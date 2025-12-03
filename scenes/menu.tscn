@@ -1,0 +1,224 @@
+[gd_scene load_steps=23 format=3 uid="uid://bbvbfgsytow76"]
+
+[ext_resource type="Texture2D" uid="uid://1dll27f2uadm" path="res://assets/images/TELA-intro-03 _0.png" id="1_mhnvy"]
+[ext_resource type="Script" uid="uid://s36kwvjcjcdx" path="res://scripts/main_menu.gd" id="1_yqeox"]
+[ext_resource type="Texture2D" uid="uid://dmxu8cnneg5vl" path="res://assets/images/Logo_aventuras_0.png" id="3_4ytvr"]
+[ext_resource type="Texture2D" uid="uid://cukh0npt7vx53" path="res://assets/images/Logo_kabelo_0.png" id="4_g3eks"]
+[ext_resource type="AudioStream" uid="uid://5nu088w5ojbl" path="res://assets/audio/kabelo_intro.mp3" id="5_4ytvr"]
+[ext_resource type="Texture2D" uid="uid://b4txiefm5cpyl" path="res://assets/images/jamela_INTRO1_0.png" id="6_7jp70"]
+[ext_resource type="Texture2D" uid="uid://dpv36hvwnumw3" path="res://assets/images/jamela_INTRO1_1.png" id="7_mxgkd"]
+[ext_resource type="Texture2D" uid="uid://b7dmt7vlh26ta" path="res://assets/images/jamela_INTRO1_2.png" id="8_g6gyw"]
+[ext_resource type="Texture2D" uid="uid://bm0ycc04soadm" path="res://assets/images/jamela_INTRO1_3.png" id="9_3dmrc"]
+[ext_resource type="Texture2D" uid="uid://b2hxpjpouyak5" path="res://assets/images/jamela_INTRO2_0.png" id="10_81l6r"]
+[ext_resource type="Texture2D" uid="uid://csfbxnoe2067u" path="res://assets/images/jamela_INTRO2_1.png" id="11_rsfmq"]
+[ext_resource type="Texture2D" uid="uid://ctjarnnrj1n16" path="res://assets/images/jamela_INTRO2_2.png" id="12_oi1it"]
+[ext_resource type="Texture2D" uid="uid://cfinke8s28vd5" path="res://assets/images/jamela_INTRO2_3.png" id="13_fy8yy"]
+[ext_resource type="Texture2D" uid="uid://dbogs45cpgntk" path="res://assets/images/jamela_INTRO2_4.png" id="14_6wigr"]
+[ext_resource type="Texture2D" uid="uid://by5usf7krra5f" path="res://assets/images/jamela_INTRO3_0.png" id="15_lnf0i"]
+[ext_resource type="AudioStream" uid="uid://crxlon1788b8p" path="res://assets/novos_audios/jamelao_song.mp3" id="16_g6gyw"]
+[ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="16_mxgkd"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ffqrc"]
+animations = [{
+"frames": [{
+"duration": 3.31,
+"texture": ExtResource("6_7jp70")
+}, {
+"duration": 3.31,
+"texture": ExtResource("7_mxgkd")
+}, {
+"duration": 3.31,
+"texture": ExtResource("8_g6gyw")
+}, {
+"duration": 3.31,
+"texture": ExtResource("9_3dmrc")
+}, {
+"duration": 3.31,
+"texture": ExtResource("10_81l6r")
+}, {
+"duration": 3.31,
+"texture": ExtResource("11_rsfmq")
+}, {
+"duration": 3.31,
+"texture": ExtResource("12_oi1it")
+}, {
+"duration": 3.31,
+"texture": ExtResource("13_fy8yy")
+}, {
+"duration": 3.31,
+"texture": ExtResource("14_6wigr")
+}, {
+"duration": 3.31,
+"texture": ExtResource("15_lnf0i")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="Animation" id="Animation_d6a83"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Transition/ColorRect:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Transition/ColorRect:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_jg2aw"]
+resource_name = "fade_in"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Transition/ColorRect:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.16666667, 1.9666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0, 0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Transition/ColorRect:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1.9),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_7g71p"]
+resource_name = "fade_out"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Transition/ColorRect:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.4, 1.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Transition/ColorRect:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.13333334),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bnd43"]
+_data = {
+&"RESET": SubResource("Animation_d6a83"),
+&"fade_in": SubResource("Animation_jg2aw"),
+&"fade_out": SubResource("Animation_7g71p")
+}
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TelaIntro030" type="Sprite2D" parent="."]
+position = Vector2(574.99994, 334.00003)
+scale = Vector2(1.836939, 1.4006524)
+texture = ExtResource("1_mhnvy")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 31.0
+offset_top = -205.99994
+offset_right = 118.0
+offset_bottom = -139.99994
+grow_vertical = 0
+scale = Vector2(2.391459, 2.0979164)
+script = ExtResource("1_yqeox")
+
+[node name="New Game" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Novo Jogo"
+
+[node name="Exit" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Sair"
+
+[node name="LogoAventuras0" type="Sprite2D" parent="."]
+position = Vector2(522, 73)
+texture = ExtResource("3_4ytvr")
+
+[node name="LogoKabelo0" type="Sprite2D" parent="."]
+position = Vector2(532, 141)
+scale = Vector2(0.999242, 1)
+texture = ExtResource("4_g3eks")
+
+[node name="cabelo_sound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_4ytvr")
+
+[node name="mayconLooking" type="AnimatedSprite2D" parent="."]
+position = Vector2(578, 501)
+scale = Vector2(2.3282413, 1.9032443)
+sprite_frames = SubResource("SpriteFrames_ffqrc")
+animation = &"idle"
+frame = 9
+frame_progress = 1.0
+
+[node name="JamelaoSong" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("16_g6gyw")
+
+[node name="menu_song" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("16_mxgkd")
+
+[node name="Transition" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_bnd43")
+}
+
+[node name="ColorRect" type="ColorRect" parent="Transition"]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(29.162046, 16.396467)
+color = Color(0, 0, 0, 1)
+
+[connection signal="ready" from="." to="VBoxContainer" method="_on_menu_ready"]
+[connection signal="pressed" from="VBoxContainer/New Game" to="VBoxContainer" method="_on_new_game_pressed"]
+[connection signal="pressed" from="VBoxContainer/Exit" to="VBoxContainer" method="_on_exit_pressed"]
+[connection signal="animation_finished" from="Transition" to="VBoxContainer" method="_on_transition_animation_finished"]

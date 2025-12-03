@@ -1,0 +1,46 @@
+[gd_scene load_steps=8 format=3 uid="uid://yicge48108e0"]
+
+[ext_resource type="Script" uid="uid://jv5gempkmtvq" path="res://scripts/game.gd" id="1_lbhrr"]
+[ext_resource type="PackedScene" uid="uid://fyyoe5vf3xm1" path="res://scenes/maycon.tscn" id="1_uwrxv"]
+[ext_resource type="Texture2D" uid="uid://ctj2d2n15jxye" path="res://assets/novas_imagens/cenarios/pracinha_bela.png" id="2_yqjtg"]
+[ext_resource type="PackedScene" uid="uid://dvl0rk52qgvxa" path="res://scenes/inimigo_seco.tscn" id="3_lnu2h"]
+[ext_resource type="AudioStream" uid="uid://crxlon1788b8p" path="res://assets/novos_audios/jamelao_song.mp3" id="5_iywne"]
+[ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="6_p57ef"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_uwrxv"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_lbhrr")
+
+[node name="PracinhaBela" type="Sprite2D" parent="."]
+position = Vector2(113.00001, -40.000004)
+scale = Vector2(0.45825326, 0.38789135)
+texture = ExtResource("2_yqjtg")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+position_smoothing_enabled = true
+rotation_smoothing_enabled = true
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(-13, 48.999996)
+scale = Vector2(-2.4855595, 0.92934257)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(10, 62)
+shape = SubResource("WorldBoundaryShape2D_uwrxv")
+
+[node name="Maycon" parent="." instance=ExtResource("1_uwrxv")]
+position = Vector2(-268, 25)
+
+[node name="Inimigo_seco" parent="." instance=ExtResource("3_lnu2h")]
+position = Vector2(455, -59.999996)
+scale = Vector2(2.0355258, 2.2938442)
+
+[node name="JamelaoSong" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_iywne")
+volume_db = -11.927
+
+[node name="song_1" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_p57ef")
+volume_db = -20.991

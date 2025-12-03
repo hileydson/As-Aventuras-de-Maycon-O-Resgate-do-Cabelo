@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://0t45klotkbf7"]
+
+[ext_resource type="Texture2D" uid="uid://dvpksvgtwvgmk" path="res://assets/images/sprite26_0.png" id="1_ho32g"]
+[ext_resource type="VideoStream" uid="uid://c08tsqoa1bl2j" path="res://assets/videos/apresentacao.ogv" id="1_tfrqh"]
+[ext_resource type="Script" uid="uid://q8lg28lk7dq5" path="res://scripts/intro_game.gd" id="2_54pjr"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Sprite260" type="Sprite2D" parent="."]
+position = Vector2(235.00012, -69)
+scale = Vector2(59.08426, 38.466576)
+texture = ExtResource("1_ho32g")
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
+offset_left = -461.0
+offset_top = -322.0
+offset_right = 179.0
+offset_bottom = 158.0
+scale = Vector2(1.4561205, 1.3460938)
+stream = ExtResource("1_tfrqh")
+autoplay = true
+script = ExtResource("2_54pjr")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[connection signal="finished" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_finished"]
+[connection signal="gui_input" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_gui_input"]

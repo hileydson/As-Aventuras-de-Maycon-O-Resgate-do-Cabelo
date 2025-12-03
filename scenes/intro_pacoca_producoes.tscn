@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://dsn4roqk0kmsk"]
+
+[ext_resource type="VideoStream" uid="uid://c5y4qqegy5pqf" path="res://assets/videos/intro_pacoca_producoes.ogv" id="1_k5unc"]
+[ext_resource type="Script" uid="uid://ivp0lwifukit" path="res://scripts/intro_pacoca_producoes.gd" id="2_byawd"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
+offset_left = -575.0
+offset_top = -321.0
+offset_right = 572.0
+offset_bottom = 319.0
+stream = ExtResource("1_k5unc")
+autoplay = true
+expand = true
+script = ExtResource("2_byawd")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[connection signal="ready" from="." to="VideoStreamPlayer" method="_on_node_2d_ready"]
+[connection signal="finished" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_finished"]
+[connection signal="gui_input" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_gui_input"]
