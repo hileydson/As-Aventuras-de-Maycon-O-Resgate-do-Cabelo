@@ -10,15 +10,21 @@ config_version=5
 
 [application]
 
-config/name="New Game Project"
+config/name="As Aventuras de Maycon"
 run/main_scene="uid://dsn4roqk0kmsk"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
+boot_splash/image="uid://nwmghk1cui0c"
 config/icon="res://icon.svg"
 
 [autoload]
 
 Global="*res://scripts/Global.gd"
 DefaultTransition="*res://scenes/default_transition.tscn"
+
+[display]
+
+window/size/mode=2
+window/stretch/mode="viewport"
 
 [dotnet]
 

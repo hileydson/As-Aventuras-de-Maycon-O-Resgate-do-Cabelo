@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj": {}
+  },
+  "projects": {
+    "/Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
+        "projectName": "New Game Project",
+        "projectPath": "/Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
+        "packagesPath": "/Users/hileydsonluizcogo/.nuget/packages/",
+        "outputPath": "/Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/hileydsonluizcogo/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Godot.SourceGenerators": {
+              "target": "Package",
+              "version": "[4.5.1, )",
+              "autoReferenced": true
+            },
+            "GodotSharp": {
+              "target": "Package",
+              "version": "[4.5.1, )",
+              "autoReferenced": true
+            },
+            "GodotSharpEditor": {
+              "target": "Package",
+              "version": "[4.5.1, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.416/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
