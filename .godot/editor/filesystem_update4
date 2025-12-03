@@ -1,1 +1,4 @@
 res://scenes/intro_pacoca_producoes.tscn
+res://scenes/battle_3d.tscn
+res://scripts/battle_3d.gd
+res://scenes/battle_3d_2.tscn

@@ -2,9 +2,9 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bk2ijm1m57oj6"
-path.s3tc="res://.godot/imported/Idle.png-ae46c6b23f9beff3ddfc9aeec3f73f15.s3tc.ctex"
-path.etc2="res://.godot/imported/Idle.png-ae46c6b23f9beff3ddfc9aeec3f73f15.etc2.ctex"
+uid="uid://dbicvg8ismuhi"
+path.s3tc="res://.godot/imported/jamelao_float_1.png-7919a3e5f3e22bf4f709a5aef65ade58.s3tc.ctex"
+path.etc2="res://.godot/imported/jamelao_float_1.png-7919a3e5f3e22bf4f709a5aef65ade58.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -12,8 +12,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_1/Idle.png"
-dest_files=["res://.godot/imported/Idle.png-ae46c6b23f9beff3ddfc9aeec3f73f15.s3tc.ctex", "res://.godot/imported/Idle.png-ae46c6b23f9beff3ddfc9aeec3f73f15.etc2.ctex"]
+source_file="res://assets/novas_imagens/maycon/jamelao_float_1.png"
+dest_files=["res://.godot/imported/jamelao_float_1.png-7919a3e5f3e22bf4f709a5aef65ade58.s3tc.ctex", "res://.godot/imported/jamelao_float_1.png-7919a3e5f3e22bf4f709a5aef65ade58.etc2.ctex"]
 
 [params]
 

@@ -14,7 +14,7 @@ config/name="As Aventuras de Maycon"
 config/version="1.0"
 run/main_scene="uid://dsn4roqk0kmsk"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
-boot_splash/image="uid://nwmghk1cui0c"
+boot_splash/show_image=false
 config/icon="res://icon.svg"
 
 [autoload]

@@ -1,0 +1,124 @@
+[gd_scene load_steps=19 format=3 uid="uid://bs45hcmevd0o"]
+
+[ext_resource type="Script" uid="uid://cnek2gcyyrw62" path="res://scripts/battle_3d.gd" id="1_f2x0r"]
+[ext_resource type="Texture2D" uid="uid://dbicvg8ismuhi" path="res://assets/novas_imagens/maycon/jamelao_float_1.png" id="1_pmkhm"]
+[ext_resource type="Texture2D" uid="uid://dpt7gawugv1w7" path="res://assets/novas_imagens/maycon/jamelao_float_2.png" id="2_f2x0r"]
+[ext_resource type="Texture2D" uid="uid://bk2ijm1m57oj6" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_1/Idle.png" id="4_qovns"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qovns"]
+
+[sub_resource type="Sky" id="Sky_h0sry"]
+sky_material = SubResource("ProceduralSkyMaterial_qovns")
+
+[sub_resource type="Environment" id="Environment_k5onl"]
+background_mode = 2
+sky = SubResource("Sky_h0sry")
+ambient_light_source = 3
+ambient_light_color = Color(0.55495375, 0.5549537, 0.5549537, 1)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pmkhm"]
+animations = [{
+"frames": [{
+"duration": 0.81,
+"texture": ExtResource("1_pmkhm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_f2x0r")
+}],
+"loop": true,
+"name": &"float",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h0sry"]
+atlas = ExtResource("4_qovns")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k5onl"]
+atlas = ExtResource("4_qovns")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sy06x"]
+atlas = ExtResource("4_qovns")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6ovs1"]
+atlas = ExtResource("4_qovns")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_whw5v"]
+atlas = ExtResource("4_qovns")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xfkjl"]
+atlas = ExtResource("4_qovns")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6kkjr"]
+atlas = ExtResource("4_qovns")
+region = Rect2(768, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7td4s"]
+atlas = ExtResource("4_qovns")
+region = Rect2(896, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jdo2k"]
+atlas = ExtResource("4_qovns")
+region = Rect2(1024, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1tc37"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h0sry")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k5onl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sy06x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6ovs1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_whw5v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xfkjl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6kkjr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7td4s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jdo2k")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+fov = 36.6
+near = 0.016
+script = ExtResource("1_f2x0r")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_k5onl")
+
+[node name="Maycon" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(0.9203596, 0.028440183, -0.39003775, -0.0044534253, 0.9980498, 0.062265676, 0.3910478, -0.05556979, 0.9186913, -1.1234604, -0.24591933, -4.070712)
+visible = false
+sprite_frames = SubResource("SpriteFrames_pmkhm")
+animation = &"float"
+
+[node name="Inimigo" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(0.9438838, -0.021228408, 0.32959476, 0.022580957, 0.999745, -0.00027549732, -0.3295048, 0.0077026016, 0.9441225, 0.4477694, -0.13866785, -2.94744)
+visible = false
+sprite_frames = SubResource("SpriteFrames_1tc37")
+animation = &"idle"
