@@ -802,15 +802,68 @@ animations = [{
 }]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wo4yk"]
-lifetime_randomness = 0.12
+lifetime_randomness = 0.51
+particle_flag_align_y = true
+particle_flag_rotate_y = true
 particle_flag_disable_z = true
+emission_shape_scale = Vector3(1, 10, 1)
 angle_min = -191.99998
 angle_max = -26.69999
 gravity = Vector3(800, 98, 0)
+linear_accel_min = -74.08
+linear_accel_max = -28.150002
+radial_accel_min = -2.2351742e-06
+radial_accel_max = 35.559998
+tangential_accel_min = -2.2351742e-06
+tangential_accel_max = 33.329998
 scale_max = 19.52
+scale_over_velocity_max = 4.9
 color = Color(1, 0.12941177, 1, 1)
+anim_speed_min = -6.0
+anim_speed_max = -6.0
+anim_offset_min = 0.0069999998
+anim_offset_max = 0.5207
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dho1k"]
+
+[sub_resource type="Animation" id="Animation_oqd0s"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attack_power:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attack_power:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(22.190712, 29.261255)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("attack_power:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_evw7u"]
 resource_name = "power_attack"
@@ -834,10 +887,10 @@ tracks/1/path = NodePath("attack_power:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.033333335, 2.3666666),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0.033333335, 2.1, 2.4),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector2(22.190712, 29.261255), Vector2(450, 29.261)]
+"values": [Vector2(22.190712, 29.261255), Vector2(450, 29.261), Vector2(1450, 29.261)]
 }
 tracks/2/type = "method"
 tracks/2/imported = false
@@ -884,45 +937,6 @@ tracks/4/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
-}
-
-[sub_resource type="Animation" id="Animation_oqd0s"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("attack_power:visible")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("attack_power:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(22.190712, 29.261255)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("attack_power:emitting")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6fm5e"]
@@ -1169,8 +1183,7 @@ script = ExtResource("47_sdi6t")
 visible = false
 position = Vector2(22.190712, 29.261255)
 scale = Vector2(11858.474, 98879.47)
-amount = 90
-amount_ratio = 0.7687
+amount = 15
 process_material = SubResource("ParticleProcessMaterial_wo4yk")
 
 [node name="RigidBody2D" type="RigidBody2D" parent="Inimigos/comum/inimigo_1/attack_power"]

@@ -1,4 +1,2 @@
-res://scripts/inimigos/inimigo_1.gd
 res://scenes/batalha_2d.tscn
-res://scripts/batalha.gd
-res://scripts/inimigos/enemy_data.gd
+res://scripts/inimigos/inimigo_1.gd
