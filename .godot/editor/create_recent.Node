@@ -1,5 +1,12 @@
+Label
+Timer
+AudioStreamPlayer2D
+AnimationPlayer
+AnimatedSprite2D
+Camera2D
+SubViewport
 DirectionalLight3D
+SpotLight3D
 Camera3D
 WorldEnvironment
 AnimatedSprite3D
-AnimatedSprite2D

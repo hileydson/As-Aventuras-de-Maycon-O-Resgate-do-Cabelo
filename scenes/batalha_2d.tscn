@@ -1,0 +1,666 @@
+[gd_scene load_steps=60 format=3 uid="uid://bgar7p5o5l876"]
+
+[ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
+[ext_resource type="Texture2D" uid="uid://cncmj1g2w8obr" path="res://assets/novas_imagens/cenarios/fantasy-2d-battlegrounds/Battleground3/Bright/Battleground3.png" id="1_6uljp"]
+[ext_resource type="Texture2D" uid="uid://dbicvg8ismuhi" path="res://assets/novas_imagens/maycon/jamelao_float_1.png" id="2_j15j5"]
+[ext_resource type="Texture2D" uid="uid://dpt7gawugv1w7" path="res://assets/novas_imagens/maycon/jamelao_float_2.png" id="3_knuts"]
+[ext_resource type="AudioStream" uid="uid://b5ff14vnqj2mh" path="res://assets/novos_audios/punch_6.mp3" id="5_5htnd"]
+[ext_resource type="Texture2D" uid="uid://bnbndhs1s5lnm" path="res://assets/novas_imagens/cenarios/fantasy-2d-battlegrounds/Battleground3/Bright/tree_face.png" id="5_fhlax"]
+[ext_resource type="Texture2D" uid="uid://dqh0d7dpr4cri" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Idle.png" id="6_vph4o"]
+[ext_resource type="Texture2D" uid="uid://bn62kapv7wtpu" path="res://assets/images/parado_direita_0.png" id="7_2cscv"]
+[ext_resource type="Texture2D" uid="uid://30wlu8i8qggp" path="res://assets/images/parado_direita_1.png" id="8_0qud2"]
+[ext_resource type="Texture2D" uid="uid://c3wtiey1rj4oj" path="res://assets/images/parado_direita_2.png" id="9_dk8xw"]
+[ext_resource type="Texture2D" uid="uid://5o3gi77c61rp" path="res://assets/images/parado_direita_3.png" id="10_jvqq8"]
+[ext_resource type="Texture2D" uid="uid://22qbnhvox1xb" path="res://assets/images/parado_direita_4.png" id="11_f8lc8"]
+[ext_resource type="Texture2D" uid="uid://c53y5cmkivc1p" path="res://assets/images/parado_direita_5.png" id="12_uut1r"]
+[ext_resource type="Texture2D" uid="uid://cxqf1sis6624j" path="res://assets/images/parado_direita_6.png" id="13_yr5gf"]
+[ext_resource type="Texture2D" uid="uid://vyfdgyamnwma" path="res://assets/images/parado_direita_7.png" id="14_at687"]
+[ext_resource type="Texture2D" uid="uid://b47w01p6xj32v" path="res://assets/images/parado_direita_8.png" id="15_trp8b"]
+[ext_resource type="Texture2D" uid="uid://bgo6vclu1ugj6" path="res://assets/images/parado_direita_9.png" id="16_og7kc"]
+[ext_resource type="AudioStream" uid="uid://cqj4ygas1ilsq" path="res://assets/audio/passos_areia.mp3" id="17_0qud2"]
+[ext_resource type="Texture2D" uid="uid://bnxs11j7f5jy3" path="res://assets/images/socando_direita_0.png" id="17_2qgjt"]
+[ext_resource type="Texture2D" uid="uid://22iw51qcp5dg" path="res://assets/images/chutando_direita_0.png" id="17_ydc6p"]
+[ext_resource type="Texture2D" uid="uid://dltv7vs287k52" path="res://assets/images/socando_direita_1.png" id="18_5htnd"]
+[ext_resource type="AudioStream" uid="uid://bobkulmhgwlos" path="res://assets/novos_audios/battle.mp3" id="18_dk8xw"]
+[ext_resource type="Texture2D" uid="uid://clx1q80dwlx78" path="res://assets/images/chutando_direita_1.png" id="18_lsaeh"]
+[ext_resource type="Texture2D" uid="uid://dje8tvkf5sfd4" path="res://assets/images/socando_direita_2.png" id="19_7auu5"]
+[ext_resource type="Texture2D" uid="uid://cffp1ro8vc2rg" path="res://assets/images/chutando_direita_2.png" id="19_rdli8"]
+[ext_resource type="Texture2D" uid="uid://bsfd8x2yh560q" path="res://assets/images/chutando_direita_3.png" id="20_i3ip3"]
+[ext_resource type="Texture2D" uid="uid://5puqrhy558if" path="res://assets/images/socando_direita_3.png" id="20_v7cc7"]
+[ext_resource type="Texture2D" uid="uid://bjsthurlbfbvx" path="res://assets/novas_imagens/maycon/volta_rastro_0.png" id="21_bxx4m"]
+[ext_resource type="Texture2D" uid="uid://cmkewyxfaxold" path="res://assets/images/andando_direita_0.png" id="21_xskhn"]
+[ext_resource type="Texture2D" uid="uid://bpbsnfvv15e57" path="res://assets/images/andando_direita_1.png" id="22_kriec"]
+[ext_resource type="Texture2D" uid="uid://ydu573b45slc" path="res://assets/images/andando_direita_2.png" id="23_lsnhu"]
+[ext_resource type="Texture2D" uid="uid://d0s5ixjm7ai54" path="res://assets/images/andando_direita_3.png" id="24_bxx4m"]
+[ext_resource type="Texture2D" uid="uid://dudd3ftd2vjun" path="res://assets/images/andando_direita_4.png" id="25_ni07n"]
+[ext_resource type="Texture2D" uid="uid://cy0vdbn6jw7i4" path="res://assets/images/andando_direita_5.png" id="26_5tf06"]
+[ext_resource type="Texture2D" uid="uid://cir28ffkpadqy" path="res://assets/images/andando_direita_6.png" id="27_55f8h"]
+[ext_resource type="Texture2D" uid="uid://b1qqwqm6jx8dt" path="res://assets/images/andando_direita_7.png" id="28_ydc6p"]
+[ext_resource type="AudioStream" uid="uid://bn7bmjnhdvvfd" path="res://assets/audio/peido.mp3" id="33_xskhn"]
+[ext_resource type="AudioStream" uid="uid://o0m05edowij" path="res://assets/audio/passos_maycon.mp3" id="34_xskhn"]
+[ext_resource type="Texture2D" uid="uid://31pa2gqucn0p" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/5 Logo/Logo3.png" id="39_rdli8"]
+[ext_resource type="Texture2D" uid="uid://dybnvb6goi2pw" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/2 Bars/EnergyBar1.png" id="40_i3ip3"]
+[ext_resource type="Texture2D" uid="uid://bslksmbwghx3e" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_02.png" id="41_8bi0a"]
+[ext_resource type="Texture2D" uid="uid://6q57wdaxgctf" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_13.png" id="42_7ch20"]
+[ext_resource type="Texture2D" uid="uid://obhft0l6l255" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_18.png" id="43_gbqun"]
+[ext_resource type="Texture2D" uid="uid://c16a78msmqs0d" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_05.png" id="44_8bi0a"]
+[ext_resource type="Texture2D" uid="uid://buntcb6wh3teo" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_12.png" id="45_7ch20"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6uljp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_j15j5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_knuts")
+}],
+"loop": true,
+"name": &"float",
+"speed": 5.0
+}]
+
+[sub_resource type="Animation" id="Animation_o2foy"]
+resource_name = "move_to_middle"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.13333334, 2.7666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-671, 45), Vector2(-300, 45)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.06666667, 2.7666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../maycon_batalha_default:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.06666667, 2.8333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="Animation" id="Animation_2cscv"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-671, 45)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../maycon_batalha_default:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../maycon_batalha_default:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-303, -14)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../maycon_batalha_default:animation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"walk"]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../maycon_batalha_default:flip_h")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_jvqq8"]
+resource_name = "close_to_enemy"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../maycon_batalha_default:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335, 1.2333333, 1.7333333, 2.8666666),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-303, -14), Vector2(180, -14), Vector2(180, -14), Vector2(-300, -14)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../maycon_batalha_default:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.1, 0.96666664, 1.5333333, 2.8666666),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [&"walk", &"punch", &"volta", &"idle"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../maycon_batalha_default:flip_h")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.033333335, 1.5666667, 2.8666666),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Punch6")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../Peido")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1.9333333),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../PassosMaycon")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.033333335, 0.23333333, 0.46666667, 0.76666665, 1.0333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_8bi0a"]
+resource_name = "kick"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../maycon_batalha_default:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335, 1.2333333, 1.7333333, 2.8666666),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-303, -14), Vector2(180, -14), Vector2(180, -14), Vector2(-300, -14)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../maycon_batalha_default:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.1, 0.96666664, 1.6666666),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [&"walk", &"kick", &"volta"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../maycon_batalha_default:flip_h")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.033333335, 1.5666667, 2.8666666),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Punch6")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../Peido")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1.9333333),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../PassosMaycon")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.033333335, 0.23333333, 0.46666667, 0.76666665, 1.0333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2117e"]
+_data = {
+&"RESET": SubResource("Animation_2cscv"),
+&"kick": SubResource("Animation_8bi0a"),
+&"move_to_middle": SubResource("Animation_o2foy"),
+&"punch": SubResource("Animation_jvqq8")
+}
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_co47a"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qobrd"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qumit"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y2evb"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uymjw"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7y2b"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mdbxd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_co47a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qobrd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qumit")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y2evb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uymjw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r7y2b")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_c4b2c"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_2cscv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_0qud2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_dk8xw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_jvqq8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_f8lc8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_uut1r")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_yr5gf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_at687")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_trp8b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_og7kc")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.81,
+"texture": ExtResource("17_ydc6p")
+}, {
+"duration": 0.81,
+"texture": ExtResource("18_lsaeh")
+}, {
+"duration": 0.81,
+"texture": ExtResource("19_rdli8")
+}, {
+"duration": 0.81,
+"texture": ExtResource("20_i3ip3")
+}],
+"loop": false,
+"name": &"kick",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.61,
+"texture": ExtResource("17_2qgjt")
+}, {
+"duration": 0.61,
+"texture": ExtResource("18_5htnd")
+}, {
+"duration": 0.61,
+"texture": ExtResource("19_7auu5")
+}, {
+"duration": 0.61,
+"texture": ExtResource("20_v7cc7")
+}],
+"loop": false,
+"name": &"punch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("21_bxx4m")
+}],
+"loop": false,
+"name": &"volta",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.51,
+"texture": ExtResource("21_xskhn")
+}, {
+"duration": 0.51,
+"texture": ExtResource("22_kriec")
+}, {
+"duration": 0.51,
+"texture": ExtResource("23_lsnhu")
+}, {
+"duration": 0.51,
+"texture": ExtResource("24_bxx4m")
+}, {
+"duration": 0.51,
+"texture": ExtResource("25_ni07n")
+}, {
+"duration": 0.51,
+"texture": ExtResource("26_5tf06")
+}, {
+"duration": 0.51,
+"texture": ExtResource("27_55f8h")
+}, {
+"duration": 0.51,
+"texture": ExtResource("28_ydc6p")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Battleground3" type="Sprite2D" parent="."]
+position = Vector2(-1.2500267, -0.7499809)
+scale = Vector2(0.6049479, 0.60972226)
+texture = ExtResource("1_6uljp")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+script = ExtResource("1_3ps70")
+
+[node name="maycon_batalha" type="AnimatedSprite2D" parent="."]
+position = Vector2(-671, 45)
+scale = Vector2(2.1498096, 1.9949325)
+sprite_frames = SubResource("SpriteFrames_6uljp")
+animation = &"float"
+frame_progress = 0.5849402
+
+[node name="batalha_moves" type="AnimationPlayer" parent="."]
+root_node = NodePath("../maycon_batalha")
+libraries = {
+&"": SubResource("AnimationLibrary_2117e")
+}
+autoplay = "move_to_middle"
+
+[node name="TreeFace" type="Sprite2D" parent="."]
+position = Vector2(384.99997, -61)
+scale = Vector2(0.44531253, 0.50092596)
+texture = ExtResource("5_fhlax")
+
+[node name="inimigo cena 1" type="AnimatedSprite2D" parent="."]
+position = Vector2(326, 11)
+scale = Vector2(-2.4785156, 2.255542)
+sprite_frames = SubResource("SpriteFrames_mdbxd")
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.79770416
+
+[node name="maycon_batalha_default" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(-303, -14)
+scale = Vector2(2.837786, 2.6283782)
+sprite_frames = SubResource("SpriteFrames_c4b2c")
+animation = &"walk"
+autoplay = "idle"
+
+[node name="PassosAreia" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_0qud2")
+volume_db = -4.77
+pitch_scale = 2.81
+autoplay = true
+
+[node name="batalha_move_close_to_enemy" type="AnimationPlayer" parent="."]
+
+[node name="Battle_Song" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("18_dk8xw")
+parameters/looping = true
+
+[node name="Punch6" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_5htnd")
+volume_db = -5.778
+
+[node name="Peido" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("33_xskhn")
+
+[node name="PassosMaycon" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("34_xskhn")
+
+[node name="Logo3" type="Sprite2D" parent="."]
+position = Vector2(-407.00003, -253.00002)
+scale = Vector2(0.71307504, 0.8304348)
+texture = ExtResource("39_rdli8")
+
+[node name="Attack_power_1" type="Sprite2D" parent="."]
+position = Vector2(-495.99997, -265)
+scale = Vector2(3.781251, 5.149996)
+texture = ExtResource("40_i3ip3")
+
+[node name="Attack_power_2" type="Sprite2D" parent="."]
+position = Vector2(-412.99997, -266)
+scale = Vector2(3.781251, 5.149996)
+texture = ExtResource("40_i3ip3")
+
+[node name="Attack_power_3" type="Sprite2D" parent="."]
+position = Vector2(-329, -266)
+scale = Vector2(3.781251, 5.149996)
+texture = ExtResource("40_i3ip3")
+
+[node name="Defense_Jump_1" type="Sprite2D" parent="."]
+position = Vector2(-494, -217)
+scale = Vector2(1.09375, 0.5625)
+texture = ExtResource("41_8bi0a")
+
+[node name="Defense_Jump_2" type="Sprite2D" parent="."]
+position = Vector2(-413, -217.00002)
+scale = Vector2(1.09375, 0.5625)
+texture = ExtResource("41_8bi0a")
+
+[node name="Defense_Jump_3" type="Sprite2D" parent="."]
+position = Vector2(-328, -217)
+scale = Vector2(1.09375, 0.5625)
+texture = ExtResource("41_8bi0a")
+
+[node name="Icon_indicate_power" type="Sprite2D" parent="."]
+position = Vector2(-234, -268)
+scale = Vector2(1.75, 1.46875)
+texture = ExtResource("42_7ch20")
+
+[node name="Icon_indicate_defense" type="Sprite2D" parent="."]
+position = Vector2(-232, -220)
+texture = ExtResource("43_gbqun")
+
+[node name="Attack_power_time" type="Sprite2D" parent="."]
+position = Vector2(-198, -270)
+scale = Vector2(1.0625, 1.09375)
+texture = ExtResource("44_8bi0a")
+
+[node name="Attack_power_X" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(-410, -268)
+scale = Vector2(1.625, 1.40625)
+texture = ExtResource("45_7ch20")
+
+[node name="timer_label" type="Label" parent="."]
+visible = false
+anchors_preset = -1
+anchor_bottom = 0.008
+offset_left = -190.0
+offset_top = -282.0
+offset_right = -142.0
+offset_bottom = -259.0
+text = "00"
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 15.0

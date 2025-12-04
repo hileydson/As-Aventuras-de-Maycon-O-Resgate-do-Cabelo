@@ -20,7 +20,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Global="*res://scripts/Global.gd"
-DefaultTransition="*res://scenes/default_transition.tscn"
+DefaultTransition="res://scenes/default_transition.tscn"
 
 [display]
 
