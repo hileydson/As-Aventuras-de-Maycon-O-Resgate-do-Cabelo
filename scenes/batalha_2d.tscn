@@ -1,4 +1,4 @@
-[gd_scene load_steps=60 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=71 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="Texture2D" uid="uid://cncmj1g2w8obr" path="res://assets/novas_imagens/cenarios/fantasy-2d-battlegrounds/Battleground3/Bright/Battleground3.png" id="1_6uljp"]
@@ -38,6 +38,7 @@
 [ext_resource type="Texture2D" uid="uid://b1qqwqm6jx8dt" path="res://assets/images/andando_direita_7.png" id="28_ydc6p"]
 [ext_resource type="AudioStream" uid="uid://bn7bmjnhdvvfd" path="res://assets/audio/peido.mp3" id="33_xskhn"]
 [ext_resource type="AudioStream" uid="uid://o0m05edowij" path="res://assets/audio/passos_maycon.mp3" id="34_xskhn"]
+[ext_resource type="PackedScene" uid="uid://cbukngmlwguv8" path="res://scenes/maycon_batalha_default.tscn" id="35_gbqun"]
 [ext_resource type="Texture2D" uid="uid://31pa2gqucn0p" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/5 Logo/Logo3.png" id="39_rdli8"]
 [ext_resource type="Texture2D" uid="uid://dybnvb6goi2pw" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/2 Bars/EnergyBar1.png" id="40_i3ip3"]
 [ext_resource type="Texture2D" uid="uid://bslksmbwghx3e" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_02.png" id="41_8bi0a"]
@@ -45,60 +46,11 @@
 [ext_resource type="Texture2D" uid="uid://obhft0l6l255" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_18.png" id="43_gbqun"]
 [ext_resource type="Texture2D" uid="uid://c16a78msmqs0d" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_05.png" id="44_8bi0a"]
 [ext_resource type="Texture2D" uid="uid://buntcb6wh3teo" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_12.png" id="45_7ch20"]
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_6uljp"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("2_j15j5")
-}, {
-"duration": 1.0,
-"texture": ExtResource("3_knuts")
-}],
-"loop": true,
-"name": &"float",
-"speed": 5.0
-}]
-
-[sub_resource type="Animation" id="Animation_o2foy"]
-resource_name = "move_to_middle"
-length = 3.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.13333334, 2.7666667),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(-671, 45), Vector2(-300, 45)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.06666667, 2.7666667),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("../maycon_batalha_default:visible")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.06666667, 2.8333333),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [false, true]
-}
+[ext_resource type="AudioStream" uid="uid://ciioq7s6nwhj5" path="res://assets/novos_audios/victory_sound.mp3" id="46_b4w2m"]
+[ext_resource type="Script" uid="uid://chne5psun3nw1" path="res://scripts/inimigos/enemy_data.gd" id="46_x11r3"]
+[ext_resource type="AudioStream" uid="uid://bpuvyi2a67twf" path="res://assets/novos_audios/DS_pain.mp3" id="47_pvxjk"]
+[ext_resource type="Script" uid="uid://d2r8xp10cjxfn" path="res://scripts/inimigos/inimigo_1.gd" id="47_sdi6t"]
+[ext_resource type="Texture2D" uid="uid://2meppcw1h507" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png" id="48_x11r3"]
 
 [sub_resource type="Animation" id="Animation_2cscv"]
 length = 0.001
@@ -174,99 +126,17 @@ tracks/5/keys = {
 "update": 1,
 "values": [false]
 }
-
-[sub_resource type="Animation" id="Animation_jvqq8"]
-resource_name = "close_to_enemy"
-length = 3.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../maycon_batalha_default:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.033333335, 1.2333333, 1.7333333, 2.8666666),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(-303, -14), Vector2(180, -14), Vector2(180, -14), Vector2(-300, -14)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("../maycon_batalha_default:animation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.1, 0.96666664, 1.5333333, 2.8666666),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [&"walk", &"punch", &"volta", &"idle"]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("../maycon_batalha_default:flip_h")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.033333335, 1.5666667, 2.8666666),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 1,
-"values": [false, true, false]
-}
-tracks/3/type = "method"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("../Punch6")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(1.3),
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../Maycon:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"values": [{
-"args": [0.0],
-"method": &"play"
-}]
-}
-tracks/4/type = "method"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("../Peido")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(1.9333333),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [0.0],
-"method": &"play"
-}]
-}
-tracks/5/type = "method"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("../PassosMaycon")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0.033333335, 0.23333333, 0.46666667, 0.76666665, 1.0333333),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"values": [{
-"args": [0.0],
-"method": &"play"
-}, {
-"args": [0.0],
-"method": &"play"
-}, {
-"args": [0.0],
-"method": &"play"
-}, {
-"args": [0.0],
-"method": &"play"
-}, {
-"args": [0.0],
-"method": &"play"
-}]
+"update": 1,
+"values": [true]
 }
 
 [sub_resource type="Animation" id="Animation_8bi0a"]
@@ -325,24 +195,10 @@ tracks/3/keys = {
 tracks/4/type = "method"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("../Peido")
+tracks/4/path = NodePath("../PassosMaycon")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(1.9333333),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [0.0],
-"method": &"play"
-}]
-}
-tracks/5/type = "method"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("../PassosMaycon")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
 "times": PackedFloat32Array(0.033333335, 0.23333333, 0.46666667, 0.76666665, 1.0333333),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "values": [{
@@ -362,6 +218,214 @@ tracks/5/keys = {
 "method": &"play"
 }]
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../maycon_batalha_default:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.03333333, 2.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../Maycon:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 2.8666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../../Inimigos")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(1.5666667),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"add_damage"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_o2foy"]
+resource_name = "move_to_middle"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.13333334, 2.7666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-671, 45), Vector2(-300, 45)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.06666667, 2.7666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../maycon_batalha_default:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.06666667, 2.8333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Maycon:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.033333335, 2.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="Animation" id="Animation_jvqq8"]
+resource_name = "close_to_enemy"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../maycon_batalha_default:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335, 1.2333333, 1.7333333, 2.8666666),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-303, -14), Vector2(180, -14), Vector2(180, -14), Vector2(-300, -14)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../maycon_batalha_default:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.1, 0.96666664, 1.5333333, 2.8666666),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [&"walk", &"punch", &"volta", &"idle"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../maycon_batalha_default:flip_h")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.033333335, 1.5666667, 2.8666666),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Punch6")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../PassosMaycon")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.033333335, 0.23333333, 0.46666667, 0.76666665, 1.0333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../Maycon:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.06666667, 2.8666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../maycon_batalha_default:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.06666667, 2.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../../Inimigos")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(1.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"add_damage"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2117e"]
 _data = {
@@ -371,53 +435,17 @@ _data = {
 &"punch": SubResource("Animation_jvqq8")
 }
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_co47a"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(0, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qobrd"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(128, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qumit"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(256, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_y2evb"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(384, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_uymjw"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(512, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_r7y2b"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(640, 0, 128, 128)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_mdbxd"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_6uljp"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_co47a")
+"texture": ExtResource("2_j15j5")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_qobrd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qumit")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_y2evb")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_uymjw")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_r7y2b")
+"texture": ExtResource("3_knuts")
 }],
 "loop": true,
-"name": &"idle",
+"name": &"float",
 "speed": 5.0
 }]
 
@@ -530,44 +558,111 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7ch20"]
+distance = -8.004456
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_co47a"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qobrd"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qumit"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y2evb"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uymjw"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7y2b"]
+atlas = ExtResource("6_vph4o")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mdbxd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_co47a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qobrd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qumit")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y2evb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uymjw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r7y2b")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pvxjk"]
+
+[sub_resource type="Curve" id="Curve_d6oll"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.9909748, 0.062366605), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_cobqf"]
+curve = SubResource("Curve_d6oll")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_h88qw"]
+particle_flag_disable_z = true
+radial_velocity_min = 66.669975
+radial_velocity_max = 259.25998
+gravity = Vector3(0, -98, 0)
+scale_min = 15.0
+scale_max = 25.0
+scale_curve = SubResource("CurveTexture_cobqf")
+color = Color(0.9019608, 0.32941177, 0.2, 0.54901963)
+collision_use_scale = true
+
 [node name="Node2D" type="Node2D"]
 
-[node name="Battleground3" type="Sprite2D" parent="."]
+[node name="Cenario de batalha" type="Node2D" parent="."]
+
+[node name="batalha_moves" type="AnimationPlayer" parent="Cenario de batalha"]
+root_node = NodePath("../maycon_batalha")
+libraries = {
+&"": SubResource("AnimationLibrary_2117e")
+}
+autoplay = "move_to_middle"
+script = ExtResource("1_3ps70")
+
+[node name="Battleground3" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(-1.2500267, -0.7499809)
 scale = Vector2(0.6049479, 0.60972226)
 texture = ExtResource("1_6uljp")
 
-[node name="Camera2D" type="Camera2D" parent="."]
-script = ExtResource("1_3ps70")
+[node name="Camera2D" type="Camera2D" parent="Cenario de batalha"]
 
-[node name="maycon_batalha" type="AnimatedSprite2D" parent="."]
+[node name="maycon_batalha" type="AnimatedSprite2D" parent="Cenario de batalha"]
 position = Vector2(-671, 45)
 scale = Vector2(2.1498096, 1.9949325)
 sprite_frames = SubResource("SpriteFrames_6uljp")
 animation = &"float"
 frame_progress = 0.5849402
 
-[node name="batalha_moves" type="AnimationPlayer" parent="."]
-root_node = NodePath("../maycon_batalha")
-libraries = {
-&"": SubResource("AnimationLibrary_2117e")
-}
-autoplay = "move_to_middle"
-
-[node name="TreeFace" type="Sprite2D" parent="."]
+[node name="TreeFace" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(384.99997, -61)
 scale = Vector2(0.44531253, 0.50092596)
 texture = ExtResource("5_fhlax")
 
-[node name="inimigo cena 1" type="AnimatedSprite2D" parent="."]
-position = Vector2(326, 11)
-scale = Vector2(-2.4785156, 2.255542)
-sprite_frames = SubResource("SpriteFrames_mdbxd")
-animation = &"idle"
-autoplay = "idle"
-frame_progress = 0.79770416
-
-[node name="maycon_batalha_default" type="AnimatedSprite2D" parent="."]
+[node name="maycon_batalha_default" type="AnimatedSprite2D" parent="Cenario de batalha"]
 visible = false
 position = Vector2(-303, -14)
 scale = Vector2(2.837786, 2.6283782)
@@ -575,84 +670,121 @@ sprite_frames = SubResource("SpriteFrames_c4b2c")
 animation = &"walk"
 autoplay = "idle"
 
-[node name="PassosAreia" type="AudioStreamPlayer" parent="."]
+[node name="Maycon" parent="Cenario de batalha" instance=ExtResource("35_gbqun")]
+position = Vector2(-303, -14)
+scale = Vector2(2.8415334, 2.76858)
+
+[node name="PassosAreia" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("17_0qud2")
 volume_db = -4.77
 pitch_scale = 2.81
 autoplay = true
 
-[node name="batalha_move_close_to_enemy" type="AnimationPlayer" parent="."]
+[node name="victory_sound" type="AudioStreamPlayer2D" parent="Cenario de batalha"]
+stream = ExtResource("46_b4w2m")
+parameters/looping = true
 
-[node name="Battle_Song" type="AudioStreamPlayer2D" parent="."]
+[node name="Battle_Song" type="AudioStreamPlayer2D" parent="Cenario de batalha"]
 stream = ExtResource("18_dk8xw")
 parameters/looping = true
 
-[node name="Punch6" type="AudioStreamPlayer" parent="."]
+[node name="Punch6" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("5_5htnd")
 volume_db = -5.778
 
-[node name="Peido" type="AudioStreamPlayer" parent="."]
+[node name="DsPain" type="AudioStreamPlayer" parent="Cenario de batalha"]
+stream = ExtResource("47_pvxjk")
+
+[node name="Peido" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("33_xskhn")
 
-[node name="PassosMaycon" type="AudioStreamPlayer" parent="."]
+[node name="PassosMaycon" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("34_xskhn")
 
-[node name="Logo3" type="Sprite2D" parent="."]
+[node name="Logo3" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(-407.00003, -253.00002)
 scale = Vector2(0.71307504, 0.8304348)
 texture = ExtResource("39_rdli8")
 
-[node name="Attack_power_1" type="Sprite2D" parent="."]
+[node name="Attack_power_1" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(-495.99997, -265)
 scale = Vector2(3.781251, 5.149996)
 texture = ExtResource("40_i3ip3")
 
-[node name="Attack_power_2" type="Sprite2D" parent="."]
+[node name="Attack_power_2" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(-412.99997, -266)
 scale = Vector2(3.781251, 5.149996)
 texture = ExtResource("40_i3ip3")
 
-[node name="Attack_power_3" type="Sprite2D" parent="."]
+[node name="Attack_power_3" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(-329, -266)
 scale = Vector2(3.781251, 5.149996)
 texture = ExtResource("40_i3ip3")
 
-[node name="Defense_Jump_1" type="Sprite2D" parent="."]
-position = Vector2(-494, -217)
+[node name="Defense_Jump_1" type="Sprite2D" parent="Cenario de batalha"]
+position = Vector2(-501, -216.99998)
 scale = Vector2(1.09375, 0.5625)
 texture = ExtResource("41_8bi0a")
 
-[node name="Defense_Jump_2" type="Sprite2D" parent="."]
-position = Vector2(-413, -217.00002)
+[node name="Defense_Jump_2" type="Sprite2D" parent="Cenario de batalha"]
+position = Vector2(-463.00003, -217.00002)
 scale = Vector2(1.09375, 0.5625)
 texture = ExtResource("41_8bi0a")
 
-[node name="Defense_Jump_3" type="Sprite2D" parent="."]
-position = Vector2(-328, -217)
+[node name="Defense_Jump_3" type="Sprite2D" parent="Cenario de batalha"]
+position = Vector2(-424, -216.99998)
 scale = Vector2(1.09375, 0.5625)
 texture = ExtResource("41_8bi0a")
 
-[node name="Icon_indicate_power" type="Sprite2D" parent="."]
+[node name="Defense_Jump_4" type="Sprite2D" parent="Cenario de batalha"]
+position = Vector2(-385, -216.99998)
+scale = Vector2(1.09375, 0.5625)
+texture = ExtResource("41_8bi0a")
+
+[node name="Defense_Jump_5" type="Sprite2D" parent="Cenario de batalha"]
+position = Vector2(-346, -216.99998)
+scale = Vector2(1.09375, 0.5625)
+texture = ExtResource("41_8bi0a")
+
+[node name="Defense_Jump_6" type="Sprite2D" parent="Cenario de batalha"]
+position = Vector2(-308, -216.99998)
+scale = Vector2(1.09375, 0.5625)
+texture = ExtResource("41_8bi0a")
+
+[node name="Icon_indicate_power" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(-234, -268)
 scale = Vector2(1.75, 1.46875)
 texture = ExtResource("42_7ch20")
 
-[node name="Icon_indicate_defense" type="Sprite2D" parent="."]
+[node name="Icon_indicate_defense" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(-232, -220)
 texture = ExtResource("43_gbqun")
 
-[node name="Attack_power_time" type="Sprite2D" parent="."]
+[node name="Attack_power_time" type="Sprite2D" parent="Cenario de batalha"]
+visible = false
 position = Vector2(-198, -270)
 scale = Vector2(1.0625, 1.09375)
 texture = ExtResource("44_8bi0a")
 
-[node name="Attack_power_X" type="Sprite2D" parent="."]
+[node name="Defense_jump_time" type="Sprite2D" parent="Cenario de batalha"]
+visible = false
+position = Vector2(-198, -223)
+scale = Vector2(1.0625, 1.09375)
+texture = ExtResource("44_8bi0a")
+
+[node name="Attack_power_X" type="Sprite2D" parent="Cenario de batalha"]
 visible = false
 position = Vector2(-410, -268)
 scale = Vector2(1.625, 1.40625)
 texture = ExtResource("45_7ch20")
 
-[node name="timer_label" type="Label" parent="."]
+[node name="Defense_jump_X" type="Sprite2D" parent="Cenario de batalha"]
+visible = false
+position = Vector2(-410, -219)
+scale = Vector2(1.625, 1.40625)
+texture = ExtResource("45_7ch20")
+
+[node name="timer_power_label" type="Label" parent="Cenario de batalha"]
 visible = false
 anchors_preset = -1
 anchor_bottom = 0.008
@@ -662,5 +794,80 @@ offset_right = -142.0
 offset_bottom = -259.0
 text = "00"
 
-[node name="Timer" type="Timer" parent="."]
-wait_time = 15.0
+[node name="timer_defense_label" type="Label" parent="Cenario de batalha"]
+visible = false
+anchors_preset = -1
+anchor_bottom = 0.008
+offset_left = -190.0
+offset_top = -236.0
+offset_right = -142.0
+offset_bottom = -213.0
+text = "00"
+
+[node name="Timer_power" type="Timer" parent="Cenario de batalha"]
+wait_time = 10.0
+
+[node name="Timer_defense" type="Timer" parent="Cenario de batalha"]
+wait_time = 8.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Cenario de batalha"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Cenario de batalha/StaticBody2D"]
+position = Vector2(-218, 169)
+scale = Vector2(2.455237, 4.1227045)
+shape = SubResource("WorldBoundaryShape2D_7ch20")
+
+[node name="Inimigos" type="Node2D" parent="."]
+script = ExtResource("46_x11r3")
+
+[node name="comum" type="Node2D" parent="Inimigos"]
+
+[node name="inimigo_1" type="AnimatedSprite2D" parent="Inimigos/comum"]
+position = Vector2(326, 11)
+rotation = 3.1415925
+scale = Vector2(2.4785156, -2.255542)
+sprite_frames = SubResource("SpriteFrames_mdbxd")
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.79770416
+script = ExtResource("47_sdi6t")
+
+[node name="hp_1" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
+position = Vector2(15.7352295, 72.04476)
+rotation = 3.1415925
+scale = Vector2(0.20173363, -0.23553094)
+texture = ExtResource("48_x11r3")
+
+[node name="hp_2" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
+position = Vector2(8.472816, 72.04476)
+rotation = 3.1415925
+scale = Vector2(0.20173363, -0.23553094)
+texture = ExtResource("48_x11r3")
+
+[node name="hp_3" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
+position = Vector2(1.2104034, 72.04476)
+rotation = 3.1415925
+scale = Vector2(0.20173363, -0.23553094)
+texture = ExtResource("48_x11r3")
+
+[node name="hp_4" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
+position = Vector2(-6.052002, 72.04476)
+rotation = 3.1415925
+scale = Vector2(0.20173363, -0.23553094)
+texture = ExtResource("48_x11r3")
+
+[node name="hp_5" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
+position = Vector2(-13.314407, 72.04476)
+rotation = 3.1415925
+scale = Vector2(0.20173363, -0.23553094)
+texture = ExtResource("48_x11r3")
+
+[node name="boss" type="Node2D" parent="Inimigos"]
+
+[node name="destroy" type="GPUParticles2D" parent="Inimigos"]
+visible = false
+material = SubResource("ShaderMaterial_pvxjk")
+position = Vector2(320, 57)
+scale = Vector2(148299.89, -75878.69)
+amount = 50
+process_material = SubResource("ParticleProcessMaterial_h88qw")
