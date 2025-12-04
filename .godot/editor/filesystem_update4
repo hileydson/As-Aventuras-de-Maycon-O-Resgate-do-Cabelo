@@ -1,6 +1,4 @@
+res://scripts/inimigos/inimigo_1.gd
 res://scenes/batalha_2d.tscn
 res://scripts/batalha.gd
-res://scripts/maycon_batalha.gd
-res://scenes/maycon_batalha_default.tscn
-res://scripts/inimigos/inimigo_1.gd
 res://scripts/inimigos/enemy_data.gd

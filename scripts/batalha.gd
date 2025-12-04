@@ -5,7 +5,6 @@ extends AnimationPlayer
 @onready var passos_areia: AudioStreamPlayer = $"../PassosAreia"
 @onready var battle_song: AudioStreamPlayer2D = $"../Battle_Song"
 @onready var victory_sound: AudioStreamPlayer2D = $"../victory_sound"
-#@onready var ds_pain: AudioStreamPlayer2D = $"../ds_pain"
 @onready var destroy: GPUParticles2D = $"../../Inimigos/destroy"
 
 @onready var batalha_moves: AnimationPlayer = $"../batalha_moves"
@@ -20,16 +19,27 @@ extends AnimationPlayer
 @onready var timer_power: Timer = $"../Timer_power"
 @onready var timer_power_label: Label = $"../timer_power_label"
 @onready var ds_pain: AudioStreamPlayer = $"../DsPain"
+@onready var victory_label: Label = $"../victory_label"
 
 var power_limit_reached:bool = false
 var power_limit:int = 3
 var power_count:int = 0
 
+var battle_finished:bool = false
+var enemy_hurt:bool = false
+
+func change_enemy_hurt(boolean:bool)->void:
+	enemy_hurt = boolean
+
 func victory()->void:
-	ds_pain.play()
 	destroy.visible = true
 	battle_song.stop()
-	victory_sound.play()
+	victory_label.visible = true
+	
+	if battle_finished==false:
+		ds_pain.play()
+		victory_sound.play()
+		battle_finished = true
 
 
 # Called when the node enters the scene tree for the first time.
@@ -46,20 +56,21 @@ func _process(delta: float) -> void:
 	
 	if !batalha_moves.is_playing():
 		maycon_batalha_default.play("idle")
-	
-	if Input.is_action_pressed("key_q") && !batalha_moves.is_playing():
-		if power_limit_reached:
-			peido.play()
-		else:
-			batalha_moves.play("punch")
-			power_count = power_count+1
 		
-	if Input.is_action_pressed("key_w") && !batalha_moves.is_playing():
-		if power_limit_reached:
-			peido.play()
-		else:
-			batalha_moves.play("kick")
-			power_count = power_count+1
+	if battle_finished==false:
+		if Input.is_action_pressed("key_q") && !batalha_moves.is_playing():
+			if power_limit_reached:
+				peido.play()
+			else:
+				batalha_moves.play("punch")
+				power_count = power_count+1
+			
+		if Input.is_action_pressed("key_w") && !batalha_moves.is_playing():
+			if power_limit_reached:
+				peido.play()
+			else:
+				batalha_moves.play("kick")
+				power_count = power_count+1
 
 
 

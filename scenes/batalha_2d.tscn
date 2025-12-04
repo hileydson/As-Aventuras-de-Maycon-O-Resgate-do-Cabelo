@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=91 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="Texture2D" uid="uid://cncmj1g2w8obr" path="res://assets/novas_imagens/cenarios/fantasy-2d-battlegrounds/Battleground3/Bright/Battleground3.png" id="1_6uljp"]
@@ -51,6 +51,10 @@
 [ext_resource type="AudioStream" uid="uid://bpuvyi2a67twf" path="res://assets/novos_audios/DS_pain.mp3" id="47_pvxjk"]
 [ext_resource type="Script" uid="uid://d2r8xp10cjxfn" path="res://scripts/inimigos/inimigo_1.gd" id="47_sdi6t"]
 [ext_resource type="Texture2D" uid="uid://2meppcw1h507" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png" id="48_x11r3"]
+[ext_resource type="Texture2D" uid="uid://dy68ub0j0tjr0" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Attack.png" id="49_cobqf"]
+[ext_resource type="Texture2D" uid="uid://cv1ilxfy1dknm" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Protection.png" id="49_d6oll"]
+[ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="54_4212h"]
+[ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="55_3out6"]
 
 [sub_resource type="Animation" id="Animation_2cscv"]
 length = 0.001
@@ -137,6 +141,30 @@ tracks/6/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../Camera2D:zoom")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("../Camera2D:position")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_8bi0a"]
@@ -255,6 +283,47 @@ tracks/7/keys = {
 "args": [],
 "method": &"add_damage"
 }]
+}
+tracks/8/type = "method"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("../batalha_moves")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(1.3666667, 1.9333333),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [true],
+"method": &"change_enemy_hurt"
+}, {
+"args": [false],
+"method": &"change_enemy_hurt"
+}]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("../Camera2D:position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0.5000001, 0.80000013, 1.8333334, 2.8000002),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(180, 0), Vector2(180, 0), Vector2(0, 0)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("../Camera2D:zoom")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 0.53333336, 1.6999999, 2.8333333),
+"transitions": PackedFloat32Array(6.062862, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.5, 1.5), Vector2(1.5, 1.5), Vector2(1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_o2foy"]
@@ -426,6 +495,47 @@ tracks/7/keys = {
 "method": &"add_damage"
 }]
 }
+tracks/8/type = "method"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("../batalha_moves")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(1.2333333, 1.8333334),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [true],
+"method": &"change_enemy_hurt"
+}, {
+"args": [false],
+"method": &"change_enemy_hurt"
+}]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("../Camera2D:zoom")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0.06666667, 0.6, 1.7666667, 2.8),
+"transitions": PackedFloat32Array(6.062862, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.5, 1.5), Vector2(1.5, 1.5), Vector2(1, 1)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("../Camera2D:position")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0.43333334, 0.73333335, 1.7666667, 2.7333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(180, 0), Vector2(180, 0), Vector2(0, 0)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2117e"]
 _data = {
@@ -561,6 +671,37 @@ animations = [{
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7ch20"]
 distance = -8.004456
 
+[sub_resource type="SystemFont" id="SystemFont_pvxjk"]
+font_italic = true
+
+[sub_resource type="LabelSettings" id="LabelSettings_d6oll"]
+font = SubResource("SystemFont_pvxjk")
+font_color = Color(3.4245715, 0.65669376, 0, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3out6"]
+atlas = ExtResource("49_cobqf")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wo4yk"]
+atlas = ExtResource("49_cobqf")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dho1k"]
+atlas = ExtResource("49_cobqf")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_evw7u"]
+atlas = ExtResource("49_cobqf")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oqd0s"]
+atlas = ExtResource("49_cobqf")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6fm5e"]
+atlas = ExtResource("49_cobqf")
+region = Rect2(640, 0, 128, 128)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_co47a"]
 atlas = ExtResource("6_vph4o")
 region = Rect2(0, 0, 128, 128)
@@ -585,8 +726,43 @@ region = Rect2(512, 0, 128, 128)
 atlas = ExtResource("6_vph4o")
 region = Rect2(640, 0, 128, 128)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_cobqf"]
+atlas = ExtResource("49_d6oll")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h88qw"]
+atlas = ExtResource("49_d6oll")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4212h"]
+atlas = ExtResource("49_d6oll")
+region = Rect2(256, 0, 128, 128)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_mdbxd"]
 animations = [{
+"frames": [{
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_3out6")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_wo4yk")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_dho1k")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_evw7u")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_oqd0s")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_6fm5e")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_co47a")
@@ -609,7 +785,151 @@ animations = [{
 "loop": true,
 "name": &"idle",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cobqf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h88qw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4212h")
+}],
+"loop": false,
+"name": &"pain",
+"speed": 5.0
 }]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wo4yk"]
+lifetime_randomness = 0.12
+particle_flag_disable_z = true
+angle_min = -191.99998
+angle_max = -26.69999
+gravity = Vector3(800, 98, 0)
+scale_max = 19.52
+color = Color(1, 0.12941177, 1, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dho1k"]
+
+[sub_resource type="Animation" id="Animation_evw7u"]
+resource_name = "power_attack"
+length = 2.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attack_power:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.06666667, 2.3333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attack_power:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.033333335, 2.3666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(22.190712, 29.261255), Vector2(450, 29.261)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Inimigo1AttackMagic")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.06666667, 1.5666667),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [],
+"method": &"stop"
+}]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Inimigo1VoiceAttack")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.033333335, 2.2),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [],
+"method": &"stop"
+}]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("attack_power:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.06666667, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_oqd0s"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("attack_power:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("attack_power:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(22.190712, 29.261255)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("attack_power:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6fm5e"]
+_data = {
+&"RESET": SubResource("Animation_oqd0s"),
+&"power_attack": SubResource("Animation_evw7u")
+}
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pvxjk"]
 
@@ -664,8 +984,9 @@ texture = ExtResource("5_fhlax")
 
 [node name="maycon_batalha_default" type="AnimatedSprite2D" parent="Cenario de batalha"]
 visible = false
+visibility_layer = 524288
 position = Vector2(-303, -14)
-scale = Vector2(2.837786, 2.6283782)
+scale = Vector2(2.837786, 2.628378)
 sprite_frames = SubResource("SpriteFrames_c4b2c")
 animation = &"walk"
 autoplay = "idle"
@@ -817,50 +1138,92 @@ position = Vector2(-218, 169)
 scale = Vector2(2.455237, 4.1227045)
 shape = SubResource("WorldBoundaryShape2D_7ch20")
 
+[node name="victory_label" type="Label" parent="Cenario de batalha"]
+visible = false
+offset_left = -226.0
+offset_top = -113.0
+offset_right = -148.0
+offset_bottom = -85.0
+scale = Vector2(5.910979, 6.3809886)
+text = "VICTORY!!"
+label_settings = SubResource("LabelSettings_d6oll")
+
 [node name="Inimigos" type="Node2D" parent="."]
 script = ExtResource("46_x11r3")
 
 [node name="comum" type="Node2D" parent="Inimigos"]
 
 [node name="inimigo_1" type="AnimatedSprite2D" parent="Inimigos/comum"]
+visibility_layer = 2
 position = Vector2(326, 11)
 rotation = 3.1415925
 scale = Vector2(2.4785156, -2.255542)
 sprite_frames = SubResource("SpriteFrames_mdbxd")
-animation = &"idle"
+animation = &"attack"
 autoplay = "idle"
-frame_progress = 0.79770416
+frame = 5
+frame_progress = 1.0
 script = ExtResource("47_sdi6t")
 
+[node name="attack_power" type="GPUParticles2D" parent="Inimigos/comum/inimigo_1"]
+visible = false
+position = Vector2(22.190712, 29.261255)
+scale = Vector2(11858.474, 98879.47)
+amount = 90
+amount_ratio = 0.7687
+process_material = SubResource("ParticleProcessMaterial_wo4yk")
+
+[node name="RigidBody2D" type="RigidBody2D" parent="Inimigos/comum/inimigo_1/attack_power"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Inimigos/comum/inimigo_1/attack_power/RigidBody2D"]
+scale = Vector2(50, 50)
+shape = SubResource("RectangleShape2D_dho1k")
+
 [node name="hp_1" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
-position = Vector2(15.7352295, 72.04476)
+position = Vector2(12.910957, 71.60142)
 rotation = 3.1415925
 scale = Vector2(0.20173363, -0.23553094)
 texture = ExtResource("48_x11r3")
 
 [node name="hp_2" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
-position = Vector2(8.472816, 72.04476)
+position = Vector2(5.6485443, 71.60142)
 rotation = 3.1415925
 scale = Vector2(0.20173363, -0.23553094)
 texture = ExtResource("48_x11r3")
 
 [node name="hp_3" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
-position = Vector2(1.2104034, 72.04476)
+position = Vector2(-1.6138678, 71.60142)
 rotation = 3.1415925
 scale = Vector2(0.20173363, -0.23553094)
 texture = ExtResource("48_x11r3")
 
 [node name="hp_4" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
-position = Vector2(-6.052002, 72.04476)
+position = Vector2(-8.876273, 71.60142)
 rotation = 3.1415925
 scale = Vector2(0.20173363, -0.23553094)
 texture = ExtResource("48_x11r3")
 
 [node name="hp_5" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
-position = Vector2(-13.314407, 72.04476)
+position = Vector2(-16.13868, 71.60142)
 rotation = 3.1415925
 scale = Vector2(0.20173363, -0.23553094)
 texture = ExtResource("48_x11r3")
+
+[node name="Inimigo1AttackMagic" type="AudioStreamPlayer" parent="Inimigos/comum/inimigo_1"]
+stream = ExtResource("54_4212h")
+
+[node name="Inimigo1VoiceAttack" type="AudioStreamPlayer" parent="Inimigos/comum/inimigo_1"]
+stream = ExtResource("55_3out6")
+pitch_scale = 1.48
+
+[node name="Timer_enemy_attack" type="Timer" parent="Inimigos/comum/inimigo_1"]
+wait_time = 3.59
+autostart = true
+
+[node name="inimigo_1_animation_attack" type="AnimationPlayer" parent="Inimigos/comum/inimigo_1"]
+libraries = {
+&"": SubResource("AnimationLibrary_6fm5e")
+}
 
 [node name="boss" type="Node2D" parent="Inimigos"]
 
@@ -871,3 +1234,5 @@ position = Vector2(320, 57)
 scale = Vector2(148299.89, -75878.69)
 amount = 50
 process_material = SubResource("ParticleProcessMaterial_h88qw")
+
+[connection signal="timeout" from="Inimigos/comum/inimigo_1/Timer_enemy_attack" to="Inimigos/comum/inimigo_1" method="_on_timer_enemy_attack_timeout"]

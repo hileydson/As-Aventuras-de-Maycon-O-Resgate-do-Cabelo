@@ -54,18 +54,14 @@ func double_jump()->void:
 func _physics_process(delta: float) -> void:
 	
 	control_defense_jump()
-	jump()
-	double_jump()
+	
+	if batalha_moves.battle_finished == false:
+		jump()
+		double_jump()
 	
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-		
-	# handles double jump 
-	double_jump()
-	
-	# handles jump.
-	jump()
 	
 	if !maycon_batalha.is_playing():
 		maycon_batalha.play("idle_right")
