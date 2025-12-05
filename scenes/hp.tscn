@@ -377,16 +377,16 @@ animations = [{
 
 [node name="Node2D" type="Node2D"]
 
-[node name="Explosao" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_wra3s")
-volume_db = -9.481
-
 [node name="hp" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.0537196, 0.047254242)
 sprite_frames = SubResource("SpriteFrames_4ha0u")
 animation = &"idle"
 autoplay = "idle"
 script = ExtResource("3_ped5p")
+
+[node name="explosao" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_wra3s")
+volume_db = -9.481
 
 [connection signal="animation_changed" from="hp" to="hp" method="_on_animation_changed"]
 [connection signal="animation_finished" from="hp" to="hp" method="_on_animation_finished"]

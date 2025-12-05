@@ -1,7 +1,6 @@
+res://scenes/hp.tscn
+res://scripts/hp.gd
 res://scenes/batalha_2d.tscn
 res://scripts/maycon_batalha.gd
-res://scripts/inimigos/inimigo_1_collision_to_maycon.gd
-res://scenes/maycon.tscn
-res://scripts/hp.gd
-res://scenes/hp.tscn
 res://scripts/batalha.gd
+res://scripts/inimigos/inimigo_1.gd

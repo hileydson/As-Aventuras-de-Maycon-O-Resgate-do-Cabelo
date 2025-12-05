@@ -69,5 +69,10 @@ func _process(delta: float) -> void:
 	
 func _on_timer_enemy_attack_timeout() -> void:
 	if maycon.visible == true && !batalha_moves.battle_finished:
+		batalha_moves.enemy_attacking = true
 		me.play("attack")
 		inimigo_1_animation_attack.play("power_attack")
+
+
+func _on_animation_finished() -> void:
+	batalha_moves.enemy_attacking = false

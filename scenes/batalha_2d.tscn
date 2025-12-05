@@ -1025,20 +1025,6 @@ sprite_frames = SubResource("SpriteFrames_c4b2c")
 animation = &"walk"
 autoplay = "idle"
 
-[node name="Maycon" parent="Cenario de batalha" instance=ExtResource("35_gbqun")]
-visibility_layer = 524289
-position = Vector2(-303, -14)
-scale = Vector2(2.8415334, 2.76858)
-collision_mask = 524289
-
-[node name="destroy_maycon" type="GPUParticles2D" parent="Cenario de batalha/Maycon"]
-visible = false
-material = SubResource("ShaderMaterial_pvxjk")
-position = Vector2(5.0000076, 25.645002)
-scale = Vector2(52190.094, -27407.082)
-amount = 50
-process_material = SubResource("ParticleProcessMaterial_h88qw")
-
 [node name="hp_1" parent="Cenario de batalha" instance=ExtResource("34_dho1k")]
 position = Vector2(-538, 295)
 rotation = 3.1415925
@@ -1058,6 +1044,20 @@ scale = Vector2(3.6918721, 3.6438017)
 position = Vector2(-444.99985, 295)
 rotation = 3.1415925
 scale = Vector2(3.6918721, 3.6438017)
+
+[node name="Maycon" parent="Cenario de batalha" instance=ExtResource("35_gbqun")]
+visibility_layer = 524289
+position = Vector2(-303, -14)
+scale = Vector2(2.8415334, 2.76858)
+collision_mask = 524289
+
+[node name="destroy_maycon" type="GPUParticles2D" parent="Cenario de batalha/Maycon"]
+visible = false
+material = SubResource("ShaderMaterial_pvxjk")
+position = Vector2(5.0000076, 25.645002)
+scale = Vector2(52190.094, -27407.082)
+amount = 50
+process_material = SubResource("ParticleProcessMaterial_h88qw")
 
 [node name="PassosAreia" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("17_0qud2")
@@ -1326,6 +1326,7 @@ scale = Vector2(148299.89, -75878.69)
 amount = 50
 process_material = SubResource("ParticleProcessMaterial_h88qw")
 
+[connection signal="animation_finished" from="Inimigos/comum/inimigo_1" to="Inimigos/comum/inimigo_1" method="_on_animation_finished"]
 [connection signal="area_entered" from="Inimigos/comum/inimigo_1/attack_power/Area2D" to="Cenario de batalha/Maycon" method="_on_area_2d_area_entered"]
 [connection signal="body_entered" from="Inimigos/comum/inimigo_1/attack_power/Area2D" to="Cenario de batalha/Maycon" method="_on_area_2d_body_entered"]
 [connection signal="timeout" from="Inimigos/comum/inimigo_1/Timer_enemy_attack" to="Inimigos/comum/inimigo_1" method="_on_timer_enemy_attack_timeout"]

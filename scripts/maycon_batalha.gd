@@ -19,10 +19,10 @@ extends CharacterBody2D
 @onready var timer_defense_label: Label = $"../timer_defense_label"
 @onready var timer_defense: Timer = $"../Timer_defense"
 
-@onready var hp_1: Node2D = $hp_1
-@onready var hp_2: Node2D = $hp_2
-@onready var hp_3: Node2D = $hp_3
-@onready var hp_4: Node2D = $hp_4
+@onready var hp_1: Node2D = $"../hp_1"
+@onready var hp_2: Node2D = $"../hp_2"
+@onready var hp_3: Node2D = $"../hp_3"
+@onready var hp_4: Node2D = $"../hp_4"
 
 
 const SPEED = 190.0

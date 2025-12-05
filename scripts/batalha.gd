@@ -31,6 +31,7 @@ var power_count:int = 0
 
 var battle_finished:bool = false
 var enemy_hurt:bool = false
+var enemy_attacking:bool = false
 
 var died:bool = false
 
@@ -42,6 +43,7 @@ func maycon_died()->void:
 	battle_song.stop()
 	you_died_label.visible = true
 	maycon.get_node("AnimatedSprite2D").stop()
+	#get_node("Cenario de batalha").get_tree().paused
 	
 	if battle_finished==false:
 		ds_pain.play()
@@ -72,20 +74,24 @@ func _process(delta: float) -> void:
 	if died:
 		maycon_died()
 	
+	if batalha_moves.enemy_attacking == true:
+		return
+	
 	control_attack_power()	
 	
 	if !batalha_moves.is_playing():
 		maycon_batalha_default.play("idle")
 		
 	if battle_finished==false:
-		if Input.is_action_pressed("key_q") && !batalha_moves.is_playing():
+		print(maycon.get_node("AnimatedSprite2D").animation)
+		if Input.is_action_pressed("key_q") && !batalha_moves.is_playing() && maycon.get_node("AnimatedSprite2D").animation == "idle_right":
 			if power_limit_reached:
 				peido.play()
 			else:
 				batalha_moves.play("punch")
 				power_count = power_count+1
 			
-		if Input.is_action_pressed("key_w") && !batalha_moves.is_playing():
+		if Input.is_action_pressed("key_w") && !batalha_moves.is_playing() && maycon.get_node("AnimatedSprite2D").animation == "idle_right":
 			if power_limit_reached:
 				peido.play()
 			else:
