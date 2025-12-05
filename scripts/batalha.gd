@@ -83,7 +83,6 @@ func _process(delta: float) -> void:
 		maycon_batalha_default.play("idle")
 		
 	if battle_finished==false:
-		print(maycon.get_node("AnimatedSprite2D").animation)
 		if Input.is_action_pressed("key_q") && !batalha_moves.is_playing() && maycon.get_node("AnimatedSprite2D").animation == "idle_right":
 			if power_limit_reached:
 				peido.play()
