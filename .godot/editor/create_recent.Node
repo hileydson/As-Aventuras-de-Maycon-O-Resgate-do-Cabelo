@@ -1,3 +1,7 @@
+Label
+Camera2D
+Button
+VBoxContainer
 AnimatedSprite2D
 Sprite2D
 CanvasModulate
@@ -6,9 +10,5 @@ RigidBody2D
 CollisionShape2D
 AnimationPlayer
 GPUParticles2D
-Label
 Label3D
 AudioStreamPlayer2D
-Node2D
-StaticBody2D
-Timer

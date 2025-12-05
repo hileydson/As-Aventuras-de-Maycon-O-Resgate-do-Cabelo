@@ -1,5 +1,6 @@
-[gd_scene load_steps=23 format=3 uid="uid://bbvbfgsytow76"]
+[gd_scene load_steps=20 format=3 uid="uid://bbvbfgsytow76"]
 
+[ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="1_3dmrc"]
 [ext_resource type="Texture2D" uid="uid://1dll27f2uadm" path="res://assets/images/TELA-intro-03 _0.png" id="1_mhnvy"]
 [ext_resource type="Script" uid="uid://s36kwvjcjcdx" path="res://scripts/main_menu.gd" id="1_yqeox"]
 [ext_resource type="Texture2D" uid="uid://dmxu8cnneg5vl" path="res://assets/images/Logo_aventuras_0.png" id="3_4ytvr"]
@@ -56,96 +57,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="Animation" id="Animation_d6a83"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Transition/ColorRect:self_modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Transition/ColorRect:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-
-[sub_resource type="Animation" id="Animation_jg2aw"]
-resource_name = "fade_in"
-length = 2.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Transition/ColorRect:self_modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.16666667, 1.9666667),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(0, 0, 0, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Transition/ColorRect:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(1.9),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-
-[sub_resource type="Animation" id="Animation_7g71p"]
-resource_name = "fade_out"
-length = 2.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Transition/ColorRect:self_modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.4, 1.9),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Transition/ColorRect:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.13333334),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_bnd43"]
-_data = {
-&"RESET": SubResource("Animation_d6a83"),
-&"fade_in": SubResource("Animation_jg2aw"),
-&"fade_out": SubResource("Animation_7g71p")
-}
-
 [node name="Menu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -153,6 +64,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="fade" parent="." instance=ExtResource("1_3dmrc")]
 
 [node name="TelaIntro030" type="Sprite2D" parent="."]
 position = Vector2(574.99994, 334.00003)
@@ -206,19 +119,6 @@ stream = ExtResource("16_g6gyw")
 [node name="menu_song" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("16_mxgkd")
 
-[node name="Transition" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_bnd43")
-}
-
-[node name="ColorRect" type="ColorRect" parent="Transition"]
-visible = false
-offset_right = 40.0
-offset_bottom = 40.0
-scale = Vector2(29.162046, 16.396467)
-color = Color(0, 0, 0, 1)
-
 [connection signal="ready" from="." to="VBoxContainer" method="_on_menu_ready"]
 [connection signal="pressed" from="VBoxContainer/New Game" to="VBoxContainer" method="_on_new_game_pressed"]
 [connection signal="pressed" from="VBoxContainer/Exit" to="VBoxContainer" method="_on_exit_pressed"]
-[connection signal="animation_finished" from="Transition" to="VBoxContainer" method="_on_transition_animation_finished"]

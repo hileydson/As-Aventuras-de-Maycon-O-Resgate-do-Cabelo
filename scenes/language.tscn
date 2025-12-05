@@ -1,0 +1,46 @@
+[gd_scene load_steps=2 format=3 uid="uid://myxkcfyi401t"]
+
+[ext_resource type="Script" uid="uid://c8keb5qyq1fp2" path="res://scripts/language_selection.gd" id="1_pfgvu"]
+
+[node name="Language" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -687.0
+offset_top = -252.0
+offset_right = -687.0
+offset_bottom = -252.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(-54, -147)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D"]
+custom_minimum_size = Vector2(20, 0)
+offset_left = -65.0
+offset_top = -66.0
+offset_right = 70.0
+offset_bottom = 79.0
+alignment = 1
+script = ExtResource("1_pfgvu")
+
+[node name="Portugues" type="Button" parent="Camera2D/VBoxContainer"]
+layout_mode = 2
+text = "Português"
+
+[node name="Ingles" type="Button" parent="Camera2D/VBoxContainer"]
+layout_mode = 2
+text = "English"
+
+[node name="Language" type="Label" parent="Camera2D"]
+offset_left = -114.0
+offset_top = -145.0
+offset_right = 32.0
+offset_bottom = -122.0
+scale = Vector2(1.5690881, 1.890431)
+text = "Selecione o Idioma"
+
+[connection signal="button_down" from="Camera2D/VBoxContainer/Portugues" to="Camera2D/VBoxContainer" method="_on_portugues_button_down"]
+[connection signal="button_down" from="Camera2D/VBoxContainer/Ingles" to="Camera2D/VBoxContainer" method="_on_ingles_button_down"]
