@@ -19,6 +19,12 @@ extends CharacterBody2D
 @onready var timer_defense_label: Label = $"../timer_defense_label"
 @onready var timer_defense: Timer = $"../Timer_defense"
 
+@onready var hp_1: Node2D = $hp_1
+@onready var hp_2: Node2D = $hp_2
+@onready var hp_3: Node2D = $hp_3
+@onready var hp_4: Node2D = $hp_4
+
+
 const SPEED = 190.0
 const JUMP_VELOCITY = -550.0
 
@@ -28,6 +34,10 @@ var attack = false
 var defense_limit_reached:bool = false
 var defense_limit:int = 6
 var defense_count:int = 0
+
+var hp_limit:int = 4
+var hp_limit_reached:bool = false
+var hp_count:int = 0
 
 func jump()->void:
 	if Input.is_action_just_pressed("ui_accept") && maycon_batalha.animation != "jump_right" && is_on_floor() && !batalha_moves.is_playing():
@@ -140,5 +150,19 @@ func control_defense_jump() -> void:
 		defense_jump_4.visible = false
 		defense_jump_5.visible = false
 		defense_jump_6.visible = false		
+	
 
-			
+
+func _on_area_2d_body_entered(body: Node2D) -> void:
+	hp_count = hp_count+1
+	
+	if hp_count == 1:
+		hp_4.get_node("hp").play("explotion")
+	if hp_count == 2:
+		hp_3.get_node("hp").play("explotion")
+	if hp_count == 3:
+		hp_2.get_node("hp").play("explotion")
+	if hp_count == 4:
+		hp_1.get_node("hp").play("explotion")
+		batalha_moves.died = true
+	

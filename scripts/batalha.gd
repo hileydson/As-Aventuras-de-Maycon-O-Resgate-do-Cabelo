@@ -1,5 +1,6 @@
 extends AnimationPlayer
 
+@onready var maycon: CharacterBody2D = $"../Maycon"
 @onready var maycon_batalha: AnimatedSprite2D = $"../maycon_batalha"
 @onready var maycon_batalha_default: AnimatedSprite2D = $"../maycon_batalha_default"
 @onready var passos_areia: AudioStreamPlayer = $"../PassosAreia"
@@ -21,6 +22,9 @@ extends AnimationPlayer
 @onready var ds_pain: AudioStreamPlayer = $"../DsPain"
 @onready var victory_label: Label = $"../victory_label"
 
+@onready var destroy_maycon: GPUParticles2D = $"../Maycon/destroy_maycon"
+@onready var you_died_label: Label = $"../you_died_label"
+
 var power_limit_reached:bool = false
 var power_limit:int = 3
 var power_count:int = 0
@@ -28,8 +32,21 @@ var power_count:int = 0
 var battle_finished:bool = false
 var enemy_hurt:bool = false
 
+var died:bool = false
+
 func change_enemy_hurt(boolean:bool)->void:
 	enemy_hurt = boolean
+
+func maycon_died()->void:
+	destroy_maycon.visible = true
+	battle_song.stop()
+	you_died_label.visible = true
+	maycon.get_node("AnimatedSprite2D").stop()
+	
+	if battle_finished==false:
+		ds_pain.play()
+		#victory_sound.play()
+		battle_finished = true
 
 func victory()->void:
 	destroy.visible = true
@@ -51,6 +68,9 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	if died:
+		maycon_died()
 	
 	control_attack_power()	
 	

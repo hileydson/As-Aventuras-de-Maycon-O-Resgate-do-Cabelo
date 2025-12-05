@@ -212,13 +212,18 @@ animations = [{
 }]
 
 [node name="Maycon" type="CharacterBody2D"]
+visibility_layer = 524289
+collision_layer = 524289
+collision_mask = 524289
 script = ExtResource("1_ih4m7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visibility_layer = 524289
 position = Vector2(5, 27)
 shape = SubResource("CapsuleShape2D_yi2kj")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visibility_layer = 524289
 position = Vector2(2, 0)
 sprite_frames = SubResource("SpriteFrames_inrnk")
 animation = &"right"

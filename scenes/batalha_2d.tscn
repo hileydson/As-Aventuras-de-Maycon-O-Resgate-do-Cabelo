@@ -1,4 +1,4 @@
-[gd_scene load_steps=91 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=97 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="Texture2D" uid="uid://cncmj1g2w8obr" path="res://assets/novas_imagens/cenarios/fantasy-2d-battlegrounds/Battleground3/Bright/Battleground3.png" id="1_6uljp"]
@@ -37,6 +37,7 @@
 [ext_resource type="Texture2D" uid="uid://cir28ffkpadqy" path="res://assets/images/andando_direita_6.png" id="27_55f8h"]
 [ext_resource type="Texture2D" uid="uid://b1qqwqm6jx8dt" path="res://assets/images/andando_direita_7.png" id="28_ydc6p"]
 [ext_resource type="AudioStream" uid="uid://bn7bmjnhdvvfd" path="res://assets/audio/peido.mp3" id="33_xskhn"]
+[ext_resource type="PackedScene" uid="uid://cq0mtqifdkd4g" path="res://scenes/hp.tscn" id="34_dho1k"]
 [ext_resource type="AudioStream" uid="uid://o0m05edowij" path="res://assets/audio/passos_maycon.mp3" id="34_xskhn"]
 [ext_resource type="PackedScene" uid="uid://cbukngmlwguv8" path="res://scenes/maycon_batalha_default.tscn" id="35_gbqun"]
 [ext_resource type="Texture2D" uid="uid://31pa2gqucn0p" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/5 Logo/Logo3.png" id="39_rdli8"]
@@ -53,7 +54,9 @@
 [ext_resource type="Texture2D" uid="uid://2meppcw1h507" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png" id="48_x11r3"]
 [ext_resource type="Texture2D" uid="uid://dy68ub0j0tjr0" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Attack.png" id="49_cobqf"]
 [ext_resource type="Texture2D" uid="uid://cv1ilxfy1dknm" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Protection.png" id="49_d6oll"]
+[ext_resource type="Texture2D" uid="uid://dqff4eihc6rqp" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Arrow.png" id="53_3out6"]
 [ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="54_4212h"]
+[ext_resource type="Script" uid="uid://csulfa0erpj1l" path="res://scripts/inimigos/inimigo_1_collision_to_maycon.gd" id="54_wo4yk"]
 [ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="55_3out6"]
 
 [sub_resource type="Animation" id="Animation_2cscv"]
@@ -668,6 +671,26 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pvxjk"]
+
+[sub_resource type="Curve" id="Curve_d6oll"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.9909748, 0.062366605), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_cobqf"]
+curve = SubResource("Curve_d6oll")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_h88qw"]
+particle_flag_disable_z = true
+radial_velocity_min = 66.669975
+radial_velocity_max = 259.25998
+gravity = Vector3(0, -98, 0)
+scale_min = 15.0
+scale_max = 25.0
+scale_curve = SubResource("CurveTexture_cobqf")
+color = Color(0.9019608, 0.32941177, 0.2, 0.54901963)
+collision_use_scale = true
+
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7ch20"]
 distance = -8.004456
 
@@ -676,7 +699,7 @@ font_italic = true
 
 [sub_resource type="LabelSettings" id="LabelSettings_d6oll"]
 font = SubResource("SystemFont_pvxjk")
-font_color = Color(3.4245715, 0.65669376, 0, 1)
+font_color = Color(0.8004417, 0.05886451, 0.39543754, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3out6"]
 atlas = ExtResource("49_cobqf")
@@ -824,7 +847,24 @@ anim_speed_max = -6.0
 anim_offset_min = 0.0069999998
 anim_offset_max = 0.5207
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_dho1k"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_0sh2x"]
+atlas = ExtResource("53_3out6")
+region = Rect2(400, 128, 25, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h2e1h"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0sh2x")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_yn2t1"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6exdr"]
 
 [sub_resource type="Animation" id="Animation_oqd0s"]
 length = 0.001
@@ -945,26 +985,6 @@ _data = {
 &"power_attack": SubResource("Animation_evw7u")
 }
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pvxjk"]
-
-[sub_resource type="Curve" id="Curve_d6oll"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.9909748, 0.062366605), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_cobqf"]
-curve = SubResource("Curve_d6oll")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_h88qw"]
-particle_flag_disable_z = true
-radial_velocity_min = 66.669975
-radial_velocity_max = 259.25998
-gravity = Vector3(0, -98, 0)
-scale_min = 15.0
-scale_max = 25.0
-scale_curve = SubResource("CurveTexture_cobqf")
-color = Color(0.9019608, 0.32941177, 0.2, 0.54901963)
-collision_use_scale = true
-
 [node name="Node2D" type="Node2D"]
 
 [node name="Cenario de batalha" type="Node2D" parent="."]
@@ -1006,8 +1026,38 @@ animation = &"walk"
 autoplay = "idle"
 
 [node name="Maycon" parent="Cenario de batalha" instance=ExtResource("35_gbqun")]
+visibility_layer = 524289
 position = Vector2(-303, -14)
 scale = Vector2(2.8415334, 2.76858)
+collision_mask = 524289
+
+[node name="destroy_maycon" type="GPUParticles2D" parent="Cenario de batalha/Maycon"]
+visible = false
+material = SubResource("ShaderMaterial_pvxjk")
+position = Vector2(5.0000076, 25.645002)
+scale = Vector2(52190.094, -27407.082)
+amount = 50
+process_material = SubResource("ParticleProcessMaterial_h88qw")
+
+[node name="hp_1" parent="Cenario de batalha" instance=ExtResource("34_dho1k")]
+position = Vector2(-538, 295)
+rotation = 3.1415925
+scale = Vector2(3.6918721, 3.6438017)
+
+[node name="hp_2" parent="Cenario de batalha" instance=ExtResource("34_dho1k")]
+position = Vector2(-506.9998, 295)
+rotation = 3.1415925
+scale = Vector2(3.6918721, 3.6438017)
+
+[node name="hp_3" parent="Cenario de batalha" instance=ExtResource("34_dho1k")]
+position = Vector2(-475.99985, 295)
+rotation = 3.1415925
+scale = Vector2(3.6918721, 3.6438017)
+
+[node name="hp_4" parent="Cenario de batalha" instance=ExtResource("34_dho1k")]
+position = Vector2(-444.99985, 295)
+rotation = 3.1415925
+scale = Vector2(3.6918721, 3.6438017)
 
 [node name="PassosAreia" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("17_0qud2")
@@ -1162,6 +1212,16 @@ scale = Vector2(5.910979, 6.3809886)
 text = "VICTORY!!"
 label_settings = SubResource("LabelSettings_d6oll")
 
+[node name="you_died_label" type="Label" parent="Cenario de batalha"]
+visible = false
+offset_left = -226.0
+offset_top = -113.0
+offset_right = -148.0
+offset_bottom = -85.0
+scale = Vector2(5.910979, 6.3809886)
+text = "YOU DIED!!"
+label_settings = SubResource("LabelSettings_d6oll")
+
 [node name="Inimigos" type="Node2D" parent="."]
 script = ExtResource("46_x11r3")
 
@@ -1181,16 +1241,34 @@ script = ExtResource("47_sdi6t")
 
 [node name="attack_power" type="GPUParticles2D" parent="Inimigos/comum/inimigo_1"]
 visible = false
+visibility_layer = 524289
 position = Vector2(22.190712, 29.261255)
-scale = Vector2(11858.474, 98879.47)
+scale = Vector2(0.004370174, 0.007473256)
 amount = 15
 process_material = SubResource("ParticleProcessMaterial_wo4yk")
 
-[node name="RigidBody2D" type="RigidBody2D" parent="Inimigos/comum/inimigo_1/attack_power"]
+[node name="Area2D" type="Area2D" parent="Inimigos/comum/inimigo_1/attack_power"]
+visibility_layer = 524289
+position = Vector2(-0.0018712934, -0.00029592845)
+scale = Vector2(8.432788e-05, 1.0113322e-05)
+collision_layer = 524289
+collision_mask = 524289
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Inimigos/comum/inimigo_1/attack_power/RigidBody2D"]
-scale = Vector2(50, 50)
-shape = SubResource("RectangleShape2D_dho1k")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Inimigos/comum/inimigo_1/attack_power/Area2D"]
+visibility_layer = 524289
+position = Vector2(54740528, -64)
+scale = Vector2(4257329, 23872834)
+sprite_frames = SubResource("SpriteFrames_h2e1h")
+autoplay = "default"
+flip_h = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Inimigos/comum/inimigo_1/attack_power/Area2D"]
+visibility_layer = 524289
+material = SubResource("CanvasItemMaterial_yn2t1")
+position = Vector2(35033916, 11732091)
+scale = Vector2(5884276, 5267810)
+shape = SubResource("CircleShape2D_6exdr")
+script = ExtResource("54_wo4yk")
 
 [node name="hp_1" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
 position = Vector2(12.910957, 71.60142)
@@ -1248,4 +1326,6 @@ scale = Vector2(148299.89, -75878.69)
 amount = 50
 process_material = SubResource("ParticleProcessMaterial_h88qw")
 
+[connection signal="area_entered" from="Inimigos/comum/inimigo_1/attack_power/Area2D" to="Cenario de batalha/Maycon" method="_on_area_2d_area_entered"]
+[connection signal="body_entered" from="Inimigos/comum/inimigo_1/attack_power/Area2D" to="Cenario de batalha/Maycon" method="_on_area_2d_body_entered"]
 [connection signal="timeout" from="Inimigos/comum/inimigo_1/Timer_enemy_attack" to="Inimigos/comum/inimigo_1" method="_on_timer_enemy_attack_timeout"]
