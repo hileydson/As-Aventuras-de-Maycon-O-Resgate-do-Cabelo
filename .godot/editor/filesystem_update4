@@ -12,3 +12,9 @@ res://scenes/default_transition_fade_out.tscn
 res://scripts/default_transition_fade_in.gd
 res://scripts/default_transition_fade_out.gd
 res://scenes/default_transition_fade_in.tscn
+res://scenes/game.tscn
+res://scenes/inimigos/boss_seco.tscn
+res://scripts/maycon.gd
+res://scenes/inimigo_seco.tscn
+res://scenes/inimigos/inimigo_seco.tscn
+res://scripts/game.gd

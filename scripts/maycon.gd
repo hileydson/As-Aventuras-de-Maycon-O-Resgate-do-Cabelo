@@ -6,13 +6,24 @@ extends CharacterBody2D
 @onready var sound_jump: AudioStreamPlayer2D = $jump
 @onready var kick: AudioStreamPlayer = $Kick
 @onready var punch: AudioStreamPlayer = $Punch
+@onready var mk_dudun: AudioStreamPlayer = $"../MkDudun"
+@onready var transition: AnimationPlayer = $"../Transition"
+@onready var msg: Label = $"../msg_box/text"
+@onready var msg_box: ColorRect = $"../msg_box"
+@onready var explosao_portal: Node2D = $"../explosao_portal"
+@onready var inimigo_seco: Node2D = $"../Inimigo_seco"
 
 
-const SPEED = 190.0
+var pausePlayer:bool = false
+var animation_1_gone = false
+
+const SPEED = 150.0
 const JUMP_VELOCITY = -400.0
 
 var DOUBLE_JUMP_COUNT = 0
 var attack = false
+
+
 
 func jump()->void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
@@ -33,6 +44,10 @@ func double_jump()->void:
 		DOUBLE_JUMP_COUNT = 0
 		
 func _physics_process(delta: float) -> void:
+	
+	if pausePlayer == true:
+		animated_sprite_2d.play("idle_right")
+		return
 	
 	# Add the gravity.
 	if not is_on_floor():
@@ -82,3 +97,47 @@ func _physics_process(delta: float) -> void:
 		animated_sprite_2d.flip_h = false			
 			
 	move_and_slide()
+
+
+func _on_area_2d_body_entered(body: Node2D) -> void:
+	
+	if animation_1_gone:
+		return
+		
+	pausePlayer = true
+	transition.play("semi_fade_out")
+	mk_dudun.play()
+	msg_box.visible = true
+	
+	if(Global.default_language == Global.language_pt_br):
+		await get_tree().create_timer(3.0).timeout
+		msg.text = "Maycon seu safado!"
+		await get_tree().create_timer(3.0).timeout
+		msg.text = "Esquece o cabelo!"
+		await get_tree().create_timer(3.0).timeout
+		msg.text = "Levarei ele para um lugar..."
+		await get_tree().create_timer(3.0).timeout
+		msg.text = "Somente lá voce contrará ele!"
+		await get_tree().create_timer(3.0).timeout
+		msg.text = "Venha seu safado!"
+		await get_tree().create_timer(3.0).timeout
+	else:
+		await get_tree().create_timer(3.0).timeout
+		msg.text = "Maycon you asshole!"
+		await get_tree().create_timer(3.0).timeout
+		msg.text = "Forget about cabelo!"
+		await get_tree().create_timer(3.0).timeout
+		msg.text = "Im gonna take him to another place!"
+		await get_tree().create_timer(3.0).timeout
+		msg.text = "Only there you can rescue him!"
+		await get_tree().create_timer(3.0).timeout
+		msg.text = "Come on! you asshole!"
+		await get_tree().create_timer(3.0).timeout
+		
+	inimigo_seco.visible = false
+	msg_box.visible = false
+	explosao_portal.get_node("hp").play("explotion")
+	
+	transition.play("zoom_out")
+	pausePlayer = false
+	animation_1_gone = true

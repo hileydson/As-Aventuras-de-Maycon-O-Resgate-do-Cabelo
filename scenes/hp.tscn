@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://cq0mtqifdkd4g"]
+[gd_scene load_steps=62 format=3 uid="uid://cq0mtqifdkd4g"]
 
 [ext_resource type="Texture2D" uid="uid://b8xm3n05un7xf" path="res://assets/novas_imagens/effects/Explosion/1.png" id="1_rtgxb"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="1_wra3s"]
@@ -209,6 +209,26 @@ region = Rect2(3584, 3584, 512, 512)
 atlas = ExtResource("2_ped5p")
 region = Rect2(512, 0, 512, 512)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_why7w"]
+atlas = ExtResource("2_ped5p")
+region = Rect2(1536, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m4hnf"]
+atlas = ExtResource("2_ped5p")
+region = Rect2(2048, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x80ru"]
+atlas = ExtResource("2_ped5p")
+region = Rect2(2560, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7qymg"]
+atlas = ExtResource("2_ped5p")
+region = Rect2(3072, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_by6nu"]
+atlas = ExtResource("2_ped5p")
+region = Rect2(3584, 0, 512, 512)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_4ha0u"]
 animations = [{
 "frames": [{
@@ -373,6 +393,26 @@ animations = [{
 "loop": true,
 "name": &"idle",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.71,
+"texture": SubResource("AtlasTexture_why7w")
+}, {
+"duration": 1.71,
+"texture": SubResource("AtlasTexture_m4hnf")
+}, {
+"duration": 1.71,
+"texture": SubResource("AtlasTexture_x80ru")
+}, {
+"duration": 1.71,
+"texture": SubResource("AtlasTexture_7qymg")
+}, {
+"duration": 1.71,
+"texture": SubResource("AtlasTexture_by6nu")
+}],
+"loop": true,
+"name": &"semi_explotion",
+"speed": 5.0
 }]
 
 [node name="Node2D" type="Node2D"]
@@ -380,8 +420,10 @@ animations = [{
 [node name="hp" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.0537196, 0.047254242)
 sprite_frames = SubResource("SpriteFrames_4ha0u")
-animation = &"idle"
+animation = &"explotion"
 autoplay = "idle"
+frame = 49
+frame_progress = 1.0
 script = ExtResource("3_ped5p")
 
 [node name="explosao" type="AudioStreamPlayer" parent="."]

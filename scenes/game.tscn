@@ -1,41 +1,194 @@
-[gd_scene load_steps=8 format=3 uid="uid://yicge48108e0"]
+[gd_scene load_steps=19 format=3 uid="uid://yicge48108e0"]
 
 [ext_resource type="Script" uid="uid://jv5gempkmtvq" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://fyyoe5vf3xm1" path="res://scenes/maycon.tscn" id="1_uwrxv"]
 [ext_resource type="Texture2D" uid="uid://ctj2d2n15jxye" path="res://assets/novas_imagens/cenarios/pracinha_bela.png" id="2_yqjtg"]
-[ext_resource type="PackedScene" uid="uid://dvl0rk52qgvxa" path="res://scenes/inimigo_seco.tscn" id="3_lnu2h"]
+[ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_gee14"]
+[ext_resource type="PackedScene" uid="uid://dvl0rk52qgvxa" path="res://scenes/inimigos/inimigo_seco.tscn" id="3_lnu2h"]
+[ext_resource type="AudioStream" uid="uid://c3jfsmiruu7lk" path="res://assets/novos_audios/scary_smile.mp3" id="4_0tnpc"]
 [ext_resource type="AudioStream" uid="uid://crxlon1788b8p" path="res://assets/novos_audios/jamelao_song.mp3" id="5_iywne"]
 [ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="6_p57ef"]
+[ext_resource type="PackedScene" uid="uid://cq0mtqifdkd4g" path="res://scenes/hp.tscn" id="6_vtaks"]
+[ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="7_u5sy4"]
+
+[sub_resource type="Animation" id="Animation_7g71p"]
+resource_name = "fade_out"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Transition/ColorRect:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.099999994, 0.93333334),
+"transitions": PackedFloat32Array(1, 0.49999955),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 0.27058825)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Transition/ColorRect:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.13333334, 1.2333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Maycon/Camera2D:zoom")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.1, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(2, 2), Vector2(2.6, 2.6)]
+}
+
+[sub_resource type="Animation" id="Animation_gee14"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Maycon/Camera2D:zoom")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2, 2)]
+}
+
+[sub_resource type="Animation" id="Animation_vtaks"]
+resource_name = "zoom_out"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Maycon/Camera2D:zoom")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(2.6, 2.6), Vector2(2, 2)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bnd43"]
+_data = {
+&"RESET": SubResource("Animation_gee14"),
+&"semi_fade_out": SubResource("Animation_7g71p"),
+&"zoom_out": SubResource("Animation_vtaks")
+}
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_uwrxv"]
 
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_p57ef"]
+a = Vector2(-0.80464935, -312.04852)
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_u5sy4"]
+a = Vector2(0.40232086, -287.29987)
+b = Vector2(-0.40231323, -17.21643)
+
+[sub_resource type="LabelSettings" id="LabelSettings_0tnpc"]
+font_size = 9
+font_color = Color(0.3557699, 0.04241158, 0.119084515, 1)
+
 [node name="Game" type="Node2D"]
+position = Vector2(596, 397)
 script = ExtResource("1_lbhrr")
 
+[node name="Transition" type="AnimationPlayer" parent="."]
+reset_on_save = false
+libraries = {
+&"": SubResource("AnimationLibrary_bnd43")
+}
+
+[node name="ColorRect" type="ColorRect" parent="Transition"]
+self_modulate = Color(0, 0, 0, 0)
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(29.162046, 16.396467)
+color = Color(0, 0, 0, 1)
+
 [node name="PracinhaBela" type="Sprite2D" parent="."]
-position = Vector2(113.00001, -40.000004)
+position = Vector2(113, -40.000004)
 scale = Vector2(0.45825326, 0.38789135)
 texture = ExtResource("2_yqjtg")
 
-[node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(2, 2)
-position_smoothing_enabled = true
-rotation_smoothing_enabled = true
+[node name="MkDudun" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_gee14")
+pitch_scale = 0.72
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="ScarySmile" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_0tnpc")
+autoplay = true
+
+[node name="chao" type="StaticBody2D" parent="."]
 position = Vector2(-13, 48.999996)
 scale = Vector2(-2.4855595, 0.92934257)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="chao"]
 position = Vector2(10, 62)
 shape = SubResource("WorldBoundaryShape2D_uwrxv")
 
+[node name="wall_left" type="StaticBody2D" parent="."]
+position = Vector2(-13, 48.999996)
+scale = Vector2(-2.4855595, 0.92934257)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="wall_left"]
+position = Vector2(102.5926, 79.62619)
+shape = SubResource("SegmentShape2D_p57ef")
+
+[node name="explosao_portal" parent="." instance=ExtResource("6_vtaks")]
+position = Vector2(436, 39)
+scale = Vector2(24.778183, 23.1846)
+
 [node name="Maycon" parent="." instance=ExtResource("1_uwrxv")]
-position = Vector2(-268, 25)
+position = Vector2(-250, 18)
+slide_on_ceiling = false
+
+[node name="Camera2D" type="Camera2D" parent="Maycon"]
+position = Vector2(181, 14.000002)
+scale = Vector2(-2.1384912, -1.1424866)
+offset = Vector2(-40, 0)
+zoom = Vector2(2, 2)
+limit_left = 354
+limit_top = -9999614
+limit_right = 1104
+limit_bottom = 556
+position_smoothing_enabled = true
+rotation_smoothing_enabled = true
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(-13, 49)
+rotation = 3.1415925
+scale = Vector2(2.4855595, -0.92934257)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-84.08569, 69.941895)
+scale = Vector2(1, 0.99999994)
+shape = SubResource("SegmentShape2D_u5sy4")
+
+[node name="Area2_portal" type="Area2D" parent="."]
+position = Vector2(-13, 49)
+rotation = 3.1415925
+scale = Vector2(2.4855595, -0.92934257)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2_portal"]
+position = Vector2(-177.42484, 75.32214)
+scale = Vector2(1, 0.99999994)
+shape = SubResource("SegmentShape2D_u5sy4")
 
 [node name="Inimigo_seco" parent="." instance=ExtResource("3_lnu2h")]
-position = Vector2(455, -59.999996)
-scale = Vector2(2.0355258, 2.2938442)
+position = Vector2(418.00003, -43)
+scale = Vector2(-2.085421, 2.0896688)
 
 [node name="JamelaoSong" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_iywne")
@@ -44,3 +197,27 @@ volume_db = -11.927
 [node name="song_1" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_p57ef")
 volume_db = -20.991
+
+[node name="fade" parent="." instance=ExtResource("7_u5sy4")]
+position = Vector2(579, 344)
+scale = Vector2(1.2987008, 1.4692736)
+
+[node name="msg_box" type="ColorRect" parent="."]
+visible = false
+offset_left = 209.0
+offset_top = -72.0
+offset_right = 397.0
+offset_bottom = -24.0
+color = Color(0.8373672, 0.85090065, 0.85082674, 0.68235296)
+
+[node name="text" type="Label" parent="msg_box"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 15.0
+offset_right = 139.0
+offset_bottom = 38.0
+text = "Mensagem de teste!"
+label_settings = SubResource("LabelSettings_0tnpc")
+
+[connection signal="body_entered" from="Area2D" to="Maycon" method="_on_area_2d_body_entered"]
+[connection signal="body_entered" from="Area2_portal" to="." method="_on_area_2_portal_body_entered"]

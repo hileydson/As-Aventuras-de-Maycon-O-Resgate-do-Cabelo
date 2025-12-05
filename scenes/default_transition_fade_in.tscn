@@ -93,12 +93,14 @@ _data = {
 [node name="Node2D" type="Node2D"]
 
 [node name="Transition" type="AnimationPlayer" parent="."]
+reset_on_save = false
 libraries = {
 &"": SubResource("AnimationLibrary_bnd43")
 }
 autoplay = "fade_in"
 
 [node name="ColorRect" type="ColorRect" parent="Transition"]
+visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 scale = Vector2(29.162046, 16.396467)

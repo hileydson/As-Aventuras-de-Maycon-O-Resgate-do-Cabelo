@@ -239,8 +239,8 @@ frame_progress = 0.53858626
 script = ExtResource("2_ctsi6")
 
 [node name="CabecaSeco" type="Sprite2D" parent="."]
-position = Vector2(-2, -2)
-scale = Vector2(0.0530591, 0.053241912)
+position = Vector2(-2, 0)
+scale = Vector2(0.052765816, 0.06380309)
 texture = ExtResource("2_gmgm2")
 
 [connection signal="ready" from="AnimatedSprite2D" to="AnimatedSprite2D" method="_on_ready"]

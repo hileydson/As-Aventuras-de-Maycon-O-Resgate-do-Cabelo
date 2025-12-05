@@ -20,8 +20,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 Global="*res://scripts/Global.gd"
+DefaultTransition="res://scenes/default_transition_fade_in.tscn"
 DefaultTransitionFadeOut="*res://scenes/default_transition_fade_out.tscn"
-DefaultTransitionFadeIn="*res://scenes/default_transition_fade_in.tscn"
 
 [display]
 

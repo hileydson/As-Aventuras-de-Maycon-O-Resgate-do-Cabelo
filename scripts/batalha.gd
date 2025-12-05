@@ -24,6 +24,8 @@ extends AnimationPlayer
 
 @onready var destroy_maycon: GPUParticles2D = $"../Maycon/destroy_maycon"
 @onready var you_died_label: Label = $"../you_died_label"
+@onready var fade: Node2D = $"../fade"
+
 
 var power_limit_reached:bool = false
 var power_limit:int = 3
@@ -49,6 +51,11 @@ func maycon_died()->void:
 		ds_pain.play()
 		#victory_sound.play()
 		battle_finished = true
+	
+	await get_tree().create_timer(4.0).timeout
+	fade.get_node("Transition").play("fade_out")
+	await get_tree().create_timer(2.0).timeout
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func victory()->void:
 	destroy.visible = true
