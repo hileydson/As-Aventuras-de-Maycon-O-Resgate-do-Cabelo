@@ -24,6 +24,9 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:	
 	
+	if batalha_moves == null:
+		return
+	
 	if batalha_moves.enemy_hurt == true:
 		me.play("pain")
 	elif me.animation_finished && !me.is_playing():
@@ -68,6 +71,9 @@ func _process(delta: float) -> void:
 	
 	
 func _on_timer_enemy_attack_timeout() -> void:
+	if batalha_moves == null:
+		return
+		
 	if maycon.visible == true && !batalha_moves.battle_finished:
 		batalha_moves.enemy_attacking = true
 		me.play("attack")

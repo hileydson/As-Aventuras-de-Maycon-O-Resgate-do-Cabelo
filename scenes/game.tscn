@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://yicge48108e0"]
+[gd_scene load_steps=20 format=3 uid="uid://yicge48108e0"]
 
 [ext_resource type="Script" uid="uid://jv5gempkmtvq" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://fyyoe5vf3xm1" path="res://scenes/maycon.tscn" id="1_uwrxv"]
@@ -10,6 +10,22 @@
 [ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="6_p57ef"]
 [ext_resource type="PackedScene" uid="uid://cq0mtqifdkd4g" path="res://scenes/hp.tscn" id="6_vtaks"]
 [ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="7_u5sy4"]
+[ext_resource type="PackedScene" uid="uid://b2fnhp1t55rgx" path="res://scenes/inimigos/inimigo_1.tscn" id="11_kvpfn"]
+
+[sub_resource type="Animation" id="Animation_gee14"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Maycon/Camera2D:zoom")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2, 2)]
+}
 
 [sub_resource type="Animation" id="Animation_7g71p"]
 resource_name = "fade_out"
@@ -48,21 +64,6 @@ tracks/2/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector2(2, 2), Vector2(2.6, 2.6)]
-}
-
-[sub_resource type="Animation" id="Animation_gee14"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Maycon/Camera2D:zoom")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(2, 2)]
 }
 
 [sub_resource type="Animation" id="Animation_vtaks"]
@@ -218,6 +219,11 @@ offset_right = 139.0
 offset_bottom = 38.0
 text = "Mensagem de teste!"
 label_settings = SubResource("LabelSettings_0tnpc")
+
+[node name="Inimigo1" parent="." instance=ExtResource("11_kvpfn")]
+visible = false
+position = Vector2(323, 27.000008)
+scale = Vector2(0.3540157, 0.35131472)
 
 [connection signal="body_entered" from="Area2D" to="Maycon" method="_on_area_2d_body_entered"]
 [connection signal="body_entered" from="Area2_portal" to="." method="_on_area_2_portal_body_entered"]
