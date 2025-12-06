@@ -66,6 +66,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="fade" parent="." instance=ExtResource("1_3dmrc")]
+visible = false
 
 [node name="TelaIntro030" type="Sprite2D" parent="."]
 position = Vector2(574.99994, 334.00003)

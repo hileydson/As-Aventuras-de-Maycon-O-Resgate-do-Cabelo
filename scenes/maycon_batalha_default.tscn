@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://cbukngmlwguv8"]
+[gd_scene load_steps=48 format=3 uid="uid://cbukngmlwguv8"]
 
 [ext_resource type="Script" uid="uid://cq5pkmyy6iown" path="res://scripts/maycon_batalha.gd" id="1_r25bu"]
 [ext_resource type="Texture2D" uid="uid://22iw51qcp5dg" path="res://assets/images/chutando_direita_0.png" id="2_gvwms"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://dltv7vs287k52" path="res://assets/images/socando_direita_1.png" id="7_6vkkr"]
 [ext_resource type="Texture2D" uid="uid://dje8tvkf5sfd4" path="res://assets/images/socando_direita_2.png" id="8_o7nud"]
 [ext_resource type="Texture2D" uid="uid://5puqrhy558if" path="res://assets/images/socando_direita_3.png" id="9_lyxl7"]
+[ext_resource type="Texture2D" uid="uid://chqin084u1tnq" path="res://assets/images/caindo_direita_0.png" id="10_ep85d"]
 [ext_resource type="Texture2D" uid="uid://c7g04ky4xe2q5" path="res://assets/images/jamela_pulo_duplo_0.png" id="10_m4q2r"]
 [ext_resource type="Texture2D" uid="uid://dwl45v4jqoeei" path="res://assets/images/jamela_pulo_duplo_1.png" id="11_ex1kg"]
 [ext_resource type="Texture2D" uid="uid://cc2tosxjd2nny" path="res://assets/images/jamela_pulo_duplo_2.png" id="12_5vixy"]
@@ -86,6 +87,17 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_punch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.71,
+"texture": ExtResource("10_ep85d")
+}, {
+"duration": 0.71,
+"texture": ExtResource("10_ep85d")
+}],
+"loop": true,
+"name": &"damage",
 "speed": 5.0
 }, {
 "frames": [{
@@ -218,9 +230,7 @@ shape = SubResource("CapsuleShape2D_yi2kj")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(2, 0)
 sprite_frames = SubResource("SpriteFrames_inrnk")
-animation = &"right"
-frame = 4
-frame_progress = 1.0
+animation = &"damage"
 
 [node name="jump" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("43_rv64k")

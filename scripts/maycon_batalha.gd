@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 @onready var maycon_batalha: AnimatedSprite2D = $AnimatedSprite2D
+@onready var hurt_sound: AudioStreamPlayer = $"../HurtSound"
 
 @onready var sound_double_jump: AudioStreamPlayer2D = $double_jump
 @onready var sound_jump: AudioStreamPlayer2D = $jump
@@ -165,4 +166,9 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	if hp_count == 4:
 		hp_1.get_node("hp").play("explotion")
 		batalha_moves.died = true
+	
+	hurt_sound.play()
+	maycon_batalha.play("damage")
+	await get_tree().create_timer(0.4).timeout
+	maycon_batalha.play("idle_right")
 	

@@ -1,0 +1,227 @@
+[gd_scene load_steps=27 format=3 uid="uid://du005rp3p5j2x"]
+
+[ext_resource type="Script" uid="uid://l37du8uog6o3" path="res://scripts/demo_controls.gd" id="1_17g57"]
+[ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="2_op8gx"]
+[ext_resource type="Texture2D" uid="uid://btsjovj5s4men" path="res://assets/images/jamela_INTRO_0.png" id="3_8llco"]
+[ext_resource type="Texture2D" uid="uid://c1aehdrutq4uw" path="res://assets/images/jamela_INTRO_1.png" id="4_g52t5"]
+[ext_resource type="Texture2D" uid="uid://dsykjpix8lbd1" path="res://assets/images/jamela_INTRO_2.png" id="5_vd5ms"]
+[ext_resource type="Texture2D" uid="uid://nu0cjwrh4wba" path="res://assets/images/jamela_INTRO_3.png" id="6_a1ad8"]
+[ext_resource type="Texture2D" uid="uid://wutdw7bkjm8t" path="res://assets/images/jamela_INTRO_4.png" id="7_3iwkt"]
+[ext_resource type="Texture2D" uid="uid://632ur7rslx7o" path="res://assets/images/jamela_INTRO_5.png" id="8_ldooy"]
+[ext_resource type="Texture2D" uid="uid://doybiikbaveqq" path="res://assets/images/jamela_INTRO_6.png" id="9_24yeb"]
+[ext_resource type="Texture2D" uid="uid://dorecop7xqjw5" path="res://assets/images/jamela_INTRO_7.png" id="10_wvkix"]
+[ext_resource type="Texture2D" uid="uid://b2hxpjpouyak5" path="res://assets/images/jamela_INTRO2_0.png" id="11_vcdic"]
+[ext_resource type="Texture2D" uid="uid://csfbxnoe2067u" path="res://assets/images/jamela_INTRO2_1.png" id="12_x8oks"]
+[ext_resource type="Texture2D" uid="uid://ctjarnnrj1n16" path="res://assets/images/jamela_INTRO2_2.png" id="13_3lmq0"]
+[ext_resource type="Texture2D" uid="uid://cfinke8s28vd5" path="res://assets/images/jamela_INTRO2_3.png" id="14_bkyd3"]
+[ext_resource type="Texture2D" uid="uid://dbogs45cpgntk" path="res://assets/images/jamela_INTRO2_4.png" id="15_uedxy"]
+[ext_resource type="Texture2D" uid="uid://bslksmbwghx3e" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_02.png" id="16_tithk"]
+[ext_resource type="Texture2D" uid="uid://obhft0l6l255" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_18.png" id="17_w2whn"]
+[ext_resource type="Texture2D" uid="uid://6q57wdaxgctf" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_13.png" id="18_k85bu"]
+
+[sub_resource type="Animation" id="Animation_gcd8f"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("maycon:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-124, 308)]
+}
+
+[sub_resource type="Animation" id="Animation_30wyh"]
+resource_name = "intro"
+length = 1.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("maycon:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335, 1.4666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-124, 372), Vector2(350, 372)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t3fa8"]
+_data = {
+&"RESET": SubResource("Animation_gcd8f"),
+&"intro": SubResource("Animation_30wyh")
+}
+
+[sub_resource type="LabelSettings" id="LabelSettings_gcd8f"]
+font_size = 44
+
+[sub_resource type="LabelSettings" id="LabelSettings_30wyh"]
+font_size = 26
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xw83q"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_8llco")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_g52t5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_vd5ms")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_a1ad8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_3iwkt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_ldooy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_24yeb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_wvkix")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_vcdic")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_x8oks")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_3lmq0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_bkyd3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_uedxy")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="SystemFont" id="SystemFont_t3fa8"]
+font_italic = true
+
+[sub_resource type="LabelSettings" id="LabelSettings_nbku2"]
+font = SubResource("SystemFont_t3fa8")
+font_size = 41
+
+[node name="Pause" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 730.0
+offset_top = 895.0
+offset_right = 730.0
+offset_bottom = 895.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_17g57")
+
+[node name="pause_animation" type="AnimationPlayer" parent="."]
+root_node = NodePath("../black_screen")
+libraries = {
+&"": SubResource("AnimationLibrary_t3fa8")
+}
+autoplay = "intro"
+
+[node name="black_screen" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 0
+offset_left = -1.0
+offset_top = -3.0
+offset_right = 1149.0
+offset_bottom = 657.0
+color = Color(0, 0, 0, 1)
+
+[node name="fade" parent="black_screen" instance=ExtResource("2_op8gx")]
+position = Vector2(1, 3)
+
+[node name="pause" type="Label" parent="black_screen"]
+layout_mode = 0
+offset_left = 456.0
+offset_top = 28.0
+offset_right = 689.0
+offset_bottom = 157.0
+text = "CONTROLS
+"
+label_settings = SubResource("LabelSettings_gcd8f")
+
+[node name="space_keys" type="Label" parent="black_screen"]
+layout_mode = 0
+offset_left = 902.0
+offset_top = 459.0
+offset_right = 974.0
+offset_bottom = 495.0
+text = "space"
+label_settings = SubResource("LabelSettings_30wyh")
+
+[node name="power_keys_q" type="Label" parent="black_screen"]
+layout_mode = 0
+offset_left = 915.0
+offset_top = 219.0
+offset_right = 960.0
+offset_bottom = 255.0
+text = "Q"
+label_settings = SubResource("LabelSettings_30wyh")
+
+[node name="power_keys_w" type="Label" parent="black_screen"]
+layout_mode = 0
+offset_left = 915.0
+offset_top = 280.0
+offset_right = 960.0
+offset_bottom = 316.0
+text = "w"
+label_settings = SubResource("LabelSettings_30wyh")
+
+[node name="maycon" type="AnimatedSprite2D" parent="black_screen"]
+position = Vector2(-124, 308)
+scale = Vector2(3.1786866, 2.9598992)
+sprite_frames = SubResource("SpriteFrames_xw83q")
+animation = &"idle"
+autoplay = "idle"
+frame = 12
+frame_progress = 1.0
+
+[node name="jump" type="Sprite2D" parent="black_screen"]
+position = Vector2(712.5, 480.5)
+scale = Vector2(2.71875, 2.1562498)
+texture = ExtResource("16_tithk")
+
+[node name="defence" type="Sprite2D" parent="black_screen"]
+position = Vector2(632.5, 483)
+scale = Vector2(2.5937507, 2.4999998)
+texture = ExtResource("17_w2whn")
+
+[node name="power" type="Sprite2D" parent="black_screen"]
+position = Vector2(672.00006, 270)
+scale = Vector2(3.953125, 3.796875)
+texture = ExtResource("18_k85bu")
+
+[node name="powers" type="Label" parent="black_screen"]
+layout_mode = 0
+offset_left = 743.00006
+offset_top = 211.99997
+offset_right = 889.00006
+offset_bottom = 509.0
+text = "PUNCH
+KICK
+
+
+   JUMP"
+label_settings = SubResource("LabelSettings_nbku2")
+
+[node name="camera" type="Camera2D" parent="black_screen"]
+position = Vector2(1, 3)
+offset = Vector2(580, 330)

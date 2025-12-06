@@ -6,3 +6,12 @@ res://scripts/inimigos/inimigo_1.gd
 res://scripts/pause.gd
 res://scenes/pause.tscn
 res://scripts/Global.gd
+res://scenes/intro_game.tscn
+res://scripts/intro_game.gd
+res://scenes/demo_controls.tscn
+res://scripts/demo_controls.gd
+res://scenes/default_transition_fade_in.tscn
+res://scenes/menu.tscn
+res://scenes/batalha_2d.tscn
+res://scenes/maycon_batalha_default.tscn
+res://scripts/maycon_batalha.gd

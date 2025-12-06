@@ -19,6 +19,21 @@
 [ext_resource type="Texture2D" uid="uid://obhft0l6l255" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_18.png" id="16_30wyh"]
 [ext_resource type="Texture2D" uid="uid://6q57wdaxgctf" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_13.png" id="16_vrtv1"]
 
+[sub_resource type="Animation" id="Animation_gcd8f"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("maycon:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-124, 308)]
+}
+
 [sub_resource type="Animation" id="Animation_30wyh"]
 resource_name = "intro"
 length = 1.5
@@ -33,21 +48,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector2(-124, 308), Vector2(350, 308)]
-}
-
-[sub_resource type="Animation" id="Animation_gcd8f"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("maycon:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-124, 308)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_t3fa8"]
@@ -111,6 +111,7 @@ animations = [{
 
 [sub_resource type="SystemFont" id="SystemFont_t3fa8"]
 font_italic = true
+subpixel_positioning = 0
 
 [sub_resource type="LabelSettings" id="LabelSettings_nbku2"]
 font = SubResource("SystemFont_t3fa8")

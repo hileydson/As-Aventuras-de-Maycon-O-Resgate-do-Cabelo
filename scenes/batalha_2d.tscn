@@ -1,4 +1,4 @@
-[gd_scene load_steps=164 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=165 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="Texture2D" uid="uid://cncmj1g2w8obr" path="res://assets/novas_imagens/cenarios/fantasy-2d-battlegrounds/Battleground3/Bright/Battleground3.png" id="1_6uljp"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://bnbndhs1s5lnm" path="res://assets/novas_imagens/cenarios/fantasy-2d-battlegrounds/Battleground3/Bright/tree_face.png" id="5_fhlax"]
 [ext_resource type="Texture2D" uid="uid://dqh0d7dpr4cri" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Idle.png" id="6_vph4o"]
 [ext_resource type="Texture2D" uid="uid://bn62kapv7wtpu" path="res://assets/images/parado_direita_0.png" id="7_2cscv"]
+[ext_resource type="AudioStream" uid="uid://bf7d2jb0jj31f" path="res://assets/novos_audios/hurt_sound.mp3" id="7_6fm5e"]
 [ext_resource type="Texture2D" uid="uid://30wlu8i8qggp" path="res://assets/images/parado_direita_1.png" id="8_0qud2"]
 [ext_resource type="Texture2D" uid="uid://c3wtiey1rj4oj" path="res://assets/images/parado_direita_2.png" id="9_dk8xw"]
 [ext_resource type="Texture2D" uid="uid://5o3gi77c61rp" path="res://assets/images/parado_direita_3.png" id="10_jvqq8"]
@@ -1476,6 +1477,9 @@ frame_progress = 0.5849402
 position = Vector2(384.99997, -61)
 scale = Vector2(0.44531253, 0.50092596)
 texture = ExtResource("5_fhlax")
+
+[node name="HurtSound" type="AudioStreamPlayer" parent="Cenario de batalha"]
+stream = ExtResource("7_6fm5e")
 
 [node name="maycon_batalha_default" type="AnimatedSprite2D" parent="Cenario de batalha"]
 visible = false
