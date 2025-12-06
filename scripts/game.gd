@@ -3,6 +3,7 @@ extends Node2D
 @onready var song_1: AudioStreamPlayer = $song_1
 @onready var explosao_portal: Node2D = $explosao_portal
 @onready var inimigo_1: Node2D = $Inimigo1
+@onready var camera: Camera2D = $Maycon/Camera2D
 
 
 # Called when the node enters the scene tree for the first time.
@@ -13,6 +14,10 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	if Global.back_to_main_camera == true:
+		camera.make_current()
+		Global.back_to_main_camera = false
 	
 	if !explosao_portal.get_node("hp").is_playing() :
 		explosao_portal.get_node("hp").visible = true

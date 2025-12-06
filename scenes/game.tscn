@@ -1,7 +1,8 @@
-[gd_scene load_steps=20 format=3 uid="uid://yicge48108e0"]
+[gd_scene load_steps=21 format=3 uid="uid://yicge48108e0"]
 
 [ext_resource type="Script" uid="uid://jv5gempkmtvq" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://fyyoe5vf3xm1" path="res://scenes/maycon.tscn" id="1_uwrxv"]
+[ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="2_dinhu"]
 [ext_resource type="Texture2D" uid="uid://ctj2d2n15jxye" path="res://assets/novas_imagens/cenarios/pracinha_bela.png" id="2_yqjtg"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_gee14"]
 [ext_resource type="PackedScene" uid="uid://dvl0rk52qgvxa" path="res://scenes/inimigos/inimigo_seco.tscn" id="3_lnu2h"]
@@ -222,8 +223,15 @@ label_settings = SubResource("LabelSettings_0tnpc")
 
 [node name="Inimigo1" parent="." instance=ExtResource("11_kvpfn")]
 visible = false
+modulate = Color(1, 1, 1, 0.4392157)
 position = Vector2(323, 27.000008)
 scale = Vector2(0.3540157, 0.35131472)
+
+[node name="Pause" parent="." instance=ExtResource("2_dinhu")]
+offset_left = 524.0
+offset_top = 622.0
+offset_right = 524.0
+offset_bottom = 622.0
 
 [connection signal="body_entered" from="Area2D" to="Maycon" method="_on_area_2d_body_entered"]
 [connection signal="body_entered" from="Area2_portal" to="." method="_on_area_2_portal_body_entered"]

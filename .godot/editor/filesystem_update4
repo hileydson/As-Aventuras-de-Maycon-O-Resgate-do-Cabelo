@@ -3,3 +3,6 @@ res://scenes/game.tscn
 res://scenes/inimigos/inimigo_1.tscn
 res://scripts/game.gd
 res://scripts/inimigos/inimigo_1.gd
+res://scripts/pause.gd
+res://scenes/pause.tscn
+res://scripts/Global.gd
