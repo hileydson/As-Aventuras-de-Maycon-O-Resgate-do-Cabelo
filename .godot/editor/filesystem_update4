@@ -15,3 +15,4 @@ res://scenes/menu.tscn
 res://scenes/batalha_2d.tscn
 res://scenes/maycon_batalha_default.tscn
 res://scripts/maycon_batalha.gd
+res://scripts/batalha.gd

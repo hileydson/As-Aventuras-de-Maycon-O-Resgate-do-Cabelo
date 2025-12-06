@@ -384,4 +384,5 @@ libraries = {
 }
 
 [connection signal="animation_finished" from="inimigo_1" to="inimigo_1" method="_on_animation_finished"]
+[connection signal="body_entered" from="inimigo_1/attack_power/Area2D" to="inimigo_1" method="_on_area_2d_body_entered"]
 [connection signal="timeout" from="inimigo_1/Timer_enemy_attack" to="inimigo_1" method="_on_timer_enemy_attack_timeout"]

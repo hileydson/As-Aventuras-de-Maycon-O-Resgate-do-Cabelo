@@ -78,6 +78,12 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	# PLOTAR INIMIGO EM BATALHA
+	if Global.battle_next_enemy != 0:
+		pass
+	elif Global.battle_next_boss != 0:
+		pass
+		
 	if died:
 		maycon_died()
 	

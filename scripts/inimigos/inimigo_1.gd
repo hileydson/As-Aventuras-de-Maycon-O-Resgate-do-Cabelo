@@ -82,3 +82,7 @@ func _on_timer_enemy_attack_timeout() -> void:
 
 func _on_animation_finished() -> void:
 	batalha_moves.enemy_attacking = false
+
+
+func _on_area_2d_body_entered(body: Node2D) -> void:
+	Global.battle_next_enemy = 1
