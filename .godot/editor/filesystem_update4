@@ -2,3 +2,8 @@ res://scenes/batalha_2d.tscn
 res://scripts/batalha.gd
 res://scenes/default_transition_fade_in.tscn
 res://scripts/maycon_batalha.gd
+res://scripts/game.gd
+res://scenes/game.tscn
+res://scenes/tunel_fogo.tscn
+res://scripts/intro_pacoca_producoes.gd
+res://assets/videos/caindo_tunel.ogv
