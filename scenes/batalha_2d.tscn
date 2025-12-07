@@ -62,6 +62,13 @@
 [ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="55_3out6"]
 [ext_resource type="Texture2D" uid="uid://1fkfqqihfhgs" path="res://assets/novas_imagens/effects/Explosion/4.png" id="60_oqd0s"]
 
+[sub_resource type="SystemFont" id="SystemFont_pvxjk"]
+font_italic = true
+
+[sub_resource type="LabelSettings" id="LabelSettings_d6oll"]
+font = SubResource("SystemFont_pvxjk")
+font_color = Color(0.8004417, 0.05886451, 0.39543754, 1)
+
 [sub_resource type="Animation" id="Animation_2cscv"]
 length = 0.001
 tracks/0/type = "value"
@@ -696,13 +703,6 @@ collision_use_scale = true
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7ch20"]
 distance = -8.004456
-
-[sub_resource type="SystemFont" id="SystemFont_pvxjk"]
-font_italic = true
-
-[sub_resource type="LabelSettings" id="LabelSettings_d6oll"]
-font = SubResource("SystemFont_pvxjk")
-font_color = Color(0.8004417, 0.05886451, 0.39543754, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3out6"]
 atlas = ExtResource("49_cobqf")
@@ -1449,7 +1449,30 @@ position = Vector2(580, 318)
 
 [node name="Cenario de batalha" type="Node2D" parent="."]
 
+[node name="victory_label" type="Label" parent="Cenario de batalha"]
+visible = false
+z_index = 1
+offset_left = -226.0
+offset_top = -113.0
+offset_right = -148.0
+offset_bottom = -85.0
+scale = Vector2(5.910979, 6.3809886)
+text = "VICTORY!!"
+label_settings = SubResource("LabelSettings_d6oll")
+
+[node name="you_died_label" type="Label" parent="Cenario de batalha"]
+visible = false
+z_index = 1
+offset_left = -226.0
+offset_top = -113.0
+offset_right = -141.0
+offset_bottom = -85.0
+scale = Vector2(5.910979, 6.3809886)
+text = "YOU DIED!!"
+label_settings = SubResource("LabelSettings_d6oll")
+
 [node name="fade" parent="Cenario de batalha" instance=ExtResource("1_evw7u")]
+position = Vector2(0, -2)
 
 [node name="batalha_moves" type="AnimationPlayer" parent="Cenario de batalha"]
 root_node = NodePath("../maycon_batalha")
@@ -1506,6 +1529,7 @@ rotation = 3.1415925
 scale = Vector2(3.6918721, 3.6438017)
 
 [node name="hp_4" parent="Cenario de batalha" instance=ExtResource("34_dho1k")]
+visible = false
 position = Vector2(-444.99985, 295)
 rotation = 3.1415925
 scale = Vector2(3.6918721, 3.6438017)
@@ -1666,26 +1690,6 @@ wait_time = 8.0
 position = Vector2(-218, 169)
 scale = Vector2(2.455237, 4.1227045)
 shape = SubResource("WorldBoundaryShape2D_7ch20")
-
-[node name="victory_label" type="Label" parent="Cenario de batalha"]
-visible = false
-offset_left = -226.0
-offset_top = -113.0
-offset_right = -148.0
-offset_bottom = -85.0
-scale = Vector2(5.910979, 6.3809886)
-text = "VICTORY!!"
-label_settings = SubResource("LabelSettings_d6oll")
-
-[node name="you_died_label" type="Label" parent="Cenario de batalha"]
-visible = false
-offset_left = -226.0
-offset_top = -113.0
-offset_right = -148.0
-offset_bottom = -85.0
-scale = Vector2(5.910979, 6.3809886)
-text = "YOU DIED!!"
-label_settings = SubResource("LabelSettings_d6oll")
 
 [node name="Inimigos" type="Node2D" parent="."]
 script = ExtResource("46_x11r3")

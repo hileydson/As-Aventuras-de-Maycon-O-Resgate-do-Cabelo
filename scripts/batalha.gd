@@ -21,9 +21,9 @@ extends AnimationPlayer
 @onready var timer_power_label: Label = $"../timer_power_label"
 @onready var ds_pain: AudioStreamPlayer = $"../DsPain"
 @onready var victory_label: Label = $"../victory_label"
+@onready var you_died_label: Label = $"../you_died_label"
 
 @onready var destroy_maycon: GPUParticles2D = $"../Maycon/destroy_maycon"
-@onready var you_died_label: Label = $"../you_died_label"
 @onready var fade: Node2D = $"../fade"
 
 
@@ -55,6 +55,9 @@ func maycon_died()->void:
 	await get_tree().create_timer(4.0).timeout
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout
+	victory_label.visible = false
+	you_died_label.visible = false
+	await get_tree().create_timer(1.0).timeout
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func victory()->void:

@@ -65,61 +65,66 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="fade" parent="." instance=ExtResource("1_3dmrc")]
-visible = false
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(577, 324)
 
-[node name="TelaIntro030" type="Sprite2D" parent="."]
-position = Vector2(574.99994, 334.00003)
+[node name="TelaIntro030" type="Sprite2D" parent="Camera2D"]
+position = Vector2(-2.000061, 2.0000305)
 scale = Vector2(1.836939, 1.4006524)
 texture = ExtResource("1_mhnvy")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 31.0
-offset_top = -205.99994
-offset_right = 118.0
-offset_bottom = -139.99994
-grow_vertical = 0
-scale = Vector2(2.391459, 2.0979164)
-script = ExtResource("1_yqeox")
-
-[node name="New Game" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Novo Jogo"
-
-[node name="Exit" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Sair"
-
-[node name="LogoAventuras0" type="Sprite2D" parent="."]
-position = Vector2(522, 73)
+[node name="LogoAventuras0" type="Sprite2D" parent="Camera2D"]
+position = Vector2(-55, -251)
 texture = ExtResource("3_4ytvr")
 
-[node name="LogoKabelo0" type="Sprite2D" parent="."]
-position = Vector2(532, 141)
+[node name="LogoKabelo0" type="Sprite2D" parent="Camera2D"]
+position = Vector2(-45, -183)
 scale = Vector2(0.999242, 1)
 texture = ExtResource("4_g3eks")
 
-[node name="cabelo_sound" type="AudioStreamPlayer2D" parent="."]
+[node name="cabelo_sound" type="AudioStreamPlayer2D" parent="Camera2D"]
+position = Vector2(-577, -324)
 stream = ExtResource("5_4ytvr")
 
-[node name="mayconLooking" type="AnimatedSprite2D" parent="."]
-position = Vector2(578, 501)
+[node name="mayconLooking" type="AnimatedSprite2D" parent="Camera2D"]
+position = Vector2(1, 177)
 scale = Vector2(2.3282413, 1.9032443)
 sprite_frames = SubResource("SpriteFrames_ffqrc")
 animation = &"idle"
 frame = 9
 frame_progress = 1.0
 
-[node name="JamelaoSong" type="AudioStreamPlayer" parent="."]
+[node name="JamelaoSong" type="AudioStreamPlayer" parent="Camera2D"]
 stream = ExtResource("16_g6gyw")
 
-[node name="menu_song" type="AudioStreamPlayer2D" parent="."]
+[node name="menu_song" type="AudioStreamPlayer2D" parent="Camera2D"]
+position = Vector2(-577, -324)
 stream = ExtResource("16_mxgkd")
 
-[connection signal="ready" from="." to="VBoxContainer" method="_on_menu_ready"]
-[connection signal="pressed" from="VBoxContainer/New Game" to="VBoxContainer" method="_on_new_game_pressed"]
-[connection signal="pressed" from="VBoxContainer/Exit" to="VBoxContainer" method="_on_exit_pressed"]
+[node name="fade" parent="Camera2D" instance=ExtResource("1_3dmrc")]
+visible = false
+position = Vector2(-577, -324)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -546.0
+offset_top = 43.0
+offset_right = -432.2619
+offset_bottom = 166.45584
+grow_vertical = 0
+scale = Vector2(2.391459, 2.0979164)
+script = ExtResource("1_yqeox")
+
+[node name="New Game" type="Button" parent="Camera2D/VBoxContainer"]
+layout_mode = 2
+text = "Novo Jogo"
+
+[node name="Exit" type="Button" parent="Camera2D/VBoxContainer"]
+layout_mode = 2
+text = "Sair"
+
+[connection signal="ready" from="." to="Camera2D/VBoxContainer" method="_on_menu_ready"]
+[connection signal="pressed" from="Camera2D/VBoxContainer/New Game" to="Camera2D/VBoxContainer" method="_on_new_game_pressed"]
+[connection signal="pressed" from="Camera2D/VBoxContainer/Exit" to="Camera2D/VBoxContainer" method="_on_exit_pressed"]

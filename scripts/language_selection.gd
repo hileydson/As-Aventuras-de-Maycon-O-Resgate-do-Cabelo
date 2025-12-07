@@ -1,4 +1,9 @@
 extends VBoxContainer
+@onready var portugues: Button = $Portugues
+
+func _ready() -> void:
+	# Esta função roda automaticamente quando a cena entra na árvore
+	portugues.grab_focus()
 
 func _on_portugues_button_down() -> void:
 	Global.default_language = Global.language_pt_br

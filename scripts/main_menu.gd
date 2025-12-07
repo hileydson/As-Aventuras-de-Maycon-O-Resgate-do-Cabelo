@@ -11,6 +11,7 @@ extends VBoxContainer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	new_game.grab_focus()
 	cabelo_sound.play()
 	
 	if Global.default_language == Global.language_en:
