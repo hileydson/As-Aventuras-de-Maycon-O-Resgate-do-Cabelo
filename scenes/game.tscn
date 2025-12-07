@@ -104,6 +104,7 @@ font_color = Color(0.3557699, 0.04241158, 0.119084515, 1)
 
 [node name="Game" type="Node2D"]
 position = Vector2(596, 397)
+scale = Vector2(1.1134915, 1.3669924)
 script = ExtResource("1_lbhrr")
 
 [node name="Transition" type="AnimationPlayer" parent="."]
