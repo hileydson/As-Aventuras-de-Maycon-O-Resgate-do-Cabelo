@@ -200,10 +200,6 @@ volume_db = -11.927
 stream = ExtResource("6_p57ef")
 volume_db = -20.991
 
-[node name="fade" parent="." instance=ExtResource("7_u5sy4")]
-position = Vector2(579, 344)
-scale = Vector2(1.2987008, 1.4692736)
-
 [node name="msg_box" type="ColorRect" parent="."]
 visible = false
 offset_left = 209.0
@@ -220,6 +216,10 @@ offset_right = 139.0
 offset_bottom = 38.0
 text = "Mensagem de teste!"
 label_settings = SubResource("LabelSettings_0tnpc")
+
+[node name="fade" parent="." instance=ExtResource("7_u5sy4")]
+position = Vector2(579, 344)
+scale = Vector2(1.2987008, 1.4692736)
 
 [node name="Inimigo1" parent="." instance=ExtResource("11_kvpfn")]
 visible = false
