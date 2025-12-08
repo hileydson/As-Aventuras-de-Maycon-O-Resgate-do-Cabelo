@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://b24g04baecogn"]
 
 [ext_resource type="VideoStream" uid="uid://cros6010x6vuk" path="res://assets/videos/caindo_tunel.ogv" id="1_481kp"]
-[ext_resource type="Script" uid="uid://ivp0lwifukit" path="res://scripts/intro_pacoca_producoes.gd" id="2_32c08"]
+[ext_resource type="Script" uid="uid://defi0lubtlfmm" path="res://scripts/intro_tunel.gd" id="2_481kp"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -13,7 +13,7 @@ offset_bottom = 319.0
 stream = ExtResource("1_481kp")
 autoplay = true
 expand = true
-script = ExtResource("2_32c08")
+script = ExtResource("2_481kp")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
