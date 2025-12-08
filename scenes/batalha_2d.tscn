@@ -1714,6 +1714,8 @@ visibility_layer = 524289
 position = Vector2(22.190712, 29.261255)
 scale = Vector2(0.004370174, 0.007473256)
 amount = 15
+lifetime = 0.44
+one_shot = true
 process_material = SubResource("ParticleProcessMaterial_wo4yk")
 
 [node name="Area2D" type="Area2D" parent="Inimigos/comum/inimigo_1/attack_power"]

@@ -36,36 +36,14 @@ func _process(delta: float) -> void:
 		inimigos.reset_damage()
 		damage_taken = damage_taken+1
 	
-	if damage_taken == 1:
-		hp_1.visible = true
-		hp_2.visible = true
-		hp_3.visible = true
-		hp_4.visible = true
-		hp_5.visible = false
-	if damage_taken == 2:
-		hp_1.visible = true
-		hp_2.visible = true
-		hp_3.visible = true
-		hp_4.visible = false
-		hp_5.visible = false
-	if damage_taken == 3:
-		hp_1.visible = true
-		hp_2.visible = true
-		hp_3.visible = false
-		hp_4.visible = false
-		hp_5.visible = false
-	if damage_taken == 4:
-		hp_1.visible = true
-		hp_2.visible = false
-		hp_3.visible = false
-		hp_4.visible = false
-		hp_5.visible = false
-	if damage_taken == 5:
-		hp_1.visible = false
-		hp_2.visible = false
-		hp_3.visible = false
-		hp_4.visible = false
-		hp_5.visible = false
+	# Simplifiquei a lógica de visibilidade (opcional, mas fica mais limpo)
+	hp_1.visible = damage_taken < 5
+	hp_2.visible = damage_taken < 4
+	hp_3.visible = damage_taken < 3
+	hp_4.visible = damage_taken < 2
+	hp_5.visible = damage_taken < 1
+
+	if damage_taken >= 5:
 		me.stop()
 		batalha_moves.victory()
 	
@@ -77,7 +55,10 @@ func _on_timer_enemy_attack_timeout() -> void:
 	if maycon.visible == true && !batalha_moves.battle_finished:
 		batalha_moves.enemy_attacking = true
 		me.play("attack")
+		
+		# Toca a animação de ataque
 		inimigo_1_animation_attack.play("power_attack")
+		
 
 
 func _on_animation_finished() -> void:
