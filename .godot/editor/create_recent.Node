@@ -1,14 +1,14 @@
 GPUParticles2D
+ColorRect
+CanvasLayer
 Node
 Label
 Camera2D
 AnimationPlayer
 AnimatedSprite2D
 Sprite2D
-ColorRect
 Button
 VBoxContainer
 Area2D
 CanvasModulate
 RigidBody2D
-CollisionShape2D
