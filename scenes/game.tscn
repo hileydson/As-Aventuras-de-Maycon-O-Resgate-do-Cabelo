@@ -122,7 +122,7 @@ color = Color(0, 0, 0, 1)
 
 [node name="PracinhaBela" type="Sprite2D" parent="."]
 position = Vector2(113, -40.000004)
-scale = Vector2(0.45825326, 0.38789135)
+scale = Vector2(0.44191885, 0.3828961)
 texture = ExtResource("2_yqjtg")
 
 [node name="MkDudun" type="AudioStreamPlayer" parent="."]
@@ -154,17 +154,18 @@ position = Vector2(436, 39)
 scale = Vector2(24.778183, 23.1846)
 
 [node name="Maycon" parent="." instance=ExtResource("1_uwrxv")]
-position = Vector2(-250, 18)
+position = Vector2(-250.56319, 43.160446)
+scale = Vector2(0.8104085, 0.7798099)
 slide_on_ceiling = false
 
 [node name="Camera2D" type="Camera2D" parent="Maycon"]
-position = Vector2(181, 14.000002)
+position = Vector2(180.84816, 14.187439)
 scale = Vector2(-2.1384912, -1.1424866)
 offset = Vector2(-40, 0)
-zoom = Vector2(2, 2)
-limit_left = 354
+zoom = Vector2(1.9, 1.9)
+limit_left = 334
 limit_top = -9999614
-limit_right = 1104
+limit_right = 1145
 limit_bottom = 556
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true

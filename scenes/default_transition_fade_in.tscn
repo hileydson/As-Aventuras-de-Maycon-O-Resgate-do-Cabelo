@@ -100,6 +100,7 @@ libraries = {
 autoplay = "fade_in"
 
 [node name="ColorRect" type="ColorRect" parent="Transition"]
+visible = false
 offset_left = -53.0
 offset_top = -27.0
 offset_right = -13.0
