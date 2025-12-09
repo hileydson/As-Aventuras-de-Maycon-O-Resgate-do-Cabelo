@@ -1,0 +1,75 @@
+[gd_scene load_steps=10 format=3 uid="uid://d3cev6uiwwro4"]
+
+[ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
+[ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
+[ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="2_7je0d"]
+[ext_resource type="PackedScene" uid="uid://b2fnhp1t55rgx" path="res://scenes/inimigos/inimigo_1.tscn" id="2_hnmna"]
+[ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="4_7je0d"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
+size = Vector2(548, 178)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
+size = Vector2(317, 178)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2rkwj"]
+size = Vector2(339, 178)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7je0d"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Fase1BeforeCastle1" type="Sprite2D" parent="."]
+position = Vector2(1586, 683)
+texture = ExtResource("1_l74ae")
+
+[node name="maycon_fase" parent="Fase1BeforeCastle1" instance=ExtResource("2_7je0d")]
+position = Vector2(-1468.9999, -765)
+scale = Vector2(4.1584525, 4.200731)
+
+[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle1/maycon_fase"]
+position = Vector2(11.542603, 0.47611237)
+scale = Vector2(4.6533337, 4.4133334)
+zoom = Vector2(0.5, 0.5)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+process_mode = 4
+position = Vector2(278, 1138)
+shape = SubResource("RectangleShape2D_hnmna")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+process_mode = 4
+position = Vector2(1997, 1140)
+shape = SubResource("RectangleShape2D_hnmna")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(1013, 1138)
+shape = SubResource("RectangleShape2D_p1t4m")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(3001.5, 1136)
+shape = SubResource("RectangleShape2D_2rkwj")
+
+[node name="dead" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(1428.9998, 2115)
+scale = Vector2(13.518565, 10.061738)
+shape = SubResource("WorldBoundaryShape2D_7je0d")
+
+[node name="Inimigo1" parent="." instance=ExtResource("2_hnmna")]
+position = Vector2(516, 785)
+scale = Vector2(1.4896702, 1.6170456)
+
+[node name="Inimigos" type="Node" parent="."]
+
+[node name="fade" parent="." instance=ExtResource("4_7je0d")]
+position = Vector2(546.0001, 277.99997)
+scale = Vector2(1.0871409, 3.626345)
+
+[node name="Pause" parent="." instance=ExtResource("1_2rkwj")]
+visible = false
+offset_left = 880.0
+offset_top = -1102.0
+offset_right = 880.0
+offset_bottom = -1102.0

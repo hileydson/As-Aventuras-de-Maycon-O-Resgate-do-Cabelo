@@ -109,12 +109,12 @@ position = Vector2(-577, -324)
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = -546.0
-offset_top = 43.0
-offset_right = -432.2619
-offset_bottom = 166.45584
+offset_left = -549.0
+offset_top = 124.0
+offset_right = -435.2619
+offset_bottom = 247.45584
 grow_vertical = 0
-scale = Vector2(2.391459, 2.0979164)
+scale = Vector2(1.2456733, 1.2632499)
 script = ExtResource("1_yqeox")
 
 [node name="New Game" type="Button" parent="Camera2D/VBoxContainer"]

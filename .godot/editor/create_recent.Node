@@ -1,8 +1,10 @@
 Camera2D
+Node
+CollisionShape2D
+StaticBody2D
 GPUParticles2D
 ColorRect
 CanvasLayer
-Node
 Label
 AnimationPlayer
 AnimatedSprite2D
@@ -10,5 +12,3 @@ Sprite2D
 Button
 VBoxContainer
 Area2D
-CanvasModulate
-RigidBody2D

@@ -6,3 +6,8 @@ res://scripts/intro_tunel.gd
 res://scenes/batalha_2d.tscn
 res://scenes/game.tscn
 res://scripts/game.gd
+res://scenes/fase_1_before_castle_1.tscn
+res://scenes/default_transition_fade_in.tscn
+res://scenes/maycon_fase.tscn
+res://scripts/maycon_fase.gd
+res://scenes/menu.tscn
