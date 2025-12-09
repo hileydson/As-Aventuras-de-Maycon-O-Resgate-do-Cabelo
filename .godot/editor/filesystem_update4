@@ -1,3 +1,5 @@
 res://scenes/inimigos/inimigo_1.tscn
 res://scenes/batalha_2d.gdshader
 res://scripts/inimigos/inimigo_1.gd
+res://scenes/maycon_fase.tscn
+res://scenes/fase_1_before_castle_1.tscn

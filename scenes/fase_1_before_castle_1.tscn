@@ -24,8 +24,8 @@ position = Vector2(1586, 683)
 texture = ExtResource("1_l74ae")
 
 [node name="maycon_fase" parent="Fase1BeforeCastle1" instance=ExtResource("2_7je0d")]
-position = Vector2(-1468.9999, -765)
-scale = Vector2(4.1584525, 4.200731)
+position = Vector2(-1461, -763)
+scale = Vector2(2.7735984, 2.5222125)
 
 [node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle1/maycon_fase"]
 position = Vector2(11.542603, 0.47611237)
