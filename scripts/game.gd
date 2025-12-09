@@ -22,11 +22,7 @@ func _process(delta: float) -> void:
 	if !explosao_portal.get_node("hp").is_playing() :
 		explosao_portal.get_node("hp").visible = true
 		explosao_portal.get_node("hp").play("semi_explotion")
-	
-	if explosao_portal.get_node("hp").animation == "explotion":
-		inimigo_1.visible = true
-		
-		
+
 
 
 func _on_area_2_portal_body_entered(body: Node2D) -> void:

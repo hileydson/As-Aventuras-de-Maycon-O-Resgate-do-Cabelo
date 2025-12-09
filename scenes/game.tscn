@@ -1,9 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://yicge48108e0"]
+[gd_scene load_steps=20 format=3 uid="uid://yicge48108e0"]
 
 [ext_resource type="Script" uid="uid://jv5gempkmtvq" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://fyyoe5vf3xm1" path="res://scenes/maycon.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="2_dinhu"]
-[ext_resource type="Texture2D" uid="uid://ctj2d2n15jxye" path="res://assets/novas_imagens/cenarios/pracinha_bela.png" id="2_yqjtg"]
+[ext_resource type="Texture2D" uid="uid://is2q46phf50g" path="res://assets/novas_imagens/cenarios/in_use/animacoes/prologo_bela_pixel.png" id="2_kvuet"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_gee14"]
 [ext_resource type="PackedScene" uid="uid://dvl0rk52qgvxa" path="res://scenes/inimigos/inimigo_seco.tscn" id="3_lnu2h"]
 [ext_resource type="AudioStream" uid="uid://c3jfsmiruu7lk" path="res://assets/novos_audios/scary_smile.mp3" id="4_0tnpc"]
@@ -11,7 +11,6 @@
 [ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="6_p57ef"]
 [ext_resource type="PackedScene" uid="uid://cq0mtqifdkd4g" path="res://scenes/hp.tscn" id="6_vtaks"]
 [ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="7_u5sy4"]
-[ext_resource type="PackedScene" uid="uid://b2fnhp1t55rgx" path="res://scenes/inimigos/inimigo_1.tscn" id="11_kvpfn"]
 
 [sub_resource type="Animation" id="Animation_gee14"]
 length = 0.001
@@ -62,9 +61,9 @@ tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0.1, 1),
-"transitions": PackedFloat32Array(1, 1),
+"transitions": PackedFloat32Array(1, 4.287095),
 "update": 0,
-"values": [Vector2(2, 2), Vector2(2.6, 2.6)]
+"values": [Vector2(1.4, 1.4), Vector2(1.5, 1.5)]
 }
 
 [sub_resource type="Animation" id="Animation_vtaks"]
@@ -76,10 +75,10 @@ tracks/0/path = NodePath("Maycon/Camera2D:zoom")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.1, 1),
+"times": PackedFloat32Array(0.1, 0.9),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(2.6, 2.6), Vector2(2, 2)]
+"values": [Vector2(1.5, 1.5), Vector2(1.4, 1.4)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bnd43"]
@@ -103,7 +102,7 @@ font_size = 9
 font_color = Color(0.3557699, 0.04241158, 0.119084515, 1)
 
 [node name="Game" type="Node2D"]
-position = Vector2(596, 397)
+position = Vector2(308.99997, 348.99997)
 scale = Vector2(1.1134915, 1.3669924)
 script = ExtResource("1_lbhrr")
 
@@ -115,15 +114,21 @@ libraries = {
 
 [node name="ColorRect" type="ColorRect" parent="Transition"]
 self_modulate = Color(0, 0, 0, 0)
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = -1
+anchor_right = 0.01263647
+anchor_bottom = 0.004530983
+offset_left = -11.000061
+offset_top = -83.0
+offset_right = 28.999939
+offset_bottom = -43.0
 scale = Vector2(29.162046, 16.396467)
 color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
 
 [node name="PracinhaBela" type="Sprite2D" parent="."]
-position = Vector2(113, -40.000004)
-scale = Vector2(0.44191885, 0.3828961)
-texture = ExtResource("2_yqjtg")
+position = Vector2(324.51547, -66.12781)
+scale = Vector2(0.37853828, 0.27715936)
+texture = ExtResource("2_kvuet")
 
 [node name="MkDudun" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_gee14")
@@ -132,9 +137,10 @@ pitch_scale = 0.72
 [node name="ScarySmile" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_0tnpc")
 autoplay = true
+parameters/looping = true
 
 [node name="chao" type="StaticBody2D" parent="."]
-position = Vector2(-13, 48.999996)
+position = Vector2(-12.573052, 59.985718)
 scale = Vector2(-2.4855595, 0.92934257)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="chao"]
@@ -150,28 +156,31 @@ position = Vector2(102.5926, 79.62619)
 shape = SubResource("SegmentShape2D_p57ef")
 
 [node name="explosao_portal" parent="." instance=ExtResource("6_vtaks")]
-position = Vector2(436, 39)
+position = Vector2(741.8108, 57.05961)
 scale = Vector2(24.778183, 23.1846)
 
 [node name="Maycon" parent="." instance=ExtResource("1_uwrxv")]
-position = Vector2(-250.56319, 43.160446)
-scale = Vector2(0.8104085, 0.7798099)
+position = Vector2(-193.0863, 40.96587)
+scale = Vector2(1.3133289, 1.0431619)
 slide_on_ceiling = false
 
 [node name="Camera2D" type="Camera2D" parent="Maycon"]
-position = Vector2(180.84816, 14.187439)
-scale = Vector2(-2.1384912, -1.1424866)
-offset = Vector2(-40, 0)
-zoom = Vector2(1.9, 1.9)
-limit_left = 334
-limit_top = -9999614
-limit_right = 1145
-limit_bottom = 556
+position = Vector2(458.8409, -94.67078)
+offset = Vector2(-320, 30)
+zoom = Vector2(1.5, 1.5)
+limit_left = 328
+limit_top = 4
+limit_right = 1654
+limit_smoothed = true
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
+drag_horizontal_offset = -0.46
+drag_left_margin = 0.09
+drag_right_margin = 0.09
+editor_draw_drag_margin = true
 
 [node name="Area2D" type="Area2D" parent="."]
-position = Vector2(-13, 49)
+position = Vector2(248.76709, 50.47581)
 rotation = 3.1415925
 scale = Vector2(2.4855595, -0.92934257)
 
@@ -181,7 +190,7 @@ scale = Vector2(1, 0.99999994)
 shape = SubResource("SegmentShape2D_u5sy4")
 
 [node name="Area2_portal" type="Area2D" parent="."]
-position = Vector2(-13, 49)
+position = Vector2(287.38434, 46.818146)
 rotation = 3.1415925
 scale = Vector2(2.4855595, -0.92934257)
 
@@ -191,7 +200,7 @@ scale = Vector2(1, 0.99999994)
 shape = SubResource("SegmentShape2D_u5sy4")
 
 [node name="Inimigo_seco" parent="." instance=ExtResource("3_lnu2h")]
-position = Vector2(418.00003, -43)
+position = Vector2(889.0188, -29.261322)
 scale = Vector2(-2.085421, 2.0896688)
 
 [node name="JamelaoSong" type="AudioStreamPlayer" parent="."]
@@ -204,10 +213,10 @@ volume_db = -20.991
 
 [node name="msg_box" type="ColorRect" parent="."]
 visible = false
-offset_left = 209.0
-offset_top = -72.0
-offset_right = 397.0
-offset_bottom = -24.0
+offset_left = 678.94543
+offset_top = -65.106415
+offset_right = 866.94543
+offset_bottom = -17.106415
 color = Color(0.8373672, 0.85090065, 0.85082674, 0.68235296)
 
 [node name="text" type="Label" parent="msg_box"]
@@ -223,17 +232,12 @@ label_settings = SubResource("LabelSettings_0tnpc")
 position = Vector2(579, 344)
 scale = Vector2(1.2987008, 1.4692736)
 
-[node name="Inimigo1" parent="." instance=ExtResource("11_kvpfn")]
-visible = false
-modulate = Color(1, 1, 1, 0.4392157)
-position = Vector2(323, 27.000008)
-scale = Vector2(0.3540157, 0.35131472)
-
 [node name="Pause" parent="." instance=ExtResource("2_dinhu")]
-offset_left = 524.0
-offset_top = 622.0
-offset_right = 524.0
-offset_bottom = 622.0
+offset_left = 441.85345
+offset_top = 542.79755
+offset_right = 441.85345
+offset_bottom = 542.79755
+scale = Vector2(0.90349585, 0.7392154)
 
 [connection signal="body_entered" from="Area2D" to="Maycon" method="_on_area_2d_body_entered"]
 [connection signal="body_entered" from="Area2_portal" to="." method="_on_area_2_portal_body_entered"]

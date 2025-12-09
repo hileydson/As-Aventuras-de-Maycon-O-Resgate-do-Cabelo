@@ -1,9 +1,9 @@
+Camera2D
 GPUParticles2D
 ColorRect
 CanvasLayer
 Node
 Label
-Camera2D
 AnimationPlayer
 AnimatedSprite2D
 Sprite2D
