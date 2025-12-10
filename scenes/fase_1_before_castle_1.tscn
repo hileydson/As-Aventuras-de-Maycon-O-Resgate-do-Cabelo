@@ -1,10 +1,148 @@
-[gd_scene load_steps=10 format=3 uid="uid://d3cev6uiwwro4"]
+[gd_scene load_steps=24 format=3 uid="uid://d3cev6uiwwro4"]
 
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
 [ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="2_7je0d"]
 [ext_resource type="PackedScene" uid="uid://b2fnhp1t55rgx" path="res://scenes/inimigos/inimigo_1.tscn" id="2_hnmna"]
+[ext_resource type="Script" uid="uid://c1spheypet4fo" path="res://scripts/fase_1_before_castle_1.gd" id="2_rh75j"]
+[ext_resource type="Texture2D" uid="uid://bs67ndmklpp1b" path="res://assets/novas_imagens/maycon/maycon_falling.png" id="3_pg6gg"]
 [ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="4_7je0d"]
+
+[sub_resource type="Animation" id="Animation_36c4s"]
+resource_name = "maycon_falling"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("maycon_falling:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.93333334, 2.0333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [&"falling", &"on_gound"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("maycon_falling:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.96666664, 2.0666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-1453, -811.00006), Vector2(-1453, 220)]
+}
+
+[sub_resource type="Animation" id="Animation_wwvab"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("maycon_falling:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"on_gound"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("maycon_falling:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1453, -811.00006)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ahm46"]
+_data = {
+&"RESET": SubResource("Animation_wwvab"),
+&"maycon_falling": SubResource("Animation_36c4s")
+}
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c6yjk"]
+atlas = ExtResource("3_pg6gg")
+region = Rect2(156, 0, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26g4g"]
+atlas = ExtResource("3_pg6gg")
+region = Rect2(0, 0, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0x3b6"]
+atlas = ExtResource("3_pg6gg")
+region = Rect2(0, 177, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wkoui"]
+atlas = ExtResource("3_pg6gg")
+region = Rect2(312, 0, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mxoto"]
+atlas = ExtResource("3_pg6gg")
+region = Rect2(312, 177, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eynw3"]
+atlas = ExtResource("3_pg6gg")
+region = Rect2(156, 177, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v5dpv"]
+atlas = ExtResource("3_pg6gg")
+region = Rect2(0, 354, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xit4y"]
+atlas = ExtResource("3_pg6gg")
+region = Rect2(156, 354, 156, 177)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gn6wi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c6yjk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26g4g")
+}],
+"loop": false,
+"name": &"falling",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_0x3b6")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_wkoui")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_mxoto")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_eynw3")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_v5dpv")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_xit4y")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_wkoui")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_0x3b6")
+}],
+"loop": true,
+"name": &"on_gound",
+"speed": 5.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
 size = Vector2(548, 178)
@@ -22,15 +160,31 @@ size = Vector2(339, 178)
 [node name="Fase1BeforeCastle1" type="Sprite2D" parent="."]
 position = Vector2(1586, 683)
 texture = ExtResource("1_l74ae")
+script = ExtResource("2_rh75j")
+
+[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle1"]
+libraries = {
+&"": SubResource("AnimationLibrary_ahm46")
+}
+
+[node name="maycon_falling" type="AnimatedSprite2D" parent="Fase1BeforeCastle1"]
+visible = false
+position = Vector2(-1453, -811.00006)
+scale = Vector2(1.3589742, 1.5550846)
+sprite_frames = SubResource("SpriteFrames_gn6wi")
+animation = &"on_gound"
 
 [node name="maycon_fase" parent="Fase1BeforeCastle1" instance=ExtResource("2_7je0d")]
-position = Vector2(-1461, -763)
+position = Vector2(-1479, -887.00006)
 scale = Vector2(2.7735984, 2.5222125)
 
 [node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle1/maycon_fase"]
 position = Vector2(11.542603, 0.47611237)
 scale = Vector2(4.6533337, 4.4133334)
 zoom = Vector2(0.5, 0.5)
+limit_left = 0
+limit_top = 0
+limit_bottom = 1355
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
@@ -58,8 +212,8 @@ scale = Vector2(13.518565, 10.061738)
 shape = SubResource("WorldBoundaryShape2D_7je0d")
 
 [node name="Inimigo1" parent="." instance=ExtResource("2_hnmna")]
-position = Vector2(516, 785)
-scale = Vector2(1.4896702, 1.6170456)
+position = Vector2(648, 845)
+scale = Vector2(1.0896726, 1.1370456)
 
 [node name="Inimigos" type="Node" parent="."]
 
@@ -68,8 +222,12 @@ position = Vector2(546.0001, 277.99997)
 scale = Vector2(1.0871409, 3.626345)
 
 [node name="Pause" parent="." instance=ExtResource("1_2rkwj")]
-visible = false
-offset_left = 880.0
-offset_top = -1102.0
-offset_right = 880.0
-offset_bottom = -1102.0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 2540.0
+offset_top = -2980.0
+offset_right = 2540.0
+offset_bottom = -2980.0
+grow_horizontal = 1
+grow_vertical = 1

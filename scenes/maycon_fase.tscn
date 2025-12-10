@@ -344,7 +344,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_sslco")
 }],
-"loop": true,
+"loop": false,
 "name": &"down",
 "speed": 5.0
 }, {
@@ -515,9 +515,7 @@ visibility_layer = 524289
 position = Vector2(5, 14)
 scale = Vector2(0.5641026, 0.6875553)
 sprite_frames = SubResource("SpriteFrames_inrnk")
-animation = &"attack_kick"
-frame = 9
-frame_progress = 1.0
+animation = &"falling_down"
 
 [node name="jump" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("45_ff0lx")
@@ -525,6 +523,11 @@ volume_db = 7.552
 
 [node name="walk" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("46_iwaom")
+parameters/looping = false
+
+[node name="run" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("46_iwaom")
+pitch_scale = 1.06
 parameters/looping = false
 
 [node name="double_jump" type="AudioStreamPlayer2D" parent="."]

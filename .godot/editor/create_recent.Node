@@ -1,3 +1,5 @@
+AnimationPlayer
+AnimatedSprite2D
 Camera2D
 Node
 CollisionShape2D
@@ -6,8 +8,6 @@ GPUParticles2D
 ColorRect
 CanvasLayer
 Label
-AnimationPlayer
-AnimatedSprite2D
 Sprite2D
 Button
 VBoxContainer

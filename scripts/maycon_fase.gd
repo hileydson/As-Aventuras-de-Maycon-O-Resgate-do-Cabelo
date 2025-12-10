@@ -12,14 +12,17 @@ extends CharacterBody2D
 @onready var msg_box: ColorRect = $"../msg_box"
 @onready var explosao_portal: Node2D = $"../explosao_portal"
 @onready var inimigo_seco: Node2D = $"../Inimigo_seco"
+@onready var run: AudioStreamPlayer2D = $run
 
 
 var pausePlayer:bool = false
 var animation_1_gone = false
 
-const SPEED = 500.0
-const JUMP_VELOCITY = -500.0
+const SPEED_DEFAULT = 300.0
+const SPEED_RUN = 500.0
+var SPEED:float = SPEED_DEFAULT
 
+const JUMP_VELOCITY = -500.0
 var DOUBLE_JUMP_COUNT = 0
 var attack = false
 
@@ -53,16 +56,22 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		
-	# attack
+	# attack kick
 	if Input.is_action_pressed("key_w"):
 		if animated_sprite_2d.animation != "attack_punch":
 			punch.play()
 			animated_sprite_2d.play("attack_punch")
 		
+	# attack punch
 	if Input.is_action_pressed("key_q"):
 		if animated_sprite_2d.animation != "attack_kick":
 			kick.play()
 			animated_sprite_2d.play("attack_kick")
+	
+	# down
+	if Input.is_action_pressed("key_down") && !Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right"):
+		if animated_sprite_2d.animation != "key_down":
+			animated_sprite_2d.play("down")
 
 	# handles double jump 
 	double_jump()
@@ -74,9 +83,19 @@ func _physics_process(delta: float) -> void:
 	# ANIMACAO DE ANDAR PROS LADOS	
 	if (Input.is_action_pressed("ui_left") || Input.is_action_pressed("ui_right")) && !Input.is_action_just_pressed("ui_accept"):	
 		if is_on_floor() && animated_sprite_2d.animation != "attack_punch" && animated_sprite_2d.animation != "attack_kick" :
-			if !sound_walk.is_playing():
-				sound_walk.play()
-			animated_sprite_2d.play("right")
+	
+			if Input.is_action_pressed("key_a"):
+				if !run.is_playing():
+					run.play()
+				if SPEED != SPEED_RUN:
+					SPEED = SPEED_RUN
+				animated_sprite_2d.play("run")
+			else:
+				if !sound_walk.is_playing():
+					sound_walk.play()
+				if SPEED != SPEED_DEFAULT:
+					SPEED = SPEED_DEFAULT
+				animated_sprite_2d.play("right")
 
 	#ANIMACAO IDLE
 	#if !Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right") && !Input.is_action_just_pressed("ui_accept")  && !Input.is_action_just_pressed("key_q") && !Input.is_action_just_pressed("key_w") && is_on_floor():		
