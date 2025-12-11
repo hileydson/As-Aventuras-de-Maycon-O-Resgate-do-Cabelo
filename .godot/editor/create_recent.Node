@@ -1,8 +1,9 @@
+Area2D
+CollisionShape2D
 AnimationPlayer
 AnimatedSprite2D
 Camera2D
 Node
-CollisionShape2D
 StaticBody2D
 GPUParticles2D
 ColorRect
@@ -11,4 +12,3 @@ Label
 Sprite2D
 Button
 VBoxContainer
-Area2D

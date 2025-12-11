@@ -16,3 +16,21 @@
 /Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.pdb
 /Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.genruntimeconfig.cache
 /Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/ref/New Game Project.dll
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/bin/Debug/New Game Project.deps.json
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/bin/Debug/New Game Project.runtimeconfig.json
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/bin/Debug/New Game Project.dll
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/bin/Debug/New Game Project.pdb
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/bin/Debug/GodotSharp.dll
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/bin/Debug/GodotSharpEditor.dll
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.csproj.AssemblyReference.cache
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.GeneratedMSBuildEditorConfig.editorconfig
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.AssemblyInfoInputs.cache
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.AssemblyInfo.cs
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.csproj.CoreCompileInputs.cache
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.sourcelink.json
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.csproj.CopyComplete
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.dll
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/refint/New Game Project.dll
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.pdb
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/New Game Project.genruntimeconfig.cache
+/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/Debug/ref/New Game Project.dll

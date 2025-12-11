@@ -5,10 +5,23 @@ extends Sprite2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	#REINICIA AS BATALHAS
+	Global.battle_next_boss = 0
+	Global.battle_next_enemy = 0
 	animacoes.play("maycon_falling")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if !maycon_falling.is_playing() && maycon_falling.animation != "on_gound":
-		maycon_falling.play("on_gound")
+	print(Global.battle_next_enemy)
+	#if !maycon_falling.is_playing() && maycon_falling.animation != "on_gound":
+	#maycon_falling.play("on_gound")
+
+
+func _on_area_2d_body_entered(body: Node2D) -> void:
+	# go to the next scene
+	pass
+
+
+func _on_dead_line_body_entered(body: Node2D) -> void:
+	get_tree().reload_current_scene()

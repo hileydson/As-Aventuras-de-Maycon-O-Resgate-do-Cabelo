@@ -532,6 +532,7 @@ parameters/looping = false
 
 [node name="double_jump" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("47_abf4a")
+volume_db = -5.368
 
 [node name="Kick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("48_280p7")

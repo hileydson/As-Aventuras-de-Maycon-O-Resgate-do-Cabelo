@@ -22,7 +22,7 @@ const SPEED_DEFAULT = 300.0
 const SPEED_RUN = 500.0
 var SPEED:float = SPEED_DEFAULT
 
-const JUMP_VELOCITY = -500.0
+const JUMP_VELOCITY = -400.0
 var DOUBLE_JUMP_COUNT = 0
 var attack = false
 
@@ -47,6 +47,9 @@ func double_jump()->void:
 		DOUBLE_JUMP_COUNT = 0
 		
 func _physics_process(delta: float) -> void:
+	
+	if get_node(".").visible == false:
+		return
 	
 	if pausePlayer == true:
 		animated_sprite_2d.play("idle_right")
