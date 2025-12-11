@@ -265,43 +265,43 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_cdphi")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_5d04k")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_433yh")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_t4ar0")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_t5yjq")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_4mdqo")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_7lgpm")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_4mdqo")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_t5yjq")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_433yh")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_t4ar0")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_5d04k")
 }, {
-"duration": 0.31,
+"duration": 0.21,
 "texture": SubResource("AtlasTexture_cdphi")
 }],
 "loop": false,
@@ -515,7 +515,7 @@ visibility_layer = 524289
 position = Vector2(5, 14)
 scale = Vector2(0.5641026, 0.6875553)
 sprite_frames = SubResource("SpriteFrames_inrnk")
-animation = &"falling_down"
+animation = &"attack_punch"
 
 [node name="jump" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("45_ff0lx")

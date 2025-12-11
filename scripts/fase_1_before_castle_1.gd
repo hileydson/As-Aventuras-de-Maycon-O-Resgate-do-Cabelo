@@ -18,9 +18,8 @@ func _process(delta: float) -> void:
 	#maycon_falling.play("on_gound")
 
 
-func _on_area_2d_body_entered(body: Node2D) -> void:
-	# go to the next scene
-	pass
+func _on_next_scene_body_entered(body: Node2D) -> void:
+	print("next scene")
 
 
 func _on_dead_line_body_entered(body: Node2D) -> void:

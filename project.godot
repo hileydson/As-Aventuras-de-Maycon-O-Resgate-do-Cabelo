@@ -25,7 +25,6 @@ DefaultTransitionFadeOut="*res://scenes/default_transition_fade_out.tscn"
 
 [display]
 
-window/size/mode=2
 window/stretch/mode="viewport"
 
 [dotnet]

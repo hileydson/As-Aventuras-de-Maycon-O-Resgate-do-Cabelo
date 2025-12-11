@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "xnDAo3PvG9AFIim76CbpZWhxGi5L+Y4JXePlv5KCmZGVgHLpCQSeMgJl/NaOYRIlCN9ggKl1owtjEfdxb64Ryg==",
+  "dgSpecHash": "URb8z+Lz8vE=",
   "success": true,
-  "projectFilePath": "/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
+  "projectFilePath": "/Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
   "expectedPackageFiles": [
-    "/home/javaboy/.nuget/packages/godot.sourcegenerators/4.5.1/godot.sourcegenerators.4.5.1.nupkg.sha512",
-    "/home/javaboy/.nuget/packages/godotsharp/4.5.1/godotsharp.4.5.1.nupkg.sha512",
-    "/home/javaboy/.nuget/packages/godotsharpeditor/4.5.1/godotsharpeditor.4.5.1.nupkg.sha512"
+    "/Users/hileydsonluizcogo/.nuget/packages/godot.sourcegenerators/4.5.1/godot.sourcegenerators.4.5.1.nupkg.sha512",
+    "/Users/hileydsonluizcogo/.nuget/packages/godotsharp/4.5.1/godotsharp.4.5.1.nupkg.sha512",
+    "/Users/hileydsonluizcogo/.nuget/packages/godotsharpeditor/4.5.1/godotsharpeditor.4.5.1.nupkg.sha512"
   ],
   "logs": []
 }

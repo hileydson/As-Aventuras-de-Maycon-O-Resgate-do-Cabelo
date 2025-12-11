@@ -88,19 +88,19 @@
     ]
   },
   "packageFolders": {
-    "/home/javaboy/.nuget/packages/": {}
+    "/Users/hileydsonluizcogo/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
+      "projectUniqueName": "/Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
       "projectName": "New Game Project",
-      "projectPath": "/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
-      "packagesPath": "/home/javaboy/.nuget/packages/",
-      "outputPath": "/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/",
+      "projectPath": "/Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
+      "packagesPath": "/Users/hileydsonluizcogo/.nuget/packages/",
+      "outputPath": "/Users/hileydsonluizcogo/Documents/Development/Games/Studies Projects/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/javaboy/.nuget/NuGet/NuGet.Config"
+        "/Users/hileydsonluizcogo/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -118,6 +118,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -156,7 +161,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.122/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.416/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
