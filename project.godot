@@ -21,7 +21,7 @@ config/icon="res://icon.svg"
 
 Global="*res://scripts/Global.gd"
 DefaultTransition="res://scenes/default_transition_fade_in.tscn"
-DefaultTransitionFadeOut="*res://scenes/default_transition_fade_out.tscn"
+DefaultTransitionFadeOut="res://scenes/default_transition_fade_out.tscn"
 
 [display]
 

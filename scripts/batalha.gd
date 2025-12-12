@@ -7,6 +7,7 @@ extends AnimationPlayer
 @onready var battle_song: AudioStreamPlayer2D = $"../Battle_Song"
 @onready var victory_sound: AudioStreamPlayer2D = $"../victory_sound"
 @onready var destroy: GPUParticles2D = $"../../Inimigos/destroy"
+@onready var camera: Camera2D = $"../Camera2D"
 
 @onready var batalha_moves: AnimationPlayer = $"../batalha_moves"
 @onready var peido: AudioStreamPlayer = $"../Peido"
@@ -73,6 +74,10 @@ func victory()->void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	#set_process_mode(Node.PROCESS_MODE_ALWAYS)
+	#get_tree().paused = true
+	
 	maycon_batalha.play("float")
 	maycon_batalha_default.play("idle")
 	battle_song.play()
@@ -83,7 +88,8 @@ func _process(delta: float) -> void:
 	
 	# PLOTAR INIMIGO EM BATALHA
 	if Global.battle_next_enemy != 0:
-		pass
+		if !camera.is_current():
+			camera.make_current()
 	elif Global.battle_next_boss != 0:
 		pass
 		

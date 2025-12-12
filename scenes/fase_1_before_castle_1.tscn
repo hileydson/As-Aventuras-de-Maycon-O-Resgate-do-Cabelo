@@ -255,9 +255,9 @@ limit_top = 0
 limit_right = 3175
 limit_bottom = 1355
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="next_scene" type="Area2D" parent="."]
 
-[node name="next_scene" type="CollisionShape2D" parent="Area2D"]
+[node name="next" type="CollisionShape2D" parent="next_scene"]
 position = Vector2(3172.9998, 936)
 scale = Vector2(1.6799976, 1.8000007)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
@@ -315,5 +315,5 @@ offset_bottom = -2980.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[connection signal="body_entered" from="Area2D" to="Fase1BeforeCastle1" method="_on_area_2d_body_entered"]
+[connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle1" method="_on_area_2d_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle1" method="_on_dead_line_body_entered"]
