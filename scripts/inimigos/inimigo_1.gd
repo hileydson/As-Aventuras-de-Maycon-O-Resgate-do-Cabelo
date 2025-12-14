@@ -27,11 +27,7 @@ func resetEnemy() -> void:
 	damage_taken = 0
 	dead = false
 	me.play()
-	hp_1.visible = true
-	hp_2.visible = true
-	hp_3.visible = true
-	hp_4.visible = true
-	hp_5.visible = true
+
 		
 func _ready() -> void:
 	pass #add_child(timer_enemy_attack)
