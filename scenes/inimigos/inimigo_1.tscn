@@ -1,11 +1,10 @@
-[gd_scene load_steps=34 format=3 uid="uid://b2fnhp1t55rgx"]
+[gd_scene load_steps=33 format=3 uid="uid://b2fnhp1t55rgx"]
 
 [ext_resource type="Texture2D" uid="uid://dy68ub0j0tjr0" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Attack.png" id="1_x2dcs"]
 [ext_resource type="Texture2D" uid="uid://dqh0d7dpr4cri" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Idle.png" id="2_b54id"]
 [ext_resource type="Texture2D" uid="uid://cv1ilxfy1dknm" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Protection.png" id="3_v1kdt"]
 [ext_resource type="Script" uid="uid://d2r8xp10cjxfn" path="res://scripts/inimigos/inimigo_1.gd" id="4_as53n"]
 [ext_resource type="Texture2D" uid="uid://dqff4eihc6rqp" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Arrow.png" id="5_o7dca"]
-[ext_resource type="Script" uid="uid://csulfa0erpj1l" path="res://scripts/inimigos/inimigo_1_collision_to_maycon.gd" id="6_rcu5f"]
 [ext_resource type="Texture2D" uid="uid://2meppcw1h507" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png" id="7_bhkq2"]
 [ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="8_b6gjk"]
 [ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="9_pgfld"]
@@ -318,8 +317,8 @@ process_material = SubResource("ParticleProcessMaterial_0iu54")
 visibility_layer = 524289
 position = Vector2(-0.0018712934, -0.00029592845)
 scale = Vector2(8.432788e-05, 1.0113322e-05)
-collision_layer = 524289
-collision_mask = 524289
+collision_layer = 524290
+collision_mask = 524290
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="inimigo_1/attack_power/Area2D"]
 visibility_layer = 524289
@@ -335,7 +334,6 @@ material = SubResource("CanvasItemMaterial_thmk5")
 position = Vector2(35033916, 11732091)
 scale = Vector2(5884276, 5267810)
 shape = SubResource("CircleShape2D_o4i3j")
-script = ExtResource("6_rcu5f")
 
 [node name="hp_1" type="Sprite2D" parent="inimigo_1"]
 position = Vector2(12.910957, 71.60142)

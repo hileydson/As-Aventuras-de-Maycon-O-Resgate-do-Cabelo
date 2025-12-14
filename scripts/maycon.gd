@@ -13,7 +13,6 @@ extends CharacterBody2D
 @onready var explosao_portal: Node2D = $"../explosao_portal"
 @onready var inimigo_seco: Node2D = $"../Inimigo_seco"
 
-
 var pausePlayer:bool = false
 var animation_1_gone = false
 
@@ -22,8 +21,6 @@ const JUMP_VELOCITY = -400.0
 
 var DOUBLE_JUMP_COUNT = 0
 var attack = false
-
-
 
 func jump()->void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():

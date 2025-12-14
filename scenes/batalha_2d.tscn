@@ -1,6 +1,7 @@
-[gd_scene load_steps=180 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=181 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
+[ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="1_6exdr"]
 [ext_resource type="Texture2D" uid="uid://cncmj1g2w8obr" path="res://assets/novas_imagens/cenarios/fantasy-2d-battlegrounds/Battleground3/Bright/Battleground3.png" id="1_6uljp"]
 [ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="1_evw7u"]
 [ext_resource type="Texture2D" uid="uid://dbicvg8ismuhi" path="res://assets/novas_imagens/maycon/jamelao_float_1.png" id="2_j15j5"]
@@ -60,7 +61,6 @@
 [ext_resource type="Texture2D" uid="uid://cv1ilxfy1dknm" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Protection.png" id="49_d6oll"]
 [ext_resource type="Texture2D" uid="uid://dqff4eihc6rqp" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Arrow.png" id="53_3out6"]
 [ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="54_4212h"]
-[ext_resource type="Script" uid="uid://csulfa0erpj1l" path="res://scripts/inimigos/inimigo_1_collision_to_maycon.gd" id="54_wo4yk"]
 [ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="55_3out6"]
 [ext_resource type="Texture2D" uid="uid://1fkfqqihfhgs" path="res://assets/novas_imagens/effects/Explosion/4.png" id="60_oqd0s"]
 [ext_resource type="Shader" uid="uid://b1m2oe2d5u8fc" path="res://scenes/batalha_2d.gdshader" id="62_0sh2x"]
@@ -68,6 +68,7 @@
 
 [sub_resource type="SystemFont" id="SystemFont_pvxjk"]
 font_italic = true
+subpixel_positioning = 0
 
 [sub_resource type="LabelSettings" id="LabelSettings_d6oll"]
 font = SubResource("SystemFont_pvxjk")
@@ -407,6 +408,20 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../PassosAreia")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.033333335),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_jvqq8"]
@@ -952,6 +967,20 @@ animations = [{
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_yn2t1"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6exdr"]
+
+[sub_resource type="GDScript" id="GDScript_yn2t1"]
+script/source = "extends CollisionShape2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
 
 [sub_resource type="Animation" id="Animation_oqd0s"]
 length = 0.001
@@ -1571,6 +1600,10 @@ position = Vector2(580, 318)
 
 [node name="Cenario de batalha" type="Node2D" parent="."]
 
+[node name="Explosao" type="AudioStreamPlayer" parent="Cenario de batalha"]
+stream = ExtResource("1_6exdr")
+volume_db = -7.61
+
 [node name="victory_label" type="Label" parent="Cenario de batalha"]
 visible = false
 z_index = 1
@@ -1601,7 +1634,6 @@ root_node = NodePath("../maycon_batalha")
 libraries = {
 &"": SubResource("AnimationLibrary_2117e")
 }
-autoplay = "move_to_middle"
 script = ExtResource("1_3ps70")
 
 [node name="Battleground3" type="Sprite2D" parent="Cenario de batalha"]
@@ -1629,6 +1661,7 @@ pitch_scale = 3.5
 
 [node name="HurtSound" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("7_6fm5e")
+volume_db = -8.878
 
 [node name="maycon_batalha_default" type="AnimatedSprite2D" parent="Cenario de batalha"]
 visible = false
@@ -1664,7 +1697,8 @@ scale = Vector2(3.6918721, 3.6438017)
 visibility_layer = 524289
 position = Vector2(-303, -14)
 scale = Vector2(2.8415334, 2.76858)
-collision_mask = 524289
+collision_layer = 512
+collision_mask = 512
 
 [node name="destroy_maycon" type="GPUParticles2D" parent="Cenario de batalha/Maycon"]
 visible = false
@@ -1678,7 +1712,6 @@ process_material = SubResource("ParticleProcessMaterial_h88qw")
 stream = ExtResource("17_0qud2")
 volume_db = -4.77
 pitch_scale = 2.81
-autoplay = true
 
 [node name="victory_sound" type="AudioStreamPlayer2D" parent="Cenario de batalha"]
 stream = ExtResource("46_b4w2m")
@@ -1811,19 +1844,27 @@ wait_time = 10.0
 wait_time = 8.0
 
 [node name="StaticBody2D" type="StaticBody2D" parent="Cenario de batalha"]
+light_mask = 512
+visibility_layer = 512
+collision_layer = 512
+collision_mask = 512
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Cenario de batalha/StaticBody2D"]
+light_mask = 512
+visibility_layer = 512
 position = Vector2(-218, 169)
 scale = Vector2(2.455237, 4.1227045)
 shape = SubResource("WorldBoundaryShape2D_7ch20")
 
 [node name="Inimigos" type="Node2D" parent="."]
+process_mode = 1
 script = ExtResource("46_x11r3")
 
 [node name="comum" type="Node2D" parent="Inimigos"]
 
 [node name="inimigo_1" type="AnimatedSprite2D" parent="Inimigos/comum"]
-visibility_layer = 2
+light_mask = 512
+visibility_layer = 512
 position = Vector2(326, 11)
 rotation = 3.1415925
 scale = Vector2(2.4785156, -2.255542)
@@ -1845,11 +1886,12 @@ one_shot = true
 process_material = SubResource("ParticleProcessMaterial_wo4yk")
 
 [node name="Area2D" type="Area2D" parent="Inimigos/comum/inimigo_1/attack_power"]
-visibility_layer = 524289
+light_mask = 513
+visibility_layer = 524801
 position = Vector2(-0.0018712934, -0.00029592845)
 scale = Vector2(8.432788e-05, 1.0113322e-05)
-collision_layer = 524289
-collision_mask = 524289
+collision_layer = 512
+collision_mask = 512
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Inimigos/comum/inimigo_1/attack_power/Area2D"]
 visibility_layer = 524289
@@ -1865,7 +1907,7 @@ material = SubResource("CanvasItemMaterial_yn2t1")
 position = Vector2(35033916, 11732091)
 scale = Vector2(5884276, 5267810)
 shape = SubResource("CircleShape2D_6exdr")
-script = ExtResource("54_wo4yk")
+script = SubResource("GDScript_yn2t1")
 
 [node name="hp_1" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
 position = Vector2(12.910957, 71.60142)
@@ -1906,7 +1948,6 @@ pitch_scale = 1.48
 
 [node name="Timer_enemy_attack" type="Timer" parent="Inimigos/comum/inimigo_1"]
 wait_time = 3.59
-autostart = true
 
 [node name="inimigo_1_animation_attack" type="AnimationPlayer" parent="Inimigos/comum/inimigo_1"]
 libraries = {
@@ -1924,13 +1965,11 @@ amount = 50
 process_material = SubResource("ParticleProcessMaterial_h88qw")
 
 [node name="inicio_batalha" type="AnimatedSprite2D" parent="."]
+auto_translate_mode = 2
 position = Vector2(-22, -27)
 scale = Vector2(7.5515676, 7.1260457)
 sprite_frames = SubResource("SpriteFrames_qqwl7")
 animation = &"inicio"
-autoplay = "inicio"
-frame = 63
-frame_progress = 1.0
 
 [node name="EfeitoVidroCanvas" type="CanvasLayer" parent="."]
 script = ExtResource("62_h2e1h")

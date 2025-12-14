@@ -155,20 +155,22 @@ func control_defense_jump() -> void:
 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
-	hp_count = hp_count+1
 	
-	#if hp_count == 1:
-		#hp_4.get_node("hp").play("explotion")
-	if hp_count == 1:
-		hp_3.get_node("hp").play("explotion")
-	if hp_count == 2:
-		hp_2.get_node("hp").play("explotion")
-	if hp_count == 3:
-		hp_1.get_node("hp").play("explotion")
-		batalha_moves.died = true
-	
-	hurt_sound.play()
-	maycon_batalha.play("damage")
-	await get_tree().create_timer(0.4).timeout
-	maycon_batalha.play("idle_right")
+	if Global.battle_started:
+		hp_count = hp_count+1
+		
+		#if hp_count == 1:
+			#hp_4.get_node("hp").play("explotion")
+		if hp_count == 1:
+			hp_3.get_node("hp").play("explotion")
+		if hp_count == 2:
+			hp_2.get_node("hp").play("explotion")
+		if hp_count == 3:
+			hp_1.get_node("hp").play("explotion")
+			batalha_moves.died = true
+		
+		hurt_sound.play()
+		maycon_batalha.play("damage")
+		await get_tree().create_timer(0.4).timeout
+		maycon_batalha.play("idle_right")
 	

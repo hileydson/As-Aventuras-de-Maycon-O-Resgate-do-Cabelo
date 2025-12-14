@@ -7,26 +7,34 @@ extends AnimatedSprite2D
 @onready var hp_5: Sprite2D = $hp_5
 @onready var ds_pain: AudioStreamPlayer = $"../../../Cenario de batalha/DsPain"
 @onready var passos_areia: AudioStreamPlayer = $"../../../Cenario de batalha/PassosAreia"
+@onready var inimigos: Node = $"../.."
 
-@onready var inimigos: Node2D = $"../.."
 @onready var batalha_moves: AnimationPlayer = $"../../../Cenario de batalha/batalha_moves"
 @onready var me: AnimatedSprite2D = $"."
 @onready var maycon: CharacterBody2D = $"../../../Cenario de batalha/Maycon"
 @onready var timer_enemy_attack: Timer = $Timer_enemy_attack
 @onready var inimigo_1_animation_attack: AnimationPlayer = $inimigo_1_animation_attack
 
+var count_play_inicio = 0
+var em_batalha = false
 var damage_limit_to_drop_hp:int = 1
 var damage_taken:int = 0
 	
 func _ready() -> void:
-	add_child(timer_enemy_attack)
+	pass #add_child(timer_enemy_attack)
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:	
 	
-	if batalha_moves == null:
-		return
+	em_batalha = (batalha_moves != null)
 	
+	if em_batalha == false:
+		return
+	elif count_play_inicio == 0:
+		if Global.battle_started == true:
+			timer_enemy_attack.start()
+			count_play_inicio = count_play_inicio+1
+		
 	if batalha_moves.enemy_hurt == true:
 		me.play("pain")
 	elif me.animation_finished && !me.is_playing():

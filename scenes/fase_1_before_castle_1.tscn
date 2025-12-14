@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://d3cev6uiwwro4"]
+[gd_scene load_steps=27 format=3 uid="uid://d3cev6uiwwro4"]
 
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
 [ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://c1spheypet4fo" path="res://scripts/fase_1_before_castle_1.gd" id="2_rh75j"]
 [ext_resource type="Texture2D" uid="uid://bs67ndmklpp1b" path="res://assets/novas_imagens/maycon/maycon_falling.png" id="3_pg6gg"]
 [ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="4_7je0d"]
+[ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="6_36c4s"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -37,22 +38,10 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("maycon_fase:visible")
+tracks/2/path = NodePath("maycon_falling:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("maycon_falling:visible")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -93,7 +82,7 @@ tracks/2/path = NodePath("maycon_fase:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.06666667, 2.7666667),
+"times": PackedFloat32Array(0.06666667, 2.8),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
@@ -210,6 +199,7 @@ animations = [{
 normal = Vector2(-1, 0)
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7je0d"]
+distance = -60.52633
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
 size = Vector2(548, 178)
@@ -224,8 +214,10 @@ size = Vector2(339, 178)
 normal = Vector2(1, 0)
 
 [node name="Node2D" type="Node2D"]
+process_mode = 1
 
 [node name="Fase1BeforeCastle1" type="Sprite2D" parent="."]
+process_mode = 1
 position = Vector2(1586, 683)
 texture = ExtResource("1_l74ae")
 script = ExtResource("2_rh75j")
@@ -243,8 +235,10 @@ animation = &"on_gound"
 
 [node name="maycon_fase" parent="Fase1BeforeCastle1" instance=ExtResource("2_7je0d")]
 visible = false
-position = Vector2(-1468, 175.99982)
+position = Vector2(-1469, 169)
 scale = Vector2(2.7735984, 2.5222125)
+collision_layer = 524288
+collision_mask = 524288
 
 [node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle1/maycon_fase"]
 position = Vector2(11.542603, 0.47611237)
@@ -255,6 +249,12 @@ limit_top = 0
 limit_right = 3175
 limit_bottom = 1355
 
+[node name="Inimigos" type="Node" parent="Fase1BeforeCastle1"]
+
+[node name="Inimigo1" parent="Fase1BeforeCastle1/Inimigos" instance=ExtResource("2_hnmna")]
+position = Vector2(648, 845)
+scale = Vector2(1.0896726, 1.1370456)
+
 [node name="next_scene" type="Area2D" parent="."]
 
 [node name="next" type="CollisionShape2D" parent="next_scene"]
@@ -263,16 +263,26 @@ scale = Vector2(1.6799976, 1.8000007)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 
 [node name="dead_line" type="Area2D" parent="."]
+light_mask = 524289
+visibility_layer = 524289
+collision_layer = 524289
+collision_mask = 524289
 
 [node name="dead" type="CollisionShape2D" parent="dead_line"]
-position = Vector2(1428.9998, 2115)
+light_mask = 524289
+visibility_layer = 524289
+position = Vector2(1442, 1268)
 scale = Vector2(13.518565, 10.061738)
 shape = SubResource("WorldBoundaryShape2D_7je0d")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 524291
+collision_mask = 524291
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 process_mode = 4
+light_mask = 524289
+visibility_layer = 524289
 position = Vector2(278, 1138)
 shape = SubResource("RectangleShape2D_hnmna")
 
@@ -294,11 +304,8 @@ position = Vector2(-5.0000153, 886)
 scale = Vector2(3.3999994, 5.44)
 shape = SubResource("WorldBoundaryShape2D_36c4s")
 
-[node name="Inimigo1" parent="." instance=ExtResource("2_hnmna")]
-position = Vector2(648, 845)
-scale = Vector2(1.0896726, 1.1370456)
-
-[node name="Inimigos" type="Node" parent="."]
+[node name="battle" parent="." instance=ExtResource("6_36c4s")]
+position = Vector2(-1634, -1127)
 
 [node name="fade" parent="." instance=ExtResource("4_7je0d")]
 position = Vector2(546.0001, 277.99997)
@@ -308,10 +315,10 @@ scale = Vector2(1.0871409, 3.626345)
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
-offset_left = 2540.0
-offset_top = -2980.0
-offset_right = 2540.0
-offset_bottom = -2980.0
+offset_left = 866.0
+offset_top = -1283.0
+offset_right = 866.0
+offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
 

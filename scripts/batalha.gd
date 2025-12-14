@@ -7,7 +7,7 @@ extends AnimationPlayer
 @onready var battle_song: AudioStreamPlayer2D = $"../Battle_Song"
 @onready var victory_sound: AudioStreamPlayer2D = $"../victory_sound"
 @onready var destroy: GPUParticles2D = $"../../Inimigos/destroy"
-@onready var camera: Camera2D = $"../Camera2D"
+@onready var camera_maycon: Camera2D = $"../Camera2D"
 
 @onready var batalha_moves: AnimationPlayer = $"../batalha_moves"
 @onready var peido: AudioStreamPlayer = $"../Peido"
@@ -26,6 +26,8 @@ extends AnimationPlayer
 
 @onready var destroy_maycon: GPUParticles2D = $"../Maycon/destroy_maycon"
 @onready var fade: Node2D = $"../fade"
+@onready var inicio_batalha: AnimatedSprite2D = $"../../inicio_batalha"
+@onready var explosao: AudioStreamPlayer = $"../Explosao"
 
 
 var power_limit_reached:bool = false
@@ -72,26 +74,44 @@ func victory()->void:
 		battle_finished = true
 
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	
-	#set_process_mode(Node.PROCESS_MODE_ALWAYS)
+func play_inicio()->void:
 	#get_tree().paused = true
 	
+	set_process_mode(Node.PROCESS_MODE_ALWAYS)
+	fade.get_node("Transition").play("fade_in")
+	camera_maycon.make_current()
+	
+	#get_tree().reload_current_scene()
+	explosao.play()
+	inicio_batalha.play("inicio")
 	maycon_batalha.play("float")
 	maycon_batalha_default.play("idle")
 	battle_song.play()
+	batalha_moves.play("move_to_middle")
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	
+	pass
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	print(Global.battle_next_enemy)
 	# PLOTAR INIMIGO EM BATALHA
 	if Global.battle_next_enemy != 0:
-		if !camera.is_current():
-			camera.make_current()
+		play_inicio()
+		Global.battle_next_enemy = 0
+		Global.battle_started = true
+		
 	elif Global.battle_next_boss != 0:
-		pass
+		play_inicio()
+		Global.battle_next_boss = 0
+		Global.battle_started = true
+		
+	if Global.battle_started == false:
+		return
 		
 	if died:
 		maycon_died()
