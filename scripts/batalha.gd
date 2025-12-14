@@ -90,6 +90,7 @@ func victory()->void:
 func play_inicio()->void:
 	
 	get_tree().paused = true
+	await get_tree().create_timer(0.8).timeout
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)
 	fade.get_node("Transition").play("fade_in")
 	camera_maycon.make_current()

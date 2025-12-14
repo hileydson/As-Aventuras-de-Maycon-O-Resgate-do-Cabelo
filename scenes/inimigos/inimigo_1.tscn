@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://b2fnhp1t55rgx"]
+[gd_scene load_steps=34 format=3 uid="uid://b2fnhp1t55rgx"]
 
 [ext_resource type="Texture2D" uid="uid://dy68ub0j0tjr0" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Attack.png" id="1_x2dcs"]
 [ext_resource type="Texture2D" uid="uid://dqh0d7dpr4cri" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Idle.png" id="2_b54id"]
@@ -131,6 +131,8 @@ animations = [{
 "name": &"pain",
 "speed": 5.0
 }]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ufy61"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0iu54"]
 lifetime_randomness = 0.51
@@ -306,20 +308,29 @@ animation = &"attack"
 autoplay = "idle"
 script = ExtResource("4_as53n")
 
+[node name="to_battle" type="Area2D" parent="inimigo_1"]
+position = Vector2(-5.245075, 28.374556)
+scale = Vector2(0.90813684, -3.486143)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="inimigo_1/to_battle"]
+shape = SubResource("RectangleShape2D_ufy61")
+
 [node name="attack_power" type="GPUParticles2D" parent="inimigo_1"]
 visible = false
-visibility_layer = 524289
+light_mask = 512
+visibility_layer = 512
 position = Vector2(22.190712, 29.261255)
 scale = Vector2(0.004370174, 0.007473256)
 amount = 15
 process_material = SubResource("ParticleProcessMaterial_0iu54")
 
 [node name="Area2D" type="Area2D" parent="inimigo_1/attack_power"]
-visibility_layer = 524289
+light_mask = 513
+visibility_layer = 524801
 position = Vector2(-0.0018712934, -0.00029592845)
 scale = Vector2(8.432788e-05, 1.0113322e-05)
-collision_layer = 513
-collision_mask = 513
+collision_layer = 512
+collision_mask = 512
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="inimigo_1/attack_power/Area2D"]
 visibility_layer = 524289
@@ -384,5 +395,5 @@ libraries = {
 }
 
 [connection signal="animation_finished" from="inimigo_1" to="inimigo_1" method="_on_animation_finished"]
-[connection signal="body_entered" from="inimigo_1/attack_power/Area2D" to="inimigo_1" method="_on_area_2d_body_entered"]
+[connection signal="body_entered" from="inimigo_1/to_battle" to="inimigo_1" method="_on_to_battle_body_entered"]
 [connection signal="timeout" from="inimigo_1/Timer_enemy_attack" to="inimigo_1" method="_on_timer_enemy_attack_timeout"]
