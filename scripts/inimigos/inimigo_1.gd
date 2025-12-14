@@ -19,14 +19,27 @@ var count_play_inicio = 0
 var em_batalha = false
 var damage_limit_to_drop_hp:int = 1
 var damage_taken:int = 0
+var dead:bool = false
 	
+	
+func resetEnemy() -> void:
+	count_play_inicio = 0
+	damage_taken = 0
+	dead = false
+	me.play()
+	hp_1.visible = true
+	hp_2.visible = true
+	hp_3.visible = true
+	hp_4.visible = true
+	hp_5.visible = true
+		
 func _ready() -> void:
 	pass #add_child(timer_enemy_attack)
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:	
 	
-	em_batalha = (batalha_moves != null)
+	em_batalha = (batalha_moves != null) && !dead
 	
 	if em_batalha == false:
 		return
@@ -54,6 +67,8 @@ func _process(delta: float) -> void:
 	if damage_taken >= 5:
 		me.stop()
 		batalha_moves.victory()
+		dead=true
+		timer_enemy_attack.stop()
 	
 	
 func _on_timer_enemy_attack_timeout() -> void:

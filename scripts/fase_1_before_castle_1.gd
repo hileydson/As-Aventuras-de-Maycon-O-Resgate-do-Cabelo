@@ -2,7 +2,7 @@ extends Sprite2D
 
 @onready var animacoes: AnimationPlayer = $animacoes
 @onready var maycon_falling: AnimatedSprite2D = $maycon_falling
-@onready var camera: Camera2D = $maycon_fase/camera_maycon
+@onready var camera: Camera2D = $maycon_fase/Camera2D
 
 #var battle = preload("res://scenes/batalha_2d.tscn")
 
@@ -18,12 +18,18 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	
 	#pra VOLTAR
+	if Global.back_to_main_camera:
+		Global.back_to_main_camera = false
+		camera.make_current()
+		
+	
 	if Global.battle_next_enemy == 0 && 1==2 :#battle.get_state():
 		pass#if !camera.is_current():
 			#camera.make_current()
 	
 	if Global.battle_next_enemy != 0:
-		print(Global.battle_next_enemy)
+		pass 
+		#print(Global.battle_next_enemy)
 		#Global.battle_next_enemy = 0
 		#filePath.insta
 		#Batalha2d.instanci

@@ -8,6 +8,7 @@ extends AnimationPlayer
 @onready var victory_sound: AudioStreamPlayer2D = $"../victory_sound"
 @onready var destroy: GPUParticles2D = $"../../Inimigos/destroy"
 @onready var camera_maycon: Camera2D = $"../Camera2D"
+@onready var inimigo_1: Node2D = $"../../../Fase1BeforeCastle1/Inimigos/Inimigo1"
 
 @onready var batalha_moves: AnimationPlayer = $"../batalha_moves"
 @onready var peido: AudioStreamPlayer = $"../Peido"
@@ -68,15 +69,27 @@ func victory()->void:
 	battle_song.stop()
 	victory_label.visible = true
 	
-	if battle_finished==false:
-		ds_pain.play()
-		victory_sound.play()
-		battle_finished = true
+	ds_pain.play()
+	victory_sound.play()
+	
+	await get_tree().create_timer(2.0).timeout
+	fade.get_node("Transition").play("fade_out")
+	await get_tree().create_timer(2.0).timeout
+	victory_label.visible = false
+	you_died_label.visible = false
+	Global.back_to_main_camera = true
+	get_tree().paused = false
+	victory_sound.stop()
+	destroy.visible = false
+	
+	#await get_tree().create_timer(1.0).timeout
+	
+	
 
 
 func play_inicio()->void:
-	#get_tree().paused = true
 	
+	get_tree().paused = true
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)
 	fade.get_node("Transition").play("fade_in")
 	camera_maycon.make_current()
@@ -88,6 +101,23 @@ func play_inicio()->void:
 	maycon_batalha_default.play("idle")
 	battle_song.play()
 	batalha_moves.play("move_to_middle")
+	
+	#reset
+	power_count = 0
+	battle_finished = false
+	enemy_hurt = false
+	enemy_attacking = false
+	
+	#reset do maycon defense tb
+	maycon.defense_limit_reached = false
+	maycon.defense_count = 0
+	maycon.defense_count = 0
+	maycon.hp_limit_reached = false
+	maycon.hp_count = 0 
+	
+	#TODO: PENSAR EM OUTRA FORMA DINAMICA
+	inimigo_1.get_node("inimigo_1").resetEnemy()
+	
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -98,7 +128,6 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	print(Global.battle_next_enemy)
 	# PLOTAR INIMIGO EM BATALHA
 	if Global.battle_next_enemy != 0:
 		play_inicio()

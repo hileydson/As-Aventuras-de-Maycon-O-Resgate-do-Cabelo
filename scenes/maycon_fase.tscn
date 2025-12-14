@@ -501,13 +501,15 @@ animations = [{
 
 [node name="Maycon" type="CharacterBody2D"]
 process_mode = 1
-visibility_layer = 524289
-collision_layer = 524289
-collision_mask = 524289
+light_mask = 513
+visibility_layer = 524801
+collision_layer = 524801
+collision_mask = 524801
 script = ExtResource("1_ju0dp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visibility_layer = 524289
+light_mask = 513
+visibility_layer = 524801
 position = Vector2(5, 27)
 shape = SubResource("CapsuleShape2D_yi2kj")
 

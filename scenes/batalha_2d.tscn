@@ -1596,9 +1596,11 @@ scale_max = 5.0
 color = Color(0.73098874, 0.02439873, 0.39386588, 0.19215687)
 
 [node name="Node2D" type="Node2D"]
+process_mode = 3
 position = Vector2(580, 318)
 
 [node name="Cenario de batalha" type="Node2D" parent="."]
+process_mode = 3
 
 [node name="Explosao" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("1_6exdr")
@@ -1694,7 +1696,8 @@ rotation = 3.1415925
 scale = Vector2(3.6918721, 3.6438017)
 
 [node name="Maycon" parent="Cenario de batalha" instance=ExtResource("35_gbqun")]
-visibility_layer = 524289
+light_mask = 512
+visibility_layer = 512
 position = Vector2(-303, -14)
 scale = Vector2(2.8415334, 2.76858)
 collision_layer = 512
@@ -1844,20 +1847,20 @@ wait_time = 10.0
 wait_time = 8.0
 
 [node name="StaticBody2D" type="StaticBody2D" parent="Cenario de batalha"]
-light_mask = 512
-visibility_layer = 512
+light_mask = 0
+visibility_layer = 0
 collision_layer = 512
-collision_mask = 512
+collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Cenario de batalha/StaticBody2D"]
-light_mask = 512
-visibility_layer = 512
+light_mask = 0
+visibility_layer = 0
 position = Vector2(-218, 169)
 scale = Vector2(2.455237, 4.1227045)
 shape = SubResource("WorldBoundaryShape2D_7ch20")
 
 [node name="Inimigos" type="Node2D" parent="."]
-process_mode = 1
+process_mode = 3
 script = ExtResource("46_x11r3")
 
 [node name="comum" type="Node2D" parent="Inimigos"]
@@ -1886,8 +1889,8 @@ one_shot = true
 process_material = SubResource("ParticleProcessMaterial_wo4yk")
 
 [node name="Area2D" type="Area2D" parent="Inimigos/comum/inimigo_1/attack_power"]
-light_mask = 513
-visibility_layer = 524801
+light_mask = 512
+visibility_layer = 512
 position = Vector2(-0.0018712934, -0.00029592845)
 scale = Vector2(8.432788e-05, 1.0113322e-05)
 collision_layer = 512
@@ -1902,7 +1905,8 @@ autoplay = "default"
 flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Inimigos/comum/inimigo_1/attack_power/Area2D"]
-visibility_layer = 524289
+light_mask = 512
+visibility_layer = 512
 material = SubResource("CanvasItemMaterial_yn2t1")
 position = Vector2(35033916, 11732091)
 scale = Vector2(5884276, 5267810)
@@ -1965,6 +1969,7 @@ amount = 50
 process_material = SubResource("ParticleProcessMaterial_h88qw")
 
 [node name="inicio_batalha" type="AnimatedSprite2D" parent="."]
+process_mode = 3
 auto_translate_mode = 2
 position = Vector2(-22, -27)
 scale = Vector2(7.5515676, 7.1260457)

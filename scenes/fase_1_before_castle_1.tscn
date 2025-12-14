@@ -82,7 +82,7 @@ tracks/2/path = NodePath("maycon_fase:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.06666667, 2.8),
+"times": PackedFloat32Array(0.1, 2.8),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
@@ -237,8 +237,8 @@ animation = &"on_gound"
 visible = false
 position = Vector2(-1469, 169)
 scale = Vector2(2.7735984, 2.5222125)
-collision_layer = 524288
-collision_mask = 524288
+collision_layer = 1
+collision_mask = 1
 
 [node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle1/maycon_fase"]
 position = Vector2(11.542603, 0.47611237)
@@ -252,6 +252,8 @@ limit_bottom = 1355
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle1"]
 
 [node name="Inimigo1" parent="Fase1BeforeCastle1/Inimigos" instance=ExtResource("2_hnmna")]
+light_mask = 512
+visibility_layer = 512
 position = Vector2(648, 845)
 scale = Vector2(1.0896726, 1.1370456)
 
@@ -304,12 +306,13 @@ position = Vector2(-5.0000153, 886)
 scale = Vector2(3.3999994, 5.44)
 shape = SubResource("WorldBoundaryShape2D_36c4s")
 
-[node name="battle" parent="." instance=ExtResource("6_36c4s")]
-position = Vector2(-1634, -1127)
-
 [node name="fade" parent="." instance=ExtResource("4_7je0d")]
 position = Vector2(546.0001, 277.99997)
 scale = Vector2(1.0871409, 3.626345)
+
+[node name="battle" parent="." instance=ExtResource("6_36c4s")]
+process_mode = 0
+position = Vector2(4780, 4545)
 
 [node name="Pause" parent="." instance=ExtResource("1_2rkwj")]
 anchors_preset = 0
