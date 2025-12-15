@@ -11,12 +11,6 @@ func _ready() -> void:
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = 0
-	
-	if Global.back_to_fase_1 == true:
-		Global.back_to_fase_1 = false
-		animacoes.play("maycon_back_to_fase_1")
-	else:
-		animacoes.play("maycon_falling")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -32,10 +26,15 @@ func _process(delta: float) -> void:
 func _on_next_scene_body_entered(body: Node2D) -> void:
 	get_tree().paused = true
 	await get_tree().create_timer(0.3).timeout 
-	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_2.tscn")
+	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
 
 
 func _on_dead_line_body_entered(body: Node2D) -> void:
-	maycon_fase.visible = false
-	animacoes.play("maycon_falling")
-	#get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_1.tscn")
+	get_tree().reload_current_scene()
+
+
+func _on_back_stage_body_entered(body: Node2D) -> void:
+	get_tree().paused = true
+	Global.back_to_fase_1 = true
+	await get_tree().create_timer(0.3).timeout 
+	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_1.tscn")
