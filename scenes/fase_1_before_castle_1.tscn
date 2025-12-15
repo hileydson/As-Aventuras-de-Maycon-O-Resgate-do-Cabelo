@@ -235,6 +235,8 @@ animation = &"on_gound"
 
 [node name="maycon_fase" parent="Fase1BeforeCastle1" instance=ExtResource("2_7je0d")]
 visible = false
+light_mask = 512
+visibility_layer = 524800
 position = Vector2(-1469, 169)
 scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 1
@@ -306,13 +308,13 @@ position = Vector2(-5.0000153, 886)
 scale = Vector2(3.3999994, 5.44)
 shape = SubResource("WorldBoundaryShape2D_36c4s")
 
-[node name="fade" parent="." instance=ExtResource("4_7je0d")]
-position = Vector2(546.0001, 277.99997)
-scale = Vector2(1.0871409, 3.626345)
-
 [node name="battle" parent="." instance=ExtResource("6_36c4s")]
 process_mode = 0
 position = Vector2(4780, 4545)
+
+[node name="fade" parent="." instance=ExtResource("4_7je0d")]
+position = Vector2(546.0001, 277.99997)
+scale = Vector2(1.0871409, 3.626345)
 
 [node name="Pause" parent="." instance=ExtResource("1_2rkwj")]
 anchors_preset = 0

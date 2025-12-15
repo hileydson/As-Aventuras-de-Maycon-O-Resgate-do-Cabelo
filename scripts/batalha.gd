@@ -9,6 +9,7 @@ extends AnimationPlayer
 @onready var destroy: GPUParticles2D = $"../../Inimigos/destroy"
 @onready var camera_maycon: Camera2D = $"../Camera2D"
 @onready var inimigo_1: Node2D = $"../../../Fase1BeforeCastle1/Inimigos/Inimigo1"
+@onready var inimigo_1_battle: AnimatedSprite2D = $"../../Inimigos/comum/inimigo_1"
 
 @onready var batalha_moves: AnimationPlayer = $"../batalha_moves"
 @onready var peido: AudioStreamPlayer = $"../Peido"
@@ -117,7 +118,9 @@ func play_inicio()->void:
 	maycon.hp_count = 0 
 	
 	#TODO: PENSAR EM OUTRA FORMA DINAMICA
-	inimigo_1.get_node("inimigo_1").resetEnemy()
+	#inimigo_1.get_node("inimigo_1").resetEnemy()
+	inimigo_1_battle.resetEnemy()
+	
 	
 
 # Called when the node enters the scene tree for the first time.
