@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://d3cev6uiwwro4"]
+[gd_scene load_steps=36 format=3 uid="uid://d3cev6uiwwro4"]
 
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
 [ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
@@ -6,8 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://b2fnhp1t55rgx" path="res://scenes/inimigos/inimigo_1.tscn" id="2_hnmna"]
 [ext_resource type="Script" uid="uid://c1spheypet4fo" path="res://scripts/fase_1_before_castle_1.gd" id="2_rh75j"]
 [ext_resource type="Texture2D" uid="uid://bs67ndmklpp1b" path="res://assets/novas_imagens/maycon/maycon_falling.png" id="3_pg6gg"]
+[ext_resource type="AudioStream" uid="uid://kg00ua8r8lwq" path="res://assets/novos_audios/maycon_falling_fase_1.mp3" id="3_wwvab"]
 [ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="4_7je0d"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="6_36c4s"]
+[ext_resource type="Texture2D" uid="uid://drf85jfsrrmkk" path="res://assets/novas_imagens/effects/smoke_animation.png" id="7_ahm46"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -58,6 +60,18 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector2(-1469, 169)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("smoke:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_36c4s"]
@@ -136,6 +150,46 @@ tracks/5/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector2(-1469, 169), Vector2(-1469, 169)]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("MayconFallingFase1")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.13333334),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("smoke:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0.033333335, 2, 3.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/8/type = "method"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("smoke")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(2.1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"default"],
+"method": &"play"
+}]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ahm46"]
@@ -219,8 +273,68 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_gn6wi"]
+atlas = ExtResource("7_ahm46")
+region = Rect2(408, 204, 204, 204)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rn1vd"]
+atlas = ExtResource("7_ahm46")
+region = Rect2(204, 204, 204, 204)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n1ahb"]
+atlas = ExtResource("7_ahm46")
+region = Rect2(0, 204, 204, 204)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ivltl"]
+atlas = ExtResource("7_ahm46")
+region = Rect2(0, 0, 204, 204)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_avwlo"]
+atlas = ExtResource("7_ahm46")
+region = Rect2(204, 0, 204, 204)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cm2i2"]
+atlas = ExtResource("7_ahm46")
+region = Rect2(408, 0, 204, 204)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t7fus"]
+animations = [{
+"frames": [{
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_gn6wi")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_rn1vd")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_n1ahb")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_ivltl")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_avwlo")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_cm2i2")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_n1ahb")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_rn1vd")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_gn6wi")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]
+
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_pg6gg"]
 normal = Vector2(-1, 0)
+distance = 0.89923096
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7je0d"]
 distance = -60.52633
@@ -245,6 +359,11 @@ process_mode = 1
 position = Vector2(1586, 683)
 texture = ExtResource("1_l74ae")
 script = ExtResource("2_rh75j")
+
+[node name="MayconFallingFase1" type="AudioStreamPlayer" parent="Fase1BeforeCastle1"]
+stream = ExtResource("3_wwvab")
+volume_db = -7.548
+pitch_scale = 1.13
 
 [node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle1"]
 libraries = {
@@ -286,11 +405,19 @@ scale = Vector2(1.0896726, 1.1370456)
 position = Vector2(2434.0002, 829)
 scale = Vector2(1.4004475, 1.2025086)
 
+[node name="smoke" type="AnimatedSprite2D" parent="Fase1BeforeCastle1"]
+visible = false
+position = Vector2(-1431.0001, 335)
+scale = Vector2(0.8857415, 0.6866642)
+sprite_frames = SubResource("SpriteFrames_t7fus")
+frame = 3
+frame_progress = 1.0
+
 [node name="next_scene" type="Area2D" parent="."]
 
 [node name="next" type="CollisionShape2D" parent="next_scene"]
 position = Vector2(3172.9998, 936)
-scale = Vector2(1.6799976, 1.8000007)
+scale = Vector2(5.559998, 2.9600005)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 
 [node name="dead_line" type="Area2D" parent="."]

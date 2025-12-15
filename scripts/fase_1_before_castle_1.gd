@@ -23,12 +23,9 @@ func _process(delta: float) -> void:
 		camera.make_current()
 
 
-		
-	#if !maycon_falling.is_playing() && maycon_falling.animation != "on_gound":
-	#maycon_falling.play("on_gound")
-
 
 func _on_next_scene_body_entered(body: Node2D) -> void:
+	get_tree().paused = true
 	print("next scene")
 
 
