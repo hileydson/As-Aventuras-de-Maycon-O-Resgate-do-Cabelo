@@ -47,6 +47,18 @@ tracks/2/keys = {
 "update": 1,
 "values": [true]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("maycon_fase:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1469, 169)]
+}
 
 [sub_resource type="Animation" id="Animation_36c4s"]
 resource_name = "maycon_falling"
@@ -112,6 +124,18 @@ tracks/4/keys = {
 "args": ["on_ground"],
 "method": &"play"
 }]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("maycon_fase:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.7, 2.7666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-1469, 169), Vector2(-1469, 169)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ahm46"]
@@ -234,7 +258,6 @@ sprite_frames = SubResource("SpriteFrames_gn6wi")
 animation = &"on_gound"
 
 [node name="maycon_fase" parent="Fase1BeforeCastle1" instance=ExtResource("2_7je0d")]
-visible = false
 light_mask = 512
 visibility_layer = 524800
 position = Vector2(-1469, 169)
@@ -258,6 +281,10 @@ light_mask = 512
 visibility_layer = 512
 position = Vector2(648, 845)
 scale = Vector2(1.0896726, 1.1370456)
+
+[node name="Inimigo2" parent="Fase1BeforeCastle1/Inimigos" instance=ExtResource("2_hnmna")]
+position = Vector2(2434.0002, 829)
+scale = Vector2(1.4004475, 1.2025086)
 
 [node name="next_scene" type="Area2D" parent="."]
 

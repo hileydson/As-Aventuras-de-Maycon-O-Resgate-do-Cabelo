@@ -31,6 +31,7 @@ extends AnimationPlayer
 @onready var inicio_batalha: AnimatedSprite2D = $"../../inicio_batalha"
 @onready var explosao: AudioStreamPlayer = $"../Explosao"
 
+signal player_clicou
 
 var power_limit_reached:bool = false
 var power_limit:int = 3
@@ -66,6 +67,7 @@ func maycon_died()->void:
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func victory()->void:
+	battle_finished = true
 	destroy.visible = true
 	battle_song.stop()
 	victory_label.visible = true
@@ -73,17 +75,19 @@ func victory()->void:
 	ds_pain.play()
 	victory_sound.play()
 	
+	await self.player_clicou
 	await get_tree().create_timer(2.0).timeout
 	fade.get_node("Transition").play("fade_out")
-	await get_tree().create_timer(2.0).timeout
-	victory_label.visible = false
-	you_died_label.visible = false
+	await get_tree().create_timer(3.0).timeout
 	Global.back_to_main_camera = true
 	get_tree().paused = false
+	victory_label.visible = false
+	you_died_label.visible = false
 	victory_sound.stop()
 	destroy.visible = false
+	await get_tree().create_timer(0.6).timeout	
 	
-	#await get_tree().create_timer(1.0).timeout
+	
 	
 	
 
@@ -91,7 +95,7 @@ func victory()->void:
 func play_inicio()->void:
 	
 	get_tree().paused = true
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.2).timeout
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)
 	fade.get_node("Transition").play("fade_in")
 	camera_maycon.make_current()
@@ -131,6 +135,9 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+
+	if Input.is_action_just_pressed("ui_accept"):
+		emit_signal("player_clicou")
 	
 	# PLOTAR INIMIGO EM BATALHA
 	if Global.battle_next_enemy != 0:

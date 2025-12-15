@@ -64,6 +64,9 @@ func double_jump()->void:
 		
 func _physics_process(delta: float) -> void:
 	
+	if Global.back_to_main_camera:
+		return
+	
 	control_defense_jump()
 	
 	if batalha_moves.battle_finished == false:
