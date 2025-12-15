@@ -10,6 +10,8 @@ extends AnimationPlayer
 @onready var camera_maycon: Camera2D = $"../Camera2D"
 @onready var inimigo_1: Node2D = $"../../../Fase1BeforeCastle1/Inimigos/Inimigo1"
 @onready var inimigo_1_battle: AnimatedSprite2D = $"../../Inimigos/comum/inimigo_1"
+@onready var battle: Node2D = $"../.."
+@onready var pause: Control = $"../../../Pause"
 
 @onready var batalha_moves: AnimationPlayer = $"../batalha_moves"
 @onready var peido: AudioStreamPlayer = $"../Peido"
@@ -88,10 +90,6 @@ func victory()->void:
 	await get_tree().create_timer(0.6).timeout	
 	
 	
-	
-	
-
-
 func play_inicio()->void:
 	
 	get_tree().paused = true
@@ -129,9 +127,11 @@ func play_inicio()->void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
-	pass
-
+	battle.queue_free()
+	pause.queue_free()
+	await get_tree().create_timer(1.0).timeout
+	battle.queue_redraw()
+	pause.queue_redraw()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

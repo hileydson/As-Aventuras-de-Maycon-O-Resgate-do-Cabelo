@@ -1,0 +1,323 @@
+[gd_scene load_steps=31 format=3 uid="uid://b5uspfqhsepac"]
+
+[ext_resource type="Texture2D" uid="uid://1i0426wllk8o" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_4.png" id="1_gv3vu"]
+[ext_resource type="Script" uid="uid://5x404tvcimbj" path="res://scripts/fase_1_before_castle_4.gd" id="2_gv3vu"]
+[ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="3_dlb6u"]
+[ext_resource type="PackedScene" uid="uid://b2fnhp1t55rgx" path="res://scenes/inimigos/inimigo_1.tscn" id="4_senh8"]
+[ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_nosu4"]
+[ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="6_fjlh3"]
+[ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="7_fp30k"]
+[ext_resource type="AudioStream" uid="uid://c3jfsmiruu7lk" path="res://assets/novos_audios/scary_smile.mp3" id="8_745bc"]
+[ext_resource type="Texture2D" uid="uid://hd7ihpk8l2bg" path="res://assets/novas_imagens/effects/Pixel Holy Spell/01.png" id="9_dlb6u"]
+
+[sub_resource type="Animation" id="Animation_wwvab"]
+length = 0.001
+
+[sub_resource type="Animation" id="Animation_36c4s"]
+resource_name = "maycon_falling"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("maycon_fase:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1, 2.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("maycon_fase:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.7, 2.7666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-1469, 169), Vector2(-1469, 169)]
+}
+
+[sub_resource type="Animation" id="Animation_gv3vu"]
+resource_name = "maycon_back_to_fase"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("maycon_fase:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.06666667),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(780, 70)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ahm46"]
+_data = {
+&"RESET": SubResource("Animation_wwvab"),
+&"maycon_back_to_fase": SubResource("Animation_gv3vu"),
+&"maycon_falling": SubResource("Animation_36c4s")
+}
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6v7in"]
+height = 387.813
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_pg6gg"]
+normal = Vector2(-1, 0)
+distance = -1.0791626
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7je0d"]
+distance = -60.52633
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_36c4s"]
+normal = Vector2(1, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
+size = Vector2(548, 178)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nulh8"]
+size = Vector2(985.25, 178)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
+size = Vector2(317, 178)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6v7in"]
+size = Vector2(96.12341, 437.84497)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nulh8"]
+height = 346.77637
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_senh8"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nosu4"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fjlh3"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fp30k"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d2dfm"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vi3cd"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ytiji"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_agc3r"]
+animations = [{
+"frames": [{
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_senh8")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_nosu4")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_fjlh3")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_fp30k")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_d2dfm")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_vi3cd")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_ytiji")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_vi3cd")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_d2dfm")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_fp30k")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_fjlh3")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_nosu4")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_senh8")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Node2D" type="Node2D"]
+process_mode = 1
+
+[node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
+process_mode = 1
+position = Vector2(1586, 683)
+texture = ExtResource("1_gv3vu")
+script = ExtResource("2_gv3vu")
+
+[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle"]
+libraries = {
+&"": SubResource("AnimationLibrary_ahm46")
+}
+
+[node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("3_dlb6u")]
+light_mask = 512
+visibility_layer = 524800
+position = Vector2(-1528.9998, 181)
+scale = Vector2(2.7735984, 2.5222125)
+collision_layer = 1
+collision_mask = 1
+
+[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase"]
+position = Vector2(11.542603, 0.47611237)
+scale = Vector2(4.6533337, 4.4133334)
+zoom = Vector2(0.5, 0.5)
+limit_left = 0
+limit_top = 0
+limit_right = 3175
+limit_bottom = 1355
+
+[node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
+
+[node name="Inimigo1" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("4_senh8")]
+position = Vector2(1252.0001, 894)
+scale = Vector2(1.0896726, 1.1370456)
+
+[node name="next_scene" type="Area2D" parent="."]
+position = Vector2(16, -2)
+
+[node name="next_" type="CollisionShape2D" parent="next_scene"]
+position = Vector2(2444.9998, 704)
+rotation = 0.034350045
+shape = SubResource("CapsuleShape2D_6v7in")
+
+[node name="next" type="CollisionShape2D" parent="next_scene"]
+position = Vector2(3172.9998, 936)
+scale = Vector2(5.559998, 2.9600005)
+shape = SubResource("WorldBoundaryShape2D_pg6gg")
+
+[node name="dead_line" type="Area2D" parent="."]
+light_mask = 524289
+visibility_layer = 524289
+collision_layer = 524289
+collision_mask = 524289
+
+[node name="dead" type="CollisionShape2D" parent="dead_line"]
+light_mask = 524289
+visibility_layer = 524289
+position = Vector2(1442, 1268)
+scale = Vector2(13.518565, 10.061738)
+shape = SubResource("WorldBoundaryShape2D_7je0d")
+
+[node name="back_stage" type="Area2D" parent="."]
+position = Vector2(1586, 683)
+
+[node name="back" type="CollisionShape2D" parent="back_stage"]
+position = Vector2(-1591, 203)
+scale = Vector2(3.3999994, 5.44)
+shape = SubResource("WorldBoundaryShape2D_36c4s")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 524291
+collision_mask = 524291
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+process_mode = 4
+light_mask = 524289
+visibility_layer = 524289
+position = Vector2(278, 1164.2697)
+shape = SubResource("RectangleShape2D_hnmna")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+process_mode = 4
+position = Vector2(1663.375, 1164.2697)
+shape = SubResource("RectangleShape2D_nulh8")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(1013, 1164.2697)
+shape = SubResource("RectangleShape2D_p1t4m")
+
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(2319.8652, 1118)
+rotation = -1.6023498
+shape = SubResource("RectangleShape2D_6v7in")
+
+[node name="CollisionShape2D8" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(2395, 994.00006)
+rotation = 0.80597186
+scale = Vector2(1, 1.2596045)
+shape = SubResource("CapsuleShape2D_nulh8")
+
+[node name="battle" parent="." instance=ExtResource("5_nosu4")]
+process_mode = 0
+position = Vector2(4780, 4545)
+
+[node name="fade" parent="." instance=ExtResource("6_fjlh3")]
+position = Vector2(546.0001, 277.99997)
+scale = Vector2(1.0871409, 3.626345)
+
+[node name="Pause" parent="." instance=ExtResource("7_fp30k")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 866.0
+offset_top = -1283.0
+offset_right = 866.0
+offset_bottom = -1283.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="enter_the_castle" type="ColorRect" parent="."]
+visible = false
+z_index = 1
+offset_left = -131.0
+offset_top = -54.0
+offset_right = -91.0
+offset_bottom = -14.0
+scale = Vector2(84.4, 38.680004)
+color = Color(0, 0, 0, 1)
+
+[node name="castle" type="Label" parent="enter_the_castle"]
+visible = false
+layout_mode = 0
+offset_left = 25.201416
+offset_top = 7.549121
+offset_right = 132.20142
+offset_bottom = 30.549122
+scale = Vector2(0.08058394, 0.30880532)
+text = "Castle of Seco"
+
+[node name="ScarySmile" type="AudioStreamPlayer" parent="enter_the_castle"]
+stream = ExtResource("8_745bc")
+pitch_scale = 4.0
+
+[node name="loading" type="AnimatedSprite2D" parent="enter_the_castle"]
+position = Vector2(24.466824, 19.674246)
+scale = Vector2(0.045040186, -0.10062235)
+sprite_frames = SubResource("SpriteFrames_agc3r")
+autoplay = "default"
+
+[connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
+[connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]
+[connection signal="body_entered" from="back_stage" to="Fase1BeforeCastle" method="_on_back_stage_body_entered"]

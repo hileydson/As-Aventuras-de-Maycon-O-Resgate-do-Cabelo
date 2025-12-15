@@ -4,6 +4,8 @@ extends Sprite2D
 @onready var maycon_falling: AnimatedSprite2D = $maycon_falling
 @onready var camera: Camera2D = $maycon_fase/Camera2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
+@onready var fade: Node2D = $fade
+
 
 
 # Called when the node enters the scene tree for the first time.
@@ -12,9 +14,10 @@ func _ready() -> void:
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = 0
 	
-	if Global.back_to_fase_1 == true:
-		Global.back_to_fase_1 = false
-		animacoes.play("maycon_back_to_fase_1")
+	if Global.back_to_fase == true:
+		Global.back_to_fase = false
+		animacoes.play("maycon_back_to_fase")
+		await get_tree().create_timer(1.0).timeout
 	else:
 		animacoes.play("maycon_falling")
 

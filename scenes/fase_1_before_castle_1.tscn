@@ -211,7 +211,7 @@ tracks/0/keys = {
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ahm46"]
 _data = {
 &"RESET": SubResource("Animation_wwvab"),
-&"maycon_back_to_fase_1": SubResource("Animation_ahm46"),
+&"maycon_back_to_fase": SubResource("Animation_ahm46"),
 &"maycon_falling": SubResource("Animation_36c4s")
 }
 

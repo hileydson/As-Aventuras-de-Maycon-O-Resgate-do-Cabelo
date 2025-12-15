@@ -1,14 +1,14 @@
+AnimatedSprite2D
+Label
+ColorRect
 CollisionShape2D
 Area2D
-AnimatedSprite2D
 AnimationPlayer
 Camera2D
 Node
 StaticBody2D
 GPUParticles2D
-ColorRect
 CanvasLayer
-Label
 Sprite2D
 Button
 VBoxContainer
