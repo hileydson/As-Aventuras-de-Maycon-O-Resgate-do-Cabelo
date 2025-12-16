@@ -15,6 +15,7 @@ func _ready() -> void:
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = 0
+	Global.battle_background = "2"
 	
 	if Global.back_to_fase == true:
 		Global.back_to_fase = false

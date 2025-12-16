@@ -32,6 +32,7 @@ extends AnimationPlayer
 @onready var fade: Node2D = $"../fade"
 @onready var inicio_batalha: AnimatedSprite2D = $"../../inicio_batalha"
 @onready var explosao: AudioStreamPlayer = $"../Explosao"
+@onready var battleground: Sprite2D = $"../Battleground"
 
 signal player_clicou
 
@@ -44,6 +45,12 @@ var enemy_hurt:bool = false
 var enemy_attacking:bool = false
 
 var died:bool = false
+
+var mapas_backgrounds = {
+	"1" = preload("res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_in_fire.png"),
+	"2" = preload("res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_no_fire.png"),
+	"3" = preload("res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_happy_ending.png")
+}
 
 func change_enemy_hurt(boolean:bool)->void:
 	enemy_hurt = boolean
@@ -79,9 +86,8 @@ func victory()->void:
 	victory_sound.play()
 	
 	await self.player_clicou
-	await get_tree().create_timer(2.0).timeout
 	fade.get_node("Transition").play("fade_out")
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(4.0).timeout
 	Global.back_to_main_camera = true
 	Global.battle_started = false
 	get_tree().paused = false
@@ -129,12 +135,10 @@ func play_inicio()->void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass 
-	#battle.queue_free()
-	#pause.queue_free()
-	#await get_tree().create_timer(1.0).timeout
-	#battle.queue_redraw()
-	#pause.queue_redraw()
+	
+	#carrega mapa correto
+	battleground.texture = mapas_backgrounds[Global.battle_background]
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

@@ -11,6 +11,7 @@ func _ready() -> void:
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = 0
+	Global.battle_background = "1"
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

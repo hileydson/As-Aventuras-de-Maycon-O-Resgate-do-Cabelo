@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="1_6exdr"]
-[ext_resource type="Texture2D" uid="uid://cncmj1g2w8obr" path="res://assets/novas_imagens/cenarios/fantasy-2d-battlegrounds/Battleground3/Bright/Battleground3.png" id="1_6uljp"]
 [ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="1_evw7u"]
 [ext_resource type="Texture2D" uid="uid://dbicvg8ismuhi" path="res://assets/novas_imagens/maycon/jamelao_float_1.png" id="2_j15j5"]
 [ext_resource type="Texture2D" uid="uid://dpt7gawugv1w7" path="res://assets/novas_imagens/maycon/jamelao_float_2.png" id="3_knuts"]
+[ext_resource type="Texture2D" uid="uid://c5o2h4u1txbm3" path="res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_in_fire.png" id="4_6exdr"]
 [ext_resource type="AudioStream" uid="uid://b5ff14vnqj2mh" path="res://assets/novos_audios/punch_6.mp3" id="5_5htnd"]
 [ext_resource type="Texture2D" uid="uid://bnbndhs1s5lnm" path="res://assets/novas_imagens/cenarios/fantasy-2d-battlegrounds/Battleground3/Bright/tree_face.png" id="5_fhlax"]
 [ext_resource type="Texture2D" uid="uid://dqh0d7dpr4cri" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Idle.png" id="6_vph4o"]
@@ -1638,10 +1638,10 @@ libraries = {
 }
 script = ExtResource("1_3ps70")
 
-[node name="Battleground3" type="Sprite2D" parent="Cenario de batalha"]
-position = Vector2(-1.2500267, -0.7499809)
-scale = Vector2(0.6049479, 0.60972226)
-texture = ExtResource("1_6uljp")
+[node name="Battleground" type="Sprite2D" parent="Cenario de batalha"]
+position = Vector2(-4.118805, -0.86668396)
+scale = Vector2(0.36434263, 0.48045638)
+texture = ExtResource("4_6exdr")
 
 [node name="Camera2D" type="Camera2D" parent="Cenario de batalha"]
 

@@ -15,8 +15,10 @@ func _ready() -> void:
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = 0
+	Global.battle_background = "1"
 	
 	if Global.back_to_fase == true:
+		Global.battle_background = "2"
 		Global.back_to_fase = false
 		fase_1_before_castle.texture = texture_no_fire
 		animacoes.play("maycon_back_to_fase")
@@ -54,6 +56,8 @@ func _on_division_no_fire_body_exited(body: Node2D) -> void:
 	mk_dudun.play()
 	
 	if fase_1_before_castle.texture == texture_no_fire:
+		Global.battle_background = "1"
 		fase_1_before_castle.texture = texture_with_fire
 	else:
+		Global.battle_background = "2"
 		fase_1_before_castle.texture = texture_no_fire
