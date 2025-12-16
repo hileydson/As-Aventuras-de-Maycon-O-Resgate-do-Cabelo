@@ -127,11 +127,12 @@ func play_inicio()->void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	battle.queue_free()
-	pause.queue_free()
-	await get_tree().create_timer(1.0).timeout
-	battle.queue_redraw()
-	pause.queue_redraw()
+	pass 
+	#battle.queue_free()
+	#pause.queue_free()
+	#await get_tree().create_timer(1.0).timeout
+	#battle.queue_redraw()
+	#pause.queue_redraw()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
