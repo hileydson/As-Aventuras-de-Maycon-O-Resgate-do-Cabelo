@@ -88,3 +88,4 @@ func _on_to_battle_body_entered(body: Node2D) -> void:
 	Global.battle_next_enemy = 1
 	queue_free()
 	
+	

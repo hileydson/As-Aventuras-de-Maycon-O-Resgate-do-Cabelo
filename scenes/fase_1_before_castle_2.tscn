@@ -127,6 +127,7 @@ position = Vector2(1515.9999, 843)
 scale = Vector2(1.0896726, 1.1370456)
 
 [node name="next_scene" type="Area2D" parent="."]
+process_mode = 1
 position = Vector2(16, -2)
 
 [node name="next" type="CollisionShape2D" parent="next_scene"]
@@ -135,6 +136,7 @@ scale = Vector2(5.559998, 2.9600005)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 
 [node name="dead_line" type="Area2D" parent="."]
+process_mode = 1
 light_mask = 524289
 visibility_layer = 524289
 collision_layer = 524289
@@ -148,6 +150,7 @@ scale = Vector2(13.518565, 10.061738)
 shape = SubResource("WorldBoundaryShape2D_7je0d")
 
 [node name="back_stage" type="Area2D" parent="."]
+process_mode = 1
 position = Vector2(1586, 683)
 
 [node name="back" type="CollisionShape2D" parent="back_stage"]
@@ -156,6 +159,7 @@ scale = Vector2(3.3999994, 5.44)
 shape = SubResource("WorldBoundaryShape2D_36c4s")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
+process_mode = 1
 collision_layer = 524291
 collision_mask = 524291
 
@@ -192,7 +196,6 @@ rotation = -1.5731149
 shape = SubResource("CapsuleShape2D_6v7in")
 
 [node name="battle" parent="." instance=ExtResource("8_w4kda")]
-process_mode = 0
 position = Vector2(4780, 4545)
 
 [node name="Pause" parent="." instance=ExtResource("10_end3m")]

@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+@onready var maycon: CharacterBody2D = $"."
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var sound_double_jump: AudioStreamPlayer2D = $double_jump
 @onready var sound_walk: AudioStreamPlayer2D = $walk
@@ -49,8 +50,8 @@ func double_jump()->void:
 func _physics_process(delta: float) -> void:
 	
 	if get_node(".").visible == false:
-		return
-	
+		return	
+		
 	if pausePlayer == true:
 		animated_sprite_2d.play("idle_right")
 		return

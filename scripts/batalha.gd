@@ -87,7 +87,7 @@ func victory()->void:
 	
 	await self.player_clicou
 	fade.get_node("Transition").play("fade_out")
-	await get_tree().create_timer(3.4).timeout
+	await get_tree().create_timer(3.0).timeout
 	Global.back_to_main_camera = true
 	Global.battle_started = false
 	get_tree().paused = false
@@ -100,13 +100,12 @@ func victory()->void:
 	
 func play_inicio()->void:
 	
-	get_tree().paused = true
+	#get_tree().paused = true
 	await get_tree().create_timer(0.2).timeout
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)
 	fade.get_node("Transition").play("fade_in")
 	camera_maycon.make_current()
 	
-	#get_tree().reload_current_scene()
 	explosao.play()
 	inicio_batalha.play("inicio")
 	maycon_batalha.play("float")

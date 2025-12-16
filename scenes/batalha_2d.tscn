@@ -1596,7 +1596,7 @@ color = Color(0.73098874, 0.02439873, 0.39386588, 0.19215687)
 
 [node name="Node2D" type="Node2D"]
 process_mode = 3
-position = Vector2(580, 318)
+position = Vector2(4066, -1039)
 
 [node name="Cenario de batalha" type="Node2D" parent="."]
 process_mode = 3
@@ -1690,6 +1690,7 @@ rotation = 3.1415925
 scale = Vector2(3.6918721, 3.6438017)
 
 [node name="Maycon" parent="Cenario de batalha" instance=ExtResource("35_gbqun")]
+process_mode = 3
 light_mask = 512
 visibility_layer = 512
 position = Vector2(-303, -14)
@@ -1841,12 +1842,14 @@ wait_time = 10.0
 wait_time = 8.0
 
 [node name="StaticBody2D" type="StaticBody2D" parent="Cenario de batalha"]
+process_mode = 3
 light_mask = 0
 visibility_layer = 0
 collision_layer = 512
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Cenario de batalha/StaticBody2D"]
+process_mode = 3
 light_mask = 0
 visibility_layer = 0
 position = Vector2(-218, 169)
@@ -1858,8 +1861,10 @@ process_mode = 3
 script = ExtResource("46_x11r3")
 
 [node name="comum" type="Node2D" parent="Inimigos"]
+process_mode = 3
 
 [node name="inimigo_1" type="AnimatedSprite2D" parent="Inimigos/comum"]
+process_mode = 3
 light_mask = 512
 visibility_layer = 512
 position = Vector2(326, 11)
@@ -1873,6 +1878,7 @@ frame_progress = 1.0
 script = ExtResource("47_sdi6t")
 
 [node name="attack_power" type="GPUParticles2D" parent="Inimigos/comum/inimigo_1"]
+process_mode = 3
 visible = false
 visibility_layer = 524289
 position = Vector2(22.190712, 29.261255)
@@ -1883,6 +1889,7 @@ one_shot = true
 process_material = SubResource("ParticleProcessMaterial_wo4yk")
 
 [node name="Area2D" type="Area2D" parent="Inimigos/comum/inimigo_1/attack_power"]
+process_mode = 3
 light_mask = 512
 visibility_layer = 512
 position = Vector2(-0.0018712934, -0.00029592845)
@@ -1899,6 +1906,7 @@ autoplay = "default"
 flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Inimigos/comum/inimigo_1/attack_power/Area2D"]
+process_mode = 3
 light_mask = 512
 visibility_layer = 512
 material = SubResource("CanvasItemMaterial_yn2t1")
