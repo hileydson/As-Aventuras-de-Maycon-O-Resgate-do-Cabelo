@@ -87,7 +87,7 @@ func victory()->void:
 	
 	await self.player_clicou
 	fade.get_node("Transition").play("fade_out")
-	await get_tree().create_timer(4.0).timeout
+	await get_tree().create_timer(3.4).timeout
 	Global.back_to_main_camera = true
 	Global.battle_started = false
 	get_tree().paused = false

@@ -22,6 +22,12 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	# corrigir bug do maycon nao levar dano em batalha
+	if Global.battle_started:
+		maycon_fase.queue_free()
+	else:
+		maycon_fase.queue_redraw()
+	
 	#pra VOLTAR
 	if Global.back_to_main_camera:
 		Global.back_to_main_camera = false
