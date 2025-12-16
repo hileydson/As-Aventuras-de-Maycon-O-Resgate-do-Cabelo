@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://yytwstsfp0ex" path="res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_no_fire.png" id="1_ryeef"]
 [ext_resource type="Script" uid="uid://croc726dc3hga" path="res://scripts/demo_final.gd" id="2_ryeef"]
 [ext_resource type="AudioStream" uid="uid://c7ap4akws6abl" path="res://assets/novos_audios/the_end.mp3" id="4_hefi4"]
-[ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="5_1ld4k"]
+[ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="4_ryeef"]
 [ext_resource type="Texture2D" uid="uid://dbicvg8ismuhi" path="res://assets/novas_imagens/maycon/jamelao_float_1.png" id="5_ryeef"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
@@ -55,7 +55,7 @@ text = "The End"
 stream = ExtResource("4_hefi4")
 autoplay = true
 
-[node name="fade" parent="." instance=ExtResource("5_1ld4k")]
+[node name="auto_fade_in" parent="." instance=ExtResource("4_ryeef")]
 
 [node name="JamelaoFloat1" type="Sprite2D" parent="."]
 position = Vector2(609, 517)

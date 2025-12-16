@@ -1,6 +1,6 @@
 extends VBoxContainer
 
-@onready var fade: Node2D = $"../fade"
+@onready var fade: Node2D = $"../../auto_fade_in"
 
 @onready var new_game: Button = $"New Game"
 @onready var exit: Button = $Exit

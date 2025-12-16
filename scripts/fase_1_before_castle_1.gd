@@ -4,7 +4,6 @@ extends Sprite2D
 @onready var maycon_falling: AnimatedSprite2D = $maycon_falling
 @onready var camera: Camera2D = $maycon_fase/Camera2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
-@onready var fade: Node2D = $fade
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

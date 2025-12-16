@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://jw0dy6pjaowh"]
+[gd_scene load_steps=5 format=3 uid="uid://bpow8ov3t2bre"]
 
 [sub_resource type="Animation" id="Animation_d6a83"]
 length = 0.001
@@ -97,6 +97,7 @@ reset_on_save = false
 libraries = {
 &"": SubResource("AnimationLibrary_bnd43")
 }
+autoplay = "fade_in"
 
 [node name="ColorRect" type="ColorRect" parent="Transition"]
 visible = false

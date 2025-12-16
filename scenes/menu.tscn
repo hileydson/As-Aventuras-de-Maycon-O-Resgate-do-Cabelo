@@ -1,6 +1,6 @@
 [gd_scene load_steps=20 format=3 uid="uid://bbvbfgsytow76"]
 
-[ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="1_3dmrc"]
+[ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="1_3dmrc"]
 [ext_resource type="Texture2D" uid="uid://1dll27f2uadm" path="res://assets/images/TELA-intro-03 _0.png" id="1_mhnvy"]
 [ext_resource type="Script" uid="uid://s36kwvjcjcdx" path="res://scripts/main_menu.gd" id="1_yqeox"]
 [ext_resource type="Texture2D" uid="uid://dmxu8cnneg5vl" path="res://assets/images/Logo_aventuras_0.png" id="3_4ytvr"]
@@ -65,6 +65,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="auto_fade_in" parent="." instance=ExtResource("1_3dmrc")]
+
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(577, 324)
 
@@ -100,10 +102,6 @@ stream = ExtResource("16_g6gyw")
 [node name="menu_song" type="AudioStreamPlayer2D" parent="Camera2D"]
 position = Vector2(-577, -324)
 stream = ExtResource("16_mxgkd")
-
-[node name="fade" parent="Camera2D" instance=ExtResource("1_3dmrc")]
-visible = false
-position = Vector2(-577, -324)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Camera2D"]
 anchors_preset = 2

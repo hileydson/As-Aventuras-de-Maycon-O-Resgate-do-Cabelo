@@ -183,6 +183,18 @@ tracks/8/keys = {
 "update": 0,
 "values": [Vector2(0, 0)]
 }
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("../../EfeitoVidroCanvas:visible")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_8bi0a"]
 resource_name = "kick"
@@ -421,6 +433,18 @@ tracks/4/keys = {
 "args": [0.0],
 "method": &"play"
 }]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../../EfeitoVidroCanvas:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 2.8666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
 }
 
 [sub_resource type="Animation" id="Animation_jvqq8"]
@@ -1979,10 +2003,10 @@ sprite_frames = SubResource("SpriteFrames_qqwl7")
 animation = &"inicio"
 
 [node name="EfeitoVidroCanvas" type="CanvasLayer" parent="."]
+visible = false
 script = ExtResource("62_h2e1h")
 
 [node name="ColorRect" type="ColorRect" parent="EfeitoVidroCanvas"]
-visible = false
 material = SubResource("ShaderMaterial_0sh2x")
 offset_left = -30.999998
 offset_top = -26.0
@@ -1991,7 +2015,6 @@ offset_bottom = 14.0
 scale = Vector2(30.353657, 16.97317)
 
 [node name="ParticulasVidro" type="GPUParticles2D" parent="EfeitoVidroCanvas"]
-visible = false
 position = Vector2(594, 311)
 emitting = false
 amount = 50

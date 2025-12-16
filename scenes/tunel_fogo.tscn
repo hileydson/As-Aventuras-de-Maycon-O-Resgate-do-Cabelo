@@ -6,16 +6,17 @@
 [node name="Node2D" type="Node2D"]
 
 [node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
-offset_left = -575.0
-offset_top = -321.0
-offset_right = 572.0
-offset_bottom = 319.0
+offset_left = 2.0
+offset_top = 21.0
+offset_right = 1149.0
+offset_bottom = 661.0
 stream = ExtResource("1_481kp")
 autoplay = true
 expand = true
 script = ExtResource("2_481kp")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(581, 327)
 
 [connection signal="ready" from="." to="VideoStreamPlayer" method="_on_node_2d_ready"]
 [connection signal="finished" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_finished"]

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://myxkcfyi401t"]
+[gd_scene load_steps=3 format=3 uid="uid://myxkcfyi401t"]
 
 [ext_resource type="Script" uid="uid://c8keb5qyq1fp2" path="res://scripts/language_selection.gd" id="1_pfgvu"]
+[ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="1_yrgbr"]
 
 [node name="Language" type="Control"]
 layout_mode = 3
@@ -13,6 +14,8 @@ offset_right = -687.0
 offset_bottom = -252.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="auto_fade_in" parent="." instance=ExtResource("1_yrgbr")]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-54, -147)
