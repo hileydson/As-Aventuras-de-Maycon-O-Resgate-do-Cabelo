@@ -24,7 +24,7 @@ var dead:bool = false
 	
 func resetEnemy() -> void:
 	count_play_inicio = 0
-	damage_taken = 0
+	damage_taken = 4 #TODO: VOLTAR PARA 0
 	dead = false
 	me.play()
 

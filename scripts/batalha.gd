@@ -66,6 +66,7 @@ func maycon_died()->void:
 	victory_label.visible = false
 	you_died_label.visible = false
 	await get_tree().create_timer(1.0).timeout
+	Global.battle_started = false
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func victory()->void:
@@ -82,6 +83,7 @@ func victory()->void:
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(3.0).timeout
 	Global.back_to_main_camera = true
+	Global.battle_started = false
 	get_tree().paused = false
 	victory_label.visible = false
 	you_died_label.visible = false
@@ -136,7 +138,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-
+	
 	if Input.is_action_just_pressed("ui_accept"):
 		emit_signal("player_clicou")
 	
