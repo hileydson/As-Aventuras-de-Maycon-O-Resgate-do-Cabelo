@@ -40,8 +40,8 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	await get_tree().create_timer(0.3).timeout 
 	castle.visible = true
 	loading.play("default")
-	await get_tree().create_timer(1.0).timeout 
-	#get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn")
+	await get_tree().create_timer(3.0).timeout 
+	get_tree().change_scene_to_file("res://scenes/fase_1_castle_1.tscn")
 
 
 func _on_dead_line_body_entered(body: Node2D) -> void:

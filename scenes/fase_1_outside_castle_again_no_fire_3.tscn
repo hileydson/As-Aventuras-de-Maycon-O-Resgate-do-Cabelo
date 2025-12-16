@@ -1,0 +1,173 @@
+[gd_scene load_steps=15 format=3 uid="uid://dscts1war82ip"]
+
+[ext_resource type="Texture2D" uid="uid://c4anaqd7mthox" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_3.png" id="1_2qpmw"]
+[ext_resource type="Script" uid="uid://08u2yya4bxkg" path="res://scripts/fase_1_outside_castle_again_no_fire_3.gd" id="2_2qpmw"]
+[ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_lq5u0"]
+[ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="4_737m3"]
+[ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_u2g44"]
+[ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="6_0pvwr"]
+
+[sub_resource type="Animation" id="Animation_wwvab"]
+length = 0.001
+
+[sub_resource type="Animation" id="Animation_aybw1"]
+resource_name = "maycon_back_to_fase"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("maycon_fase:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1500, 150)]
+}
+
+[sub_resource type="Animation" id="Animation_36c4s"]
+resource_name = "maycon_falling"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("maycon_fase:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1, 2.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("maycon_fase:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.7, 2.7666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-1469, 169), Vector2(-1469, 169)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ahm46"]
+_data = {
+&"RESET": SubResource("Animation_wwvab"),
+&"maycon_back_to_fase": SubResource("Animation_aybw1"),
+&"maycon_falling": SubResource("Animation_36c4s")
+}
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_pg6gg"]
+normal = Vector2(-1, 0)
+distance = 0.89923096
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7je0d"]
+distance = -60.52633
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_36c4s"]
+normal = Vector2(1, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
+size = Vector2(1488.1172, 178)
+
+[node name="Node2D" type="Node2D"]
+process_mode = 1
+
+[node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
+process_mode = 1
+position = Vector2(1586, 683)
+texture = ExtResource("1_2qpmw")
+script = ExtResource("2_2qpmw")
+
+[node name="MkDudun" type="AudioStreamPlayer" parent="Fase1BeforeCastle"]
+stream = ExtResource("3_lq5u0")
+volume_db = -6.71
+pitch_scale = 0.33
+
+[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle"]
+libraries = {
+&"": SubResource("AnimationLibrary_ahm46")
+}
+
+[node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("4_737m3")]
+light_mask = 512
+visibility_layer = 524800
+position = Vector2(-1369, 238)
+scale = Vector2(2.7735984, 2.5222125)
+collision_layer = 1
+collision_mask = 1
+
+[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase"]
+position = Vector2(11.542603, 0.47611237)
+scale = Vector2(4.6533337, 4.4133334)
+zoom = Vector2(0.5, 0.5)
+limit_left = -6
+limit_top = 2
+limit_right = 3169
+limit_bottom = 1357
+
+[node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
+
+[node name="next_scene" type="Area2D" parent="."]
+position = Vector2(16, -2)
+
+[node name="next" type="CollisionShape2D" parent="next_scene"]
+position = Vector2(2024, 892)
+scale = Vector2(5.559998, 2.9600005)
+shape = SubResource("WorldBoundaryShape2D_pg6gg")
+
+[node name="dead_line" type="Area2D" parent="."]
+light_mask = 524289
+visibility_layer = 524289
+collision_layer = 524289
+collision_mask = 524289
+
+[node name="dead" type="CollisionShape2D" parent="dead_line"]
+light_mask = 524289
+visibility_layer = 524289
+position = Vector2(1442, 1268)
+scale = Vector2(13.518565, 10.061738)
+shape = SubResource("WorldBoundaryShape2D_7je0d")
+
+[node name="back_stage" type="Area2D" parent="."]
+position = Vector2(1586, 683)
+
+[node name="back" type="CollisionShape2D" parent="back_stage"]
+position = Vector2(-1433, 144)
+scale = Vector2(3.3999994, 5.44)
+shape = SubResource("WorldBoundaryShape2D_36c4s")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 524291
+collision_mask = 524291
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+process_mode = 4
+light_mask = 524289
+visibility_layer = 524289
+position = Vector2(927.78345, 1173.4918)
+rotation = -0.07896982
+shape = SubResource("RectangleShape2D_hnmna")
+
+[node name="battle" parent="." instance=ExtResource("5_u2g44")]
+process_mode = 0
+position = Vector2(4780, 4545)
+
+[node name="Pause" parent="." instance=ExtResource("6_0pvwr")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 866.0
+offset_top = -1283.0
+offset_right = 866.0
+offset_bottom = -1283.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
+[connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]
+[connection signal="body_entered" from="back_stage" to="Fase1BeforeCastle" method="_on_back_stage_body_entered"]
