@@ -168,7 +168,7 @@ shape = SubResource("RectangleShape2D_s4wqb")
 
 [node name="battle" parent="." instance=ExtResource("5_dyxua")]
 process_mode = 0
-position = Vector2(4780, 4545)
+position = Vector2(-675, 329)
 
 [node name="Pause" parent="." instance=ExtResource("6_2krnn")]
 anchors_preset = 0

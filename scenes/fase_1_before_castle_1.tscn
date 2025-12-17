@@ -480,7 +480,7 @@ shape = SubResource("WorldBoundaryShape2D_36c4s")
 
 [node name="battle" parent="." instance=ExtResource("6_36c4s")]
 process_mode = 0
-position = Vector2(4780, 4545)
+position = Vector2(-673, 328)
 
 [node name="auto_fade_in" parent="." instance=ExtResource("9_ahm46")]
 

@@ -154,8 +154,6 @@ rotation = -0.07896982
 shape = SubResource("RectangleShape2D_hnmna")
 
 [node name="battle" parent="." instance=ExtResource("5_u2g44")]
-process_mode = 0
-position = Vector2(4780, 4545)
 
 [node name="Pause" parent="." instance=ExtResource("6_0pvwr")]
 anchors_preset = 0

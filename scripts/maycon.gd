@@ -12,6 +12,11 @@ extends CharacterBody2D
 @onready var msg_box: ColorRect = $"../msg_box"
 @onready var explosao_portal: Node2D = $"../explosao_portal"
 @onready var inimigo_seco: Node2D = $"../Inimigo_seco"
+@onready var explosao: AudioStreamPlayer = $"../Explosao"
+@onready var fire_cracling: AudioStreamPlayer = $"../FireCracling"
+@onready var fires_above_seco: Node2D = $"../fires_above_seco"
+@onready var logo_inimigo_seco: AnimatedSprite2D = $"../node_logo_seco/logo_inimigo_seco"
+@onready var node_logo_seco: Node2D = $"../node_logo_seco"
 
 var pausePlayer:bool = false
 var animation_1_gone = false
@@ -104,12 +109,19 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	pausePlayer = true
 	transition.play("semi_fade_out")
 	mk_dudun.play()
+	node_logo_seco.visible = true
+	logo_inimigo_seco.play("default")
 	
+	await get_tree().create_timer(4.0).timeout
+	fires_above_seco.visible = false
 	
 	if(Global.default_language == Global.language_pt_br):
 		await get_tree().create_timer(3.0).timeout
+		node_logo_seco.visible = false
 		msg.text = "Maycon seu safado!"
 		msg_box.visible = true
+		inimigo_seco.get_node("AnimatedSprite2D").play("talking")
+		inimigo_seco.get_node("AnimatedSprite2D").modulate = Color(1,1,1,1)
 		await get_tree().create_timer(3.0).timeout
 		msg.text = "Esquece o cabelo!"
 		await get_tree().create_timer(3.0).timeout
@@ -125,8 +137,11 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		await get_tree().create_timer(3.0).timeout
 	else:
 		await get_tree().create_timer(3.0).timeout
+		node_logo_seco.visible = false
 		msg.text = "Maycon you asshole!"
 		msg_box.visible = true
+		inimigo_seco.get_node("AnimatedSprite2D").play("talking")
+		inimigo_seco.get_node("AnimatedSprite2D").modulate = Color(1,1,1,1)
 		await get_tree().create_timer(3.0).timeout
 		msg.text = "Forget about cabelo!"
 		await get_tree().create_timer(3.0).timeout
@@ -144,7 +159,9 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	inimigo_seco.visible = false
 	msg_box.visible = false
 	explosao_portal.get_node("hp").play("explotion")
+	explosao.play()
 	
 	transition.play("zoom_out")
 	pausePlayer = false
 	animation_1_gone = true
+	

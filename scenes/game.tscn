@@ -1,16 +1,20 @@
-[gd_scene load_steps=20 format=3 uid="uid://yicge48108e0"]
+[gd_scene load_steps=44 format=3 uid="uid://yicge48108e0"]
 
 [ext_resource type="Script" uid="uid://jv5gempkmtvq" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://fyyoe5vf3xm1" path="res://scenes/maycon.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="2_dinhu"]
 [ext_resource type="Texture2D" uid="uid://is2q46phf50g" path="res://assets/novas_imagens/cenarios/in_use/animacoes/prologo_bela_pixel.png" id="2_kvuet"]
+[ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="3_dinhu"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_gee14"]
 [ext_resource type="PackedScene" uid="uid://dvl0rk52qgvxa" path="res://scenes/inimigos/inimigo_seco.tscn" id="3_lnu2h"]
 [ext_resource type="AudioStream" uid="uid://c3jfsmiruu7lk" path="res://assets/novos_audios/scary_smile.mp3" id="4_0tnpc"]
+[ext_resource type="AudioStream" uid="uid://tgbq8dtejvrb" path="res://assets/novos_audios/fire_cracling.mp3" id="4_kvuet"]
 [ext_resource type="AudioStream" uid="uid://crxlon1788b8p" path="res://assets/novos_audios/jamelao_song.mp3" id="5_iywne"]
 [ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="6_p57ef"]
 [ext_resource type="PackedScene" uid="uid://cq0mtqifdkd4g" path="res://scenes/hp.tscn" id="6_vtaks"]
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="10_kvpfn"]
+[ext_resource type="Texture2D" uid="uid://hd7ihpk8l2bg" path="res://assets/novas_imagens/effects/Pixel Holy Spell/01.png" id="14_trtic"]
+[ext_resource type="Texture2D" uid="uid://dg1fnlmoadjti" path="res://assets/novas_imagens/inimigos/seco/olindao_tripa_maior.png" id="15_ir15t"]
 
 [sub_resource type="Animation" id="Animation_gee14"]
 length = 0.001
@@ -101,6 +105,148 @@ b = Vector2(-0.40231323, -17.21643)
 font_size = 9
 font_color = Color(0.3557699, 0.04241158, 0.119084515, 1)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ir15t"]
+atlas = ExtResource("14_trtic")
+region = Rect2(0, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ca42v"]
+atlas = ExtResource("14_trtic")
+region = Rect2(64, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rysoc"]
+atlas = ExtResource("14_trtic")
+region = Rect2(128, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ssvqc"]
+atlas = ExtResource("14_trtic")
+region = Rect2(192, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_264po"]
+atlas = ExtResource("14_trtic")
+region = Rect2(256, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1kice"]
+atlas = ExtResource("14_trtic")
+region = Rect2(320, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5newe"]
+atlas = ExtResource("14_trtic")
+region = Rect2(384, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_37s47"]
+atlas = ExtResource("14_trtic")
+region = Rect2(448, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bt5mj"]
+atlas = ExtResource("14_trtic")
+region = Rect2(512, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e1j6l"]
+atlas = ExtResource("14_trtic")
+region = Rect2(576, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pl11u"]
+atlas = ExtResource("14_trtic")
+region = Rect2(640, 512, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bhx41"]
+animations = [{
+"frames": [{
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_ir15t")
+}, {
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_ca42v")
+}, {
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_rysoc")
+}, {
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_ssvqc")
+}, {
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_264po")
+}, {
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_1kice")
+}, {
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_5newe")
+}, {
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_37s47")
+}, {
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_bt5mj")
+}, {
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_e1j6l")
+}, {
+"duration": 0.31,
+"texture": SubResource("AtlasTexture_pl11u")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bhx41"]
+atlas = ExtResource("15_ir15t")
+region = Rect2(0, 0, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qnb83"]
+atlas = ExtResource("15_ir15t")
+region = Rect2(156, 0, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sww3w"]
+atlas = ExtResource("15_ir15t")
+region = Rect2(312, 0, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_suyxu"]
+atlas = ExtResource("15_ir15t")
+region = Rect2(0, 177, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sgl2t"]
+atlas = ExtResource("15_ir15t")
+region = Rect2(156, 177, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qouja"]
+atlas = ExtResource("15_ir15t")
+region = Rect2(156, 354, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wljb1"]
+atlas = ExtResource("15_ir15t")
+region = Rect2(312, 177, 156, 177)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qouja"]
+animations = [{
+"frames": [{
+"duration": 1.41,
+"texture": SubResource("AtlasTexture_bhx41")
+}, {
+"duration": 1.41,
+"texture": SubResource("AtlasTexture_qnb83")
+}, {
+"duration": 1.41,
+"texture": SubResource("AtlasTexture_sww3w")
+}, {
+"duration": 1.41,
+"texture": SubResource("AtlasTexture_suyxu")
+}, {
+"duration": 1.41,
+"texture": SubResource("AtlasTexture_sgl2t")
+}, {
+"duration": 1.41,
+"texture": SubResource("AtlasTexture_qouja")
+}, {
+"duration": 1.41,
+"texture": SubResource("AtlasTexture_wljb1")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]
+
 [node name="Game" type="Node2D"]
 position = Vector2(308.99997, 348.99997)
 scale = Vector2(1.1134915, 1.3669924)
@@ -130,6 +276,16 @@ position = Vector2(324.51547, -66.12781)
 scale = Vector2(0.37853828, 0.27715936)
 texture = ExtResource("2_kvuet")
 
+[node name="Explosao" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_dinhu")
+volume_db = -6.5
+
+[node name="FireCracling" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_kvuet")
+volume_db = -8.357
+autoplay = true
+parameters/looping = true
+
 [node name="MkDudun" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_gee14")
 pitch_scale = 0.72
@@ -155,10 +311,6 @@ scale = Vector2(-2.4855595, 0.92934257)
 position = Vector2(102.5926, 79.62619)
 shape = SubResource("SegmentShape2D_p57ef")
 
-[node name="explosao_portal" parent="." instance=ExtResource("6_vtaks")]
-position = Vector2(741.8108, 57.05961)
-scale = Vector2(24.778183, 23.1846)
-
 [node name="Maycon" parent="." instance=ExtResource("1_uwrxv")]
 position = Vector2(-193.0863, 40.96587)
 scale = Vector2(1.3133289, 1.0431619)
@@ -167,7 +319,7 @@ slide_on_ceiling = false
 [node name="Camera2D" type="Camera2D" parent="Maycon"]
 position = Vector2(458.8409, -94.67078)
 offset = Vector2(-320, 30)
-zoom = Vector2(1.5, 1.5)
+zoom = Vector2(1.4, 1.4)
 limit_left = 328
 limit_top = 4
 limit_right = 1654
@@ -200,8 +352,12 @@ scale = Vector2(1, 0.99999994)
 shape = SubResource("SegmentShape2D_u5sy4")
 
 [node name="Inimigo_seco" parent="." instance=ExtResource("3_lnu2h")]
-position = Vector2(889.0188, -29.261322)
-scale = Vector2(-2.085421, 2.0896688)
+position = Vector2(765.1608, -29.2613)
+scale = Vector2(-1.259191, 1.0362632)
+
+[node name="explosao_portal" parent="." instance=ExtResource("6_vtaks")]
+position = Vector2(741.8107, 57.059586)
+scale = Vector2(24.778183, 23.184599)
 
 [node name="JamelaoSong" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_iywne")
@@ -213,10 +369,10 @@ volume_db = -20.991
 
 [node name="msg_box" type="ColorRect" parent="."]
 visible = false
-offset_left = 678.94543
-offset_top = -65.106415
-offset_right = 866.94543
-offset_bottom = -17.106415
+offset_left = 462.50912
+offset_top = -81.93167
+offset_right = 650.50916
+offset_bottom = -33.93167
 color = Color(0.8373672, 0.85090065, 0.85082674, 0.68235296)
 
 [node name="text" type="Label" parent="msg_box"]
@@ -236,6 +392,90 @@ offset_top = 542.79755
 offset_right = 441.85345
 offset_bottom = 542.79755
 scale = Vector2(0.90349585, 0.7392154)
+
+[node name="fires_above_seco" type="Node2D" parent="."]
+
+[node name="fire_above_seco" type="AnimatedSprite2D" parent="fires_above_seco"]
+position = Vector2(686.13007, -100.95151)
+scale = Vector2(1.770396, 1.3242917)
+sprite_frames = SubResource("SpriteFrames_bhx41")
+autoplay = "default"
+frame_progress = 0.55617845
+
+[node name="fire_above_seco2" type="AnimatedSprite2D" parent="fires_above_seco"]
+position = Vector2(735.52423, -122.16597)
+scale = Vector2(1.770396, 1.3242917)
+sprite_frames = SubResource("SpriteFrames_bhx41")
+autoplay = "default"
+frame_progress = 0.47550967
+
+[node name="fire_above_seco3" type="AnimatedSprite2D" parent="fires_above_seco"]
+position = Vector2(821.73956, -86.32088)
+scale = Vector2(1.770396, 1.3242917)
+sprite_frames = SubResource("SpriteFrames_bhx41")
+autoplay = "default"
+frame_progress = 0.47550967
+
+[node name="fire_above_seco4" type="AnimatedSprite2D" parent="fires_above_seco"]
+position = Vector2(853.1722, -35.11354)
+scale = Vector2(1.770396, 1.3242917)
+sprite_frames = SubResource("SpriteFrames_bhx41")
+autoplay = "default"
+frame_progress = 0.47550967
+
+[node name="fire_above_seco5" type="AnimatedSprite2D" parent="fires_above_seco"]
+position = Vector2(846.8857, 37.30818)
+scale = Vector2(1.770396, 1.3242917)
+sprite_frames = SubResource("SpriteFrames_bhx41")
+autoplay = "default"
+frame_progress = 0.47550967
+
+[node name="fire_above_seco6" type="AnimatedSprite2D" parent="fires_above_seco"]
+position = Vector2(737.3204, -72.42175)
+scale = Vector2(1.770396, 1.3242917)
+sprite_frames = SubResource("SpriteFrames_bhx41")
+autoplay = "default"
+frame_progress = 0.47550967
+
+[node name="fire_above_seco7" type="AnimatedSprite2D" parent="fires_above_seco"]
+position = Vector2(671.76086, -60.717224)
+scale = Vector2(1.770396, 1.3242917)
+sprite_frames = SubResource("SpriteFrames_bhx41")
+autoplay = "default"
+frame_progress = 0.47550967
+
+[node name="fire_above_seco8" type="AnimatedSprite2D" parent="fires_above_seco"]
+position = Vector2(647.51276, -23.409042)
+scale = Vector2(1.770396, 1.3242917)
+sprite_frames = SubResource("SpriteFrames_bhx41")
+autoplay = "default"
+frame_progress = 0.47550967
+
+[node name="fire_above_seco9" type="AnimatedSprite2D" parent="fires_above_seco"]
+position = Vector2(730.13574, -92.17313)
+scale = Vector2(1.770396, 1.3242917)
+sprite_frames = SubResource("SpriteFrames_bhx41")
+autoplay = "default"
+frame_progress = 0.47550967
+
+[node name="node_logo_seco" type="Node2D" parent="."]
+visible = false
+position = Vector2(94.29799, -40.23429)
+
+[node name="back_fundo_logo" type="ColorRect" parent="node_logo_seco"]
+visible = false
+offset_left = 290.07855
+offset_top = -149.96423
+offset_right = 648.4109
+offset_bottom = 84.85782
+color = Color(0.13365835, 0.12171512, 0, 1)
+
+[node name="logo_inimigo_seco" type="AnimatedSprite2D" parent="node_logo_seco"]
+position = Vector2(438.93466, 1.0973072)
+scale = Vector2(4.0960326, 1.9548874)
+sprite_frames = SubResource("SpriteFrames_qouja")
+frame = 6
+frame_progress = 1.0
 
 [connection signal="body_entered" from="Area2D" to="Maycon" method="_on_area_2d_body_entered"]
 [connection signal="body_entered" from="Area2_portal" to="." method="_on_area_2_portal_body_entered"]

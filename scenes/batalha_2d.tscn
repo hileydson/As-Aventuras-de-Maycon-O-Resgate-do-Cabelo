@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="1_6exdr"]
-[ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="1_evw7u"]
 [ext_resource type="Texture2D" uid="uid://dbicvg8ismuhi" path="res://assets/novas_imagens/maycon/jamelao_float_1.png" id="2_j15j5"]
+[ext_resource type="PackedScene" uid="uid://b4h2dbkicw38b" path="res://scenes/battle_fade.tscn" id="2_yn2t1"]
 [ext_resource type="Texture2D" uid="uid://dpt7gawugv1w7" path="res://assets/novas_imagens/maycon/jamelao_float_2.png" id="3_knuts"]
 [ext_resource type="Texture2D" uid="uid://c5o2h4u1txbm3" path="res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_in_fire.png" id="4_6exdr"]
 [ext_resource type="AudioStream" uid="uid://b5ff14vnqj2mh" path="res://assets/novos_audios/punch_6.mp3" id="5_5htnd"]
@@ -209,7 +209,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0.033333335, 1.2333333, 1.7333333, 2.8666666),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(-303, -14), Vector2(180, -14), Vector2(180, -14), Vector2(-300, -14)]
+"values": [Vector2(-303, 80), Vector2(180, 80), Vector2(180, 80), Vector2(-300, 80)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -340,7 +340,7 @@ tracks/9/keys = {
 "times": PackedFloat32Array(0.5000001, 0.80000013, 1.8333334, 2.8000002),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(180, 0), Vector2(180, 0), Vector2(0, 0)]
+"values": [Vector2(0, 80), Vector2(180, 120), Vector2(180, 100), Vector2(0, 80)]
 }
 tracks/10/type = "value"
 tracks/10/imported = false
@@ -382,7 +382,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0.13333334, 2.7666667),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(-671, 45), Vector2(-300, 45)]
+"values": [Vector2(0, -600), Vector2(-300, 145)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -391,7 +391,7 @@ tracks/1/path = NodePath(".:visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.06666667, 2.7666667),
+"times": PackedFloat32Array(0, 2.7666667),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -403,7 +403,7 @@ tracks/2/path = NodePath("../maycon_batalha_default:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.06666667, 2.8333333),
+"times": PackedFloat32Array(0, 2.8333333),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, false]
@@ -415,7 +415,7 @@ tracks/3/path = NodePath("../Maycon:visible")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0.033333335, 2.8),
+"times": PackedFloat32Array(0, 2.8),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
@@ -436,7 +436,7 @@ tracks/4/keys = {
 }
 tracks/5/type = "value"
 tracks/5/imported = false
-tracks/5/enabled = true
+tracks/5/enabled = false
 tracks/5/path = NodePath("../../EfeitoVidroCanvas:visible")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
@@ -444,7 +444,7 @@ tracks/5/keys = {
 "times": PackedFloat32Array(0, 2.8666666),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [true, false]
+"values": [false, false]
 }
 
 [sub_resource type="Animation" id="Animation_jvqq8"]
@@ -460,7 +460,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0.033333335, 1.2333333, 1.7333333, 2.8666666),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(-303, -14), Vector2(180, -14), Vector2(180, -14), Vector2(-300, -14)]
+"values": [Vector2(-303, 80), Vector2(180, 80), Vector2(180, 80), Vector2(-300, 80)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -603,7 +603,7 @@ tracks/10/keys = {
 "times": PackedFloat32Array(0.43333334, 0.73333335, 1.7666667, 2.7333333),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(180, 0), Vector2(180, 0), Vector2(0, 0)]
+"values": [Vector2(0, 80), Vector2(180, 120), Vector2(180, 100), Vector2(0, 80)]
 }
 tracks/11/type = "method"
 tracks/11/imported = false
@@ -1620,7 +1620,7 @@ color = Color(0.73098874, 0.02439873, 0.39386588, 0.19215687)
 
 [node name="Node2D" type="Node2D"]
 process_mode = 3
-position = Vector2(4066, -1039)
+position = Vector2(-673, 326)
 
 [node name="Cenario de batalha" type="Node2D" parent="."]
 process_mode = 3
@@ -1651,8 +1651,7 @@ scale = Vector2(5.910979, 6.3809886)
 text = "YOU DIED!!"
 label_settings = SubResource("LabelSettings_d6oll")
 
-[node name="fade" parent="Cenario de batalha" instance=ExtResource("1_evw7u")]
-position = Vector2(0, -2)
+[node name="fade" parent="Cenario de batalha" instance=ExtResource("2_yn2t1")]
 
 [node name="batalha_moves" type="AnimationPlayer" parent="Cenario de batalha"]
 root_node = NodePath("../maycon_batalha")
@@ -1667,6 +1666,7 @@ scale = Vector2(0.42333293, 0.48883927)
 texture = ExtResource("4_6exdr")
 
 [node name="Camera2D" type="Camera2D" parent="Cenario de batalha"]
+limit_bottom = 655
 
 [node name="maycon_batalha" type="AnimatedSprite2D" parent="Cenario de batalha"]
 position = Vector2(-671, 45)
@@ -1717,7 +1717,7 @@ scale = Vector2(3.6918721, 3.6438017)
 process_mode = 3
 light_mask = 512
 visibility_layer = 512
-position = Vector2(-303, -14)
+position = Vector2(-314, 67)
 scale = Vector2(2.8415334, 2.76858)
 collision_layer = 512
 collision_mask = 512
@@ -1869,6 +1869,7 @@ wait_time = 8.0
 process_mode = 3
 light_mask = 0
 visibility_layer = 0
+position = Vector2(-278, 362)
 collision_layer = 512
 collision_mask = 0
 
@@ -1876,12 +1877,13 @@ collision_mask = 0
 process_mode = 3
 light_mask = 0
 visibility_layer = 0
-position = Vector2(-218, 169)
+position = Vector2(-11, -120.00003)
 scale = Vector2(2.455237, 4.1227045)
 shape = SubResource("WorldBoundaryShape2D_7ch20")
 
 [node name="Inimigos" type="Node2D" parent="."]
 process_mode = 3
+position = Vector2(0, 84)
 script = ExtResource("46_x11r3")
 
 [node name="comum" type="Node2D" parent="Inimigos"]
@@ -1891,7 +1893,7 @@ process_mode = 3
 process_mode = 3
 light_mask = 512
 visibility_layer = 512
-position = Vector2(326, 11)
+position = Vector2(325, 12)
 rotation = 3.1415925
 scale = Vector2(2.4785156, -2.255542)
 sprite_frames = SubResource("SpriteFrames_mdbxd")
@@ -2007,6 +2009,7 @@ visible = false
 script = ExtResource("62_h2e1h")
 
 [node name="ColorRect" type="ColorRect" parent="EfeitoVidroCanvas"]
+visible = false
 material = SubResource("ShaderMaterial_0sh2x")
 offset_left = -30.999998
 offset_top = -26.0
@@ -2015,6 +2018,7 @@ offset_bottom = 14.0
 scale = Vector2(30.353657, 16.97317)
 
 [node name="ParticulasVidro" type="GPUParticles2D" parent="EfeitoVidroCanvas"]
+visible = false
 position = Vector2(594, 311)
 emitting = false
 amount = 50

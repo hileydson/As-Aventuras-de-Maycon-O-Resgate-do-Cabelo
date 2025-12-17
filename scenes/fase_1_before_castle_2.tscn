@@ -196,7 +196,7 @@ rotation = -1.5731149
 shape = SubResource("CapsuleShape2D_6v7in")
 
 [node name="battle" parent="." instance=ExtResource("8_w4kda")]
-position = Vector2(4780, 4545)
+position = Vector2(-673, 328)
 
 [node name="Pause" parent="." instance=ExtResource("10_end3m")]
 anchors_preset = 0

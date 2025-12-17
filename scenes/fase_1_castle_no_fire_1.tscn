@@ -175,7 +175,7 @@ shape = SubResource("CapsuleShape2D_ncgmf")
 
 [node name="battle" parent="." instance=ExtResource("6_1d8hg")]
 process_mode = 0
-position = Vector2(4780, 4545)
+position = Vector2(-672, 327)
 
 [node name="Pause" parent="." instance=ExtResource("7_2sufg")]
 anchors_preset = 0
