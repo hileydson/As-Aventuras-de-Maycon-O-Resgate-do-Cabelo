@@ -1,0 +1,62 @@
+[gd_scene load_steps=10 format=3 uid="uid://cm5cq4wwh4ya2"]
+
+[ext_resource type="Texture2D" uid="uid://bwclf236t6sen" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_6.png" id="1_jy2ff"]
+[ext_resource type="Texture2D" uid="uid://boqps76s0d2f1" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_5.png" id="2_6033c"]
+[ext_resource type="Texture2D" uid="uid://dvkf8no5eb18o" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_7.png" id="3_l6ry5"]
+[ext_resource type="Texture2D" uid="uid://bbc5aevxnopb" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_4.png" id="4_fe76t"]
+[ext_resource type="Texture2D" uid="uid://vm2ck7tphlm6" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_2.png" id="5_arfsl"]
+[ext_resource type="Texture2D" uid="uid://cpxulos1rcdcf" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_1.png" id="6_4nsrk"]
+[ext_resource type="Script" uid="uid://c13y4jwxxav11" path="res://scripts/intro_batalha_frozen_effect.gd" id="7_4mydn"]
+[ext_resource type="AudioStream" uid="uid://blr8jcgdaeph7" path="res://assets/novos_audios/freezing_sound_effect.mp3" id="8_e514w"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jy2ff"]
+animations = [{
+"frames": [{
+"duration": 1.01,
+"texture": ExtResource("1_jy2ff")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.41,
+"texture": ExtResource("1_jy2ff")
+}, {
+"duration": 0.41,
+"texture": ExtResource("2_6033c")
+}, {
+"duration": 0.41,
+"texture": ExtResource("3_l6ry5")
+}, {
+"duration": 0.41,
+"texture": ExtResource("4_fe76t")
+}, {
+"duration": 0.41,
+"texture": ExtResource("5_arfsl")
+}, {
+"duration": 0.41,
+"texture": ExtResource("6_4nsrk")
+}],
+"loop": false,
+"name": &"intro_battle",
+"speed": 5.0
+}]
+
+[node name="battle_shattered_screen_effect" type="Node2D"]
+
+[node name="canvas_layer_frozen_effect" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="intro_batalha_frozen_effect" type="AnimatedSprite2D" parent="canvas_layer_frozen_effect"]
+position = Vector2(1154.0001, 706.8)
+scale = Vector2(1.2, 1.194815)
+sprite_frames = SubResource("SpriteFrames_jy2ff")
+animation = &"intro_battle"
+frame = 5
+frame_progress = 1.0
+script = ExtResource("7_4mydn")
+
+[node name="FreezingSoundEffect" type="AudioStreamPlayer" parent="canvas_layer_frozen_effect"]
+stream = ExtResource("8_e514w")
+pitch_scale = 0.96

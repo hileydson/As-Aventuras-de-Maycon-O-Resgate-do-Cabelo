@@ -102,7 +102,7 @@ func victory()->void:
 	
 func play_inicio()->void:
 	
-	await get_tree().create_timer(0.2).timeout
+	#await get_tree().create_timer(0.2).timeout
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)
 	fade.get_node("Transition").play("fade_in")
 	camera_maycon.make_current()
@@ -139,7 +139,6 @@ func _ready() -> void:
 	#carrega mapa correto
 	battleground.texture = mapas_backgrounds[Global.battle_background]
 	
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
@@ -148,13 +147,20 @@ func _process(delta: float) -> void:
 	
 	# PLOTAR INIMIGO EM BATALHA
 	if Global.battle_next_enemy != 0:
-		GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
-		play_inicio()
 		Global.battle_next_enemy = 0
 		Global.battle_started = true
+		GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
+		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").start_effect(2)
+		await get_tree().create_timer(0.8).timeout
+		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").stop_effect()
+		play_inicio()
+		
 		
 	elif Global.battle_next_boss != 0:
 		GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
+		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").start_effect(2)
+		await get_tree().create_timer(0.8).timeout
+		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").stop_effect()
 		play_inicio()
 		Global.battle_next_boss = 0
 		Global.battle_started = true
