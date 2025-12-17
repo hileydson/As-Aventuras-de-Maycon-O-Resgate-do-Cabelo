@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://d3cev6uiwwro4"]
+[gd_scene load_steps=46 format=3 uid="uid://d3cev6uiwwro4"]
 
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
 [ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
@@ -9,7 +9,15 @@
 [ext_resource type="AudioStream" uid="uid://kg00ua8r8lwq" path="res://assets/novos_audios/maycon_falling_fase_1.mp3" id="3_wwvab"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="6_36c4s"]
 [ext_resource type="Texture2D" uid="uid://drf85jfsrrmkk" path="res://assets/novas_imagens/effects/smoke_animation.png" id="7_ahm46"]
+[ext_resource type="Texture2D" uid="uid://bwclf236t6sen" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_6.png" id="8_cm2i2"]
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="9_ahm46"]
+[ext_resource type="Texture2D" uid="uid://boqps76s0d2f1" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_5.png" id="9_t7fus"]
+[ext_resource type="Texture2D" uid="uid://dvkf8no5eb18o" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_7.png" id="10_avl2m"]
+[ext_resource type="Texture2D" uid="uid://bbc5aevxnopb" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_4.png" id="11_t3aas"]
+[ext_resource type="Texture2D" uid="uid://vm2ck7tphlm6" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_2.png" id="12_7xe64"]
+[ext_resource type="AudioStream" uid="uid://blr8jcgdaeph7" path="res://assets/novos_audios/freezing_sound_effect.mp3" id="12_t7fus"]
+[ext_resource type="Texture2D" uid="uid://cpxulos1rcdcf" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_1.png" id="13_0sfqs"]
+[ext_resource type="AudioStream" uid="uid://drnd65usjc7l7" path="res://assets/novos_audios/stage_sound.mp3" id="15_avl2m"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -73,6 +81,18 @@ tracks/4/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("node2d_stage_1_label:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_ahm46"]
 resource_name = "maycon_back_to_fase_1"
@@ -92,7 +112,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_36c4s"]
 resource_name = "maycon_falling"
-length = 4.0
+length = 8.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -207,6 +227,32 @@ tracks/8/keys = {
 "method": &"play"
 }]
 }
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("node2d_stage_1_label:visible")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0.033333335, 3.8333333, 7.733333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/10/type = "method"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("node2d_stage_1_label/StageSound")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(3.7666667),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ahm46"]
 _data = {
@@ -287,6 +333,32 @@ animations = [{
 }],
 "loop": false,
 "name": &"on_ground",
+"speed": 5.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jph6d"]
+animations = [{
+"frames": [{
+"duration": 0.41,
+"texture": ExtResource("8_cm2i2")
+}, {
+"duration": 0.41,
+"texture": ExtResource("9_t7fus")
+}, {
+"duration": 0.41,
+"texture": ExtResource("10_avl2m")
+}, {
+"duration": 0.41,
+"texture": ExtResource("11_t3aas")
+}, {
+"duration": 0.41,
+"texture": ExtResource("12_7xe64")
+}, {
+"duration": 0.41,
+"texture": ExtResource("13_0sfqs")
+}],
+"loop": false,
+"name": &"intro_battle",
 "speed": 5.0
 }]
 
@@ -401,6 +473,19 @@ scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 1
 collision_mask = 1
 
+[node name="intro_batalha_frozen_effect" type="AnimatedSprite2D" parent="Fase1BeforeCastle1/maycon_fase"]
+visible = false
+position = Vector2(373.88257, -57.568512)
+scale = Vector2(0.43265095, 0.47371703)
+sprite_frames = SubResource("SpriteFrames_jph6d")
+animation = &"intro_battle"
+frame = 5
+frame_progress = 1.0
+
+[node name="FreezingSoundEffect" type="AudioStreamPlayer" parent="Fase1BeforeCastle1/maycon_fase"]
+stream = ExtResource("12_t7fus")
+pitch_scale = 0.96
+
 [node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle1/maycon_fase"]
 position = Vector2(11.542603, 0.47611237)
 scale = Vector2(4.6533337, 4.4133334)
@@ -427,6 +512,22 @@ scale = Vector2(0.8857415, 0.6866642)
 sprite_frames = SubResource("SpriteFrames_t7fus")
 frame = 3
 frame_progress = 1.0
+
+[node name="node2d_stage_1_label" type="Node2D" parent="Fase1BeforeCastle1"]
+visible = false
+position = Vector2(-432, 5)
+scale = Vector2(1.2, 1.16)
+
+[node name="StageSound" type="AudioStreamPlayer" parent="Fase1BeforeCastle1/node2d_stage_1_label"]
+stream = ExtResource("15_avl2m")
+
+[node name="label_stage_1" type="Label" parent="Fase1BeforeCastle1/node2d_stage_1_label"]
+offset_left = -253.0
+offset_top = -325.0
+offset_right = -197.0
+offset_bottom = -302.0
+scale = Vector2(7.76, 7.0000014)
+text = "Stage 1"
 
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)

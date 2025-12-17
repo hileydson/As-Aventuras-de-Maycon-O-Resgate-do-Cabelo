@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 Global="*res://scripts/Global.gd"
 DefaultTransition="res://scenes/default_transition_fade_in.tscn"
 DefaultTransitionFadeOut="res://scenes/default_transition_fade_out.tscn"
+GameSongs="*res://scenes/game_songs.tscn"
 
 [display]
 

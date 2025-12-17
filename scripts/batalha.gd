@@ -74,6 +74,7 @@ func maycon_died()->void:
 	you_died_label.visible = false
 	await get_tree().create_timer(1.0).timeout
 	Global.battle_started = false
+	GameSongs.process_mode = Node.PROCESS_MODE_INHERIT
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func victory()->void:
@@ -95,6 +96,7 @@ func victory()->void:
 	you_died_label.visible = false
 	victory_sound.stop()
 	destroy.visible = false
+	GameSongs.process_mode = Node.PROCESS_MODE_INHERIT
 	await get_tree().create_timer(0.6).timeout	
 	
 	
@@ -146,11 +148,13 @@ func _process(delta: float) -> void:
 	
 	# PLOTAR INIMIGO EM BATALHA
 	if Global.battle_next_enemy != 0:
+		GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
 		play_inicio()
 		Global.battle_next_enemy = 0
 		Global.battle_started = true
 		
 	elif Global.battle_next_boss != 0:
+		GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
 		play_inicio()
 		Global.battle_next_boss = 0
 		Global.battle_started = true

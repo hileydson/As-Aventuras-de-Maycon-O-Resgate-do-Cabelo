@@ -7,6 +7,9 @@ extends Sprite2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	GameSongs.play_song(1)
+	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = 0

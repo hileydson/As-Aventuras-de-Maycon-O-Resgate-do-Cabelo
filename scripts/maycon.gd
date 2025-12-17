@@ -8,8 +8,8 @@ extends CharacterBody2D
 @onready var punch: AudioStreamPlayer = $Punch
 @onready var mk_dudun: AudioStreamPlayer = $"../MkDudun"
 @onready var transition: AnimationPlayer = $"../Transition"
-@onready var msg: Label = $"../msg_box/text"
-@onready var msg_box: ColorRect = $"../msg_box"
+@onready var msg: Label = $"../balao_conversa/text"
+@onready var balao_conversa: AnimatedSprite2D = $"../balao_conversa"
 @onready var explosao_portal: Node2D = $"../explosao_portal"
 @onready var inimigo_seco: Node2D = $"../Inimigo_seco"
 @onready var explosao: AudioStreamPlayer = $"../Explosao"
@@ -119,7 +119,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		await get_tree().create_timer(3.0).timeout
 		node_logo_seco.visible = false
 		msg.text = "Maycon seu safado!"
-		msg_box.visible = true
+		balao_conversa.visible = true
 		inimigo_seco.get_node("AnimatedSprite2D").play("talking")
 		inimigo_seco.get_node("AnimatedSprite2D").modulate = Color(1,1,1,1)
 		await get_tree().create_timer(3.0).timeout
@@ -139,7 +139,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		await get_tree().create_timer(3.0).timeout
 		node_logo_seco.visible = false
 		msg.text = "Maycon you asshole!"
-		msg_box.visible = true
+		balao_conversa.visible = true
 		inimigo_seco.get_node("AnimatedSprite2D").play("talking")
 		inimigo_seco.get_node("AnimatedSprite2D").modulate = Color(1,1,1,1)
 		await get_tree().create_timer(3.0).timeout
@@ -157,7 +157,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		await get_tree().create_timer(3.0).timeout
 		
 	inimigo_seco.visible = false
-	msg_box.visible = false
+	balao_conversa.visible = false
 	explosao_portal.get_node("hp").play("explotion")
 	explosao.play()
 	

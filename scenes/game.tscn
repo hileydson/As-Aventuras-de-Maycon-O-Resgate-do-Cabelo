@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3 uid="uid://yicge48108e0"]
+[gd_scene load_steps=47 format=3 uid="uid://yicge48108e0"]
 
 [ext_resource type="Script" uid="uid://jv5gempkmtvq" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://fyyoe5vf3xm1" path="res://scenes/maycon.tscn" id="1_uwrxv"]
@@ -13,6 +13,7 @@
 [ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="6_p57ef"]
 [ext_resource type="PackedScene" uid="uid://cq0mtqifdkd4g" path="res://scenes/hp.tscn" id="6_vtaks"]
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="10_kvpfn"]
+[ext_resource type="Texture2D" uid="uid://clkgb4q1xsqpt" path="res://assets/novas_imagens/inimigos/balao_conversa.png" id="12_ca42v"]
 [ext_resource type="Texture2D" uid="uid://hd7ihpk8l2bg" path="res://assets/novas_imagens/effects/Pixel Holy Spell/01.png" id="14_trtic"]
 [ext_resource type="Texture2D" uid="uid://dg1fnlmoadjti" path="res://assets/novas_imagens/inimigos/seco/olindao_tripa_maior.png" id="15_ir15t"]
 
@@ -101,8 +102,23 @@ a = Vector2(-0.80464935, -312.04852)
 a = Vector2(0.40232086, -287.29987)
 b = Vector2(-0.40231323, -17.21643)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2yb1"]
+atlas = ExtResource("12_ca42v")
+region = Rect2(0, 0, 274, 227)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_js0lu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v2yb1")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [sub_resource type="LabelSettings" id="LabelSettings_0tnpc"]
-font_size = 9
+font_size = 12
 font_color = Color(0.3557699, 0.04241158, 0.119084515, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ir15t"]
@@ -367,6 +383,21 @@ volume_db = -11.927
 stream = ExtResource("6_p57ef")
 volume_db = -20.991
 
+[node name="balao_conversa" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(531.6611, -98.75693)
+scale = Vector2(0.91626143, 0.5547844)
+sprite_frames = SubResource("SpriteFrames_js0lu")
+flip_h = true
+
+[node name="text" type="Label" parent="balao_conversa"]
+offset_left = -97.03523
+offset_top = -42.194866
+offset_right = 54.554733
+offset_bottom = 3.2900581
+text = "Mensagem de teste!"
+label_settings = SubResource("LabelSettings_0tnpc")
+
 [node name="msg_box" type="ColorRect" parent="."]
 visible = false
 offset_left = 462.50912
@@ -374,15 +405,6 @@ offset_top = -81.93167
 offset_right = 650.50916
 offset_bottom = -33.93167
 color = Color(0.8373672, 0.85090065, 0.85082674, 0.68235296)
-
-[node name="text" type="Label" parent="msg_box"]
-layout_mode = 0
-offset_left = 3.0
-offset_top = 15.0
-offset_right = 139.0
-offset_bottom = 38.0
-text = "Mensagem de teste!"
-label_settings = SubResource("LabelSettings_0tnpc")
 
 [node name="Node2D" parent="." instance=ExtResource("10_kvpfn")]
 
