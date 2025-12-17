@@ -386,7 +386,7 @@ stream = ExtResource("9_pgfld")
 pitch_scale = 1.48
 
 [node name="Timer_enemy_attack" type="Timer" parent="inimigo_1"]
-wait_time = 3.59
+wait_time = 2.0
 autostart = true
 
 [node name="inimigo_1_animation_attack" type="AnimationPlayer" parent="inimigo_1"]

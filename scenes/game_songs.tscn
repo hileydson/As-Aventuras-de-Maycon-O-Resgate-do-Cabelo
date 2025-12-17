@@ -8,5 +8,5 @@ script = ExtResource("1_svmer")
 
 [node name="old_song_backup" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_cwb0u")
-volume_db = -9.286
+volume_db = -17.643
 parameters/looping = true
