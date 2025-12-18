@@ -1618,7 +1618,7 @@ scale_min = 2.0
 scale_max = 5.0
 color = Color(0.73098874, 0.02439873, 0.39386588, 0.19215687)
 
-[node name="Node2D" type="Node2D"]
+[node name="Node2D2" type="Node2D"]
 process_mode = 3
 position = Vector2(-673, 326)
 
@@ -1718,7 +1718,7 @@ process_mode = 3
 light_mask = 512
 visibility_layer = 512
 position = Vector2(-314, 67)
-scale = Vector2(2.8415334, 2.76858)
+scale = Vector2(2.8415334, 2.6008897)
 collision_layer = 512
 collision_mask = 512
 
