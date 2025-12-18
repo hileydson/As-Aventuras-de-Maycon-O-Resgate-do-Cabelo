@@ -1,4 +1,4 @@
-[gd_scene load_steps=180 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=148 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="1_6exdr"]
@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://dpt7gawugv1w7" path="res://assets/novas_imagens/maycon/jamelao_float_2.png" id="3_knuts"]
 [ext_resource type="Texture2D" uid="uid://c5o2h4u1txbm3" path="res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_in_fire.png" id="4_6exdr"]
 [ext_resource type="AudioStream" uid="uid://b5ff14vnqj2mh" path="res://assets/novos_audios/punch_6.mp3" id="5_5htnd"]
-[ext_resource type="Texture2D" uid="uid://dqh0d7dpr4cri" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Idle.png" id="6_vph4o"]
 [ext_resource type="Texture2D" uid="uid://bn62kapv7wtpu" path="res://assets/images/parado_direita_0.png" id="7_2cscv"]
 [ext_resource type="AudioStream" uid="uid://btl22s5pwrpe0" path="res://assets/novos_audios/sliding.mp3" id="7_6exdr"]
 [ext_resource type="AudioStream" uid="uid://bf7d2jb0jj31f" path="res://assets/novos_audios/hurt_sound.mp3" id="7_6fm5e"]
@@ -54,13 +53,7 @@
 [ext_resource type="AudioStream" uid="uid://ciioq7s6nwhj5" path="res://assets/novos_audios/victory_sound.mp3" id="46_b4w2m"]
 [ext_resource type="Script" uid="uid://chne5psun3nw1" path="res://scripts/inimigos/enemy_data.gd" id="46_x11r3"]
 [ext_resource type="AudioStream" uid="uid://bpuvyi2a67twf" path="res://assets/novos_audios/DS_pain.mp3" id="47_pvxjk"]
-[ext_resource type="Script" uid="uid://d2r8xp10cjxfn" path="res://scripts/inimigos/inimigo_1.gd" id="47_sdi6t"]
-[ext_resource type="Texture2D" uid="uid://2meppcw1h507" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png" id="48_x11r3"]
-[ext_resource type="Texture2D" uid="uid://dy68ub0j0tjr0" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Attack.png" id="49_cobqf"]
-[ext_resource type="Texture2D" uid="uid://cv1ilxfy1dknm" path="res://assets/novas_imagens/inimigos/craftpix-net-242415-free-schoolgirls-anime-character-pixel-sprite-pack/Girl_3/Protection.png" id="49_d6oll"]
-[ext_resource type="Texture2D" uid="uid://dqff4eihc6rqp" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Arrow.png" id="53_3out6"]
-[ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="54_4212h"]
-[ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="55_3out6"]
+[ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="54_wo4yk"]
 [ext_resource type="Texture2D" uid="uid://1fkfqqihfhgs" path="res://assets/novas_imagens/effects/Explosion/4.png" id="60_oqd0s"]
 [ext_resource type="Shader" uid="uid://b1m2oe2d5u8fc" path="res://scenes/batalha_2d.gdshader" id="62_0sh2x"]
 [ext_resource type="Script" uid="uid://bcde43vdwkd2i" path="res://scripts/efeito_vidro_canvas.gd" id="62_h2e1h"]
@@ -826,304 +819,6 @@ collision_use_scale = true
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7ch20"]
 distance = -8.004456
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_3out6"]
-atlas = ExtResource("49_cobqf")
-region = Rect2(0, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wo4yk"]
-atlas = ExtResource("49_cobqf")
-region = Rect2(128, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dho1k"]
-atlas = ExtResource("49_cobqf")
-region = Rect2(256, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_evw7u"]
-atlas = ExtResource("49_cobqf")
-region = Rect2(384, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oqd0s"]
-atlas = ExtResource("49_cobqf")
-region = Rect2(512, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6fm5e"]
-atlas = ExtResource("49_cobqf")
-region = Rect2(640, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_co47a"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(0, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qobrd"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(128, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qumit"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(256, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_y2evb"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(384, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_uymjw"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(512, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_r7y2b"]
-atlas = ExtResource("6_vph4o")
-region = Rect2(640, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cobqf"]
-atlas = ExtResource("49_d6oll")
-region = Rect2(0, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_h88qw"]
-atlas = ExtResource("49_d6oll")
-region = Rect2(128, 0, 128, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4212h"]
-atlas = ExtResource("49_d6oll")
-region = Rect2(256, 0, 128, 128)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_mdbxd"]
-animations = [{
-"frames": [{
-"duration": 0.71,
-"texture": SubResource("AtlasTexture_3out6")
-}, {
-"duration": 0.71,
-"texture": SubResource("AtlasTexture_wo4yk")
-}, {
-"duration": 0.71,
-"texture": SubResource("AtlasTexture_dho1k")
-}, {
-"duration": 0.71,
-"texture": SubResource("AtlasTexture_evw7u")
-}, {
-"duration": 0.71,
-"texture": SubResource("AtlasTexture_oqd0s")
-}, {
-"duration": 0.71,
-"texture": SubResource("AtlasTexture_6fm5e")
-}],
-"loop": false,
-"name": &"attack",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_co47a")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qobrd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qumit")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_y2evb")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_uymjw")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_r7y2b")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cobqf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_h88qw")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4212h")
-}],
-"loop": false,
-"name": &"pain",
-"speed": 5.0
-}]
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wo4yk"]
-lifetime_randomness = 0.51
-particle_flag_align_y = true
-particle_flag_rotate_y = true
-particle_flag_disable_z = true
-emission_shape_scale = Vector3(1, 10, 1)
-angle_min = -191.99998
-angle_max = -26.69999
-gravity = Vector3(800, 98, 0)
-linear_accel_min = -74.08
-linear_accel_max = -28.150002
-radial_accel_min = -2.2351742e-06
-radial_accel_max = 35.559998
-tangential_accel_min = -2.2351742e-06
-tangential_accel_max = 33.329998
-scale_max = 19.52
-scale_over_velocity_max = 4.9
-color = Color(1, 0.12941177, 1, 1)
-anim_speed_min = -6.0
-anim_speed_max = -6.0
-anim_offset_min = 0.0069999998
-anim_offset_max = 0.5207
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0sh2x"]
-atlas = ExtResource("53_3out6")
-region = Rect2(400, 128, 25, 16)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_h2e1h"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0sh2x")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_yn2t1"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_6exdr"]
-
-[sub_resource type="GDScript" id="GDScript_yn2t1"]
-script/source = "extends CollisionShape2D
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-"
-
-[sub_resource type="Animation" id="Animation_oqd0s"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("attack_power:visible")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("attack_power:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(22.190712, 29.261255)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("attack_power:emitting")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-
-[sub_resource type="Animation" id="Animation_evw7u"]
-resource_name = "power_attack"
-length = 2.2
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("attack_power:visible")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.06666667, 2.0666666),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("attack_power:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.033333335, 1.8333333, 2.1333334),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(22.190712, 29.261255), Vector2(450, 29.261), Vector2(1450, 29.261)]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Inimigo1AttackMagic")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.06666667, 1.4),
-"transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [0.0],
-"method": &"play"
-}, {
-"args": [],
-"method": &"stop"
-}]
-}
-tracks/3/type = "method"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Inimigo1VoiceAttack")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0.033333335, 1.9),
-"transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [0.0],
-"method": &"play"
-}, {
-"args": [],
-"method": &"stop"
-}]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("attack_power:emitting")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0.06666667, 1.7333333),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_6fm5e"]
-_data = {
-&"RESET": SubResource("Animation_oqd0s"),
-&"power_attack": SubResource("Animation_evw7u")
-}
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_h2e1h"]
 atlas = ExtResource("60_oqd0s")
 region = Rect2(512, 0, 512, 512)
@@ -1883,108 +1578,17 @@ shape = SubResource("WorldBoundaryShape2D_7ch20")
 
 [node name="Inimigos" type="Node2D" parent="."]
 process_mode = 3
+light_mask = 512
+visibility_layer = 512
 position = Vector2(0, 84)
 script = ExtResource("46_x11r3")
 
 [node name="comum" type="Node2D" parent="Inimigos"]
 process_mode = 3
-
-[node name="inimigo_1" type="AnimatedSprite2D" parent="Inimigos/comum"]
-process_mode = 3
 light_mask = 512
 visibility_layer = 512
-position = Vector2(325, 12)
-rotation = 3.1415925
-scale = Vector2(2.4785156, -2.255542)
-sprite_frames = SubResource("SpriteFrames_mdbxd")
-animation = &"attack"
-autoplay = "idle"
-frame = 5
-frame_progress = 1.0
-script = ExtResource("47_sdi6t")
 
-[node name="attack_power" type="GPUParticles2D" parent="Inimigos/comum/inimigo_1"]
-process_mode = 3
-visible = false
-visibility_layer = 524289
-position = Vector2(22.190712, 29.261255)
-scale = Vector2(0.004370174, 0.007473256)
-amount = 15
-lifetime = 0.44
-one_shot = true
-process_material = SubResource("ParticleProcessMaterial_wo4yk")
-
-[node name="Area2D" type="Area2D" parent="Inimigos/comum/inimigo_1/attack_power"]
-process_mode = 3
-light_mask = 512
-visibility_layer = 512
-position = Vector2(-0.0018712934, -0.00029592845)
-scale = Vector2(8.432788e-05, 1.0113322e-05)
-collision_layer = 512
-collision_mask = 512
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Inimigos/comum/inimigo_1/attack_power/Area2D"]
-visibility_layer = 524289
-position = Vector2(54740528, -64)
-scale = Vector2(4257329, 23872834)
-sprite_frames = SubResource("SpriteFrames_h2e1h")
-autoplay = "default"
-flip_h = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Inimigos/comum/inimigo_1/attack_power/Area2D"]
-process_mode = 3
-light_mask = 512
-visibility_layer = 512
-material = SubResource("CanvasItemMaterial_yn2t1")
-position = Vector2(35033916, 11732091)
-scale = Vector2(5884276, 5267810)
-shape = SubResource("CircleShape2D_6exdr")
-script = SubResource("GDScript_yn2t1")
-
-[node name="hp_1" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
-position = Vector2(12.910957, 71.60142)
-rotation = 3.1415925
-scale = Vector2(0.20173363, -0.23553094)
-texture = ExtResource("48_x11r3")
-
-[node name="hp_2" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
-position = Vector2(5.6485443, 71.60142)
-rotation = 3.1415925
-scale = Vector2(0.20173363, -0.23553094)
-texture = ExtResource("48_x11r3")
-
-[node name="hp_3" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
-position = Vector2(-1.6138678, 71.60142)
-rotation = 3.1415925
-scale = Vector2(0.20173363, -0.23553094)
-texture = ExtResource("48_x11r3")
-
-[node name="hp_4" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
-position = Vector2(-8.876273, 71.60142)
-rotation = 3.1415925
-scale = Vector2(0.20173363, -0.23553094)
-texture = ExtResource("48_x11r3")
-
-[node name="hp_5" type="Sprite2D" parent="Inimigos/comum/inimigo_1"]
-position = Vector2(-16.13868, 71.60142)
-rotation = 3.1415925
-scale = Vector2(0.20173363, -0.23553094)
-texture = ExtResource("48_x11r3")
-
-[node name="Inimigo1AttackMagic" type="AudioStreamPlayer" parent="Inimigos/comum/inimigo_1"]
-stream = ExtResource("54_4212h")
-
-[node name="Inimigo1VoiceAttack" type="AudioStreamPlayer" parent="Inimigos/comum/inimigo_1"]
-stream = ExtResource("55_3out6")
-pitch_scale = 1.48
-
-[node name="Timer_enemy_attack" type="Timer" parent="Inimigos/comum/inimigo_1"]
-wait_time = 3.59
-
-[node name="inimigo_1_animation_attack" type="AnimationPlayer" parent="Inimigos/comum/inimigo_1"]
-libraries = {
-&"": SubResource("AnimationLibrary_6fm5e")
-}
+[node name="inimigo_camilita" parent="Inimigos/comum" instance=ExtResource("54_wo4yk")]
 
 [node name="boss" type="Node2D" parent="Inimigos"]
 
@@ -2027,8 +1631,3 @@ lifetime = 2.0
 one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_h2e1h")
-
-[connection signal="animation_finished" from="Inimigos/comum/inimigo_1" to="Inimigos/comum/inimigo_1" method="_on_animation_finished"]
-[connection signal="area_entered" from="Inimigos/comum/inimigo_1/attack_power/Area2D" to="Cenario de batalha/Maycon" method="_on_area_2d_area_entered"]
-[connection signal="body_entered" from="Inimigos/comum/inimigo_1/attack_power/Area2D" to="Cenario de batalha/Maycon" method="_on_area_2d_body_entered"]
-[connection signal="timeout" from="Inimigos/comum/inimigo_1/Timer_enemy_attack" to="Inimigos/comum/inimigo_1" method="_on_timer_enemy_attack_timeout"]

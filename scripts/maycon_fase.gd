@@ -27,8 +27,11 @@ const JUMP_VELOCITY = -400.0
 var DOUBLE_JUMP_COUNT = 0
 var attack = false
 
-
-
+func pause()->void:
+	pausePlayer = true
+func unpause()->void:
+	pausePlayer = false
+	
 func jump()->void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		sound_jump.play()

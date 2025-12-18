@@ -3,11 +3,11 @@
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
 [ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="2_7je0d"]
-[ext_resource type="PackedScene" uid="uid://b2fnhp1t55rgx" path="res://scenes/inimigos/inimigo_1.tscn" id="2_hnmna"]
 [ext_resource type="Script" uid="uid://c1spheypet4fo" path="res://scripts/fase_1_before_castle_1.gd" id="2_rh75j"]
 [ext_resource type="Texture2D" uid="uid://bs67ndmklpp1b" path="res://assets/novas_imagens/maycon/maycon_falling.png" id="3_pg6gg"]
 [ext_resource type="AudioStream" uid="uid://kg00ua8r8lwq" path="res://assets/novos_audios/maycon_falling_fase_1.mp3" id="3_wwvab"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="6_36c4s"]
+[ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="6_n1ahb"]
 [ext_resource type="Texture2D" uid="uid://drf85jfsrrmkk" path="res://assets/novas_imagens/effects/smoke_animation.png" id="7_ahm46"]
 [ext_resource type="Texture2D" uid="uid://bwclf236t6sen" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_6.png" id="8_cm2i2"]
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="9_ahm46"]
@@ -272,6 +272,23 @@ tracks/11/keys = {
 "update": 1,
 "values": [false, true, false]
 }
+tracks/12/type = "method"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("maycon_fase")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(2.7, 7.9),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"pause"
+}, {
+"args": [],
+"method": &"unpause"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ahm46"]
 _data = {
@@ -474,7 +491,7 @@ light_mask = 512
 visibility_layer = 524800
 position = Vector2(-1469, 169)
 scale = Vector2(2.7735984, 2.5222125)
-collision_layer = 1
+collision_layer = 5
 collision_mask = 1
 
 [node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle1/maycon_fase"]
@@ -488,13 +505,11 @@ limit_bottom = 1355
 
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle1"]
 
-[node name="Inimigo1" parent="Fase1BeforeCastle1/Inimigos" instance=ExtResource("2_hnmna")]
-position = Vector2(648, 845)
-scale = Vector2(1.0896726, 1.1370456)
+[node name="inimigo_camilita" parent="Fase1BeforeCastle1/Inimigos" instance=ExtResource("6_n1ahb")]
+position = Vector2(1000.99994, 872)
 
-[node name="Inimigo2" parent="Fase1BeforeCastle1/Inimigos" instance=ExtResource("2_hnmna")]
-position = Vector2(2434.0002, 829)
-scale = Vector2(1.4004475, 1.2025086)
+[node name="inimigo_camilita2" parent="Fase1BeforeCastle1/Inimigos" instance=ExtResource("6_n1ahb")]
+position = Vector2(2978.0002, 870)
 
 [node name="smoke" type="AnimatedSprite2D" parent="Fase1BeforeCastle1"]
 visible = false
@@ -572,6 +587,8 @@ shape = SubResource("WorldBoundaryShape2D_36c4s")
 
 [node name="battle" parent="." instance=ExtResource("6_36c4s")]
 process_mode = 0
+light_mask = 512
+visibility_layer = 512
 position = Vector2(-673, 328)
 
 [node name="auto_fade_in" parent="." instance=ExtResource("9_ahm46")]

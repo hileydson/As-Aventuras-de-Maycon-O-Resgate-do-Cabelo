@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=3 uid="uid://cbukngmlwguv8"]
+[gd_scene load_steps=49 format=3 uid="uid://cbukngmlwguv8"]
 
 [ext_resource type="Script" uid="uid://cq5pkmyy6iown" path="res://scripts/maycon_batalha.gd" id="1_r25bu"]
 [ext_resource type="Texture2D" uid="uid://22iw51qcp5dg" path="res://assets/images/chutando_direita_0.png" id="2_gvwms"]
@@ -45,6 +45,9 @@
 [ext_resource type="Texture2D" uid="uid://b1qqwqm6jx8dt" path="res://assets/images/andando_direita_7.png" id="42_glm8g"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="43_rv64k"]
 [ext_resource type="AudioStream" uid="uid://bn7bmjnhdvvfd" path="res://assets/audio/peido.mp3" id="45_qieyo"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ep85d"]
+height = 84.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yi2kj"]
 radius = 6.0
@@ -227,6 +230,14 @@ collision_layer = 513
 collision_mask = 513
 script = ExtResource("1_r25bu")
 
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(3, 24)
+collision_layer = 513
+collision_mask = 513
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CapsuleShape2D_ep85d")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 light_mask = 524801
 visibility_layer = 524801
@@ -245,5 +256,6 @@ volume_db = 7.552
 [node name="double_jump" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("45_qieyo")
 
+[connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="ready" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_ready"]

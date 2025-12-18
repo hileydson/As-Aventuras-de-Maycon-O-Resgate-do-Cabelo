@@ -8,8 +8,8 @@ extends AnimationPlayer
 @onready var victory_sound: AudioStreamPlayer2D = $"../victory_sound"
 @onready var destroy: GPUParticles2D = $"../../Inimigos/destroy"
 @onready var camera_maycon: Camera2D = $"../Camera2D"
-@onready var inimigo_1: Node2D = $"../../../Fase1BeforeCastle1/Inimigos/Inimigo1"
-@onready var inimigo_1_battle: AnimatedSprite2D = $"../../Inimigos/comum/inimigo_1"
+
+@onready var inimigo_camilita: AnimatedSprite2D = $"../../Inimigos/comum/inimigo_camilita"
 @onready var battle: Node2D = $"../.."
 @onready var pause: Control = $"../../../Pause"
 
@@ -56,6 +56,7 @@ func change_enemy_hurt(boolean:bool)->void:
 	enemy_hurt = boolean
 
 func maycon_died()->void:
+	GameSongs.stop(1)
 	destroy_maycon.visible = true
 	battle_song.stop()
 	you_died_label.visible = true
@@ -129,7 +130,7 @@ func play_inicio()->void:
 	
 	#TODO: PENSAR EM OUTRA FORMA DINAMICA
 	#inimigo_1.get_node("inimigo_1").resetEnemy()
-	inimigo_1_battle.resetEnemy()
+	inimigo_camilita.resetEnemy()
 	
 	
 
@@ -141,7 +142,7 @@ func _ready() -> void:
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
+	print(Global.battle_next_enemy)
 	if Input.is_action_just_pressed("ui_accept"):
 		emit_signal("player_clicou")
 	

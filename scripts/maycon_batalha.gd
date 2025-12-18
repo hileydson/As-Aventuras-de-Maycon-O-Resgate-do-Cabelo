@@ -158,7 +158,12 @@ func control_defense_jump() -> void:
 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
+	pass
 	
+	
+
+
+func _on_area_2d_area_entered(area: Area2D) -> void:
 	if Global.battle_started:
 		hp_count = hp_count+1
 		
@@ -176,4 +181,3 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		maycon_batalha.play("damage")
 		await get_tree().create_timer(0.4).timeout
 		maycon_batalha.play("idle_right")
-	
