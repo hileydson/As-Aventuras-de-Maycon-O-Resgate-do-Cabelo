@@ -19,6 +19,7 @@ extends CharacterBody2D
 @onready var defense_jump_x: Sprite2D = $"../Defense_jump_X"
 @onready var timer_defense_label: Label = $"../timer_defense_label"
 @onready var timer_defense: Timer = $"../Timer_defense"
+@onready var erro_sound: AudioStreamPlayer = $"../ErroSound"
 
 @onready var hp_1: Node2D = $"../hp_1"
 @onready var hp_2: Node2D = $"../hp_2"
@@ -43,7 +44,7 @@ var hp_count:int = 0
 func jump()->void:
 	if Input.is_action_just_pressed("ui_accept") && maycon_batalha.animation != "jump_right" && is_on_floor() && !batalha_moves.is_playing():
 		if defense_limit_reached:
-			peido.play()
+			erro_sound.play()
 		else:
 			sound_jump.play()
 			maycon_batalha.play("jump_right")

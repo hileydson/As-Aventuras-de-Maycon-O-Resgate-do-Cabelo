@@ -1,4 +1,4 @@
-[gd_scene load_steps=148 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=149 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="1_6exdr"]
@@ -51,6 +51,7 @@
 [ext_resource type="Texture2D" uid="uid://c16a78msmqs0d" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_05.png" id="44_8bi0a"]
 [ext_resource type="Texture2D" uid="uid://buntcb6wh3teo" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_12.png" id="45_7ch20"]
 [ext_resource type="AudioStream" uid="uid://ciioq7s6nwhj5" path="res://assets/novos_audios/victory_sound.mp3" id="46_b4w2m"]
+[ext_resource type="AudioStream" uid="uid://cr5pvvip7o20n" path="res://assets/novos_audios/erro_sound.mp3" id="46_dho1k"]
 [ext_resource type="Script" uid="uid://chne5psun3nw1" path="res://scripts/inimigos/enemy_data.gd" id="46_x11r3"]
 [ext_resource type="AudioStream" uid="uid://bpuvyi2a67twf" path="res://assets/novos_audios/DS_pain.mp3" id="47_pvxjk"]
 [ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="54_wo4yk"]
@@ -1451,6 +1452,9 @@ stream = ExtResource("33_xskhn")
 [node name="PassosMaycon" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("34_xskhn")
 
+[node name="ErroSound" type="AudioStreamPlayer" parent="Cenario de batalha"]
+stream = ExtResource("46_dho1k")
+
 [node name="Logo3" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(-407.00003, -253.00002)
 scale = Vector2(0.71307504, 0.8304348)
@@ -1555,9 +1559,11 @@ offset_bottom = -213.0
 text = "00"
 
 [node name="Timer_power" type="Timer" parent="Cenario de batalha"]
+process_mode = 3
 wait_time = 10.0
 
 [node name="Timer_defense" type="Timer" parent="Cenario de batalha"]
+process_mode = 3
 wait_time = 8.0
 
 [node name="StaticBody2D" type="StaticBody2D" parent="Cenario de batalha"]
@@ -1589,6 +1595,8 @@ light_mask = 512
 visibility_layer = 512
 
 [node name="inimigo_camilita" parent="Inimigos/comum" instance=ExtResource("54_wo4yk")]
+position = Vector2(305.00003, 46)
+scale = Vector2(1.0888638, -1.0577118)
 
 [node name="boss" type="Node2D" parent="Inimigos"]
 

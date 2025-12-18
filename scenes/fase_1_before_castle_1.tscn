@@ -506,7 +506,8 @@ limit_bottom = 1355
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle1"]
 
 [node name="inimigo_camilita" parent="Fase1BeforeCastle1/Inimigos" instance=ExtResource("6_n1ahb")]
-position = Vector2(3024.9998, 870)
+position = Vector2(3016.0002, 904.00006)
+scale = Vector2(1.3607981, -1.1666366)
 
 [node name="smoke" type="AnimatedSprite2D" parent="Fase1BeforeCastle1"]
 visible = false

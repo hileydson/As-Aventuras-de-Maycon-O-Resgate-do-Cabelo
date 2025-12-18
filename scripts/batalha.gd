@@ -33,6 +33,7 @@ extends AnimationPlayer
 @onready var inicio_batalha: AnimatedSprite2D = $"../../inicio_batalha"
 @onready var explosao: AudioStreamPlayer = $"../Explosao"
 @onready var battleground: Sprite2D = $"../Battleground"
+@onready var erro_sound: AudioStreamPlayer = $"../ErroSound"
 
 signal player_clicou
 
@@ -140,8 +141,11 @@ func _ready() -> void:
 	#carrega mapa correto
 	battleground.texture = mapas_backgrounds[Global.battle_background]
 	
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	control_attack_power()	
 	
 	if Input.is_action_just_pressed("ui_accept"):
 		emit_signal("player_clicou")
@@ -149,12 +153,12 @@ func _process(delta: float) -> void:
 	# PLOTAR INIMIGO EM BATALHA
 	if Global.battle_next_enemy != 0:
 		Global.battle_next_enemy = 0
-		Global.battle_started = true
 		GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
 		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").start_effect(2)
 		await get_tree().create_timer(0.8).timeout
 		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").stop_effect()
 		play_inicio()
+		Global.battle_started = true
 		
 		
 	elif Global.battle_next_boss != 0:
@@ -172,25 +176,24 @@ func _process(delta: float) -> void:
 	if died:
 		maycon_died()
 	
-	if batalha_moves.enemy_attacking == true:
-		return
-	
-	control_attack_power()	
-	
 	if !batalha_moves.is_playing():
 		maycon_batalha_default.play("idle")
+		
+		
+	if enemy_attacking == true:
+		return
 		
 	if battle_finished==false:
 		if Input.is_action_pressed("key_q") && !batalha_moves.is_playing() && maycon.get_node("AnimatedSprite2D").animation == "idle_right":
 			if power_limit_reached:
-				peido.play()
+				erro_sound.play()
 			else:
 				batalha_moves.play("punch")
 				power_count = power_count+1
 			
 		if Input.is_action_pressed("key_w") && !batalha_moves.is_playing() && maycon.get_node("AnimatedSprite2D").animation == "idle_right":
 			if power_limit_reached:
-				peido.play()
+				erro_sound.play()
 			else:
 				batalha_moves.play("kick")
 				power_count = power_count+1

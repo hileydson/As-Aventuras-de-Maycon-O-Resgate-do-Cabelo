@@ -1,10 +1,10 @@
 extends AnimatedSprite2D
 
-@onready var hp_1: Sprite2D = $hp_1
-@onready var hp_2: Sprite2D = $hp_2
-@onready var hp_3: Sprite2D = $hp_3
-@onready var hp_4: Sprite2D = $hp_4
-@onready var hp_5: Sprite2D = $hp_5
+@onready var hp_1: Sprite2D = $hps/hp_1
+@onready var hp_2: Sprite2D = $hps/hp_2
+@onready var hp_3: Sprite2D = $hps/hp_3
+@onready var hp_4: Sprite2D = $hps/hp_4
+@onready var hp_5: Sprite2D = $hps/hp_5
 @onready var ds_pain: AudioStreamPlayer = $"../../../Cenario de batalha/DsPain"
 @onready var passos_areia: AudioStreamPlayer = $"../../../Cenario de batalha/PassosAreia"
 @onready var inimigos: Node = $"../.."
@@ -26,7 +26,7 @@ func resetEnemy() -> void:
 	count_play_inicio = 0
 	damage_taken = 0 #TODO: COLOCAR 4 PARA TESTAR RAPIDO E VOLTAR PARA 0 PARA O PADRAO
 	dead = false
-	me.play()
+	me.play("idle")
 
 		
 func _ready() -> void:
@@ -70,15 +70,21 @@ func _process(delta: float) -> void:
 func _on_timer_enemy_attack_timeout() -> void:
 	if batalha_moves == null:
 		return
+	
+	if inimigo_1_animation_attack.is_playing():
+		return
 		
 	if maycon.visible == true && !batalha_moves.battle_finished:
-		batalha_moves.enemy_attacking = true
-		me.play("attack")
-		
 		# Toca a animação de ataque
 		inimigo_1_animation_attack.play("power_attack")
 		
-
+		batalha_moves.enemy_attacking = true
+		
+		
+func set_enemy_attacking() -> void:
+	batalha_moves.enemy_attacking = false		
+func set_enemy_not_attacking() -> void:
+	batalha_moves.enemy_attacking = false
 
 func _on_animation_finished() -> void:
 	batalha_moves.enemy_attacking = false
