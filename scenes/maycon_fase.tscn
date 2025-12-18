@@ -526,20 +526,22 @@ animation = &"attack_punch"
 
 [node name="jump" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("45_ff0lx")
-volume_db = 7.552
+volume_db = 3.838
 
 [node name="walk" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("46_iwaom")
+volume_db = 4.643
 parameters/looping = false
 
 [node name="run" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("46_iwaom")
+volume_db = 5.571
 pitch_scale = 1.06
 parameters/looping = false
 
 [node name="double_jump" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("47_abf4a")
-volume_db = -5.368
+volume_db = -1.654
 
 [node name="Kick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("48_280p7")

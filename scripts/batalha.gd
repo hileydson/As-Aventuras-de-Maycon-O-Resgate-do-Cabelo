@@ -152,23 +152,24 @@ func _process(delta: float) -> void:
 	
 	# PLOTAR INIMIGO EM BATALHA
 	if Global.battle_next_enemy != 0:
+		Global.battle_started = true
 		Global.battle_next_enemy = 0
 		GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
 		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").start_effect(2)
 		await get_tree().create_timer(0.8).timeout
 		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").stop_effect()
 		play_inicio()
-		Global.battle_started = true
+		
 		
 		
 	elif Global.battle_next_boss != 0:
+		Global.battle_started = true
 		GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
 		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").start_effect(2)
 		await get_tree().create_timer(0.8).timeout
 		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").stop_effect()
 		play_inicio()
 		Global.battle_next_boss = 0
-		Global.battle_started = true
 		
 	if Global.battle_started == false:
 		return
