@@ -303,7 +303,7 @@ position = Vector2(325, 12)
 rotation = 3.1415925
 scale = Vector2(2.4785156, -2.255542)
 sprite_frames = SubResource("SpriteFrames_sacx5")
-animation = &"attack"
+animation = &"idle"
 autoplay = "idle"
 script = ExtResource("4_kbwi8")
 
@@ -391,7 +391,7 @@ stream = ExtResource("8_n4vpa")
 pitch_scale = 1.48
 
 [node name="Timer_enemy_attack" type="Timer" parent="."]
-wait_time = 2.0
+wait_time = 3.0069999999999997
 
 [node name="inimigo_1_animation_attack" type="AnimationPlayer" parent="."]
 libraries = {
