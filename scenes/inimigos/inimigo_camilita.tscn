@@ -394,7 +394,7 @@ scale = Vector2(5884276, 21635452)
 shape = SubResource("CircleShape2D_6yikh")
 
 [node name="hps" type="Node2D" parent="."]
-position = Vector2(0.9912094, -22.394966)
+position = Vector2(-6.938493, -22.394964)
 scale = Vector2(2.0308614, 1.2132909)
 
 [node name="hp_1" type="Sprite2D" parent="hps"]
@@ -417,12 +417,6 @@ texture = ExtResource("6_68kxr")
 
 [node name="hp_4" type="Sprite2D" parent="hps"]
 position = Vector2(-9.155518, 109.34494)
-rotation = 3.1415925
-scale = Vector2(0.2017336, -0.23553093)
-texture = ExtResource("6_68kxr")
-
-[node name="hp_5" type="Sprite2D" parent="hps"]
-position = Vector2(-16.417908, 109.34494)
 rotation = 3.1415925
 scale = Vector2(0.2017336, -0.23553093)
 texture = ExtResource("6_68kxr")
