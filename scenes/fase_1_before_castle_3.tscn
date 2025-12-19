@@ -124,11 +124,11 @@ limit_bottom = 1355
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
 
 [node name="inimigo_camilita" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("4_e7uvt")]
-position = Vector2(3039.0002, 644)
+position = Vector2(2146, 922.99994)
 scale = Vector2(1.199496, -1.0507715)
 
 [node name="inimigo_bomba_pretti" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("5_vjg2b")]
-position = Vector2(1651, 956)
+position = Vector2(2951, 647.99994)
 scale = Vector2(1.4689795, -1.333543)
 
 [node name="next_scene" type="Area2D" parent="."]

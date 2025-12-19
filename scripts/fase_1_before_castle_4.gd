@@ -43,6 +43,7 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	get_tree().paused = true
 	await get_tree().create_timer(0.3).timeout 
 	enter_the_castle.visible = true
+	GameSongs.stop(1001)
 	scary_smile.play()
 	await get_tree().create_timer(0.3).timeout 
 	castle.visible = true

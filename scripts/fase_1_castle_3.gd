@@ -44,6 +44,7 @@ func _process(delta: float) -> void:
 func _on_next_scene_body_entered(body: Node2D) -> void:
 	get_tree().paused = true
 	await get_tree().create_timer(0.3).timeout 
+	GameSongs.stop(1002)
 	get_tree().change_scene_to_file("res://scenes/fase_1_castle_no_fire_1.tscn")
 
 
@@ -55,6 +56,7 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 	get_tree().paused = true
 	Global.back_to_fase = true
 	await get_tree().create_timer(0.3).timeout 
+	GameSongs.play_song(1002)
 	get_tree().change_scene_to_file("res://scenes/fase_1_castle_2.tscn")
 
 

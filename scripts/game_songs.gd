@@ -9,12 +9,17 @@ func stop(n:int) -> void:
 		song_fase_1_fire_cracling.stop()
 	if n==1001:
 		song_fase_1.stop()
+	if n==1002:
+		song_fase_1_fire_cracling.stop()	
 		
 func play_song(n:int) -> void:
 	if n==1:
 		song_fase_1.play()
 		song_fase_1_fire_cracling.play()
-
+	if n==1001:
+		song_fase_1.play()
+	if n==1002:
+		song_fase_1_fire_cracling.play()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
