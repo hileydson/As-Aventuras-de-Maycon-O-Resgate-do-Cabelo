@@ -81,7 +81,6 @@ func maycon_died()->void:
 	
 	await get_tree().create_timer(4.0).timeout
 	fade.get_node("Transition").play("fade_out")
-	current_enemy.queue_free()
 	await get_tree().create_timer(2.0).timeout
 	victory_label.visible = false
 	you_died_label.visible = false
