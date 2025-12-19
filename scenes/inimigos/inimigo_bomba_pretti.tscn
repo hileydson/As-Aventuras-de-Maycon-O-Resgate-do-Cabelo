@@ -1,10 +1,9 @@
-[gd_scene load_steps=31 format=3 uid="uid://8h41hconncdu"]
+[gd_scene load_steps=28 format=3 uid="uid://8h41hconncdu"]
 
 [ext_resource type="Texture2D" uid="uid://dj6t28v6ftb70" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_attack_1.png" id="1_68eli"]
-[ext_resource type="Texture2D" uid="uid://dc6fyyx8xncpv" path="res://assets/novas_imagens/inimigos/camilita/camilita_attack.png" id="1_rt5w4"]
 [ext_resource type="Texture2D" uid="uid://b65egppqvsc2d" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_idle.png" id="3_68eli"]
 [ext_resource type="Script" uid="uid://b4hrkqb4atcxe" path="res://scripts/inimigos/inimigo_bomba_pretti.gd" id="3_rt5w4"]
-[ext_resource type="Texture2D" uid="uid://dqff4eihc6rqp" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Arrow.png" id="4_0dlgm"]
+[ext_resource type="Texture2D" uid="uid://ct1c24u6ffq62" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_agulha.png" id="4_rt5w4"]
 [ext_resource type="Texture2D" uid="uid://2meppcw1h507" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png" id="5_dd1k7"]
 [ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="6_kqh5m"]
 [ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="7_ak6sc"]
@@ -138,36 +137,20 @@ tangential_accel_min = -2.2351742e-06
 tangential_accel_max = 33.329998
 scale_max = 19.52
 scale_over_velocity_max = 4.9
-color = Color(1, 0.12941177, 1, 1)
+color = Color(0.27668077, 0.7494532, 3.85046e-07, 1)
 anim_speed_min = -6.0
 anim_speed_max = -6.0
 anim_offset_min = 0.0069999998
 anim_offset_max = 0.5207
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_vaw2u"]
-atlas = ExtResource("1_rt5w4")
-region = Rect2(134, 412, 134, 206)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0sh2x"]
-atlas = ExtResource("4_0dlgm")
-region = Rect2(400, 128, 25, 16)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_t5fwm"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_vaw2u")
+"texture": ExtResource("4_rt5w4")
 }],
 "loop": true,
 "name": &"default",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0sh2x")
-}],
-"loop": true,
-"name": &"default__",
 "speed": 5.0
 }]
 
@@ -361,11 +344,10 @@ collision_mask = 512
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="attack_power/Area2D"]
 visibility_layer = 524289
-position = Vector2(95662104, 515884670)
-scale = Vector2(2858707.2, 15971146)
+position = Vector2(-28755840, 43256320)
+scale = Vector2(502774.28, 1861104.6)
 sprite_frames = SubResource("SpriteFrames_t5fwm")
 autoplay = "default"
-flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="attack_power/Area2D"]
 light_mask = 512
