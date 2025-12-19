@@ -39,7 +39,8 @@ extends AnimationPlayer
 
 var inimigos = {
 	"1" = preload("res://scenes/inimigos/inimigo_camilita.tscn"),
-	"2" = preload("res://scenes/inimigos/inimigo_bomba_pretti.tscn")
+	"2" = preload("res://scenes/inimigos/inimigo_bomba_pretti.tscn"),
+	"3" = preload("res://scenes/inimigos/inimigo_fofo.tscn")
 }
 
 signal player_clicou
