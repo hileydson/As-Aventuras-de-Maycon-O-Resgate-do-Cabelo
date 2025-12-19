@@ -14,7 +14,7 @@ var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase
 func _ready() -> void:
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
-	Global.battle_next_enemy = 0
+	Global.battle_next_enemy = "0"
 	Global.battle_background = "1"
 	
 	if Global.back_to_fase == true:

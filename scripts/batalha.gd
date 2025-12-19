@@ -6,10 +6,12 @@ extends AnimationPlayer
 @onready var passos_areia: AudioStreamPlayer = $"../PassosAreia"
 @onready var battle_song: AudioStreamPlayer2D = $"../Battle_Song"
 @onready var victory_sound: AudioStreamPlayer2D = $"../victory_sound"
-@onready var destroy: GPUParticles2D = $"../../Inimigos/destroy"
+@onready var destroy: GPUParticles2D = $"../../inimigo_node/destroy"
 @onready var camera_maycon: Camera2D = $"../Camera2D"
+@onready var inimigo_batalha: AnimatedSprite2D = $"../../inimigo_node/inimigo_batalha"
+@onready var inimigos_place: Node2D = $"../../Inimigos"
+@onready var marker_2d: Marker2D = $"../../Inimigos/Marker2D"
 
-@onready var inimigo_camilita: AnimatedSprite2D = $"../../Inimigos/comum/inimigo_camilita"
 @onready var battle: Node2D = $"../.."
 @onready var pause: Control = $"../../../Pause"
 
@@ -35,7 +37,14 @@ extends AnimationPlayer
 @onready var battleground: Sprite2D = $"../Battleground"
 @onready var erro_sound: AudioStreamPlayer = $"../ErroSound"
 
+var inimigos = {
+	"1" = preload("res://scenes/inimigos/inimigo_camilita.tscn"),
+	"2" = preload("res://scenes/inimigos/inimigo_bomba_pretti.tscn")
+}
+
 signal player_clicou
+
+var current_enemy = null
 
 var power_limit_reached:bool = false
 var power_limit:int = 3
@@ -71,6 +80,7 @@ func maycon_died()->void:
 	
 	await get_tree().create_timer(4.0).timeout
 	fade.get_node("Transition").play("fade_out")
+	current_enemy.queue_free()
 	await get_tree().create_timer(2.0).timeout
 	victory_label.visible = false
 	you_died_label.visible = false
@@ -90,6 +100,7 @@ func victory()->void:
 	
 	await self.player_clicou
 	fade.get_node("Transition").play("fade_out")
+	current_enemy.queue_free()
 	await get_tree().create_timer(3.0).timeout
 	Global.back_to_main_camera = true
 	Global.battle_started = false
@@ -100,6 +111,12 @@ func victory()->void:
 	destroy.visible = false
 	GameSongs.process_mode = Node.PROCESS_MODE_INHERIT
 	await get_tree().create_timer(0.6).timeout	
+	
+	
+func add_enemy()->void:
+	current_enemy = inimigos[Global.battle_next_enemy].instantiate()
+	add_child(current_enemy)
+	current_enemy.global_position = inimigo_batalha.global_position
 	
 	
 func play_inicio()->void:
@@ -131,7 +148,7 @@ func play_inicio()->void:
 	
 	#TODO: PENSAR EM OUTRA FORMA DINAMICA
 	#inimigo_1.get_node("inimigo_1").resetEnemy()
-	inimigo_camilita.resetEnemy()
+	current_enemy.resetEnemy()
 	
 	
 
@@ -151,9 +168,10 @@ func _process(delta: float) -> void:
 		emit_signal("player_clicou")
 	
 	# PLOTAR INIMIGO EM BATALHA
-	if Global.battle_next_enemy != 0:
+	if Global.battle_next_enemy != "0":
 		Global.battle_started = true
-		Global.battle_next_enemy = 0
+		add_enemy()
+		Global.battle_next_enemy = "0"
 		GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
 		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").start_effect(2)
 		await get_tree().create_timer(0.8).timeout
@@ -164,6 +182,7 @@ func _process(delta: float) -> void:
 		
 	elif Global.battle_next_boss != 0:
 		Global.battle_started = true
+		add_enemy()
 		GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
 		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").start_effect(2)
 		await get_tree().create_timer(0.8).timeout

@@ -1,4 +1,4 @@
-[gd_scene load_steps=149 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=152 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="1_6exdr"]
@@ -54,7 +54,7 @@
 [ext_resource type="AudioStream" uid="uid://cr5pvvip7o20n" path="res://assets/novos_audios/erro_sound.mp3" id="46_dho1k"]
 [ext_resource type="Script" uid="uid://chne5psun3nw1" path="res://scripts/inimigos/enemy_data.gd" id="46_x11r3"]
 [ext_resource type="AudioStream" uid="uid://bpuvyi2a67twf" path="res://assets/novos_audios/DS_pain.mp3" id="47_pvxjk"]
-[ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="54_wo4yk"]
+[ext_resource type="Texture2D" uid="uid://c2dbtrgi6uahl" path="res://assets/novas_imagens/inimigos/cabeca_seco.png" id="55_dho1k"]
 [ext_resource type="Texture2D" uid="uid://1fkfqqihfhgs" path="res://assets/novas_imagens/effects/Explosion/4.png" id="60_oqd0s"]
 [ext_resource type="Shader" uid="uid://b1m2oe2d5u8fc" path="res://scenes/batalha_2d.gdshader" id="62_0sh2x"]
 [ext_resource type="Script" uid="uid://bcde43vdwkd2i" path="res://scripts/efeito_vidro_canvas.gd" id="62_h2e1h"]
@@ -296,7 +296,7 @@ tracks/6/keys = {
 tracks/7/type = "method"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("../../Inimigos")
+tracks/7/path = NodePath("../../inimigo_node")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -547,7 +547,7 @@ tracks/6/keys = {
 tracks/7/type = "method"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("../../Inimigos")
+tracks/7/path = NodePath("../../inimigo_node")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -819,6 +819,24 @@ collision_use_scale = true
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7ch20"]
 distance = -8.004456
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dho1k"]
+atlas = ExtResource("55_dho1k")
+region = Rect2(0, 0, 962, 812)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_oqd0s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dho1k")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wo4yk"]
+size = Vector2(93, 217)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h2e1h"]
 atlas = ExtResource("60_oqd0s")
@@ -1582,25 +1600,30 @@ position = Vector2(-11, -120.00003)
 scale = Vector2(2.455237, 4.1227045)
 shape = SubResource("WorldBoundaryShape2D_7ch20")
 
-[node name="Inimigos" type="Node2D" parent="."]
+[node name="inimigo_node" type="Node2D" parent="."]
+unique_name_in_owner = true
 process_mode = 3
 light_mask = 512
 visibility_layer = 512
 position = Vector2(0, 84)
 script = ExtResource("46_x11r3")
 
-[node name="comum" type="Node2D" parent="Inimigos"]
-process_mode = 3
-light_mask = 512
-visibility_layer = 512
+[node name="Marker2D" type="Marker2D" parent="inimigo_node"]
+position = Vector2(-27, -208)
 
-[node name="inimigo_camilita" parent="Inimigos/comum" instance=ExtResource("54_wo4yk")]
-position = Vector2(305.00003, 46)
-scale = Vector2(1.0888638, -1.0577118)
+[node name="inimigo_batalha" type="AnimatedSprite2D" parent="inimigo_node"]
+visible = false
+position = Vector2(288, 56.000015)
+scale = Vector2(0.3898129, 0.36576355)
+sprite_frames = SubResource("SpriteFrames_oqd0s")
 
-[node name="boss" type="Node2D" parent="Inimigos"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="inimigo_node/inimigo_batalha"]
+position = Vector2(1, 1)
+shape = SubResource("RectangleShape2D_wo4yk")
 
-[node name="destroy" type="GPUParticles2D" parent="Inimigos"]
+[node name="boss" type="Node2D" parent="inimigo_node"]
+
+[node name="destroy" type="GPUParticles2D" parent="inimigo_node"]
 visible = false
 material = SubResource("ShaderMaterial_pvxjk")
 position = Vector2(320, 57)
@@ -1611,6 +1634,7 @@ process_material = SubResource("ParticleProcessMaterial_h88qw")
 [node name="inicio_batalha" type="AnimatedSprite2D" parent="."]
 process_mode = 3
 auto_translate_mode = 2
+z_index = 1
 position = Vector2(-22, -27)
 scale = Vector2(7.5515676, 7.1260457)
 sprite_frames = SubResource("SpriteFrames_qqwl7")

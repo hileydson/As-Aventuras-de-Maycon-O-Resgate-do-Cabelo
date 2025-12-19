@@ -6,7 +6,6 @@ extends AnimatedSprite2D
 @onready var hp_4: Sprite2D = $hps/hp_4
 @onready var ds_pain: AudioStreamPlayer = $"../../../Cenario de batalha/DsPain"
 @onready var passos_areia: AudioStreamPlayer = $"../../../Cenario de batalha/PassosAreia"
-@onready var inimigos: Node = $"../.."
 
 @onready var batalha_moves: AnimationPlayer = $"../../../Cenario de batalha/batalha_moves"
 @onready var me: AnimatedSprite2D = $"."
@@ -19,7 +18,8 @@ var em_batalha = false
 var damage_limit_to_drop_hp:int = 1
 var damage_taken:int = 0
 var dead:bool = false
-	
+
+var ref_inimigos: Node	
 	
 func resetEnemy() -> void:
 	count_play_inicio = 0
@@ -29,7 +29,7 @@ func resetEnemy() -> void:
 
 		
 func _ready() -> void:
-	pass #add_child(timer_enemy_attack)
+	ref_inimigos = get_tree().root.find_child("inimigo_node", true, false)
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:	
@@ -48,8 +48,10 @@ func _process(delta: float) -> void:
 	elif me.animation_finished && !me.is_playing():
 		me.play("idle")
 
-	if inimigos.damage_count_drop_hp == damage_limit_to_drop_hp:
-		inimigos.reset_damage()
+	if ref_inimigos == null:
+		ref_inimigos = get_tree().root.find_child("inimigo_node", true, false)
+	elif ref_inimigos.damage_count_drop_hp == damage_limit_to_drop_hp:
+		ref_inimigos.reset_damage()
 		damage_taken = damage_taken+1
 	
 	# Simplifiquei a lógica de visibilidade (opcional, mas fica mais limpo)
@@ -89,7 +91,7 @@ func _on_animation_finished() -> void:
 
 
 func _on_to_battle_body_entered(body: Node2D) -> void:
-	Global.battle_next_enemy = 1
+	Global.battle_next_enemy = "1"
 	queue_free()
 	
 	
