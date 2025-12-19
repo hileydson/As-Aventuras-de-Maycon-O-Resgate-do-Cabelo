@@ -76,8 +76,13 @@ func _on_timer_enemy_attack_timeout() -> void:
 		return
 		
 	if maycon.visible == true && !batalha_moves.battle_finished:
-		# Toca a animação de ataque
-		inimigo_1_animation_attack.play("power_attack")
+		# gera ataques aleatorios
+		var resultado = randi_range(0, 100) / 2.0
+		if  resultado == floor(resultado):
+			inimigo_1_animation_attack.play("power_attack")
+		else:
+			inimigo_1_animation_attack.play("power_attack_2")
+			
 		
 		batalha_moves.enemy_attacking = true
 		

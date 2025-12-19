@@ -1,12 +1,15 @@
-[gd_scene load_steps=28 format=3 uid="uid://8h41hconncdu"]
+[gd_scene load_steps=38 format=3 uid="uid://8h41hconncdu"]
 
 [ext_resource type="Texture2D" uid="uid://dj6t28v6ftb70" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_attack_1.png" id="1_68eli"]
+[ext_resource type="Texture2D" uid="uid://cjny1v7bphapj" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_attack_2.png" id="2_l1tvj"]
 [ext_resource type="Texture2D" uid="uid://b65egppqvsc2d" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_idle.png" id="3_68eli"]
 [ext_resource type="Script" uid="uid://b4hrkqb4atcxe" path="res://scripts/inimigos/inimigo_bomba_pretti.gd" id="3_rt5w4"]
 [ext_resource type="Texture2D" uid="uid://ct1c24u6ffq62" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_agulha.png" id="4_rt5w4"]
+[ext_resource type="Texture2D" uid="uid://cu01u62l1psg6" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_halter.png" id="5_0dlgm"]
 [ext_resource type="Texture2D" uid="uid://2meppcw1h507" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png" id="5_dd1k7"]
 [ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="6_kqh5m"]
 [ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="7_ak6sc"]
+[ext_resource type="AudioStream" uid="uid://c2uew5w81laa" path="res://assets/novos_audios/doom_pain.mp3" id="10_0dlgm"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_68eli"]
 atlas = ExtResource("1_68eli")
@@ -15,6 +18,22 @@ region = Rect2(0, 0, 144, 192)
 [sub_resource type="AtlasTexture" id="AtlasTexture_a8u4x"]
 atlas = ExtResource("1_68eli")
 region = Rect2(288, 0, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e7hgl"]
+atlas = ExtResource("2_l1tvj")
+region = Rect2(0, 0, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fi5xb"]
+atlas = ExtResource("2_l1tvj")
+region = Rect2(144, 0, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k05k5"]
+atlas = ExtResource("2_l1tvj")
+region = Rect2(288, 0, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yjj5x"]
+atlas = ExtResource("2_l1tvj")
+region = Rect2(0, 192, 144, 192)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l1tvj"]
 atlas = ExtResource("3_68eli")
@@ -75,6 +94,53 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_e7hgl")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_fi5xb")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_k05k5")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_yjj5x")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_yjj5x")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_yjj5x")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_yjj5x")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_yjj5x")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_yjj5x")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_yjj5x")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_yjj5x")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_k05k5")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_fi5xb")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_e7hgl")
+}],
+"loop": false,
+"name": &"attack_2",
 "speed": 5.0
 }, {
 "frames": [{
@@ -158,6 +224,40 @@ animations = [{
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6yikh"]
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_478t0"]
+lifetime_randomness = 0.51
+particle_flag_align_y = true
+particle_flag_rotate_y = true
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(1, 10, 1)
+angle_min = -191.99998
+angle_max = -26.69999
+gravity = Vector3(800, 98, 0)
+linear_accel_min = -74.08
+linear_accel_max = -28.150002
+radial_accel_min = -2.2351742e-06
+radial_accel_max = 35.559998
+tangential_accel_min = -2.2351742e-06
+tangential_accel_max = 33.329998
+scale_max = 19.52
+scale_over_velocity_max = 4.9
+color = Color(0.27668077, 0.7494532, 3.85046e-07, 1)
+anim_speed_min = -6.0
+anim_speed_max = -6.0
+anim_offset_min = 0.0069999998
+anim_offset_max = 0.5207
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8shk3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_0dlgm")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [sub_resource type="Animation" id="Animation_oqd0s"]
 length = 0.001
 tracks/0/type = "value"
@@ -191,6 +291,42 @@ tracks/2/path = NodePath("attack_power:emitting")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("attack_power2:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("attack_power2:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(98.58546, -14.999998)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("attack_power2:emitting")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -241,42 +377,25 @@ tracks/2/keys = {
 "method": &"stop"
 }]
 }
-tracks/3/type = "method"
+tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("Inimigo1VoiceAttack")
+tracks/3/path = NodePath("attack_power:emitting")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0.73333335, 1.9),
-"transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [0.0],
-"method": &"play"
-}, {
-"args": [],
-"method": &"stop"
-}]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("attack_power:emitting")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
 "times": PackedFloat32Array(0.76666665, 1.9333333),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
 }
-tracks/5/type = "method"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath(".")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
 "times": PackedFloat32Array(0.03333333, 1, 1.7),
 "transitions": PackedFloat32Array(1, 1, 1),
 "values": [{
@@ -290,11 +409,100 @@ tracks/5/keys = {
 "method": &"set_enemy_not_attacking"
 }]
 }
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("DoomPain")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.033333335),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_iognq"]
+resource_name = "power_attack"
+length = 3.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.03333333, 1.4333333, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [&"attack_2"],
+"method": &"play"
+}, {
+"args": [],
+"method": &"stop"
+}, {
+"args": [],
+"method": &"set_enemy_not_attacking"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DoomPain")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.13333334),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("attack_power2:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.4, 2.8666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("attack_power2:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.52, 1.05, 1.7, 2.5666666, 2.86),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(18.833035, -82.11495), Vector2(248.794, -105.576), Vector2(248.7944, -105.576416), Vector2(663.12134, -89.580055), Vector2(2114.2568, -99.17815)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("attack_power2:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.7, 2.0333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6fm5e"]
 _data = {
 &"RESET": SubResource("Animation_oqd0s"),
-&"power_attack": SubResource("Animation_evw7u")
+&"power_attack": SubResource("Animation_evw7u"),
+&"power_attack_2": SubResource("Animation_iognq")
 }
 
 [node name="inimigo_bomba_pretti" type="AnimatedSprite2D"]
@@ -305,10 +513,10 @@ position = Vector2(534, 463.99997)
 rotation = 3.1415925
 scale = Vector2(1.0088651, -0.9377094)
 sprite_frames = SubResource("SpriteFrames_rt5w4")
-animation = &"attack"
+animation = &"attack_2"
 autoplay = "idle"
-frame = 5
-frame_progress = 1.0
+frame = 6
+frame_progress = 0.26937202
 flip_h = true
 script = ExtResource("3_rt5w4")
 
@@ -357,6 +565,38 @@ position = Vector2(39179296, 50253492)
 scale = Vector2(5884276, 21635452)
 shape = SubResource("CircleShape2D_6yikh")
 
+[node name="attack_power2" type="GPUParticles2D" parent="."]
+visible = false
+light_mask = 512
+visibility_layer = 512
+position = Vector2(98.58546, -14.999998)
+scale = Vector2(0.004370174, 0.007473256)
+amount = 15
+process_material = SubResource("ParticleProcessMaterial_478t0")
+
+[node name="Area2D" type="Area2D" parent="attack_power2"]
+light_mask = 513
+visibility_layer = 524801
+position = Vector2(-0.0018712934, -0.00029592845)
+scale = Vector2(8.432788e-05, 1.0113322e-05)
+collision_layer = 512
+collision_mask = 512
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="attack_power2/Area2D"]
+visibility_layer = 524289
+position = Vector2(-28755840, 43256320)
+scale = Vector2(502774.28, 1861104.6)
+sprite_frames = SubResource("SpriteFrames_8shk3")
+autoplay = "default"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="attack_power2/Area2D"]
+light_mask = 512
+visibility_layer = 524800
+material = SubResource("CanvasItemMaterial_85y4w")
+position = Vector2(39179296, 50253492)
+scale = Vector2(5884276, 21635452)
+shape = SubResource("CircleShape2D_6yikh")
+
 [node name="hps" type="Node2D" parent="."]
 position = Vector2(-6.938493, -22.394964)
 scale = Vector2(2.0308614, 1.2132909)
@@ -391,6 +631,9 @@ stream = ExtResource("6_kqh5m")
 [node name="Inimigo1VoiceAttack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_ak6sc")
 pitch_scale = 1.48
+
+[node name="DoomPain" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_0dlgm")
 
 [node name="Timer_enemy_attack" type="Timer" parent="."]
 wait_time = 3.0069999999999997

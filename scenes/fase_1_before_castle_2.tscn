@@ -131,6 +131,8 @@ scale = Vector2(1.2165517, -1.1197971)
 position = Vector2(996.5, 904.50006)
 scale = Vector2(1.5179462, -1.5278542)
 animation = &"idle"
+frame = 0
+frame_progress = 0.0
 
 [node name="next_scene" type="Area2D" parent="."]
 process_mode = 1
