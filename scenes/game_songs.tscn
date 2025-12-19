@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://c1ohu1ucwwi6d"]
+[gd_scene load_steps=5 format=3 uid="uid://c1ohu1ucwwi6d"]
 
 [ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="1_cwb0u"]
 [ext_resource type="Script" uid="uid://i0tht7dfoh03" path="res://scripts/game_songs.gd" id="1_svmer"]
+[ext_resource type="AudioStream" uid="uid://tgbq8dtejvrb" path="res://assets/novos_audios/fire_cracling.mp3" id="3_ydfgw"]
+[ext_resource type="AudioStream" uid="uid://dry3m3cm7jvae" path="res://assets/novos_audios/song_fase_1.mp3" id="4_do2j7"]
 
 [node name="GameSongs" type="Node2D"]
 script = ExtResource("1_svmer")
@@ -9,4 +11,14 @@ script = ExtResource("1_svmer")
 [node name="old_song_backup" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_cwb0u")
 volume_db = -17.643
+parameters/looping = true
+
+[node name="FireCracling" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_ydfgw")
+volume_db = -2.786
+parameters/looping = true
+
+[node name="SongFase1" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_do2j7")
+volume_db = -19.5
 parameters/looping = true

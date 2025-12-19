@@ -1,5 +1,6 @@
-[gd_scene load_steps=35 format=3 uid="uid://8h41hconncdu"]
+[gd_scene load_steps=31 format=3 uid="uid://8h41hconncdu"]
 
+[ext_resource type="Texture2D" uid="uid://dj6t28v6ftb70" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_attack_1.png" id="1_68eli"]
 [ext_resource type="Texture2D" uid="uid://dc6fyyx8xncpv" path="res://assets/novas_imagens/inimigos/camilita/camilita_attack.png" id="1_rt5w4"]
 [ext_resource type="Texture2D" uid="uid://b65egppqvsc2d" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_idle.png" id="3_68eli"]
 [ext_resource type="Script" uid="uid://b4hrkqb4atcxe" path="res://scripts/inimigos/inimigo_bomba_pretti.gd" id="3_rt5w4"]
@@ -8,33 +9,13 @@
 [ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="6_kqh5m"]
 [ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="7_ak6sc"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_d62wo"]
-atlas = ExtResource("1_rt5w4")
-region = Rect2(0, 0, 134, 206)
+[sub_resource type="AtlasTexture" id="AtlasTexture_68eli"]
+atlas = ExtResource("1_68eli")
+region = Rect2(0, 0, 144, 192)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_sacx5"]
-atlas = ExtResource("1_rt5w4")
-region = Rect2(134, 0, 134, 206)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yc6lw"]
-atlas = ExtResource("1_rt5w4")
-region = Rect2(268, 0, 134, 206)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mwyi8"]
-atlas = ExtResource("1_rt5w4")
-region = Rect2(0, 206, 134, 206)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4rbxg"]
-atlas = ExtResource("1_rt5w4")
-region = Rect2(134, 206, 134, 206)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dprdq"]
-atlas = ExtResource("1_rt5w4")
-region = Rect2(268, 206, 134, 206)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_d2mve"]
-atlas = ExtResource("1_rt5w4")
-region = Rect2(0, 412, 134, 206)
+[sub_resource type="AtlasTexture" id="AtlasTexture_a8u4x"]
+atlas = ExtResource("1_68eli")
+region = Rect2(288, 0, 144, 192)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l1tvj"]
 atlas = ExtResource("3_68eli")
@@ -68,33 +49,30 @@ region = Rect2(0, 384, 144, 192)
 atlas = ExtResource("3_68eli")
 region = Rect2(144, 384, 144, 192)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_8y85u"]
-atlas = ExtResource("1_rt5w4")
-region = Rect2(268, 0, 134, 206)
+[sub_resource type="AtlasTexture" id="AtlasTexture_yus0p"]
+atlas = ExtResource("1_68eli")
+region = Rect2(0, 192, 144, 192)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_rt5w4"]
 animations = [{
 "frames": [{
-"duration": 0.81,
-"texture": SubResource("AtlasTexture_d62wo")
+"duration": 0.91,
+"texture": SubResource("AtlasTexture_68eli")
 }, {
-"duration": 0.81,
-"texture": SubResource("AtlasTexture_sacx5")
+"duration": 0.91,
+"texture": SubResource("AtlasTexture_a8u4x")
 }, {
-"duration": 0.81,
-"texture": SubResource("AtlasTexture_yc6lw")
+"duration": 0.91,
+"texture": SubResource("AtlasTexture_a8u4x")
 }, {
-"duration": 0.81,
-"texture": SubResource("AtlasTexture_mwyi8")
+"duration": 0.91,
+"texture": SubResource("AtlasTexture_a8u4x")
 }, {
-"duration": 0.81,
-"texture": SubResource("AtlasTexture_4rbxg")
+"duration": 0.91,
+"texture": SubResource("AtlasTexture_a8u4x")
 }, {
-"duration": 0.81,
-"texture": SubResource("AtlasTexture_dprdq")
-}, {
-"duration": 0.81,
-"texture": SubResource("AtlasTexture_d2mve")
+"duration": 0.91,
+"texture": SubResource("AtlasTexture_68eli")
 }],
 "loop": false,
 "name": &"attack",
@@ -131,10 +109,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_8y85u")
+"texture": SubResource("AtlasTexture_yus0p")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_8y85u")
+"texture": SubResource("AtlasTexture_yus0p")
 }],
 "loop": false,
 "name": &"pain",
@@ -346,6 +324,8 @@ scale = Vector2(1.0088651, -0.9377094)
 sprite_frames = SubResource("SpriteFrames_rt5w4")
 animation = &"attack"
 autoplay = "idle"
+frame = 5
+frame_progress = 1.0
 flip_h = true
 script = ExtResource("3_rt5w4")
 

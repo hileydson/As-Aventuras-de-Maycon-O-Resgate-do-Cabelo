@@ -1,15 +1,19 @@
 extends Node2D
 
-@onready var old_song_backup: AudioStreamPlayer = $old_song_backup
-
+@onready var song_fase_1: AudioStreamPlayer = $FireCracling
+@onready var song_fase_1_fire_cracling: AudioStreamPlayer = $SongFase1
 
 func stop(n:int) -> void:
 	if n==1:
-		old_song_backup.stop()
+		song_fase_1.stop()
+		song_fase_1_fire_cracling.stop()
+	if n==1001:
+		song_fase_1.stop()
 		
 func play_song(n:int) -> void:
 	if n==1:
-		old_song_backup.play()
+		song_fase_1.play()
+		song_fase_1_fire_cracling.play()
 
 
 # Called when the node enters the scene tree for the first time.
