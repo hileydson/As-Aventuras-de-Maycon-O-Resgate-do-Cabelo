@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://qsg2ve35f64a"
-path="res://.godot/imported/bomba_pretti_down_attack.png-9d57836d3a90c579acbfd79c8dd73062.ctex"
+uid="uid://cu01u62l1psg6"
+path="res://.godot/imported/bomba_pretti_halter.png-18c153041e7fa73a87e9fc2cfa36a83c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_down_attack.png"
-dest_files=["res://.godot/imported/bomba_pretti_down_attack.png-9d57836d3a90c579acbfd79c8dd73062.ctex"]
+source_file="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_halter.png"
+dest_files=["res://.godot/imported/bomba_pretti_halter.png-18c153041e7fa73a87e9fc2cfa36a83c.ctex"]
 
 [params]
 
