@@ -250,7 +250,7 @@ tangential_accel_min = -2.2351742e-06
 tangential_accel_max = 33.329998
 scale_max = 19.52
 scale_over_velocity_max = 4.9
-color = Color(0.27668077, 0.7494532, 3.85046e-07, 1)
+color = Color(0.82701844, 1.8000901e-05, 0.57196003, 1)
 anim_speed_min = -6.0
 anim_speed_max = -6.0
 anim_offset_min = 0.0069999998
@@ -489,10 +489,10 @@ tracks/3/path = NodePath("attack_power2:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0.52, 1.05, 1.7, 2.5666666, 2.86),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0.74, 1, 1.2333333, 1.44, 2.5666666, 2.86),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(18.833035, -82.11495), Vector2(248.794, -105.576), Vector2(248.7944, -105.576416), Vector2(663.12134, -89.580055), Vector2(2114.2568, -99.17815)]
+"values": [Vector2(30.105858, -17.037193), Vector2(189.94489, 87.85522), Vector2(277.54028, -109.185776), Vector2(322.69257, 7.470314), Vector2(663.121, 7.47), Vector2(2114.2568, -99.17815)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -592,8 +592,8 @@ collision_mask = 512
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="attack_power2/Area2D"]
 visibility_layer = 524289
-position = Vector2(32267416, 50867724)
-scale = Vector2(263728.62, 1761896.5)
+position = Vector2(41246400, 30063384)
+scale = Vector2(185068.31, 1172605.4)
 sprite_frames = SubResource("SpriteFrames_8shk3")
 autoplay = "default"
 
