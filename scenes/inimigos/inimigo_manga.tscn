@@ -696,7 +696,7 @@ scale = Vector2(14706832, 39794156)
 shape = SubResource("CircleShape2D_6yikh")
 
 [node name="hps" type="Node2D" parent="."]
-position = Vector2(-6.938493, -22.394964)
+position = Vector2(-21.161549, 24.135527)
 scale = Vector2(2.0308614, 1.2132909)
 
 [node name="hp_1" type="Sprite2D" parent="hps"]
