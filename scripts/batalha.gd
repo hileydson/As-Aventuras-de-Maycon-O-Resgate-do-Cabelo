@@ -38,9 +38,15 @@ extends AnimationPlayer
 @onready var erro_sound: AudioStreamPlayer = $"../ErroSound"
 
 var inimigos = {
+	# ENEMIES
 	"1" = preload("res://scenes/inimigos/inimigo_camilita.tscn"),
 	"2" = preload("res://scenes/inimigos/inimigo_bomba_pretti.tscn"),
-	"3" = preload("res://scenes/inimigos/inimigo_fofo.tscn")
+	"3" = preload("res://scenes/inimigos/inimigo_fofo.tscn"),
+	"4" = preload("res://scenes/inimigos/inimigo_xuruzika.tscn"),
+	"5" = preload("res://scenes/inimigos/inimigo_manga.tscn"),
+	
+	# BOSSES
+	"1001" = preload("res://scenes/inimigos/inimigo_boss_seco.tscn")
 }
 
 signal player_clicou
