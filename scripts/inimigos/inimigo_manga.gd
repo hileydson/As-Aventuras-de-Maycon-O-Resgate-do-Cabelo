@@ -13,6 +13,7 @@ extends AnimatedSprite2D
 @onready var maycon: CharacterBody2D = $"../../../Cenario de batalha/Maycon"
 @onready var timer_enemy_attack: Timer = $Timer_enemy_attack
 @onready var inimigo_1_animation_attack: AnimationPlayer = $inimigo_1_animation_attack
+@onready var macaco_aura: Sprite2D = $macaco_aura
 
 var count_play_inicio = 0
 var em_batalha = false
@@ -31,6 +32,7 @@ func resetEnemy() -> void:
 		
 func _ready() -> void:
 	ref_inimigos = get_tree().root.find_child("inimigo_node", true, false)
+	macaco_aura.visible = false
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:	
