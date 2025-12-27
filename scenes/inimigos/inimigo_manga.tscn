@@ -405,6 +405,18 @@ tracks/6/keys = {
 "update": 1,
 "values": [true]
 }
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("macaco_aura:self_modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_evw7u"]
 resource_name = "power_attack"
@@ -596,6 +608,18 @@ tracks/5/keys = {
 "update": 1,
 "values": [true, false]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("macaco_aura:self_modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.033333335, 1.4, 2.8333333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0.12156863)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6fm5e"]
 _data = {
@@ -748,9 +772,9 @@ libraries = {
 
 [node name="macaco_aura" type="Sprite2D" parent="."]
 modulate = Color(1, 1, 1, 0.28235295)
-position = Vector2(259.5218, 49.623367)
+position = Vector2(90.60376, -8.21451)
 rotation = 0.13818409
-scale = Vector2(1.4184194, 0.9471967)
+scale = Vector2(2.0748556, 1.6023096)
 texture = ExtResource("4_jrtmr")
 
 [connection signal="animation_finished" from="." to="." method="_on_animation_finished"]
