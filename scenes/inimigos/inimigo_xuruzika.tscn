@@ -611,9 +611,9 @@ _data = {
 process_mode = 3
 light_mask = 512
 visibility_layer = 512
-position = Vector2(541.33813, 456.37955)
+position = Vector2(578.99994, 467.99997)
 rotation = 3.1415925
-scale = Vector2(1.107364, -1.0200922)
+scale = Vector2(0.9135693, -0.926177)
 sprite_frames = SubResource("SpriteFrames_rt5w4")
 animation = &"idle"
 autoplay = "idle"
@@ -715,12 +715,6 @@ texture = ExtResource("6_vis88")
 
 [node name="hp_3" type="Sprite2D" parent="hps"]
 position = Vector2(-1.8931274, 109.34494)
-rotation = 3.1415925
-scale = Vector2(0.2017336, -0.23553093)
-texture = ExtResource("6_vis88")
-
-[node name="hp_4" type="Sprite2D" parent="hps"]
-position = Vector2(-9.155518, 109.34494)
 rotation = 3.1415925
 scale = Vector2(0.2017336, -0.23553093)
 texture = ExtResource("6_vis88")

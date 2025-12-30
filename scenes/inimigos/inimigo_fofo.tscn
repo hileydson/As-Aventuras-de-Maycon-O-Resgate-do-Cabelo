@@ -501,9 +501,9 @@ _data = {
 process_mode = 3
 light_mask = 512
 visibility_layer = 512
-position = Vector2(541.33813, 456.37955)
+position = Vector2(539, 449.99997)
 rotation = 3.1415925
-scale = Vector2(1.107364, -1.0200922)
+scale = Vector2(1.32701, -1.1675123)
 sprite_frames = SubResource("SpriteFrames_rt5w4")
 animation = &"pain"
 autoplay = "idle"
@@ -589,7 +589,7 @@ scale = Vector2(5884276, 21635452)
 shape = SubResource("CircleShape2D_6yikh")
 
 [node name="hps" type="Node2D" parent="."]
-position = Vector2(-6.938493, -22.394964)
+position = Vector2(1.5071545, -24.839117)
 scale = Vector2(2.0308614, 1.2132909)
 
 [node name="hp_1" type="Sprite2D" parent="hps"]
@@ -612,6 +612,12 @@ texture = ExtResource("7_7uej5")
 
 [node name="hp_4" type="Sprite2D" parent="hps"]
 position = Vector2(-9.155518, 109.34494)
+rotation = 3.1415925
+scale = Vector2(0.2017336, -0.23553093)
+texture = ExtResource("7_7uej5")
+
+[node name="hp_5" type="Sprite2D" parent="hps"]
+position = Vector2(-16.576538, 109.34497)
 rotation = 3.1415925
 scale = Vector2(0.2017336, -0.23553093)
 texture = ExtResource("7_7uej5")

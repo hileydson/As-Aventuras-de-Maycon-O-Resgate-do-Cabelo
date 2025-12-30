@@ -1,11 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://bkw572ls3qfdj"]
+[gd_scene load_steps=17 format=3 uid="uid://bkw572ls3qfdj"]
 
 [ext_resource type="Texture2D" uid="uid://cs1sa5shl3sps" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_2.png" id="1_bn463"]
 [ext_resource type="Script" uid="uid://cu7lgu8hmr4uw" path="res://scripts/fase_1_outside_castle_again_no_fire_2.gd" id="2_bn463"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_fsdbl"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="4_3s5kl"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_dyxua"]
-[ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="5_k5iv1"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="6_2krnn"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
@@ -118,10 +117,6 @@ limit_right = 3169
 limit_bottom = 1357
 
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
-
-[node name="inimigo_camilita" parent="Fase1BeforeCastle" instance=ExtResource("5_k5iv1")]
-position = Vector2(758.21027, 368.8523)
-scale = Vector2(1.1848316, -1.0750656)
 
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)

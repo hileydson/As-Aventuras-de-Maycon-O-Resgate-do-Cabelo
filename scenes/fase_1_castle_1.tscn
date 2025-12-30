@@ -1,11 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://bdmpm2b3ny4k2"]
+[gd_scene load_steps=19 format=3 uid="uid://bdmpm2b3ny4k2"]
 
 [ext_resource type="Texture2D" uid="uid://b6c6gorildkq4" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_1.png" id="1_isgjk"]
 [ext_resource type="Script" uid="uid://bpwcs2a6d8j8" path="res://scripts/fase_1_castle_1.gd" id="2_isgjk"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="3_pkp6y"]
-[ext_resource type="PackedScene" uid="uid://iv6b1ijvsoxd" path="res://scenes/inimigos/inimigo_fofo.tscn" id="4_w4eqy"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_6qwlc"]
-[ext_resource type="PackedScene" uid="uid://c283awjq1ew2g" path="res://scenes/inimigos/inimigo_xuruzika.tscn" id="5_pkp6y"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="6_4xbjm"]
 [ext_resource type="PackedScene" uid="uid://c7sguivhsbmw2" path="res://scenes/inimigos/inimigo_manga.tscn" id="6_htegb"]
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="6_w4eqy"]
@@ -119,16 +117,8 @@ limit_bottom = 1355
 
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
 
-[node name="inimigo_fofo" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("4_w4eqy")]
-position = Vector2(3031.0002, 759)
-scale = Vector2(1.7245454, -1.5936471)
-frame_progress = 0.0
-
-[node name="inimigo_xuruzika" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("5_pkp6y")]
-position = Vector2(2360, 905)
-
 [node name="inimigo_manga" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("6_htegb")]
-position = Vector2(1055, 870)
+position = Vector2(2208, 845.99994)
 
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)

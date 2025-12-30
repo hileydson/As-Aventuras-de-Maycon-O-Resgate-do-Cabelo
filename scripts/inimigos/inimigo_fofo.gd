@@ -4,6 +4,8 @@ extends AnimatedSprite2D
 @onready var hp_2: Sprite2D = $hps/hp_2
 @onready var hp_3: Sprite2D = $hps/hp_3
 @onready var hp_4: Sprite2D = $hps/hp_4
+@onready var hp_5: Sprite2D = $hps/hp_5
+
 @onready var ds_pain: AudioStreamPlayer = $"../../../Cenario de batalha/DsPain"
 @onready var passos_areia: AudioStreamPlayer = $"../../../Cenario de batalha/PassosAreia"
 @onready var inimigos: Node = $"../.."
@@ -56,12 +58,13 @@ func _process(delta: float) -> void:
 		damage_taken = damage_taken+1
 	
 	# Simplifiquei a lógica de visibilidade (opcional, mas fica mais limpo)
-	hp_1.visible = damage_taken < 4
-	hp_2.visible = damage_taken < 3
-	hp_3.visible = damage_taken < 2
-	hp_4.visible = damage_taken < 1
+	hp_1.visible = damage_taken < 5
+	hp_2.visible = damage_taken < 4
+	hp_3.visible = damage_taken < 3
+	hp_4.visible = damage_taken < 2
+	hp_5.visible = damage_taken < 1
 
-	if damage_taken >= 4:
+	if damage_taken >= 5:
 		me.stop()
 		batalha_moves.victory()
 		dead=true

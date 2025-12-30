@@ -1,10 +1,11 @@
-[gd_scene load_steps=31 format=3 uid="uid://b5uspfqhsepac"]
+[gd_scene load_steps=32 format=3 uid="uid://b5uspfqhsepac"]
 
 [ext_resource type="Texture2D" uid="uid://1i0426wllk8o" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_4.png" id="1_gv3vu"]
 [ext_resource type="Script" uid="uid://5x404tvcimbj" path="res://scripts/fase_1_before_castle_4.gd" id="2_gv3vu"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="3_dlb6u"]
 [ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="4_dlb6u"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_nosu4"]
+[ext_resource type="PackedScene" uid="uid://c283awjq1ew2g" path="res://scenes/inimigos/inimigo_xuruzika.tscn" id="5_senh8"]
 [ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="6_fjlh3"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="7_fp30k"]
 [ext_resource type="AudioStream" uid="uid://c3jfsmiruu7lk" path="res://assets/novos_audios/scary_smile.mp3" id="8_745bc"]
@@ -201,7 +202,10 @@ limit_bottom = 1355
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
 
 [node name="inimigo_camilita" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("4_dlb6u")]
-position = Vector2(1719.0001, 965)
+position = Vector2(1983, 923.99994)
+
+[node name="inimigo_xuruzika" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("5_senh8")]
+position = Vector2(1648.9999, 981.99994)
 
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)

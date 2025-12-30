@@ -1,63 +1,82 @@
-[gd_scene load_steps=32 format=3 uid="uid://brgahg4b0gy80"]
+[gd_scene load_steps=36 format=3 uid="uid://143260dknkmv"]
 
-[ext_resource type="Texture2D" uid="uid://dc6fyyx8xncpv" path="res://assets/novas_imagens/inimigos/camilita/camilita_attack.png" id="1_t5fwm"]
-[ext_resource type="Texture2D" uid="uid://cv4kx83psghuy" path="res://assets/novas_imagens/inimigos/camilita/camilita_idle.png" id="3_gcquk"]
-[ext_resource type="Script" uid="uid://kko0iwfldle7" path="res://scripts/inimigos/inimigo_camilita.gd" id="4_kbwi8"]
-[ext_resource type="Texture2D" uid="uid://dqff4eihc6rqp" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Arrow.png" id="5_6yikh"]
-[ext_resource type="Texture2D" uid="uid://2meppcw1h507" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png" id="6_68kxr"]
-[ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="7_d62wo"]
-[ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="8_n4vpa"]
+[ext_resource type="Texture2D" uid="uid://dc6fyyx8xncpv" path="res://assets/novas_imagens/inimigos/camilita/camilita_attack.png" id="1_r1yt6"]
+[ext_resource type="Texture2D" uid="uid://cv4kx83psghuy" path="res://assets/novas_imagens/inimigos/camilita/camilita_idle.png" id="2_idtwr"]
+[ext_resource type="Texture2D" uid="uid://jpruwl1kxn8m" path="res://assets/novas_imagens/cabelo/cabelo_idle.png" id="3_idtwr"]
+[ext_resource type="Texture2D" uid="uid://dqff4eihc6rqp" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Arrow.png" id="4_q3qoc"]
+[ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="6_cqfj5"]
+[ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="7_wx1q8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_d62wo"]
-atlas = ExtResource("1_t5fwm")
+atlas = ExtResource("1_r1yt6")
 region = Rect2(0, 0, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sacx5"]
-atlas = ExtResource("1_t5fwm")
+atlas = ExtResource("1_r1yt6")
 region = Rect2(134, 0, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yc6lw"]
-atlas = ExtResource("1_t5fwm")
+atlas = ExtResource("1_r1yt6")
 region = Rect2(268, 0, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mwyi8"]
-atlas = ExtResource("1_t5fwm")
+atlas = ExtResource("1_r1yt6")
 region = Rect2(0, 206, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4rbxg"]
-atlas = ExtResource("1_t5fwm")
+atlas = ExtResource("1_r1yt6")
 region = Rect2(134, 206, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dprdq"]
-atlas = ExtResource("1_t5fwm")
+atlas = ExtResource("1_r1yt6")
 region = Rect2(268, 206, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_d2mve"]
-atlas = ExtResource("1_t5fwm")
+atlas = ExtResource("1_r1yt6")
 region = Rect2(0, 412, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t5fwm"]
-atlas = ExtResource("3_gcquk")
+atlas = ExtResource("2_idtwr")
 region = Rect2(0, 0, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_85y4w"]
-atlas = ExtResource("3_gcquk")
+atlas = ExtResource("2_idtwr")
 region = Rect2(134, 0, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6yikh"]
-atlas = ExtResource("3_gcquk")
+atlas = ExtResource("2_idtwr")
 region = Rect2(268, 0, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_68kxr"]
-atlas = ExtResource("3_gcquk")
+atlas = ExtResource("2_idtwr")
 region = Rect2(0, 206, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n4vpa"]
-atlas = ExtResource("3_gcquk")
+atlas = ExtResource("2_idtwr")
 region = Rect2(268, 206, 134, 206)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_tlxdt"]
+atlas = ExtResource("3_idtwr")
+region = Rect2(0, 0, 158, 197)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q3qoc"]
+atlas = ExtResource("3_idtwr")
+region = Rect2(158, 0, 158, 197)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fkove"]
+atlas = ExtResource("3_idtwr")
+region = Rect2(0, 394, 158, 197)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cqfj5"]
+atlas = ExtResource("3_idtwr")
+region = Rect2(158, 394, 158, 197)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wx1q8"]
+atlas = ExtResource("3_idtwr")
+region = Rect2(0, 591, 158, 197)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_8y85u"]
-atlas = ExtResource("1_t5fwm")
+atlas = ExtResource("1_r1yt6")
 region = Rect2(268, 0, 134, 206)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_syuxc"]
@@ -109,20 +128,20 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 1.81,
-"texture": SubResource("AtlasTexture_t5fwm")
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tlxdt")
 }, {
-"duration": 1.81,
-"texture": SubResource("AtlasTexture_85y4w")
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q3qoc")
 }, {
-"duration": 1.81,
-"texture": SubResource("AtlasTexture_6yikh")
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fkove")
 }, {
-"duration": 1.81,
-"texture": SubResource("AtlasTexture_68kxr")
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cqfj5")
 }, {
-"duration": 1.81,
-"texture": SubResource("AtlasTexture_n4vpa")
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wx1q8")
 }],
 "loop": true,
 "name": &"idle",
@@ -166,11 +185,11 @@ anim_offset_min = 0.0069999998
 anim_offset_max = 0.5207
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vaw2u"]
-atlas = ExtResource("1_t5fwm")
+atlas = ExtResource("1_r1yt6")
 region = Rect2(134, 412, 134, 206)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0sh2x"]
-atlas = ExtResource("5_6yikh")
+atlas = ExtResource("4_q3qoc")
 region = Rect2(400, 128, 25, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_t5fwm"]
@@ -343,9 +362,9 @@ position = Vector2(540.00006, 456)
 rotation = 3.1415925
 scale = Vector2(1.1484176, -1.0231465)
 sprite_frames = SubResource("SpriteFrames_syuxc")
-animation = &"pain"
+animation = &"idle"
 autoplay = "idle"
-script = ExtResource("4_kbwi8")
+frame_progress = 0.1530907
 
 [node name="to_battle" type="Area2D" parent="."]
 light_mask = 517
@@ -393,27 +412,11 @@ position = Vector2(39179296, 50253492)
 scale = Vector2(5884276, 21635452)
 shape = SubResource("CircleShape2D_6yikh")
 
-[node name="hps" type="Node2D" parent="."]
-position = Vector2(-25.771532, -18.129248)
-scale = Vector2(2.0308614, 1.2132909)
-
-[node name="hp_1" type="Sprite2D" parent="hps"]
-position = Vector2(12.631714, 109.34494)
-rotation = 3.1415925
-scale = Vector2(0.2017336, -0.23553093)
-texture = ExtResource("6_68kxr")
-
-[node name="hp_2" type="Sprite2D" parent="hps"]
-position = Vector2(5.3693237, 109.34494)
-rotation = 3.1415925
-scale = Vector2(0.2017336, -0.23553093)
-texture = ExtResource("6_68kxr")
-
 [node name="Inimigo1AttackMagic" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("7_d62wo")
+stream = ExtResource("6_cqfj5")
 
 [node name="Inimigo1VoiceAttack" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("8_n4vpa")
+stream = ExtResource("7_wx1q8")
 pitch_scale = 1.48
 
 [node name="Timer_enemy_attack" type="Timer" parent="."]

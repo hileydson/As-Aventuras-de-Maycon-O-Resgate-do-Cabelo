@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dscts1war82ip"]
+[gd_scene load_steps=31 format=3 uid="uid://dscts1war82ip"]
 
 [ext_resource type="Texture2D" uid="uid://c4anaqd7mthox" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_3.png" id="1_2qpmw"]
 [ext_resource type="Script" uid="uid://08u2yya4bxkg" path="res://scripts/fase_1_outside_castle_again_no_fire_3.gd" id="2_2qpmw"]
@@ -6,6 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="4_737m3"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_u2g44"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="6_0pvwr"]
+[ext_resource type="PackedScene" uid="uid://143260dknkmv" path="res://scenes/inimigos/cabelo.tscn" id="7_737m3"]
+[ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="8_u2g44"]
+[ext_resource type="Texture2D" uid="uid://5x3arlktkuq8" path="res://assets/novas_imagens/effects/smoke_sheet.png" id="9_0pvwr"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -73,6 +76,125 @@ normal = Vector2(1, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
 size = Vector2(1488.1172, 178)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kpgq7"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(512, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xaswh"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(768, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ibnm"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(1024, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i3puo"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(0, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_588db"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(256, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qvh7e"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(512, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w1ymd"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(768, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_klta2"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(1024, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ioxrq"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(0, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_87fqj"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(256, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nyr17"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(512, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_di0br"]
+atlas = ExtResource("9_0pvwr")
+region = Rect2(768, 512, 256, 256)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_l7mck"]
+animations = [{
+"frames": [{
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_kpgq7")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_xaswh")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_0ibnm")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_i3puo")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_588db")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_qvh7e")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_w1ymd")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_klta2")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_ioxrq")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_87fqj")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_nyr17")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_di0br")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_87fqj")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_ioxrq")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_klta2")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_w1ymd")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_qvh7e")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_588db")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_i3puo")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_0ibnm")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_xaswh")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="Node2D" type="Node2D"]
 process_mode = 1
@@ -165,6 +287,19 @@ offset_right = 866.0
 offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="inimigo_camilita" parent="." instance=ExtResource("7_737m3")]
+position = Vector2(2211, 774)
+
+[node name="FinalCabeloMistery" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_u2g44")
+autoplay = true
+
+[node name="smoke" type="AnimatedSprite2D" parent="."]
+position = Vector2(2207, 766)
+sprite_frames = SubResource("SpriteFrames_l7mck")
+autoplay = "default"
+frame_progress = 0.692876
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]

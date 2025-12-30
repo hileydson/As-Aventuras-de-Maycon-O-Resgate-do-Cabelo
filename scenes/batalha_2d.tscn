@@ -59,6 +59,44 @@
 [ext_resource type="Shader" uid="uid://b1m2oe2d5u8fc" path="res://scenes/batalha_2d.gdshader" id="62_0sh2x"]
 [ext_resource type="Script" uid="uid://bcde43vdwkd2i" path="res://scripts/efeito_vidro_canvas.gd" id="62_h2e1h"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_dho1k"]
+atlas = ExtResource("55_dho1k")
+region = Rect2(0, 0, 962, 812)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_oqd0s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dho1k")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wo4yk"]
+size = Vector2(93, 217)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pvxjk"]
+
+[sub_resource type="Curve" id="Curve_d6oll"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.9909748, 0.062366605), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_cobqf"]
+curve = SubResource("Curve_d6oll")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_h88qw"]
+particle_flag_disable_z = true
+radial_velocity_min = 66.669975
+radial_velocity_max = 259.25998
+gravity = Vector3(0, -98, 0)
+scale_min = 15.0
+scale_max = 25.0
+scale_curve = SubResource("CurveTexture_cobqf")
+color = Color(0.9019608, 0.32941177, 0.2, 0.54901963)
+collision_use_scale = true
+
 [sub_resource type="SystemFont" id="SystemFont_pvxjk"]
 font_italic = true
 subpixel_positioning = 0
@@ -797,46 +835,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pvxjk"]
-
-[sub_resource type="Curve" id="Curve_d6oll"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.9909748, 0.062366605), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_cobqf"]
-curve = SubResource("Curve_d6oll")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_h88qw"]
-particle_flag_disable_z = true
-radial_velocity_min = 66.669975
-radial_velocity_max = 259.25998
-gravity = Vector3(0, -98, 0)
-scale_min = 15.0
-scale_max = 25.0
-scale_curve = SubResource("CurveTexture_cobqf")
-color = Color(0.9019608, 0.32941177, 0.2, 0.54901963)
-collision_use_scale = true
-
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7ch20"]
 distance = -8.004456
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dho1k"]
-atlas = ExtResource("55_dho1k")
-region = Rect2(0, 0, 962, 812)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_oqd0s"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_dho1k")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_wo4yk"]
-size = Vector2(93, 217)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h2e1h"]
 atlas = ExtResource("60_oqd0s")
@@ -1336,6 +1336,37 @@ color = Color(0.73098874, 0.02439873, 0.39386588, 0.19215687)
 process_mode = 3
 position = Vector2(-673, 326)
 
+[node name="inimigo_node" type="Node2D" parent="."]
+unique_name_in_owner = true
+process_mode = 3
+light_mask = 512
+visibility_layer = 512
+position = Vector2(0, 84)
+script = ExtResource("46_x11r3")
+
+[node name="Marker2D" type="Marker2D" parent="inimigo_node"]
+position = Vector2(-27, -208)
+
+[node name="inimigo_batalha" type="AnimatedSprite2D" parent="inimigo_node"]
+visible = false
+position = Vector2(288, 56.000015)
+scale = Vector2(0.3898129, 0.36576355)
+sprite_frames = SubResource("SpriteFrames_oqd0s")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="inimigo_node/inimigo_batalha"]
+position = Vector2(1, 1)
+shape = SubResource("RectangleShape2D_wo4yk")
+
+[node name="boss" type="Node2D" parent="inimigo_node"]
+
+[node name="destroy" type="GPUParticles2D" parent="inimigo_node"]
+visible = false
+material = SubResource("ShaderMaterial_pvxjk")
+position = Vector2(320, 57)
+scale = Vector2(148299.89, -75878.69)
+amount = 50
+process_material = SubResource("ParticleProcessMaterial_h88qw")
+
 [node name="Cenario de batalha" type="Node2D" parent="."]
 process_mode = 3
 
@@ -1400,6 +1431,7 @@ volume_db = -8.878
 [node name="maycon_batalha_default" type="AnimatedSprite2D" parent="Cenario de batalha"]
 visible = false
 visibility_layer = 524288
+z_index = 1
 position = Vector2(-303, -14)
 scale = Vector2(2.837786, 2.628378)
 sprite_frames = SubResource("SpriteFrames_c4b2c")
@@ -1599,37 +1631,6 @@ visibility_layer = 0
 position = Vector2(-11, -120.00003)
 scale = Vector2(2.455237, 4.1227045)
 shape = SubResource("WorldBoundaryShape2D_7ch20")
-
-[node name="inimigo_node" type="Node2D" parent="."]
-unique_name_in_owner = true
-process_mode = 3
-light_mask = 512
-visibility_layer = 512
-position = Vector2(0, 84)
-script = ExtResource("46_x11r3")
-
-[node name="Marker2D" type="Marker2D" parent="inimigo_node"]
-position = Vector2(-27, -208)
-
-[node name="inimigo_batalha" type="AnimatedSprite2D" parent="inimigo_node"]
-visible = false
-position = Vector2(288, 56.000015)
-scale = Vector2(0.3898129, 0.36576355)
-sprite_frames = SubResource("SpriteFrames_oqd0s")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="inimigo_node/inimigo_batalha"]
-position = Vector2(1, 1)
-shape = SubResource("RectangleShape2D_wo4yk")
-
-[node name="boss" type="Node2D" parent="inimigo_node"]
-
-[node name="destroy" type="GPUParticles2D" parent="inimigo_node"]
-visible = false
-material = SubResource("ShaderMaterial_pvxjk")
-position = Vector2(320, 57)
-scale = Vector2(148299.89, -75878.69)
-amount = 50
-process_material = SubResource("ParticleProcessMaterial_h88qw")
 
 [node name="inicio_batalha" type="AnimatedSprite2D" parent="."]
 process_mode = 3
