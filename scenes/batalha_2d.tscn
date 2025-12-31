@@ -1396,8 +1396,6 @@ scale = Vector2(5.910979, 6.3809886)
 text = "YOU DIED!!"
 label_settings = SubResource("LabelSettings_d6oll")
 
-[node name="fade" parent="Cenario de batalha" instance=ExtResource("2_yn2t1")]
-
 [node name="batalha_moves" type="AnimationPlayer" parent="Cenario de batalha"]
 root_node = NodePath("../maycon_batalha")
 libraries = {
@@ -1640,6 +1638,8 @@ position = Vector2(-22, -27)
 scale = Vector2(7.5515676, 7.1260457)
 sprite_frames = SubResource("SpriteFrames_qqwl7")
 animation = &"inicio"
+
+[node name="fade" parent="." instance=ExtResource("2_yn2t1")]
 
 [node name="EfeitoVidroCanvas" type="CanvasLayer" parent="."]
 visible = false

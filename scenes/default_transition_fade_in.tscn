@@ -100,6 +100,7 @@ libraries = {
 
 [node name="ColorRect" type="ColorRect" parent="Transition"]
 visible = false
+z_index = 10
 offset_left = -53.0
 offset_top = -27.0
 offset_right = 1057.6824

@@ -29,9 +29,9 @@ extends AnimationPlayer
 @onready var ds_pain: AudioStreamPlayer = $"../DsPain"
 @onready var victory_label: Label = $"../victory_label"
 @onready var you_died_label: Label = $"../you_died_label"
+@onready var fade: Node2D = $"../../fade"
 
 @onready var destroy_maycon: GPUParticles2D = $"../Maycon/destroy_maycon"
-@onready var fade: Node2D = $"../fade"
 @onready var inicio_batalha: AnimatedSprite2D = $"../../inicio_batalha"
 @onready var explosao: AudioStreamPlayer = $"../Explosao"
 @onready var battleground: Sprite2D = $"../Battleground"
@@ -106,7 +106,7 @@ func victory()->void:
 	
 	await self.player_clicou
 	fade.get_node("Transition").play("fade_out")
-	current_enemy.queue_free()
+	#current_enemy.queue_free()
 	await get_tree().create_timer(3.0).timeout
 	Global.back_to_main_camera = true
 	Global.battle_started = false
