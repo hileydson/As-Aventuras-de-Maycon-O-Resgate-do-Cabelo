@@ -88,19 +88,19 @@
     ]
   },
   "packageFolders": {
-    "/home/javaboy/.nuget/packages/": {}
+    "/home/dev/snap/godot-4/common/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
+      "projectUniqueName": "/home/dev/Documents/Development/Game Development/As Aventuras de Maycon/sourcecode/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
       "projectName": "New Game Project",
-      "projectPath": "/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
-      "packagesPath": "/home/javaboy/.nuget/packages/",
-      "outputPath": "/home/javaboy/Documents/development/games/As Aventuras de Maycon/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/",
+      "projectPath": "/home/dev/Documents/Development/Game Development/As Aventuras de Maycon/sourcecode/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/New Game Project.csproj",
+      "packagesPath": "/home/dev/snap/godot-4/common/.nuget/packages/",
+      "outputPath": "/home/dev/Documents/Development/Game Development/As Aventuras de Maycon/sourcecode/As-Aventuras-de-Maycon-O-Resgate-do-Cabelo/.godot/mono/temp/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/javaboy/.nuget/NuGet/NuGet.Config"
+        "/home/dev/snap/godot-4/common/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -156,7 +156,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.122/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/snap/godot-4/17/usr/lib/dotnet/sdk/8.0.122/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
