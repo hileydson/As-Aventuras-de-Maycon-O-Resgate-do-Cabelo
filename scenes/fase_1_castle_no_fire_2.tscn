@@ -76,7 +76,7 @@ normal = Vector2(1, 0)
 size = Vector2(788, 178)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
-size = Vector2(1253.8125, 178)
+size = Vector2(1146.8125, 178)
 
 [node name="Node2D" type="Node2D"]
 process_mode = 1
@@ -124,7 +124,7 @@ scale = Vector2(1.6156905, -1.3321537)
 position = Vector2(16, -2)
 
 [node name="next" type="CollisionShape2D" parent="next_scene"]
-position = Vector2(2135, 841)
+position = Vector2(2026.0002, 851)
 scale = Vector2(5.559998, 2.9600005)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 
@@ -161,7 +161,7 @@ position = Vector2(550, 1072)
 shape = SubResource("RectangleShape2D_hnmna")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(1494.0938, 1072)
+position = Vector2(1440.5938, 1072)
 shape = SubResource("RectangleShape2D_p1t4m")
 
 [node name="battle" parent="." instance=ExtResource("6_44bvi")]

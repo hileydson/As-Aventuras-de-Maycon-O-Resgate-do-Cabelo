@@ -354,7 +354,7 @@ _data = {
 &"power_attack": SubResource("Animation_evw7u")
 }
 
-[node name="inimigo_camilita" type="AnimatedSprite2D"]
+[node name="cabelo" type="AnimatedSprite2D"]
 process_mode = 3
 light_mask = 517
 visibility_layer = 517

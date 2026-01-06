@@ -131,7 +131,7 @@ position = Vector2(2580, 951)
 position = Vector2(16, -2)
 
 [node name="next" type="CollisionShape2D" parent="next_scene"]
-position = Vector2(3165, 888)
+position = Vector2(2949, 896.00006)
 scale = Vector2(5.559998, 2.9600005)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 

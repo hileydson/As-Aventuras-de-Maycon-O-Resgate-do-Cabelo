@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="6_n1ahb"]
 [ext_resource type="Texture2D" uid="uid://drf85jfsrrmkk" path="res://assets/novas_imagens/effects/smoke_animation.png" id="7_ahm46"]
 [ext_resource type="Texture2D" uid="uid://bwclf236t6sen" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_6.png" id="8_cm2i2"]
-[ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="9_ahm46"]
+[ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="10_ivltl"]
 [ext_resource type="Script" uid="uid://j0vbl5413yex" path="res://scripts/effect_stage_show.gd" id="10_n1ahb"]
 [ext_resource type="AudioStream" uid="uid://drnd65usjc7l7" path="res://assets/novos_audios/stage_sound.mp3" id="15_avl2m"]
 
@@ -589,7 +589,7 @@ light_mask = 512
 visibility_layer = 512
 position = Vector2(-673, 328)
 
-[node name="auto_fade_in" parent="." instance=ExtResource("9_ahm46")]
+[node name="auto_fade_in" parent="." instance=ExtResource("10_ivltl")]
 
 [node name="Pause" parent="." instance=ExtResource("1_2rkwj")]
 anchors_preset = 0
