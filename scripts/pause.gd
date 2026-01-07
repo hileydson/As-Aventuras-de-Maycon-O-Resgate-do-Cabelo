@@ -8,9 +8,16 @@ extends Control
 @onready var down_label: Label = $black_screen/down_label
 @onready var space_keys: Label = $black_screen/space_keys
 @onready var powers: Label = $black_screen/powers
+@onready var v_box_container: VBoxContainer = $black_screen/VBoxContainer
+@onready var pause: Label = $black_screen/pause
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	if Global.before_prologo == false:
+		v_box_container.visible = true
+	else:
+		v_box_container.visible = false
 	
 	if Global.default_language == Global.language_pt_br:
 		powers.text = " SOCO \n CHUTE \n\n PULO"
@@ -18,12 +25,19 @@ func _ready() -> void:
 		quit.text = "Sair"
 		run_label.text = "Correr"
 		down_label.text = "Agachar"
+		
+		if Global.before_prologo:
+			pause.text = "CONTROLE"
+		
 	else:
 		powers.text = " PUNCH \n KICK \n\n JUMP"
 		close.text = "Close"
 		quit.text = "Quit"
 		run_label.text = "Run"
 		down_label.text = "Croutch"
+		
+		if Global.before_prologo:
+			pause.text = "CONTROLLER"
 		
 
 func processa_pause_unpause()->void:
@@ -37,12 +51,14 @@ func processa_pause_unpause()->void:
 		set_process_mode(Node.PROCESS_MODE_ALWAYS)
 		camera.make_current()
 		get_tree().paused = true
+		pause_animation.stop()
+		maycon.stop()
 		pause_animation.play("intro")
 		maycon.play("idle")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("ui_cancel") && (!Global.battle_started):
+	if Input.is_action_just_pressed("ui_cancel") && (!Global.battle_started) && (!Global.before_prologo):
 		processa_pause_unpause()
 			
 

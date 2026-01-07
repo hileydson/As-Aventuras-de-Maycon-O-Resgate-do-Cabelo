@@ -1,24 +1,21 @@
 extends Control
-@onready var pause_animation: AnimationPlayer = $pause_animation
-@onready var camera: Camera2D = $black_screen/camera
-@onready var maycon: AnimatedSprite2D = $black_screen/maycon
+@onready var me: Control = $"."
 
-@onready var space_keys: Label = $black_screen/space_keys
-@onready var powers: Label = $black_screen/powers
-@onready var pause: Label = $black_screen/pause
+var menu = preload("res://scenes/pause.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if Global.default_language == Global.language_pt_br:
-		space_keys.text = "espaço"
-		powers.text = " CHUTE \n SOCO \n\n\n PULO"
-		pause.text = "CONTROLE"
-	else:
-		space_keys.text = "space"
-		powers.text = " KICK \n PUNCH \n\n\n JUMP"
-		pause.text = "CONTROLS"
-
-	await get_tree().create_timer(6.0).timeout
+	
+	#block input e add pause
+	Global.before_prologo = true
+	var menu_instance = menu.instantiate()
+	add_child(menu_instance)
+	menu_instance.get_node("pause_animation").play("intro")
+	menu_instance.get_node("black_screen/maycon").play("idle")
+	get_viewport().gui_disable_input = true
+	await get_tree().create_timer(10.0).timeout
+	Global.before_prologo = false 
+	get_viewport().gui_disable_input = false
 	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
 
