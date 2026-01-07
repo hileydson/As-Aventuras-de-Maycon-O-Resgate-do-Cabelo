@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://bh1gv66siwdi4"]
+
+[ext_resource type="Script" uid="uid://b2gqtmb556l3" path="res://scripts/intro_historia.gd" id="1_nwdv0"]
+[ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="2_ogx3b"]
+
+[node name="intro_historia" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 648.0
+offset_top = 957.0
+offset_right = 648.0
+offset_bottom = 957.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nwdv0")
+
+[node name="black_screen" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 0
+offset_left = -1.0
+offset_top = -3.0
+offset_right = 1198.0
+offset_bottom = 676.0
+color = Color(0, 0, 0, 1)
+
+[node name="camera" type="Camera2D" parent="black_screen"]
+position = Vector2(1, 3)
+offset = Vector2(580, 330)
+
+[node name="auto_fade_in" parent="black_screen" instance=ExtResource("2_ogx3b")]
+
+[node name="texto" type="Label" parent="black_screen"]
+layout_mode = 0
+offset_left = 94.0
+offset_top = 299.0
+offset_right = 144.0
+offset_bottom = 322.0
+scale = Vector2(3.08, 2.680005)
+text = "TEXTO"

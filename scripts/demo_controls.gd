@@ -14,9 +14,11 @@ func _ready() -> void:
 	menu_instance.get_node("black_screen/maycon").play("idle")
 	get_viewport().gui_disable_input = true
 	await get_tree().create_timer(10.0).timeout
+	menu_instance.get_node("black_screen/auto_fade_in").get_node("Transition").play("fade_out")
+	await get_tree().create_timer(2.5).timeout
 	Global.before_prologo = false 
 	get_viewport().gui_disable_input = false
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
+	get_tree().change_scene_to_file("res://scenes/intro_historia.tscn")
 
 
 
