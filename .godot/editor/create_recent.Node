@@ -1,6 +1,7 @@
+AnimationPlayer
+AnimatedSprite2D
 Button
 VBoxContainer
-AnimatedSprite2D
 Sprite2D
 Marker2D
 CollisionShape2D

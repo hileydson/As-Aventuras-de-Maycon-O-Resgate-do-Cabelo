@@ -9,9 +9,11 @@ extends VBoxContainer
 @onready var menu_song: AudioStreamPlayer2D = $"../menu_song"
 @onready var jamelao_song: AudioStreamPlayer = $"../JamelaoSong"
 @onready var v_box_container: VBoxContainer = $"."
+@onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	animation_player.play("intro")
 	new_game.grab_focus()
 	cabelo_sound.play()
 	

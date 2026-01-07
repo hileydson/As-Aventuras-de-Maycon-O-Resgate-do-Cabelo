@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bbvbfgsytow76"]
+[gd_scene load_steps=31 format=3 uid="uid://bbvbfgsytow76"]
 
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="1_3dmrc"]
 [ext_resource type="Texture2D" uid="uid://1dll27f2uadm" path="res://assets/images/TELA-intro-03 _0.png" id="1_mhnvy"]
@@ -18,6 +18,92 @@
 [ext_resource type="Texture2D" uid="uid://by5usf7krra5f" path="res://assets/images/jamela_INTRO3_0.png" id="15_lnf0i"]
 [ext_resource type="AudioStream" uid="uid://crxlon1788b8p" path="res://assets/novos_audios/jamelao_song.mp3" id="16_g6gyw"]
 [ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="16_mxgkd"]
+[ext_resource type="Texture2D" uid="uid://5x3arlktkuq8" path="res://assets/novas_imagens/effects/smoke_sheet.png" id="19_81l6r"]
+
+[sub_resource type="Animation" id="Animation_81l6r"]
+resource_name = "intro"
+length = 2.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBoxContainer:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-753, 137), Vector2(-419, 145)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("LogoKabelo0:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.033333335, 2.3666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("LogoAventuras0:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 2.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-16, -409), Vector2(5, -269)]
+}
+
+[sub_resource type="Animation" id="Animation_rsfmq"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBoxContainer:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-549, 124)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("LogoKabelo0:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("LogoAventuras0:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-16, -409)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_oi1it"]
+_data = {
+&"RESET": SubResource("Animation_rsfmq"),
+&"intro": SubResource("Animation_81l6r")
+}
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ffqrc"]
 animations = [{
@@ -57,6 +143,71 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_rsfmq"]
+atlas = ExtResource("19_81l6r")
+region = Rect2(0, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oi1it"]
+atlas = ExtResource("19_81l6r")
+region = Rect2(256, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fy8yy"]
+atlas = ExtResource("19_81l6r")
+region = Rect2(512, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6wigr"]
+atlas = ExtResource("19_81l6r")
+region = Rect2(768, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lnf0i"]
+atlas = ExtResource("19_81l6r")
+region = Rect2(1024, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ffqrc"]
+atlas = ExtResource("19_81l6r")
+region = Rect2(0, 512, 256, 256)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_x16fv"]
+animations = [{
+"frames": [{
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_rsfmq")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_oi1it")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_fy8yy")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_6wigr")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_lnf0i")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_ffqrc")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_lnf0i")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_6wigr")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_fy8yy")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_oi1it")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_rsfmq")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [node name="Menu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -70,13 +221,18 @@ grow_vertical = 2
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(577, 324)
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Camera2D"]
+libraries = {
+&"": SubResource("AnimationLibrary_oi1it")
+}
+
 [node name="TelaIntro030" type="Sprite2D" parent="Camera2D"]
 position = Vector2(-2.000061, 2.0000305)
 scale = Vector2(1.836939, 1.4006524)
 texture = ExtResource("1_mhnvy")
 
 [node name="LogoAventuras0" type="Sprite2D" parent="Camera2D"]
-position = Vector2(-55, -251)
+position = Vector2(-16, -409)
 texture = ExtResource("3_4ytvr")
 
 [node name="LogoKabelo0" type="Sprite2D" parent="Camera2D"]
@@ -110,7 +266,7 @@ anchor_bottom = 1.0
 offset_left = -549.0
 offset_top = 124.0
 offset_right = -435.2619
-offset_bottom = 247.45584
+offset_bottom = 247.45502
 grow_vertical = 0
 scale = Vector2(1.2456733, 1.2632499)
 script = ExtResource("1_yqeox")
@@ -122,6 +278,13 @@ text = "Novo Jogo"
 [node name="Exit" type="Button" parent="Camera2D/VBoxContainer"]
 layout_mode = 2
 text = "Sair"
+
+[node name="effect_cabelo" type="AnimatedSprite2D" parent="."]
+position = Vector2(931, 274.00006)
+scale = Vector2(1.8945313, 1.8710938)
+sprite_frames = SubResource("SpriteFrames_x16fv")
+autoplay = "default"
+frame_progress = 0.49333024
 
 [connection signal="ready" from="." to="Camera2D/VBoxContainer" method="_on_menu_ready"]
 [connection signal="pressed" from="Camera2D/VBoxContainer/New Game" to="Camera2D/VBoxContainer" method="_on_new_game_pressed"]
