@@ -4,31 +4,36 @@ extends Control
 @onready var maycon: AnimatedSprite2D = $black_screen/maycon
 @onready var close: Button = $black_screen/VBoxContainer/close
 @onready var quit: Button = $black_screen/VBoxContainer/quit
-
+@onready var run_label: Label = $black_screen/run_label
+@onready var down_label: Label = $black_screen/down_label
 @onready var space_keys: Label = $black_screen/space_keys
 @onready var powers: Label = $black_screen/powers
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	close.grab_focus()
 	
 	if Global.default_language == Global.language_pt_br:
-		space_keys.text = "espaço"
-		powers.text = " CHUTE \n SOCO \n\n\n PULO"
+		powers.text = " SOCO \n CHUTE \n\n PULO"
 		close.text = "Fechar"
 		quit.text = "Sair"
+		run_label.text = "Correr"
+		down_label.text = "Agachar"
 	else:
-		space_keys.text = "space"
-		powers.text = " KICK \n PUNCH \n\n\n JUMP"
+		powers.text = " PUNCH \n KICK \n\n JUMP"
 		close.text = "Close"
 		quit.text = "Quit"
+		run_label.text = "Run"
+		down_label.text = "Croutch"
 		
 
 func processa_pause_unpause()->void:
 	if get_tree().paused:
+			close.release_focus()
+			quit.release_focus()
 			Global.back_to_main_camera = true
 			get_tree().paused = false
 	else:
+		close.grab_focus()
 		set_process_mode(Node.PROCESS_MODE_ALWAYS)
 		camera.make_current()
 		get_tree().paused = true

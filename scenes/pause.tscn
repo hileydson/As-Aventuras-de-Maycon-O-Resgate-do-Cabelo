@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://bxrvb1ninxb77"]
+[gd_scene load_steps=37 format=3 uid="uid://bxrvb1ninxb77"]
 
 [ext_resource type="Script" uid="uid://deep1rb4hx2ta" path="res://scripts/pause.gd" id="1_f1d2v"]
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="2_30wyh"]
@@ -18,6 +18,17 @@
 [ext_resource type="Texture2D" uid="uid://bslksmbwghx3e" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_02.png" id="15_qn06s"]
 [ext_resource type="Texture2D" uid="uid://obhft0l6l255" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_18.png" id="16_30wyh"]
 [ext_resource type="Texture2D" uid="uid://6q57wdaxgctf" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/9 Other/3 Skill icons/Skillicon7_13.png" id="16_vrtv1"]
+[ext_resource type="Texture2D" uid="uid://vjg703nkndy4" path="res://assets/novas_imagens/buttons/Arrow_Down_Key_Light.png" id="19_nru7y"]
+[ext_resource type="Texture2D" uid="uid://d0w7o4h2f8ssn" path="res://assets/novas_imagens/buttons/ButtonIcon-Switch-Dpad_Down.png" id="20_f2c3o"]
+[ext_resource type="Texture2D" uid="uid://c0kqvp1p5iswd" path="res://assets/novas_imagens/buttons/360_X.png" id="21_2hkh7"]
+[ext_resource type="Texture2D" uid="uid://dmf8mrk677jdd" path="res://assets/novas_imagens/buttons/A_Key_Light.png" id="22_4hiuc"]
+[ext_resource type="Texture2D" uid="uid://c5esugi7ad25q" path="res://assets/novas_imagens/buttons/Q_Key_Light.png" id="23_gs1sl"]
+[ext_resource type="Texture2D" uid="uid://ca14mbcnug2a1" path="res://assets/novas_imagens/buttons/360_Y.png" id="24_ai0yt"]
+[ext_resource type="Texture2D" uid="uid://dgvpcimo2t1bv" path="res://assets/novas_imagens/buttons/W_Key_Light.png" id="25_57sbn"]
+[ext_resource type="Texture2D" uid="uid://b0cv160eigo1w" path="res://assets/novas_imagens/buttons/360_B.png" id="26_8kyqv"]
+[ext_resource type="Texture2D" uid="uid://bu87adwoqopfd" path="res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png" id="27_72xvg"]
+[ext_resource type="Texture2D" uid="uid://dqid02yacbfn5" path="res://assets/novas_imagens/buttons/Blank_White_Enter.png" id="28_w3st5"]
+[ext_resource type="Texture2D" uid="uid://b4nuieuqfk5wl" path="res://assets/novas_imagens/buttons/360_A.png" id="29_l1hj0"]
 
 [sub_resource type="Animation" id="Animation_gcd8f"]
 length = 0.001
@@ -55,12 +66,6 @@ _data = {
 &"RESET": SubResource("Animation_gcd8f"),
 &"intro": SubResource("Animation_30wyh")
 }
-
-[sub_resource type="LabelSettings" id="LabelSettings_gcd8f"]
-font_size = 44
-
-[sub_resource type="LabelSettings" id="LabelSettings_30wyh"]
-font_size = 26
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_xw83q"]
 animations = [{
@@ -109,6 +114,9 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="LabelSettings" id="LabelSettings_gcd8f"]
+font_size = 44
+
 [sub_resource type="SystemFont" id="SystemFont_t3fa8"]
 font_italic = true
 subpixel_positioning = 0
@@ -146,84 +154,11 @@ offset_right = 1198.0
 offset_bottom = 676.0
 color = Color(0, 0, 0, 1)
 
-[node name="auto_fade_in" parent="black_screen" instance=ExtResource("2_30wyh")]
-
-[node name="pause" type="Label" parent="black_screen"]
-layout_mode = 0
-offset_left = 497.0
-offset_top = 23.0
-offset_right = 638.0
-offset_bottom = 152.0
-text = "PAUSE
-"
-label_settings = SubResource("LabelSettings_gcd8f")
-
-[node name="space_keys" type="Label" parent="black_screen"]
-layout_mode = 0
-offset_left = 916.0
-offset_top = 431.0
-offset_right = 988.0
-offset_bottom = 467.0
-text = "space"
-label_settings = SubResource("LabelSettings_30wyh")
-
-[node name="power_keys_q" type="Label" parent="black_screen"]
-layout_mode = 0
-offset_left = 929.0
-offset_top = 191.0
-offset_right = 974.0
-offset_bottom = 227.0
-text = "Q"
-label_settings = SubResource("LabelSettings_30wyh")
-
-[node name="power_keys_w" type="Label" parent="black_screen"]
-layout_mode = 0
-offset_left = 929.0
-offset_top = 252.0
-offset_right = 974.0
-offset_bottom = 288.0
-text = "w"
-label_settings = SubResource("LabelSettings_30wyh")
-
-[node name="maycon" type="AnimatedSprite2D" parent="black_screen"]
-position = Vector2(-124, 308)
-scale = Vector2(3.1786866, 2.9598992)
-sprite_frames = SubResource("SpriteFrames_xw83q")
-animation = &"idle"
-frame = 12
-frame_progress = 1.0
-
-[node name="jump" type="Sprite2D" parent="black_screen"]
-position = Vector2(726.5, 452.50003)
-scale = Vector2(2.71875, 2.1562498)
-texture = ExtResource("15_qn06s")
-
-[node name="defence" type="Sprite2D" parent="black_screen"]
-position = Vector2(646.5, 455)
-scale = Vector2(2.5937507, 2.4999998)
-texture = ExtResource("16_30wyh")
-
-[node name="power" type="Sprite2D" parent="black_screen"]
-position = Vector2(686.00006, 242.00002)
-scale = Vector2(3.953125, 3.796875)
-texture = ExtResource("16_vrtv1")
-
-[node name="powers" type="Label" parent="black_screen"]
-layout_mode = 0
-offset_left = 757.00006
-offset_top = 183.99997
-offset_right = 903.00006
-offset_bottom = 480.99997
-text = "PUNCH
-KICK
-
-
-   JUMP"
-label_settings = SubResource("LabelSettings_nbku2")
-
 [node name="camera" type="Camera2D" parent="black_screen"]
 position = Vector2(1, 3)
 offset = Vector2(580, 330)
+
+[node name="auto_fade_in" parent="black_screen" instance=ExtResource("2_30wyh")]
 
 [node name="VBoxContainer" type="VBoxContainer" parent="black_screen"]
 layout_direction = 2
@@ -242,6 +177,125 @@ language = "pt"
 [node name="quit" type="Button" parent="black_screen/VBoxContainer"]
 layout_mode = 2
 text = "QUIT"
+
+[node name="maycon" type="AnimatedSprite2D" parent="black_screen"]
+position = Vector2(-124, 308)
+scale = Vector2(3.1786866, 2.9598992)
+sprite_frames = SubResource("SpriteFrames_xw83q")
+animation = &"idle"
+frame = 12
+frame_progress = 1.0
+
+[node name="pause" type="Label" parent="black_screen"]
+layout_mode = 0
+offset_left = 497.0
+offset_top = 23.0
+offset_right = 638.0
+offset_bottom = 152.0
+text = "PAUSE
+"
+label_settings = SubResource("LabelSettings_gcd8f")
+
+[node name="jump" type="Sprite2D" parent="black_screen"]
+position = Vector2(791.5, 326.5)
+scale = Vector2(2.71875, 2.1562498)
+texture = ExtResource("15_qn06s")
+
+[node name="defence" type="Sprite2D" parent="black_screen"]
+position = Vector2(711.5, 329)
+scale = Vector2(2.5937507, 2.4999998)
+texture = ExtResource("16_30wyh")
+
+[node name="power" type="Sprite2D" parent="black_screen"]
+position = Vector2(752, 173.75)
+scale = Vector2(3.953125, 3.796875)
+texture = ExtResource("16_vrtv1")
+
+[node name="powers" type="Label" parent="black_screen"]
+layout_mode = 0
+offset_left = 823.00006
+offset_top = 115.74997
+offset_right = 969.00006
+offset_bottom = 412.74997
+text = "PUNCH
+KICK
+
+ JUMP"
+label_settings = SubResource("LabelSettings_nbku2")
+
+[node name="run_label" type="Label" parent="black_screen"]
+layout_mode = 0
+offset_left = 756.0
+offset_top = 528.0
+offset_right = 897.0
+offset_bottom = 657.0
+text = "RUN
+"
+label_settings = SubResource("LabelSettings_gcd8f")
+
+[node name="down_label" type="Label" parent="black_screen"]
+layout_mode = 0
+offset_left = 724.0
+offset_top = 421.0
+offset_right = 959.0
+offset_bottom = 550.0
+text = "Croutch"
+label_settings = SubResource("LabelSettings_gcd8f")
+
+[node name="ArrowDownKeyLight" type="Sprite2D" parent="black_screen"]
+position = Vector2(992, 458)
+scale = Vector2(0.75, 0.73)
+texture = ExtResource("19_nru7y")
+
+[node name="ButtonIconSwitchDpadDown" type="Sprite2D" parent="black_screen"]
+position = Vector2(1079, 457)
+scale = Vector2(0.77, 0.75)
+texture = ExtResource("20_f2c3o")
+
+[node name="360X" type="Sprite2D" parent="black_screen"]
+position = Vector2(1080.0001, 558)
+scale = Vector2(0.77, 0.77)
+texture = ExtResource("21_2hkh7")
+
+[node name="AKeyLight" type="Sprite2D" parent="black_screen"]
+position = Vector2(995, 560)
+scale = Vector2(0.8, 0.79)
+texture = ExtResource("22_4hiuc")
+
+[node name="QKeyLight" type="Sprite2D" parent="."]
+position = Vector2(1000, 141)
+scale = Vector2(0.63, 0.58)
+texture = ExtResource("23_gs1sl")
+
+[node name="360Y" type="Sprite2D" parent="."]
+position = Vector2(1076, 141)
+scale = Vector2(0.6, 0.63)
+texture = ExtResource("24_ai0yt")
+
+[node name="WKeyLight" type="Sprite2D" parent="."]
+position = Vector2(1000, 201)
+scale = Vector2(0.62, 0.63)
+texture = ExtResource("25_57sbn")
+
+[node name="360B" type="Sprite2D" parent="."]
+position = Vector2(1078, 204)
+scale = Vector2(0.63, 0.64)
+texture = ExtResource("26_8kyqv")
+
+[node name="BlankWhiteSuperWide" type="Sprite2D" parent="."]
+position = Vector2(994, 348)
+scale = Vector2(0.73999995, 0.57999986)
+texture = ExtResource("27_72xvg")
+
+[node name="BlankWhiteEnter" type="Sprite2D" parent="."]
+position = Vector2(993, 304)
+scale = Vector2(0.67, 0.65)
+texture = ExtResource("28_w3st5")
+
+[node name="360A" type="Sprite2D" parent="."]
+position = Vector2(1079, 324)
+scale = Vector2(0.75, 0.71)
+texture = ExtResource("29_l1hj0")
 
 [connection signal="pressed" from="black_screen/VBoxContainer/close" to="." method="_on_close_pressed"]
 [connection signal="pressed" from="black_screen/VBoxContainer/quit" to="." method="_on_quit_pressed"]
