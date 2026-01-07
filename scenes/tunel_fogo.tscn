@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://b24g04baecogn"]
+[gd_scene load_steps=4 format=3 uid="uid://b24g04baecogn"]
 
 [ext_resource type="VideoStream" uid="uid://cros6010x6vuk" path="res://assets/videos/caindo_tunel.ogv" id="1_481kp"]
 [ext_resource type="Script" uid="uid://defi0lubtlfmm" path="res://scripts/intro_tunel.gd" id="2_481kp"]
+[ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="3_32c08"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -17,6 +18,8 @@ script = ExtResource("2_481kp")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(581, 327)
+
+[node name="fade" parent="." instance=ExtResource("3_32c08")]
 
 [connection signal="ready" from="." to="VideoStreamPlayer" method="_on_node_2d_ready"]
 [connection signal="finished" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_finished"]

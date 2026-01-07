@@ -1,6 +1,7 @@
-[gd_scene load_steps=31 format=3 uid="uid://dscts1war82ip"]
+[gd_scene load_steps=32 format=3 uid="uid://dscts1war82ip"]
 
 [ext_resource type="Texture2D" uid="uid://c4anaqd7mthox" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_3.png" id="1_2qpmw"]
+[ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="1_u2g44"]
 [ext_resource type="Script" uid="uid://08u2yya4bxkg" path="res://scripts/fase_1_outside_castle_again_no_fire_3.gd" id="2_2qpmw"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_lq5u0"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="4_737m3"]
@@ -198,6 +199,8 @@ animations = [{
 
 [node name="Node2D" type="Node2D"]
 process_mode = 1
+
+[node name="fade" parent="." instance=ExtResource("1_u2g44")]
 
 [node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
 process_mode = 1

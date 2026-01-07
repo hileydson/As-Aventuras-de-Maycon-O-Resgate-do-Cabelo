@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://yytwstsfp0ex" path="res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_no_fire.png" id="1_ryeef"]
 [ext_resource type="Script" uid="uid://croc726dc3hga" path="res://scripts/demo_final.gd" id="2_ryeef"]
 [ext_resource type="AudioStream" uid="uid://c7ap4akws6abl" path="res://assets/novos_audios/the_end.mp3" id="4_hefi4"]
-[ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="4_ryeef"]
+[ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="4_ryeef"]
 [ext_resource type="Texture2D" uid="uid://dbicvg8ismuhi" path="res://assets/novas_imagens/maycon/jamelao_float_1.png" id="5_ryeef"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
@@ -44,12 +44,22 @@ position = Vector2(8.264331, -5.258192)
 scale = Vector2(3.9585018, 1.3761984)
 
 [node name="Label" type="Label" parent="Fase1BeforeCastle"]
+visible = false
 offset_left = -281.7824
 offset_top = -572.40643
 offset_right = -196.97418
 offset_bottom = -547.25134
 scale = Vector2(9.56284, 9.05578)
 text = "The End"
+
+[node name="end_demo_thanks" type="Label" parent="Fase1BeforeCastle"]
+visible = false
+offset_left = -372.0622
+offset_top = -414.28873
+offset_right = -147.0622
+offset_bottom = -388.9067
+scale = Vector2(3.5441866, 4.8666897)
+text = "Thanks for playing the demo!"
 
 [node name="TheEnd" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_hefi4")
@@ -61,3 +71,5 @@ autoplay = true
 position = Vector2(609, 517)
 scale = Vector2(2.3416033, 2.101351)
 texture = ExtResource("5_ryeef")
+
+[connection signal="ready" from="." to="Fase1BeforeCastle" method="_on_node_2d_ready"]

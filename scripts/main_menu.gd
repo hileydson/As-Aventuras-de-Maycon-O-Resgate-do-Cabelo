@@ -8,6 +8,7 @@ extends VBoxContainer
 @onready var maycon_looking: AnimatedSprite2D = $"../mayconLooking"
 @onready var menu_song: AudioStreamPlayer2D = $"../menu_song"
 @onready var jamelao_song: AudioStreamPlayer = $"../JamelaoSong"
+@onready var v_box_container: VBoxContainer = $"."
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -20,6 +21,9 @@ func _ready() -> void:
 	
 	maycon_looking.play("idle")
 	
+	get_viewport().gui_disable_input = true
+	await get_tree().create_timer(3.0).timeout 
+	get_viewport().gui_disable_input = false
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
