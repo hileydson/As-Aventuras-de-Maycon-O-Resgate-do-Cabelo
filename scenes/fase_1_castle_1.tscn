@@ -118,7 +118,7 @@ limit_bottom = 1355
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
 
 [node name="inimigo_manga" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("6_htegb")]
-position = Vector2(2208, 845.99994)
+position = Vector2(1647, 867.00006)
 
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)

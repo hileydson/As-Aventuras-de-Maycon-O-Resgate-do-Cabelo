@@ -11,6 +11,18 @@
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("maycon_fase:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-367.99988, 210)]
+}
 
 [sub_resource type="Animation" id="Animation_aybw1"]
 resource_name = "maycon_back_to_fase"
@@ -25,7 +37,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0.1),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(1500, 150)]
+"values": [Vector2(1300, 183.95)]
 }
 
 [sub_resource type="Animation" id="Animation_36c4s"]
@@ -80,7 +92,7 @@ size = Vector2(999, 178)
 size = Vector2(400.40625, 136)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s4wqb"]
-size = Vector2(613.2031, 136)
+size = Vector2(404.20313, 136)
 
 [node name="Node2D" type="Node2D"]
 process_mode = 1
@@ -104,7 +116,7 @@ libraries = {
 [node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("4_wsirf")]
 light_mask = 512
 visibility_layer = 524800
-position = Vector2(-352.99988, 195)
+position = Vector2(-367.99988, 210)
 scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
 collision_mask = 1
@@ -131,7 +143,7 @@ position = Vector2(2580, 951)
 position = Vector2(16, -2)
 
 [node name="next" type="CollisionShape2D" parent="next_scene"]
-position = Vector2(2949, 896.00006)
+position = Vector2(2964, 901.99994)
 scale = Vector2(5.559998, 2.9600005)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 
@@ -172,7 +184,7 @@ position = Vector2(2384, 1253)
 shape = SubResource("RectangleShape2D_p1t4m")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(2843.3984, 1128)
+position = Vector2(2738.8984, 1128)
 shape = SubResource("RectangleShape2D_s4wqb")
 
 [node name="battle" parent="." instance=ExtResource("6_yvup1")]
