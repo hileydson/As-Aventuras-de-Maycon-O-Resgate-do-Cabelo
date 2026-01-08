@@ -32,15 +32,15 @@ func pause()->void:
 func unpause()->void:
 	pausePlayer = false
 	
-func jump()->void:
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+func jump(is_colliding:bool)->void:
+	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !is_colliding:
 		sound_jump.play()
 		animated_sprite_2d.play("jump_right")
 		velocity.y = JUMP_VELOCITY
 		
 				
-func double_jump()->void:
-	if Input.is_action_just_pressed("ui_accept") and !is_on_floor():
+func double_jump(is_colliding:bool)->void:
+	if Input.is_action_just_pressed("ui_accept") and !is_on_floor() and !is_colliding:
 		if DOUBLE_JUMP_COUNT<1:
 			sound_double_jump.play()
 			velocity.y = JUMP_VELOCITY+50
@@ -64,13 +64,13 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 		
 	# attack kick
-	if Input.is_action_pressed("key_w"):
+	if Input.is_action_pressed("key_q"):
 		if animated_sprite_2d.animation != "attack_punch":
 			punch.play()
 			animated_sprite_2d.play("attack_punch")
 		
 	# attack punch
-	if Input.is_action_pressed("key_q"):
+	if Input.is_action_pressed("key_w"):
 		if animated_sprite_2d.animation != "attack_kick":
 			kick.play()
 			animated_sprite_2d.play("attack_kick")
@@ -80,13 +80,8 @@ func _physics_process(delta: float) -> void:
 		if animated_sprite_2d.animation != "key_down":
 			animated_sprite_2d.play("down")
 
-	# handles double jump 
-	double_jump()
 	
-	# handles jump.
-	jump()
 	
-			
 	# ANIMACAO DE ANDAR PROS LADOS	
 	if (Input.is_action_pressed("ui_left") || Input.is_action_pressed("ui_right")) && !Input.is_action_just_pressed("ui_accept"):	
 		if is_on_floor() && animated_sprite_2d.animation != "attack_punch" && animated_sprite_2d.animation != "attack_kick" :
@@ -109,13 +104,21 @@ func _physics_process(delta: float) -> void:
 	if !animated_sprite_2d.is_playing():
 		animated_sprite_2d.play("idle_right")
 		
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
+
+	# 1. Variáveis de controle
 	var direction := Input.get_axis("ui_left", "ui_right")
-	if direction:
-		velocity.x = direction * SPEED
+	var esta_golpeando = Input.is_action_pressed("key_q") or Input.is_action_pressed("key_w")
+
+	# 2. Lógica de Movimento (Só move se NÃO estiver golpeando)
+	if not esta_golpeando:
+		if direction:
+			velocity.x = direction * SPEED
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED)
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+		# Se estiver golpeando, força a parada imediata ou gradual
+		var desaceleracao = 10000 
+		velocity = velocity.move_toward(Vector2.ZERO, desaceleracao * delta)	
 
 	if direction == -1:
 		animated_sprite_2d.flip_h = true
@@ -123,6 +126,30 @@ func _physics_process(delta: float) -> void:
 		animated_sprite_2d.flip_h = false			
 			
 	move_and_slide()
+	var is_colliding:bool = get_slide_collision_count()>1
+	
+	# handles double jump 
+	double_jump(is_colliding)
+	
+	# handles jump.
+	jump(is_colliding)
+	
+	for i in get_slide_collision_count():
+		var desaceleracao = 20000 # Força da frenagem
+		var forca_impulso:int = 95
+		var collision = get_slide_collision(i)
+		if collision.get_collider() is RigidBody2D:
+			if Input.is_action_pressed("key_q") or Input.is_action_pressed("key_w"):
+			# ISSO impede o Maycon de seguir o objeto no ar:
+				velocity = Vector2.ZERO 
+				
+				# Se você quiser um pequeno "coice" para trás (Knockback), use:
+				velocity = collision.get_normal() * 1200 
+
+				var multiplicador = 1.5 if Input.is_action_pressed("key_w") else 1.0
+				collision.get_collider().apply_central_impulse(-collision.get_normal() * forca_impulso * multiplicador)
+			
+			
 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:

@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://c3br47ikydrxp"]
+
+[ext_resource type="Script" uid="uid://cvd8ka40gblwa" path="res://scripts/explosao.gd" id="1_3d3oe"]
+
+[node name="Explosao" type="Node2D"]
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+position = Vector2(2.0000038, 1.1444092e-05)
+scale = Vector2(67.60002, 50.719963)
+emitting = false
+amount = 400
+one_shot = true
+randomness = 0.65
+emission_shape = 2
+emission_sphere_radius = 1.0
+scale_amount_min = 5.0
+scale_amount_max = 5.0
+color = Color(0.7582776, 0.5415324, 0.47941232, 1)
+script = ExtResource("1_3d3oe")

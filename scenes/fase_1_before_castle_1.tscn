@@ -1,4 +1,4 @@
-[gd_scene load_steps=61 format=3 uid="uid://d3cev6uiwwro4"]
+[gd_scene load_steps=62 format=3 uid="uid://d3cev6uiwwro4"]
 
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
 [ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="14_ivltl"]
 [ext_resource type="AudioStream" uid="uid://drnd65usjc7l7" path="res://assets/novos_audios/stage_sound.mp3" id="15_avl2m"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="15_avwlo"]
+[ext_resource type="PackedScene" uid="uid://d35e0jeya7iev" path="res://scenes/caixa.tscn" id="16_cm2i2"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -622,7 +623,7 @@ visibility_layer = 524800
 position = Vector2(-1469, 169)
 scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
-collision_mask = 1
+collision_mask = 5
 
 [node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle1/maycon_fase"]
 position = Vector2(11.542603, 0.47611237)
@@ -690,25 +691,33 @@ collision_mask = 524291
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 process_mode = 4
-light_mask = 524289
-visibility_layer = 524289
+light_mask = 524294
+visibility_layer = 524294
 position = Vector2(278, 1138)
 shape = SubResource("RectangleShape2D_hnmna")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
 process_mode = 4
+light_mask = 524294
+visibility_layer = 524294
 position = Vector2(1997, 1140)
 shape = SubResource("RectangleShape2D_hnmna")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+light_mask = 524294
+visibility_layer = 524294
 position = Vector2(1013, 1138)
 shape = SubResource("RectangleShape2D_p1t4m")
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D"]
+light_mask = 524294
+visibility_layer = 524294
 position = Vector2(3001.5, 1136)
 shape = SubResource("RectangleShape2D_2rkwj")
 
 [node name="CollisionShape2D5" type="CollisionShape2D" parent="StaticBody2D"]
+light_mask = 524294
+visibility_layer = 524294
 position = Vector2(-5.0000153, 886)
 scale = Vector2(3.3999994, 5.44)
 shape = SubResource("WorldBoundaryShape2D_36c4s")
@@ -839,6 +848,15 @@ rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_qx0j8")
 autoplay = "default"
+
+[node name="caixa" parent="." instance=ExtResource("16_cm2i2")]
+position = Vector2(2157, 972)
+
+[node name="caixa2" parent="." instance=ExtResource("16_cm2i2")]
+position = Vector2(2161, 831)
+
+[node name="caixa3" parent="." instance=ExtResource("16_cm2i2")]
+position = Vector2(2167, 685)
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle1" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle1" method="_on_dead_line_body_entered"]
