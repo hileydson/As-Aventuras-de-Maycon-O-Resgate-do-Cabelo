@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://w6ofyplymeea"]
+[gd_scene load_steps=40 format=3 uid="uid://w6ofyplymeea"]
 
 [ext_resource type="Texture2D" uid="uid://qpa3u3o25j1m" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_3.png" id="1_vjg2b"]
 [ext_resource type="Script" uid="uid://cud6uo2ykclj0" path="res://scripts/fase_1_before_castle_3.gd" id="2_vjg2b"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="4_e7uvt"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_wup0o"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="7_2rg5i"]
+[ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="7_vjg2b"]
+[ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="8_pyjnh"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -88,6 +90,134 @@ height = 346.77637
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6v7in"]
 height = 418.0044
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t7fus"]
+atlas = ExtResource("7_vjg2b")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_avl2m"]
+atlas = ExtResource("7_vjg2b")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t3aas"]
+atlas = ExtResource("7_vjg2b")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7xe64"]
+atlas = ExtResource("7_vjg2b")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0sfqs"]
+atlas = ExtResource("7_vjg2b")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jph6d"]
+atlas = ExtResource("7_vjg2b")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8fjxu"]
+atlas = ExtResource("7_vjg2b")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cao5k"]
+atlas = ExtResource("7_vjg2b")
+region = Rect2(224, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pyjnh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t7fus")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_avl2m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t3aas")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7xe64")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0sfqs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jph6d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8fjxu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cao5k")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_isw4w"]
+atlas = ExtResource("8_pyjnh")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mm46c"]
+atlas = ExtResource("8_pyjnh")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lfjsi"]
+atlas = ExtResource("8_pyjnh")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kivjr"]
+atlas = ExtResource("8_pyjnh")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_16te5"]
+atlas = ExtResource("8_pyjnh")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f8quw"]
+atlas = ExtResource("8_pyjnh")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0qa7q"]
+atlas = ExtResource("8_pyjnh")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t428b"]
+atlas = ExtResource("8_pyjnh")
+region = Rect2(224, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3dovv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_isw4w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mm46c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lfjsi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kivjr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_16te5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f8quw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0qa7q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t428b")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="Node2D" type="Node2D"]
 process_mode = 1
@@ -205,6 +335,111 @@ offset_right = 866.0
 offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="fogo" type="AnimatedSprite2D" parent="."]
+position = Vector2(700, 1197)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo2" type="AnimatedSprite2D" parent="."]
+position = Vector2(1325, 1272)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo3" type="AnimatedSprite2D" parent="."]
+position = Vector2(1582.0001, 1300)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo4" type="AnimatedSprite2D" parent="."]
+position = Vector2(1632.0001, 1256)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo5" type="AnimatedSprite2D" parent="."]
+position = Vector2(1836, 1265)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo6" type="AnimatedSprite2D" parent="."]
+position = Vector2(2056, 1290)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo7" type="AnimatedSprite2D" parent="."]
+position = Vector2(2737.0002, 998)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="smoke" type="AnimatedSprite2D" parent="."]
+position = Vector2(1991.2311, 161.5311)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_3dovv")
+autoplay = "default"
+
+[node name="smoke2" type="AnimatedSprite2D" parent="."]
+position = Vector2(398.22324, 158)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_3dovv")
+autoplay = "default"
+
+[node name="smoke3" type="AnimatedSprite2D" parent="."]
+position = Vector2(975.44653, 131.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_3dovv")
+autoplay = "default"
+
+[node name="smoke4" type="AnimatedSprite2D" parent="."]
+position = Vector2(1024.4465, 92.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_3dovv")
+autoplay = "default"
+
+[node name="smoke5" type="AnimatedSprite2D" parent="."]
+position = Vector2(906.4464, 126.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_3dovv")
+autoplay = "default"
+
+[node name="smoke6" type="AnimatedSprite2D" parent="."]
+position = Vector2(1363.4465, 96.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_3dovv")
+autoplay = "default"
+
+[node name="smoke7" type="AnimatedSprite2D" parent="."]
+position = Vector2(2441.4463, 160.3875)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_3dovv")
+autoplay = "default"
+
+[node name="smoke8" type="AnimatedSprite2D" parent="."]
+position = Vector2(2968.4463, 109.38752)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_3dovv")
+autoplay = "default"
+
+[node name="smoke9" type="AnimatedSprite2D" parent="."]
+position = Vector2(2713.4463, 120.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_3dovv")
+autoplay = "default"
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]

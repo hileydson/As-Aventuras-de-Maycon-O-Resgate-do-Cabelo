@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bdmpm2b3ny4k2"]
+[gd_scene load_steps=29 format=3 uid="uid://bdmpm2b3ny4k2"]
 
 [ext_resource type="Texture2D" uid="uid://b6c6gorildkq4" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_1.png" id="1_isgjk"]
 [ext_resource type="Script" uid="uid://bpwcs2a6d8j8" path="res://scripts/fase_1_castle_1.gd" id="2_isgjk"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="6_4xbjm"]
 [ext_resource type="PackedScene" uid="uid://c7sguivhsbmw2" path="res://scenes/inimigos/inimigo_manga.tscn" id="6_htegb"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="6_w4eqy"]
+[ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="8_pkp6y"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -84,6 +85,70 @@ size = Vector2(911.5, 178)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6v7in"]
 size = Vector2(96.12341, 222.01563)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_t7fus"]
+atlas = ExtResource("8_pkp6y")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_avl2m"]
+atlas = ExtResource("8_pkp6y")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t3aas"]
+atlas = ExtResource("8_pkp6y")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7xe64"]
+atlas = ExtResource("8_pkp6y")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0sfqs"]
+atlas = ExtResource("8_pkp6y")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jph6d"]
+atlas = ExtResource("8_pkp6y")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8fjxu"]
+atlas = ExtResource("8_pkp6y")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cao5k"]
+atlas = ExtResource("8_pkp6y")
+region = Rect2(224, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_htegb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t7fus")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_avl2m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t3aas")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7xe64")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0sfqs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jph6d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8fjxu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cao5k")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [node name="Node2D" type="Node2D"]
 process_mode = 1
 
@@ -101,6 +166,7 @@ libraries = {
 [node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("3_pkp6y")]
 light_mask = 512
 visibility_layer = 524800
+z_index = 1
 position = Vector2(-1396.9998, 112.99999)
 scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
@@ -190,6 +256,72 @@ offset_right = 866.0
 offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="fogo" type="AnimatedSprite2D" parent="."]
+position = Vector2(700, 1197)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo2" type="AnimatedSprite2D" parent="."]
+position = Vector2(795.00006, 1335)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo3" type="AnimatedSprite2D" parent="."]
+position = Vector2(1695, 1220)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo4" type="AnimatedSprite2D" parent="."]
+position = Vector2(1757, 1234)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo5" type="AnimatedSprite2D" parent="."]
+position = Vector2(1814.0001, 1207)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo6" type="AnimatedSprite2D" parent="."]
+position = Vector2(1872, 1262)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo7" type="AnimatedSprite2D" parent="."]
+position = Vector2(2673, 1266)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo8" type="AnimatedSprite2D" parent="."]
+position = Vector2(2190.0002, 697)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo9" type="AnimatedSprite2D" parent="."]
+position = Vector2(713.00037, 476.99994)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo10" type="AnimatedSprite2D" parent="."]
+position = Vector2(1196, 691)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo11" type="AnimatedSprite2D" parent="."]
+position = Vector2(2899, 354)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]

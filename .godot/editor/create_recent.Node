@@ -1,7 +1,8 @@
-Label
 Node2D
-AnimationPlayer
 AnimatedSprite2D
+AnimationTree
+Label
+AnimationPlayer
 Button
 VBoxContainer
 Sprite2D
@@ -11,4 +12,3 @@ ShapeCast2D
 Area2D
 CanvasLayer
 ColorRect
-Node
