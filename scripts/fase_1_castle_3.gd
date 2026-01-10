@@ -9,10 +9,12 @@ extends Sprite2D
 @onready var cabelo: AnimatedSprite2D = $"../cabelo"
 @onready var inimigos: Node = $Inimigos
 @onready var fogos: Node2D = $"../fogos"
+@onready var canvas_layer: CanvasLayer = $CanvasLayer
 
 var texture_no_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire.png")
 var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3.png")
 
+var temp_canvas_layer_fogo = canvas_layer
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	#REINICIA AS BATALHAS
@@ -65,6 +67,13 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 
 func _on_division_no_fire_body_exited(body: Node2D) -> void:
 	mk_dudun.play()
+	GameSongs.stop(1)
+	
+	if canvas_layer :
+		canvas_layer.queue_free()
+	else :
+		add_child(temp_canvas_layer_fogo)
+		
 	
 	if fase_1_before_castle.texture == texture_no_fire:
 		Global.battle_background = "1"

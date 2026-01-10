@@ -1,3 +1,6 @@
+WorldEnvironment
+ColorRect
+CanvasLayer
 AnimatedSprite2D
 CollisionShape2D
 RigidBody2D
@@ -10,5 +13,3 @@ AnimationTree
 Label
 AnimationPlayer
 Button
-VBoxContainer
-Sprite2D

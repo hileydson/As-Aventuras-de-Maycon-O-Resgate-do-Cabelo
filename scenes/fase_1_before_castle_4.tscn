@@ -1,4 +1,4 @@
-[gd_scene load_steps=54 format=3 uid="uid://b5uspfqhsepac"]
+[gd_scene load_steps=58 format=3 uid="uid://b5uspfqhsepac"]
 
 [ext_resource type="Texture2D" uid="uid://1i0426wllk8o" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_4.png" id="1_gv3vu"]
 [ext_resource type="Script" uid="uid://5x404tvcimbj" path="res://scripts/fase_1_before_castle_4.gd" id="2_gv3vu"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_nosu4"]
 [ext_resource type="PackedScene" uid="uid://c283awjq1ew2g" path="res://scenes/inimigos/inimigo_xuruzika.tscn" id="5_senh8"]
 [ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="6_fjlh3"]
+[ext_resource type="Shader" uid="uid://b3xewfakdijcn" path="res://scenes/fase_1_before_castle_4.gdshader" id="6_vi3cd"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="7_fp30k"]
 [ext_resource type="AudioStream" uid="uid://c3jfsmiruu7lk" path="res://assets/novos_audios/scary_smile.mp3" id="8_745bc"]
 [ext_resource type="Texture2D" uid="uid://hd7ihpk8l2bg" path="res://assets/novas_imagens/effects/Pixel Holy Spell/01.png" id="9_dlb6u"]
@@ -68,6 +69,17 @@ _data = {
 &"maycon_back_to_fase": SubResource("Animation_gv3vu"),
 &"maycon_falling": SubResource("Animation_36c4s")
 }
+
+[sub_resource type="Texture2DRD" id="Texture2DRD_vi3cd"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ytiji"]
+shader = ExtResource("6_vi3cd")
+shader_parameter/noise_texture = SubResource("Texture2DRD_vi3cd")
+shader_parameter/strength = 0.0050000002375
+shader_parameter/speed = 0.05
+
+[sub_resource type="Environment" id="Environment_ytiji"]
+glow_enabled = true
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6v7in"]
 height = 387.813
@@ -338,6 +350,16 @@ position = Vector2(1983, 923.99994)
 
 [node name="inimigo_xuruzika" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("5_senh8")]
 position = Vector2(1648.9999, 981.99994)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle"]
+
+[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/CanvasLayer"]
+material = SubResource("ShaderMaterial_ytiji")
+offset_right = 3450.0
+offset_bottom = 1605.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle/CanvasLayer"]
+environment = SubResource("Environment_ytiji")
 
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)

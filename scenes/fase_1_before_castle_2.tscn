@@ -1,9 +1,10 @@
-[gd_scene load_steps=52 format=3 uid="uid://f8txa0404jbf"]
+[gd_scene load_steps=56 format=3 uid="uid://f8txa0404jbf"]
 
 [ext_resource type="Texture2D" uid="uid://d4gyanjdy41sl" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_2.png" id="1_6v7in"]
 [ext_resource type="Script" uid="uid://bkvxkpbrw3jax" path="res://scripts/fase_1_before_castle_2.gd" id="2_6v7in"]
 [ext_resource type="PackedScene" uid="uid://c283awjq1ew2g" path="res://scenes/inimigos/inimigo_xuruzika.tscn" id="4_aybw1"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="5_54a10"]
+[ext_resource type="Shader" uid="uid://b3xewfakdijcn" path="res://scenes/fase_1_before_castle_4.gdshader" id="5_wfe43"]
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="6_nulh8"]
 [ext_resource type="Texture2D" uid="uid://dqysr3mp02p6t" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 6 - 5/Group 6 - 5.png" id="7_6v7in"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="8_w4kda"]
@@ -65,6 +66,17 @@ _data = {
 &"maycon_back_to_fase": SubResource("Animation_aybw1"),
 &"maycon_falling": SubResource("Animation_36c4s")
 }
+
+[sub_resource type="Texture2DRD" id="Texture2DRD_8ayet"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_54a10"]
+shader = ExtResource("5_wfe43")
+shader_parameter/noise_texture = SubResource("Texture2DRD_8ayet")
+shader_parameter/strength = 0.0050000002375
+shader_parameter/speed = 0.05
+
+[sub_resource type="Environment" id="Environment_sa00i"]
+glow_enabled = true
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_pg6gg"]
 normal = Vector2(-1, 0)
@@ -322,6 +334,16 @@ limit_bottom = 1355
 [node name="inimigo_xuruzika" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("4_aybw1")]
 position = Vector2(1005, 958.9999)
 
+[node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle"]
+
+[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/CanvasLayer"]
+material = SubResource("ShaderMaterial_54a10")
+offset_right = 3450.0
+offset_bottom = 1605.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle/CanvasLayer"]
+environment = SubResource("Environment_sa00i")
+
 [node name="next_scene" type="Area2D" parent="."]
 process_mode = 1
 position = Vector2(16, -2)
@@ -557,6 +579,9 @@ position = Vector2(454, -549)
 
 [node name="coxinha2" parent="." instance=ExtResource("11_sx1rn")]
 position = Vector2(238, 34)
+
+[node name="coxinha3" parent="." instance=ExtResource("11_sx1rn")]
+position = Vector2(342, -808)
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]

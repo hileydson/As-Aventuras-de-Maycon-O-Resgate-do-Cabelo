@@ -1,4 +1,4 @@
-[gd_scene load_steps=62 format=3 uid="uid://d3cev6uiwwro4"]
+[gd_scene load_steps=66 format=3 uid="uid://d3cev6uiwwro4"]
 
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
 [ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="6_n1ahb"]
 [ext_resource type="Texture2D" uid="uid://drf85jfsrrmkk" path="res://assets/novas_imagens/effects/smoke_animation.png" id="7_ahm46"]
 [ext_resource type="Texture2D" uid="uid://bwclf236t6sen" path="res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_6.png" id="8_cm2i2"]
+[ext_resource type="Shader" uid="uid://b3xewfakdijcn" path="res://scenes/fase_1_before_castle_4.gdshader" id="9_t7fus"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="10_ivltl"]
 [ext_resource type="Script" uid="uid://j0vbl5413yex" path="res://scripts/effect_stage_show.gd" id="10_n1ahb"]
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="14_ivltl"]
@@ -434,6 +435,17 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="Texture2DRD" id="Texture2DRD_vi3cd"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_avl2m"]
+shader = ExtResource("9_t7fus")
+shader_parameter/noise_texture = SubResource("Texture2DRD_vi3cd")
+shader_parameter/strength = 0.0050000002375
+shader_parameter/speed = 0.05
+
+[sub_resource type="Environment" id="Environment_t3aas"]
+glow_enabled = true
+
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_pg6gg"]
 normal = Vector2(-1, 0)
 distance = 0.89923096
@@ -664,6 +676,16 @@ offset_bottom = -302.0
 scale = Vector2(7.76, 7.0000014)
 text = "Stage 1"
 
+[node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle1"]
+
+[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle1/CanvasLayer"]
+material = SubResource("ShaderMaterial_avl2m")
+offset_right = 3450.0
+offset_bottom = 1605.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle1/CanvasLayer"]
+environment = SubResource("Environment_t3aas")
+
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)
 
@@ -848,6 +870,9 @@ rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_qx0j8")
 autoplay = "default"
+
+[node name="caixa4" parent="." instance=ExtResource("16_cm2i2")]
+position = Vector2(1109, 987)
 
 [node name="caixa" parent="." instance=ExtResource("16_cm2i2")]
 position = Vector2(2157, 972)

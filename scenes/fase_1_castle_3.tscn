@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://bmeon4mpjn614"]
+[gd_scene load_steps=36 format=3 uid="uid://bmeon4mpjn614"]
 
 [ext_resource type="Texture2D" uid="uid://dv8x3bopk0uoc" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3.png" id="1_pvy0v"]
 [ext_resource type="Script" uid="uid://eci84viv68o0" path="res://scripts/fase_1_castle_3.gd" id="2_pvy0v"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_ar2is"]
 [ext_resource type="PackedScene" uid="uid://c7sguivhsbmw2" path="res://scenes/inimigos/inimigo_manga.tscn" id="6_5a084"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="6_fr6g4"]
+[ext_resource type="Shader" uid="uid://b3xewfakdijcn" path="res://scenes/fase_1_before_castle_4.gdshader" id="7_fr6g4"]
 [ext_resource type="PackedScene" uid="uid://143260dknkmv" path="res://scenes/inimigos/cabelo.tscn" id="9_75opb"]
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="10_ar2is"]
 
@@ -68,6 +69,17 @@ _data = {
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_pvy0v"]
 a = Vector2(96.80026, 9.844482)
 b = Vector2(-188.50433, 13.693359)
+
+[sub_resource type="Texture2DRD" id="Texture2DRD_41qbo"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hak52"]
+shader = ExtResource("7_fr6g4")
+shader_parameter/noise_texture = SubResource("Texture2DRD_41qbo")
+shader_parameter/strength = 0.0050000002375
+shader_parameter/speed = 0.05
+
+[sub_resource type="Environment" id="Environment_j5kpr"]
+glow_enabled = true
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_pg6gg"]
 normal = Vector2(-1, 0)
@@ -207,6 +219,16 @@ position = Vector2(1094, 842)
 rotation = 1.5828485
 scale = Vector2(3, 3.2)
 shape = SubResource("SegmentShape2D_pvy0v")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle"]
+
+[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/CanvasLayer"]
+material = SubResource("ShaderMaterial_hak52")
+offset_right = 3450.0
+offset_bottom = 1605.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle/CanvasLayer"]
+environment = SubResource("Environment_j5kpr")
 
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)
