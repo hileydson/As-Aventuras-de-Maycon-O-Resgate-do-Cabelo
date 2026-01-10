@@ -1,0 +1,34 @@
+[gd_scene load_steps=5 format=3 uid="uid://chpqi8ryj0b1g"]
+
+[ext_resource type="Texture2D" uid="uid://30tsd1l3hqfw" path="res://assets/novas_imagens/objects/Items.png" id="1_dcobq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lrfig"]
+atlas = ExtResource("1_dcobq")
+region = Rect2(16, 64, 16, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0wrhj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lrfig")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4o8hq"]
+size = Vector2(113, 67.375)
+
+[node name="RigidBody2D" type="RigidBody2D"]
+collision_layer = 6
+collision_mask = 6
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(4.000002, -55.000004)
+scale = Vector2(9.7578125, 6.773438)
+sprite_frames = SubResource("SpriteFrames_0wrhj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(4, 1)
+shape = SubResource("RectangleShape2D_4o8hq")

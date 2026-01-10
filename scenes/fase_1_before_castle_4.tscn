@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://b5uspfqhsepac"]
+[gd_scene load_steps=54 format=3 uid="uid://b5uspfqhsepac"]
 
 [ext_resource type="Texture2D" uid="uid://1i0426wllk8o" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_4.png" id="1_gv3vu"]
 [ext_resource type="Script" uid="uid://5x404tvcimbj" path="res://scripts/fase_1_before_castle_4.gd" id="2_gv3vu"]
@@ -12,6 +12,8 @@
 [ext_resource type="Texture2D" uid="uid://hd7ihpk8l2bg" path="res://assets/novas_imagens/effects/Pixel Holy Spell/01.png" id="9_dlb6u"]
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="11_nosu4"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="12_fjlh3"]
+[ext_resource type="PackedScene" uid="uid://d35e0jeya7iev" path="res://scenes/caixa.tscn" id="13_d2dfm"]
+[ext_resource type="PackedScene" uid="uid://chpqi8ryj0b1g" path="res://scenes/bloco.tscn" id="14_vi3cd"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -377,26 +379,34 @@ collision_mask = 524291
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 process_mode = 4
-light_mask = 524289
-visibility_layer = 524289
+light_mask = 524294
+visibility_layer = 524294
 position = Vector2(278, 1164.2697)
 shape = SubResource("RectangleShape2D_hnmna")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
 process_mode = 4
+light_mask = 524294
+visibility_layer = 524294
 position = Vector2(1663.375, 1164.2697)
 shape = SubResource("RectangleShape2D_nulh8")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+light_mask = 524294
+visibility_layer = 524294
 position = Vector2(1013, 1164.2697)
 shape = SubResource("RectangleShape2D_p1t4m")
 
 [node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
+light_mask = 524294
+visibility_layer = 524294
 position = Vector2(2319.8652, 1118)
 rotation = -1.6023498
 shape = SubResource("RectangleShape2D_6v7in")
 
 [node name="CollisionShape2D8" type="CollisionShape2D" parent="StaticBody2D"]
+light_mask = 524294
+visibility_layer = 524294
 position = Vector2(2395, 994.00006)
 rotation = 0.80597186
 scale = Vector2(1, 1.2596045)
@@ -592,6 +602,36 @@ rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_fp30k")
 autoplay = "default"
+
+[node name="caixa" parent="." instance=ExtResource("13_d2dfm")]
+position = Vector2(1334, 1002)
+
+[node name="caixa2" parent="." instance=ExtResource("13_d2dfm")]
+position = Vector2(1338, 861)
+
+[node name="caixa3" parent="." instance=ExtResource("13_d2dfm")]
+position = Vector2(1344, 715)
+
+[node name="RigidBody2D" parent="." instance=ExtResource("13_d2dfm")]
+position = Vector2(918, 1009)
+
+[node name="RigidBody2D2" parent="." instance=ExtResource("13_d2dfm")]
+position = Vector2(920, 886)
+
+[node name="RigidBody2D3" parent="." instance=ExtResource("13_d2dfm")]
+position = Vector2(922, 766)
+
+[node name="RigidBody2D4" parent="." instance=ExtResource("14_vi3cd")]
+position = Vector2(487, 1027)
+
+[node name="RigidBody2D5" parent="." instance=ExtResource("14_vi3cd")]
+position = Vector2(483, 949)
+
+[node name="RigidBody2D6" parent="." instance=ExtResource("14_vi3cd")]
+position = Vector2(349, 1027)
+
+[node name="RigidBody2D7" parent="." instance=ExtResource("14_vi3cd")]
+position = Vector2(355, 945)
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]
