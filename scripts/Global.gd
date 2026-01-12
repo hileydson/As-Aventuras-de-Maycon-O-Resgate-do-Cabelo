@@ -17,3 +17,4 @@ var before_prologo:bool = false #TESTE
 var maycon_itens = {axe=false}
 
 var game_events = {axe_taken=false, gilhotina_broken=false}
+var inimigos_mortos = {}

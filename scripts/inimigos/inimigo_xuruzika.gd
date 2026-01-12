@@ -14,6 +14,8 @@ extends AnimatedSprite2D
 @onready var timer_enemy_attack: Timer = $Timer_enemy_attack
 @onready var inimigo_1_animation_attack: AnimationPlayer = $inimigo_1_animation_attack
 
+var id_unico:String
+
 var count_play_inicio = 0
 var em_batalha = false
 var damage_limit_to_drop_hp:int = 1
@@ -31,6 +33,10 @@ func resetEnemy() -> void:
 		
 func _ready() -> void:
 	ref_inimigos = get_tree().root.find_child("inimigo_node", true, false)
+	
+	id_unico = get_tree().current_scene.name + "_" + str(get_path())
+	if Global.inimigos_mortos.has(id_unico):
+		queue_free()
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:	
@@ -97,6 +103,7 @@ func _on_animation_finished() -> void:
 
 func _on_to_battle_body_entered(body: Node2D) -> void:
 	Global.battle_next_enemy = "4"
+	Global.inimigos_mortos[id_unico] = true
 	queue_free()
 	
 	
