@@ -149,7 +149,7 @@ size = Vector2(2054.8125, 178)
 radius = 45.04248
 height = 223.95557
 
-[node name="Node2D" type="Node2D"]
+[node name="castelo_no_fire_1" type="Node2D"]
 process_mode = 1
 
 [node name="maycon_itens" parent="." instance=ExtResource("1_rjtni")]
