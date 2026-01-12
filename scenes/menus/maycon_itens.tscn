@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://c6hkbpx4y28ce"]
+
+[ext_resource type="Script" uid="uid://broav1jkk1nk1" path="res://scripts/maycon_itens.gd" id="1_66wnj"]
+[ext_resource type="Texture2D" uid="uid://30tsd1l3hqfw" path="res://assets/novas_imagens/objects/Items.png" id="2_875xj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wbttt"]
+atlas = ExtResource("2_875xj")
+region = Rect2(32, 0, 16, 36)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_10fkc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wbttt")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_66wnj")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="axe" type="TextureRect" parent="CanvasLayer"]
+visible = false
+anchors_preset = -1
+anchor_left = 0.56200004
+anchor_top = 1.0380001
+anchor_right = 0.56200004
+anchor_bottom = 1.0380001
+offset_left = -79.42407
+offset_top = -317.62408
+offset_right = 242.57593
+offset_bottom = -133.62408
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="axe" type="AnimatedSprite2D" parent="CanvasLayer/axe"]
+position = Vector2(-542, 255.00002)
+scale = Vector2(2.958338, 2.3489575)
+sprite_frames = SubResource("SpriteFrames_10fkc")
+autoplay = "default"
+frame_progress = 0.24658604

@@ -1,6 +1,7 @@
-[gd_scene load_steps=56 format=3 uid="uid://b5uspfqhsepac"]
+[gd_scene load_steps=57 format=3 uid="uid://b5uspfqhsepac"]
 
 [ext_resource type="Texture2D" uid="uid://1i0426wllk8o" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_4.png" id="1_gv3vu"]
+[ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_vi3cd"]
 [ext_resource type="Script" uid="uid://5x404tvcimbj" path="res://scripts/fase_1_before_castle_4.gd" id="2_gv3vu"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="3_dlb6u"]
 [ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="4_dlb6u"]
@@ -309,6 +310,9 @@ animations = [{
 
 [node name="Node2D" type="Node2D"]
 process_mode = 1
+
+[node name="maycon_itens" parent="." instance=ExtResource("1_vi3cd")]
+position = Vector2(1586, 683)
 
 [node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
 process_mode = 1

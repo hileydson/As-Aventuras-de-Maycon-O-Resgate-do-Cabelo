@@ -1,7 +1,9 @@
-[gd_scene load_steps=47 format=3 uid="uid://dmratg4yp57fk"]
+[gd_scene load_steps=51 format=3 uid="uid://dmratg4yp57fk"]
 
 [ext_resource type="Texture2D" uid="uid://dkde0mifvly5i" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_1.png" id="1_nnpcb"]
+[ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_yvup1"]
 [ext_resource type="Script" uid="uid://u67qivon285c" path="res://scripts/fase_1_outside_castle_again_no_fire_1.gd" id="2_s4wqb"]
+[ext_resource type="Texture2D" uid="uid://bddceahmv3soi" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Objects.png" id="3_6tryt"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_mm3kt"]
 [ext_resource type="Texture2D" uid="uid://dwyvi8qmv1rv7" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Cannon_restricted_size.png" id="4_6tryt"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="4_wsirf"]
@@ -10,6 +12,21 @@
 [ext_resource type="PackedScene" uid="uid://iv6b1ijvsoxd" path="res://scenes/inimigos/inimigo_fofo.tscn" id="6_mm3kt"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="6_yvup1"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="7_ssjau"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yvup1"]
+atlas = ExtResource("3_6tryt")
+region = Rect2(0, 0, 76, 73)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ssjau"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yvup1")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -283,11 +300,19 @@ size = Vector2(404.20313, 136)
 [node name="Node2D" type="Node2D"]
 process_mode = 1
 
+[node name="maycon_itens" parent="." instance=ExtResource("1_yvup1")]
+
 [node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
 process_mode = 1
 position = Vector2(1586, 683)
 texture = ExtResource("1_nnpcb")
 script = ExtResource("2_s4wqb")
+
+[node name="no_monster_flask" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(647.99994, 175.99998)
+scale = Vector2(3.6925187, 4.7253985)
+sprite_frames = SubResource("SpriteFrames_ssjau")
+autoplay = "default"
 
 [node name="MkDudun" type="AudioStreamPlayer" parent="Fase1BeforeCastle"]
 stream = ExtResource("3_mm3kt")
@@ -304,14 +329,14 @@ position = Vector2(501.6771, 208.62498)
 scale = Vector2(2.7248774, 2.7265632)
 sprite_frames = SubResource("SpriteFrames_ghhu0")
 autoplay = "default"
-frame_progress = 0.7850389
+frame_progress = 0.02566872
 
 [node name="guilhote" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
 position = Vector2(288.99997, 243.00003)
 scale = Vector2(6.3385406, 10.269529)
 sprite_frames = SubResource("SpriteFrames_n6co3")
 autoplay = "default"
-frame_progress = 0.58486885
+frame_progress = 0.3674767
 
 [node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("4_wsirf")]
 light_mask = 512

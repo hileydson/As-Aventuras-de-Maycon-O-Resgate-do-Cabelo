@@ -1,6 +1,7 @@
-[gd_scene load_steps=27 format=3 uid="uid://ddmbod8sij2k6"]
+[gd_scene load_steps=28 format=3 uid="uid://ddmbod8sij2k6"]
 
 [ext_resource type="Texture2D" uid="uid://mpk6pxv1a2st" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire_2.png" id="1_8led0"]
+[ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_xwc8o"]
 [ext_resource type="Script" uid="uid://ca0a55y4mmhrd" path="res://scripts/fase_1_castle_no_fire_2.gd" id="2_8led0"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_032mh"]
 [ext_resource type="Texture2D" uid="uid://xy15l3nye50p" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/web.png" id="3_xwc8o"]
@@ -144,6 +145,9 @@ size = Vector2(1871, 178)
 
 [node name="Node2D" type="Node2D"]
 process_mode = 1
+
+[node name="maycon_itens" parent="." instance=ExtResource("1_xwc8o")]
+position = Vector2(1586, 683)
 
 [node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
 process_mode = 1

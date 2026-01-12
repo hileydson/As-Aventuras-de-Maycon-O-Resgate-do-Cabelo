@@ -1,5 +1,6 @@
-[gd_scene load_steps=44 format=3 uid="uid://w6ofyplymeea"]
+[gd_scene load_steps=45 format=3 uid="uid://w6ofyplymeea"]
 
+[ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_1ljjb"]
 [ext_resource type="Texture2D" uid="uid://qpa3u3o25j1m" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_3.png" id="1_vjg2b"]
 [ext_resource type="Script" uid="uid://cud6uo2ykclj0" path="res://scripts/fase_1_before_castle_3.gd" id="2_vjg2b"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="3_3dovv"]
@@ -233,6 +234,9 @@ animations = [{
 
 [node name="Node2D" type="Node2D"]
 process_mode = 1
+
+[node name="maycon_itens" parent="." instance=ExtResource("1_1ljjb")]
+position = Vector2(1586, 683)
 
 [node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
 process_mode = 1

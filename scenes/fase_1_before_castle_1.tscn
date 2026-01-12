@@ -1,7 +1,8 @@
-[gd_scene load_steps=72 format=3 uid="uid://d3cev6uiwwro4"]
+[gd_scene load_steps=73 format=3 uid="uid://d3cev6uiwwro4"]
 
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
 [ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
+[ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_t3aas"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="2_7je0d"]
 [ext_resource type="Script" uid="uid://c1spheypet4fo" path="res://scripts/fase_1_before_castle_1.gd" id="2_rh75j"]
 [ext_resource type="Texture2D" uid="uid://ctu2fq4dxgban" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Rotating_blades.png" id="3_avl2m"]
@@ -643,6 +644,8 @@ animations = [{
 
 [node name="Node2D" type="Node2D"]
 process_mode = 1
+
+[node name="maycon_itens" parent="." instance=ExtResource("1_t3aas")]
 
 [node name="Fase1BeforeCastle1" type="Sprite2D" parent="."]
 process_mode = 1
