@@ -10,9 +10,13 @@ extends VBoxContainer
 @onready var jamelao_song: AudioStreamPlayer = $"../JamelaoSong"
 @onready var v_box_container: VBoxContainer = $"."
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
+@onready var continue_: Button = $Continue_
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	continue_.disabled = !Global.check_load()
+	
 	animation_player.play("intro")
 	new_game.grab_focus()
 	cabelo_sound.play()
@@ -48,4 +52,5 @@ func _on_exit_pressed() -> void:
 	get_tree().quit()
 
 
-	
+func _on_continue__pressed() -> void:
+	Global.load_progress()

@@ -17,6 +17,8 @@ var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase
 var temp_canvas_layer_fogo = canvas_layer
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Global.save_progress(get_tree().current_scene.name)
+	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = "0"
