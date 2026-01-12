@@ -27,12 +27,12 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if Global.maycon_itens["axe"]==false:
+	if Global.maycon_itens["axe"]==false && Global.game_events["gilhotina_broken"]==false:
 		axe_area.visible = true
 	else:
 		axe_area.visible = false
 	
-	if played_axe==false && !inimigos.has_node("inimigo_camilita") && Global.maycon_itens["axe"]==false:
+	if played_axe==false && !inimigos.has_node("inimigo_camilita") && Global.maycon_itens["axe"]==false && Global.game_events["gilhotina_broken"]==false:
 		played_axe = true
 		animacoes.play("axe_fall")
 		
