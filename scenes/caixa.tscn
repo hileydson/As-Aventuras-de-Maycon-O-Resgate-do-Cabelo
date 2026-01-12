@@ -9,6 +9,7 @@ size = Vector2(154.25, 114)
 [node name="RigidBody2D" type="RigidBody2D"]
 collision_layer = 6
 collision_mask = 6
+mass = 0.523
 
 [node name="Caixa" type="Sprite2D" parent="."]
 position = Vector2(-7.6293945e-06, -9.999992)

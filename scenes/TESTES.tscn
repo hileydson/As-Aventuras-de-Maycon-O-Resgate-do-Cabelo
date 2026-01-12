@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3 uid="uid://b5w3ky5lxkm83"]
+
+[ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="1_1vmsl"]
+[ext_resource type="PackedScene" uid="uid://d35e0jeya7iev" path="res://scenes/caixa.tscn" id="2_h48ka"]
+[ext_resource type="PackedScene" uid="uid://chpqi8ryj0b1g" path="res://scenes/bloco.tscn" id="3_acxo1"]
+[ext_resource type="PackedScene" uid="uid://c0hdoyj76p8qk" path="res://scenes/coxinha.tscn" id="4_76bik"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_acxo1"]
+size = Vector2(1120, 36)
+
+[node name="Node2D" type="Node2D"]
+position = Vector2(0, 414)
+
+[node name="Maycon" parent="." instance=ExtResource("1_1vmsl")]
+position = Vector2(76, -51)
+scale = Vector2(3.3599994, 2.880005)
+collision_layer = 5
+collision_mask = 5
+
+[node name="CAIXA" parent="." instance=ExtResource("2_h48ka")]
+position = Vector2(688, 93)
+collision_layer = 1
+collision_mask = 1
+
+[node name="CAIXA2" parent="." instance=ExtResource("2_h48ka")]
+position = Vector2(684, -46)
+collision_layer = 1
+collision_mask = 1
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(578, 193)
+shape = SubResource("RectangleShape2D_acxo1")
+
+[node name="RigidBody2D" parent="." instance=ExtResource("3_acxo1")]
+position = Vector2(396, 121)
+
+[node name="RigidBody2D2" parent="." instance=ExtResource("3_acxo1")]
+position = Vector2(395, 38)
+
+[node name="RigidBody2D3" parent="." instance=ExtResource("4_76bik")]
+position = Vector2(195, 107)

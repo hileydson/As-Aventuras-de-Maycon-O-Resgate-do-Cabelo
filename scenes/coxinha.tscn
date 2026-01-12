@@ -1,9 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://c0hdoyj76p8qk"]
+[gd_scene load_steps=4 format=3 uid="uid://c0hdoyj76p8qk"]
 
 [ext_resource type="Texture2D" uid="uid://bw3esmny7cywp" path="res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_coxinha.png" id="1_4272t"]
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_4272t"]
-rough = true
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_0wrhj"]
 animations = [{
@@ -20,10 +17,9 @@ animations = [{
 radius = 41.19466
 
 [node name="RigidBody2D" type="RigidBody2D"]
-collision_layer = 6
+collision_layer = 0
 collision_mask = 6
-mass = 7.43
-physics_material_override = SubResource("PhysicsMaterial_4272t")
+mass = 0.17
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(-0.99998474, -6)

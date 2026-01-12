@@ -136,7 +136,7 @@ func _physics_process(delta: float) -> void:
 	
 	for i in get_slide_collision_count():
 		var desaceleracao = 20000 # Força da frenagem
-		var forca_impulso:int = 95
+		var forca_impulso:int = 150
 		var collision = get_slide_collision(i)
 		if collision.get_collider() is RigidBody2D:
 			if Input.is_action_pressed("key_q") or Input.is_action_pressed("key_w"):
@@ -148,7 +148,7 @@ func _physics_process(delta: float) -> void:
 
 				var multiplicador = 1.5 if Input.is_action_pressed("key_w") else 1.0
 				collision.get_collider().apply_central_impulse(-collision.get_normal() * forca_impulso * multiplicador)
-			
+				break;
 			
 
 

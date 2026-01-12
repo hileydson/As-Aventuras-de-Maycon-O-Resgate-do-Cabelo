@@ -318,7 +318,7 @@ visibility_layer = 524800
 position = Vector2(-1545.9998, 158.99997)
 scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
-collision_mask = 1
+collision_mask = 5
 
 [node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase"]
 position = Vector2(11.542603, 0.47611237)
@@ -413,14 +413,168 @@ position = Vector2(2907, 791)
 rotation = -1.5731149
 shape = SubResource("CapsuleShape2D_6v7in")
 
-[node name="battle" parent="." instance=ExtResource("8_w4kda")]
-position = Vector2(-673, 328)
+[node name="effects" type="Node2D" parent="."]
 
-[node name="fogo7" type="AnimatedSprite2D" parent="."]
+[node name="fogo7" type="AnimatedSprite2D" parent="effects"]
 position = Vector2(2157, 1198)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_2qlpt")
 autoplay = "default"
+
+[node name="fogo" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(697.5, 1268.5)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.41814077
+
+[node name="fogo2" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(786, 1362.0001)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
+[node name="fogo3" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1257, 1348.0001)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
+[node name="fogo4" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1387, 1363)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
+[node name="fogo5" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1510, 1322.0001)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
+[node name="fogo6" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1689, 1373)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
+[node name="smoke" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1800.0078, 167.5311)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_5fr62")
+autoplay = "default"
+
+[node name="smoke2" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(207, 164)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_5fr62")
+autoplay = "default"
+
+[node name="smoke3" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(784.22327, 137.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_5fr62")
+autoplay = "default"
+
+[node name="smoke4" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(833.22327, 98.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_5fr62")
+autoplay = "default"
+
+[node name="smoke5" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(715.2232, 132.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_5fr62")
+autoplay = "default"
+
+[node name="smoke6" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1172.2233, 102.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_5fr62")
+autoplay = "default"
+
+[node name="smoke7" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2250.2231, 166.3875)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_5fr62")
+autoplay = "default"
+
+[node name="smoke8" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2777.2231, 115.38752)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_5fr62")
+autoplay = "default"
+
+[node name="smoke9" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2522.2231, 126.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_5fr62")
+autoplay = "default"
+
+[node name="objetos" type="Node2D" parent="."]
+
+[node name="bloco" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(907, 1010)
+
+[node name="bloco2" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(904, 938)
+
+[node name="bloco3" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(904, 868)
+
+[node name="bloco4" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(905, 798)
+
+[node name="bloco7" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(1118, 1010)
+
+[node name="bloco8" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(1118, 939)
+
+[node name="bloco9" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(1117, 869)
+
+[node name="bloco10" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(1118, 801)
+
+[node name="bloco11" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(904, 726)
+
+[node name="bloco12" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(903, 653)
+
+[node name="bloco13" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(904, 583)
+
+[node name="bloco14" parent="objetos" instance=ExtResource("10_5fr62")]
+position = Vector2(901, 511)
+
+[node name="coxinha" parent="objetos" instance=ExtResource("11_sx1rn")]
+position = Vector2(454, -549)
+
+[node name="coxinha2" parent="objetos" instance=ExtResource("11_sx1rn")]
+position = Vector2(238, 34)
+
+[node name="coxinha3" parent="objetos" instance=ExtResource("11_sx1rn")]
+position = Vector2(342, -808)
+
+[node name="battle" parent="." instance=ExtResource("8_w4kda")]
+position = Vector2(-673, 328)
 
 [node name="Pause" parent="." instance=ExtResource("10_end3m")]
 anchors_preset = 0
@@ -432,156 +586,6 @@ offset_right = 866.0
 offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
-
-[node name="fogo" type="AnimatedSprite2D" parent="."]
-position = Vector2(697.5, 1268.5)
-scale = Vector2(6.4062505, 6.718751)
-sprite_frames = SubResource("SpriteFrames_kvuau")
-autoplay = "default"
-frame_progress = 0.41814077
-
-[node name="fogo2" type="AnimatedSprite2D" parent="."]
-position = Vector2(786, 1362.0001)
-scale = Vector2(6.4062505, 6.718751)
-sprite_frames = SubResource("SpriteFrames_kvuau")
-autoplay = "default"
-frame_progress = 0.7696933
-
-[node name="fogo3" type="AnimatedSprite2D" parent="."]
-position = Vector2(1257, 1348.0001)
-scale = Vector2(6.4062505, 6.718751)
-sprite_frames = SubResource("SpriteFrames_kvuau")
-autoplay = "default"
-frame_progress = 0.7696933
-
-[node name="fogo4" type="AnimatedSprite2D" parent="."]
-position = Vector2(1387, 1363)
-scale = Vector2(6.4062505, 6.718751)
-sprite_frames = SubResource("SpriteFrames_kvuau")
-autoplay = "default"
-frame_progress = 0.7696933
-
-[node name="fogo5" type="AnimatedSprite2D" parent="."]
-position = Vector2(1510, 1322.0001)
-scale = Vector2(6.4062505, 6.718751)
-sprite_frames = SubResource("SpriteFrames_kvuau")
-autoplay = "default"
-frame_progress = 0.7696933
-
-[node name="fogo6" type="AnimatedSprite2D" parent="."]
-position = Vector2(1689, 1373)
-scale = Vector2(6.4062505, 6.718751)
-sprite_frames = SubResource("SpriteFrames_kvuau")
-autoplay = "default"
-frame_progress = 0.7696933
-
-[node name="smoke" type="AnimatedSprite2D" parent="."]
-position = Vector2(1800.0078, 167.5311)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_5fr62")
-autoplay = "default"
-
-[node name="smoke2" type="AnimatedSprite2D" parent="."]
-position = Vector2(207, 164)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_5fr62")
-autoplay = "default"
-
-[node name="smoke3" type="AnimatedSprite2D" parent="."]
-position = Vector2(784.22327, 137.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_5fr62")
-autoplay = "default"
-
-[node name="smoke4" type="AnimatedSprite2D" parent="."]
-position = Vector2(833.22327, 98.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_5fr62")
-autoplay = "default"
-
-[node name="smoke5" type="AnimatedSprite2D" parent="."]
-position = Vector2(715.2232, 132.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_5fr62")
-autoplay = "default"
-
-[node name="smoke6" type="AnimatedSprite2D" parent="."]
-position = Vector2(1172.2233, 102.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_5fr62")
-autoplay = "default"
-
-[node name="smoke7" type="AnimatedSprite2D" parent="."]
-position = Vector2(2250.2231, 166.3875)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_5fr62")
-autoplay = "default"
-
-[node name="smoke8" type="AnimatedSprite2D" parent="."]
-position = Vector2(2777.2231, 115.38752)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_5fr62")
-autoplay = "default"
-
-[node name="smoke9" type="AnimatedSprite2D" parent="."]
-position = Vector2(2522.2231, 126.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_5fr62")
-autoplay = "default"
-
-[node name="bloco" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(907, 1010)
-
-[node name="bloco2" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(904, 938)
-
-[node name="bloco3" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(904, 868)
-
-[node name="bloco4" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(905, 798)
-
-[node name="bloco7" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(1118, 1010)
-
-[node name="bloco8" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(1118, 939)
-
-[node name="bloco9" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(1117, 869)
-
-[node name="bloco10" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(1118, 801)
-
-[node name="bloco11" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(904, 726)
-
-[node name="bloco12" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(903, 653)
-
-[node name="bloco13" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(904, 583)
-
-[node name="bloco14" parent="." instance=ExtResource("10_5fr62")]
-position = Vector2(901, 511)
-
-[node name="coxinha" parent="." instance=ExtResource("11_sx1rn")]
-position = Vector2(454, -549)
-
-[node name="coxinha2" parent="." instance=ExtResource("11_sx1rn")]
-position = Vector2(238, 34)
-
-[node name="coxinha3" parent="." instance=ExtResource("11_sx1rn")]
-position = Vector2(342, -808)
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]

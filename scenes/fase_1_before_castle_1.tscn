@@ -744,6 +744,116 @@ position = Vector2(-5.0000153, 886)
 scale = Vector2(3.3999994, 5.44)
 shape = SubResource("WorldBoundaryShape2D_36c4s")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="intro_batalha_frozen_effect" type="AnimatedSprite2D" parent="CanvasLayer"]
+visible = false
+position = Vector2(2740, 1389.8)
+scale = Vector2(1.2, 1.194815)
+sprite_frames = SubResource("SpriteFrames_n1ahb")
+script = ExtResource("10_n1ahb")
+
+[node name="effects" type="Node2D" parent="."]
+
+[node name="fogo" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(700, 1197)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
+[node name="fogo2" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1452, 1205)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
+[node name="fogo3" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2459, 1225)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
+[node name="fogo4" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2530.0002, 1245)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
+[node name="fogo5" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2644, 1216)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
+[node name="fogo6" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1357.0001, 1284)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
+[node name="smoke" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1367.0078, 162.5311)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_qx0j8")
+autoplay = "default"
+
+[node name="smoke2" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(160.22324, 96.38753)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_qx0j8")
+autoplay = "default"
+
+[node name="smoke3" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(351.22324, 132.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_qx0j8")
+autoplay = "default"
+
+[node name="smoke4" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(400.22324, 93.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_qx0j8")
+autoplay = "default"
+
+[node name="smoke5" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(282.2232, 127.387505)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_qx0j8")
+autoplay = "default"
+
+[node name="smoke6" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(739.22327, 97.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_qx0j8")
+autoplay = "default"
+
+[node name="smoke7" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1817.2233, 161.3875)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_qx0j8")
+autoplay = "default"
+
+[node name="smoke8" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2344.2231, 110.38752)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_qx0j8")
+autoplay = "default"
+
+[node name="smoke9" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2089.2231, 121.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_qx0j8")
+autoplay = "default"
+
 [node name="battle" parent="." instance=ExtResource("6_36c4s")]
 process_mode = 0
 light_mask = 512
@@ -763,116 +873,8 @@ offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="intro_batalha_frozen_effect" type="AnimatedSprite2D" parent="CanvasLayer"]
-visible = false
-position = Vector2(2740, 1389.8)
-scale = Vector2(1.2, 1.194815)
-sprite_frames = SubResource("SpriteFrames_n1ahb")
-script = ExtResource("10_n1ahb")
-
-[node name="fogo" type="AnimatedSprite2D" parent="."]
-position = Vector2(700, 1197)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_isw4w")
-autoplay = "default"
-
-[node name="fogo2" type="AnimatedSprite2D" parent="."]
-position = Vector2(1452, 1205)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_isw4w")
-autoplay = "default"
-
-[node name="fogo3" type="AnimatedSprite2D" parent="."]
-position = Vector2(2459, 1225)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_isw4w")
-autoplay = "default"
-
-[node name="fogo4" type="AnimatedSprite2D" parent="."]
-position = Vector2(2530.0002, 1245)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_isw4w")
-autoplay = "default"
-
-[node name="fogo5" type="AnimatedSprite2D" parent="."]
-position = Vector2(2644, 1216)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_isw4w")
-autoplay = "default"
-
-[node name="fogo6" type="AnimatedSprite2D" parent="."]
-position = Vector2(1357.0001, 1284)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_isw4w")
-autoplay = "default"
-
-[node name="smoke" type="AnimatedSprite2D" parent="."]
-position = Vector2(1367.0078, 162.5311)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_qx0j8")
-autoplay = "default"
-
-[node name="smoke2" type="AnimatedSprite2D" parent="."]
-position = Vector2(160.22324, 96.38753)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_qx0j8")
-autoplay = "default"
-
-[node name="smoke3" type="AnimatedSprite2D" parent="."]
-position = Vector2(351.22324, 132.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_qx0j8")
-autoplay = "default"
-
-[node name="smoke4" type="AnimatedSprite2D" parent="."]
-position = Vector2(400.22324, 93.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_qx0j8")
-autoplay = "default"
-
-[node name="smoke5" type="AnimatedSprite2D" parent="."]
-position = Vector2(282.2232, 127.387505)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_qx0j8")
-autoplay = "default"
-
-[node name="smoke6" type="AnimatedSprite2D" parent="."]
-position = Vector2(739.22327, 97.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_qx0j8")
-autoplay = "default"
-
-[node name="smoke7" type="AnimatedSprite2D" parent="."]
-position = Vector2(1817.2233, 161.3875)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_qx0j8")
-autoplay = "default"
-
-[node name="smoke8" type="AnimatedSprite2D" parent="."]
-position = Vector2(2344.2231, 110.38752)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_qx0j8")
-autoplay = "default"
-
-[node name="smoke9" type="AnimatedSprite2D" parent="."]
-position = Vector2(2089.2231, 121.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_qx0j8")
-autoplay = "default"
-
 [node name="caixa4" parent="." instance=ExtResource("16_cm2i2")]
-position = Vector2(1109, 987)
+position = Vector2(1068, 988)
 
 [node name="caixa" parent="." instance=ExtResource("16_cm2i2")]
 position = Vector2(2157, 972)

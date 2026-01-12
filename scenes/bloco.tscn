@@ -21,8 +21,9 @@ animations = [{
 size = Vector2(113, 67.375)
 
 [node name="RigidBody2D" type="RigidBody2D"]
-collision_layer = 6
+collision_layer = 2
 collision_mask = 6
+mass = 0.327
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(4.000002, -55.000004)

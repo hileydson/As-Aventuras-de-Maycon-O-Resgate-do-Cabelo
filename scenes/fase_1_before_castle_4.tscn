@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://b5uspfqhsepac"]
+[gd_scene load_steps=56 format=3 uid="uid://b5uspfqhsepac"]
 
 [ext_resource type="Texture2D" uid="uid://1i0426wllk8o" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_4.png" id="1_gv3vu"]
 [ext_resource type="Script" uid="uid://5x404tvcimbj" path="res://scripts/fase_1_before_castle_4.gd" id="2_gv3vu"]
@@ -14,7 +14,6 @@
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="11_nosu4"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="12_fjlh3"]
 [ext_resource type="PackedScene" uid="uid://d35e0jeya7iev" path="res://scenes/caixa.tscn" id="13_d2dfm"]
-[ext_resource type="PackedScene" uid="uid://chpqi8ryj0b1g" path="res://scenes/bloco.tscn" id="14_vi3cd"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -94,95 +93,16 @@ distance = -60.52633
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_36c4s"]
 normal = Vector2(1, 0)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_vi3cd"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vi3cd"]
 size = Vector2(548, 178)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_nulh8"]
-size = Vector2(985.25, 178)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_agc3r"]
+size = Vector2(1420, 178)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
-size = Vector2(317, 178)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6v7in"]
-size = Vector2(96.12341, 437.84497)
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nulh8"]
-height = 346.77637
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_senh8"]
-atlas = ExtResource("9_dlb6u")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nosu4"]
-atlas = ExtResource("9_dlb6u")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fjlh3"]
-atlas = ExtResource("9_dlb6u")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fp30k"]
-atlas = ExtResource("9_dlb6u")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_d2dfm"]
-atlas = ExtResource("9_dlb6u")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vi3cd"]
-atlas = ExtResource("9_dlb6u")
-region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ytiji"]
-atlas = ExtResource("9_dlb6u")
-region = Rect2(384, 0, 64, 64)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_agc3r"]
-animations = [{
-"frames": [{
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_senh8")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_nosu4")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_fjlh3")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_fp30k")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_d2dfm")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_vi3cd")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_ytiji")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_vi3cd")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_d2dfm")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_fp30k")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_fjlh3")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_nosu4")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_senh8")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ytiji"]
+size = Vector2(440, 178)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t7fus"]
 atlas = ExtResource("11_nosu4")
@@ -312,6 +232,81 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_senh8"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nosu4"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fjlh3"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fp30k"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d2dfm"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vi3cd"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ytiji"]
+atlas = ExtResource("9_dlb6u")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_agc3r"]
+animations = [{
+"frames": [{
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_senh8")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_nosu4")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_fjlh3")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_fp30k")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_d2dfm")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_vi3cd")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_ytiji")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_vi3cd")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_d2dfm")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_fp30k")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_fjlh3")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_nosu4")
+}, {
+"duration": 0.51,
+"texture": SubResource("AtlasTexture_senh8")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [node name="Node2D" type="Node2D"]
 process_mode = 1
 
@@ -331,8 +326,8 @@ light_mask = 512
 visibility_layer = 524800
 position = Vector2(-1528.9998, 181)
 scale = Vector2(2.7735984, 2.5222125)
-collision_layer = 5
-collision_mask = 1
+collision_layer = 524293
+collision_mask = 524293
 
 [node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase"]
 position = Vector2(11.542603, 0.47611237)
@@ -398,60 +393,171 @@ shape = SubResource("WorldBoundaryShape2D_36c4s")
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 collision_layer = 524291
 collision_mask = 524291
+physics_material_override = SubResource("PhysicsMaterial_vi3cd")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 process_mode = 4
 light_mask = 524294
 visibility_layer = 524294
-position = Vector2(278, 1164.2697)
-shape = SubResource("RectangleShape2D_hnmna")
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
-process_mode = 4
-light_mask = 524294
-visibility_layer = 524294
-position = Vector2(1663.375, 1164.2697)
-shape = SubResource("RectangleShape2D_nulh8")
+position = Vector2(281, 1159)
+shape = SubResource("RectangleShape2D_vi3cd")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
 light_mask = 524294
 visibility_layer = 524294
-position = Vector2(1013, 1164.2697)
-shape = SubResource("RectangleShape2D_p1t4m")
+position = Vector2(1557, 1164.2697)
+shape = SubResource("RectangleShape2D_agc3r")
 
 [node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
 light_mask = 524294
 visibility_layer = 524294
-position = Vector2(2319.8652, 1118)
-rotation = -1.6023498
-shape = SubResource("RectangleShape2D_6v7in")
+position = Vector2(2357, 1063)
+rotation = -0.5235988
+shape = SubResource("RectangleShape2D_ytiji")
 
-[node name="CollisionShape2D8" type="CollisionShape2D" parent="StaticBody2D"]
-light_mask = 524294
-visibility_layer = 524294
-position = Vector2(2395, 994.00006)
-rotation = 0.80597186
-scale = Vector2(1, 1.2596045)
-shape = SubResource("CapsuleShape2D_nulh8")
+[node name="effects" type="Node2D" parent="."]
 
-[node name="battle" parent="." instance=ExtResource("5_nosu4")]
-process_mode = 0
-position = Vector2(-674, 330)
+[node name="fogo" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(700, 1197)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
 
-[node name="fade" parent="." instance=ExtResource("6_fjlh3")]
-position = Vector2(546.0001, 277.99997)
-scale = Vector2(1.0871409, 3.626345)
+[node name="fogo2" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(586.00006, 1285)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
 
-[node name="Pause" parent="." instance=ExtResource("7_fp30k")]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 866.0
-offset_top = -1283.0
-offset_right = 866.0
-offset_bottom = -1283.0
-grow_horizontal = 1
-grow_vertical = 1
+[node name="fogo3" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1339, 1314)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
+
+[node name="fogo4" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1522.0001, 1291)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
+
+[node name="fogo5" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1619.0001, 1342)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
+
+[node name="fogo6" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1619.0001, 1342)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
+
+[node name="fogo7" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1773.0001, 1305)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
+
+[node name="fogo8" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1970.0001, 1242)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
+
+[node name="fogo9" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(3083, 751)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
+
+[node name="fogo10" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2766, 155)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
+
+[node name="fogo11" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2218.0002, 192)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
+
+[node name="fogo12" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2569.0002, -56)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_fjlh3")
+autoplay = "default"
+
+[node name="smoke" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1361.9999, 156.00002)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_fp30k")
+autoplay = "default"
+
+[node name="smoke10" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1804, 120.999985)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_fp30k")
+autoplay = "default"
+
+[node name="smoke2" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(63.223236, 162)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_fp30k")
+autoplay = "default"
+
+[node name="smoke3" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(640.44653, 135.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_fp30k")
+autoplay = "default"
+
+[node name="smoke4" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(689.44653, 96.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_fp30k")
+autoplay = "default"
+
+[node name="smoke5" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(571.4464, 130.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_fp30k")
+autoplay = "default"
+
+[node name="smoke6" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(1028.4465, 100.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_fp30k")
+autoplay = "default"
+
+[node name="smoke7" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2106.4463, 164.3875)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_fp30k")
+autoplay = "default"
+
+[node name="smoke8" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2633.4463, 113.38752)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_fp30k")
+autoplay = "default"
+
+[node name="smoke9" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2378.4463, 124.38751)
+rotation = 3.1415431
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_fp30k")
+autoplay = "default"
 
 [node name="enter_the_castle" type="ColorRect" parent="."]
 visible = false
@@ -483,177 +589,27 @@ scale = Vector2(0.045040186, -0.10062235)
 sprite_frames = SubResource("SpriteFrames_agc3r")
 autoplay = "default"
 
-[node name="fogo" type="AnimatedSprite2D" parent="."]
-position = Vector2(700, 1197)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
+[node name="battle" parent="." instance=ExtResource("5_nosu4")]
+process_mode = 0
+position = Vector2(-674, 330)
 
-[node name="fogo2" type="AnimatedSprite2D" parent="."]
-position = Vector2(586.00006, 1285)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
+[node name="fade" parent="." instance=ExtResource("6_fjlh3")]
+position = Vector2(546.0001, 277.99997)
+scale = Vector2(1.0871409, 3.626345)
 
-[node name="fogo3" type="AnimatedSprite2D" parent="."]
-position = Vector2(1339, 1314)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
-
-[node name="fogo4" type="AnimatedSprite2D" parent="."]
-position = Vector2(1522.0001, 1291)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
-
-[node name="fogo5" type="AnimatedSprite2D" parent="."]
-position = Vector2(1619.0001, 1342)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
-
-[node name="fogo6" type="AnimatedSprite2D" parent="."]
-position = Vector2(1619.0001, 1342)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
-
-[node name="fogo7" type="AnimatedSprite2D" parent="."]
-position = Vector2(1773.0001, 1305)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
-
-[node name="fogo8" type="AnimatedSprite2D" parent="."]
-position = Vector2(1970.0001, 1242)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
-
-[node name="fogo9" type="AnimatedSprite2D" parent="."]
-position = Vector2(3083, 751)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
-
-[node name="fogo10" type="AnimatedSprite2D" parent="."]
-position = Vector2(2766, 155)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
-
-[node name="fogo11" type="AnimatedSprite2D" parent="."]
-position = Vector2(2218.0002, 192)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
-
-[node name="fogo12" type="AnimatedSprite2D" parent="."]
-position = Vector2(2569.0002, -56)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_fjlh3")
-autoplay = "default"
-
-[node name="smoke" type="AnimatedSprite2D" parent="."]
-position = Vector2(1361.9999, 156.00002)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_fp30k")
-autoplay = "default"
-
-[node name="smoke10" type="AnimatedSprite2D" parent="."]
-position = Vector2(1804, 120.999985)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_fp30k")
-autoplay = "default"
-
-[node name="smoke2" type="AnimatedSprite2D" parent="."]
-position = Vector2(63.223236, 162)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_fp30k")
-autoplay = "default"
-
-[node name="smoke3" type="AnimatedSprite2D" parent="."]
-position = Vector2(640.44653, 135.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_fp30k")
-autoplay = "default"
-
-[node name="smoke4" type="AnimatedSprite2D" parent="."]
-position = Vector2(689.44653, 96.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_fp30k")
-autoplay = "default"
-
-[node name="smoke5" type="AnimatedSprite2D" parent="."]
-position = Vector2(571.4464, 130.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_fp30k")
-autoplay = "default"
-
-[node name="smoke6" type="AnimatedSprite2D" parent="."]
-position = Vector2(1028.4465, 100.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_fp30k")
-autoplay = "default"
-
-[node name="smoke7" type="AnimatedSprite2D" parent="."]
-position = Vector2(2106.4463, 164.3875)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_fp30k")
-autoplay = "default"
-
-[node name="smoke8" type="AnimatedSprite2D" parent="."]
-position = Vector2(2633.4463, 113.38752)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_fp30k")
-autoplay = "default"
-
-[node name="smoke9" type="AnimatedSprite2D" parent="."]
-position = Vector2(2378.4463, 124.38751)
-rotation = 3.1415431
-scale = Vector2(5.700968, 6.5159583)
-sprite_frames = SubResource("SpriteFrames_fp30k")
-autoplay = "default"
+[node name="Pause" parent="." instance=ExtResource("7_fp30k")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 866.0
+offset_top = -1283.0
+offset_right = 866.0
+offset_bottom = -1283.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="caixa" parent="." instance=ExtResource("13_d2dfm")]
-position = Vector2(1334, 1002)
-
-[node name="caixa2" parent="." instance=ExtResource("13_d2dfm")]
-position = Vector2(1338, 861)
-
-[node name="caixa3" parent="." instance=ExtResource("13_d2dfm")]
-position = Vector2(1344, 715)
-
-[node name="RigidBody2D" parent="." instance=ExtResource("13_d2dfm")]
-position = Vector2(918, 1009)
-
-[node name="RigidBody2D2" parent="." instance=ExtResource("13_d2dfm")]
-position = Vector2(920, 886)
-
-[node name="RigidBody2D3" parent="." instance=ExtResource("13_d2dfm")]
-position = Vector2(922, 766)
-
-[node name="RigidBody2D4" parent="." instance=ExtResource("14_vi3cd")]
-position = Vector2(487, 1027)
-
-[node name="RigidBody2D5" parent="." instance=ExtResource("14_vi3cd")]
-position = Vector2(483, 949)
-
-[node name="RigidBody2D6" parent="." instance=ExtResource("14_vi3cd")]
-position = Vector2(349, 1027)
-
-[node name="RigidBody2D7" parent="." instance=ExtResource("14_vi3cd")]
-position = Vector2(355, 945)
+position = Vector2(417, 995)
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]
