@@ -1,13 +1,29 @@
-[gd_scene load_steps=32 format=3 uid="uid://xofol7e84828"]
+[gd_scene load_steps=35 format=3 uid="uid://xofol7e84828"]
 
 [ext_resource type="Texture2D" uid="uid://b7vvpryprwb2m" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_2.png" id="1_7pipl"]
 [ext_resource type="Script" uid="uid://bp5oioibh4nkn" path="res://scripts/fase_1_castle_2.gd" id="2_7pipl"]
+[ext_resource type="Texture2D" uid="uid://xy15l3nye50p" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/web.png" id="3_aybmk"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="3_ncgmf"]
 [ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="4_7pipl"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_7cf5f"]
 [ext_resource type="Shader" uid="uid://b3xewfakdijcn" path="res://scenes/fase_1_before_castle_4.gdshader" id="5_ncgmf"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="6_wbttt"]
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="7_t30a4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_th65o"]
+atlas = ExtResource("3_aybmk")
+region = Rect2(0, 0, 60, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7cf5f"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_th65o")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -170,6 +186,30 @@ process_mode = 1
 position = Vector2(1586, 683)
 texture = ExtResource("1_7pipl")
 script = ExtResource("2_7pipl")
+
+[node name="teia" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(150.99994, -333)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_7cf5f")
+autoplay = "default"
+
+[node name="teia2" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-205.00003, -259)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_7cf5f")
+autoplay = "default"
+
+[node name="teia3" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-1141, -570)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_7cf5f")
+autoplay = "default"
+
+[node name="teia4" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-599.00006, -245)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_7cf5f")
+autoplay = "default"
 
 [node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle"]
 libraries = {

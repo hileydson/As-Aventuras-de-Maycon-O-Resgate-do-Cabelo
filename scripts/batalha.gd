@@ -173,6 +173,12 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept"):
 		emit_signal("player_clicou")
 	
+	
+	
+	# TEMP PARA ANALISAR TODAS AS FASES
+	#return
+	
+	
 	# PLOTAR INIMIGO EM BATALHA
 	if Global.battle_next_enemy != "0":
 		Global.battle_started = true

@@ -1,12 +1,29 @@
-[gd_scene load_steps=17 format=3 uid="uid://ddmbod8sij2k6"]
+[gd_scene load_steps=27 format=3 uid="uid://ddmbod8sij2k6"]
 
 [ext_resource type="Texture2D" uid="uid://mpk6pxv1a2st" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire_2.png" id="1_8led0"]
 [ext_resource type="Script" uid="uid://ca0a55y4mmhrd" path="res://scripts/fase_1_castle_no_fire_2.gd" id="2_8led0"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_032mh"]
+[ext_resource type="Texture2D" uid="uid://xy15l3nye50p" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/web.png" id="3_xwc8o"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="4_xwc8o"]
 [ext_resource type="PackedScene" uid="uid://8h41hconncdu" path="res://scenes/inimigos/inimigo_bomba_pretti.tscn" id="5_8led0"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="6_44bvi"]
+[ext_resource type="Texture2D" uid="uid://c804y68km4f4i" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Flasks_monsters.png" id="6_a7lel"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="7_o1pkn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_th65o"]
+atlas = ExtResource("3_xwc8o")
+region = Rect2(0, 0, 60, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_44bvi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_th65o")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -62,6 +79,56 @@ _data = {
 &"maycon_falling": SubResource("Animation_36c4s")
 }
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_wsirf"]
+atlas = ExtResource("6_a7lel")
+region = Rect2(0, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6tryt"]
+atlas = ExtResource("6_a7lel")
+region = Rect2(0, 64, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yvup1"]
+atlas = ExtResource("6_a7lel")
+region = Rect2(0, 128, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ssjau"]
+atlas = ExtResource("6_a7lel")
+region = Rect2(0, 192, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_krf8o"]
+atlas = ExtResource("6_a7lel")
+region = Rect2(0, 256, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ckdea"]
+atlas = ExtResource("6_a7lel")
+region = Rect2(0, 320, 48, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_032mh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wsirf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6tryt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yvup1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ssjau")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_krf8o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ckdea")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_pg6gg"]
 normal = Vector2(-1, 0)
 distance = 0.89923096
@@ -72,11 +139,8 @@ distance = -60.52633
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_36c4s"]
 normal = Vector2(1, 0)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
-size = Vector2(788, 178)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
-size = Vector2(1146.8125, 178)
+size = Vector2(1871, 178)
 
 [node name="Node2D" type="Node2D"]
 process_mode = 1
@@ -86,6 +150,24 @@ process_mode = 1
 position = Vector2(1586, 683)
 texture = ExtResource("1_8led0")
 script = ExtResource("2_8led0")
+
+[node name="teia" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1120.9998, -445)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_44bvi")
+autoplay = "default"
+
+[node name="teia2" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-244.99963, -472)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_44bvi")
+autoplay = "default"
+
+[node name="teia3" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-981.99994, -476)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_44bvi")
+autoplay = "default"
 
 [node name="MkDudun" type="AudioStreamPlayer" parent="Fase1BeforeCastle"]
 stream = ExtResource("3_032mh")
@@ -120,6 +202,12 @@ limit_bottom = 1357
 position = Vector2(1101, 854)
 scale = Vector2(1.6156905, -1.3321537)
 
+[node name="monster_on_jarrow" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1023.9999, 238)
+scale = Vector2(4.885415, 4.8984375)
+sprite_frames = SubResource("SpriteFrames_032mh")
+autoplay = "default"
+
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)
 
@@ -153,15 +241,8 @@ shape = SubResource("WorldBoundaryShape2D_36c4s")
 collision_layer = 524291
 collision_mask = 524291
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-process_mode = 4
-light_mask = 524289
-visibility_layer = 524289
-position = Vector2(550, 1072)
-shape = SubResource("RectangleShape2D_hnmna")
-
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(1440.5938, 1072)
+position = Vector2(1078.5, 1072)
 shape = SubResource("RectangleShape2D_p1t4m")
 
 [node name="battle" parent="." instance=ExtResource("6_44bvi")]

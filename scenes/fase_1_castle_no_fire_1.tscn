@@ -1,11 +1,78 @@
-[gd_scene load_steps=17 format=3 uid="uid://ha67qw6gr3jn"]
+[gd_scene load_steps=28 format=3 uid="uid://ha67qw6gr3jn"]
 
 [ext_resource type="Texture2D" uid="uid://dr0shnq7sjo2l" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire_1.png" id="1_d82ky"]
 [ext_resource type="Script" uid="uid://cm17ww3ttpfxb" path="res://scripts/fase_1_castle_no_fire_1.gd" id="2_prnbl"]
+[ext_resource type="Texture2D" uid="uid://xy15l3nye50p" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/web.png" id="3_prnbl"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_rjtni"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="4_wyovg"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="6_1d8hg"]
+[ext_resource type="Texture2D" uid="uid://c804y68km4f4i" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Flasks_monsters.png" id="6_rjtni"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="7_2sufg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wsirf"]
+atlas = ExtResource("6_rjtni")
+region = Rect2(0, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6tryt"]
+atlas = ExtResource("6_rjtni")
+region = Rect2(0, 64, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yvup1"]
+atlas = ExtResource("6_rjtni")
+region = Rect2(0, 128, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ssjau"]
+atlas = ExtResource("6_rjtni")
+region = Rect2(0, 192, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_krf8o"]
+atlas = ExtResource("6_rjtni")
+region = Rect2(0, 256, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ckdea"]
+atlas = ExtResource("6_rjtni")
+region = Rect2(0, 320, 48, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ct2lu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wsirf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6tryt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yvup1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ssjau")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_krf8o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ckdea")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_th65o"]
+atlas = ExtResource("3_prnbl")
+region = Rect2(0, 0, 60, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wyovg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_th65o")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -89,6 +156,42 @@ process_mode = 1
 position = Vector2(1586, 683)
 texture = ExtResource("1_d82ky")
 script = ExtResource("2_prnbl")
+
+[node name="monster_on_jarrow" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(344, 124)
+scale = Vector2(3.8229177, 3.882813)
+sprite_frames = SubResource("SpriteFrames_ct2lu")
+autoplay = "default"
+
+[node name="teia" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-1141.0001, -576)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_wyovg")
+autoplay = "default"
+
+[node name="teia2" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1369.9996, -496)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_wyovg")
+autoplay = "default"
+
+[node name="teia3" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(993.0001, -324)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_wyovg")
+autoplay = "default"
+
+[node name="teia4" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(253.00018, -336)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_wyovg")
+autoplay = "default"
+
+[node name="teia5" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-614.9999, -350)
+scale = Vector2(3.2083333, 4.0625)
+sprite_frames = SubResource("SpriteFrames_wyovg")
+autoplay = "default"
 
 [node name="MkDudun" type="AudioStreamPlayer" parent="Fase1BeforeCastle"]
 stream = ExtResource("3_rjtni")

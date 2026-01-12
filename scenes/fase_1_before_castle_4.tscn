@@ -13,7 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://hd7ihpk8l2bg" path="res://assets/novas_imagens/effects/Pixel Holy Spell/01.png" id="9_dlb6u"]
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="11_nosu4"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="12_fjlh3"]
-[ext_resource type="PackedScene" uid="uid://d35e0jeya7iev" path="res://scenes/caixa.tscn" id="13_d2dfm"]
+[ext_resource type="PackedScene" uid="uid://chpqi8ryj0b1g" path="res://scenes/bloco.tscn" id="14_d2dfm"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -608,8 +608,8 @@ offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[node name="caixa" parent="." instance=ExtResource("13_d2dfm")]
-position = Vector2(417, 995)
+[node name="RigidBody2D" parent="." instance=ExtResource("14_d2dfm")]
+position = Vector2(453, 1026)
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]
