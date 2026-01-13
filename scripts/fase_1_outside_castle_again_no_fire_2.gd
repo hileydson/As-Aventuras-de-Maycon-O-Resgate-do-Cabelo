@@ -6,6 +6,14 @@ extends Sprite2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
 @onready var fase_1_before_castle: Sprite2D = $"."
 @onready var mk_dudun: AudioStreamPlayer = $MkDudun
+@onready var inimigo_boss_seco: AnimatedSprite2D = $Inimigos/inimigo_boss_seco
+@onready var explotion: AnimatedSprite2D = $explotion
+@onready var explotion_2: AnimatedSprite2D = $explotion2
+@onready var explotion_3: AnimatedSprite2D = $explotion3
+@onready var seco_camera: Camera2D = $Inimigos/inimigo_boss_seco/seco_camera
+
+@onready var breaking_glass: AudioStreamPlayer = $BreakingGlass
+@onready var start_seco_break_capsule: Area2D = $start_seco_break_capsule
 
 
 # Called when the node enters the scene tree for the first time.
@@ -23,6 +31,12 @@ func _ready() -> void:
 		await get_tree().create_timer(1.0).timeout
 
 
+	if Global.game_events["seco_break_capsule"]:
+		start_seco_break_capsule.queue_free()
+		inimigo_boss_seco.visible = true
+		inimigo_boss_seco.flip_h = true
+	
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
@@ -36,7 +50,6 @@ func _process(delta: float) -> void:
 	if Global.back_to_main_camera:
 		Global.back_to_main_camera = false
 		camera.make_current()
-
 
 
 func _on_next_scene_body_entered(body: Node2D) -> void:
@@ -54,3 +67,27 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 	Global.back_to_fase = true
 	await get_tree().create_timer(0.3).timeout 
 	get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn")
+
+
+func reset_maycon_motion()->void:
+	Global.battle_started = false
+
+func _on_start_seco_break_capsule_body_entered(body: Node2D) -> void:
+	#start scene seco break capsule
+	Global.battle_started = true
+	explotion.play("default")
+	explotion_2.play("default")
+	explotion_3.play("default")
+	breaking_glass.play()
+	await get_tree().create_timer(3.0).timeout 
+	seco_camera.make_current()
+	animacoes.play("seco_break_capsule")
+	Global.game_events["seco_break_capsule"] = true
+	Global.save_progress(get_tree().current_scene.name)
+	start_seco_break_capsule.queue_free()
+	await get_tree().create_timer(6.0).timeout 
+	inimigo_boss_seco.flip_h = true
+	
+	
+	
+	

@@ -1,9 +1,10 @@
-[gd_scene load_steps=42 format=3 uid="uid://dep6dmg0ng8e0"]
+[gd_scene load_steps=49 format=3 uid="uid://dep6dmg0ng8e0"]
 
 [ext_resource type="Texture2D" uid="uid://djvp6j6ovokxk" path="res://assets/novas_imagens/inimigos/fofo/fofo_attack_1.png" id="1_21l61"]
 [ext_resource type="Texture2D" uid="uid://km444acjn6ii" path="res://assets/novas_imagens/inimigos/fofo/fofo_attack_2.png" id="2_k3to7"]
-[ext_resource type="Texture2D" uid="uid://b7yj0sujlibwm" path="res://assets/novas_imagens/inimigos/fofo/fofo_idle.png" id="3_fx4d7"]
+[ext_resource type="Texture2D" uid="uid://dl7rs3v1uv2q4" path="res://assets/novas_imagens/inimigos/seco/seco_idle_smile_2.png" id="3_21l61"]
 [ext_resource type="Script" uid="uid://phh1ca3d1njb" path="res://scripts/inimigos/inimigo_boss_seco.gd" id="4_21l61"]
+[ext_resource type="Texture2D" uid="uid://dvchofw63am8g" path="res://assets/novas_imagens/inimigos/seco/seco_kick.png" id="4_k3to7"]
 [ext_resource type="Texture2D" uid="uid://vobxbqucar8k" path="res://assets/novas_imagens/inimigos/fofo/fofo_parafuso.png" id="5_764i1"]
 [ext_resource type="Texture2D" uid="uid://2meppcw1h507" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png" id="6_qr7ke"]
 [ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="7_vsg7e"]
@@ -74,17 +75,41 @@ region = Rect2(149, 370, 149, 185)
 atlas = ExtResource("2_k3to7")
 region = Rect2(298, 370, 149, 185)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_48lvr"]
-atlas = ExtResource("3_fx4d7")
-region = Rect2(298, 185, 149, 185)
+[sub_resource type="AtlasTexture" id="AtlasTexture_k3to7"]
+atlas = ExtResource("3_21l61")
+region = Rect2(0, 0, 155, 134)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_m24ts"]
-atlas = ExtResource("3_fx4d7")
-region = Rect2(298, 380, 149, 176)
+[sub_resource type="AtlasTexture" id="AtlasTexture_fx4d7"]
+atlas = ExtResource("3_21l61")
+region = Rect2(156, 0, 155, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q0utr"]
+atlas = ExtResource("3_21l61")
+region = Rect2(315, 0, 151, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_764i1"]
+atlas = ExtResource("3_21l61")
+region = Rect2(0, 136, 155, 133)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qr7ke"]
+atlas = ExtResource("3_21l61")
+region = Rect2(158, 136, 153, 133)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vsg7e"]
+atlas = ExtResource("3_21l61")
+region = Rect2(318, 136, 147, 133)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e5xg1"]
 atlas = ExtResource("2_k3to7")
 region = Rect2(0, 370, 149, 185)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_13roo"]
+atlas = ExtResource("4_k3to7")
+region = Rect2(164, 0, 151, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n6jpr"]
+atlas = ExtResource("4_k3to7")
+region = Rect2(315, 0, 151, 134)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_rt5w4"]
 animations = [{
@@ -150,11 +175,23 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 2.31,
-"texture": SubResource("AtlasTexture_48lvr")
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_k3to7")
 }, {
-"duration": 2.31,
-"texture": SubResource("AtlasTexture_m24ts")
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_fx4d7")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_q0utr")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_764i1")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_qr7ke")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_vsg7e")
 }],
 "loop": true,
 "name": &"idle",
@@ -170,9 +207,21 @@ animations = [{
 "loop": false,
 "name": &"pain",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_13roo")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_n6jpr")
+}],
+"loop": true,
+"name": &"run",
+"speed": 5.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kbwi8"]
+size = Vector2(38.31898, 17.315418)
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gcquk"]
 lifetime_randomness = 0.51
@@ -501,14 +550,13 @@ _data = {
 process_mode = 3
 light_mask = 512
 visibility_layer = 512
-position = Vector2(541.33813, 456.37955)
+position = Vector2(573.17755, 421.32474)
 rotation = 3.1415925
-scale = Vector2(1.107364, -1.0200922)
+scale = Vector2(1.5181955, -1.5432985)
 sprite_frames = SubResource("SpriteFrames_rt5w4")
-animation = &"pain"
+animation = &"run"
 autoplay = "idle"
-frame = 1
-frame_progress = 1.0
+frame_progress = 0.69636613
 script = ExtResource("4_21l61")
 
 [node name="to_battle" type="Area2D" parent="."]
@@ -522,6 +570,8 @@ collision_mask = 4
 [node name="CollisionShape2D" type="CollisionShape2D" parent="to_battle"]
 light_mask = 5
 visibility_layer = 5
+position = Vector2(-1.0112562, 1.1449646)
+scale = Vector2(1, 0.9999997)
 shape = SubResource("RectangleShape2D_kbwi8")
 
 [node name="attack_power" type="GPUParticles2D" parent="."]
@@ -589,7 +639,7 @@ scale = Vector2(5884276, 21635452)
 shape = SubResource("CircleShape2D_6yikh")
 
 [node name="hps" type="Node2D" parent="."]
-position = Vector2(-6.938493, -22.394964)
+position = Vector2(18.5599, -52.047455)
 scale = Vector2(2.0308614, 1.2132909)
 
 [node name="hp_1" type="Sprite2D" parent="hps"]
@@ -612,6 +662,30 @@ texture = ExtResource("6_qr7ke")
 
 [node name="hp_4" type="Sprite2D" parent="hps"]
 position = Vector2(-9.155518, 109.34494)
+rotation = 3.1415925
+scale = Vector2(0.2017336, -0.23553093)
+texture = ExtResource("6_qr7ke")
+
+[node name="hp_5" type="Sprite2D" parent="hps"]
+position = Vector2(-16.291016, 109.34497)
+rotation = 3.1415925
+scale = Vector2(0.2017336, -0.23553093)
+texture = ExtResource("6_qr7ke")
+
+[node name="hp_6" type="Sprite2D" parent="hps"]
+position = Vector2(-23.42627, 109.34497)
+rotation = 3.1415925
+scale = Vector2(0.2017336, -0.23553093)
+texture = ExtResource("6_qr7ke")
+
+[node name="hp_7" type="Sprite2D" parent="hps"]
+position = Vector2(-30.562012, 109.34497)
+rotation = 3.1415925
+scale = Vector2(0.2017336, -0.23553093)
+texture = ExtResource("6_qr7ke")
+
+[node name="hp_8" type="Sprite2D" parent="hps"]
+position = Vector2(-37.69751, 109.34497)
 rotation = 3.1415925
 scale = Vector2(0.2017336, -0.23553093)
 texture = ExtResource("6_qr7ke")

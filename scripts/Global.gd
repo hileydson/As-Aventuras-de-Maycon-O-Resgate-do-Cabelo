@@ -16,14 +16,15 @@ var can_load:bool = false
 var save_array = {}
 var default_language:String = language_pt_br
 var maycon_itens_default = {axe=false}
+var game_events_default = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false}
 var maycon_itens = {axe=false}
-var game_events = {axe_taken=false, gilhotina_broken=false}
+var game_events = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false}
 var inimigos_mortos = {}
 var last_fase = "fase_1"
 
 func reset_died()->void:
 	maycon_itens = maycon_itens_default
-	game_events = {}
+	game_events = game_events_default
 	inimigos_mortos = {}
 	save_progress("fase_1")
 	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_1.tscn") 
