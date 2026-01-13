@@ -11,6 +11,7 @@ extends Sprite2D
 @onready var explotion_2: AnimatedSprite2D = $explotion2
 @onready var explotion_3: AnimatedSprite2D = $explotion3
 @onready var seco_camera: Camera2D = $Inimigos/inimigo_boss_seco/seco_camera
+@onready var inimigos: Node = $Inimigos
 
 @onready var breaking_glass: AudioStreamPlayer = $BreakingGlass
 @onready var start_seco_break_capsule: Area2D = $start_seco_break_capsule
@@ -31,16 +32,25 @@ func _ready() -> void:
 		await get_tree().create_timer(1.0).timeout
 
 
-	if Global.game_events["seco_break_capsule"]:
-		start_seco_break_capsule.queue_free()
-		if $Inimigos.has_node("inimigo_boss_seco"):
-			inimigo_boss_seco.visible = true
-			inimigo_boss_seco.flip_h = true
-
-	else:
+	if Global.game_events["seco_break_capsule"]==false:
 		$smoke.visible = true
 		$ScarySmile.play()
 		$sound_seco_capsule.play()
+	else:
+		start_seco_break_capsule.queue_free()
+		
+		if inimigos.has_node("inimigo_boss_seco"):
+			inimigo_boss_seco.visible = true
+			inimigo_boss_seco.flip_h = true
+			$smoke.visible = false
+			$ScarySmile.stop()
+			$sound_seco_capsule.play()
+		else:
+			$smoke.visible = false
+			$ScarySmile.stop()
+			$sound_seco_capsule.stop()
+
+		
 	
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -80,6 +90,7 @@ func reset_maycon_motion()->void:
 
 func _on_start_seco_break_capsule_body_entered(body: Node2D) -> void:
 	#start scene seco break capsule
+	inimigo_boss_seco.get_node("hps").visible = false
 	Global.battle_started = true
 	explotion.play("default")
 	explotion_2.play("default")
@@ -93,6 +104,7 @@ func _on_start_seco_break_capsule_body_entered(body: Node2D) -> void:
 	start_seco_break_capsule.queue_free()
 	await get_tree().create_timer(6.0).timeout 
 	inimigo_boss_seco.flip_h = true
+	inimigo_boss_seco.get_node("hps").visible = true
 	
 	
 	

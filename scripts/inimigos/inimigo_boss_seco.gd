@@ -99,7 +99,8 @@ func set_enemy_not_attacking() -> void:
 	batalha_moves.enemy_attacking = false
 
 func _on_animation_finished() -> void:
-	batalha_moves.enemy_attacking = false
+	if Global.battle_started:
+		batalha_moves.enemy_attacking = false
 
 
 func _on_to_battle_body_entered(body: Node2D) -> void:

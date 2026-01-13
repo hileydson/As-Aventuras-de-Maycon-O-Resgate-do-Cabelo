@@ -16,9 +16,9 @@ var can_load:bool = false
 var save_array = {}
 var default_language:String = language_pt_br
 var maycon_itens_default = {axe=false}
-var game_events_default = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false}
+var game_events_default = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false}
 var maycon_itens = {axe=false}
-var game_events = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false}
+var game_events = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false}
 var inimigos_mortos = {}
 var last_fase = "fase_1"
 

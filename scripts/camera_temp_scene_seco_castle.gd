@@ -1,0 +1,69 @@
+extends Camera2D
+
+@onready var camera_2d_maycon: Camera2D = $"../maycon_fase/Camera2D"
+@onready var msg_block: Label = $msg_block
+@onready var fade: Node2D = $fade
+@onready var maycon_fase: CharacterBody2D = $"../maycon_fase"
+@onready var me: Camera2D = $"."
+@onready var animacoes: AnimationPlayer = $"../animacoes"
+@onready var inimigo_boss_seco: AnimatedSprite2D = $inimigo_boss_seco
+
+
+func _on_ready() -> void:
+	if Global.game_events["seco_first_scene_castle"]==false:
+		GameSongs.stop(1)
+		inimigo_boss_seco.get_node("hps").visible = false
+		maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
+		
+		#executa cena do seco levando o cabelo somente 1x
+		me.make_current()
+		
+		fade.get_node("Transition").play("fade_in")
+		msg_block.visible = true
+		if Global.default_language == Global.language_pt_br:
+			msg_block.text = "Volte aqui Olindão!"
+		else:
+			msg_block.text = "Come back here Olindão!"
+		
+		await get_tree().create_timer(2.0).timeout		
+		fade.get_node("Transition").play("fade_out")
+		await get_tree().create_timer(1.0).timeout
+		
+		
+		
+		await get_tree().create_timer(2.0).timeout
+		fade.get_node("Transition").play("fade_in")
+		msg_block.visible = true
+		if Global.default_language == Global.language_pt_br:
+			msg_block.text = "Estou te avisando!"
+		else:
+			msg_block.text = "I'm not gonna say it again!"
+		
+		await get_tree().create_timer(2.0).timeout		
+		fade.get_node("Transition").play("fade_out")
+		await get_tree().create_timer(1.0).timeout
+		
+		
+		animacoes.play("seco_first_scene_castle")
+		
+		
+		await get_tree().create_timer(2.0).timeout
+		fade.get_node("Transition").play("fade_in")
+		msg_block.visible = true
+		if Global.default_language == Global.language_pt_br:
+			msg_block.text = "Eu vou te pegar ainda Tripa Maior!"
+		else:
+			msg_block.text = "I'm gonna catch you Tripa Maior!"
+		
+		await get_tree().create_timer(2.0).timeout		
+		fade.get_node("Transition").play("fade_out")
+		await get_tree().create_timer(3.0).timeout
+		
+		
+		#volta ao jogo
+		$Running.stop()
+		GameSongs.play_song(1)
+		Global.game_events["seco_first_scene_castle"]=true
+		Global.save_progress(get_tree().current_scene.name)
+		maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
+		camera_2d_maycon.make_current()

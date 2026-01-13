@@ -4,6 +4,7 @@ extends Sprite2D
 @onready var maycon_falling: AnimatedSprite2D = $maycon_falling
 @onready var camera: Camera2D = $maycon_fase/Camera2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
+@onready var camera_temp: Camera2D = $Camera_temp
 
 
 # Called when the node enters the scene tree for the first time.
@@ -31,7 +32,7 @@ func _process(delta: float) -> void:
 		maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
 	
 	#pra VOLTAR
-	if Global.back_to_main_camera:
+	if Global.back_to_main_camera && Global.game_events["seco_first_scene_castle"]:
 		Global.back_to_main_camera = false
 		camera.make_current()
 

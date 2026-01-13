@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://bdmpm2b3ny4k2"]
+[gd_scene load_steps=44 format=3 uid="uid://bdmpm2b3ny4k2"]
 
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_4xbjm"]
 [ext_resource type="Texture2D" uid="uid://b6c6gorildkq4" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_1.png" id="1_isgjk"]
@@ -10,7 +10,13 @@
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="6_4xbjm"]
 [ext_resource type="PackedScene" uid="uid://c7sguivhsbmw2" path="res://scenes/inimigos/inimigo_manga.tscn" id="6_htegb"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="6_w4eqy"]
+[ext_resource type="Script" uid="uid://qjvc77hv4efq" path="res://scripts/camera_temp_scene_seco_castle.gd" id="8_0lpkh"]
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="8_pkp6y"]
+[ext_resource type="AudioStream" uid="uid://1w11c4koxm1e" path="res://assets/novos_audios/kick.mp3" id="9_3ej27"]
+[ext_resource type="PackedScene" uid="uid://dep6dmg0ng8e0" path="res://scenes/inimigos/inimigo_boss_seco.tscn" id="9_bbiws"]
+[ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="9_fyo8v"]
+[ext_resource type="PackedScene" uid="uid://143260dknkmv" path="res://scenes/inimigos/cabelo.tscn" id="10_3ej27"]
+[ext_resource type="AudioStream" uid="uid://ds2yyaaf2s8cj" path="res://assets/novos_audios/running.mp3" id="10_cf614"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_th65o"]
 atlas = ExtResource("3_6qwlc")
@@ -29,6 +35,42 @@ animations = [{
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera_temp/inimigo_boss_seco:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-695.99994, 13)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera_temp/inimigo_boss_seco:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera_temp/cabelo:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-632, 48)]
+}
 
 [sub_resource type="Animation" id="Animation_aybw1"]
 resource_name = "maycon_back_to_fase"
@@ -74,11 +116,91 @@ tracks/1/keys = {
 "values": [Vector2(-1469, 169), Vector2(-1469, 169)]
 }
 
+[sub_resource type="Animation" id="Animation_3ej27"]
+resource_name = "seco_first_scene_castle"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera_temp/inimigo_boss_seco:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.97, 3.95),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(-695.99994, 13), Vector2(-54.99994, -14), Vector2(692.00006, -7)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera_temp/inimigo_boss_seco")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.8, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [&"run"],
+"method": &"play"
+}, {
+"args": [&"attack"],
+"method": &"play"
+}, {
+"args": [&"run"],
+"method": &"play"
+}]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera_temp/Running")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera_temp/Kick")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1.0333333),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Camera_temp/cabelo:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.6666667, 1, 2.0666666),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-632, 48), Vector2(-271, 38.000053), Vector2(-271.99982, 8.999977), Vector2(693, 7.00008)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ahm46"]
 _data = {
 &"RESET": SubResource("Animation_wwvab"),
 &"maycon_back_to_fase": SubResource("Animation_aybw1"),
-&"maycon_falling": SubResource("Animation_36c4s")
+&"maycon_falling": SubResource("Animation_36c4s"),
+&"seco_first_scene_castle": SubResource("Animation_3ej27")
 }
 
 [sub_resource type="Texture2DRD" id="Texture2DRD_6qwlc"]
@@ -256,6 +378,49 @@ offset_bottom = 1605.0
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle/CanvasLayer"]
 environment = SubResource("Environment_0lpkh")
 
+[node name="Camera_temp" type="Camera2D" parent="Fase1BeforeCastle"]
+position = Vector2(2512, -258)
+script = ExtResource("8_0lpkh")
+
+[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/Camera_temp"]
+z_index = -2
+offset_left = -584.0
+offset_top = -334.0
+offset_right = 580.0
+offset_bottom = 327.0
+color = Color(0, 0, 0, 1)
+
+[node name="Kick" type="AudioStreamPlayer" parent="Fase1BeforeCastle/Camera_temp"]
+stream = ExtResource("9_3ej27")
+
+[node name="inimigo_boss_seco" parent="Fase1BeforeCastle/Camera_temp" instance=ExtResource("9_bbiws")]
+z_index = 20
+position = Vector2(-695.99994, 13)
+flip_h = true
+
+[node name="cabelo" parent="Fase1BeforeCastle/Camera_temp" instance=ExtResource("10_3ej27")]
+z_index = 20
+position = Vector2(-632, 48)
+rotation = -2.3479953
+scale = Vector2(0.8574843, -0.73798275)
+skew = -0.016398787
+
+[node name="msg_block" type="Label" parent="Fase1BeforeCastle/Camera_temp"]
+visible = false
+z_index = 3
+offset_left = -427.0
+offset_top = -89.0
+offset_right = -373.0
+offset_bottom = -35.0
+scale = Vector2(2.9967816, 1.6456175)
+text = "TEXT...
+TEXT..."
+
+[node name="Running" type="AudioStreamPlayer" parent="Fase1BeforeCastle/Camera_temp"]
+stream = ExtResource("10_cf614")
+
+[node name="fade" parent="Fase1BeforeCastle/Camera_temp" instance=ExtResource("9_fyo8v")]
+
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)
 
@@ -393,6 +558,7 @@ scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
+[connection signal="ready" from="Fase1BeforeCastle/Camera_temp" to="Fase1BeforeCastle/Camera_temp" method="_on_ready"]
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]
 [connection signal="body_entered" from="back_stage" to="Fase1BeforeCastle" method="_on_back_stage_body_entered"]
