@@ -67,3 +67,4 @@ func _on_ready() -> void:
 		Global.save_progress(get_tree().current_scene.name)
 		maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
 		camera_2d_maycon.make_current()
+		$"../../auto_fade_in".get_node("Transition").play("fade_in")
