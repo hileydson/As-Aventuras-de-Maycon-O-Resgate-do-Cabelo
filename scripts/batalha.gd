@@ -93,7 +93,9 @@ func maycon_died()->void:
 	await get_tree().create_timer(1.0).timeout
 	Global.battle_started = false
 	GameSongs.process_mode = Node.PROCESS_MODE_INHERIT
-	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	#TODO: para a demo, apenas volta para a fase 1, mas para uma versao final seria 
+	# melhor analisar qual a ultima fase salva e ir por lah
+	Global.reset_died()
 
 func victory()->void:
 	battle_finished = true
@@ -176,7 +178,7 @@ func _process(delta: float) -> void:
 	
 	
 	# TEMP PARA ANALISAR TODAS AS FASES
-	return
+	#return
 	
 	
 	# PLOTAR INIMIGO EM BATALHA
