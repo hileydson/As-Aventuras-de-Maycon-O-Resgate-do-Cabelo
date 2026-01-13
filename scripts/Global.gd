@@ -9,7 +9,7 @@ var battle_background:String = "1" # default o cenario de fogo fora do castelo
 var battle_next_enemy:String = "0"
 var battle_next_boss:int = 0
 var battle_started:bool = false
-var before_prologo:bool = false #TESTE - correto eh TRUE
+var before_prologo:bool = true #TESTE - correto eh TRUE
 
 # data to be saved
 var can_load:bool = false
