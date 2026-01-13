@@ -104,7 +104,7 @@ func _on_animation_finished() -> void:
 
 
 func _on_to_battle_body_entered(body: Node2D) -> void:
-	Global.battle_next_enemy = "1001"
+	#Global.battle_next_enemy = "1001" # TODO: COMENTADO PARA NAO ENTRAR EM BATALHA AINDA
 	Global.inimigos_mortos[id_unico] = true
 	queue_free()
 	
