@@ -20,6 +20,7 @@ extends CharacterBody2D
 @onready var timer_defense_label: Label = $"../timer_defense_label"
 @onready var timer_defense: Timer = $"../Timer_defense"
 @onready var erro_sound: AudioStreamPlayer = $"../ErroSound"
+@onready var camera_2d: Camera2D = $"../Camera2D"
 
 @onready var hp_1: Node2D = $"../hp_1"
 @onready var hp_2: Node2D = $"../hp_2"
@@ -161,11 +162,12 @@ func control_defense_jump() -> void:
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	pass
 	
-	
-
 
 func _on_area_2d_area_entered(area: Area2D) -> void:
 	if Global.battle_started:
+		if $"../Camera2D":
+			camera_2d.tremer(10, 0.5)
+			
 		hp_count = hp_count+1
 		
 		#if hp_count == 1:

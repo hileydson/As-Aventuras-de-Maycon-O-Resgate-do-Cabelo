@@ -1,4 +1,4 @@
-[gd_scene load_steps=152 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=153 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="1_6exdr"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dpt7gawugv1w7" path="res://assets/novas_imagens/maycon/jamelao_float_2.png" id="3_knuts"]
 [ext_resource type="Texture2D" uid="uid://c5o2h4u1txbm3" path="res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_in_fire.png" id="4_6exdr"]
 [ext_resource type="AudioStream" uid="uid://b5ff14vnqj2mh" path="res://assets/novos_audios/punch_6.mp3" id="5_5htnd"]
+[ext_resource type="Script" uid="uid://d4enrwrfewi6n" path="res://scripts/camera_batalha.gd" id="6_evw7u"]
 [ext_resource type="Texture2D" uid="uid://bn62kapv7wtpu" path="res://assets/images/parado_direita_0.png" id="7_2cscv"]
 [ext_resource type="AudioStream" uid="uid://btl22s5pwrpe0" path="res://assets/novos_audios/sliding.mp3" id="7_6exdr"]
 [ext_resource type="AudioStream" uid="uid://bf7d2jb0jj31f" path="res://assets/novos_audios/hurt_sound.mp3" id="7_6fm5e"]
@@ -1410,6 +1411,7 @@ texture = ExtResource("4_6exdr")
 
 [node name="Camera2D" type="Camera2D" parent="Cenario de batalha"]
 limit_bottom = 655
+script = ExtResource("6_evw7u")
 
 [node name="maycon_batalha" type="AnimatedSprite2D" parent="Cenario de batalha"]
 position = Vector2(-671, 45)
