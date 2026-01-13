@@ -4,6 +4,10 @@ extends AnimatedSprite2D
 @onready var hp_2: Sprite2D = $hps/hp_2
 @onready var hp_3: Sprite2D = $hps/hp_3
 @onready var hp_4: Sprite2D = $hps/hp_4
+@onready var hp_5: Sprite2D = $hps/hp_5
+@onready var hp_6: Sprite2D = $hps/hp_6
+@onready var hp_7: Sprite2D = $hps/hp_7
+@onready var hp_8: Sprite2D = $hps/hp_8
 @onready var ds_pain: AudioStreamPlayer = $"../../../Cenario de batalha/DsPain"
 @onready var passos_areia: AudioStreamPlayer = $"../../../Cenario de batalha/PassosAreia"
 @onready var inimigos: Node = $"../.."
@@ -62,16 +66,26 @@ func _process(delta: float) -> void:
 		damage_taken = damage_taken+1
 	
 	# Simplifiquei a lógica de visibilidade (opcional, mas fica mais limpo)
-	hp_1.visible = damage_taken < 4
-	hp_2.visible = damage_taken < 3
-	hp_3.visible = damage_taken < 2
-	hp_4.visible = damage_taken < 1
+	hp_1.visible = damage_taken < 8
+	hp_2.visible = damage_taken < 7
+	hp_3.visible = damage_taken < 6
+	hp_4.visible = damage_taken < 5
+	hp_5.visible = damage_taken < 4
+	hp_6.visible = damage_taken < 3
+	hp_7.visible = damage_taken < 2
+	hp_8.visible = damage_taken < 1
 
-	if damage_taken >= 4:
+	if damage_taken >= 8:
 		me.stop()
 		batalha_moves.victory()
 		dead=true
 		timer_enemy_attack.stop()
+	
+	
+	if me.animation == "idle" && em_batalha:
+		me.flip_h = true
+	else:
+		me.flip_h = false
 	
 	
 func _on_timer_enemy_attack_timeout() -> void:
@@ -104,7 +118,7 @@ func _on_animation_finished() -> void:
 
 
 func _on_to_battle_body_entered(body: Node2D) -> void:
-	#Global.battle_next_enemy = "1001" # TODO: COMENTADO PARA NAO ENTRAR EM BATALHA AINDA
+	Global.battle_next_enemy = "1001"
 	Global.inimigos_mortos[id_unico] = true
 	queue_free()
 	
