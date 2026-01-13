@@ -129,11 +129,11 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		await get_tree().create_timer(3.0).timeout
 		msg.text = "fora do mundo real!"
 		await get_tree().create_timer(3.0).timeout
-		msg.text = "Somente lá voce contrará ele!"
+		msg.text = "Somente lá voce encontrará ele!"
 		await get_tree().create_timer(3.0).timeout
 		msg.text = "Venha seu safado!"
 		await get_tree().create_timer(3.0).timeout
-		msg.text = "Entre! entre no fogo!!"
+		msg.text = "Entre! \nEntre no fogo!!"
 		await get_tree().create_timer(3.0).timeout
 	else:
 		await get_tree().create_timer(3.0).timeout
@@ -145,7 +145,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		await get_tree().create_timer(3.0).timeout
 		msg.text = "Forget about cabelo!"
 		await get_tree().create_timer(3.0).timeout
-		msg.text = "Im gonna take him to another place!"
+		msg.text = "Im gonna take him \nto another place!"
 		await get_tree().create_timer(3.0).timeout
 		msg.text = "A not real one!"
 		await get_tree().create_timer(3.0).timeout
@@ -153,7 +153,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		await get_tree().create_timer(3.0).timeout
 		msg.text = "Come on! you asshole!"
 		await get_tree().create_timer(3.0).timeout
-		msg.text = "Enter! touch the fire!!"
+		msg.text = "Enter! \nTouch the fire!!"
 		await get_tree().create_timer(3.0).timeout
 		
 	inimigo_seco.visible = false

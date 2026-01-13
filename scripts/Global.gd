@@ -22,11 +22,15 @@ var game_events = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=f
 var inimigos_mortos = {}
 var last_fase = "fase_1"
 
-func reset_died()->void:
+
+func reset_save_to_fase_1()->void:
 	maycon_itens = maycon_itens_default
 	game_events = game_events_default
 	inimigos_mortos = {}
 	save_progress("fase_1")
+	
+func reset_died()->void:
+	reset_save_to_fase_1()
 	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_1.tscn") 
 	
 

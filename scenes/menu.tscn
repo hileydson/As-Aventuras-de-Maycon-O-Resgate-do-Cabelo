@@ -254,6 +254,7 @@ frame_progress = 1.0
 
 [node name="JamelaoSong" type="AudioStreamPlayer" parent="Camera2D"]
 stream = ExtResource("16_g6gyw")
+volume_db = -3.649
 
 [node name="menu_song" type="AudioStreamPlayer2D" parent="Camera2D"]
 position = Vector2(-577, -324)

@@ -7,10 +7,9 @@
 [node name="Node2D" type="Node2D"]
 
 [node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
-offset_left = 2.0
-offset_top = 21.0
-offset_right = 1149.0
-offset_bottom = 661.0
+offset_top = -8.0
+offset_right = 1161.0
+offset_bottom = 658.0
 stream = ExtResource("1_481kp")
 autoplay = true
 expand = true
