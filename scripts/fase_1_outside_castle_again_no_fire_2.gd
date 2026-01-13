@@ -33,8 +33,14 @@ func _ready() -> void:
 
 	if Global.game_events["seco_break_capsule"]:
 		start_seco_break_capsule.queue_free()
-		inimigo_boss_seco.visible = true
-		inimigo_boss_seco.flip_h = true
+		if $Inimigos.has_node("inimigo_boss_seco"):
+			inimigo_boss_seco.visible = true
+			inimigo_boss_seco.flip_h = true
+
+	else:
+		$smoke.visible = true
+		$ScarySmile.play()
+		$sound_seco_capsule.play()
 	
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
