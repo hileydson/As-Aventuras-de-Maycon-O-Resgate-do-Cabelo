@@ -108,6 +108,8 @@ func _on_animation_finished() -> void:
 func _on_to_battle_body_entered(body: Node2D) -> void:
 	Global.battle_next_enemy = "3"
 	Global.inimigos_mortos[id_unico] = true
+	$".".process_mode = Node.PROCESS_MODE_DISABLED
+	await get_tree().create_timer(2.0).timeout
 	queue_free()
 	
 	

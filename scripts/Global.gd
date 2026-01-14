@@ -9,16 +9,16 @@ var battle_background:String = "1" # default o cenario de fogo fora do castelo
 var battle_next_enemy:String = "0"
 var battle_next_boss:int = 0
 var battle_started:bool = false
-#var before_prologo:bool = true #TESTE - correto eh TRUE
+#var before_prologo:bool = false #TESTE - correto eh TRUE
 
 # data to be saved
 var can_load:bool = false
 var save_array = {}
 var default_language:String = language_pt_br
 var maycon_itens_default = {axe=false}
-var game_events_default = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, before_prologo=true}
+var game_events_default = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, before_prologo=false}
 var maycon_itens = {axe=false}
-var game_events = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, before_prologo=true}
+var game_events = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, before_prologo=false}
 var inimigos_mortos = {}
 var last_fase = "fase_1"
 

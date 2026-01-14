@@ -1448,7 +1448,7 @@ autoplay = "default"
 
 [node name="Sprite2D" type="Sprite2D" parent="attack_2_block/attack_power2/Area2D/AnimatedSprite2D"]
 position = Vector2(-21.794418, -9.943634)
-scale = Vector2(6.784946e-07, 1.9489467e-07)
+scale = Vector2(1e-05, 1e-05)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="attack_2_block/attack_power2/Area2D"]
 light_mask = 512
