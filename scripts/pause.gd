@@ -67,6 +67,7 @@ func _on_close_pressed() -> void:
 
 
 func _on_quit_pressed() -> void:
+	GameSongs.stop(1)
 	Global.back_to_main_camera = true
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")

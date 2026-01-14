@@ -2,7 +2,7 @@ res://scenes/game.tscn::cf0b17e3d2ac16ed126e6e5796f4037c::1768323902::res://.god
 res://scenes/intro_game.tscn::f9a135223fe7f8d58e9c22fa09069689::1767636737::res://.godot/exported/133200997/export-d812ff7a61965b00992033639963698d-intro_game.scn
 res://scenes/intro_pacoca_producoes.tscn::494533cab23c4a71e5d695f5beb53146::1767636737::res://.godot/exported/133200997/export-73645334111537d72cd9a9328343782a-intro_pacoca_producoes.scn
 res://scenes/maycon.tscn::803324a1ac23cf0e9609ed2538d80e42::1767636737::res://.godot/exported/133200997/export-85185de7cb3a71cec2db2b53fc9f797e-maycon.scn
-res://scenes/menu.tscn::5aeb82d093289a00515be23f743b381b::1768323735::res://.godot/exported/133200997/export-1ce5c86e8ca186dcaaeaa8726f1268db-menu.scn
+res://scenes/menu.tscn::5aeb82d093289a00515be23f743b381b::1768352975::res://.godot/exported/133200997/export-1ce5c86e8ca186dcaaeaa8726f1268db-menu.scn
 res://assets/resources/vidro_noise.tres::f8fb095af2c8f65906d6d42917232c8b::1767636737::res://.godot/exported/133200997/export-a30762d24094eca2047354fdf5bfe9e3-vidro_noise.res
 res://scenes/inimigos/inimigo_seco.tscn::b465705f69557f3d069526602967d21d::1767636737::res://.godot/exported/133200997/export-9edf44e67ccdb115b8c25ce94c24b84c-inimigo_seco.scn
 res://scenes/batalha_2d.tscn::4541de47e37fef81a8f1e61af632b420::1768268005::res://.godot/exported/133200997/export-dc705722b9042b873191ca1c9890a575-batalha_2d.scn
@@ -16,7 +16,7 @@ res://scenes/hp.tscn::cea2748778095890d63c1134e5bedbba::1767636737::res://.godot
 res://scenes/language.tscn::f81eeb8668a2e3484981ac81d3752801::1767636737::res://.godot/exported/133200997/export-f45afe5ad3f1b91df43b0463d042cec5-language.scn
 res://scenes/maycon_batalha_default.tscn::1fe51cb59ec1447b8de98c0427caa7c4::1767750629::res://.godot/exported/133200997/export-676c308b57c7b42b9ad067c3fdec16ab-maycon_batalha_default.scn
 res://scenes/maycon_fase.tscn::80cd52ca40c64410759f1b91548fae33::1768224589::res://.godot/exported/133200997/export-e8f02bfddc4b5104a8b7d2d7345349cf-maycon_fase.scn
-res://scenes/pause.tscn::7217730fbf4db18d3aeaaf3cd8df11af::1767803948::res://.godot/exported/133200997/export-877dd510dd31eb0f29670ab72328164d-pause.scn
+res://scenes/pause.tscn::7217730fbf4db18d3aeaaf3cd8df11af::1768336346::res://.godot/exported/133200997/export-877dd510dd31eb0f29670ab72328164d-pause.scn
 res://scenes/tunel_fogo.tscn::01c5b2c8704bcfc619a30378471bd93e::1768323970::res://.godot/exported/133200997/export-2299e257a37b4acdc27e092c3137aa50-tunel_fogo.scn
 res://scenes/demo_end.tscn::412c990ceec102ee512723ca00178fa1::1768324442::res://.godot/exported/133200997/export-bf1b86bf27854fb765698f6f949ebe67-demo_end.scn
 res://scenes/fase_1_before_castle_2.tscn::27f67a129bf0a027ae97bc702a3c6265::1768267846::res://.godot/exported/133200997/export-a3a1507b01b834d646cdc9005ca0f44c-fase_1_before_castle_2.scn
