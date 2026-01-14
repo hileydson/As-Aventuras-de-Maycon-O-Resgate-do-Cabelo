@@ -164,7 +164,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	
 
 func _on_area_2d_area_entered(area: Area2D) -> void:
-	if Global.battle_started:
+	if Global.battle_started && Global.game_events["first_battle"]==false:
 		if $"../Camera2D":
 			camera_2d.tremer(10, 0.5)
 			

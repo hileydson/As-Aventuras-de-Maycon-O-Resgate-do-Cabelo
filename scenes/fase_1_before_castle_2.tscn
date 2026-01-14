@@ -123,11 +123,12 @@ distance = 0.89923096
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7je0d"]
 distance = -60.52633
 
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_36c4s"]
-normal = Vector2(1, 0)
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_54a10"]
+a = Vector2(0, -40.625)
+b = Vector2(0.2941177, 47.61029)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
-size = Vector2(548, 178)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_54a10"]
+size = Vector2(533, 178)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nulh8"]
 size = Vector2(302, 178)
@@ -362,7 +363,7 @@ libraries = {
 [node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("5_54a10")]
 light_mask = 512
 visibility_layer = 524800
-position = Vector2(-1545.9998, 158.99997)
+position = Vector2(-1469, 169)
 scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
 collision_mask = 5
@@ -416,12 +417,12 @@ shape = SubResource("WorldBoundaryShape2D_7je0d")
 
 [node name="back_stage" type="Area2D" parent="."]
 process_mode = 1
-position = Vector2(1586, 683)
+position = Vector2(1600, 685)
 
 [node name="back" type="CollisionShape2D" parent="back_stage"]
 position = Vector2(-1591, 203)
 scale = Vector2(3.3999994, 5.44)
-shape = SubResource("WorldBoundaryShape2D_36c4s")
+shape = SubResource("SegmentShape2D_54a10")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 process_mode = 1
@@ -432,8 +433,8 @@ collision_mask = 524291
 process_mode = 4
 light_mask = 524289
 visibility_layer = 524289
-position = Vector2(278, 1138)
-shape = SubResource("RectangleShape2D_hnmna")
+position = Vector2(285.5, 1138)
+shape = SubResource("RectangleShape2D_54a10")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
 process_mode = 4
@@ -621,7 +622,7 @@ position = Vector2(238, 34)
 position = Vector2(342, -808)
 
 [node name="battle" parent="." instance=ExtResource("8_w4kda")]
-position = Vector2(-673, 328)
+position = Vector2(-679, 333)
 
 [node name="Pause" parent="." instance=ExtResource("10_end3m")]
 anchors_preset = 0

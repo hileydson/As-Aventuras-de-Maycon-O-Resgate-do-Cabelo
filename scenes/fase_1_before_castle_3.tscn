@@ -83,8 +83,9 @@ distance = 0.89923096
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7je0d"]
 distance = -60.52633
 
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_36c4s"]
-normal = Vector2(1, 0)
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_1ljjb"]
+a = Vector2(-0.5881994, -26.470581)
+b = Vector2(0.2941177, 47.61029)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
 size = Vector2(548, 178)
@@ -307,9 +308,9 @@ shape = SubResource("WorldBoundaryShape2D_7je0d")
 position = Vector2(1586, 683)
 
 [node name="back" type="CollisionShape2D" parent="back_stage"]
-position = Vector2(-1591, 203)
+position = Vector2(-1577.0001, 127)
 scale = Vector2(3.3999994, 5.44)
-shape = SubResource("WorldBoundaryShape2D_36c4s")
+shape = SubResource("SegmentShape2D_1ljjb")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 collision_layer = 524291

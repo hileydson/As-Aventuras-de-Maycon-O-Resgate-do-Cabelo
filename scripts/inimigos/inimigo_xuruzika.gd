@@ -39,9 +39,13 @@ func _ready() -> void:
 		queue_free()
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:	
-	
+func _process(delta: float) -> void:			
 	em_batalha = (batalha_moves != null) && !dead
+	
+	if em_batalha && Global.game_events["first_battle"]:
+		$".".process_mode = Node.PROCESS_MODE_DISABLED
+	elif em_batalha && Global.game_events["first_battle"]==false:
+		$".".process_mode = Node.PROCESS_MODE_INHERIT
 	
 	if em_batalha == false:
 		return

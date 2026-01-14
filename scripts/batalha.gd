@@ -37,6 +37,12 @@ extends AnimationPlayer
 @onready var battleground: Sprite2D = $"../Battleground"
 @onready var erro_sound: AudioStreamPlayer = $"../ErroSound"
 
+@onready var text_about_itens: Label = $"../explicacao_batalha/text_about_itens"
+@onready var bloco_visao: ColorRect = $"../explicacao_batalha/bloco_visao"
+@onready var bloco_visao_2: ColorRect = $"../explicacao_batalha/bloco_visao2"
+@onready var bloco_visao_3: ColorRect = $"../explicacao_batalha/bloco_visao3"
+@onready var fade_interno_explicacao: Node2D = $"../explicacao_batalha/fade_interno_explicacao"
+
 var inimigos = {
 	# ENEMIES
 	"1" = preload("res://scenes/inimigos/inimigo_camilita.tscn"),
@@ -60,6 +66,8 @@ var power_count:int = 0
 var battle_finished:bool = false
 var enemy_hurt:bool = false
 var enemy_attacking:bool = false
+
+var first_battle_explain_shown:bool = false
 
 var died:bool = false
 
@@ -157,8 +165,52 @@ func play_inicio()->void:
 	#TODO: PENSAR EM OUTRA FORMA DINAMICA
 	#inimigo_1.get_node("inimigo_1").resetEnemy()
 	current_enemy.resetEnemy()
+
+func show_first_battle() -> void:	
+	first_battle_explain_shown = true
+	await get_tree().create_timer(4.0).timeout
+	#fade_interno_explicacao.get_node("Transition").play("fade_in")
+	
+	if Global.default_language == Global.language_pt_br:
+		text_about_itens.text = "Voçê terá 3 ataques(soco ou chute) e 
+									6 defesas(pulo).
+									
+									Após usar os 3 ataques terá que aguardar
+									um instante até poder atacar novamente.
+									
+									Após usar as 6 defesas também terá que 
+									aguardar um instante.
+									\n\n\n\n\n
+									Voçê terá 3 vidas, caso morra, terá que
+									voltar ao início do Stage"
+	else:
+		text_about_itens.text = "You will have 3 attacks (punch or kick) 
+									and 6 defenses (jump).
+
+									After using the 3 attacks you will have 
+									to wait a moment before you can attack again.
+
+									After using the 6 defenses you will also 
+									have to wait a moment.
+									\n\n\n\n\n
+									You will have 3 lives, if you die, you will 
+									have to return to the beginning of the Stage."
+		
+	$"../explicacao_batalha".visible = true
+	maycon.process_mode = Node.PROCESS_MODE_DISABLED
 	
 	
+	await get_tree().create_timer(3.0).timeout
+	$"../explicacao_batalha/ok_buttons".visible = true
+	await self.player_clicou
+	Global.game_events["first_battle"]=false
+	await get_tree().create_timer(0.5).timeout
+	maycon.process_mode = Node.PROCESS_MODE_INHERIT
+	$"../explicacao_batalha".visible = false
+	
+	for objetos_na_batalha in batalha_moves.get_children(false):
+		objetos_na_batalha.process_mode = Node.PROCESS_MODE_INHERIT
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -170,13 +222,16 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	control_attack_power()	
-	
 	if Input.is_action_just_pressed("ui_accept"):
 		emit_signal("player_clicou")
+		
 	
+	if Global.battle_started && Global.game_events["first_battle"] && first_battle_explain_shown==false:
+		show_first_battle()
 	
+	control_attack_power()	
 	
+
 	# TEMP PARA ANALISAR TODAS AS FASES
 	# return
 	
