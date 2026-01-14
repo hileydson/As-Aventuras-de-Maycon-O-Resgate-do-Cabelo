@@ -15,6 +15,36 @@
 [ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="12_6qt3w"]
 [ext_resource type="AudioStream" uid="uid://cbsglgyfgjkb4" path="res://assets/novos_audios/breaking_glass.mp3" id="13_buahj"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_yvup1"]
+atlas = ExtResource("7_k5iv1")
+region = Rect2(0, 0, 76, 73)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fsdbl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yvup1")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_buahj"]
+atlas = ExtResource("7_k5iv1")
+region = Rect2(228, 0, 38, 61)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6lif2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_buahj")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
 tracks/0/type = "value"
@@ -310,36 +340,6 @@ _data = {
 &"maycon_falling": SubResource("Animation_36c4s"),
 &"seco_break_capsule": SubResource("Animation_0q26h")
 }
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yvup1"]
-atlas = ExtResource("7_k5iv1")
-region = Rect2(0, 0, 76, 73)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_fsdbl"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_yvup1")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_buahj"]
-atlas = ExtResource("7_k5iv1")
-region = Rect2(228, 0, 38, 61)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_6lif2"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_buahj")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kpgq7"]
 atlas = ExtResource("11_yl2kb")
@@ -1068,6 +1068,19 @@ position = Vector2(1586, 683)
 texture = ExtResource("1_bn463")
 script = ExtResource("2_bn463")
 
+[node name="no_monster_flask" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(176, 115.00006)
+scale = Vector2(1.814695, 2.1545382)
+sprite_frames = SubResource("SpriteFrames_fsdbl")
+autoplay = "default"
+
+[node name="no_monster_flask_empty" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+visible = false
+position = Vector2(176, 115.00006)
+scale = Vector2(1.814695, 2.1545382)
+sprite_frames = SubResource("SpriteFrames_6lif2")
+autoplay = "default"
+
 [node name="MkDudun" type="AudioStreamPlayer" parent="Fase1BeforeCastle"]
 stream = ExtResource("3_fsdbl")
 volume_db = -6.71
@@ -1103,19 +1116,6 @@ position = Vector2(1469.0001, 889)
 scale = Vector2(4.947, -4.576)
 
 [node name="seco_camera" type="Camera2D" parent="Fase1BeforeCastle/Inimigos/inimigo_boss_seco"]
-
-[node name="no_monster_flask" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
-position = Vector2(176, 115.00006)
-scale = Vector2(1.814695, 2.1545382)
-sprite_frames = SubResource("SpriteFrames_fsdbl")
-autoplay = "default"
-
-[node name="no_monster_flask_empty" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
-visible = false
-position = Vector2(176, 115.00006)
-scale = Vector2(1.814695, 2.1545382)
-sprite_frames = SubResource("SpriteFrames_6lif2")
-autoplay = "default"
 
 [node name="smoke" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
 visible = false

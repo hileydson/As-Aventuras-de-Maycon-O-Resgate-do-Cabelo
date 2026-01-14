@@ -28,7 +28,7 @@ res://scenes/fase_1_castle_3.tscn::e0183144aa0333d940c2ae4b76231711::1768252866:
 res://scenes/fase_1_castle_no_fire_1.tscn::50709f96511ff86fbc0282d94d29cbc5::1768252866::res://.godot/exported/133200997/export-eedef7cf678d8de0491a98f5b5780f69-fase_1_castle_no_fire_1.scn
 res://scenes/fase_1_castle_no_fire_2.tscn::7e91a52bb52271c08cbe56b6a1a1943f::1768252866::res://.godot/exported/133200997/export-3c3d05877c4ec37330306e2cbf80fb0f-fase_1_castle_no_fire_2.scn
 res://scenes/fase_1_outside_castle_again_no_fire_1.tscn::73b1a1d4829e903cd21b1486c17de487::1768314107::res://.godot/exported/133200997/export-a3356e83dceedc6e829193948cb5a5ed-fase_1_outside_castle_again_no_fire_1.scn
-res://scenes/fase_1_outside_castle_again_no_fire_2.tscn::6a328e256792a3aa283307d55a767d61::1768321479::res://.godot/exported/133200997/export-f9ee804e357dbf4c135524117a0d99ba-fase_1_outside_castle_again_no_fire_2.scn
+res://scenes/fase_1_outside_castle_again_no_fire_2.tscn::d4aac0636b0deb1dc9d10a57197f9be9::1768335939::res://.godot/exported/133200997/export-f9ee804e357dbf4c135524117a0d99ba-fase_1_outside_castle_again_no_fire_2.scn
 res://scenes/fase_1_outside_castle_again_no_fire_3.tscn::ed6ab810c752f4832c3d9a004709cbb3::1768314878::res://.godot/exported/133200997/export-dff55fe45b2be0f5a440454f8287699b-fase_1_outside_castle_again_no_fire_3.scn
 res://scenes/default_transition_auto_fade_in.tscn::ee45521c947148249c0a998e72b37d2c::1768243145::res://.godot/exported/133200997/export-994adf6f1ea351b7814f37eb20607215-default_transition_auto_fade_in.scn
 res://scenes/battle_fade.tscn::a1aee71b583b303715076c2800a52c6b::1767636737::res://.godot/exported/133200997/export-9c41ef030c3e84ce73e6e59972aa009f-battle_fade.scn
@@ -38,7 +38,7 @@ res://scenes/battle_shattered_screen_effect.tscn::88eb621b958bd83d7340cd49dd076f
 res://scenes/inimigos/inimigo_bomba_pretti.tscn::7eef9c3802a1faac103d7029cae6f70b::1768252022::res://.godot/exported/133200997/export-b563f408437e966ba09952612854cfbd-inimigo_bomba_pretti.scn
 res://scenes/inimigos/inimigo_fofo.tscn::e1d195bd1a1e31c0130a38762ac22af0::1768251919::res://.godot/exported/133200997/export-84857c73101eb34cafab0ea69f0a4def-inimigo_fofo.scn
 res://scenes/inimigos/cabelo.tscn::6e0215ede7306fbf0f2697087dd04535::1768321891::res://.godot/exported/133200997/export-968f72782617ba7397790bc14fae7591-cabelo.scn
-res://scenes/inimigos/inimigo_boss_seco.tscn::55a2f0105981cea1c7701ef906f9ec3f::1768325476::res://.godot/exported/133200997/export-636daf6cc716058df4c40427967fbef1-inimigo_boss_seco.scn
+res://scenes/inimigos/inimigo_boss_seco.tscn::88e31b9dc2560e45b64aceaeb32c09b5::1768335760::res://.godot/exported/133200997/export-636daf6cc716058df4c40427967fbef1-inimigo_boss_seco.scn
 res://scenes/inimigos/inimigo_manga.tscn::51a0a049a61abd9086c46d1b559bed32::1767636737::res://.godot/exported/133200997/export-b5fbdd962c7fea7e594d7b9f1c468959-inimigo_manga.scn
 res://scenes/inimigos/inimigo_xuruzika.tscn::313ec2fc72785f63ad9c3e36ffa7b3c1::1768252301::res://.godot/exported/133200997/export-e4fde1f7a97106757c8a95776fa5fca9-inimigo_xuruzika.scn
 res://scenes/default_transition_auto_fade_in_long.tscn::19284efc4624874462a24356474f6aab::1767833487::res://.godot/exported/133200997/export-72067638cbb21262ecc598d8e837bd55-default_transition_auto_fade_in_long.scn

@@ -14,7 +14,7 @@ extends Control
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
-	if Global.before_prologo == false:
+	if Global.game_events["before_prologo"] == false:
 		v_box_container.visible = true
 	else:
 		v_box_container.visible = false
@@ -26,7 +26,7 @@ func _ready() -> void:
 		run_label.text = "Correr"
 		down_label.text = "Agachar"
 		
-		if Global.before_prologo:
+		if Global.game_events["before_prologo"]:
 			pause.text = "CONTROLE"
 		
 	else:
@@ -36,7 +36,7 @@ func _ready() -> void:
 		run_label.text = "Run"
 		down_label.text = "Croutch"
 		
-		if Global.before_prologo:
+		if Global.game_events["before_prologo"]:
 			pause.text = "CONTROLLER"
 		
 
@@ -58,7 +58,7 @@ func processa_pause_unpause()->void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("ui_cancel") && (!Global.battle_started) && (!Global.before_prologo):
+	if Input.is_action_just_pressed("ui_cancel") && (!Global.battle_started) && (!Global.game_events["before_prologo"]):
 		processa_pause_unpause()
 			
 

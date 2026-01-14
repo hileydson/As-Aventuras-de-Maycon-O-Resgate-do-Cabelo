@@ -9,16 +9,16 @@ var battle_background:String = "1" # default o cenario de fogo fora do castelo
 var battle_next_enemy:String = "0"
 var battle_next_boss:int = 0
 var battle_started:bool = false
-var before_prologo:bool = true #TESTE - correto eh TRUE
+#var before_prologo:bool = true #TESTE - correto eh TRUE
 
 # data to be saved
 var can_load:bool = false
 var save_array = {}
 var default_language:String = language_pt_br
 var maycon_itens_default = {axe=false}
-var game_events_default = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false}
+var game_events_default = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, before_prologo=true}
 var maycon_itens = {axe=false}
-var game_events = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false}
+var game_events = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, before_prologo=true}
 var inimigos_mortos = {}
 var last_fase = "fase_1"
 
@@ -66,18 +66,25 @@ func load_progress()->void:
 		last_fase = save_array["last_fase"]
 		
 		if last_fase == "fase_1":
+			GameSongs.play_song(1)
 			get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_1.tscn")
 		elif last_fase == "fase_2":
+			GameSongs.play_song(1)
 			get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_2.tscn")
 		elif last_fase == "fase_3":
+			GameSongs.play_song(1)
 			get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
 		elif last_fase == "fase_4":
+			GameSongs.play_song(1)
 			get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn")
 		elif last_fase == "castelo_1":
+			GameSongs.play_song(1)
 			get_tree().change_scene_to_file("res://scenes/fase_1_castle_1.tscn")
 		elif last_fase == "castelo_2":
+			GameSongs.play_song(1)
 			get_tree().change_scene_to_file("res://scenes/fase_1_castle_2.tscn")
 		elif last_fase == "castelo_3":
+			GameSongs.play_song(1)
 			get_tree().change_scene_to_file("res://scenes/fase_1_castle_3.tscn")
 		elif last_fase == "castelo_no_fire_1":
 			get_tree().change_scene_to_file("res://scenes/fase_1_castle_no_fire_1.tscn")
