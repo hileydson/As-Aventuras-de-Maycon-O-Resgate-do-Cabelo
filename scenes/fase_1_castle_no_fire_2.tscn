@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://ddmbod8sij2k6"]
+[gd_scene load_steps=23 format=3 uid="uid://ddmbod8sij2k6"]
 
 [ext_resource type="Texture2D" uid="uid://mpk6pxv1a2st" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire_2.png" id="1_8led0"]
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_xwc8o"]
@@ -8,8 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="4_xwc8o"]
 [ext_resource type="PackedScene" uid="uid://8h41hconncdu" path="res://scenes/inimigos/inimigo_bomba_pretti.tscn" id="5_8led0"]
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="6_44bvi"]
-[ext_resource type="Texture2D" uid="uid://c804y68km4f4i" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Flasks_monsters.png" id="6_a7lel"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="7_o1pkn"]
+[ext_resource type="Texture2D" uid="uid://bddceahmv3soi" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Objects.png" id="8_xwc8o"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_th65o"]
 atlas = ExtResource("3_xwc8o")
@@ -80,50 +80,15 @@ _data = {
 &"maycon_falling": SubResource("Animation_36c4s")
 }
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wsirf"]
-atlas = ExtResource("6_a7lel")
-region = Rect2(0, 0, 48, 64)
+[sub_resource type="AtlasTexture" id="AtlasTexture_buahj"]
+atlas = ExtResource("8_xwc8o")
+region = Rect2(228, 0, 38, 61)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6tryt"]
-atlas = ExtResource("6_a7lel")
-region = Rect2(0, 64, 48, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yvup1"]
-atlas = ExtResource("6_a7lel")
-region = Rect2(0, 128, 48, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ssjau"]
-atlas = ExtResource("6_a7lel")
-region = Rect2(0, 192, 48, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_krf8o"]
-atlas = ExtResource("6_a7lel")
-region = Rect2(0, 256, 48, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ckdea"]
-atlas = ExtResource("6_a7lel")
-region = Rect2(0, 320, 48, 64)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_032mh"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_th65o"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_wsirf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6tryt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_yvup1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ssjau")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_krf8o")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ckdea")
+"texture": SubResource("AtlasTexture_buahj")
 }],
 "loop": true,
 "name": &"default",
@@ -206,10 +171,10 @@ limit_bottom = 1357
 position = Vector2(1101, 854)
 scale = Vector2(1.6156905, -1.3321537)
 
-[node name="monster_on_jarrow" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
-position = Vector2(1023.9999, 238)
-scale = Vector2(4.885415, 4.8984375)
-sprite_frames = SubResource("SpriteFrames_032mh")
+[node name="no_monster_flask_empty" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1271.9999, 216)
+scale = Vector2(6.2748766, 5.40808)
+sprite_frames = SubResource("SpriteFrames_th65o")
 autoplay = "default"
 
 [node name="next_scene" type="Area2D" parent="."]
