@@ -334,7 +334,7 @@ slide_on_ceiling = false
 
 [node name="Camera2D" type="Camera2D" parent="Maycon"]
 position = Vector2(458.8409, -94.67078)
-offset = Vector2(-320, 30)
+offset = Vector2(-320, 10)
 zoom = Vector2(1.4, 1.4)
 limit_left = 328
 limit_top = 4

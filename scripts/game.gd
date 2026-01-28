@@ -9,6 +9,7 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Global.game_events["before_prologo"] = false 
 	explosao_portal.get_node("hp").play("semi_explotion")
 	
 
