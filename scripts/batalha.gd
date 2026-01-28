@@ -43,6 +43,7 @@ extends AnimationPlayer
 @onready var bloco_visao_3: ColorRect = $"../explicacao_batalha/bloco_visao3"
 @onready var fade_interno_explicacao: Node2D = $"../explicacao_batalha/fade_interno_explicacao"
 @onready var fire_effects: Node2D = $"../fire_effects"
+@onready var no_fire_effects: Node2D = $"../no_fire_effects"
 
 var inimigos = {
 	# ENEMIES
@@ -220,9 +221,11 @@ func _ready() -> void:
 	battleground.texture = mapas_backgrounds[Global.battle_background]
 	# se for cenario de fogo dai mostra os fire effects
 	if Global.battle_background == "1":
+		no_fire_effects.visible = false
 		fire_effects.visible = true
 	else:
 		fire_effects.visible = false
+		no_fire_effects.visible = true
 	
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.

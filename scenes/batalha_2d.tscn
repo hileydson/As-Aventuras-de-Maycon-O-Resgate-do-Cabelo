@@ -1,4 +1,4 @@
-[gd_scene load_steps=167 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=175 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="1_6exdr"]
@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://c3wtiey1rj4oj" path="res://assets/images/parado_direita_2.png" id="9_dk8xw"]
 [ext_resource type="Texture2D" uid="uid://5o3gi77c61rp" path="res://assets/images/parado_direita_3.png" id="10_jvqq8"]
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="10_yn2t1"]
+[ext_resource type="Texture2D" uid="uid://c804y68km4f4i" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Flasks_monsters.png" id="11_6exdr"]
 [ext_resource type="Texture2D" uid="uid://22qbnhvox1xb" path="res://assets/images/parado_direita_4.png" id="11_f8lc8"]
 [ext_resource type="Texture2D" uid="uid://c53y5cmkivc1p" path="res://assets/images/parado_direita_5.png" id="12_uut1r"]
 [ext_resource type="Texture2D" uid="uid://cxqf1sis6624j" path="res://assets/images/parado_direita_6.png" id="13_yr5gf"]
@@ -724,6 +725,56 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_cao5k")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wsirf"]
+atlas = ExtResource("11_6exdr")
+region = Rect2(0, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6tryt"]
+atlas = ExtResource("11_6exdr")
+region = Rect2(0, 64, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yvup1"]
+atlas = ExtResource("11_6exdr")
+region = Rect2(0, 128, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ssjau"]
+atlas = ExtResource("11_6exdr")
+region = Rect2(0, 192, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_krf8o"]
+atlas = ExtResource("11_6exdr")
+region = Rect2(0, 256, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ckdea"]
+atlas = ExtResource("11_6exdr")
+region = Rect2(0, 320, 48, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6iq70"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wsirf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6tryt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yvup1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ssjau")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_krf8o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ckdea")
 }],
 "loop": true,
 "name": &"default",
@@ -1886,6 +1937,14 @@ position = Vector2(300.00003, 32.999996)
 rotation = -0.16677713
 scale = Vector2(1.7578136, 1.3489583)
 sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="no_fire_effects" type="Node2D" parent="Cenario de batalha"]
+
+[node name="monster_on_jarrow" type="AnimatedSprite2D" parent="Cenario de batalha/no_fire_effects"]
+position = Vector2(593, 242)
+scale = Vector2(3.8229177, 3.882813)
+sprite_frames = SubResource("SpriteFrames_6iq70")
 autoplay = "default"
 
 [node name="Camera2D" type="Camera2D" parent="Cenario de batalha"]
