@@ -44,6 +44,7 @@ extends AnimationPlayer
 @onready var fade_interno_explicacao: Node2D = $"../explicacao_batalha/fade_interno_explicacao"
 @onready var fire_effects: Node2D = $"../fire_effects"
 @onready var no_fire_effects: Node2D = $"../no_fire_effects"
+@onready var sound_seco_capsule: AudioStreamPlayer = $"../sound_seco_capsule"
 
 var inimigos = {
 	# ENEMIES
@@ -72,6 +73,8 @@ var enemy_attacking:bool = false
 var first_battle_explain_shown:bool = false
 
 var died:bool = false
+
+var boss_song:bool = false
 
 var mapas_backgrounds = {
 	"1" = preload("res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_in_fire.png"),
@@ -132,6 +135,12 @@ func victory()->void:
 	
 	
 func add_enemy()->void:
+	
+	if Global.battle_next_enemy == "1001": #boss seco
+		boss_song = true
+	else:
+		boss_song = false
+		
 	current_enemy = inimigos[Global.battle_next_enemy].instantiate()
 	add_child(current_enemy)
 	current_enemy.global_position = inimigo_batalha.global_position
@@ -148,8 +157,13 @@ func play_inicio()->void:
 	inicio_batalha.play("inicio")
 	maycon_batalha.play("float")
 	maycon_batalha_default.play("idle")
-	battle_song.play()
+	
 	batalha_moves.play("move_to_middle")
+	
+	if boss_song :
+		sound_seco_capsule.play()
+	else:
+		battle_song.play()
 	
 	#reset
 	power_count = 0
