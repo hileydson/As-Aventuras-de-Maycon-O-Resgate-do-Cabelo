@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://dsn4roqk0kmsk"]
+[gd_scene load_steps=4 format=3 uid="uid://dsn4roqk0kmsk"]
 
 [ext_resource type="VideoStream" uid="uid://c5y4qqegy5pqf" path="res://assets/videos/intro_pacoca_producoes.ogv" id="1_k5unc"]
 [ext_resource type="Script" uid="uid://ivp0lwifukit" path="res://scripts/intro_pacoca_producoes.gd" id="2_byawd"]
+[ext_resource type="Texture2D" uid="uid://c3qrk8bj3q3mf" path="res://assets/novas_imagens/objects/barras_logo_pacoca_producoes.png" id="3_sjrhx"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -11,11 +12,42 @@ offset_top = -321.0
 offset_right = 572.0
 offset_bottom = 319.0
 stream = ExtResource("1_k5unc")
+volume_db = 3.91
 autoplay = true
 expand = true
 script = ExtResource("2_byawd")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="BarrasLogoPacocaProducoes" type="Sprite2D" parent="."]
+position = Vector2(-552, 14)
+texture = ExtResource("3_sjrhx")
+
+[node name="BarrasLogoPacocaProducoes2" type="Sprite2D" parent="."]
+position = Vector2(573, -2)
+texture = ExtResource("3_sjrhx")
+
+[node name="BarrasLogoPacocaProducoes3" type="Sprite2D" parent="."]
+position = Vector2(-169, 426.99997)
+rotation = -1.5704241
+texture = ExtResource("3_sjrhx")
+
+[node name="BarrasLogoPacocaProducoes5" type="Sprite2D" parent="."]
+position = Vector2(-181.99998, -443.00003)
+rotation = -1.5704241
+texture = ExtResource("3_sjrhx")
+
+[node name="BarrasLogoPacocaProducoes6" type="Sprite2D" parent="."]
+position = Vector2(294, -442)
+rotation = -1.5704241
+texture = ExtResource("3_sjrhx")
+
+[node name="BarrasLogoPacocaProducoes4" type="Sprite2D" parent="."]
+position = Vector2(256, 427)
+rotation = -1.5704241
+texture = ExtResource("3_sjrhx")
 
 [connection signal="ready" from="." to="VideoStreamPlayer" method="_on_node_2d_ready"]
 [connection signal="finished" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_finished"]

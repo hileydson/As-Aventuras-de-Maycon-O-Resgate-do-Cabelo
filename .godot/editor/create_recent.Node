@@ -1,8 +1,8 @@
+Sprite2D
 Node2D
 Label
 ColorRect
 AnimatedSprite2D
-Sprite2D
 Camera2D
 CollisionShape2D
 Area2D
