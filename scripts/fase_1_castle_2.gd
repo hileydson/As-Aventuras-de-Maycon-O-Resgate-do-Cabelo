@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 	else:
 		axe_area.visible = false
 	
-	if played_axe==false && !inimigos.has_node("inimigo_camilita") && Global.maycon_itens["axe"]==false && Global.game_events["gilhotina_broken"]==false:
+	if Global.battle_started == false && played_axe==false && !inimigos.has_node("inimigo_camilita") && Global.maycon_itens["axe"]==false && Global.game_events["gilhotina_broken"]==false:
 		played_axe = true
 		animacoes.play("axe_fall")
 		

@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://xofol7e84828"]
+[gd_scene load_steps=42 format=3 uid="uid://xofol7e84828"]
 
 [ext_resource type="Texture2D" uid="uid://b7vvpryprwb2m" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_2.png" id="1_7pipl"]
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_wbttt"]
@@ -11,6 +11,7 @@
 [ext_resource type="Shader" uid="uid://b3xewfakdijcn" path="res://scenes/fase_1_before_castle_4.gdshader" id="5_ncgmf"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="6_wbttt"]
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="7_t30a4"]
+[ext_resource type="PackedScene" uid="uid://d35e0jeya7iev" path="res://scenes/caixa.tscn" id="12_wrggl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_th65o"]
 atlas = ExtResource("3_aybmk")
@@ -63,6 +64,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_wbttt"]
 resource_name = "axe_fall"
+length = 1.4
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -70,7 +72,7 @@ tracks/0/path = NodePath("axe_area:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.28, 0.56666666, 0.79, 0.98),
+"times": PackedFloat32Array(0.3666668, 0.5999999, 0.76666665, 0.9666667, 1.1666665),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
 "values": [Vector2(8, -31), Vector2(119, -113), Vector2(254.00003, -4.0000305), Vector2(323.99994, 243), Vector2(424.99994, 419)]
@@ -289,7 +291,7 @@ visibility_layer = 524800
 position = Vector2(-1398.9998, 86.99994)
 scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 261
-collision_mask = 257
+collision_mask = 5
 
 [node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase"]
 position = Vector2(11.542603, 0.47611237)
@@ -303,7 +305,7 @@ limit_bottom = 1357
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
 
 [node name="inimigo_camilita" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("4_7pipl")]
-position = Vector2(1185.0001, 508)
+position = Vector2(1172.0001, 479)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle"]
 
@@ -384,6 +386,11 @@ offset_right = 866.0
 offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="caixa" parent="." instance=ExtResource("12_wrggl")]
+position = Vector2(1891.9994, 904)
+rotation = 3.1415925
+scale = Vector2(-1.1315826, -1.0231465)
 
 [node name="fogo" type="AnimatedSprite2D" parent="."]
 position = Vector2(700, 1197)
