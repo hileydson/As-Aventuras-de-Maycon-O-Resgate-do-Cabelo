@@ -2030,7 +2030,7 @@ parameters/looping = true
 
 [node name="Punch6" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("5_5htnd")
-volume_db = -5.778
+volume_db = -9.519
 
 [node name="DsPain" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("47_pvxjk")
@@ -2043,6 +2043,8 @@ stream = ExtResource("34_xskhn")
 
 [node name="ErroSound" type="AudioStreamPlayer" parent="Cenario de batalha"]
 stream = ExtResource("46_dho1k")
+volume_db = 0.748
+pitch_scale = 1.56
 
 [node name="Logo3" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(-407.00003, -253.00002)

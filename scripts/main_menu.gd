@@ -23,6 +23,7 @@ func _ready() -> void:
 	
 	if Global.default_language == Global.language_en:
 		new_game.text = "New Game"
+		continue_.text = "Continue"
 		exit.text = "Exit"
 	
 	maycon_looking.play("idle")
