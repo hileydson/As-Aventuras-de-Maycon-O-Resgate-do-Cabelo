@@ -8,6 +8,7 @@ extends Sprite2D
 @onready var scary_smile: AudioStreamPlayer = $"../enter_the_castle/ScarySmile"
 @onready var castle: Label = $"../enter_the_castle/castle"
 @onready var loading: AnimatedSprite2D = $"../enter_the_castle/loading"
+@onready var canvas_layer: CanvasLayer = $CanvasLayer
 
 
 # Called when the node enters the scene tree for the first time.
@@ -42,6 +43,7 @@ func _process(delta: float) -> void:
 
 
 func _on_next_scene_body_entered(body: Node2D) -> void:
+	canvas_layer.visible = false
 	get_tree().paused = true
 	await get_tree().create_timer(0.3).timeout 
 	enter_the_castle.visible = true

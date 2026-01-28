@@ -7,10 +7,12 @@ extends Camera2D
 @onready var me: Camera2D = $"."
 @onready var animacoes: AnimationPlayer = $"../animacoes"
 @onready var inimigo_boss_seco: AnimatedSprite2D = $inimigo_boss_seco
+@onready var canvas_layer: CanvasLayer = $"../CanvasLayer"
 
 
 func _on_ready() -> void:
 	if Global.game_events["seco_first_scene_castle"]==false:
+		canvas_layer.visible = false
 		GameSongs.stop(1)
 		inimigo_boss_seco.get_node("hps").visible = false
 		maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
@@ -68,3 +70,4 @@ func _on_ready() -> void:
 		maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
 		camera_2d_maycon.make_current()
 		$"../../auto_fade_in".get_node("Transition").play("fade_in")
+		canvas_layer.visible = true
