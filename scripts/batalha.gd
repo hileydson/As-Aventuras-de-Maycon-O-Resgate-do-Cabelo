@@ -282,14 +282,14 @@ func _process(delta: float) -> void:
 		return
 		
 	if battle_finished==false:
-		if Input.is_action_pressed("key_q") && !batalha_moves.is_playing() && maycon.get_node("AnimatedSprite2D").animation == "idle_right":
+		if Input.is_action_pressed("key_q") && Global.game_events["first_battle"]==false && !batalha_moves.is_playing() && maycon.get_node("AnimatedSprite2D").animation == "idle_right":
 			if power_limit_reached:
 				erro_sound.play()
 			else:
 				batalha_moves.play("punch")
 				power_count = power_count+1
 			
-		if Input.is_action_pressed("key_w") && !batalha_moves.is_playing() && maycon.get_node("AnimatedSprite2D").animation == "idle_right":
+		if Input.is_action_pressed("key_w") && Global.game_events["first_battle"]==false && !batalha_moves.is_playing() && maycon.get_node("AnimatedSprite2D").animation == "idle_right":
 			if power_limit_reached:
 				erro_sound.play()
 			else:
