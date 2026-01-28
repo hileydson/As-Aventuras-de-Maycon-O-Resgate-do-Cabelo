@@ -1,4 +1,4 @@
-[gd_scene load_steps=157 format=3 uid="uid://bgar7p5o5l876"]
+[gd_scene load_steps=167 format=3 uid="uid://bgar7p5o5l876"]
 
 [ext_resource type="Script" uid="uid://dbjl6k03foucy" path="res://scripts/batalha.gd" id="1_3ps70"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="1_6exdr"]
@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://30wlu8i8qggp" path="res://assets/images/parado_direita_1.png" id="8_0qud2"]
 [ext_resource type="Texture2D" uid="uid://c3wtiey1rj4oj" path="res://assets/images/parado_direita_2.png" id="9_dk8xw"]
 [ext_resource type="Texture2D" uid="uid://5o3gi77c61rp" path="res://assets/images/parado_direita_3.png" id="10_jvqq8"]
+[ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="10_yn2t1"]
 [ext_resource type="Texture2D" uid="uid://22qbnhvox1xb" path="res://assets/images/parado_direita_4.png" id="11_f8lc8"]
 [ext_resource type="Texture2D" uid="uid://c53y5cmkivc1p" path="res://assets/images/parado_direita_5.png" id="12_uut1r"]
 [ext_resource type="Texture2D" uid="uid://cxqf1sis6624j" path="res://assets/images/parado_direita_6.png" id="13_yr5gf"]
@@ -664,6 +665,70 @@ _data = {
 &"move_to_middle": SubResource("Animation_o2foy"),
 &"punch": SubResource("Animation_jvqq8")
 }
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t7fus"]
+atlas = ExtResource("10_yn2t1")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_avl2m"]
+atlas = ExtResource("10_yn2t1")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t3aas"]
+atlas = ExtResource("10_yn2t1")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7xe64"]
+atlas = ExtResource("10_yn2t1")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0sfqs"]
+atlas = ExtResource("10_yn2t1")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jph6d"]
+atlas = ExtResource("10_yn2t1")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8fjxu"]
+atlas = ExtResource("10_yn2t1")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cao5k"]
+atlas = ExtResource("10_yn2t1")
+region = Rect2(224, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6exdr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t7fus")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_avl2m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t3aas")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7xe64")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0sfqs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jph6d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8fjxu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cao5k")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_6uljp"]
 animations = [{
@@ -1467,6 +1532,361 @@ script = ExtResource("1_3ps70")
 position = Vector2(1.440628, 2.49996)
 scale = Vector2(0.42333293, 0.48883927)
 texture = ExtResource("4_6exdr")
+
+[node name="fire_effects" type="Node2D" parent="Cenario de batalha"]
+
+[node name="fogo" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(636, 251)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo2" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(623, 247)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo3" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(602, 264)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo4" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(584, 265)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo5" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(446, 290)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo6" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(370, 323)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo7" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(104, 339)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo8" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(52, 329)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo9" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(6, 337)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo10" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-39, 318)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo11" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-391, 328)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo12" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-617, 275)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo13" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-607, 256)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo14" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-614, 240)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo15" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-601, 218)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo16" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-605, -101)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo17" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-606, -125)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo18" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-598, -140)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo19" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-588, -179)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo20" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-593, -164)
+scale = Vector2(4.375002, 3.4166665)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo21" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-36.999973, 87)
+scale = Vector2(2.7812502, 2.0208333)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo22" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-25.999973, 92)
+scale = Vector2(2.7812502, 2.0208333)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo23" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-14.999973, 93)
+scale = Vector2(2.7812502, 2.0208333)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo24" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-28.999973, 76)
+scale = Vector2(2.7812502, 2.0208333)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo25" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(-21.999973, 64)
+scale = Vector2(2.7812502, 2.0208333)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo26" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(183.00002, -51)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo27" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(175.00002, -51)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo28" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(165.00002, -51)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo29" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(162.00002, -50)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo30" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(148.00002, -49)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo31" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(142.00002, -49)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo32" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(126.000015, -48)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo33" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(121.000015, -47)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo34" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(99.000015, -43)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo35" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(88.000015, -43)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo36" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(75.000015, -42)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo37" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(51.000015, -35)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo38" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(59.000015, -36)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo39" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(33.000015, -34)
+scale = Vector2(1.3281264, 1.1145833)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo40" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(458.00003, -42)
+rotation = -0.504466
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo41" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(446.00003, -34)
+rotation = -0.504466
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo42" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(437.00003, -27)
+rotation = -0.504466
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo43" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(423.00003, -20)
+rotation = -0.504466
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo44" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(413.00003, -11.000001)
+rotation = -0.504466
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo45" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(404.00003, -2.000002)
+rotation = -0.504466
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo46" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(389.00003, 4.999998)
+rotation = -0.504466
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo47" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(389.00003, 4.999998)
+rotation = -0.504466
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo48" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(371.00003, 9.999998)
+rotation = -0.16677713
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo49" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(378.00003, 6.999998)
+rotation = -0.16677713
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo50" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(377.00003, -11)
+rotation = -0.16677713
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo51" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(376.99997, -21)
+rotation = -0.16677713
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo52" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(350.99997, 18.999996)
+rotation = -0.16677713
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo53" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(333.00003, 20.999996)
+rotation = -0.16677713
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo54" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(324.00003, 23.999996)
+rotation = -0.16677713
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo55" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(310.00003, 27.999996)
+rotation = -0.16677713
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
+
+[node name="fogo56" type="AnimatedSprite2D" parent="Cenario de batalha/fire_effects"]
+position = Vector2(300.00003, 32.999996)
+rotation = -0.16677713
+scale = Vector2(1.7578136, 1.3489583)
+sprite_frames = SubResource("SpriteFrames_6exdr")
+autoplay = "default"
 
 [node name="Camera2D" type="Camera2D" parent="Cenario de batalha"]
 limit_bottom = 655
