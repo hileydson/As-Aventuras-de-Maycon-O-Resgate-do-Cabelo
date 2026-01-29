@@ -146,7 +146,7 @@ func _physics_process(delta: float) -> void:
 				# Se você quiser um pequeno "coice" para trás (Knockback), use:
 				velocity = collision.get_normal() * 1200 
 
-				var multiplicador = 1.5 if Input.is_action_pressed("key_w") else 1.0
+				var multiplicador = 3.0 if Input.is_action_pressed("key_w") else 1.0
 				collision.get_collider().apply_central_impulse(-collision.get_normal() * forca_impulso * multiplicador)
 				break;
 			

@@ -245,6 +245,9 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	#TEMP
+	print(Global.game_events["caixa_to_carry_moved"])
+	
 	if Input.is_action_just_pressed("ui_accept"):
 		emit_signal("player_clicou")
 		
@@ -256,7 +259,7 @@ func _process(delta: float) -> void:
 	
 
 	# TEMP PARA ANALISAR TODAS AS FASES
-	# return
+	return
 	
 	
 	# PLOTAR INIMIGO EM BATALHA

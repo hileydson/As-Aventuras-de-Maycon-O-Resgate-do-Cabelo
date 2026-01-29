@@ -6,11 +6,20 @@ extends Sprite2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
 @onready var inimigos: Node = $Inimigos
 @onready var axe_area: Area2D = $axe_area
+@onready var caixa_to_carry: RigidBody2D = $caixa_to_carry
 
 var played_axe:bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	# SET CAIXA OU QUEUEFREE SE NAO TIVER TRAGO A CAIXA
+	if Global.game_events["caixa_to_carry_moved"]:
+		Global.game_events["caixa_to_carry_moved"] = false
+	else:
+		caixa_to_carry.queue_free() 
+	
+	
 	Global.save_progress(get_tree().current_scene.name)
 	
 	#REINICIA AS BATALHAS

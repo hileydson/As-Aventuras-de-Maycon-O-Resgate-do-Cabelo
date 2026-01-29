@@ -243,6 +243,7 @@ texture = ExtResource("4_g3eks")
 [node name="cabelo_sound" type="AudioStreamPlayer2D" parent="Camera2D"]
 position = Vector2(-577, -324)
 stream = ExtResource("5_4ytvr")
+volume_db = 3.741
 
 [node name="mayconLooking" type="AnimatedSprite2D" parent="Camera2D"]
 position = Vector2(1, 177)

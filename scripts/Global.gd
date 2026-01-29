@@ -9,6 +9,7 @@ var battle_background:String = "1" # default o cenario de fogo fora do castelo
 var battle_next_enemy:String = "0"
 var battle_next_boss:int = 0
 var battle_started:bool = false
+var last_fase = "fase_1"
 #var before_prologo:bool = false #TESTE - correto eh TRUE
 
 # data to be saved
@@ -16,14 +17,22 @@ var can_load:bool = false
 var save_array = {}
 var default_language:String = language_pt_br
 var maycon_itens_default = {axe=false}
-var game_events_default = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
+var game_events_default = {caixa_to_carry_moved=false, axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
 var maycon_itens = {axe=false}
-var game_events = {axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
+var game_events = {caixa_to_carry_moved=false, axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
 var inimigos_mortos = {}
-var last_fase = "fase_1"
+
 
 
 func reset_save_to_fase_1()->void:
+	var back_to_main_camera = false
+	var back_to_fase = false
+	var battle_background:String = "1" # default o cenario de fogo fora do castelo
+	var battle_next_enemy:String = "0"
+	var battle_next_boss:int = 0
+	var battle_started:bool = false
+	var last_fase = "fase_1"
+	
 	maycon_itens = maycon_itens_default
 	game_events = game_events_default
 	inimigos_mortos = {}

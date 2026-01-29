@@ -52,6 +52,10 @@ func _on_dead_line_body_entered(body: Node2D) -> void:
 
 
 func _on_back_stage_body_entered(body: Node2D) -> void:
+	
+	if body is RigidBody2D:
+		Global.game_events["caixa_to_carry_moved"] = true
+	
 	get_tree().paused = true
 	Global.back_to_fase = true
 	await get_tree().create_timer(0.3).timeout 

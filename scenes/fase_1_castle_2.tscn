@@ -317,6 +317,11 @@ offset_bottom = 1605.0
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle/CanvasLayer"]
 environment = SubResource("Environment_wbttt")
 
+[node name="caixa_to_carry" parent="Fase1BeforeCastle" instance=ExtResource("12_wrggl")]
+position = Vector2(373, 228)
+rotation = 3.1415925
+scale = Vector2(-1.1315826, -1.0231465)
+
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)
 
@@ -386,11 +391,6 @@ offset_right = 866.0
 offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
-
-[node name="caixa" parent="." instance=ExtResource("12_wrggl")]
-position = Vector2(1891.9994, 904)
-rotation = 3.1415925
-scale = Vector2(-1.1315826, -1.0231465)
 
 [node name="fogo" type="AnimatedSprite2D" parent="."]
 position = Vector2(700, 1197)

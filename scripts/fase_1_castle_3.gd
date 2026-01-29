@@ -10,6 +10,7 @@ extends Sprite2D
 @onready var inimigos: Node = $Inimigos
 @onready var fogos: Node2D = $"../fogos"
 @onready var canvas_layer: CanvasLayer = $CanvasLayer
+@onready var caixa_to_carry: RigidBody2D = $caixa_to_carry
 
 var texture_no_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire.png")
 var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3.png")
@@ -17,6 +18,13 @@ var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase
 var temp_canvas_layer_fogo = canvas_layer
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	# SET CAIXA OU QUEUEFREE SE NAO TIVER TRAGO A CAIXA
+	if Global.game_events["caixa_to_carry_moved"]:
+		Global.game_events["caixa_to_carry_moved"] = false
+	else:
+		caixa_to_carry.queue_free() 
+	
 	Global.save_progress(get_tree().current_scene.name)
 	
 	#REINICIA AS BATALHAS
@@ -60,6 +68,10 @@ func _on_dead_line_body_entered(body: Node2D) -> void:
 
 
 func _on_back_stage_body_entered(body: Node2D) -> void:
+	
+	if body is RigidBody2D:
+		Global.game_events["caixa_to_carry_moved"] = true
+		
 	get_tree().paused = true
 	Global.back_to_fase = true
 	await get_tree().create_timer(0.3).timeout 
