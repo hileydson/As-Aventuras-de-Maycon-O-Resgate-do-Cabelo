@@ -464,6 +464,24 @@ scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_ncgmf")
 autoplay = "default"
 
+[node name="fogo13" type="AnimatedSprite2D" parent="."]
+position = Vector2(3028, 1237)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_ncgmf")
+autoplay = "default"
+
+[node name="fogo14" type="AnimatedSprite2D" parent="."]
+position = Vector2(3082.0002, 1221)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_ncgmf")
+autoplay = "default"
+
+[node name="fogo15" type="AnimatedSprite2D" parent="."]
+position = Vector2(3041, 1156)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_ncgmf")
+autoplay = "default"
+
 [connection signal="body_entered" from="Fase1BeforeCastle/axe_area" to="Fase1BeforeCastle" method="_on_axe_area_body_entered"]
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]

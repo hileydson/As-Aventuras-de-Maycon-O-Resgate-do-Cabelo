@@ -29,8 +29,8 @@ process_mode = 1
 
 [node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
 process_mode = 1
-position = Vector2(584, 332.75)
-scale = Vector2(0.3655303, 0.4869792)
+position = Vector2(604.49994, 332.75)
+scale = Vector2(0.4157197, 0.4869792)
 texture = ExtResource("1_ryeef")
 script = ExtResource("2_ryeef")
 

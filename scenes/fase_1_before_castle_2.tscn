@@ -511,6 +511,48 @@ sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
+[node name="fogo8" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2979, 1322.0001)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
+[node name="fogo9" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(3066, 1320)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
+[node name="fogo10" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(3106, 1322.0001)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
+[node name="fogo11" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(3078.9998, 1241)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
+[node name="fogo12" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(3039.9998, 1216)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
+[node name="fogo13" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(3039.9998, 1216)
+scale = Vector2(6.4062505, 6.718751)
+sprite_frames = SubResource("SpriteFrames_kvuau")
+autoplay = "default"
+frame_progress = 0.7696933
+
 [node name="smoke" type="AnimatedSprite2D" parent="effects"]
 position = Vector2(1800.0078, 167.5311)
 rotation = 3.1415431

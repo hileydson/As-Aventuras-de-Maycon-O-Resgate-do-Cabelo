@@ -1,4 +1,4 @@
-[gd_scene load_steps=73 format=3 uid="uid://d3cev6uiwwro4"]
+[gd_scene load_steps=74 format=3 uid="uid://d3cev6uiwwro4"]
 
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
 [ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
@@ -15,6 +15,7 @@
 [ext_resource type="Shader" uid="uid://b3xewfakdijcn" path="res://scenes/fase_1_before_castle_4.gdshader" id="9_t7fus"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="10_ivltl"]
 [ext_resource type="Script" uid="uid://j0vbl5413yex" path="res://scripts/effect_stage_show.gd" id="10_n1ahb"]
+[ext_resource type="Texture2D" uid="uid://drljpi330bnf1" path="res://assets/novas_imagens/objects/block_hide_gemini.png" id="12_7xe64"]
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="14_ivltl"]
 [ext_resource type="AudioStream" uid="uid://drnd65usjc7l7" path="res://assets/novos_audios/stage_sound.mp3" id="15_avl2m"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="15_avwlo"]
@@ -732,6 +733,10 @@ offset_bottom = 1605.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle1/CanvasLayer"]
 environment = SubResource("Environment_t3aas")
+
+[node name="BlockHideGemini" type="Sprite2D" parent="Fase1BeforeCastle1"]
+position = Vector2(1469, 567)
+texture = ExtResource("12_7xe64")
 
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)

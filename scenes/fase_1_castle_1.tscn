@@ -558,6 +558,36 @@ scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
+[node name="fogo12" type="AnimatedSprite2D" parent="."]
+position = Vector2(3026.0002, 1311)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo13" type="AnimatedSprite2D" parent="."]
+position = Vector2(3054, 1280)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo14" type="AnimatedSprite2D" parent="."]
+position = Vector2(3045, 1207)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo15" type="AnimatedSprite2D" parent="."]
+position = Vector2(3069.0002, 1190)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
+[node name="fogo16" type="AnimatedSprite2D" parent="."]
+position = Vector2(3060.0002, 1176)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_htegb")
+autoplay = "default"
+
 [connection signal="ready" from="Fase1BeforeCastle/Camera_temp" to="Fase1BeforeCastle/Camera_temp" method="_on_ready"]
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]

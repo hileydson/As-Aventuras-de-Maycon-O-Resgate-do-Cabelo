@@ -1,4 +1,4 @@
-[gd_scene load_steps=127 format=4 uid="uid://bkw572ls3qfdj"]
+[gd_scene load_steps=137 format=4 uid="uid://bkw572ls3qfdj"]
 
 [ext_resource type="Texture2D" uid="uid://cs1sa5shl3sps" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_2.png" id="1_bn463"]
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_fsdbl"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://5x3arlktkuq8" path="res://assets/novas_imagens/effects/smoke_sheet.png" id="11_yl2kb"]
 [ext_resource type="Texture2D" uid="uid://cb0vy6xntexbt" path="res://assets/novas_imagens/effects/round_explosion/spritesheet/spritesheet.png" id="12_0q26h"]
 [ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="12_6qt3w"]
+[ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="13_6qt3w"]
 [ext_resource type="AudioStream" uid="uid://cbsglgyfgjkb4" path="res://assets/novos_audios/breaking_glass.mp3" id="13_buahj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yvup1"]
@@ -1037,6 +1038,70 @@ data = PackedByteArray("SUQzBAAAAAABAFRYWFgAAAASAAADbWFqb3JfYnJhbmQAZGFzaABUWFhY
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6qt3w"]
 size = Vector2(20, 675)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_isw4w"]
+atlas = ExtResource("13_6qt3w")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mm46c"]
+atlas = ExtResource("13_6qt3w")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lfjsi"]
+atlas = ExtResource("13_6qt3w")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kivjr"]
+atlas = ExtResource("13_6qt3w")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_16te5"]
+atlas = ExtResource("13_6qt3w")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f8quw"]
+atlas = ExtResource("13_6qt3w")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0qa7q"]
+atlas = ExtResource("13_6qt3w")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t428b"]
+atlas = ExtResource("13_6qt3w")
+region = Rect2(224, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0q26h"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_isw4w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mm46c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lfjsi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kivjr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_16te5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f8quw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0qa7q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t428b")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_pg6gg"]
 normal = Vector2(-1, 0)
 distance = 0.89923096
@@ -1171,6 +1236,83 @@ parameters/looping = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Fase1BeforeCastle/start_seco_break_capsule"]
 position = Vector2(-735, 56.5)
 shape = SubResource("RectangleShape2D_6qt3w")
+
+[node name="smoke15" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1430.9998, 584.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
+
+[node name="smoke16" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1482.9998, 613.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
+
+[node name="smoke17" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1522, 623.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
+
+[node name="smoke18" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1475, 548.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
+
+[node name="smoke19" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-1578, 724.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
+
+[node name="smoke20" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-1556.9999, 667.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
+
+[node name="smoke21" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-1583, 592.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
+
+[node name="smoke22" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-1607, 535.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
+
+[node name="smoke23" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-1604, 436.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
+
+[node name="smoke24" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-1510.9999, 672.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
+
+[node name="smoke25" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(-1492.9999, 680.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_0q26h")
+autoplay = "default"
 
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)

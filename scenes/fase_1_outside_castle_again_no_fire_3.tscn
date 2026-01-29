@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://dscts1war82ip"]
+[gd_scene load_steps=43 format=3 uid="uid://dscts1war82ip"]
 
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_0pvwr"]
 [ext_resource type="Texture2D" uid="uid://c4anaqd7mthox" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_3.png" id="1_2qpmw"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="5_u2g44"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="6_0pvwr"]
 [ext_resource type="PackedScene" uid="uid://143260dknkmv" path="res://scenes/inimigos/cabelo.tscn" id="7_737m3"]
+[ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="7_kpgq7"]
 [ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="8_u2g44"]
 [ext_resource type="Texture2D" uid="uid://5x3arlktkuq8" path="res://assets/novas_imagens/effects/smoke_sheet.png" id="9_0pvwr"]
 
@@ -65,6 +66,70 @@ _data = {
 &"maycon_back_to_fase": SubResource("Animation_aybw1"),
 &"maycon_falling": SubResource("Animation_36c4s")
 }
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_isw4w"]
+atlas = ExtResource("7_kpgq7")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mm46c"]
+atlas = ExtResource("7_kpgq7")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lfjsi"]
+atlas = ExtResource("7_kpgq7")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kivjr"]
+atlas = ExtResource("7_kpgq7")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_16te5"]
+atlas = ExtResource("7_kpgq7")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f8quw"]
+atlas = ExtResource("7_kpgq7")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0qa7q"]
+atlas = ExtResource("7_kpgq7")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t428b"]
+atlas = ExtResource("7_kpgq7")
+region = Rect2(224, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xaswh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_isw4w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mm46c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lfjsi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kivjr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_16te5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f8quw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0qa7q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t428b")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_pg6gg"]
 normal = Vector2(-1, 0)
@@ -239,6 +304,83 @@ limit_right = 3169
 limit_bottom = 1357
 
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
+
+[node name="smoke25" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1368.0001, 738.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
+
+[node name="smoke26" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1417.0001, 720.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
+
+[node name="smoke27" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1440.0001, 671.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
+
+[node name="smoke28" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1471.0001, 648.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
+
+[node name="smoke29" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1510.0001, 636.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
+
+[node name="smoke30" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1555.0001, 611.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
+
+[node name="smoke31" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1603.9999, 562.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
+
+[node name="smoke32" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1607.9999, 457.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
+
+[node name="smoke33" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1599.9999, 441.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
+
+[node name="smoke34" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1478.9999, 572.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
+
+[node name="smoke35" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(1445.9999, 591.99994)
+rotation = 0.025717258
+scale = Vector2(5.700968, 6.5159583)
+sprite_frames = SubResource("SpriteFrames_xaswh")
+autoplay = "default"
 
 [node name="next_scene" type="Area2D" parent="."]
 position = Vector2(16, -2)

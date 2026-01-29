@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://yicge48108e0"]
+[gd_scene load_steps=57 format=3 uid="uid://yicge48108e0"]
 
 [ext_resource type="Script" uid="uid://jv5gempkmtvq" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://fyyoe5vf3xm1" path="res://scenes/maycon.tscn" id="1_uwrxv"]
@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://clkgb4q1xsqpt" path="res://assets/novas_imagens/inimigos/balao_conversa.png" id="12_ca42v"]
 [ext_resource type="Texture2D" uid="uid://hd7ihpk8l2bg" path="res://assets/novas_imagens/effects/Pixel Holy Spell/01.png" id="14_trtic"]
 [ext_resource type="Texture2D" uid="uid://dg1fnlmoadjti" path="res://assets/novas_imagens/inimigos/seco/olindao_tripa_maior.png" id="15_ir15t"]
+[ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="17_rysoc"]
 
 [sub_resource type="Animation" id="Animation_gee14"]
 length = 0.001
@@ -263,6 +264,70 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_isw4w"]
+atlas = ExtResource("17_rysoc")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mm46c"]
+atlas = ExtResource("17_rysoc")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lfjsi"]
+atlas = ExtResource("17_rysoc")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kivjr"]
+atlas = ExtResource("17_rysoc")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_16te5"]
+atlas = ExtResource("17_rysoc")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f8quw"]
+atlas = ExtResource("17_rysoc")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0qa7q"]
+atlas = ExtResource("17_rysoc")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t428b"]
+atlas = ExtResource("17_rysoc")
+region = Rect2(224, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ssvqc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_isw4w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mm46c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lfjsi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kivjr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_16te5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f8quw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0qa7q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t428b")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [node name="Game" type="Node2D"]
 position = Vector2(308.99997, 348.99997)
 scale = Vector2(1.1134915, 1.3669924)
@@ -372,6 +437,10 @@ position = Vector2(765.1608, -29.2613)
 scale = Vector2(-1.259191, 1.0362632)
 
 [node name="explosao_portal" parent="." instance=ExtResource("6_vtaks")]
+position = Vector2(741.8107, 57.059586)
+scale = Vector2(24.778183, 23.184599)
+
+[node name="explosao_portal2" parent="." instance=ExtResource("6_vtaks")]
 position = Vector2(741.8107, 57.059586)
 scale = Vector2(24.778183, 23.184599)
 
@@ -498,6 +567,111 @@ scale = Vector2(4.0960326, 1.9548874)
 sprite_frames = SubResource("SpriteFrames_qouja")
 frame = 6
 frame_progress = 1.0
+
+[node name="smoke25" type="AnimatedSprite2D" parent="."]
+position = Vector2(592.7302, 137.52823)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke26" type="AnimatedSprite2D" parent="."]
+position = Vector2(615.1822, 133.87056)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke27" type="AnimatedSprite2D" parent="."]
+position = Vector2(661.88196, 138.25975)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke28" type="AnimatedSprite2D" parent="."]
+position = Vector2(706.7859, 128.74982)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke29" type="AnimatedSprite2D" parent="."]
+position = Vector2(765.1607, 127.28675)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke30" type="AnimatedSprite2D" parent="."]
+position = Vector2(729.2378, 138.25975)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke31" type="AnimatedSprite2D" parent="."]
+position = Vector2(790.3068, 133.87056)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke32" type="AnimatedSprite2D" parent="."]
+position = Vector2(829.82227, 128.0183)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke33" type="AnimatedSprite2D" parent="."]
+position = Vector2(853.17224, 119.971436)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke34" type="AnimatedSprite2D" parent="."]
+position = Vector2(868.4395, 107.53538)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke35" type="AnimatedSprite2D" parent="."]
+position = Vector2(889.99335, 94.36778)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke36" type="AnimatedSprite2D" parent="."]
+position = Vector2(918.73175, 86.32092)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke37" type="AnimatedSprite2D" parent="."]
+position = Vector2(916.9356, 50.47581)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke38" type="AnimatedSprite2D" parent="."]
+position = Vector2(915.13947, 21.214493)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
+
+[node name="smoke39" type="AnimatedSprite2D" parent="."]
+position = Vector2(915.13947, 21.214493)
+rotation = 0.025717258
+scale = Vector2(3.3046715, 2.903217)
+sprite_frames = SubResource("SpriteFrames_ssvqc")
+autoplay = "default"
 
 [connection signal="body_entered" from="Area2D" to="Maycon" method="_on_area_2d_body_entered"]
 [connection signal="body_entered" from="Area2_portal" to="." method="_on_area_2_portal_body_entered"]
