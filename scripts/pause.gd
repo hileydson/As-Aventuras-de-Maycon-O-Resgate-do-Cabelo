@@ -10,14 +10,17 @@ extends Control
 @onready var powers: Label = $black_screen/powers
 @onready var v_box_container: VBoxContainer = $black_screen/VBoxContainer
 @onready var pause: Label = $black_screen/pause
+@onready var maycon_hp: Node2D = $maycon_hp
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
 	if Global.game_events["before_prologo"] == false:
 		v_box_container.visible = true
+		maycon_hp.visible = true
 	else:
 		v_box_container.visible = false
+		maycon_hp.visible = false
 	
 	if Global.default_language == Global.language_pt_br:
 		powers.text = " SOCO \n CHUTE \n\n PULO"
@@ -47,6 +50,10 @@ func processa_pause_unpause()->void:
 			Global.back_to_main_camera = true
 			get_tree().paused = false
 	else:
+		$maycon_hp/hp_1.visible = Global.maycon_hp_count<=2
+		$maycon_hp/hp_2.visible = Global.maycon_hp_count<=1
+		$maycon_hp/hp_3.visible = Global.maycon_hp_count<=0
+		
 		close.grab_focus()
 		set_process_mode(Node.PROCESS_MODE_ALWAYS)
 		camera.make_current()
@@ -55,6 +62,9 @@ func processa_pause_unpause()->void:
 		maycon.stop()
 		pause_animation.play("intro")
 		maycon.play("idle")
+		
+		
+		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

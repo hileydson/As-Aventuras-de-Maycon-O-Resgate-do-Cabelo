@@ -9,6 +9,7 @@ extends Sprite2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Global.maycon_hp_count = 0
 	Global.save_progress(get_tree().current_scene.name)
 	
 	#REINICIA AS BATALHAS

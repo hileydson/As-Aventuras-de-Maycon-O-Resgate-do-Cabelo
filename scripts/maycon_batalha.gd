@@ -38,9 +38,11 @@ var defense_limit_reached:bool = false
 var defense_limit:int = 6
 var defense_count:int = 0
 
+#var hp_count:int = 0
+#Global.maycon_hp_count
 var hp_limit:int = 3
 var hp_limit_reached:bool = false
-var hp_count:int = 0
+
 
 func jump()->void:
 	if Input.is_action_just_pressed("ui_accept") && maycon_batalha.animation != "jump_right" && is_on_floor() && !batalha_moves.is_playing():
@@ -168,15 +170,15 @@ func _on_area_2d_area_entered(area: Area2D) -> void:
 		if $"../Camera2D":
 			camera_2d.tremer(10, 0.5)
 			
-		hp_count = hp_count+1
+		Global.maycon_hp_count = Global.maycon_hp_count+1
 		
 		#if hp_count == 1:
 			#hp_4.get_node("hp").play("explotion")
-		if hp_count == 1:
+		if Global.maycon_hp_count == 1:
 			hp_3.get_node("hp").play("explotion")
-		if hp_count == 2:
+		if Global.maycon_hp_count == 2:
 			hp_2.get_node("hp").play("explotion")
-		if hp_count == 3:
+		if Global.maycon_hp_count == 3:
 			hp_1.get_node("hp").play("explotion")
 			batalha_moves.died = true
 		

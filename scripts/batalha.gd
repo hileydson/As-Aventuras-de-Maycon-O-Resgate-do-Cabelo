@@ -111,6 +111,7 @@ func maycon_died()->void:
 	Global.reset_died()
 
 func victory()->void:
+	#Global.maycon_hp_count = maycon.hp_count
 	battle_finished = true
 	destroy.visible = true
 	battle_song.stop()
@@ -147,10 +148,24 @@ func add_enemy()->void:
 	add_child(current_enemy)
 	current_enemy.global_position = inimigo_batalha.global_position
 	
+func reset_maycon_batalha()->void:
+	power_count = 0
+	battle_finished = false
+	enemy_hurt = false
+	enemy_attacking = false
+	
+	#reset do maycon defense tb
+	maycon.defense_limit_reached = false
+	maycon.defense_count = 0
+	#maycon.hp_limit_reached = false
+	#maycon.hp_count = 0 
 	
 func play_inicio()->void:
+	#visibilidade do sangue continuo
+	$"../hp_1".visible = Global.maycon_hp_count<=2
+	$"../hp_2".visible = Global.maycon_hp_count<=1
+	$"../hp_3".visible = Global.maycon_hp_count<=0
 	
-	#await get_tree().create_timer(0.2).timeout
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)
 	fade.get_node("Transition").play("fade_in")
 	camera_maycon.make_current()
@@ -167,21 +182,8 @@ func play_inicio()->void:
 	else:
 		battle_song.play()
 	
-	#reset
-	power_count = 0
-	battle_finished = false
-	enemy_hurt = false
-	enemy_attacking = false
+	reset_maycon_batalha()
 	
-	#reset do maycon defense tb
-	maycon.defense_limit_reached = false
-	maycon.defense_count = 0
-	maycon.defense_count = 0
-	maycon.hp_limit_reached = false
-	maycon.hp_count = 0 
-	
-	#TODO: PENSAR EM OUTRA FORMA DINAMICA
-	#inimigo_1.get_node("inimigo_1").resetEnemy()
 	current_enemy.resetEnemy()
 
 func show_first_battle() -> void:	
@@ -246,7 +248,7 @@ func _ready() -> void:
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
+		
 	if Input.is_action_just_pressed("ui_accept"):
 		emit_signal("player_clicou")
 		
