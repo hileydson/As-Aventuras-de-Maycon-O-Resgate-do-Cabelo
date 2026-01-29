@@ -117,7 +117,9 @@ func victory()->void:
 	victory_label.visible = true
 	
 	ds_pain.play()
-	victory_sound.play()
+	
+	if !boss_song :
+		victory_sound.play()
 	
 	await self.player_clicou
 	fade.get_node("Transition").play("fade_out")
