@@ -358,9 +358,9 @@ collision_mask = 1
 position = Vector2(11.542603, 0.47611237)
 scale = Vector2(4.6533337, 4.4133334)
 zoom = Vector2(0.5, 0.5)
-limit_left = 0
-limit_top = 0
-limit_right = 3175
+limit_left = 7
+limit_top = 21
+limit_right = 3159
 limit_bottom = 1355
 
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
