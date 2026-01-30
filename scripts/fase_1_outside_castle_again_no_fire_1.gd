@@ -76,6 +76,7 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 func _on_block_gilhotina_body_entered(body: Node2D) -> void:
 	
 	if !Global.maycon_itens["axe"] && Global.game_events["gilhotina_broken"] == false:
+		$"../maycon_itens".get_node("canvas").visible = false
 		Global.battle_started = true # para pausar maycon
 		fade.get_node("Transition").play("fade_out")
 		await get_tree().create_timer(2.0).timeout 
@@ -92,9 +93,11 @@ func _on_block_gilhotina_body_entered(body: Node2D) -> void:
 		msg_block.visible = false
 		await get_tree().create_timer(1.0).timeout
 		Global.battle_started = false
+		$"../maycon_itens".get_node("canvas").visible = true
 		get_tree().reload_current_scene()
 	
 	if Global.maycon_itens["axe"] && Global.game_events["gilhotina_broken"] == false:
+		$"../maycon_itens".get_node("canvas").visible = false
 		guilhote_temp.visible = true
 		axe.visible = true
 		barulho_gilhotina.stop()
@@ -110,6 +113,7 @@ func _on_block_gilhotina_body_entered(body: Node2D) -> void:
 		Global.battle_started = false
 		Global.game_events["gilhotina_broken"] = true
 		Global.maycon_itens["axe"] = false
+		$"../maycon_itens".get_node("canvas").visible = true
 		get_tree().reload_current_scene()
 		
 		

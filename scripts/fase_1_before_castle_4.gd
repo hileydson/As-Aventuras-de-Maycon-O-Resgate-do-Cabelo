@@ -43,6 +43,7 @@ func _process(delta: float) -> void:
 
 
 func _on_next_scene_body_entered(body: Node2D) -> void:	
+	$"../maycon_itens".get_node("canvas").visible = false
 	canvas_layer.visible = false
 	get_tree().paused = true
 	await get_tree().create_timer(0.3).timeout 
@@ -53,6 +54,7 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	castle.visible = true
 	loading.play("default")
 	await get_tree().create_timer(3.0).timeout 
+	$"../maycon_itens".get_node("canvas").visible = true
 	get_tree().change_scene_to_file("res://scenes/fase_1_castle_1.tscn")
 
 

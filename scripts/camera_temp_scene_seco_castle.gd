@@ -12,6 +12,7 @@ extends Camera2D
 
 func _on_ready() -> void:
 	if Global.game_events["seco_first_scene_castle"]==false:
+		$"../../maycon_itens".get_node("canvas").visible = false
 		canvas_layer.visible = false
 		GameSongs.stop(1)
 		inimigo_boss_seco.get_node("hps").visible = false
@@ -64,6 +65,7 @@ func _on_ready() -> void:
 		
 		#volta ao jogo
 		$Running.stop()
+		$"../../maycon_itens".get_node("canvas").visible = true
 		GameSongs.play_song(1)
 		Global.game_events["seco_first_scene_castle"]=true
 		Global.save_progress(get_tree().current_scene.name)
