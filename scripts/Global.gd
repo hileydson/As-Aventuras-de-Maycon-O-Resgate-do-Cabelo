@@ -18,8 +18,8 @@ var save_array = {}
 var default_language:String = language_pt_br
 var maycon_hp_count:int = 0
 var maycon_itens_default = {axe=false}
-var game_events_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
-axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
+var game_stage_1_events_died_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=true, 
+axe_taken=true, gilhotina_broken=true, seco_break_capsule=false, seco_first_scene_castle=true, first_battle=false, before_prologo=false}
 var maycon_itens = {axe=false}
 var game_events = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
@@ -30,13 +30,13 @@ var inimigos_mortos = {}
 func reset_save_to_fase_1()->void:
 	maycon_hp_count = 0	
 	maycon_itens = maycon_itens_default
-	game_events = game_events_default
+	game_events = game_stage_1_events_died_default
 	inimigos_mortos = {}
-	save_progress("fase_1")
+	save_progress("castle_1")
 	
-func reset_died()->void:
+func reset_died_stage1()->void:
 	reset_save_to_fase_1()
-	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_1.tscn") 
+	get_tree().change_scene_to_file("res://scenes/fase_1_castle_1.tscn") 
 	
 
 func save_progress(fase:String)->void:
