@@ -6,6 +6,7 @@ extends Sprite2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
 @onready var fase_1_before_castle: Sprite2D = $"."
 @onready var mk_dudun: AudioStreamPlayer = $MkDudun
+@onready var caixa_to_carry: RigidBody2D = $"../caixa_to_carry"
 
 var texture_no_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire.png")
 var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3.png")
@@ -13,6 +14,9 @@ var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
+	print(Global.game_events["axe_taken"])
+	if Global.game_events["axe_taken"]:
+		caixa_to_carry.queue_free()
 	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0

@@ -80,3 +80,4 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 
 func _on_axe_area_body_entered(body: Node2D) -> void:
 	Global.maycon_itens["axe"] = true
+	Global.game_events["axe_taken"] = true
