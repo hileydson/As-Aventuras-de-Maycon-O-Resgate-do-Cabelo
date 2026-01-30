@@ -791,6 +791,7 @@ animations = [{
 radius = 65.62012
 
 [node name="sangue_fill_scene" type="Node2D"]
+z_index = 3
 
 [node name="sangue_fill" type="Area2D" parent="."]
 position = Vector2(661, -23)

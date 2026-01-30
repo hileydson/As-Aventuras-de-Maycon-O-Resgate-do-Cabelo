@@ -86,6 +86,7 @@ func change_enemy_hurt(boolean:bool)->void:
 	enemy_hurt = boolean
 
 func maycon_died()->void:
+	$"../../../maycon_itens".get_node("canvas").visible = false
 	GameSongs.stop(1)
 	destroy_maycon.visible = true
 	battle_song.stop()
@@ -105,13 +106,14 @@ func maycon_died()->void:
 	you_died_label.visible = false
 	await get_tree().create_timer(1.0).timeout
 	Global.battle_started = false
+	$"../../../maycon_itens".get_node("canvas").visible = true
 	GameSongs.process_mode = Node.PROCESS_MODE_INHERIT
 	#TODO: para a demo, apenas volta para a fase 1, mas para uma versao final seria 
 	# melhor analisar qual a ultima fase salva e ir por lah
 	Global.reset_died()
 
 func victory()->void:
-	#Global.maycon_hp_count = maycon.hp_count
+	$"../../../maycon_itens".get_node("canvas").visible = false
 	battle_finished = true
 	destroy.visible = true
 	battle_song.stop()
@@ -135,6 +137,7 @@ func victory()->void:
 	destroy.visible = false
 	GameSongs.process_mode = Node.PROCESS_MODE_INHERIT
 	await get_tree().create_timer(0.6).timeout	
+	$"../../../maycon_itens".get_node("canvas").visible = true
 	
 	
 func add_enemy()->void:

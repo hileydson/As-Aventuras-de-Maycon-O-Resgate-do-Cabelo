@@ -1,4 +1,4 @@
-[gd_scene load_steps=69 format=3 uid="uid://dvs2lwybcbwt2"]
+[gd_scene load_steps=70 format=3 uid="uid://dvs2lwybcbwt2"]
 
 [ext_resource type="Script" uid="uid://bdteoruwoiuea" path="res://scripts/maycon_fase.gd" id="1_ju0dp"]
 [ext_resource type="Texture2D" uid="uid://dvqh0bes12frh" path="res://assets/novas_imagens/maycon/maycon_kick.png" id="3_lwkg1"]
@@ -499,6 +499,9 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_eojr0"]
+radius = 19.026299
+
 [node name="Maycon" type="CharacterBody2D"]
 process_mode = 1
 light_mask = 513
@@ -550,6 +553,14 @@ volume_db = -8.71
 [node name="Punch" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("49_db654")
 volume_db = -11.019
+
+[node name="area2d" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="collision" type="CollisionShape2D" parent="area2d"]
+position = Vector2(6, 37)
+shape = SubResource("CircleShape2D_eojr0")
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="ready" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_ready"]

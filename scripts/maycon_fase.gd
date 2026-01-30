@@ -126,7 +126,7 @@ func _physics_process(delta: float) -> void:
 		animated_sprite_2d.flip_h = false			
 			
 	move_and_slide()
-	var is_colliding:bool = get_slide_collision_count()>1
+	var is_colliding:bool = (get_slide_collision_count()>1) || ($area2d.get_overlapping_areas().size()>0)
 	
 	# handles double jump 
 	double_jump(is_colliding)
