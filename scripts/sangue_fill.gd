@@ -3,13 +3,14 @@ extends Area2D
 @onready var sangue_sprite: AnimatedSprite2D = $sangue_sprite
 @onready var buttons: Node2D = $buttons
 
+signal taken_hp
 var played:bool = false
 
 func _process(delta: float) -> void:
-	
 	if sangue_fill.get_overlapping_bodies().size() >0 && played==false:
 		buttons.visible = true
 		if Input.is_action_pressed("ui_accept"):
+			taken_hp.emit(true)
 			played = true
 			buttons.visible = false
 			Global.maycon_hp_count = 0

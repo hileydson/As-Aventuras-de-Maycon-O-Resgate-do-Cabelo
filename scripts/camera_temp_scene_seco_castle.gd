@@ -16,6 +16,7 @@ func _on_ready() -> void:
 		canvas_layer.visible = false
 		GameSongs.stop(1)
 		inimigo_boss_seco.get_node("hps").visible = false
+		maycon_fase.visible = false
 		maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
 		
 		#executa cena do seco levando o cabelo somente 1x
@@ -64,6 +65,7 @@ func _on_ready() -> void:
 		
 		
 		#volta ao jogo
+		maycon_fase.visible = true
 		$Running.stop()
 		$"../../maycon_itens".get_node("canvas").visible = true
 		GameSongs.play_song(1)

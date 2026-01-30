@@ -1,4 +1,4 @@
-[gd_scene load_steps=137 format=4 uid="uid://bkw572ls3qfdj"]
+[gd_scene load_steps=138 format=4 uid="uid://bkw572ls3qfdj"]
 
 [ext_resource type="Texture2D" uid="uid://cs1sa5shl3sps" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_2.png" id="1_bn463"]
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_fsdbl"]
@@ -15,6 +15,7 @@
 [ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="12_6qt3w"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="13_6qt3w"]
 [ext_resource type="AudioStream" uid="uid://cbsglgyfgjkb4" path="res://assets/novos_audios/breaking_glass.mp3" id="13_buahj"]
+[ext_resource type="PackedScene" uid="uid://ct4euwv2ox56v" path="res://scenes/sangue_fill_scene.tscn" id="16_0q26h"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yvup1"]
 atlas = ExtResource("7_k5iv1")
@@ -1376,6 +1377,9 @@ offset_right = 866.0
 offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="sangue_fill_scene" parent="." instance=ExtResource("16_0q26h")]
+position = Vector2(522, 991)
 
 [connection signal="body_entered" from="Fase1BeforeCastle/start_seco_break_capsule" to="Fase1BeforeCastle" method="_on_start_seco_break_capsule_body_entered"]
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]

@@ -5,11 +5,19 @@ extends Sprite2D
 @onready var camera: Camera2D = $maycon_fase/Camera2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
 @onready var camera_temp: Camera2D = $Camera_temp
+@onready var sangue_fill_scene: Node2D = $"../sangue_fill_scene"
 
-
+func taken_hp(taken_hp):
+	Global.game_events["taken_hp_fase_1_castle_1"]=true
+	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
+	
+	if Global.game_events["taken_hp_fase_1_castle_1"]:
+		$"../sangue_fill_scene".queue_free()
+	else:
+		sangue_fill_scene.get_node("sangue_fill").taken_hp.connect(taken_hp)
 	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0

@@ -815,8 +815,8 @@ position = Vector2(-658, 28)
 shape = SubResource("CircleShape2D_iwgai")
 
 [node name="buttons" type="Node2D" parent="sangue_fill"]
-position = Vector2(335, -60)
-scale = Vector2(1.5599976, 1.7200006)
+position = Vector2(657, -105)
+scale = Vector2(2.0800023, 2.440001)
 
 [node name="BlankWhiteSuperWide" type="Sprite2D" parent="sangue_fill/buttons"]
 position = Vector2(-583.645, 91.7475)
