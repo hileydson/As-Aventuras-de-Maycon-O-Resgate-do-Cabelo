@@ -2053,7 +2053,7 @@ rotation = 3.1415925
 scale = Vector2(3.6918721, 3.6438017)
 
 [node name="hp_2" parent="Cenario de batalha" instance=ExtResource("34_dho1k")]
-position = Vector2(-500.99976, 295)
+position = Vector2(-496.99976, 295)
 rotation = 3.1415925
 scale = Vector2(3.6918721, 3.6438017)
 
