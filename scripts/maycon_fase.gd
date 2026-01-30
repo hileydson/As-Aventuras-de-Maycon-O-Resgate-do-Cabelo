@@ -120,9 +120,11 @@ func _physics_process(delta: float) -> void:
 		var desaceleracao = 10000 
 		velocity = velocity.move_toward(Vector2.ZERO, desaceleracao * delta)	
 
-	if direction == -1:
+	# Se a direção for qualquer valor negativo (ex: -0.1, -0.5, -1.0)
+	if direction < 0:
 		animated_sprite_2d.flip_h = true
-	if direction == 1:
+	# Se a direção for qualquer valor positivo (ex: 0.1, 0.5, 1.0)
+	elif direction > 0:
 		animated_sprite_2d.flip_h = false			
 			
 	move_and_slide()

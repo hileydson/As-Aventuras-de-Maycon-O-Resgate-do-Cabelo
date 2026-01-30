@@ -46,7 +46,6 @@ func double_jump()->void:
 		DOUBLE_JUMP_COUNT = 0
 		
 func _physics_process(delta: float) -> void:
-	
 	if pausePlayer == true:
 		animated_sprite_2d.play("idle_right")
 		return
@@ -92,7 +91,8 @@ func _physics_process(delta: float) -> void:
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-
+	
+	
 	# Se a direção for qualquer valor negativo (ex: -0.1, -0.5, -1.0)
 	if direction < 0:
 		animated_sprite_2d.flip_h = true
