@@ -25,7 +25,7 @@ func _ready() -> void:
 	if Global.default_language == Global.language_pt_br:
 		powers.text = " SOCO \n CHUTE \n\n PULO"
 		close.text = "Fechar"
-		quit.text = "Sair"
+		quit.text = "Salvar & Sair"
 		run_label.text = "Correr"
 		down_label.text = "Agachar"
 		
@@ -35,7 +35,7 @@ func _ready() -> void:
 	else:
 		powers.text = " PUNCH \n KICK \n\n JUMP"
 		close.text = "Close"
-		quit.text = "Quit"
+		quit.text = "Save & Quit"
 		run_label.text = "Run"
 		down_label.text = "Croutch"
 		
