@@ -90,6 +90,7 @@ func reset_maycon_motion()->void:
 
 func _on_start_seco_break_capsule_body_entered(body: Node2D) -> void:
 	#start scene seco break capsule
+	$"../maycon_itens".get_node("canvas").visible = false
 	inimigo_boss_seco.get_node("hps").visible = false
 	Global.battle_started = true
 	explotion.play("default")
@@ -105,6 +106,7 @@ func _on_start_seco_break_capsule_body_entered(body: Node2D) -> void:
 	await get_tree().create_timer(6.0).timeout 
 	inimigo_boss_seco.flip_h = true
 	inimigo_boss_seco.get_node("hps").visible = true
+	$"../maycon_itens".get_node("canvas").visible = true
 	
 	
 	
