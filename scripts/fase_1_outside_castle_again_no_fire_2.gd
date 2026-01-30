@@ -24,7 +24,7 @@ func taken_hp(taken_hp):
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
 	
-	if Global.game_events["taken_hp_fase_1_castle_1"]:
+	if Global.game_events["taken_hp_fase_1_outside_castle_again_no_fire_2"]:
 		$"../sangue_fill_scene".queue_free()
 	else:
 		sangue_fill_scene.get_node("sangue_fill").taken_hp.connect(taken_hp)
