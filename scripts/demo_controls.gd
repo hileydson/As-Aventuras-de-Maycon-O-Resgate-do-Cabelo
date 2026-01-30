@@ -16,7 +16,7 @@ func _ready() -> void:
 	await get_tree().create_timer(10.0).timeout
 	menu_instance.get_node("black_screen/auto_fade_in").get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.5).timeout
-	Global.game_events["before_prologo"] = false 
+	Global.game_events["before_prologo"] = true 
 	get_viewport().gui_disable_input = false
 	get_tree().change_scene_to_file("res://scenes/intro_historia.tscn")
 

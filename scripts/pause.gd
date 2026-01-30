@@ -14,8 +14,7 @@ extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
-	if Global.game_events["before_prologo"] == false:
+	if Global.game_events["before_prologo"]==false:
 		v_box_container.visible = true
 		maycon_hp.visible = true
 	else:
@@ -54,6 +53,13 @@ func _ready() -> void:
 		
 
 func processa_pause_unpause()->void:
+	if Global.game_events["before_prologo"]==false:
+		v_box_container.visible = true
+		maycon_hp.visible = true
+	else:
+		v_box_container.visible = false
+		maycon_hp.visible = false
+	
 	if get_tree().paused:
 			close.release_focus()
 			quit.release_focus()
@@ -67,9 +73,11 @@ func processa_pause_unpause()->void:
 		if $"../maycon_itens":
 			$"../maycon_itens".get_node("canvas").visible = false
 		
-		$maycon_hp/hp_1.visible = Global.maycon_hp_count<=2
-		$maycon_hp/hp_2.visible = Global.maycon_hp_count<=1
-		$maycon_hp/hp_3.visible = Global.maycon_hp_count<=0
+		if Global.game_events["before_prologo"]==false:
+			$maycon_hp/hp_1.visible = Global.maycon_hp_count<=2
+			$maycon_hp/hp_2.visible = Global.maycon_hp_count<=1
+			$maycon_hp/hp_3.visible = Global.maycon_hp_count<=0
+			
 		
 		close.grab_focus()
 		set_process_mode(Node.PROCESS_MODE_ALWAYS)
@@ -85,7 +93,7 @@ func processa_pause_unpause()->void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("ui_cancel") && (!Global.battle_started) && (!Global.game_events["before_prologo"]):
+	if Input.is_action_just_pressed("ui_cancel") && (!Global.battle_started):
 		processa_pause_unpause()
 			
 
