@@ -93,10 +93,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
-	if direction == -1:
+	# Se a direção for qualquer valor negativo (ex: -0.1, -0.5, -1.0)
+	if direction < 0:
 		animated_sprite_2d.flip_h = true
-	if direction == 1:
-		animated_sprite_2d.flip_h = false			
+	# Se a direção for qualquer valor positivo (ex: 0.1, 0.5, 1.0)
+	elif direction > 0:
+		animated_sprite_2d.flip_h = false	
 			
 	move_and_slide()
 

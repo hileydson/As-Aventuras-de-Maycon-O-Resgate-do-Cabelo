@@ -9,6 +9,6 @@ func _process(delta):
 
 
 func _on_node_2d_ready() -> void:
-	await get_tree().create_timer(12.9).timeout
+	await get_tree().create_timer(12.7).timeout
 	#to_hide.visible = false
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")

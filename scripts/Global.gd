@@ -10,6 +10,7 @@ var battle_next_enemy:String = "0"
 var battle_next_boss:int = 0
 var battle_started:bool = false
 var last_fase = "fase_1"
+var block_pause_before_prologo = false
 #var before_prologo:bool = false #TESTE - correto eh TRUE
 
 # data to be saved

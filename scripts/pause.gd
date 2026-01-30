@@ -93,7 +93,7 @@ func processa_pause_unpause()->void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("ui_cancel") && (!Global.battle_started):
+	if Input.is_action_just_pressed("ui_cancel") && (!Global.battle_started) && !Global.block_pause_before_prologo:
 		processa_pause_unpause()
 			
 

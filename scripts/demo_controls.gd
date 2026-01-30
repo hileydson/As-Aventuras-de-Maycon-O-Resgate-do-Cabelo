@@ -8,6 +8,7 @@ func _ready() -> void:
 	
 	#block input e add pause
 	Global.game_events["before_prologo"] = true
+	Global.block_pause_before_prologo = true
 	var menu_instance = menu.instantiate()
 	add_child(menu_instance)
 	menu_instance.get_node("pause_animation").play("intro")
@@ -18,6 +19,7 @@ func _ready() -> void:
 	await get_tree().create_timer(2.5).timeout
 	Global.game_events["before_prologo"] = true 
 	get_viewport().gui_disable_input = false
+	Global.block_pause_before_prologo = false
 	get_tree().change_scene_to_file("res://scenes/intro_historia.tscn")
 
 
