@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://dvdlkl56hy3v"]
+
+[ext_resource type="Script" uid="uid://d2l37bhsd7lhp" path="res://scripts/3D/object_3d.gd" id="1_xg3va"]
+[ext_resource type="PackedScene" uid="uid://cj2glpmry1pkv" path="res://scenes/3D/seco_3d.tscn" id="2_h2jqc"]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_xg3va")
+
+[node name="seco_3d" parent="." instance=ExtResource("2_h2jqc")]

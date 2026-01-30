@@ -10,7 +10,6 @@ extends Sprite2D
 @onready var loading: AnimatedSprite2D = $"../enter_the_castle/loading"
 @onready var canvas_layer: CanvasLayer = $CanvasLayer
 
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
@@ -41,6 +40,8 @@ func _process(delta: float) -> void:
 		await get_tree().create_timer(1.0).timeout	
 
 
+func load_3d()->void:
+	get_tree().change_scene_to_file("res://scenes/3D/world_3d.tscn")
 
 func _on_next_scene_body_entered(body: Node2D) -> void:	
 	$"../maycon_itens".get_node("canvas").visible = false
@@ -55,7 +56,12 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	loading.play("default")
 	await get_tree().create_timer(3.0).timeout 
 	$"../maycon_itens".get_node("canvas").visible = true
+	
 	get_tree().change_scene_to_file("res://scenes/fase_1_castle_1.tscn")
+	
+	# TO DO - 3D PART
+	#get_tree().paused = false
+	#get_tree().change_scene_to_file("res://scenes/3D/world_3d.tscn")
 
 
 func _on_dead_line_body_entered(body: Node2D) -> void:

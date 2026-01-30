@@ -1,0 +1,130 @@
+[gd_scene load_steps=20 format=3 uid="uid://cj2glpmry1pkv"]
+
+[ext_resource type="Script" uid="uid://lhs7w1lfxh4w" path="res://scripts/3D/seco_3d.gd" id="1_ml58b"]
+[ext_resource type="Texture2D" uid="uid://bhio7fv0i3hmo" path="res://assets/novas_imagens/inimigos/seco/seco_idle_smile.png" id="1_orvse"]
+[ext_resource type="AudioStream" uid="uid://winmr31cwh05" path="res://assets/novos_audios/growl_1.mp3" id="2_0wdaf"]
+[ext_resource type="AudioStream" uid="uid://d2ubmgfppbohq" path="res://assets/novos_audios/growl_2.mp3" id="3_pvhlm"]
+[ext_resource type="AudioStream" uid="uid://oliyk2sx4vpw" path="res://assets/novos_audios/growl_3.mp3" id="4_uf71k"]
+[ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="5_de7ik"]
+[ext_resource type="AudioStream" uid="uid://3ioxpfl6y5r" path="res://assets/novos_audios/seco_3d_power.mp3" id="5_pvhlm"]
+[ext_resource type="PackedScene" uid="uid://dbylb1bjbstk2" path="res://scenes/3D/seco_power_3d_1.tscn" id="6_uf71k"]
+[ext_resource type="Texture2D" uid="uid://dvchofw63am8g" path="res://assets/novas_imagens/inimigos/seco/seco_kick.png" id="8_eny66"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h2jqc"]
+atlas = ExtResource("1_orvse")
+region = Rect2(0, 0, 155, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yvcwf"]
+atlas = ExtResource("1_orvse")
+region = Rect2(155, 0, 155, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3sl3y"]
+atlas = ExtResource("1_orvse")
+region = Rect2(310, 0, 155, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r1r2n"]
+atlas = ExtResource("1_orvse")
+region = Rect2(0, 134, 155, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hgm0k"]
+atlas = ExtResource("1_orvse")
+region = Rect2(155, 134, 155, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6mfb3"]
+atlas = ExtResource("1_orvse")
+region = Rect2(310, 134, 155, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_de7ik"]
+atlas = ExtResource("8_eny66")
+region = Rect2(0, 134, 155, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uwy75"]
+atlas = ExtResource("8_eny66")
+region = Rect2(155, 134, 155, 134)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s73nt"]
+atlas = ExtResource("8_eny66")
+region = Rect2(310, 134, 155, 134)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aq40f"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h2jqc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yvcwf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3sl3y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r1r2n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hgm0k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6mfb3")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_de7ik")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uwy75")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s73nt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uwy75")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_de7ik")
+}],
+"loop": false,
+"name": &"power_attack_1",
+"speed": 5.0
+}]
+
+[node name="seco_3d" type="Node3D"]
+
+[node name="Growl1" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_0wdaf")
+autoplay = true
+
+[node name="Growl2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_pvhlm")
+
+[node name="Growl3" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_uf71k")
+
+[node name="Seco3dPower" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_pvhlm")
+
+[node name="jump" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_de7ik")
+volume_db = 3.838
+
+[node name="Timer_enemy_attack" type="Timer" parent="."]
+wait_time = 8.059
+autostart = true
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+script = ExtResource("1_ml58b")
+onda_scene = ExtResource("6_uf71k")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="CharacterBody3D"]
+transform = Transform3D(2.208389, 0, 0, 0, 2.953899, 0, 0, 0, 0.26040876, 0.012023926, 1.9610329, 1)
+billboard = 1
+sprite_frames = SubResource("SpriteFrames_aq40f")
+animation = &"idle"
+autoplay = "idle"
+
+[connection signal="timeout" from="Timer_enemy_attack" to="CharacterBody3D" method="_on_timer_enemy_attack_timeout"]
+[connection signal="animation_finished" from="CharacterBody3D/AnimatedSprite3D" to="CharacterBody3D" method="_on_animated_sprite_3d_animation_finished"]

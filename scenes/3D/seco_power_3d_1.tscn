@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://dbylb1bjbstk2"]
+
+[ext_resource type="Script" uid="uid://dkny6wmmn76sa" path="res://scripts/3D/seco_power_3d_1.gd" id="1_k7mrl"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_xak17"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_k7mrl"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xak17"]
+next_pass = SubResource("ProceduralSkyMaterial_k7mrl")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_k7mrl"]
+material = SubResource("StandardMaterial3D_xak17")
+
+[node name="seco_power_3d_1" type="Node3D"]
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17764282, 0)
+script = ExtResource("1_k7mrl")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("CylinderShape3D_xak17")
+debug_color = Color(0.9132999, 0.32563677, 0.48602074, 0.41960785)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.0869751, 0)
+gi_mode = 2
+mesh = SubResource("CylinderMesh_k7mrl")

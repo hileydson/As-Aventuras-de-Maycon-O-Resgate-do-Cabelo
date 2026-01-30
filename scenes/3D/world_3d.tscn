@@ -1,0 +1,42 @@
+[gd_scene load_steps=8 format=3 uid="uid://bgr1w7fk5snwj"]
+
+[ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="1_g4aeq"]
+[ext_resource type="AudioStream" uid="uid://d23jsbvra6ofb" path="res://assets/novos_audios/3d_first_battle_seco.mp3" id="1_r7pon"]
+[ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="3_r7pon"]
+[ext_resource type="Script" uid="uid://7yq1nl8wo04o" path="res://scenes/3D/gpu_particles_3d.gd" id="3_uihr4"]
+[ext_resource type="PackedScene" uid="uid://bvbdalvb1q4f5" path="res://scenes/3D/fire_seco_3d.tscn" id="4_r7pon"]
+
+[sub_resource type="Environment" id="Environment_j24mh"]
+background_mode = 1
+background_color = Color(0.049687535, 0.031141926, 0.007765345, 1)
+ambient_light_color = Color(0.1148968, 0.11489681, 0.1148968, 1)
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uihr4"]
+
+[node name="world_3d" type="Node3D"]
+
+[node name="fade" parent="." instance=ExtResource("1_g4aeq")]
+
+[node name="3dFirstBattleSeco" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_r7pon")
+volume_db = -8.979
+autoplay = true
+parameters/looping = true
+
+[node name="maycon_3d" parent="." instance=ExtResource("3_r7pon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24.054443)
+
+[node name="fire_seco_3d" parent="." instance=ExtResource("4_r7pon")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+light_color = Color(0.030159006, 0.07120172, 0.12095205, 1)
+light_energy = 0.639
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_j24mh")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+process_material = SubResource("ParticleProcessMaterial_uihr4")
+script = ExtResource("3_uihr4")
