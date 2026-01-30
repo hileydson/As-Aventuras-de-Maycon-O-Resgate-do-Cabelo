@@ -1,11 +1,11 @@
 Node2D
+CollisionShape2D
+Area2D
+AnimatedSprite2D
 Sprite2D
 Label
 ColorRect
-AnimatedSprite2D
 Camera2D
-CollisionShape2D
-Area2D
 Node
 TextureRect
 CanvasLayer

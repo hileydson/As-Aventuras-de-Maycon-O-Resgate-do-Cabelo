@@ -49,7 +49,11 @@ func processa_pause_unpause()->void:
 			quit.release_focus()
 			Global.back_to_main_camera = true
 			get_tree().paused = false
+			$"../maycon_itens".get_node("canvas").visible = true
 	else:
+		
+		$"../maycon_itens".get_node("canvas").visible = false
+		
 		$maycon_hp/hp_1.visible = Global.maycon_hp_count<=2
 		$maycon_hp/hp_2.visible = Global.maycon_hp_count<=1
 		$maycon_hp/hp_3.visible = Global.maycon_hp_count<=0

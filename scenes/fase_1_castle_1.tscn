@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3 uid="uid://bdmpm2b3ny4k2"]
+[gd_scene load_steps=45 format=3 uid="uid://bdmpm2b3ny4k2"]
 
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_4xbjm"]
 [ext_resource type="Texture2D" uid="uid://b6c6gorildkq4" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_1.png" id="1_isgjk"]
@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="9_fyo8v"]
 [ext_resource type="PackedScene" uid="uid://143260dknkmv" path="res://scenes/inimigos/cabelo.tscn" id="10_3ej27"]
 [ext_resource type="AudioStream" uid="uid://ds2yyaaf2s8cj" path="res://assets/novos_audios/running.mp3" id="10_cf614"]
+[ext_resource type="PackedScene" uid="uid://ct4euwv2ox56v" path="res://scenes/sangue_fill_scene.tscn" id="18_5dcdm"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_th65o"]
 atlas = ExtResource("3_6qwlc")
@@ -587,6 +588,9 @@ position = Vector2(3060.0002, 1176)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
+
+[node name="sangue_fill_scene" parent="." instance=ExtResource("18_5dcdm")]
+position = Vector2(1707, 681)
 
 [connection signal="ready" from="Fase1BeforeCastle/Camera_temp" to="Fase1BeforeCastle/Camera_temp" method="_on_ready"]
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
