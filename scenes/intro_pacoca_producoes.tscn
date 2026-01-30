@@ -6,49 +6,52 @@
 
 [node name="Node2D" type="Node2D"]
 
-[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
-offset_left = -575.0
-offset_top = -321.0
-offset_right = 572.0
-offset_bottom = 319.0
+[node name="to_hide" type="Node2D" parent="."]
+position = Vector2(-575, -321)
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="to_hide"]
+offset_right = 1147.0
+offset_bottom = 640.0
 stream = ExtResource("1_k5unc")
 volume_db = 3.91
 autoplay = true
 expand = true
 script = ExtResource("2_byawd")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="to_hide"]
+position = Vector2(575, 321)
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="to_hide"]
+position = Vector2(575, 321)
 
-[node name="BarrasLogoPacocaProducoes" type="Sprite2D" parent="."]
-position = Vector2(-552, 14)
+[node name="BarrasLogoPacocaProducoes" type="Sprite2D" parent="to_hide"]
+position = Vector2(23, 335)
 texture = ExtResource("3_sjrhx")
 
-[node name="BarrasLogoPacocaProducoes2" type="Sprite2D" parent="."]
-position = Vector2(573, -2)
+[node name="BarrasLogoPacocaProducoes2" type="Sprite2D" parent="to_hide"]
+position = Vector2(1148, 319)
 texture = ExtResource("3_sjrhx")
 
-[node name="BarrasLogoPacocaProducoes3" type="Sprite2D" parent="."]
-position = Vector2(-169, 426.99997)
+[node name="BarrasLogoPacocaProducoes3" type="Sprite2D" parent="to_hide"]
+position = Vector2(406, 748)
 rotation = -1.5704241
 texture = ExtResource("3_sjrhx")
 
-[node name="BarrasLogoPacocaProducoes5" type="Sprite2D" parent="."]
-position = Vector2(-181.99998, -443.00003)
+[node name="BarrasLogoPacocaProducoes5" type="Sprite2D" parent="to_hide"]
+position = Vector2(393, -122.00003)
 rotation = -1.5704241
 texture = ExtResource("3_sjrhx")
 
-[node name="BarrasLogoPacocaProducoes6" type="Sprite2D" parent="."]
-position = Vector2(294, -442)
+[node name="BarrasLogoPacocaProducoes6" type="Sprite2D" parent="to_hide"]
+position = Vector2(869, -121)
 rotation = -1.5704241
 texture = ExtResource("3_sjrhx")
 
-[node name="BarrasLogoPacocaProducoes4" type="Sprite2D" parent="."]
-position = Vector2(256, 427)
+[node name="BarrasLogoPacocaProducoes4" type="Sprite2D" parent="to_hide"]
+position = Vector2(831, 748)
 rotation = -1.5704241
 texture = ExtResource("3_sjrhx")
 
-[connection signal="ready" from="." to="VideoStreamPlayer" method="_on_node_2d_ready"]
-[connection signal="finished" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_finished"]
-[connection signal="gui_input" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_gui_input"]
+[connection signal="ready" from="." to="to_hide/VideoStreamPlayer" method="_on_node_2d_ready"]
+[connection signal="finished" from="to_hide/VideoStreamPlayer" to="to_hide/VideoStreamPlayer" method="_on_finished"]
+[connection signal="gui_input" from="to_hide/VideoStreamPlayer" to="to_hide/VideoStreamPlayer" method="_on_gui_input"]
