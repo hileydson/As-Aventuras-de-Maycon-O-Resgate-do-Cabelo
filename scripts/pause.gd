@@ -25,7 +25,12 @@ func _ready() -> void:
 	if Global.default_language == Global.language_pt_br:
 		powers.text = " SOCO \n CHUTE \n\n PULO"
 		close.text = "Fechar"
-		quit.text = "Salvar & Sair"
+		
+		if Global.game_events["before_prologo"]:
+			quit.text = "Sair"
+		else:
+			quit.text = "Salvar & Sair"
+		
 		run_label.text = "Correr"
 		down_label.text = "Agachar"
 		
@@ -35,7 +40,12 @@ func _ready() -> void:
 	else:
 		powers.text = " PUNCH \n KICK \n\n JUMP"
 		close.text = "Close"
-		quit.text = "Save & Quit"
+		
+		if Global.game_events["before_prologo"]:
+			quit.text = "Quit"
+		else:
+			quit.text = "Save & Quit"
+
 		run_label.text = "Run"
 		down_label.text = "Croutch"
 		
@@ -49,10 +59,13 @@ func processa_pause_unpause()->void:
 			quit.release_focus()
 			Global.back_to_main_camera = true
 			get_tree().paused = false
-			$"../maycon_itens".get_node("canvas").visible = true
+			
+			if $"../maycon_itens":
+				$"../maycon_itens".get_node("canvas").visible = true
 	else:
 		
-		$"../maycon_itens".get_node("canvas").visible = false
+		if $"../maycon_itens":
+			$"../maycon_itens".get_node("canvas").visible = false
 		
 		$maycon_hp/hp_1.visible = Global.maycon_hp_count<=2
 		$maycon_hp/hp_2.visible = Global.maycon_hp_count<=1
