@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://bgr1w7fk5snwj"]
+[gd_scene load_steps=20 format=3 uid="uid://bgr1w7fk5snwj"]
 
 [ext_resource type="Script" uid="uid://ftfnu08qs8ea" path="res://scripts/3D/world_3d.gd" id="1_37ayl"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="1_g4aeq"]
 [ext_resource type="AudioStream" uid="uid://d23jsbvra6ofb" path="res://assets/novos_audios/3d_first_battle_seco.mp3" id="1_r7pon"]
 [ext_resource type="AudioStream" uid="uid://barhr1sntfpf6" path="res://assets/novos_audios/gun_load.mp3" id="3_6j7o7"]
 [ext_resource type="AudioStream" uid="uid://b2ugwu5vh7jxh" path="res://assets/novos_audios/seco_welcome.mp3" id="3_8u6hh"]
+[ext_resource type="AudioStream" uid="uid://clwe6bwguowon" path="res://assets/novos_audios/hurt_sound_3d.mp3" id="3_fki46"]
 [ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="3_r7pon"]
 [ext_resource type="Script" uid="uid://7yq1nl8wo04o" path="res://scenes/3D/gpu_particles_3d.gd" id="3_uihr4"]
 [ext_resource type="PackedScene" uid="uid://bvbdalvb1q4f5" path="res://scenes/3D/fire_seco_3d.tscn" id="4_r7pon"]
@@ -28,10 +29,19 @@ glow_enabled = true
 [sub_resource type="SphereShape3D" id="SphereShape3D_37ayl"]
 radius = 0.58586234
 
+[sub_resource type="Theme" id="Theme_0dmxx"]
+default_base_scale = 0.41
+
+[sub_resource type="LabelSettings" id="LabelSettings_fki46"]
+font_color = Color(1, 0.32, 0.32, 1)
+
 [node name="world_3d" type="Node3D"]
 script = ExtResource("1_37ayl")
 
 [node name="fade" parent="." instance=ExtResource("1_g4aeq")]
+
+[node name="HurtSound3d" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_fki46")
 
 [node name="SecoWelcome" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_8u6hh")
@@ -107,5 +117,16 @@ texture = ExtResource("7_37ayl")
 
 [node name="bullets" parent="." instance=ExtResource("11_0dmxx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.013834, 0.228158, -13.820661)
+
+[node name="you_died" type="Label" parent="."]
+visible = false
+offset_left = 405.00003
+offset_top = 104.0
+offset_right = 485.00003
+offset_bottom = 127.0
+scale = Vector2(4.455126, 6.8819976)
+theme = SubResource("Theme_0dmxx")
+text = "YOU DIED!"
+label_settings = SubResource("LabelSettings_fki46")
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
