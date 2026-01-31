@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bgr1w7fk5snwj"]
+[gd_scene load_steps=10 format=3 uid="uid://bgr1w7fk5snwj"]
 
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="1_g4aeq"]
 [ext_resource type="AudioStream" uid="uid://d23jsbvra6ofb" path="res://assets/novos_audios/3d_first_battle_seco.mp3" id="1_r7pon"]
@@ -15,6 +15,10 @@ glow_enabled = true
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uihr4"]
 
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_r7pon"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_g4aeq"]
+
 [node name="world_3d" type="Node3D"]
 
 [node name="fade" parent="." instance=ExtResource("1_g4aeq")]
@@ -29,6 +33,7 @@ parameters/looping = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24.054443)
 
 [node name="fire_seco_3d" parent="." instance=ExtResource("4_r7pon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07498169, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 light_color = Color(0.030159006, 0.07120172, 0.12095205, 1)
@@ -40,3 +45,31 @@ environment = SubResource("Environment_j24mh")
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
 process_material = SubResource("ParticleProcessMaterial_uihr4")
 script = ExtResource("3_uihr4")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="."]
+transform = Transform3D(0.9996964, 0, 0.024641555, 0, 1, 0, -0.024641555, 0, 0.9996964, 0, 0, 0.2851715)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2"]
+transform = Transform3D(-0.037291814, 0.03722316, 0.99861085, -0.998666, 0.034340378, -0.0385739, -0.035728488, -0.9987171, 0.03589287, 0, 0, 24.949121)
+shape = SubResource("WorldBoundaryShape3D_r7pon")
+
+[node name="StaticBody3D3" type="StaticBody3D" parent="."]
+transform = Transform3D(-0.9991775, 0, -0.04055023, 0, 1, 0, 0.04055023, 0, -0.9991775, 0, 0, 8.129517)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D3"]
+transform = Transform3D(-0.037291814, 0.03722316, 0.99861085, -0.998666, 0.034340378, -0.0385739, -0.035728488, -0.9987171, 0.03589287, 0, 0, 24.949121)
+shape = SubResource("WorldBoundaryShape3D_g4aeq")
+
+[node name="StaticBody3D4" type="StaticBody3D" parent="."]
+transform = Transform3D(0.023629442, 0, -0.99972075, 0, 1, 0, 0.99972075, 0, 0.023629442, 2.2836304, 0, 8.767197)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D4"]
+transform = Transform3D(-0.037291814, 0.03722316, 0.99861085, -0.998666, 0.034340378, -0.0385739, -0.035728488, -0.9987171, 0.03589287, 0, 0, 24.949121)
+shape = SubResource("WorldBoundaryShape3D_g4aeq")
+
+[node name="StaticBody3D5" type="StaticBody3D" parent="."]
+transform = Transform3D(-0.042852007, 0, 0.99908155, 0, 1, 0, -0.99908155, 0, -0.042852007, -2.1010742, 0, 8.767197)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D5"]
+transform = Transform3D(-0.037291814, 0.03722316, 0.99861085, -0.998666, 0.034340378, -0.0385739, -0.035728488, -0.9987171, 0.03589287, 0, 0, 24.949121)
+shape = SubResource("WorldBoundaryShape3D_g4aeq")

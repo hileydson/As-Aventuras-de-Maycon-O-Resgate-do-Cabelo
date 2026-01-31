@@ -1,6 +1,7 @@
-MeshInstance3D
 CollisionShape3D
+StaticBody3D
 Area3D
+MeshInstance3D
 CharacterBody3D
 Node
 AnimatedSprite3D
@@ -11,5 +12,3 @@ GPUParticles3D
 CPUParticles3D
 WorldEnvironment
 DirectionalLight3D
-Camera3D
-Node2D

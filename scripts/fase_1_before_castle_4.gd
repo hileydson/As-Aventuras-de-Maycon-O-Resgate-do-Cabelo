@@ -57,11 +57,12 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	await get_tree().create_timer(3.0).timeout 
 	$"../maycon_itens".get_node("canvas").visible = true
 	
-	get_tree().change_scene_to_file("res://scenes/fase_1_castle_1.tscn")
+	#get_tree().change_scene_to_file("res://scenes/fase_1_castle_1.tscn")
 	
 	# TO DO - 3D PART
-	#get_tree().paused = false
-	#get_tree().change_scene_to_file("res://scenes/3D/world_3d.tscn")
+	#TODO: TEM QUE TER UM IF AQUI PRA NAO IR PRA O MUNDO 3D
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/3D/world_3d.tscn")
 
 
 func _on_dead_line_body_entered(body: Node2D) -> void:

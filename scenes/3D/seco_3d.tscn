@@ -112,8 +112,7 @@ stream = ExtResource("5_de7ik")
 volume_db = 3.838
 
 [node name="Timer_enemy_attack" type="Timer" parent="."]
-wait_time = 8.059
-autostart = true
+wait_time = 4.66
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 script = ExtResource("1_ml58b")
