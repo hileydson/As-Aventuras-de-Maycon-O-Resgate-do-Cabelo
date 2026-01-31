@@ -55,23 +55,30 @@ func _on_ready() -> void:
 		fade.get_node("Transition").play("fade_in")
 		msg_block.visible = true
 		if Global.default_language == Global.language_pt_br:
-			msg_block.text = "Eu vou te pegar ainda Tripa Maior!"
+			msg_block.text = "Eu vou te pegar AGORA Tripa Maior!"
 		else:
-			msg_block.text = "I'm gonna catch you Tripa Maior!"
+			msg_block.text = "I'm gonna catch you NOW Tripa Maior!"
 		
 		await get_tree().create_timer(2.0).timeout		
 		fade.get_node("Transition").play("fade_out")
 		await get_tree().create_timer(3.0).timeout
 		
 		
+		#TODO: TEM QUE TER UM IF AQUI PRA NAO IR PRA O MUNDO 3D CASO JAH TENHA IDO E VENCIDO
+		get_tree().paused = false
+		get_tree().change_scene_to_file("res://scenes/3D/world_3d.tscn")
+		
+		#TODO: GANHANDO A BATALHA SALVA AS PARADA ABAIXO
+		
 		#volta ao jogo
-		maycon_fase.visible = true
-		$Running.stop()
-		$"../../maycon_itens".get_node("canvas").visible = true
-		GameSongs.play_song(1)
-		Global.game_events["seco_first_scene_castle"]=true
-		Global.save_progress(get_tree().current_scene.name)
-		maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
-		camera_2d_maycon.make_current()
-		$"../../auto_fade_in".get_node("Transition").play("fade_in")
-		canvas_layer.visible = true
+		#maycon_fase.visible = true
+		#$Running.stop()
+		#$"../../maycon_itens".get_node("canvas").visible = true
+		#GameSongs.play_song(1)
+		#Global.game_events["seco_first_scene_castle"]=true
+		#Global.save_progress(get_tree().current_scene.name)
+		#maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
+		#camera_2d_maycon.make_current()
+		#$"../../auto_fade_in".get_node("Transition").play("fade_in")
+		#canvas_layer.visible = true
+		
