@@ -61,8 +61,19 @@ func _on_ready() -> void:
 		
 		await get_tree().create_timer(2.0).timeout		
 		fade.get_node("Transition").play("fade_out")
-		await get_tree().create_timer(3.0).timeout
+		await get_tree().create_timer(1.0).timeout
 		
+		await get_tree().create_timer(2.0).timeout
+		fade.get_node("Transition").play("fade_in")
+		msg_block.visible = true
+		if Global.default_language == Global.language_pt_br:
+			msg_block.text = "                         AGORA!"
+		else:
+			msg_block.text = "                          NOW!"
+		
+		await get_tree().create_timer(2.0).timeout		
+		fade.get_node("Transition").play("fade_out")
+		await get_tree().create_timer(3.0).timeout
 		
 		#TODO: TEM QUE TER UM IF AQUI PRA NAO IR PRA O MUNDO 3D CASO JAH TENHA IDO E VENCIDO
 		get_tree().paused = false
@@ -75,7 +86,7 @@ func _on_ready() -> void:
 		#$Running.stop()
 		#$"../../maycon_itens".get_node("canvas").visible = true
 		#GameSongs.play_song(1)
-		#Global.game_events["seco_first_scene_castle"]=true
+		#Global.game_events["seco_first_scene_castle"]=true #-------------->>>>>>> ATIVAR ESSE SOMENTE APOS MATAR O BOSS 3D
 		#Global.save_progress(get_tree().current_scene.name)
 		#maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
 		#camera_2d_maycon.make_current()

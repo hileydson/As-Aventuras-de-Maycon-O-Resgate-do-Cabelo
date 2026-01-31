@@ -12,4 +12,3 @@ MeshInstance3D
 CharacterBody3D
 Node
 AnimatedSprite3D
-CSGBox3D

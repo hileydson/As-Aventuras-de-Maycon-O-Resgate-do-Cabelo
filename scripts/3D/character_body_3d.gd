@@ -10,8 +10,19 @@ extends CharacterBody3D
 @onready var arma_sprite: AnimatedSprite2D = $arma_canvas/Control/arma_sprite
 @onready var gun_load: AudioStreamPlayer = $"../GunLoad"
 @onready var gun_shot: AudioStreamPlayer = $"../GunShot"
+@onready var shoot_fire: AnimatedSprite2D = $arma_canvas/Control/shoot
+@onready var balas_numero: Label = $arma_canvas/Control/balas_numero
 
 @onready var camera = $Camera3D
+
+var gun_bullets_count=0
+
+func add_bullets_to_gun(number:int):
+	gun_bullets_count = gun_bullets_count+number
+
+func remove_bullets_from_gun()->void:
+	if gun_bullets_count != 0:
+		gun_bullets_count = gun_bullets_count-1
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -24,10 +35,16 @@ func _unhandled_input(event):
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 
 func _physics_process(delta):
+	
+	#CONTA BALAS
+	balas_numero.text = "X "+str(gun_bullets_count)
+	
 	# faz o tiro
-	if Global.maycon_pegou_arma_first_3d_battle && Input.is_action_just_pressed("tiro") && arma_sprite.animation!="shoot":
+	if Global.maycon_pegou_arma_first_3d_battle && Input.is_action_just_pressed("tiro") && arma_sprite.animation!="shoot" && gun_bullets_count!=0:
+		shoot_fire.play("shoot")
 		arma_sprite.play("shoot")
 		gun_shot.play()
+		remove_bullets_from_gun()
 	
 	if Global.maycon_pegou_arma_first_3d_battle:
 		arma_canvas.visible = true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=27 format=3 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="2_bd24c"]
@@ -8,8 +8,77 @@
 [ext_resource type="AudioStream" uid="uid://barhr1sntfpf6" path="res://assets/novos_audios/gun_load.mp3" id="5_uh0k5"]
 [ext_resource type="Texture2D" uid="uid://dhv5ghy38te6w" path="res://assets/novas_imagens/3d_battle/segurando_arma_3d.png" id="6_xqtj4"]
 [ext_resource type="AudioStream" uid="uid://dxlxhstdapo76" path="res://assets/novos_audios/gun_shot.mp3" id="6_y4gmr"]
+[ext_resource type="Texture2D" uid="uid://v26pfw0k1oo0" path="res://assets/novas_imagens/effects/Pixel fire/fire asset yellow floored/Group 7 - 5/Group 7 - 5.png" id="8_y4gmr"]
+[ext_resource type="Texture2D" uid="uid://cy1x2n0ltysjh" path="res://assets/novas_imagens/3d_battle/bala.png" id="10_11d7m"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ss8dx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s4l0a"]
+atlas = ExtResource("8_y4gmr")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vcx2r"]
+atlas = ExtResource("8_y4gmr")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qmx0i"]
+atlas = ExtResource("8_y4gmr")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8fb3s"]
+atlas = ExtResource("8_y4gmr")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fakjw"]
+atlas = ExtResource("8_y4gmr")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1she0"]
+atlas = ExtResource("8_y4gmr")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m47l0"]
+atlas = ExtResource("8_y4gmr")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_doy81"]
+atlas = ExtResource("8_y4gmr")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jvhfj"]
+animations = [{
+"frames": [{
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_s4l0a")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_vcx2r")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_qmx0i")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_8fb3s")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_fakjw")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_1she0")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_m47l0")
+}, {
+"duration": 0.08,
+"texture": SubResource("AtlasTexture_doy81")
+}, {
+"duration": 0.08,
+"texture": null
+}],
+"loop": false,
+"name": &"shoot",
+"speed": 5.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xqtj4"]
 atlas = ExtResource("6_xqtj4")
@@ -133,6 +202,15 @@ offset_top = 8.0
 offset_right = 74.0
 offset_bottom = 48.0
 
+[node name="shoot" type="AnimatedSprite2D" parent="CharacterBody3D/arma_canvas/Control"]
+position = Vector2(635, 375.00003)
+rotation = -0.8875863
+scale = Vector2(1.5917358, 2.0518117)
+sprite_frames = SubResource("SpriteFrames_jvhfj")
+animation = &"shoot"
+frame = 8
+frame_progress = 1.0
+
 [node name="arma_sprite" type="AnimatedSprite2D" parent="CharacterBody3D/arma_canvas/Control"]
 position = Vector2(712, 483)
 scale = Vector2(0.81, 0.774)
@@ -148,5 +226,19 @@ offset_right = 574.0
 offset_bottom = 249.0
 scale = Vector2(2.2777793, 2.6133335)
 text = "."
+
+[node name="Bala" type="Sprite2D" parent="CharacterBody3D/arma_canvas/Control"]
+position = Vector2(1073.857, 598.12195)
+scale = Vector2(0.17142838, 0.18048783)
+texture = ExtResource("10_11d7m")
+
+[node name="balas_numero" type="Label" parent="CharacterBody3D/arma_canvas/Control"]
+layout_mode = 0
+offset_left = 1047.0
+offset_top = 606.0
+offset_right = 1087.0
+offset_bottom = 629.0
+scale = Vector2(1.2799838, 1.3199955)
+text = "X 99"
 
 [connection signal="animation_finished" from="CharacterBody3D/arma_canvas/Control/arma_sprite" to="CharacterBody3D" method="_on_animated_sprite_2d_animation_finished"]
