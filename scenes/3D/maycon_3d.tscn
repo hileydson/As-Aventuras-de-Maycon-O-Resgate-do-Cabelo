@@ -1,12 +1,90 @@
-[gd_scene load_steps=7 format=3 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=14 format=3 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="2_bd24c"]
 [ext_resource type="AudioStream" uid="uid://o0m05edowij" path="res://assets/audio/passos_maycon.mp3" id="2_o46vj"]
 [ext_resource type="AudioStream" uid="uid://1w11c4koxm1e" path="res://assets/novos_audios/kick.mp3" id="3_xqtj4"]
 [ext_resource type="AudioStream" uid="uid://cgkrv61ssnnmh" path="res://assets/novos_audios/punch.mp3" id="4_8in0v"]
+[ext_resource type="Texture2D" uid="uid://dhv5ghy38te6w" path="res://assets/novas_imagens/3d_battle/segurando_arma_3d.png" id="6_xqtj4"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ss8dx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xqtj4"]
+atlas = ExtResource("6_xqtj4")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8in0v"]
+atlas = ExtResource("6_xqtj4")
+region = Rect2(0, 0, 500, 481)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uh0k5"]
+atlas = ExtResource("6_xqtj4")
+region = Rect2(0, 0, 500, 460)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y4gmr"]
+atlas = ExtResource("6_xqtj4")
+region = Rect2(0, 0, 500, 443)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_11d7m"]
+atlas = ExtResource("6_xqtj4")
+region = Rect2(0, 0, 500, 415)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xqtj4"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_xqtj4")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_xqtj4")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_8in0v")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_uh0k5")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_y4gmr")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_11d7m")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_y4gmr")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_uh0k5")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_8in0v")
+}],
+"loop": false,
+"name": &"shoot",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_xqtj4")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_8in0v")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_uh0k5")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_8in0v")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
 
 [node name="maycon_3d" type="Node3D"]
 
@@ -30,8 +108,39 @@ volume_db = -11.019
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 collision_layer = 9
 script = ExtResource("1_fvdyg")
+SPEED = null
+JUMP_VELOCITY = null
+MOUSE_SENSITIVITY = null
+JOY_SENSITIVITY = null
 
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
 shape = SubResource("CapsuleShape3D_ss8dx")
+
+[node name="arma_canvas" type="CanvasLayer" parent="CharacterBody3D"]
+
+[node name="Control" type="Control" parent="CharacterBody3D/arma_canvas"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterBody3D/arma_canvas/Control"]
+position = Vector2(712, 483)
+scale = Vector2(0.81, 0.774)
+sprite_frames = SubResource("SpriteFrames_xqtj4")
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.6422726
+
+[node name="ponto" type="Label" parent="CharacterBody3D/arma_canvas/Control"]
+layout_mode = 0
+offset_left = 534.0
+offset_top = 226.0
+offset_right = 574.0
+offset_bottom = 249.0
+scale = Vector2(2.2777793, 2.6133335)
+text = "."
+
+[connection signal="animation_finished" from="CharacterBody3D/arma_canvas/Control/AnimatedSprite2D" to="CharacterBody3D" method="_on_animated_sprite_2d_animation_finished"]

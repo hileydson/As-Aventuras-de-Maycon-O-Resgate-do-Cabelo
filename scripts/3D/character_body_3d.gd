@@ -6,6 +6,8 @@ extends CharacterBody3D
 @export var JOY_SENSITIVITY = 0.05 # Sensibilidade para o controle
 @onready var walk: AudioStreamPlayer2D = $"../walk"
 @onready var jump: AudioStreamPlayer2D = $"../jump"
+@onready var arma_sprite: AnimatedSprite2D = $arma/Control/AnimatedSprite2D
+@onready var arma_canvas: CanvasLayer = $arma_canvas
 
 @onready var camera = $Camera3D
 
@@ -20,6 +22,15 @@ func _unhandled_input(event):
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 
 func _physics_process(delta):
+	# faz o tiro
+	if Input.is_action_just_pressed("tiro"):
+		arma_sprite.play("shoot")
+	
+	if Global.maycon_pegou_arma_first_3d_battle:
+		arma_canvas.visible = true
+	else:
+		arma_canvas.visible = false
+	
 	# --- LÓGICA DO ANALÓGICO DIREITO ---
 	var joy_look = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	
@@ -46,6 +57,7 @@ func _physics_process(delta):
 	
 	if !direction.is_zero_approx() && !walk.is_playing():
 		walk.play()
+		arma_sprite.play("walk")
 	
 	
 	if direction:
@@ -56,3 +68,8 @@ func _physics_process(delta):
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 
 	move_and_slide()
+	
+
+
+func _on_animated_sprite_2d_animation_finished() -> void:
+	arma_sprite.play("idle")

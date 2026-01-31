@@ -13,6 +13,10 @@ var last_fase = "fase_1"
 var block_pause_before_prologo = false
 #var before_prologo:bool = false #TESTE - correto eh TRUE
 
+var maycon_danos_first_3d_battle:int = 0
+var seco_danos_first_3d_battle:int = 0
+var maycon_pegou_arma_first_3d_battle:bool = false
+
 # data to be saved
 var can_load:bool = false
 var save_array = {}

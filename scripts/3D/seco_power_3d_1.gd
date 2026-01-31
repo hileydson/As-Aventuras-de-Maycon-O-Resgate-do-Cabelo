@@ -18,8 +18,4 @@ func _physics_process(delta):
 		queue_free()
 
 func _on_body_entered(body):
-	print("dano causado 1")
-	# Se o corpo que entrou tiver a função "receber_dano"
-	if body.has_method("receber_dano"):
-		body.receber_dano(dano)
-		print("dano causado 2")
+	Global.maycon_danos_first_3d_battle = Global.maycon_danos_first_3d_battle + 1
