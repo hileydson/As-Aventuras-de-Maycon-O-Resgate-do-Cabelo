@@ -1,6 +1,6 @@
 extends Area3D
 
-@export var expansao_speed = 11.0 # Quão rápido a onda cresce
+@export var expansao_speed = 15.0 # Quão rápido a onda cresce
 @export var tamanho_maximo = 70.0 # Onde ela some
 @export var dano = 1
 
