@@ -1,4 +1,4 @@
-extends Area3D
+extends Node3D
 
 var tempo = 0.0
 @export var velocidade = 6.0  # Quão rápido ele sobe e desce

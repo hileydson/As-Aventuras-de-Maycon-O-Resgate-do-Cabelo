@@ -1,8 +1,9 @@
+res://scenes/3D
+res://scripts/3D
+res://scripts
 res://assets/novas_imagens/effects/Pixel fire/fire asset yellow floored/Group 7 - 5
 res://assets/novas_imagens/3d_battle
 res://assets/novas_imagens/inimigos/seco
-res://scripts/3D
-res://scenes/3D
 res://assets/novas_imagens/effects
 res://assets/novas_imagens/cabelo
 res://assets/novas_imagens/inimigos/manga
@@ -14,7 +15,6 @@ res://assets/novas_imagens/inimigos
 res://scenes
 res://scenes/inimigos
 res://assets/novas_imagens/inimigos/camilita
-res://scripts
 res://assets/novas_imagens/effects/round_vortex/spritesheet
 res://assets/novas_imagens/effects/Pixel Holy Spell
 res://assets/novas_imagens/maycon

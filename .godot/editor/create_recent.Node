@@ -1,11 +1,11 @@
+CollisionShape3D
+Area3D
+Sprite3D
 Label
 AnimatedSprite2D
 Sprite2D
-Sprite3D
 Control
 CanvasLayer
-CollisionShape3D
-Area3D
 GPUParticles3D
 StaticBody3D
 MeshInstance3D

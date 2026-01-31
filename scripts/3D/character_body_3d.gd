@@ -36,6 +36,11 @@ func _unhandled_input(event):
 
 func _physics_process(delta):
 	
+	#se pegou bala nova soma na contagem
+	if Global.maycon_pegou_bullet:
+		Global.maycon_pegou_bullet = false
+		add_bullets_to_gun(2)
+	
 	#CONTA BALAS
 	balas_numero.text = "X "+str(gun_bullets_count)
 	
