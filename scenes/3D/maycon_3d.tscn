@@ -1039,8 +1039,14 @@ shape = SubResource("CapsuleShape3D_ss8dx")
 
 [node name="hud_canvas" type="CanvasLayer" parent="CharacterBody3D"]
 
+[node name="ColorRect" type="ColorRect" parent="CharacterBody3D/hud_canvas"]
+offset_left = -8.0
+offset_top = -7.0
+offset_right = 1162.0
+offset_bottom = 653.0
+color = Color(1, 0, 0, 0)
+
 [node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas"]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 34.0

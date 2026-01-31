@@ -38,8 +38,6 @@ font_color = Color(1, 0.32, 0.32, 1)
 [node name="world_3d" type="Node3D"]
 script = ExtResource("1_37ayl")
 
-[node name="fade" parent="." instance=ExtResource("1_g4aeq")]
-
 [node name="HurtSound3d" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_fki46")
 
@@ -128,5 +126,8 @@ scale = Vector2(4.455126, 6.8819976)
 theme = SubResource("Theme_0dmxx")
 text = "YOU DIED!"
 label_settings = SubResource("LabelSettings_fki46")
+
+[node name="fade" parent="." instance=ExtResource("1_g4aeq")]
+z_index = 7
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

@@ -32,13 +32,12 @@ func _process(delta: float) -> void:
 		await get_tree().create_timer(2.0).timeout 
 		get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn") 
 	
-	print("DANOS MAYCON: -> "+str(Global.maycon_danos_first_3d_battle))
+	
 	print("DANOS SECO: -> "+str(Global.seco_danos_first_3d_battle))
 	
 	if Global.maycon_pegou_arma_first_3d_battle && arma:
 		arma.queue_free()
 	
-
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	Global.maycon_pegou_arma_first_3d_battle = true

@@ -1,11 +1,12 @@
+ColorRect
+Control
+CanvasLayer
 Label
 CollisionShape3D
 Area3D
 Sprite3D
 AnimatedSprite2D
 Sprite2D
-Control
-CanvasLayer
 GPUParticles3D
 StaticBody3D
 MeshInstance3D

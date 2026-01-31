@@ -15,6 +15,7 @@ extends CharacterBody3D
 @onready var control_gun: Control = $hud_canvas/control_gun
 @onready var camera_3d: Camera3D = $Camera3D
 @onready var hurt_sound_3d: AudioStreamPlayer = $"../../HurtSound3d"
+@onready var color_rect: ColorRect = $hud_canvas/ColorRect
 
 @onready var camera = $Camera3D
 
@@ -43,6 +44,13 @@ func _unhandled_input(event):
 
 func aplicar_shake(valor: float):
 	shake_intensity = valor
+	
+	# 2. Efeito de Flash com Tween
+	var tween = create_tween()
+	# Faz o Alpha ir para 0.5 (metade opaco) em 0.05 segundos (muito rápido)
+	tween.tween_property(color_rect, "modulate:a", 0.5, 0.05)
+	# Faz o Alpha voltar para 0.0 (invisível) em 0.2 segundos
+	tween.tween_property(color_rect, "modulate:a", 0.0, 0.2)
 
 func _physics_process(delta):
 	
@@ -59,12 +67,6 @@ func _physics_process(delta):
 		aplicar_shake(0.4)
 		hurt_sound_3d.play()
 		
-		
-	# YOU DIED
-	if Global.maycon_danos_first_3d_battle == 5:
-		#get_tree().paused = true
-		#$".".process_mode = Node.PROCESS_MODE_DISABLED
-		pass
 			
 	#se pegou bala nova soma na contagem
 	if Global.maycon_pegou_bullet:

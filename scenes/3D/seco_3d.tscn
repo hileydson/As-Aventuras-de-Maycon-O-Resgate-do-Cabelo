@@ -125,5 +125,13 @@ sprite_frames = SubResource("SpriteFrames_aq40f")
 animation = &"idle"
 autoplay = "idle"
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
 [connection signal="timeout" from="Timer_enemy_attack" to="CharacterBody3D" method="_on_timer_enemy_attack_timeout"]
 [connection signal="animation_finished" from="CharacterBody3D/AnimatedSprite3D" to="CharacterBody3D" method="_on_animated_sprite_3d_animation_finished"]
