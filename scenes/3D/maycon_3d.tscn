@@ -1,11 +1,13 @@
-[gd_scene load_steps=14 format=3 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=16 format=3 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="2_bd24c"]
 [ext_resource type="AudioStream" uid="uid://o0m05edowij" path="res://assets/audio/passos_maycon.mp3" id="2_o46vj"]
 [ext_resource type="AudioStream" uid="uid://1w11c4koxm1e" path="res://assets/novos_audios/kick.mp3" id="3_xqtj4"]
 [ext_resource type="AudioStream" uid="uid://cgkrv61ssnnmh" path="res://assets/novos_audios/punch.mp3" id="4_8in0v"]
+[ext_resource type="AudioStream" uid="uid://barhr1sntfpf6" path="res://assets/novos_audios/gun_load.mp3" id="5_uh0k5"]
 [ext_resource type="Texture2D" uid="uid://dhv5ghy38te6w" path="res://assets/novas_imagens/3d_battle/segurando_arma_3d.png" id="6_xqtj4"]
+[ext_resource type="AudioStream" uid="uid://dxlxhstdapo76" path="res://assets/novos_audios/gun_shot.mp3" id="6_y4gmr"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ss8dx"]
 
@@ -40,7 +42,7 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 0.14,
+"duration": 0.31,
 "texture": SubResource("AtlasTexture_xqtj4")
 }, {
 "duration": 0.14,
@@ -105,6 +107,13 @@ volume_db = -8.71
 stream = ExtResource("4_8in0v")
 volume_db = -11.019
 
+[node name="GunLoad" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_uh0k5")
+
+[node name="GunShot" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_y4gmr")
+volume_db = -4.489
+
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 collision_layer = 9
 script = ExtResource("1_fvdyg")
@@ -119,8 +128,10 @@ shape = SubResource("CapsuleShape3D_ss8dx")
 [node name="Control" type="Control" parent="CharacterBody3D/arma_canvas"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 34.0
+offset_top = 8.0
+offset_right = 74.0
+offset_bottom = 48.0
 
 [node name="arma_sprite" type="AnimatedSprite2D" parent="CharacterBody3D/arma_canvas/Control"]
 position = Vector2(712, 483)

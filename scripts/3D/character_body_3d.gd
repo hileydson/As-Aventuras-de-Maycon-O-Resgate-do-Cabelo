@@ -8,6 +8,8 @@ extends CharacterBody3D
 @onready var jump: AudioStreamPlayer2D = $"../jump"
 @onready var arma_canvas: CanvasLayer = $arma_canvas
 @onready var arma_sprite: AnimatedSprite2D = $arma_canvas/Control/arma_sprite
+@onready var gun_load: AudioStreamPlayer = $"../GunLoad"
+@onready var gun_shot: AudioStreamPlayer = $"../GunShot"
 
 @onready var camera = $Camera3D
 
@@ -23,8 +25,9 @@ func _unhandled_input(event):
 
 func _physics_process(delta):
 	# faz o tiro
-	if Input.is_action_just_pressed("tiro"):
+	if Global.maycon_pegou_arma_first_3d_battle && Input.is_action_just_pressed("tiro") && arma_sprite.animation!="shoot":
 		arma_sprite.play("shoot")
+		gun_shot.play()
 	
 	if Global.maycon_pegou_arma_first_3d_battle:
 		arma_canvas.visible = true
@@ -50,6 +53,7 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		jump.play()
+		arma_sprite.play("walk")
 		
 
 	var input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
