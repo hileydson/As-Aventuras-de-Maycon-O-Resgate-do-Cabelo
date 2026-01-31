@@ -1,7 +1,7 @@
 extends Area3D
 
-@export var expansao_speed = 10.0 # Quão rápido a onda cresce
-@export var tamanho_maximo = 50.0 # Onde ela some
+@export var expansao_speed = 11.0 # Quão rápido a onda cresce
+@export var tamanho_maximo = 70.0 # Onde ela some
 @export var dano = 1
 
 func _ready():
@@ -18,6 +18,8 @@ func _physics_process(delta):
 		queue_free()
 
 func _on_body_entered(body):
+	print("dano causado 1")
 	# Se o corpo que entrou tiver a função "receber_dano"
 	if body.has_method("receber_dano"):
 		body.receber_dano(dano)
+		print("dano causado 2")

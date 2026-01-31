@@ -12,13 +12,13 @@ extends CharacterBody3D
 func disparar_onda():
 	var nova_onda = onda_scene.instantiate()
 	# Adicione 0.1 ou 0.2 no eixo Y para ela "flutuar" sobre o chão
-	nova_onda.global_position = global_position + Vector3(0, 0.01, 0)
+	nova_onda.global_position = global_position + Vector3(0, 0.1, 0)
 	get_tree().current_scene.add_child(nova_onda)
 	
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	await get_tree().create_timer(8.0).timeout
+	await get_tree().create_timer(1.0).timeout
 	timer_enemy_attack.start()
 
 
