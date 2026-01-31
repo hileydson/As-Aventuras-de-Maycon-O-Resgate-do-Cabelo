@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=32 format=3 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="2_bd24c"]
@@ -10,6 +10,11 @@
 [ext_resource type="AudioStream" uid="uid://dxlxhstdapo76" path="res://assets/novos_audios/gun_shot.mp3" id="6_y4gmr"]
 [ext_resource type="Texture2D" uid="uid://v26pfw0k1oo0" path="res://assets/novas_imagens/effects/Pixel fire/fire asset yellow floored/Group 7 - 5/Group 7 - 5.png" id="8_y4gmr"]
 [ext_resource type="Texture2D" uid="uid://cy1x2n0ltysjh" path="res://assets/novas_imagens/3d_battle/bala.png" id="10_11d7m"]
+[ext_resource type="Texture2D" uid="uid://d20k0m5bseynp" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_1.png" id="10_fakjw"]
+[ext_resource type="Texture2D" uid="uid://bgxxn46q4nutx" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_2.png" id="11_1she0"]
+[ext_resource type="Texture2D" uid="uid://b1nhpgedhfvw3" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_3.png" id="12_m47l0"]
+[ext_resource type="Texture2D" uid="uid://c54ujioar2c72" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_4.png" id="13_doy81"]
+[ext_resource type="Texture2D" uid="uid://bpd6r1c6dq1eq" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_5.png" id="14_jvhfj"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ss8dx"]
 
@@ -108,6 +113,35 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.51,
+"texture": ExtResource("10_fakjw")
+}, {
+"duration": 0.51,
+"texture": ExtResource("11_1she0")
+}, {
+"duration": 0.51,
+"texture": ExtResource("12_m47l0")
+}, {
+"duration": 0.51,
+"texture": ExtResource("13_doy81")
+}, {
+"duration": 0.51,
+"texture": ExtResource("14_jvhfj")
+}, {
+"duration": 0.51,
+"texture": ExtResource("13_doy81")
+}, {
+"duration": 0.51,
+"texture": ExtResource("12_m47l0")
+}, {
+"duration": 0.51,
+"texture": ExtResource("11_1she0")
+}],
+"loop": false,
+"name": &"reload",
 "speed": 5.0
 }, {
 "frames": [{
@@ -215,7 +249,7 @@ frame_progress = 1.0
 position = Vector2(712, 483)
 scale = Vector2(0.81, 0.774)
 sprite_frames = SubResource("SpriteFrames_xqtj4")
-animation = &"shoot"
+animation = &"reload"
 autoplay = "idle"
 
 [node name="ponto" type="Label" parent="CharacterBody3D/arma_canvas/Control"]

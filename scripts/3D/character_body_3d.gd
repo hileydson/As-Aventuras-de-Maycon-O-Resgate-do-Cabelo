@@ -38,8 +38,9 @@ func _physics_process(delta):
 	
 	#se pegou bala nova soma na contagem
 	if Global.maycon_pegou_bullet:
+		arma_sprite.play("reload")
 		Global.maycon_pegou_bullet = false
-		add_bullets_to_gun(2)
+		add_bullets_to_gun(3)
 	
 	#CONTA BALAS
 	balas_numero.text = "X "+str(gun_bullets_count)
@@ -52,6 +53,8 @@ func _physics_process(delta):
 		remove_bullets_from_gun()
 	
 	if Global.maycon_pegou_arma_first_3d_battle:
+		if arma_canvas.visible == false:
+			arma_sprite.play("reload")
 		arma_canvas.visible = true
 	else:
 		arma_canvas.visible = false
