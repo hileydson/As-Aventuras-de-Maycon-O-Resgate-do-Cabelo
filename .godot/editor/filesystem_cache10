@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1769800902
+::res://::1769827185
 export_presets.cfg::TextFile::-1::1769796487::0::1::::<><><>0<>0<><>::
 icon.svg::CompressedTexture2D::1790880795757653::1767636737::1767636737::1::::<><><>0<>0<>1d558fff71561543e2cf7e0d300c3350<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
 README.md::TextFile::-1::1769709718::0::1::::<><><>0<>0<><>::
@@ -214,7 +214,7 @@ TELA-intro-02-gif_3.png::CompressedTexture2D::5931608762705168638::1767636736::1
 TELA-intro-02-gif_4.png::CompressedTexture2D::6552295653215431946::1767636736::1767636736::1::::<><><>0<>0<>2f4b4f684b0768074461ed38ca71845f<>res://.godot/imported/TELA-intro-02-gif_4.png-bc740bfc1821c91ab634f22a971f8a4c.ctex::
 TELA-intro-03 _0.png::CompressedTexture2D::1831792066332645858::1767636736::1767636736::1::::<><><>0<>0<>dbc407605a66e9a6a47a9ab65ee6b1ec<>res://.godot/imported/TELA-intro-03 _0.png-57a5744f0cfcc4e0b1347c297ea67aa9.ctex::
 ::res://assets/novas_imagens/::1769824650
-::res://assets/novas_imagens/3d_battle/::1769824722
+::res://assets/novas_imagens/3d_battle/::1769825623
 arma_3d.png::CompressedTexture2D::208041587662444155::1769824615::1769824722::1::::<><><>0<>0<>d46c136d3ab78b9f9fdf2ae4f4dcb383<>res://.godot/imported/arma_3d.png-48906d11f5ba9717c041ab214ccf0b77.s3tc.ctex<*>res://.godot/imported/arma_3d.png-48906d11f5ba9717c041ab214ccf0b77.etc2.ctex::
 segurando_arma_3d.png::CompressedTexture2D::7695768519983008876::1769824607::1769825623::1::::<><><>0<>0<>346fcfc3e96dada85bf7831f3d5baf68<>res://.godot/imported/segurando_arma_3d.png-8673dec809844312b39fe4b7962286a8.s3tc.ctex<*>res://.godot/imported/segurando_arma_3d.png-8673dec809844312b39fe4b7962286a8.etc2.ctex::
 ::res://assets/novas_imagens/buttons/::1767749924
@@ -2820,15 +2820,15 @@ pause.tscn::PackedScene::4037136737900185900::1769788128::0::1::::<><><>0<>0<><>
 sangue_fill_scene.tscn::PackedScene::6166576124426715491::1769782970::0::1::::<><><>0<>0<><>::uid://knnoyualhpak::::res://assets/novas_imagens/effects/round_vortex/spritesheet/spritesheet.png<>uid://c3kw67aa4ebg7::::res://scripts/sangue_fill.gd<>uid://df08t0n8ym22n::::res://assets/novos_audios/sangue_fill_effect.mp3<>uid://bu87adwoqopfd::::res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png<>uid://dqid02yacbfn5::::res://assets/novas_imagens/buttons/Blank_White_Enter.png<>uid://b4nuieuqfk5wl::::res://assets/novas_imagens/buttons/360_A.png
 TESTES.tscn::PackedScene::4539221544595366990::1768225158::0::1::::<><><>0<>0<><>::uid://dvs2lwybcbwt2::::res://scenes/maycon_fase.tscn<>uid://d35e0jeya7iev::::res://scenes/caixa.tscn<>uid://chpqi8ryj0b1g::::res://scenes/bloco.tscn<>uid://c0hdoyj76p8qk::::res://scenes/coxinha.tscn
 tunel_fogo.tscn::PackedScene::4341796888319329057::1768323970::0::1::::<><><>0<>0<><>::uid://cros6010x6vuk::::res://assets/videos/caindo_tunel.ogv<>uid://defi0lubtlfmm::::res://scripts/intro_tunel.gd<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn
-::res://scenes/3D/::1769825259
+::res://scenes/3D/::1769827096
 castelo_3d.tscn::PackedScene::2193107508504318551::1769800933::0::1::::<><><>0<>0<><>::uid://d12tsbs23bhs0::::res://scripts/3D/character_body_3d.gd
 fire_seco_3d.tscn::PackedScene::3862633539102727356::1769800505::0::1::::<><><>0<>0<><>::uid://d2l37bhsd7lhp::::res://scripts/3D/object_3d.gd<>uid://cj2glpmry1pkv::::res://scenes/3D/seco_3d.tscn
 gpu_particles_3d.gd::GDScript::2296606666366010620::1769803289::0::1::::<>Node3D<><>0<>0<><>::
+maycon_3d.tscn::PackedScene::6885597973953626926::1769826950::0::1::::<><><>0<>0<><>::uid://d12tsbs23bhs0::::res://scripts/3D/character_body_3d.gd<>uid://dmk7ag335ld5j::::res://assets/audio/pulo_maycon.mp3<>uid://o0m05edowij::::res://assets/audio/passos_maycon.mp3<>uid://1w11c4koxm1e::::res://assets/novos_audios/kick.mp3<>uid://cgkrv61ssnnmh::::res://assets/novos_audios/punch.mp3<>uid://dhv5ghy38te6w::::res://assets/novas_imagens/3d_battle/segurando_arma_3d.png
 object_3d.tscn::PackedScene::254120802091748693::1769800469::0::1::::<><><>0<>0<><>::uid://d2l37bhsd7lhp::::res://scripts/3D/object_3d.gd<>uid://cj2glpmry1pkv::::res://scenes/3D/seco_3d.tscn
-maycon_3d.tscn::PackedScene::6885597973953626926::1769822408::0::1::::<><><>0<>0<><>::uid://d12tsbs23bhs0::::res://scripts/3D/character_body_3d.gd<>uid://dmk7ag335ld5j::::res://assets/audio/pulo_maycon.mp3<>uid://o0m05edowij::::res://assets/audio/passos_maycon.mp3<>uid://1w11c4koxm1e::::res://assets/novos_audios/kick.mp3<>uid://cgkrv61ssnnmh::::res://assets/novos_audios/punch.mp3
-seco_power_3d_1.tscn::PackedScene::7279667001091999291::1769823929::0::1::::<><><>0<>0<><>::uid://dkny6wmmn76sa::::res://scripts/3D/seco_power_3d_1.gd
 seco_3d.tscn::PackedScene::5460663912371079189::1769821574::0::1::::<><><>0<>0<><>::uid://lhs7w1lfxh4w::::res://scripts/3D/seco_3d.gd<>uid://bhio7fv0i3hmo::::res://assets/novas_imagens/inimigos/seco/seco_idle_smile.png<>uid://winmr31cwh05::::res://assets/novos_audios/growl_1.mp3<>uid://d2ubmgfppbohq::::res://assets/novos_audios/growl_2.mp3<>uid://oliyk2sx4vpw::::res://assets/novos_audios/growl_3.mp3<>uid://dmk7ag335ld5j::::res://assets/audio/pulo_maycon.mp3<>uid://3ioxpfl6y5r::::res://assets/novos_audios/seco_3d_power.mp3<>uid://dbylb1bjbstk2::::res://scenes/3D/seco_power_3d_1.tscn<>uid://dvchofw63am8g::::res://assets/novas_imagens/inimigos/seco/seco_kick.png
-world_3d.tscn::PackedScene::2844267785584541593::1769825259::0::1::::<><><>0<>0<><>::uid://ftfnu08qs8ea::::res://scripts/3D/world_3d.gd<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn<>uid://d23jsbvra6ofb::::res://assets/novos_audios/3d_first_battle_seco.mp3<>uid://c5do17jvoskfm::::res://scenes/3D/maycon_3d.tscn<>uid://7yq1nl8wo04o::::res://scenes/3D/gpu_particles_3d.gd<>uid://bvbdalvb1q4f5::::res://scenes/3D/fire_seco_3d.tscn<>uid://c71odhu3buit::::res://assets/novas_imagens/3d_battle/arma_3d.png
+seco_power_3d_1.tscn::PackedScene::7279667001091999291::1769823929::0::1::::<><><>0<>0<><>::uid://dkny6wmmn76sa::::res://scripts/3D/seco_power_3d_1.gd
+world_3d.tscn::PackedScene::2844267785584541593::1769827096::0::1::::<><><>0<>0<><>::uid://ftfnu08qs8ea::::res://scripts/3D/world_3d.gd<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn<>uid://d23jsbvra6ofb::::res://assets/novos_audios/3d_first_battle_seco.mp3<>uid://c5do17jvoskfm::::res://scenes/3D/maycon_3d.tscn<>uid://7yq1nl8wo04o::::res://scenes/3D/gpu_particles_3d.gd<>uid://bvbdalvb1q4f5::::res://scenes/3D/fire_seco_3d.tscn<>uid://c71odhu3buit::::res://assets/novas_imagens/3d_battle/arma_3d.png
 ::res://scenes/inimigos/::1769632833
 cabelo.tscn::PackedScene::1886526848683626109::1768321891::0::1::::<><><>0<>0<><>::uid://dc6fyyx8xncpv::::res://assets/novas_imagens/inimigos/camilita/camilita_attack.png<>uid://jpruwl1kxn8m::::res://assets/novas_imagens/cabelo/cabelo_idle.png<>uid://dqff4eihc6rqp::::res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Arrow.png<>uid://dasniorc2jiw6::::res://assets/novos_audios/inimigo_1_attack_magic.mp3<>uid://4dsrxbn0hoiw::::res://assets/novos_audios/inimigo_1_voice_attack.mp3
 inimigo_bomba_pretti.tscn::PackedScene::2332490079172283386::1768423640::0::1::::<><><>0<>0<><>::uid://dj6t28v6ftb70::::res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_attack_1.png<>uid://cjny1v7bphapj::::res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_attack_2.png<>uid://b65egppqvsc2d::::res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_idle.png<>uid://b4hrkqb4atcxe::::res://scripts/inimigos/inimigo_bomba_pretti.gd<>uid://ct1c24u6ffq62::::res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_agulha.png<>uid://cu01u62l1psg6::::res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_halter.png<>uid://2meppcw1h507::::res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png<>uid://dasniorc2jiw6::::res://assets/novos_audios/inimigo_1_attack_magic.mp3<>uid://4dsrxbn0hoiw::::res://assets/novos_audios/inimigo_1_voice_attack.mp3<>uid://c2uew5w81laa::::res://assets/novos_audios/doom_pain.mp3
@@ -2883,12 +2883,12 @@ maycon_itens.gd::GDScript::3608571195747589650::1769775583::0::1::::<>Node2D<><>
 pause.gd::GDScript::7449233017950370426::1769794721::0::1::::<>Control<><>0<>0<><>::
 sangue_fill.gd::GDScript::6760165581029737568::1769782970::0::1::::<>Area2D<><>0<>0<><>::
 seco.gd::GDScript::1005395561379310119::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-::res://scripts/3D/::1769825259
-character_body_3d.gd::GDScript::9041096033774661569::1769821390::0::1::::<>CharacterBody3D<><>0<>0<><>::
+::res://scripts/3D/::1769827156
+character_body_3d.gd::GDScript::9041096033774661569::1769827156::0::1::::<>CharacterBody3D<><>0<>0<><>::
 object_3d.gd::GDScript::9078826269963351129::1769803268::0::1::::<>Node3D<><>0<>0<><>::
-world_3d.gd::GDScript::390495286410503036::1769825259::0::1::::<>Node3D<><>0<>0<><>::
-seco_power_3d_1.gd::GDScript::7889501140315098800::1769823929::0::1::::<>Area3D<><>0<>0<><>::
 seco_3d.gd::GDScript::787679171757530100::1769822071::0::1::::<>CharacterBody3D<><>0<>0<><>::
+seco_power_3d_1.gd::GDScript::7889501140315098800::1769823929::0::1::::<>Area3D<><>0<>0<><>::
+world_3d.gd::GDScript::390495286410503036::1769825259::0::1::::<>Node3D<><>0<>0<><>::
 ::res://scripts/inimigos/::1768424364
 enemy_data.gd::GDScript::5291297442027347434::1768420697::0::1::::<>Node2D<><>0<>0<><>::
 inimigo_1.gd::GDScript::9091500814300405403::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::

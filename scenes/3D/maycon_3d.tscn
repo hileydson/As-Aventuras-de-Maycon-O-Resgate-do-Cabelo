@@ -40,28 +40,28 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 0.21,
+"duration": 0.14,
 "texture": SubResource("AtlasTexture_xqtj4")
 }, {
-"duration": 0.21,
+"duration": 0.14,
 "texture": SubResource("AtlasTexture_8in0v")
 }, {
-"duration": 0.21,
+"duration": 0.14,
 "texture": SubResource("AtlasTexture_uh0k5")
 }, {
-"duration": 0.21,
+"duration": 0.14,
 "texture": SubResource("AtlasTexture_y4gmr")
 }, {
-"duration": 0.21,
+"duration": 0.14,
 "texture": SubResource("AtlasTexture_11d7m")
 }, {
-"duration": 0.21,
+"duration": 0.14,
 "texture": SubResource("AtlasTexture_y4gmr")
 }, {
-"duration": 0.21,
+"duration": 0.14,
 "texture": SubResource("AtlasTexture_uh0k5")
 }, {
-"duration": 0.21,
+"duration": 0.14,
 "texture": SubResource("AtlasTexture_8in0v")
 }],
 "loop": false,
@@ -81,7 +81,7 @@ animations = [{
 "duration": 1.01,
 "texture": SubResource("AtlasTexture_8in0v")
 }],
-"loop": true,
+"loop": false,
 "name": &"walk",
 "speed": 5.0
 }]
@@ -108,10 +108,6 @@ volume_db = -11.019
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 collision_layer = 9
 script = ExtResource("1_fvdyg")
-SPEED = null
-JUMP_VELOCITY = null
-MOUSE_SENSITIVITY = null
-JOY_SENSITIVITY = null
 
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
 
@@ -126,13 +122,12 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterBody3D/arma_canvas/Control"]
+[node name="arma_sprite" type="AnimatedSprite2D" parent="CharacterBody3D/arma_canvas/Control"]
 position = Vector2(712, 483)
 scale = Vector2(0.81, 0.774)
 sprite_frames = SubResource("SpriteFrames_xqtj4")
-animation = &"idle"
+animation = &"shoot"
 autoplay = "idle"
-frame_progress = 0.6422726
 
 [node name="ponto" type="Label" parent="CharacterBody3D/arma_canvas/Control"]
 layout_mode = 0
@@ -143,4 +138,4 @@ offset_bottom = 249.0
 scale = Vector2(2.2777793, 2.6133335)
 text = "."
 
-[connection signal="animation_finished" from="CharacterBody3D/arma_canvas/Control/AnimatedSprite2D" to="CharacterBody3D" method="_on_animated_sprite_2d_animation_finished"]
+[connection signal="animation_finished" from="CharacterBody3D/arma_canvas/Control/arma_sprite" to="CharacterBody3D" method="_on_animated_sprite_2d_animation_finished"]

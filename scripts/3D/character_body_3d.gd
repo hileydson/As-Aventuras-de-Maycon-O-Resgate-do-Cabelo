@@ -6,8 +6,8 @@ extends CharacterBody3D
 @export var JOY_SENSITIVITY = 0.05 # Sensibilidade para o controle
 @onready var walk: AudioStreamPlayer2D = $"../walk"
 @onready var jump: AudioStreamPlayer2D = $"../jump"
-@onready var arma_sprite: AnimatedSprite2D = $arma/Control/AnimatedSprite2D
 @onready var arma_canvas: CanvasLayer = $arma_canvas
+@onready var arma_sprite: AnimatedSprite2D = $arma_canvas/Control/arma_sprite
 
 @onready var camera = $Camera3D
 
