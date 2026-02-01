@@ -34,24 +34,27 @@ func create_dungeon_floor():
 	lava = CSGBox3D.new()
 	lava.size = Vector3(50, 1, 50)
 	lava.material = lava_material
-	lava.use_collision = true  # Ativa a colisão física
+	lava.use_collision = true  # CRÍTICO: Ativa a colisão física
 	
 	# 2. Adiciona a lava COMO FILHA da NavigationRegion
-	# Isso é vital: a navegação só funciona com os filhos dela
 	nav_region.add_child(lava)
 	
 	# 3. Posiciona a lava NO MUNDO (Global)
-	# Coloquei em Y = -0.5 para que o TOPO da caixa (que tem 1 de altura) 
-	# fique exatamente no nível 0, facilitando o spawn do player e inimigos.
 	lava.global_position = Vector3(0, -0.5, 0)
 	
-	# 4. Gera a malha de navegação para os inimigos
+	# --- O PULO DO GATO ---
+	# Espera um frame para o Godot registrar a colisão da lava no servidor de física
+	await get_tree().process_frame
+	
+	# 4. Agora sim, gera a malha de navegação (Aparecerá o AZUL no Debug)
 	nav_region.bake_navigation_mesh()
 	
 	# 5. Reposiciona o Player para garantir que ele não caia
-	# Se o player nascer em 0,0,0 e a lava estiver lá, ele fica no chão.
-	if maycon_3d.get_node("CharacterBody3D"):
-		maycon_3d.get_node("CharacterBody3D").global_position = Vector3(0, 2, 24.05444) # Nasce um pouco acima do chão
+	# Certifique-se que o caminho do nó está correto
+	var player_node = maycon_3d.get_node("CharacterBody3D")
+	if player_node:
+		player_node.global_position = Vector3(0, 2, 24)
+		
 	
 	
 	

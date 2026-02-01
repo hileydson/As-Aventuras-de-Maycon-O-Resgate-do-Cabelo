@@ -1029,8 +1029,8 @@ stream = ExtResource("6_y4gmr")
 volume_db = -4.489
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="." groups=["player"]]
-collision_layer = 9
-collision_mask = 9
+collision_layer = 1033
+collision_mask = 1033
 script = ExtResource("1_fvdyg")
 
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]

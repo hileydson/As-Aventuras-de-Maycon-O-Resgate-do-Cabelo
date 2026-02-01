@@ -97,7 +97,9 @@ animations = [{
 [node name="inimigo_bomba_pretti_3d" type="Node3D"]
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1848145, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0184517, 0)
+collision_layer = 1025
+collision_mask = 1025
 script = ExtResource("1_low0x")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="CharacterBody3D"]
