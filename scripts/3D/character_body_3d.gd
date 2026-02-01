@@ -32,6 +32,21 @@ func remove_bullets_from_gun()->void:
 	if gun_bullets_count != 0:
 		gun_bullets_count = gun_bullets_count-1
 
+@onready var raycast = $Camera3D/RayCast3D
+
+func atirar():
+	# Verifica se o raio está encostando em algo
+	if raycast.is_colliding():
+		var alvo = raycast.get_collider() # Pega o objeto atingido
+
+		# Verifica se o alvo tem a função de receber dano
+		if alvo.has_method("receber_dano"):
+			alvo.receber_dano(3)
+			
+			# Opcional: Criar uma marca de impacto ou faísca no local exato
+			var ponto_impacto = raycast.get_collision_point()
+			#criar_impacto_visual(ponto_impacto)
+
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -55,7 +70,7 @@ func aplicar_shake(valor: float):
 	
 
 func _physics_process(delta):
-	print(Input.get_connected_joypads())
+	
 	# HUD de sangue
 	$hud_canvas/maycon_hp/hp_1.visible = Global.maycon_danos_first_3d_battle<=4
 	$hud_canvas/maycon_hp/hp_2.visible = Global.maycon_danos_first_3d_battle<=3
@@ -94,6 +109,7 @@ func _physics_process(delta):
 	
 	# faz o tiro
 	if Global.maycon_pegou_arma_first_3d_battle && Input.is_action_just_pressed("tiro") && arma_sprite.animation!="shoot" && gun_bullets_count!=0:
+		atirar()
 		shoot_fire.play("shoot")
 		arma_sprite.play("shoot")
 		Input.start_joy_vibration(0, 0.4, 0.1, 0.2)

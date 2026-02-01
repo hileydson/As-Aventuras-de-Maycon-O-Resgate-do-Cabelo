@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://cj2glpmry1pkv"]
+[gd_scene load_steps=24 format=3 uid="uid://cj2glpmry1pkv"]
 
 [ext_resource type="Script" uid="uid://lhs7w1lfxh4w" path="res://scripts/3D/seco_3d.gd" id="1_ml58b"]
 [ext_resource type="Texture2D" uid="uid://bhio7fv0i3hmo" path="res://assets/novas_imagens/inimigos/seco/seco_idle_smile.png" id="1_orvse"]
@@ -9,6 +9,7 @@
 [ext_resource type="AudioStream" uid="uid://3ioxpfl6y5r" path="res://assets/novos_audios/seco_3d_power.mp3" id="5_pvhlm"]
 [ext_resource type="PackedScene" uid="uid://dbylb1bjbstk2" path="res://scenes/3D/seco_power_3d_1.tscn" id="6_uf71k"]
 [ext_resource type="Texture2D" uid="uid://dvchofw63am8g" path="res://assets/novas_imagens/inimigos/seco/seco_kick.png" id="8_eny66"]
+[ext_resource type="Script" uid="uid://oc3lu102dap5" path="res://scripts/3D/seco_3d_hp.gd" id="10_uwy75"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h2jqc"]
 atlas = ExtResource("1_orvse")
@@ -92,6 +93,14 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_de7ik"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uwy75"]
+bg_color = Color(0.9972492, 0.87304837, 0.88654727, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s73nt"]
+bg_color = Color(0.5812133, 0.21403438, 0.17860019, 1)
+
 [node name="seco_3d" type="Node3D"]
 
 [node name="Growl1" type="AudioStreamPlayer" parent="."]
@@ -115,6 +124,7 @@ volume_db = 3.838
 wait_time = 4.66
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+collision_mask = 513
 script = ExtResource("1_ml58b")
 onda_scene = ExtResource("6_uf71k")
 
@@ -125,13 +135,33 @@ sprite_frames = SubResource("SpriteFrames_aq40f")
 animation = &"idle"
 autoplay = "idle"
 
+[node name="Area3D" type="Area3D" parent="CharacterBody3D"]
+collision_layer = 512
+collision_mask = 512
+script = ExtResource("10_uwy75")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Area3D"]
+transform = Transform3D(3.2674801, 0, 0, 0, 2.4990282, 0, 0, 0, 2.8107557, 0, 2.347931, 0.9777832)
+shape = SubResource("CapsuleShape3D_de7ik")
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Control" type="Control" parent="CanvasLayer"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer"]
+anchors_preset = -1
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 246.0
+offset_top = -312.0
+offset_right = 246.0
+offset_bottom = -285.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5600003, 0.35999978)
+theme_override_styles/background = SubResource("StyleBoxFlat_uwy75")
+theme_override_styles/fill = SubResource("StyleBoxFlat_s73nt")
+value = 100.0
+show_percentage = false
 
 [connection signal="timeout" from="Timer_enemy_attack" to="CharacterBody3D" method="_on_timer_enemy_attack_timeout"]
 [connection signal="animation_finished" from="CharacterBody3D/AnimatedSprite3D" to="CharacterBody3D" method="_on_animated_sprite_3d_animation_finished"]

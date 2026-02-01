@@ -17,23 +17,24 @@ func _ready() -> void:
 	await get_tree().create_timer(3.0).timeout
 	seco_welcome.play()
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+func maycon_died()->void:
+	#get_tree().paused = true
+	you_died.visible = true
+	fire_seco_3d.process_mode = Node.PROCESS_MODE_DISABLED
+	maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
+	await get_tree().create_timer(3.0).timeout 
+	fade.get_node("Transition").play("fade_out")
+	await get_tree().create_timer(2.0).timeout 
+	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn") 
+	# Called every frame. 'delta' is the elapsed time since the previous frame.
+	
 func _process(delta: float) -> void:
 	
 	# YOU DIED
 	if Global.maycon_danos_first_3d_battle == 5:
-		#get_tree().paused = true
-		you_died.visible = true
-		fire_seco_3d.process_mode = Node.PROCESS_MODE_DISABLED
-		maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
-		await get_tree().create_timer(3.0).timeout 
-		fade.get_node("Transition").play("fade_out")
-		await get_tree().create_timer(2.0).timeout 
-		get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn") 
+		maycon_died()
 	
-	
-	print("DANOS SECO: -> "+str(Global.seco_danos_first_3d_battle))
+	#print("DANOS SECO: -> "+str(Global.seco_danos_first_3d_battle))
 	
 	if Global.maycon_pegou_arma_first_3d_battle && arma:
 		arma.queue_free()
