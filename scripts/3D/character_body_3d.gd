@@ -51,9 +51,11 @@ func aplicar_shake(valor: float):
 	tween.tween_property(color_rect, "modulate:a", 0.5, 0.05)
 	# Faz o Alpha voltar para 0.0 (invisível) em 0.2 segundos
 	tween.tween_property(color_rect, "modulate:a", 0.0, 0.2)
+	
+	
 
 func _physics_process(delta):
-	
+	print(Input.get_connected_joypads())
 	# HUD de sangue
 	$hud_canvas/maycon_hp/hp_1.visible = Global.maycon_danos_first_3d_battle<=4
 	$hud_canvas/maycon_hp/hp_2.visible = Global.maycon_danos_first_3d_battle<=3
@@ -64,6 +66,7 @@ func _physics_process(delta):
 	#acabou de levar um dano
 	if Global.maycon_danos_first_3d_battle != danos_count:
 		danos_count = Global.maycon_danos_first_3d_battle
+		Input.start_joy_vibration(0, 0.5, 0.7, 0.3)
 		aplicar_shake(0.4)
 		hurt_sound_3d.play()
 		
@@ -93,6 +96,7 @@ func _physics_process(delta):
 	if Global.maycon_pegou_arma_first_3d_battle && Input.is_action_just_pressed("tiro") && arma_sprite.animation!="shoot" && gun_bullets_count!=0:
 		shoot_fire.play("shoot")
 		arma_sprite.play("shoot")
+		Input.start_joy_vibration(0, 0.4, 0.1, 0.2)
 		gun_shot.play()
 		remove_bullets_from_gun()
 	
@@ -123,6 +127,7 @@ func _physics_process(delta):
 		velocity.y = JUMP_VELOCITY
 		jump.play()
 		arma_sprite.play("walk")
+		Input.start_joy_vibration(0, 0.2, 0.2, 0.2)
 		
 
 	var input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")

@@ -35,6 +35,7 @@ func unpause()->void:
 func jump(is_colliding:bool)->void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !is_colliding:
 		sound_jump.play()
+		Input.start_joy_vibration(0, 0.2, 0.2, 0.1)
 		animated_sprite_2d.play("jump_right")
 		velocity.y = JUMP_VELOCITY
 		
@@ -43,6 +44,7 @@ func double_jump(is_colliding:bool)->void:
 	if Input.is_action_just_pressed("ui_accept") and !is_on_floor() and !is_colliding:
 		if DOUBLE_JUMP_COUNT<1:
 			sound_double_jump.play()
+			Input.start_joy_vibration(0, 0.2, 0.2, 0.2)
 			velocity.y = JUMP_VELOCITY+50
 			animated_sprite_2d.play("double_jump")
 			DOUBLE_JUMP_COUNT = DOUBLE_JUMP_COUNT+1

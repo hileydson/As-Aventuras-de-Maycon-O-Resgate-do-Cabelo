@@ -183,6 +183,7 @@ func _on_area_2d_area_entered(area: Area2D) -> void:
 			batalha_moves.died = true
 		
 		hurt_sound.play()
+		Input.start_joy_vibration(0, 0.5, 0.7, 0.3)
 		maycon_batalha.play("damage")
 		await get_tree().create_timer(0.4).timeout
 		maycon_batalha.play("idle_right")
