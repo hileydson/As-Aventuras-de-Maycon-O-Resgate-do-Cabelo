@@ -14,9 +14,12 @@ extends Node3D
 @export var inimigo_scene: PackedScene 
 
 # Referência ao nó que contém os pontos de spawn
-@onready var pontos_container = $WorldEnvironment
+#@onready var pontos_container = $"."
+var pontos_container
 
+var enemies_count:int = 0
 var lava_material = StandardMaterial3D.new()
+var lava
 
 func setup_materials():
 	# Configura a cor da lava com emissão (brilho)
@@ -27,7 +30,7 @@ func setup_materials():
 	
 func create_dungeon_floor():
 # Criando o chão de lava
-	var lava = CSGBox3D.new()
+	lava = CSGBox3D.new()
 	lava.size = Vector3(50, 1, 50)
 	lava.position.y = -1
 	lava.material = lava_material
@@ -83,24 +86,32 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 
 func _on_respaw_timeout() -> void:
 	#plotar novo inimigo
-	if get_tree().get_nodes_in_group("inimigos").size() < 10:
+	if enemies_count < 10:
 		respaw_sound.play()
-		# 1. Pega todos os Marker3Ds dentro do container
-		var pontos = pontos_container.get_children()
-		
-		if pontos.size() > 0:
-			# 2. Escolhe um ponto aleatório da lista
-			var ponto_aleatorio = pontos.pick_random()
-			
-			# 3. Instancia o inimigo
-			var novo_inimigo = inimigo_scene.instantiate()
-			
-			# 4. Adiciona à cena
-			add_child(novo_inimigo)
-			
-			# 5. Coloca o inimigo na posição global do ponto escolhido
-			if novo_inimigo.global_position:
-				novo_inimigo.global_position = ponto_aleatorio.global_position
-				print("Inimigo surgiu em: ", ponto_aleatorio.name)
-			
-			
+	
+		var novo_inimigo = inimigo_scene.instantiate()
+		add_child(novo_inimigo)
+
+		# 1. Pegamos o tamanho da caixa (lava)
+		var largura = lava.size.x
+		var profundidade = lava.size.z
+		var altura_caixa = lava.size.y
+
+		# 2. Geramos um X e Z aleatórios dentro dos limites da caixa
+		# Usamos size/2 porque a posição (0,0,0) da caixa costuma ser o centro
+		var x_aleatorio = randf_range(-largura / 2, largura / 2)
+		var z_aleatorio = randf_range(-profundidade / 2, profundidade / 2)
+
+		# 3. Calculamos a altura exata do topo
+		var altura_topo = lava.global_position.y + (altura_caixa / 2) + 0.5
+
+		# 4. Definimos a posição final
+		# Somamos a posição global da lava para que o spawn siga a caixa onde ela estiver
+		novo_inimigo.global_position = Vector3(
+			lava.global_position.x + x_aleatorio,
+			altura_topo,
+			lava.global_position.z + z_aleatorio
+		)
+
+		enemies_count += 1
+		print("Inimigo spawnado em X:", x_aleatorio, " Z:", z_aleatorio)

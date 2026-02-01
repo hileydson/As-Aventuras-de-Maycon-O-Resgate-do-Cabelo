@@ -41,6 +41,30 @@ font_color = Color(1, 0.32, 0.32, 1)
 script = ExtResource("1_37ayl")
 inimigo_scene = ExtResource("2_s1682")
 
+[node name="respaw_sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_y1myi")
+
+[node name="HurtSound3d" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_fki46")
+
+[node name="SecoWelcome" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_8u6hh")
+volume_db = 5.237
+pitch_scale = 0.53
+
+[node name="GunLoad" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_6j7o7")
+volume_db = 2.993
+
+[node name="3dFirstBattleSeco" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_r7pon")
+volume_db = -8.979
+autoplay = true
+parameters/looping = true
+
+[node name="respaw" type="Timer" parent="."]
+wait_time = 2.0
+
 [node name="maycon_3d" parent="." instance=ExtResource("3_r7pon")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24.054443)
 
@@ -112,32 +136,8 @@ theme = SubResource("Theme_0dmxx")
 text = "YOU DIED!"
 label_settings = SubResource("LabelSettings_fki46")
 
-[node name="respaw" type="Timer" parent="."]
-wait_time = 10.0
-
-[node name="respaw_sound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_y1myi")
-
-[node name="HurtSound3d" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_fki46")
-
-[node name="SecoWelcome" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_8u6hh")
-volume_db = 5.237
-pitch_scale = 0.53
-
-[node name="GunLoad" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_6j7o7")
-volume_db = 2.993
-
-[node name="3dFirstBattleSeco" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("1_r7pon")
-volume_db = -8.979
-autoplay = true
-parameters/looping = true
-
 [node name="fade" parent="." instance=ExtResource("1_g4aeq")]
 z_index = 7
 
-[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="timeout" from="respaw" to="." method="_on_respaw_timeout"]
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

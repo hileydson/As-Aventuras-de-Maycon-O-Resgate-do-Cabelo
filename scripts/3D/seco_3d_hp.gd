@@ -1,7 +1,7 @@
 extends Area3D
 
 @onready var barra_vida: ProgressBar = $"../../CanvasLayer/ProgressBar"
-@onready var growl_3: AudioStreamPlayer = $"../../Growl3"
+@onready var growl_fino: AudioStreamPlayer = $"../../Growl_fino"
 
 var hp:int = 100
 
@@ -27,7 +27,7 @@ func _process(delta: float) -> void:
 
 
 func atualizar_barra():
-	growl_3.play()
+	growl_fino.play()
 	# O Tween faz a barra descer suavemente em vez de um corte seco
 	var tween = create_tween()
 	tween.tween_property(barra_vida, "value", hp, 0.2)
