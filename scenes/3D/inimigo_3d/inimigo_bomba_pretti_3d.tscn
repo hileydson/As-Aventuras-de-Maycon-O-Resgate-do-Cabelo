@@ -1,0 +1,123 @@
+[gd_scene load_steps=15 format=3 uid="uid://ben4xc74a3q4f"]
+
+[ext_resource type="Script" uid="uid://wh5qn7k0e20g" path="res://scripts/3D/inimigo_bomba_pretti_3d.gd" id="1_low0x"]
+[ext_resource type="Texture2D" uid="uid://b65egppqvsc2d" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_idle.png" id="2_mex0y"]
+[ext_resource type="Texture2D" uid="uid://dj6t28v6ftb70" path="res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_attack_1.png" id="3_chxo1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kye6n"]
+atlas = ExtResource("2_mex0y")
+region = Rect2(0, 0, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ci58r"]
+atlas = ExtResource("2_mex0y")
+region = Rect2(144, 0, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vx05q"]
+atlas = ExtResource("2_mex0y")
+region = Rect2(288, 0, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e1av5"]
+atlas = ExtResource("2_mex0y")
+region = Rect2(0, 192, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f0tm8"]
+atlas = ExtResource("2_mex0y")
+region = Rect2(144, 192, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b7kxd"]
+atlas = ExtResource("2_mex0y")
+region = Rect2(288, 192, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1mwxm"]
+atlas = ExtResource("2_mex0y")
+region = Rect2(0, 384, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_875nr"]
+atlas = ExtResource("2_mex0y")
+region = Rect2(144, 384, 144, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ejl6"]
+atlas = ExtResource("3_chxo1")
+region = Rect2(288, 0, 144, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ldy12"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kye6n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ci58r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vx05q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e1av5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f0tm8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b7kxd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1mwxm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_875nr")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ejl6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ejl6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ejl6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ejl6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ejl6")
+}],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1h8fw"]
+
+[node name="inimigo_bomba_pretti_3d" type="Node3D"]
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1848145, 0)
+script = ExtResource("1_low0x")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="CharacterBody3D"]
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="CharacterBody3D"]
+billboard = 1
+sprite_frames = SubResource("SpriteFrames_ldy12")
+animation = &"idle"
+autoplay = "idle"
+frame = 2
+frame_progress = 0.28025973
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("CapsuleShape3D_1h8fw")
+
+[node name="Area3D" type="Area3D" parent="CharacterBody3D"]
+collision_layer = 8
+collision_mask = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Area3D"]
+shape = SubResource("CapsuleShape3D_1h8fw")
+
+[connection signal="body_entered" from="CharacterBody3D/Area3D" to="CharacterBody3D" method="_on_area_3d_body_entered"]

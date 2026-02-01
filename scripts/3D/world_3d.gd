@@ -9,6 +9,7 @@ extends Node3D
 @onready var fade: Node2D = $fade
 @onready var respaw: Timer = $respaw
 @onready var respaw_sound: AudioStreamPlayer = $respaw_sound
+@onready var nav_region: NavigationRegion3D = $NavigationRegion3D
 
 # Arraste o arquivo .tscn do seu inimigo para cá no Inspetor
 @export var inimigo_scene: PackedScene 
@@ -29,17 +30,30 @@ func setup_materials():
 	lava_material.emission_energy_multiplier = 2.0
 	
 func create_dungeon_floor():
-# Criando o chão de lava
+	# 1. Configuração básica da lava
 	lava = CSGBox3D.new()
 	lava.size = Vector3(50, 1, 50)
-	lava.position.y = -1
 	lava.material = lava_material
+	lava.use_collision = true  # Ativa a colisão física
 	
-	# --- A LINHA QUE SALVA SUA VIDA ---
-	lava.use_collision = true 
-	# ----------------------------------
+	# 2. Adiciona a lava COMO FILHA da NavigationRegion
+	# Isso é vital: a navegação só funciona com os filhos dela
+	nav_region.add_child(lava)
 	
-	add_child(lava)
+	# 3. Posiciona a lava NO MUNDO (Global)
+	# Coloquei em Y = -0.5 para que o TOPO da caixa (que tem 1 de altura) 
+	# fique exatamente no nível 0, facilitando o spawn do player e inimigos.
+	lava.global_position = Vector3(0, -0.5, 0)
+	
+	# 4. Gera a malha de navegação para os inimigos
+	nav_region.bake_navigation_mesh()
+	
+	# 5. Reposiciona o Player para garantir que ele não caia
+	# Se o player nascer em 0,0,0 e a lava estiver lá, ele fica no chão.
+	if maycon_3d.get_node("CharacterBody3D"):
+		maycon_3d.get_node("CharacterBody3D").global_position = Vector3(0, 2, 24.05444) # Nasce um pouco acima do chão
+	
+	
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -86,7 +100,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 
 func _on_respaw_timeout() -> void:
 	#plotar novo inimigo
-	if enemies_count < 10:
+	if enemies_count < 3:
 		respaw_sound.play()
 	
 		var novo_inimigo = inimigo_scene.instantiate()
@@ -112,6 +126,4 @@ func _on_respaw_timeout() -> void:
 			altura_topo,
 			lava.global_position.z + z_aleatorio
 		)
-
 		enemies_count += 1
-		print("Inimigo spawnado em X:", x_aleatorio, " Z:", z_aleatorio)
