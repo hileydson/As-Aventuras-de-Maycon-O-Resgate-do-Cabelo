@@ -60,9 +60,16 @@ func atirar():
 			# sangue.look_at(raycast.get_collision_point() + raycast.get_collision_normal())
 
 func _ready():
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	#Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
-
+func _input(event):
+	if event is InputEventMouseMotion:
+		# Aqui é onde a mágica acontece
+		rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
+		camera.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
+		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))
+		
 func _unhandled_input(event):
 	# O mouse continua funcionando normalmente aqui
 	if event is InputEventMouseMotion:

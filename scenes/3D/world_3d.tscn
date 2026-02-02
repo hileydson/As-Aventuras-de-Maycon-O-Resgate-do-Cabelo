@@ -134,13 +134,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.013834, 0.228158, -13.820
 
 [node name="you_died" type="Label" parent="."]
 visible = false
-offset_left = 405.00003
-offset_top = 104.0
-offset_right = 485.00003
-offset_bottom = 127.0
+offset_left = 293.00003
+offset_top = 161.0
+offset_right = 407.00003
+offset_bottom = 184.0
 scale = Vector2(4.455126, 6.8819976)
 theme = SubResource("Theme_0dmxx")
-text = "YOU DIED!"
+text = "      YOU DIED!"
 label_settings = SubResource("LabelSettings_fki46")
 
 [node name="fade" parent="." instance=ExtResource("1_g4aeq")]
