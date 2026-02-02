@@ -6,8 +6,17 @@ extends CharacterBody3D
 @onready var animated_sprite_3d: AnimatedSprite3D = $AnimatedSprite3D
 
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-
+var esta_atordoado: bool = false
 var player = null
+
+# Função chamada pela Area3D
+func parar_por_dano():
+	esta_atordoado = true
+	# Cria um timer de 1 segundo
+	await get_tree().create_timer(1.0).timeout 
+	# Se ainda estiver vivo após 1 segundo, volta a perseguir
+	esta_atordoado = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Espera um frame para garantir que a navegação foi carregada
@@ -24,6 +33,13 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = 0
 
+	if esta_atordoado:
+		# O inimigo fica parado horizontalmente enquanto leva o hit
+		velocity.x = 0
+		velocity.z = 0
+		move_and_slide()
+		return # SAI DA FUNÇÃO AQUI, ignorando o resto (GPS/Perseguição)
+		
 	# 2. LÓGICA DE MOVIMENTO
 	if player:
 		if animated_sprite_3d.animation != "attack" && animated_sprite_3d.animation != "died":

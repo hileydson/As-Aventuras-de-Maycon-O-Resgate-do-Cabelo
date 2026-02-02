@@ -1,9 +1,11 @@
-[gd_scene load_steps=37 format=3 uid="uid://dlqycyx4v715r"]
+[gd_scene load_steps=41 format=3 uid="uid://dlqycyx4v715r"]
 
 [ext_resource type="Script" uid="uid://dq25ryu2ggdlp" path="res://scripts/3D/inimigo_3d_default.gd" id="1_i4pi1"]
 [ext_resource type="Texture2D" uid="uid://cubmgmt62011h" path="res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf/Attack_1.png" id="2_i4pi1"]
+[ext_resource type="AudioStream" uid="uid://winmr31cwh05" path="res://assets/novos_audios/growl_1.mp3" id="2_o4kr3"]
 [ext_resource type="Texture2D" uid="uid://kdyeokdlvwl6" path="res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf/Dead.png" id="3_fawpx"]
 [ext_resource type="Texture2D" uid="uid://g8qriihve8i3" path="res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf/Walk.png" id="4_ca0h3"]
+[ext_resource type="Texture2D" uid="uid://dcbjwtlcy33bf" path="res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf/Hurt.png" id="5_eyvy2"]
 [ext_resource type="Texture2D" uid="uid://dhwcev2dytmqv" path="res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf/Run.png" id="5_o4kr3"]
 [ext_resource type="Script" uid="uid://bkdv0ufofdy2q" path="res://scripts/3D/recebe_dano_inimigo_default.gd" id="6_fawpx"]
 
@@ -37,6 +39,14 @@ region = Rect2(0, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o0apw"]
 atlas = ExtResource("3_fawpx")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o0y1s"]
+atlas = ExtResource("5_eyvy2")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_khrok"]
+atlas = ExtResource("5_eyvy2")
 region = Rect2(128, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oi40a"]
@@ -177,6 +187,17 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o0y1s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_khrok")
+}],
+"loop": true,
+"name": &"hurt",
+"speed": 5.0
+}, {
+"frames": [{
 "duration": 0.51,
 "texture": SubResource("AtlasTexture_oi40a")
 }, {
@@ -257,14 +278,18 @@ collision_layer = 1025
 collision_mask = 1025
 script = ExtResource("1_i4pi1")
 
+[node name="Growl1" type="AudioStreamPlayer" parent="CharacterBody3D"]
+stream = ExtResource("2_o4kr3")
+volume_db = 2.245
+pitch_scale = 4.0
+
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="CharacterBody3D"]
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="CharacterBody3D"]
 billboard = 1
 sprite_frames = SubResource("SpriteFrames_o0y1s")
-animation = &"attack"
+animation = &"hurt"
 autoplay = "idle"
-frame_progress = 0.04137244
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="CharacterBody3D"]
 transform = Transform3D(0.7102158, 0, 0, 0, 0.6631042, 0, 0, 0, 1, 0, -0.016784668, 0)

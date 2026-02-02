@@ -1,6 +1,7 @@
-[gd_scene load_steps=36 format=3 uid="uid://ccq7i7c6to5yt"]
+[gd_scene load_steps=37 format=3 uid="uid://ccq7i7c6to5yt"]
 
 [ext_resource type="Script" uid="uid://dq25ryu2ggdlp" path="res://scripts/3D/inimigo_3d_default.gd" id="1_ps2ur"]
+[ext_resource type="AudioStream" uid="uid://winmr31cwh05" path="res://assets/novos_audios/growl_1.mp3" id="2_g72og"]
 [ext_resource type="Texture2D" uid="uid://bc4xeep05vpl2" path="res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Black_Werewolf/Attack_3.png" id="2_ps2ur"]
 [ext_resource type="Texture2D" uid="uid://dy5h25sfvurdc" path="res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Black_Werewolf/Dead.png" id="3_ps2ur"]
 [ext_resource type="Texture2D" uid="uid://swrayka3u6p4" path="res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Black_Werewolf/walk.png" id="4_ps2ur"]
@@ -246,6 +247,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0184517, 0)
 collision_layer = 1025
 collision_mask = 1025
 script = ExtResource("1_ps2ur")
+
+[node name="Growl1" type="AudioStreamPlayer" parent="CharacterBody3D"]
+stream = ExtResource("2_g72og")
+volume_db = 2.245
+pitch_scale = 4.0
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="CharacterBody3D"]
 

@@ -2,14 +2,25 @@ extends Area3D
 
 @onready var animated_sprite_3d: AnimatedSprite3D = $"../AnimatedSprite3D"
 @onready var me: Node3D = $"../.."
+@onready var growl_1: AudioStreamPlayer = $"../Growl1"
 
 var hp:int = 6
 
 func receber_dano(dano:int)->void:
-	print("RECEBEU DANO")
+
 	hp -= dano
 	# Garante que a vida não fique negativa
 	hp = clamp(hp, 0, 6)
+	
+	# 1. Toca a animação de dano
+	animated_sprite_3d.play("hurt") # Certifique-se de ter essa animação
+	growl_1.play()
+	
+	# 2. Avisa o pai (CharacterBody3D) para parar
+	var pai = get_parent()
+	if pai and pai.has_method("parar_por_dano"):
+		pai.parar_por_dano()
+	
 	
 	if hp <= 0:
 		morrer()

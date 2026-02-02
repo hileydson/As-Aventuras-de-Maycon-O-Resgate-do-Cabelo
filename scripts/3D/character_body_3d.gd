@@ -26,7 +26,8 @@ var gun_bullets_count=0
 var danos_count = 0
 
 func add_bullets_to_gun(number:int):
-	gun_bullets_count = gun_bullets_count+number
+	#gun_bullets_count = gun_bullets_count+number
+	gun_bullets_count = 50+number #TODO: TESTE
 
 func remove_bullets_from_gun()->void:
 	if gun_bullets_count != 0:
@@ -38,8 +39,7 @@ func atirar():
 	# Verifica se o raio está encostando em algo
 	if raycast.is_colliding():
 		var alvo = raycast.get_collider() # Pega o objeto atingido
-		print(alvo.name)
-		print(alvo is Area3D)
+		
 		# Verifica se o alvo tem a função de receber dano
 		if alvo.has_method("receber_dano"):
 			alvo.receber_dano(3)

@@ -107,7 +107,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	
 func _on_respaw_timeout() -> void:
 	#plotar novo inimigo
-	if enemies_count < 1:
+	if enemies_count < 5:
 		respaw_sound.play()
 	
 		var novo_inimigo
