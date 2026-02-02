@@ -39,18 +39,19 @@ func morrer():
 	me.queue_free()
 	
 func drop_municao():
-	# Cria uma instância da cena de munição
 	var municao_instancia = MUNICAO_SCENE.instantiate()
-	
-	# Adiciona a munição na cena principal (ou no "world_3d")
-	# É melhor adicionar no root ou no world para ela não sumir com o inimigo
 	get_tree().current_scene.add_child(municao_instancia)
 	
-	# Define a posição da munição para a mesma posição do inimigo
-	# Usamos global_position para não ter erro de herança
+	# Tamanho reduzido (como fizemos antes)
+	municao_instancia.scale = Vector3(0.3, 0.3, 0.3)
+	
+	# Posição exata do inimigo
 	municao_instancia.global_position = global_position
-	# Ajuste leve no Y para ela não ficar "dentro" do chão
-	municao_instancia.global_position.y += 0.5
+	
+	# AJUSTE AQUI: 
+	# 0.1 deixa quase encostado no chão. 
+	# Se ainda estiver alto, use 0.05 ou remova a linha para ficar no 0.
+	municao_instancia.global_position.y += 0.1
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
