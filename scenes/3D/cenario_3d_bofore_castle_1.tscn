@@ -1,10 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://efjafjlo8f64"]
+[gd_scene load_steps=15 format=3 uid="uid://efjafjlo8f64"]
 
 [ext_resource type="Script" uid="uid://nkjnek3wm5yp" path="res://scripts/3D/cenario_3d_bofore_castle_1.gd" id="1_evjeq"]
 [ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="1_xq8f0"]
+[ext_resource type="AudioStream" uid="uid://df08t0n8ym22n" path="res://assets/novos_audios/sangue_fill_effect.mp3" id="2_1der3"]
 [ext_resource type="Texture2D" uid="uid://boqyn3fvgnhwl" path="res://assets/novas_imagens/3d_cenarios/textura_chao_barro.png" id="2_axo0a"]
 [ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="2_o5qm3"]
 [ext_resource type="PackedScene" uid="uid://b1y2e2cvtlgas" path="res://scenes/3D/torcha_3d.tscn" id="2_thl2i"]
+[ext_resource type="AudioStream" uid="uid://btl22s5pwrpe0" path="res://assets/novos_audios/sliding.mp3" id="3_7uvpv"]
 [ext_resource type="PackedScene" uid="uid://bysc8ns18xmwv" path="res://scenes/3D/pause_3d.tscn" id="4_33vbx"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="5_thl2i"]
 
@@ -38,6 +40,15 @@ uv1_triplanar = true
 [node name="cenario_3d_bofore_castle_1" type="Node3D"]
 script = ExtResource("1_evjeq")
 
+[node name="SangueFillEffect" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_1der3")
+volume_db = -4.489
+
+[node name="Sliding" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_7uvpv")
+volume_db = 3.741
+pitch_scale = 0.43
+
 [node name="FinalCabeloMistery" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_o5qm3")
 volume_db = -4.489
@@ -64,7 +75,7 @@ light_energy = 0.05
 light_specular = 0.519
 
 [node name="maycon_3d" parent="." instance=ExtResource("1_xq8f0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.339691, 2.866394, 23.56311)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.339691, 23.118591, 23.56311)
 
 [node name="chao" type="CSGBox3D" parent="."]
 transform = Transform3D(35.694233, 0, 0, 0, 0.3051597, 0, 0, 0, 53.394855, 0, 0, 0)
