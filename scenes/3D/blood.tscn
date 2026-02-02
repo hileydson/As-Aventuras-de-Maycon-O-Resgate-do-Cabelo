@@ -9,6 +9,7 @@ scale_min = 0.099999994
 scale_max = 0.099999994
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vh1g4"]
+shading_mode = 0
 albedo_color = Color(1, 0, 0, 1)
 billboard_mode = 1
 billboard_keep_scale = true
@@ -17,12 +18,17 @@ point_size = 0.6
 
 [sub_resource type="SphereMesh" id="SphereMesh_b4lwt"]
 material = SubResource("StandardMaterial3D_vh1g4")
+radius = 0.2
+height = 0.3
+radial_segments = 364
 
 [node name="blood" type="Node3D"]
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
-amount = 26
+emitting = false
+amount = 34
 amount_ratio = 0.5414
+one_shot = true
 process_material = SubResource("ParticleProcessMaterial_jypjr")
 draw_pass_1 = SubResource("SphereMesh_b4lwt")
 script = ExtResource("1_bwwsb")
