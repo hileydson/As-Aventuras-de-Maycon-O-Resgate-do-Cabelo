@@ -2,11 +2,18 @@ extends Area3D
 
 @onready var barra_vida: ProgressBar = $"../../CanvasLayer/ProgressBar"
 @onready var growl_fino: AudioStreamPlayer = $"../../Growl_fino"
+@onready var seco_died: Label = $"../../seco_died"
+@onready var blackout: ColorRect = $"../../ColorRect"
+@onready var canvas_layer: CanvasLayer = $"../../CanvasLayer"
+@onready var final_msg: Label = $"../../ColorRect/final_msg"
+@onready var final_msg_2: Label = $"../../ColorRect/final_msg2"
 
 var hp:int = 100
 
 func receber_dano(dano:int)->void:
 	hp -= dano
+	#hp -= 90 # TESTE
+	
 	# Garante que a vida não fique negativa
 	hp = clamp(hp, 0, 100)
 	
@@ -33,11 +40,32 @@ func atualizar_barra():
 	tween.tween_property(barra_vida, "value", hp, 0.2)
 
 func morrer():
+	if Global.default_language != Global.language_en:
+			seco_died.text = "DERROTADO!"
+			seco_died.visible = true
+			final_msg.text = "      SECO FUGIU!"
+			final_msg_2.text = "               MAS EU NÃO! 
+								EU AINDA TE PEGO MALDITO!"
+			
 	$"../../..".process_mode = Node.PROCESS_MODE_DISABLED
 	$"../../../../maycon_3d".process_mode = Node.PROCESS_MODE_DISABLED
 	await get_tree().create_timer(3.0).timeout 
+	canvas_layer.visible = false
+	var player = get_tree().get_first_node_in_group("player")
+	player.get_node("hud_canvas").visible = false
 	$"../../../../fade".get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout 
+	
+	#cena de encerramento 
+	blackout.visible = true
+	final_msg.visible = true
+	
+	await get_tree().create_timer(4.0).timeout 
+	final_msg_2.visible = true
+	await get_tree().create_timer(4.0).timeout 
+	$"../../../../fade".get_node("Transition").play("fade_out")
+	await get_tree().create_timer(2.0).timeout 
+	
 	Global.game_events["seco_first_scene_castle"]=true
 	Global.save_progress("castelo_1")
 	get_tree().change_scene_to_file("res://scenes/fase_1_castle_1.tscn") 

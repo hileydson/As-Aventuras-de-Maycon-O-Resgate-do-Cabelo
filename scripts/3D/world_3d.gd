@@ -83,13 +83,15 @@ func maycon_died()->void:
 	fire_seco_3d.process_mode = Node.PROCESS_MODE_DISABLED
 	maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
 	await get_tree().create_timer(3.0).timeout 
+	var player = get_tree().get_first_node_in_group("player")
+	player.get_node("hud_canvas").visible = false
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout 
 	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn") 
 	# Called every frame. 'delta' is the elapsed time since the previous frame.
 	
 func _process(delta: float) -> void:
-	print(enemies_count)
+	
 	# YOU DIED
 	if Global.maycon_danos_first_3d_battle == 5:
 		maycon_died()

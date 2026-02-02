@@ -1,3 +1,5 @@
+Label
+ColorRect
 GPUParticles3D
 CharacterBody3D
 NavigationRegion3D
@@ -10,5 +12,4 @@ ProgressBar
 CanvasLayer
 RigidBody3D
 RayCast3D
-ColorRect
 Control
