@@ -1,9 +1,10 @@
 extends CharacterBody3D
 
 @onready var navigation_agent_3d: NavigationAgent3D = $NavigationAgent3D
-@export var velocidade = 3.0
+@export var velocidade = 2.2
 @onready var nav_agent = $NavigationAgent3D
 @onready var animated_sprite_3d: AnimatedSprite3D = $AnimatedSprite3D
+@onready var area_3d: Area3D = $Area3D
 
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var esta_atordoado: bool = false
@@ -75,10 +76,11 @@ func look_at_target(target_pos):
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	animated_sprite_3d.play("attack")
 	Global.maycon_danos_first_3d_battle += 1
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.0).timeout
 	animated_sprite_3d.play("died")
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.0).timeout
 	var world_3d = get_tree().get_first_node_in_group("world_3d")
 	world_3d.remove_enemies_count()
-	
+	parar_por_dano()
+	area_3d.drop_municao()
 	queue_free()

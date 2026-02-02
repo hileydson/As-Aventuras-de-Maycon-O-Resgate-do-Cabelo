@@ -26,8 +26,8 @@ var gun_bullets_count=0
 var danos_count = 0
 
 func add_bullets_to_gun(number:int):
-	#gun_bullets_count = gun_bullets_count+number
-	gun_bullets_count = 50+number #TODO: TESTE
+	gun_bullets_count = gun_bullets_count+number
+	#gun_bullets_count = 50+number #TODO: TESTE
 
 func remove_bullets_from_gun()->void:
 	if gun_bullets_count != 0:
@@ -91,7 +91,7 @@ func _physics_process(delta):
 	if Global.maycon_pegou_bullet:
 		arma_sprite.play("reload")
 		Global.maycon_pegou_bullet = false
-		add_bullets_to_gun(3)
+		add_bullets_to_gun(4)
 	
 	#CONTA BALAS
 	balas_numero.text = "X "+str(gun_bullets_count)

@@ -89,7 +89,7 @@ func maycon_died()->void:
 	# Called every frame. 'delta' is the elapsed time since the previous frame.
 	
 func _process(delta: float) -> void:
-	
+	print(enemies_count)
 	# YOU DIED
 	if Global.maycon_danos_first_3d_battle == 5:
 		maycon_died()
@@ -107,7 +107,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	
 func _on_respaw_timeout() -> void:
 	#plotar novo inimigo
-	if enemies_count < 5:
+	if enemies_count < 3:
 		respaw_sound.play()
 	
 		var novo_inimigo
