@@ -61,8 +61,8 @@ func atirar():
 			# sangue.look_at(raycast.get_collision_point() + raycast.get_collision_normal())
 
 func _ready():
-	#Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 func _input(event):
 	if event is InputEventMouseMotion:
@@ -172,7 +172,7 @@ func _physics_process(delta):
 	var input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
-	if !direction.is_zero_approx() && !walk.is_playing():
+	if !direction.is_zero_approx() && !walk.is_playing() && is_on_floor() && !(velocity == Vector3.ZERO):
 		walk.play()
 		arma_sprite.play("walk")
 	

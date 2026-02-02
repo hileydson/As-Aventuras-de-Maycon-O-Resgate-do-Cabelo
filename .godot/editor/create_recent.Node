@@ -1,7 +1,10 @@
+DirectionalLight3D
+WorldEnvironment
+CSGBox3D
+Node3D
 Control
 Label
 ColorRect
-Node3D
 Node2D
 GPUParticles3D
 CharacterBody3D
@@ -10,6 +13,3 @@ NavigationAgent3D
 Area3D
 CollisionShape3D
 AnimatedSprite3D
-Timer
-ProgressBar
-CanvasLayer
