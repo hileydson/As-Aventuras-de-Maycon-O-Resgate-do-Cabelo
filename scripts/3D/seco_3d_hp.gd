@@ -14,6 +14,9 @@ func receber_dano(dano:int)->void:
 	hp -= dano
 	#hp -= 90 # TESTE
 	
+	# 0.2 de velocidade (bem lento) por 0.3 segundos reais
+	efeito_camera_lenta(0.2, 0.3)
+	
 	# Garante que a vida não fique negativa
 	hp = clamp(hp, 0, 100)
 	
@@ -22,6 +25,18 @@ func receber_dano(dano:int)->void:
 	
 	if hp <= 0:
 		morrer()
+	
+	
+func efeito_camera_lenta(intensidade: float, duracao: float):
+	# intensidade 0.1 é muito lento, 0.5 é metade da velocidade
+	Engine.time_scale = intensidade
+	
+	# Criamos um timer que IGNORE a escala de tempo, 
+	# senão ele também demoraria para acabar.
+	await get_tree().create_timer(duracao, true, false, true).timeout
+	
+	# Volta para a velocidade normal
+	Engine.time_scale = 1.0
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
