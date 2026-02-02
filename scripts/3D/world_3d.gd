@@ -78,8 +78,10 @@ func _ready() -> void:
 	respaw.start()
 
 func maycon_died()->void:
-	#get_tree().paused = true
+	if Global.default_language != Global.language_en:
+			you_died.text = "VOCÊ MORREU!"
 	you_died.visible = true
+	
 	fire_seco_3d.process_mode = Node.PROCESS_MODE_DISABLED
 	maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
 	await get_tree().create_timer(3.0).timeout 
