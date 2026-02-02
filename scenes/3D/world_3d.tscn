@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://bgr1w7fk5snwj"]
+[gd_scene load_steps=25 format=3 uid="uid://bgr1w7fk5snwj"]
 
 [ext_resource type="Script" uid="uid://ftfnu08qs8ea" path="res://scripts/3D/world_3d.gd" id="1_37ayl"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="1_g4aeq"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://c71odhu3buit" path="res://assets/novas_imagens/3d_battle/arma_3d.png" id="7_37ayl"]
 [ext_resource type="Script" uid="uid://bwxswwjvm1rsh" path="res://scripts/3D/bounce_item.gd" id="9_4ama6"]
 [ext_resource type="PackedScene" uid="uid://pag3tfoc4qyk" path="res://scenes/3D/bullets.tscn" id="11_0dmxx"]
+[ext_resource type="PackedScene" uid="uid://bysc8ns18xmwv" path="res://scenes/3D/pause_3d.tscn" id="15_sx413"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_s1682"]
 
@@ -142,6 +143,8 @@ scale = Vector2(4.455126, 6.8819976)
 theme = SubResource("Theme_0dmxx")
 text = "      YOU DIED!"
 label_settings = SubResource("LabelSettings_fki46")
+
+[node name="pause_3d" parent="." instance=ExtResource("15_sx413")]
 
 [node name="fade" parent="." instance=ExtResource("1_g4aeq")]
 z_index = 7

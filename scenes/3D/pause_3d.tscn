@@ -1,0 +1,53 @@
+[gd_scene load_steps=3 format=3 uid="uid://bysc8ns18xmwv"]
+
+[ext_resource type="Script" uid="uid://dagdax751ux57" path="res://scripts/3D/pause_3d.gd" id="1_081oe"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_081oe"]
+
+[node name="pause_3d" type="Node3D"]
+script = ExtResource("1_081oe")
+
+[node name="Control" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 0
+offset_right = 1157.0
+offset_bottom = 656.0
+color = Color(0, 0, 0, 0.62352943)
+
+[node name="pause" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 491.99997
+offset_top = 173.0
+offset_right = 543.0
+offset_bottom = 196.0
+scale = Vector2(2.7200024, 2.3999987)
+text = "PAUSE"
+label_settings = SubResource("LabelSettings_081oe")
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+layout_direction = 2
+layout_mode = 0
+offset_left = 472.0
+offset_top = 540.0
+offset_right = 559.0968
+offset_bottom = 606.0
+scale = Vector2(1.9200001, 1.6400001)
+
+[node name="close" type="Button" parent="Control/VBoxContainer"]
+layout_mode = 2
+text = "FECHAR"
+language = "pt"
+
+[node name="quit" type="Button" parent="Control/VBoxContainer"]
+layout_mode = 2
+text = "QUIT"
+
+[connection signal="pressed" from="Control/VBoxContainer/close" to="." method="_on_close_pressed"]
+[connection signal="pressed" from="Control/VBoxContainer/quit" to="." method="_on_quit_pressed"]
