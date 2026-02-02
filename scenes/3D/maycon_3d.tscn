@@ -118,29 +118,29 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 0.71,
+"duration": 0.41,
 "texture": ExtResource("10_fakjw")
 }, {
-"duration": 0.71,
+"duration": 0.41,
 "texture": ExtResource("11_1she0")
 }, {
-"duration": 0.71,
-"texture": ExtResource("12_m47l0")
+"duration": 0.41,
+"texture": ExtResource("11_1she0")
 }, {
-"duration": 0.71,
+"duration": 0.41,
 "texture": ExtResource("13_doy81")
 }, {
-"duration": 0.71,
+"duration": 0.41,
+"texture": ExtResource("13_doy81")
+}, {
+"duration": 0.41,
 "texture": ExtResource("14_jvhfj")
 }, {
-"duration": 0.71,
-"texture": ExtResource("13_doy81")
-}, {
-"duration": 0.71,
+"duration": 0.41,
 "texture": ExtResource("12_m47l0")
 }, {
-"duration": 0.71,
-"texture": ExtResource("11_1she0")
+"duration": 0.41,
+"texture": ExtResource("10_fakjw")
 }],
 "loop": false,
 "name": &"reload",
@@ -1076,6 +1076,8 @@ scale = Vector2(0.81, 0.774)
 sprite_frames = SubResource("SpriteFrames_xqtj4")
 animation = &"reload"
 autoplay = "idle"
+frame = 7
+frame_progress = 1.0
 
 [node name="ponto" type="Label" parent="CharacterBody3D/hud_canvas/control_gun"]
 layout_mode = 0
