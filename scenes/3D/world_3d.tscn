@@ -130,7 +130,7 @@ billboard = 1
 texture = ExtResource("7_37ayl")
 
 [node name="bullets" parent="." instance=ExtResource("11_0dmxx")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.013834, 0.228158, -13.820661)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.013834, 0.98315525, -13.820661)
 
 [node name="you_died" type="Label" parent="."]
 visible = false
