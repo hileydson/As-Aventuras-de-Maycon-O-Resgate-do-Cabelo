@@ -1,3 +1,4 @@
+GPUParticles3D
 CharacterBody3D
 NavigationRegion3D
 NavigationAgent3D
@@ -11,5 +12,3 @@ RigidBody3D
 RayCast3D
 ColorRect
 Control
-Label
-Sprite3D

@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://boenay2qpihbd"]
+
+[ext_resource type="Script" uid="uid://b6xclp8odu70a" path="res://scripts/3D/blood.gd" id="1_bwwsb"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jypjr"]
+direction = Vector3(1, 2, 0)
+initial_velocity_max = 3.0
+scale_min = 0.099999994
+scale_max = 0.099999994
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vh1g4"]
+albedo_color = Color(1, 0, 0, 1)
+billboard_mode = 1
+billboard_keep_scale = true
+use_point_size = true
+point_size = 0.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_b4lwt"]
+material = SubResource("StandardMaterial3D_vh1g4")
+
+[node name="blood" type="Node3D"]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 26
+amount_ratio = 0.5414
+process_material = SubResource("ParticleProcessMaterial_jypjr")
+draw_pass_1 = SubResource("SphereMesh_b4lwt")
+script = ExtResource("1_bwwsb")

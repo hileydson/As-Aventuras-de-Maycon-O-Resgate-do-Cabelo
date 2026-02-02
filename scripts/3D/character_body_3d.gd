@@ -16,8 +16,9 @@ extends CharacterBody3D
 @onready var camera_3d: Camera3D = $Camera3D
 @onready var hurt_sound_3d: AudioStreamPlayer = $"../../HurtSound3d"
 @onready var color_rect: ColorRect = $hud_canvas/ColorRect
-
 @onready var camera = $Camera3D
+
+const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
 
 var shake_intensity = 0.0
 var shake_decay = 5.0 # Quão rápido a tremedeira para
@@ -47,6 +48,16 @@ func atirar():
 			# Opcional: Criar uma marca de impacto ou faísca no local exato
 			var ponto_impacto = raycast.get_collision_point()
 			#criar_impacto_visual(ponto_impacto)
+			
+			# --- LÓGICA DO SANGUE ---
+			var sangue = SANGUE_SCENE.instantiate()
+			get_tree().current_scene.add_child(sangue)
+			
+			# Coloca o sangue no PONTO EXATO onde o tiro bateu
+			sangue.global_position = raycast.get_collision_point()
+			
+			# Opcional: Faz o sangue espirrar na direção oposta ao tiro
+			# sangue.look_at(raycast.get_collision_point() + raycast.get_collision_normal())
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
