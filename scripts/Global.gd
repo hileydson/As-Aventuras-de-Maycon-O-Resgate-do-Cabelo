@@ -15,6 +15,7 @@ var block_pause_before_prologo = false
 
 var maycon_danos_first_3d_battle:int = 0
 var seco_danos_first_3d_battle:int = 0
+var maycon_pegou_lamp_3d_world:bool = false
 var maycon_pegou_arma_first_3d_battle:bool = false
 var maycon_pegou_bullet:bool = false
 

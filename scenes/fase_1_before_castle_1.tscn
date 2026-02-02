@@ -710,8 +710,8 @@ frame_progress = 1.0
 
 [node name="node2d_stage_1_label" type="Node2D" parent="Fase1BeforeCastle1"]
 visible = false
-position = Vector2(-432, 5)
-scale = Vector2(1.2, 1.16)
+position = Vector2(-774, 99)
+scale = Vector2(1, 0.91999996)
 
 [node name="StageSound" type="AudioStreamPlayer" parent="Fase1BeforeCastle1/node2d_stage_1_label"]
 stream = ExtResource("15_avl2m")
@@ -722,7 +722,7 @@ offset_top = -325.0
 offset_right = -197.0
 offset_bottom = -302.0
 scale = Vector2(7.76, 7.0000014)
-text = "Stage 1"
+text = "Maycon's World"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle1"]
 

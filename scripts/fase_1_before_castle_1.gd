@@ -4,6 +4,7 @@ extends Sprite2D
 @onready var maycon_falling: AnimatedSprite2D = $maycon_falling
 @onready var camera: Camera2D = $maycon_fase/Camera2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
+@onready var label_stage_1: Label = $node2d_stage_1_label/label_stage_1
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -11,6 +12,9 @@ func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
 	
 	GameSongs.play_song(1)
+	
+	if Global.default_language == Global.language_pt_br:
+		label_stage_1.text = "Mundo do Maycon"
 	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0

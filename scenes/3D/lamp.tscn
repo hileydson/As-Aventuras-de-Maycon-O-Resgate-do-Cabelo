@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://c7ojmg3ah36ew"]
+
+[ext_resource type="AudioStream" uid="uid://barhr1sntfpf6" path="res://assets/novos_audios/gun_load.mp3" id="1_hhax7"]
+[ext_resource type="Script" uid="uid://di85fqkatdjvt" path="res://scripts/3D/lamp.gd" id="2_hhax7"]
+[ext_resource type="Texture2D" uid="uid://fww6et7us54v" path="res://assets/novas_imagens/3d_cenarios/lamp/lamp_apagado.png" id="3_hhax7"]
+[ext_resource type="Script" uid="uid://bwxswwjvm1rsh" path="res://scripts/3D/bounce_item.gd" id="4_nload"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_gem6u"]
+
+[node name="bullets" type="Node3D"]
+
+[node name="sound_lamp" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_hhax7")
+volume_db = -1.497
+pitch_scale = 0.28
+
+[node name="Area3D" type="Area3D" parent="."]
+script = ExtResource("2_hhax7")
+
+[node name="Sprite3D" type="Sprite3D" parent="Area3D"]
+transform = Transform3D(0.5607326, 0, 0, 0, 0.54512006, 0, 0, 0, 1, 0, 0, 0)
+billboard = 1
+texture = ExtResource("3_hhax7")
+script = ExtResource("4_nload")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(2.4409938, 0, 0, 0, 1.8030188, 0, 0, 0, 1.9004781, 0, 0, 0.12915039)
+shape = SubResource("SphereShape3D_gem6u")
+
+[connection signal="body_entered" from="Area3D" to="Area3D" method="_on_body_entered"]
