@@ -17,6 +17,7 @@ func _process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node3D) -> void:
-	Global.maycon_pegou_bullet = true
-	gun_load.play()
-	queue_free()
+	if body is CharacterBody3D:
+		Global.maycon_pegou_bullet = true
+		gun_load.play()
+		queue_free()
