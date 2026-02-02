@@ -38,7 +38,8 @@ func atirar():
 	# Verifica se o raio está encostando em algo
 	if raycast.is_colliding():
 		var alvo = raycast.get_collider() # Pega o objeto atingido
-
+		print(alvo.name)
+		print(alvo is Area3D)
 		# Verifica se o alvo tem a função de receber dano
 		if alvo.has_method("receber_dano"):
 			alvo.receber_dano(3)

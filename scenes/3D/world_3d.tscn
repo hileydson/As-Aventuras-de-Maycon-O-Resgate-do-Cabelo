@@ -1,12 +1,13 @@
-[gd_scene load_steps=23 format=3 uid="uid://bgr1w7fk5snwj"]
+[gd_scene load_steps=24 format=3 uid="uid://bgr1w7fk5snwj"]
 
 [ext_resource type="Script" uid="uid://ftfnu08qs8ea" path="res://scripts/3D/world_3d.gd" id="1_37ayl"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="1_g4aeq"]
 [ext_resource type="AudioStream" uid="uid://d23jsbvra6ofb" path="res://assets/novos_audios/3d_first_battle_seco.mp3" id="1_r7pon"]
-[ext_resource type="PackedScene" uid="uid://ben4xc74a3q4f" path="res://scenes/3D/inimigo_3d/inimigo_bomba_pretti_3d.tscn" id="2_s1682"]
+[ext_resource type="PackedScene" uid="uid://dlqycyx4v715r" path="res://scenes/3D/inimigo_3d/inimigo_1_first_3d_battle.tscn" id="2_bldta"]
 [ext_resource type="AudioStream" uid="uid://poibc18m5nnx" path="res://assets/novos_audios/respaw.mp3" id="2_y1myi"]
 [ext_resource type="AudioStream" uid="uid://barhr1sntfpf6" path="res://assets/novos_audios/gun_load.mp3" id="3_6j7o7"]
 [ext_resource type="AudioStream" uid="uid://b2ugwu5vh7jxh" path="res://assets/novos_audios/seco_welcome.mp3" id="3_8u6hh"]
+[ext_resource type="PackedScene" uid="uid://ccq7i7c6to5yt" path="res://scenes/3D/inimigo_3d/inimigo_2_first_3d_battle.tscn" id="3_bldta"]
 [ext_resource type="AudioStream" uid="uid://clwe6bwguowon" path="res://assets/novos_audios/hurt_sound_3d.mp3" id="3_fki46"]
 [ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="3_r7pon"]
 [ext_resource type="Script" uid="uid://7yq1nl8wo04o" path="res://scenes/3D/gpu_particles_3d.gd" id="3_uihr4"]
@@ -39,9 +40,10 @@ default_base_scale = 0.41
 [sub_resource type="LabelSettings" id="LabelSettings_fki46"]
 font_color = Color(1, 0.32, 0.32, 1)
 
-[node name="world_3d" type="Node3D"]
+[node name="world_3d" type="Node3D" groups=["world_3d"]]
 script = ExtResource("1_37ayl")
-inimigo_scene = ExtResource("2_s1682")
+inimigo_scene = ExtResource("2_bldta")
+inimigo_scene_2 = ExtResource("3_bldta")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_s1682")

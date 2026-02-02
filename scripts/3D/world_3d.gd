@@ -13,6 +13,8 @@ extends Node3D
 
 # Arraste o arquivo .tscn do seu inimigo para cá no Inspetor
 @export var inimigo_scene: PackedScene 
+@export var inimigo_scene_2: PackedScene 
+var enemy_chance:bool = false
 
 # Referência ao nó que contém os pontos de spawn
 #@onready var pontos_container = $"."
@@ -21,6 +23,9 @@ var pontos_container
 var enemies_count:int = 0
 var lava_material = StandardMaterial3D.new()
 var lava
+
+func remove_enemies_count()->void:
+	enemies_count -=1
 
 func setup_materials():
 	# Configura a cor da lava com emissão (brilho)
@@ -100,13 +105,19 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	gun_load.play()
 	maycon_3d.get_node("CharacterBody3D").add_bullets_to_gun(5)
 	
-
 func _on_respaw_timeout() -> void:
 	#plotar novo inimigo
-	if enemies_count < 3:
+	if enemies_count < 1:
 		respaw_sound.play()
 	
-		var novo_inimigo = inimigo_scene.instantiate()
+		var novo_inimigo
+		if enemy_chance:
+			enemy_chance = false
+			novo_inimigo = inimigo_scene.instantiate()
+		else:
+			enemy_chance = true
+			novo_inimigo = inimigo_scene_2.instantiate()
+	
 		add_child(novo_inimigo)
 
 		# 1. Pegamos o tamanho da caixa (lava)

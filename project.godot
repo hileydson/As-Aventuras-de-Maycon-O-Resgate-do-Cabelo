@@ -36,6 +36,7 @@ project/assembly_name="New Game Project"
 [global_group]
 
 player=""
+world_3d=""
 
 [input]
 

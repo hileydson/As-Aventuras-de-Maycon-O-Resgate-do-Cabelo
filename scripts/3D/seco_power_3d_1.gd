@@ -18,4 +18,4 @@ func _physics_process(delta):
 		queue_free()
 
 func _on_body_entered(body):
-	Global.maycon_danos_first_3d_battle = Global.maycon_danos_first_3d_battle + 1
+	Global.maycon_danos_first_3d_battle += 1

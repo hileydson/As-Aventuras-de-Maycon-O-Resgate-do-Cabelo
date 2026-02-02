@@ -1,9 +1,10 @@
 extends CharacterBody3D
 
 @onready var navigation_agent_3d: NavigationAgent3D = $NavigationAgent3D
-
 @export var velocidade = 4.0
 @onready var nav_agent = $NavigationAgent3D
+@onready var animated_sprite_3d: AnimatedSprite3D = $AnimatedSprite3D
+
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 var player = null
@@ -25,6 +26,8 @@ func _physics_process(delta: float) -> void:
 
 	# 2. LÓGICA DE MOVIMENTO
 	if player:
+		if animated_sprite_3d.animation != "attack" && animated_sprite_3d.animation != "died":
+			animated_sprite_3d.play("run")
 		nav_agent.target_position = player.global_position
 		
 		# Verificamos se o GPS já calculou o caminho e se não chegamos no alvo
@@ -47,10 +50,19 @@ func _physics_process(delta: float) -> void:
 	# 3. ÚNICA CHAMADA DE MOVIMENTO (Aplica a velocidade acumulada)
 	move_and_slide()
 
+func finish_enemy_life()->void:
+	animated_sprite_3d.play("")
+	
 func look_at_target(target_pos):
 	var look_pos = Vector3(target_pos.x, global_position.y, target_pos.z)
 	if global_position.distance_to(look_pos) > 0.5:
 		look_at(look_pos, Vector3.UP)
 		
 func _on_area_3d_body_entered(body: Node3D) -> void:
-	print("PEGOU MAYCON!")
+	animated_sprite_3d.play("attack")
+	await get_tree().create_timer(1.5).timeout
+	animated_sprite_3d.play("died")
+	await get_tree().create_timer(1.5).timeout
+	var world_3d = get_tree().get_first_node_in_group("world_3d")
+	world_3d.remove_enemies_count()
+	queue_free()

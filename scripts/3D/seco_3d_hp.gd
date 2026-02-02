@@ -33,7 +33,6 @@ func atualizar_barra():
 	tween.tween_property(barra_vida, "value", hp, 0.2)
 
 func morrer():
-	print("Boss derrotado!")
 	$"../../..".process_mode = Node.PROCESS_MODE_DISABLED
 	$"../../../../maycon_3d".process_mode = Node.PROCESS_MODE_DISABLED
 	await get_tree().create_timer(3.0).timeout 
