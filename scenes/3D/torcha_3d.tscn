@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://b1y2e2cvtlgas"]
+
+[ext_resource type="Texture2D" uid="uid://ckvw6nxkmuyub" path="res://assets/novas_imagens/3d_cenarios/torcha/torcha_1.png" id="1_6nhju"]
+[ext_resource type="Texture2D" uid="uid://cd88qjqo1o4ol" path="res://assets/novas_imagens/3d_cenarios/torcha/torcha_2.png" id="2_13jdl"]
+[ext_resource type="Texture2D" uid="uid://4tyqelvsk8bf" path="res://assets/novas_imagens/3d_cenarios/torcha/torcha_3.png" id="3_culln"]
+[ext_resource type="Texture2D" uid="uid://csaj5qrrfomxb" path="res://assets/novas_imagens/3d_cenarios/torcha/torcha_4.png" id="4_yd1ty"]
+[ext_resource type="AudioStream" uid="uid://tgbq8dtejvrb" path="res://assets/novos_audios/fire_cracling.mp3" id="5_13jdl"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7dk72"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_6nhju")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_13jdl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_culln")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_yd1ty")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="torcha_3d" type="Node3D"]
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
+billboard = 1
+sprite_frames = SubResource("SpriteFrames_7dk72")
+autoplay = "default"
+frame_progress = 0.74710745
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04269409, 0.3079834, 0.23075867)
+light_energy = 0.398
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_13jdl")
+volume_db = -10.36
+autoplay = true
+parameters/looping = true

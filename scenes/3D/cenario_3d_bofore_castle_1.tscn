@@ -1,8 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://efjafjlo8f64"]
+[gd_scene load_steps=13 format=3 uid="uid://efjafjlo8f64"]
 
 [ext_resource type="Script" uid="uid://nkjnek3wm5yp" path="res://scripts/3D/cenario_3d_bofore_castle_1.gd" id="1_evjeq"]
 [ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="1_xq8f0"]
 [ext_resource type="Texture2D" uid="uid://boqyn3fvgnhwl" path="res://assets/novas_imagens/3d_cenarios/textura_chao_barro.png" id="2_axo0a"]
+[ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="2_o5qm3"]
+[ext_resource type="PackedScene" uid="uid://b1y2e2cvtlgas" path="res://scenes/3D/torcha_3d.tscn" id="2_thl2i"]
+[ext_resource type="PackedScene" uid="uid://bysc8ns18xmwv" path="res://scenes/3D/pause_3d.tscn" id="4_33vbx"]
+[ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="5_thl2i"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_axo0a"]
 sky_top_color = Color(0.11, 0.0055000014, 0.019433321, 1)
@@ -34,6 +38,22 @@ uv1_triplanar = true
 [node name="cenario_3d_bofore_castle_1" type="Node3D"]
 script = ExtResource("1_evjeq")
 
+[node name="FinalCabeloMistery" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_o5qm3")
+volume_db = -4.489
+pitch_scale = 0.11
+autoplay = true
+parameters/looping = true
+
+[node name="torcha_3d" parent="." instance=ExtResource("2_thl2i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.682103, 1.8364449, -20.099169)
+
+[node name="torcha_3d2" parent="." instance=ExtResource("2_thl2i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3417325, 1.8364449, -24.364986)
+
+[node name="torcha_3d4" parent="." instance=ExtResource("2_thl2i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.536282, 1.8364449, -0.047221184)
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_xq8f0")
 
@@ -60,7 +80,7 @@ size = Vector3(1, 1, 0.5263672)
 material = SubResource("StandardMaterial3D_axo0a")
 
 [node name="CSGBox3D9" type="CSGBox3D" parent="paredes"]
-transform = Transform3D(-7.8172116, 0, 0, 0, 24.63735, 0, 0, 0, 1, -15.45929, 12.180435, -18.54889)
+transform = Transform3D(-7.8172116, 0, 0, 0, 24.63735, 0, 0, 0, 1, -14.515379, 12.180435, -18.54889)
 use_collision = true
 size = Vector3(1, 1, 0.5263672)
 material = SubResource("StandardMaterial3D_axo0a")
@@ -112,5 +132,9 @@ transform = Transform3D(0.8686166, 0, 0, 0, 24.63735, 0, 0, 0, 77.2032, -10.9283
 use_collision = true
 size = Vector3(1, 1, 0.5263672)
 material = SubResource("StandardMaterial3D_axo0a")
+
+[node name="pause_3d" parent="." instance=ExtResource("4_33vbx")]
+
+[node name="fade" parent="." instance=ExtResource("5_thl2i")]
 
 [connection signal="ready" from="WorldEnvironment" to="WorldEnvironment" method="_on_ready"]
