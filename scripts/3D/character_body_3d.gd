@@ -17,6 +17,7 @@ extends CharacterBody3D
 @onready var hurt_sound_3d: AudioStreamPlayer = $"../../HurtSound3d"
 @onready var color_rect: ColorRect = $hud_canvas/ColorRect
 @onready var camera = $Camera3D
+@onready var hud_gun_buttons: Node2D = $hud_canvas/control_gun/hud_gun_buttons
 
 const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
 
@@ -140,8 +141,10 @@ func _physics_process(delta):
 		if control_gun.visible == false:
 			arma_sprite.play("reload")
 		control_gun.visible = true
+		hud_gun_buttons.visible = true
 	else:
 		control_gun.visible = false
+		hud_gun_buttons.visible = false
 	
 	# --- LÓGICA DO ANALÓGICO DIREITO ---
 	var joy_look = Input.get_vector("look_left", "look_right", "look_up", "look_down")

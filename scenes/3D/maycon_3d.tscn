@@ -1,4 +1,4 @@
-[gd_scene load_steps=93 format=3 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=95 format=3 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="2_bd24c"]
@@ -15,8 +15,10 @@
 [ext_resource type="Texture2D" uid="uid://b1nhpgedhfvw3" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_3.png" id="12_m47l0"]
 [ext_resource type="Texture2D" uid="uid://c54ujioar2c72" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_4.png" id="13_doy81"]
 [ext_resource type="Texture2D" uid="uid://bpd6r1c6dq1eq" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_5.png" id="14_jvhfj"]
+[ext_resource type="Texture2D" uid="uid://c47is26nrvf1s" path="res://assets/novas_imagens/buttons/button_trigger.png" id="16_jvhfj"]
 [ext_resource type="Texture2D" uid="uid://b8xm3n05un7xf" path="res://assets/novas_imagens/effects/Explosion/1.png" id="16_m47l0"]
 [ext_resource type="Texture2D" uid="uid://dlowt45jrflns" path="res://assets/novas_imagens/effects/Explosion/3.png" id="17_doy81"]
+[ext_resource type="Texture2D" uid="uid://cn553mn1ycaas" path="res://assets/novas_imagens/buttons/mouse_trigger.png" id="17_xpqs8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ss8dx"]
 
@@ -1054,6 +1056,7 @@ offset_bottom = 653.0
 color = Color(1, 0, 0, 0)
 
 [node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas"]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 34.0
@@ -1101,6 +1104,20 @@ offset_right = 1087.0
 offset_bottom = 629.0
 scale = Vector2(1.2799838, 1.3199955)
 text = "X 99"
+
+[node name="hud_gun_buttons" type="Node2D" parent="CharacterBody3D/hud_canvas/control_gun"]
+visible = false
+
+[node name="ButtonTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun/hud_gun_buttons"]
+position = Vector2(1085, 569)
+rotation = -0.16053383
+scale = Vector2(0.37234885, 0.39948073)
+texture = ExtResource("16_jvhfj")
+
+[node name="MouseTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun/hud_gun_buttons"]
+position = Vector2(1053.5, 568.26526)
+scale = Vector2(0.31000003, 0.34530595)
+texture = ExtResource("17_xpqs8")
 
 [node name="maycon_hp" type="Node2D" parent="CharacterBody3D/hud_canvas"]
 position = Vector2(-24, 151)
