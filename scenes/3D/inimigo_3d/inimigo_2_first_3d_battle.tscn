@@ -274,7 +274,7 @@ script = ExtResource("1_ps2ur")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="CharacterBody3D"]
 stream = ExtResource("2_mk02k")
-volume_db = 3.453
+volume_db = 10.359
 autoplay = true
 
 [node name="Growl1" type="AudioStreamPlayer" parent="CharacterBody3D"]

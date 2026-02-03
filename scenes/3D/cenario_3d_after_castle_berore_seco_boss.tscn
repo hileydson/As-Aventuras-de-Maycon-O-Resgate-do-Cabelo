@@ -141,6 +141,12 @@ pitch_scale = 0.11
 autoplay = true
 parameters/looping = true
 
+[node name="player_respaw_back" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.620274, 1.4474792, -421.7728)
+
+[node name="player_gun_respaw_back" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.198032, 1.4474792, -368.76608)
+
 [node name="arvores" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.536087, 0, 151.3977)
 
@@ -432,6 +438,121 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.52977, 0.6887207, -465.77
 process_material = SubResource("ParticleProcessMaterial_whkre")
 script = ExtResource("12_2cugi")
 
+[node name="GPUParticles3D32" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.101111, 0, 0, 0, 79.86659, 0, 0, 0, 1, -17.757023, 0.0006135225, 252.36633)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D33" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -22.97337, 0.0056390166, 254.97855)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D66" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -9.2943, 0.0056390166, 254.03708)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D67" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -24.62186, 0.0006135225, 249.79895)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D68" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -14.60791, 0.0006135225, 258.09372)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D69" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -25.752827, 0.0006135225, 260.83026)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D70" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -29.72202, 0.0006135225, 255.27637)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D71" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -11.021023, -0.0044119717, 249.19498)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D72" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -18.66397, -0.0044119717, 263.60132)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D73" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -10.247681, 0.0006135225, 261.9592)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D74" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -4.1584206, -0.0044119717, 258.50604)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D75" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 79.86659, 0, 0, 0, 1.0921893, -1.829174, -0.0044119717, 253.57333)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D76" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(2.4883966, 0, 0, 0, 755.7337, 0, 0, 0, 1.0921893, -16.398056, 0.0006135225, 255.13608)
+process_material = SubResource("ParticleProcessMaterial_dotwp")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D77" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.59453, 0, 239.76141)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D78" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.302841, 0, 239.42719)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D79" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.269363, 0, 240.55249)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D80" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.966995, 0.3866577, 240.53235)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D84" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8257294, 0, 242.58368)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D85" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.179428, 0, 242.1416)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D86" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.633026, 0, 242.1112)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D87" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.848068, 0, 242.78595)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D88" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7813873, 0.6887207, 267.22876)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D89" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.52977, 0.6887207, 266.0276)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
 [node name="GPUParticles3D27" type="GPUParticles3D" parent="particulas"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.473373, 14.652771, -463.14532)
 process_material = SubResource("ParticleProcessMaterial_whkre")
@@ -624,8 +745,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.32933, 0.00012207031, -47
 transform = Transform3D(59.64387, 0, 0, 0, 17.279577, 0, 0, 0, 42.155426, 25.962027, 0.00024414063, -14.715027)
 shape = SubResource("BoxShape3D_whkre")
 
+[node name="portal_next_scene2" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.819172, 0.00012207031, 261.4278)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="portal_next_scene2"]
+transform = Transform3D(59.64387, 0, 0, 0, 17.279577, 0, 0, 0, 42.155426, 25.962027, 0.00024414063, -14.715027)
+shape = SubResource("BoxShape3D_whkre")
+
 [node name="maycon_3d" parent="." instance=ExtResource("1_fhkrn")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10453415, 1.7405825, 222.3659)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10453415, 1.7405825, 205.60149)
 
 [node name="RigidBody3D" type="RigidBody3D" parent="."]
 transform = Transform3D(-0.4382833, -0.67420304, 0.5944393, -0.8500529, 0.09599182, -0.51787627, 0.29209226, -0.7322813, -0.6151799, -30.12508, 103.675964, 326.9481)
@@ -706,6 +834,7 @@ label_settings = SubResource("LabelSettings_gbqjv")
 z_index = 7
 
 [connection signal="body_entered" from="portal_next_scene" to="." method="_on_portal_next_scene_body_entered"]
+[connection signal="body_entered" from="portal_next_scene2" to="." method="_on_portal_next_scene_2_body_entered"]
 [connection signal="timeout" from="respaw" to="." method="_on_respaw_timeout"]
 [connection signal="timeout" from="bake_again" to="." method="_on_bake_again_timeout"]
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

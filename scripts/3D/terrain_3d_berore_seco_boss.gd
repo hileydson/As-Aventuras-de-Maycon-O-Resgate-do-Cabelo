@@ -11,6 +11,8 @@ extends Node3D
 @onready var caminho_das_pedras: Label = $caminho_das_pedras
 @onready var chao: Terrain3D = $NavigationRegion3D/Terrain3D
 @onready var nav_region: NavigationRegion3D = $NavigationRegion3D
+@onready var player_respaw_back: Marker3D = $player_respaw_back
+@onready var player_gun_respaw_back: Marker3D = $player_gun_respaw_back
 
 # Arraste o arquivo .tscn do seu inimigo para cá no Inspetor
 @export var inimigo_scene: PackedScene 
@@ -29,6 +31,12 @@ func remove_enemies_count()->void:
 	
 
 func _ready() -> void:
+	
+	if Global.back_to_fase:
+		maycon_3d.get_node("CharacterBody3D").rotation_degrees.y += 180
+		Global.back_to_fase = false
+		maycon_3d.global_position = player_respaw_back.global_position
+		arma.global_position = player_gun_respaw_back.global_position
 	
 	Global.maycon_danos_first_3d_battle = 0
 	Global.maycon_pegou_arma_first_3d_battle = false
@@ -141,7 +149,17 @@ func _on_bake_again_timeout() -> void:
 
 
 func _on_portal_next_scene_body_entered(body: Node3D) -> void:
-	#NEXT SCENE
-	fade.get_node("Transition").play("fade_out")
-	await get_tree().create_timer(2.0).timeout
-	get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_2.tscn")
+	if body is CharacterBody3D:
+		#NEXT SCENE
+		fade.get_node("Transition").play("fade_out")
+		await get_tree().create_timer(2.0).timeout
+		get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_2.tscn")
+
+
+func _on_portal_next_scene_2_body_entered(body: Node3D) -> void:
+	if body is CharacterBody3D:
+		#NEXT SCENE
+		fade.get_node("Transition").play("fade_out")
+		await get_tree().create_timer(2.0).timeout
+		Global.back_to_fase = true
+		get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn")

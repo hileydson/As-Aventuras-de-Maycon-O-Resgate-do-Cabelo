@@ -90,7 +90,8 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 	get_tree().paused = true
 	Global.back_to_fase = true
 	await get_tree().create_timer(0.3).timeout 
-	get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn")
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn")
 
 
 func reset_maycon_motion()->void:
