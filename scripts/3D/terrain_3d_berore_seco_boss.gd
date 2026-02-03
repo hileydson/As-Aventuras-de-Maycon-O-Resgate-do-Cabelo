@@ -36,9 +36,9 @@ func _ready() -> void:
 	if Global.default_language == Global.language_pt_br:
 		caminho_das_pedras.text = "Caminho das Pedras"
 	
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(2.0).timeout
 	caminho_das_pedras.visible = true
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(5.0).timeout
 	caminho_das_pedras.visible = false
 	
 	# --- O PULO DO GATO ---
