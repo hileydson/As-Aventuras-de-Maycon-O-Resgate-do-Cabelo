@@ -5,6 +5,7 @@ extends Node3D
 @onready var prompt: Control = $escada/prompt
 @onready var msg_prompt: Label = $escada/prompt/msg_prompt
 @onready var fade: Node2D = $fade
+@onready var passagem_pestilenta: Label = $passagem_pestilenta
 
 
 func _ready() -> void:
@@ -23,6 +24,14 @@ func _ready() -> void:
 	sliding.stop()
 	get_tree().get_first_node_in_group("player").aplicar_shake(0.9)
 	
+	if Global.default_language == Global.language_pt_br:
+		passagem_pestilenta.text = "Passagem Pestilenta"
+	
+	await get_tree().create_timer(2.0).timeout
+	passagem_pestilenta.visible = true
+	await get_tree().create_timer(5.0).timeout
+	passagem_pestilenta.visible = false
+	
 
 func _process(delta: float) -> void:
 	var player = get_tree().get_first_node_in_group("player")
@@ -37,9 +46,10 @@ func _process(delta: float) -> void:
 			
 			#IMPLEMENTAR VOLTA PRO 2D
 			get_tree().get_first_node_in_group("player").process_mode = Node.PROCESS_MODE_DISABLED
-			fade.play("fade_out")
+			fade.get_node("Transition").play("fade_out")
 			await get_tree().create_timer(2.0).timeout
-			#CHAMAR A CENA CORRETA
+			Global.from_slum = true
+			get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
 
 
 func _on_area_3d_body_entered(body: Node3D) -> void:

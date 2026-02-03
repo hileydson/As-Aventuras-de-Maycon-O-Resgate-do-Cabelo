@@ -203,6 +203,15 @@ text = "YOU SUCK!"
 [node name="bullets" parent="." instance=ExtResource("10_cp835")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8894854, 1.2420645, 21.183075)
 
+[node name="passagem_pestilenta" type="Label" parent="."]
+visible = false
+offset_left = 289.0
+offset_top = 165.00002
+offset_right = 407.0
+offset_bottom = 188.00002
+scale = Vector2(4.0000005, 4.6400003)
+text = "Pestilent passage"
+
 [connection signal="body_entered" from="escada/Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="escada/Area3D" to="." method="_on_area_3d_body_exited"]
 [connection signal="ready" from="WorldEnvironment" to="WorldEnvironment" method="_on_ready"]

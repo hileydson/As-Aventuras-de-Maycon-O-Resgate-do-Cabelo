@@ -68,6 +68,8 @@ func _ready() -> void:
 	setup_materials()
 	create_dungeon_floor()
 	
+	Global.maycon_pegou_lamp_3d_world = false
+	Global.maycon_pegou_lamp_fire_3d_world = false
 	Global.maycon_danos_first_3d_battle = 0
 	Global.maycon_pegou_arma_first_3d_battle = false
 	

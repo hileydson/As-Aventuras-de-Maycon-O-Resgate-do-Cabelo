@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3 uid="uid://w6ofyplymeea"]
+[gd_scene load_steps=50 format=3 uid="uid://w6ofyplymeea"]
 
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_1ljjb"]
 [ext_resource type="Texture2D" uid="uid://qpa3u3o25j1m" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_3.png" id="1_vjg2b"]
@@ -11,6 +11,9 @@
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="7_vjg2b"]
 [ext_resource type="Texture2D" uid="uid://drljpi330bnf1" path="res://assets/novas_imagens/objects/block_hide_gemini.png" id="7_wup0o"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="8_pyjnh"]
+[ext_resource type="Texture2D" uid="uid://casgjkx6xefuq" path="res://assets/novas_imagens/3d_cenarios/escada.png" id="12_nj030"]
+[ext_resource type="Texture2D" uid="uid://cldr3pb1hha2p" path="res://assets/novas_imagens/cenarios/metade_bloqueio_passagem.png" id="13_2rg5i"]
+[ext_resource type="Texture2D" uid="uid://d3y21yi0f8kgy" path="res://assets/novas_imagens/cenarios/bloqueio_passagem.png" id="14_0r645"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -87,24 +90,6 @@ distance = -60.52633
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_1ljjb"]
 a = Vector2(-0.5881994, -26.470581)
 b = Vector2(0.2941177, 47.61029)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
-size = Vector2(548, 178)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_nulh8"]
-size = Vector2(985.25, 178)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
-size = Vector2(317, 178)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6v7in"]
-size = Vector2(96.12341, 437.84497)
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nulh8"]
-height = 346.77637
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6v7in"]
-height = 418.0044
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t7fus"]
 atlas = ExtResource("7_vjg2b")
@@ -234,8 +219,32 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dg1pv"]
+size = Vector2(554, 178)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nulh8"]
+size = Vector2(985.25, 178)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y6tgn"]
+size = Vector2(317, 1100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6v7in"]
+size = Vector2(96.12341, 437.84497)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nulh8"]
+height = 346.77637
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6v7in"]
+height = 418.0044
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0r645"]
+size = Vector2(284, 102)
+
 [node name="fase_3" type="Node2D"]
 process_mode = 1
+
+[node name="back_from_slum" type="Marker2D" parent="."]
+position = Vector2(2128, 907)
 
 [node name="maycon_itens" parent="." instance=ExtResource("1_1ljjb")]
 position = Vector2(1586, 683)
@@ -254,6 +263,7 @@ libraries = {
 [node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("3_3dovv")]
 light_mask = 512
 visibility_layer = 524800
+z_index = 1
 position = Vector2(-1538.9998, 176.99997)
 scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
@@ -268,6 +278,64 @@ limit_top = 21
 limit_right = 3164
 limit_bottom = 1355
 
+[node name="bloqueio_passagem" type="Node2D" parent="Fase1BeforeCastle"]
+position = Vector2(-1586, -683)
+
+[node name="MetadeBloqueioPassagem" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(1009.75, 1113.25)
+scale = Vector2(1.335443, 1.3666667)
+texture = ExtResource("13_2rg5i")
+
+[node name="MetadeBloqueioPassagem2" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(1009.75006, 1133.25)
+scale = Vector2(1.335443, 1.3666667)
+texture = ExtResource("13_2rg5i")
+
+[node name="MetadeBloqueioPassagem3" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(1009.75006, 980.25006)
+scale = Vector2(1.335443, 1.3666667)
+texture = ExtResource("13_2rg5i")
+
+[node name="MetadeBloqueioPassagem4" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(1009.75006, 845.25)
+scale = Vector2(1.335443, 1.3666667)
+texture = ExtResource("13_2rg5i")
+
+[node name="MetadeBloqueioPassagem5" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(1009.75006, 713.25)
+scale = Vector2(1.335443, 1.3666667)
+texture = ExtResource("13_2rg5i")
+
+[node name="MetadeBloqueioPassagem6" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(1009.75006, 577.25)
+scale = Vector2(1.335443, 1.3666667)
+texture = ExtResource("13_2rg5i")
+
+[node name="MetadeBloqueioPassagem7" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(1009.75006, 443.25)
+scale = Vector2(1.335443, 1.3666667)
+texture = ExtResource("13_2rg5i")
+
+[node name="MetadeBloqueioPassagem8" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(1009.75006, 382.25003)
+scale = Vector2(1.335443, 1.3666667)
+texture = ExtResource("13_2rg5i")
+
+[node name="BloqueioPassagem" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(1007.75006, 363.25)
+scale = Vector2(1.3185654, 1.020362)
+texture = ExtResource("14_0r645")
+
+[node name="MetadeBloqueioPassagem9" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(705, 1256)
+scale = Vector2(1.2563292, 1.9309518)
+texture = ExtResource("13_2rg5i")
+
+[node name="MetadeBloqueioPassagem10" type="Sprite2D" parent="Fase1BeforeCastle/bloqueio_passagem"]
+position = Vector2(698.93744, 1146)
+scale = Vector2(1.3074893, 1.9309518)
+texture = ExtResource("13_2rg5i")
+
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
 
 [node name="inimigo_camilita" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("4_e7uvt")]
@@ -275,6 +343,7 @@ position = Vector2(1600.0002, 935)
 scale = Vector2(1.199496, -1.0507715)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle"]
+visible = false
 
 [node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/CanvasLayer"]
 material = SubResource("ShaderMaterial_wup0o")
@@ -317,42 +386,6 @@ shape = SubResource("SegmentShape2D_1ljjb")
 position = Vector2(1470, 561)
 texture = ExtResource("7_wup0o")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
-collision_layer = 524291
-collision_mask = 524291
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-process_mode = 4
-light_mask = 524289
-visibility_layer = 524289
-position = Vector2(278, 1164.2697)
-shape = SubResource("RectangleShape2D_hnmna")
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
-process_mode = 4
-position = Vector2(1663.375, 1164.2697)
-shape = SubResource("RectangleShape2D_nulh8")
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(1013, 1164.2697)
-shape = SubResource("RectangleShape2D_p1t4m")
-
-[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(2319.8652, 1118)
-rotation = -1.6023498
-shape = SubResource("RectangleShape2D_6v7in")
-
-[node name="CollisionShape2D8" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(2610, 937.0002)
-rotation = 0.80597186
-scale = Vector2(1, 1.2596045)
-shape = SubResource("CapsuleShape2D_nulh8")
-
-[node name="CollisionShape2D7" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(2955.9998, 793)
-rotation = -1.5731149
-shape = SubResource("CapsuleShape2D_6v7in")
-
 [node name="battle" parent="." instance=ExtResource("5_wup0o")]
 process_mode = 0
 position = Vector2(-670, 329)
@@ -367,12 +400,6 @@ offset_right = 866.0
 offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
-
-[node name="fogo" type="AnimatedSprite2D" parent="."]
-position = Vector2(700, 1197)
-scale = Vector2(9.375, 7.0416665)
-sprite_frames = SubResource("SpriteFrames_pyjnh")
-autoplay = "default"
 
 [node name="fogo2" type="AnimatedSprite2D" parent="."]
 position = Vector2(1325, 1272)
@@ -429,7 +456,7 @@ sprite_frames = SubResource("SpriteFrames_pyjnh")
 autoplay = "default"
 
 [node name="fogo11" type="AnimatedSprite2D" parent="."]
-position = Vector2(3036.0002, 1143)
+position = Vector2(3036, 1142)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_pyjnh")
 autoplay = "default"
@@ -497,6 +524,53 @@ scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_3dovv")
 autoplay = "default"
 
+[node name="Escada" type="Sprite2D" parent="."]
+position = Vector2(2304, 1222)
+texture = ExtResource("12_nj030")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 524291
+collision_mask = 524291
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+process_mode = 4
+light_mask = 524289
+visibility_layer = 524289
+position = Vector2(281, 1164.2697)
+shape = SubResource("RectangleShape2D_dg1pv")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+process_mode = 4
+position = Vector2(1663.375, 1164.2697)
+shape = SubResource("RectangleShape2D_nulh8")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(1013, 804)
+shape = SubResource("RectangleShape2D_y6tgn")
+
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(2319.8652, 1118)
+rotation = -1.6023498
+shape = SubResource("RectangleShape2D_6v7in")
+
+[node name="CollisionShape2D8" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(2610, 937.0002)
+rotation = 0.80597186
+scale = Vector2(1, 1.2596045)
+shape = SubResource("CapsuleShape2D_nulh8")
+
+[node name="CollisionShape2D7" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(2955.9998, 793)
+rotation = -1.5731149
+shape = SubResource("CapsuleShape2D_6v7in")
+
+[node name="portal_slum" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="portal_slum"]
+position = Vector2(705, 1302)
+shape = SubResource("RectangleShape2D_0r645")
+
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]
 [connection signal="body_entered" from="back_stage" to="Fase1BeforeCastle" method="_on_back_stage_body_entered"]
+[connection signal="body_entered" from="portal_slum" to="Fase1BeforeCastle" method="_on_portal_slum_body_entered"]
