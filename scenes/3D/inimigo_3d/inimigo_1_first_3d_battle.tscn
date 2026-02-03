@@ -1,6 +1,7 @@
-[gd_scene load_steps=41 format=3 uid="uid://dlqycyx4v715r"]
+[gd_scene load_steps=42 format=3 uid="uid://dlqycyx4v715r"]
 
 [ext_resource type="Script" uid="uid://dq25ryu2ggdlp" path="res://scripts/3D/inimigo_3d_default.gd" id="1_i4pi1"]
+[ext_resource type="AudioStream" uid="uid://b1gdi2twv57tt" path="res://assets/novos_audios/dog_running.mp3" id="2_eyvy2"]
 [ext_resource type="Texture2D" uid="uid://cubmgmt62011h" path="res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf/Attack_1.png" id="2_i4pi1"]
 [ext_resource type="AudioStream" uid="uid://winmr31cwh05" path="res://assets/novos_audios/growl_1.mp3" id="2_o4kr3"]
 [ext_resource type="Texture2D" uid="uid://kdyeokdlvwl6" path="res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf/Dead.png" id="3_fawpx"]
@@ -277,6 +278,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0184517, 0)
 collision_layer = 1025
 collision_mask = 1025
 script = ExtResource("1_i4pi1")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="CharacterBody3D"]
+stream = ExtResource("2_eyvy2")
+volume_db = 3.453
+autoplay = true
 
 [node name="Growl1" type="AudioStreamPlayer" parent="CharacterBody3D"]
 stream = ExtResource("2_o4kr3")

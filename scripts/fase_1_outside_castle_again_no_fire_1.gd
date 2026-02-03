@@ -58,6 +58,7 @@ func _process(delta: float) -> void:
 func _on_next_scene_body_entered(body: Node2D) -> void:
 	get_tree().paused = true
 	await get_tree().create_timer(0.3).timeout 
+	get_tree().paused = false
 	get_tree().change_scene_to_file("res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn")
 
 

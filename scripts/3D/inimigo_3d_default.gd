@@ -6,6 +6,8 @@ extends CharacterBody3D
 @onready var animated_sprite_3d: AnimatedSprite3D = $AnimatedSprite3D
 @onready var area_3d: Area3D = $Area3D
 
+@export var distancia_despawn: float = 120.0
+
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var esta_atordoado: bool = false
 var player = null
@@ -33,6 +35,21 @@ func _physics_process(delta: float) -> void:
 		velocity.y -= gravity * delta
 	else:
 		velocity.y = 0
+
+		# --- LÓGICA DE DISTÂNCIA (QUEUE_FREE) ---
+	if player:
+		var distancia_atual = global_position.distance_to(player.global_position)
+
+		if distancia_atual > distancia_despawn:
+			# Antes de sumir, avisamos o world_3d para liberar espaço no contador
+			var world_3d = get_tree().get_first_node_in_group("world_3d")
+			if world_3d:
+				world_3d.remove_enemies_count()
+			
+			print("inimigo DESPAWN")
+			queue_free() # Remove o inimigo do jogo
+			return # Para o código aqui para não processar o resto do frame
+		# ----------------------------------------	
 
 	if esta_atordoado:
 		# O inimigo fica parado horizontalmente enquanto leva o hit

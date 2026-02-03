@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://cemapjdo6u5wl"]
+[gd_scene load_steps=38 format=3 uid="uid://cemapjdo6u5wl"]
 
 [ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="1_12fbm"]
 [ext_resource type="Texture2D" uid="uid://c58hvspwv25xf" path="res://assets/novas_imagens/3d_cenarios/textura_chao_caminho_das_pegras.png" id="1_34rwn"]
@@ -20,6 +20,11 @@
 [ext_resource type="Texture2D" uid="uid://c71odhu3buit" path="res://assets/novas_imagens/3d_battle/arma_3d.png" id="14_whkre"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dotwp"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_whkre"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_whkre"]
+size = Vector3(1, 1, 1.4326172)
 
 [sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_lwreq"]
 
@@ -110,7 +115,7 @@ texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_
 [sub_resource type="Environment" id="Environment_8cpxr"]
 background_mode = 1
 background_color = Color(0.1656563, 0.16565642, 0.16565639, 1)
-background_energy_multiplier = 1.62
+background_energy_multiplier = 0.88
 ambient_light_color = Color(0.0885599, 0.0885599, 0.0885599, 1)
 tonemap_mode = 2
 glow_enabled = true
@@ -362,6 +367,263 @@ transform = Transform3D(2.4883966, 0, 0, 0, 755.7337, 0, 0, 0, 1.0921893, -16.39
 process_material = SubResource("ParticleProcessMaterial_dotwp")
 script = ExtResource("12_2cugi")
 
+[node name="GPUParticles3D14" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.59453, 0, -463.14545)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D15" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.302841, 0, -463.47968)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D16" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.269363, 0, -462.35437)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D17" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.966995, 0, -462.3745)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D18" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.611435, 0, -462.02374)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D19" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.663223, 0, -462.21094)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D20" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.010452, 0, -461.43835)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D21" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8257294, 0, -460.32318)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D22" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.179428, 0, -460.76526)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D23" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.633026, 0, -460.79565)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D24" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.848068, 0, -460.1209)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D25" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7813873, 0.6887207, -464.5758)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D26" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.52977, 0.6887207, -465.77698)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D27" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.59453, 13.647095, -463.14545)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D28" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.302841, 13.647095, -463.47968)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D29" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.269363, 13.647095, -462.35437)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D30" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.966995, 13.647095, -462.3745)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D31" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.611435, 13.647095, -462.02374)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D34" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8257294, 13.647095, -460.32318)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D35" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.179428, 13.647095, -460.76526)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D36" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.633026, 13.647095, -460.79565)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D37" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.848068, 13.647095, -460.1209)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D38" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7813873, 14.335815, -464.5758)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D39" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.52977, 14.335815, -465.77698)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D40" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.59453, 27.720703, -463.14545)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D41" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.302841, 27.720703, -463.47968)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D42" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.269363, 27.720703, -462.35437)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D43" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.966995, 27.720703, -462.3745)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D44" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.611435, 27.720703, -462.02374)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D45" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.663223, 27.720703, -462.21094)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D46" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.010452, 27.720703, -461.43835)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D47" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8257294, 27.720703, -460.32318)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D48" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.179428, 27.720703, -460.76526)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D49" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.633026, 27.720703, -460.79565)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D50" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.848068, 27.720703, -460.1209)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D51" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7813873, 28.409424, -464.5758)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D52" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.52977, 28.409424, -465.77698)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D53" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.59453, 43.926636, -463.14545)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D54" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.302841, 43.926636, -463.47968)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D55" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.269363, 43.926636, -462.35437)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D56" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.966995, 43.926636, -462.3745)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D57" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.611435, 43.926636, -462.02374)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D58" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.663223, 43.926636, -462.21094)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D59" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.010452, 43.926636, -461.43835)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D60" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8257294, 43.926636, -460.32318)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D61" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.179428, 43.926636, -460.76526)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D62" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.633026, 43.926636, -460.79565)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D63" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.848068, 43.926636, -460.1209)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D64" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7813873, 44.615356, -464.5758)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="GPUParticles3D65" type="GPUParticles3D" parent="particulas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.52977, 44.615356, -465.77698)
+process_material = SubResource("ParticleProcessMaterial_whkre")
+script = ExtResource("12_2cugi")
+
+[node name="portal_next_scene" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.32933, 0.00012207031, -478.97058)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="portal_next_scene"]
+transform = Transform3D(59.64387, 0, 0, 0, 17.279577, 0, 0, 0, 42.155426, 25.962027, 0.00024414063, -14.715027)
+shape = SubResource("BoxShape3D_whkre")
+
 [node name="maycon_3d" parent="." instance=ExtResource("1_fhkrn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10453415, 1.7405825, 222.3659)
 
@@ -398,8 +660,8 @@ volume_db = 2.993
 [node name="respaw" type="Timer" parent="."]
 wait_time = 6.0
 
-[node name="back_again" type="Timer" parent="."]
-wait_time = 20.0
+[node name="bake_again" type="Timer" parent="."]
+wait_time = 10.0
 autostart = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -443,6 +705,7 @@ label_settings = SubResource("LabelSettings_gbqjv")
 [node name="fade" parent="." instance=ExtResource("14_v64fo")]
 z_index = 7
 
+[connection signal="body_entered" from="portal_next_scene" to="." method="_on_portal_next_scene_body_entered"]
 [connection signal="timeout" from="respaw" to="." method="_on_respaw_timeout"]
-[connection signal="timeout" from="back_again" to="." method="_on_back_again_timeout"]
+[connection signal="timeout" from="bake_again" to="." method="_on_bake_again_timeout"]
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
