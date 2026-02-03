@@ -18,6 +18,9 @@ extends CharacterBody3D
 @onready var color_rect: ColorRect = $hud_canvas/ColorRect
 @onready var camera = $Camera3D
 @onready var hud_gun_buttons: Node2D = $hud_canvas/control_gun/hud_gun_buttons
+@onready var lamp_light: OmniLight3D = $Camera3D/lamp_light
+@onready var lamp: AnimatedSprite2D = $hud_canvas/control_lamp/lamp
+@onready var control_lamp: Control = $hud_canvas/control_lamp
 
 const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
 
@@ -91,6 +94,11 @@ func aplicar_shake(valor: float):
 	
 
 func _physics_process(delta):
+	
+	if Global.maycon_pegou_lamp_3d_world:
+		control_lamp.visible = true
+	else:
+		control_lamp.visible = false
 	
 	# HUD de sangue
 	$hud_canvas/maycon_hp/hp_1.visible = Global.maycon_danos_first_3d_battle<=4
@@ -175,6 +183,13 @@ func _physics_process(delta):
 	if !direction.is_zero_approx() && !walk.is_playing() && is_on_floor() && !(velocity == Vector3.ZERO):
 		walk.play()
 		arma_sprite.play("walk")
+		
+		if Global.maycon_pegou_lamp_fire_3d_world:
+			lamp.play("walk_with_light")
+			lamp_light.visible = true
+		else:
+			lamp.play("walk")
+			lamp_light.visible = false
 	
 	
 	if direction:
@@ -186,7 +201,15 @@ func _physics_process(delta):
 
 	move_and_slide()
 	
+	
 
 
 func _on_animated_sprite_2d_animation_finished() -> void:
 	arma_sprite.play("idle")
+
+
+func _on_lamp_animation_finished() -> void:
+		if Global.maycon_pegou_lamp_fire_3d_world:
+			lamp.play("idle_with_light")
+		else:
+			lamp.play("idle")

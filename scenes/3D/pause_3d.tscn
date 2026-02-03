@@ -9,12 +9,14 @@ script = ExtResource("1_081oe")
 
 [node name="Control" type="Control" parent="."]
 visible = false
+z_index = 10
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ColorRect" type="ColorRect" parent="Control"]
+z_index = 10
 layout_mode = 0
 offset_right = 1157.0
 offset_bottom = 656.0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=95 format=3 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=108 format=3 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="2_bd24c"]
@@ -8,7 +8,9 @@
 [ext_resource type="AudioStream" uid="uid://barhr1sntfpf6" path="res://assets/novos_audios/gun_load.mp3" id="5_uh0k5"]
 [ext_resource type="Texture2D" uid="uid://dhv5ghy38te6w" path="res://assets/novas_imagens/3d_battle/segurando_arma_3d.png" id="6_xqtj4"]
 [ext_resource type="AudioStream" uid="uid://dxlxhstdapo76" path="res://assets/novos_audios/gun_shot.mp3" id="6_y4gmr"]
+[ext_resource type="Texture2D" uid="uid://xdd1agi20lk7" path="res://assets/novas_imagens/3d_cenarios/lamp/lamp_na_mao_no_light.png" id="8_1ocj4"]
 [ext_resource type="Texture2D" uid="uid://v26pfw0k1oo0" path="res://assets/novas_imagens/effects/Pixel fire/fire asset yellow floored/Group 7 - 5/Group 7 - 5.png" id="8_y4gmr"]
+[ext_resource type="Texture2D" uid="uid://dl1flpd73rljh" path="res://assets/novas_imagens/3d_cenarios/lamp/lamp_na_mao.png" id="9_ievb8"]
 [ext_resource type="Texture2D" uid="uid://cy1x2n0ltysjh" path="res://assets/novas_imagens/3d_battle/bala.png" id="10_11d7m"]
 [ext_resource type="Texture2D" uid="uid://d20k0m5bseynp" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_1.png" id="10_fakjw"]
 [ext_resource type="Texture2D" uid="uid://bgxxn46q4nutx" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_2.png" id="11_1she0"]
@@ -21,6 +23,123 @@
 [ext_resource type="Texture2D" uid="uid://cn553mn1ycaas" path="res://assets/novas_imagens/buttons/mouse_trigger.png" id="17_xpqs8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ss8dx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ocj4"]
+atlas = ExtResource("8_1ocj4")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ievb8"]
+atlas = ExtResource("8_1ocj4")
+region = Rect2(0, 15, 500, 485)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5yci6"]
+atlas = ExtResource("8_1ocj4")
+region = Rect2(0, 30, 500, 470)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j1g22"]
+atlas = ExtResource("8_1ocj4")
+region = Rect2(0, 45, 500, 455)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aob2u"]
+atlas = ExtResource("8_1ocj4")
+region = Rect2(0, 60, 500, 440)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_str34"]
+atlas = ExtResource("9_ievb8")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bet6o"]
+atlas = ExtResource("9_ievb8")
+region = Rect2(0, 15, 500, 485)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6h74x"]
+atlas = ExtResource("9_ievb8")
+region = Rect2(0, 30, 500, 470)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_owhm4"]
+atlas = ExtResource("9_ievb8")
+region = Rect2(0, 45, 500, 455)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pti3k"]
+atlas = ExtResource("9_ievb8")
+region = Rect2(0, 60, 500, 440)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5yci6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_1ocj4")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_ievb8")
+}],
+"loop": true,
+"name": &"idle_with_light",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_1ocj4")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_ievb8")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_5yci6")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_j1g22")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_aob2u")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_j1g22")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_5yci6")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_ievb8")
+}],
+"loop": false,
+"name": &"walk",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_str34")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_bet6o")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_6h74x")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_owhm4")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_pti3k")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_owhm4")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_6h74x")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_bet6o")
+}],
+"loop": false,
+"name": &"walk_with_light",
+"speed": 5.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s4l0a"]
 atlas = ExtResource("8_y4gmr")
@@ -1043,6 +1162,12 @@ target_position = Vector3(0, 0, -50)
 collision_mask = 520
 collide_with_areas = true
 
+[node name="lamp_light" type="OmniLight3D" parent="CharacterBody3D/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.01940918, -0.0018920898, -0.4153595)
+visible = false
+light_color = Color(0.90727174, 0.55628204, 0.14874196, 1)
+light_energy = 1.5
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
 shape = SubResource("CapsuleShape3D_ss8dx")
 
@@ -1054,6 +1179,19 @@ offset_top = -7.0
 offset_right = 1162.0
 offset_bottom = 653.0
 color = Color(1, 0, 0, 0)
+
+[node name="control_lamp" type="Control" parent="CharacterBody3D/hud_canvas"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="lamp" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_lamp"]
+position = Vector2(564, 489)
+scale = Vector2(0.928, 0.886)
+sprite_frames = SubResource("SpriteFrames_5yci6")
+animation = &"idle"
+autoplay = "idle"
 
 [node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas"]
 visible = false
@@ -1158,6 +1296,7 @@ sprite_frames = SubResource("SpriteFrames_ievb8")
 animation = &"semi_explotion"
 autoplay = "semi_explotion"
 
+[connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_lamp/lamp" to="CharacterBody3D" method="_on_lamp_animation_finished"]
 [connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_gun/arma_sprite" to="CharacterBody3D" method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="animation_changed" from="CharacterBody3D/hud_canvas/maycon_hp/hp_1" to="CharacterBody3D/hud_canvas/maycon_hp/hp_1" method="_on_animation_changed"]
 [connection signal="animation_finished" from="CharacterBody3D/hud_canvas/maycon_hp/hp_1" to="CharacterBody3D/hud_canvas/maycon_hp/hp_1" method="_on_animation_finished"]

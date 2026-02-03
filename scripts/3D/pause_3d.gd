@@ -25,6 +25,10 @@ func _process(delta: float) -> void:
 
 
 func processa_pause_unpause()->void:
+	var player = get_tree().get_first_node_in_group("player")
+	player.get_node("hud_canvas").get_node("control_gun").visible = false
+	player.get_node("hud_canvas").get_node("control_lamp").visible = false
+	
 	if get_tree().paused:
 		control.visible = false
 		get_tree().paused = false

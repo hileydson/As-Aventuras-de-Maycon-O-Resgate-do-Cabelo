@@ -27,6 +27,7 @@ BattleShatteredScreenEffect="*res://scenes/battle_shattered_screen_effect.tscn"
 
 [display]
 
+window/size/mode=2
 window/stretch/mode="viewport"
 
 [dotnet]

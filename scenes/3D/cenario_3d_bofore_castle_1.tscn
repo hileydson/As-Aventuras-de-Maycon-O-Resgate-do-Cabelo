@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://efjafjlo8f64"]
+[gd_scene load_steps=19 format=3 uid="uid://efjafjlo8f64"]
 
 [ext_resource type="Script" uid="uid://nkjnek3wm5yp" path="res://scripts/3D/cenario_3d_bofore_castle_1.gd" id="1_evjeq"]
 [ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="1_xq8f0"]
@@ -8,8 +8,12 @@
 [ext_resource type="PackedScene" uid="uid://b1y2e2cvtlgas" path="res://scenes/3D/torcha_3d.tscn" id="2_thl2i"]
 [ext_resource type="AudioStream" uid="uid://btl22s5pwrpe0" path="res://assets/novos_audios/sliding.mp3" id="3_7uvpv"]
 [ext_resource type="PackedScene" uid="uid://bysc8ns18xmwv" path="res://scenes/3D/pause_3d.tscn" id="4_33vbx"]
+[ext_resource type="Texture2D" uid="uid://b4nuieuqfk5wl" path="res://assets/novas_imagens/buttons/360_A.png" id="5_5yycw"]
+[ext_resource type="Texture2D" uid="uid://casgjkx6xefuq" path="res://assets/novas_imagens/3d_cenarios/escada.png" id="5_ka82m"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="5_thl2i"]
 [ext_resource type="PackedScene" uid="uid://c7ojmg3ah36ew" path="res://scenes/3D/lamp.tscn" id="10_cp835"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5yycw"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_axo0a"]
 sky_top_color = Color(0.11, 0.0055000014, 0.019433321, 1)
@@ -29,11 +33,10 @@ ambient_light_color = Color(0.042778365, 0.24074075, 0.4687116, 1)
 ambient_light_energy = 0.3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_evjeq"]
-albedo_color = Color(0.1140518, 0.012722114, 0, 1)
+albedo_color = Color(0.504789, 0.27394813, 4.813075e-08, 1)
 albedo_texture = ExtResource("2_axo0a")
 uv1_scale = Vector3(5, 5, 5)
 uv1_triplanar = true
-shadow_to_opacity = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_axo0a"]
 albedo_texture = ExtResource("2_axo0a")
@@ -54,13 +57,60 @@ pitch_scale = 0.43
 
 [node name="FinalCabeloMistery" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_o5qm3")
-volume_db = -4.489
+volume_db = 5.237
 pitch_scale = 0.11
 autoplay = true
 parameters/looping = true
 
+[node name="escada" type="Node3D" parent="."]
+
+[node name="prompt" type="Control" parent="escada"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="msg_prompt" type="Label" parent="escada/prompt"]
+layout_mode = 0
+offset_left = 383.0
+offset_top = 232.0
+offset_right = 509.0
+offset_bottom = 255.0
+scale = Vector2(3.1935484, 4.18)
+text = "climb the stairs?"
+
+[node name="button_A" type="Sprite2D" parent="escada/prompt"]
+position = Vector2(1045.5, 608)
+scale = Vector2(0.65, 0.62)
+texture = ExtResource("5_5yycw")
+
+[node name="sprite_escada" type="Sprite3D" parent="escada"]
+transform = Transform3D(0.13988076, 0.031525522, 0.09478579, -0.2862805, 2.370301, 0.0011886464, 1.2247977, 0.55042624, -0.010547405, -16.521187, 5.131012, -20.934017)
+texture = ExtResource("5_ka82m")
+
+[node name="sprite_escada2" type="Sprite3D" parent="escada"]
+transform = Transform3D(0.13988076, 0.031525522, 0.09478579, -0.2862805, 2.370301, 0.0011886464, 1.2247977, 0.55042624, -0.010547405, -16.521187, 14.102203, -20.176144)
+texture = ExtResource("5_ka82m")
+
+[node name="sprite_escada3" type="Sprite3D" parent="escada"]
+transform = Transform3D(0.13988076, 0.031525522, 0.09478579, -0.2862805, 2.370301, 0.0011886464, 1.2247977, 0.55042624, -0.010547405, -16.521187, 21.88153, -19.456234)
+texture = ExtResource("5_ka82m")
+
+[node name="Area3D" type="Area3D" parent="escada"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="escada/Area3D"]
+transform = Transform3D(4.392458, 0, 0, 0, 1, 0, 0, 0, 4.730705, -12.987848, 1.6052856, -22.68265)
+shape = SubResource("CapsuleShape3D_5yycw")
+
 [node name="torcha_3d" parent="." instance=ExtResource("2_thl2i")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.682103, 1.8364449, -20.099169)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.54029, 1.8364449, -24.134907)
+
+[node name="torcha_3d2" parent="." instance=ExtResource("2_thl2i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.695633, 1.8364449, -12.911573)
+
+[node name="torcha_3d3" parent="." instance=ExtResource("2_thl2i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.097385, 1.951191, -19.638048)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_xq8f0")
@@ -141,6 +191,11 @@ use_collision = true
 size = Vector3(1, 1, 0.5263672)
 material = SubResource("StandardMaterial3D_axo0a")
 
+[node name="Label3D" type="Label3D" parent="paredes"]
+transform = Transform3D(2.9427316, 0, 0, 0, 3.327284, 0, 0, 0, 1.4729202, -14.846077, 3.6582031, -18.28067)
+modulate = Color(0.18628961, 1.278473e-07, 0.015358456, 1)
+text = "YOU SUCK!"
+
 [node name="pause_3d" parent="." instance=ExtResource("4_33vbx")]
 
 [node name="fade" parent="." instance=ExtResource("5_thl2i")]
@@ -148,4 +203,6 @@ material = SubResource("StandardMaterial3D_axo0a")
 [node name="bullets" parent="." instance=ExtResource("10_cp835")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8894854, 1.2420645, 21.183075)
 
+[connection signal="body_entered" from="escada/Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_exited" from="escada/Area3D" to="." method="_on_area_3d_body_exited"]
 [connection signal="ready" from="WorldEnvironment" to="WorldEnvironment" method="_on_ready"]

@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://b1y2e2cvtlgas"]
+[gd_scene load_steps=9 format=3 uid="uid://b1y2e2cvtlgas"]
 
 [ext_resource type="Texture2D" uid="uid://ckvw6nxkmuyub" path="res://assets/novas_imagens/3d_cenarios/torcha/torcha_1.png" id="1_6nhju"]
+[ext_resource type="Script" uid="uid://i1icjuoy3vk0" path="res://scripts/3D/torcha_3d.gd" id="1_culln"]
 [ext_resource type="Texture2D" uid="uid://cd88qjqo1o4ol" path="res://assets/novas_imagens/3d_cenarios/torcha/torcha_2.png" id="2_13jdl"]
 [ext_resource type="Texture2D" uid="uid://4tyqelvsk8bf" path="res://assets/novas_imagens/3d_cenarios/torcha/torcha_3.png" id="3_culln"]
 [ext_resource type="Texture2D" uid="uid://csaj5qrrfomxb" path="res://assets/novas_imagens/3d_cenarios/torcha/torcha_4.png" id="4_yd1ty"]
@@ -26,13 +27,16 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_13jdl"]
+
 [node name="torcha_3d" type="Node3D"]
+script = ExtResource("1_culln")
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
 billboard = 1
 sprite_frames = SubResource("SpriteFrames_7dk72")
 autoplay = "default"
-frame_progress = 0.74710745
+frame_progress = 0.7663161
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04269409, 0.3079834, 0.23075867)
@@ -43,3 +47,11 @@ stream = ExtResource("5_13jdl")
 volume_db = -10.36
 autoplay = true
 parameters/looping = true
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(2.5271232, 0, 0, 0, 2.0916066, 0, 0, 0, 3.0946927, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_13jdl")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
