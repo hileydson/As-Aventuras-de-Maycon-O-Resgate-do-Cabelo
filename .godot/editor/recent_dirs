@@ -1,6 +1,8 @@
-res://terreno3d_assetlib
-res://scenes/3D
 res://scripts/3D
+res://terrain_3d_data
+res://scenes/3D
+res://addons/terrain_3d
+res://
 res://assets/novas_imagens/inimigos/seco
 res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Black_Werewolf
 res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf
@@ -19,4 +21,3 @@ res://assets/novas_imagens/inimigos/manga
 res://assets/novas_imagens/inimigos/xuruzika
 res://assets/novas_imagens/inimigos/fofo
 /home/javaboy/Documents/development/games
-res://assets/novas_imagens/inimigos
