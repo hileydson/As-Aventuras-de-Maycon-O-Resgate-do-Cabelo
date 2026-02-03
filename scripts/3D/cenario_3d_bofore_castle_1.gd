@@ -4,6 +4,7 @@ extends Node3D
 @onready var label_3d: Label3D = $paredes/Label3D
 @onready var prompt: Control = $escada/prompt
 @onready var msg_prompt: Label = $escada/prompt/msg_prompt
+@onready var fade: Node2D = $fade
 
 
 func _ready() -> void:
@@ -33,6 +34,12 @@ func _process(delta: float) -> void:
 	if prompt.visible:
 		if Input.is_action_pressed("ui_accept"):
 			print("subiu escada!")
+			
+			#IMPLEMENTAR VOLTA PRO 2D
+			get_tree().get_first_node_in_group("player").process_mode = Node.PROCESS_MODE_DISABLED
+			fade.play("fade_out")
+			await get_tree().create_timer(2.0).timeout
+			#CHAMAR A CENA CORRETA
 
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
