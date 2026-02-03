@@ -74,8 +74,6 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 
 
 func _on_block_gilhotina_body_entered(body: Node2D) -> void:
-	return
-	
 	if !Global.maycon_itens["axe"] && Global.game_events["gilhotina_broken"] == false:
 		$"../maycon_itens".get_node("canvas").visible = false
 		Global.battle_started = true # para pausar maycon

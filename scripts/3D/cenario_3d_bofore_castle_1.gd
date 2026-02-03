@@ -42,9 +42,6 @@ func _process(delta: float) -> void:
 	
 	if prompt.visible:
 		if Input.is_action_pressed("ui_accept"):
-			print("subiu escada!")
-			
-			#IMPLEMENTAR VOLTA PRO 2D
 			get_tree().get_first_node_in_group("player").process_mode = Node.PROCESS_MODE_DISABLED
 			fade.get_node("Transition").play("fade_out")
 			await get_tree().create_timer(2.0).timeout
