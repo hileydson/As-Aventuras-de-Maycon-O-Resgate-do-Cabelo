@@ -6,7 +6,10 @@ extends Node3D
 @onready var msg_prompt: Label = $escada/prompt/msg_prompt
 @onready var fade: Node2D = $fade
 @onready var passagem_pestilenta: Label = $passagem_pestilenta
+@onready var subindo_escada: AudioStreamPlayer = $SubindoEscada
+@onready var blackout: ColorRect = $blackout
 
+var fim_cenario_3d:bool = false
 
 func _ready() -> void:
 	GameSongs.stop(1)
@@ -36,16 +39,22 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	var player = get_tree().get_first_node_in_group("player")
-	if Global.maycon_pegou_lamp_3d_world:
+	if Global.maycon_pegou_lamp_3d_world && fim_cenario_3d==false:
 		player.get_node("hud_canvas").get_node("control_lamp").visible = true
 	else:
 		player.get_node("hud_canvas").get_node("control_lamp").visible = false
 	
 	if prompt.visible:
 		if Input.is_action_pressed("ui_accept"):
+			fim_cenario_3d = true
 			get_tree().get_first_node_in_group("player").process_mode = Node.PROCESS_MODE_DISABLED
 			fade.get_node("Transition").play("fade_out")
 			await get_tree().create_timer(2.0).timeout
+			subindo_escada.play()
+			blackout.visible = true
+			await get_tree().create_timer(3.0).timeout
+			Global.fade_out_sound(subindo_escada, 4.0)
+			await get_tree().create_timer(3.0).timeout
 			Global.from_slum = true
 			get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
 

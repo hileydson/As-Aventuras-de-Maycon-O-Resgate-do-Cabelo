@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://efjafjlo8f64"]
+[gd_scene load_steps=20 format=3 uid="uid://efjafjlo8f64"]
 
 [ext_resource type="Script" uid="uid://nkjnek3wm5yp" path="res://scripts/3D/cenario_3d_bofore_castle_1.gd" id="1_evjeq"]
 [ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="1_xq8f0"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="2_o5qm3"]
 [ext_resource type="PackedScene" uid="uid://b1y2e2cvtlgas" path="res://scenes/3D/torcha_3d.tscn" id="2_thl2i"]
 [ext_resource type="AudioStream" uid="uid://btl22s5pwrpe0" path="res://assets/novos_audios/sliding.mp3" id="3_7uvpv"]
+[ext_resource type="AudioStream" uid="uid://c0jpqp6ih1ob0" path="res://assets/novos_audios/subindo_escada.mp3" id="3_w8yxg"]
 [ext_resource type="PackedScene" uid="uid://bysc8ns18xmwv" path="res://scenes/3D/pause_3d.tscn" id="4_33vbx"]
 [ext_resource type="Texture2D" uid="uid://b4nuieuqfk5wl" path="res://assets/novas_imagens/buttons/360_A.png" id="5_5yycw"]
 [ext_resource type="Texture2D" uid="uid://casgjkx6xefuq" path="res://assets/novas_imagens/3d_cenarios/escada.png" id="5_ka82m"]
@@ -49,6 +50,10 @@ script = ExtResource("1_evjeq")
 [node name="SangueFillEffect" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_1der3")
 volume_db = -4.489
+
+[node name="SubindoEscada" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_w8yxg")
+pitch_scale = 1.2
 
 [node name="Sliding" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_7uvpv")
@@ -211,6 +216,13 @@ offset_right = 407.0
 offset_bottom = 188.00002
 scale = Vector2(4.0000005, 4.6400003)
 text = "Pestilent passage"
+
+[node name="blackout" type="ColorRect" parent="."]
+visible = false
+z_index = 22
+offset_right = 1159.0
+offset_bottom = 660.0
+color = Color(0, 0, 0, 1)
 
 [connection signal="body_entered" from="escada/Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="escada/Area3D" to="." method="_on_area_3d_body_exited"]

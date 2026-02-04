@@ -75,7 +75,14 @@ func check_load():
 		can_load = true
 	
 	return can_load
-
+	
+func fade_out_sound(stream_player: AudioStreamPlayer, duracao: float):
+	var tween = create_tween()
+	# Faz o volume ir do valor atual até -80 dB (silêncio total)
+	if stream_player:
+		tween.tween_property(stream_player, "volume_db", -20.0, duracao)
+	
+		
 func load_progress()->void:
 	if FileAccess.file_exists("user://savegame.save"): 
 		can_load = true
