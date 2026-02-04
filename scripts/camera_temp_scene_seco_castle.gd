@@ -8,10 +8,12 @@ extends Camera2D
 @onready var animacoes: AnimationPlayer = $"../animacoes"
 @onready var inimigo_boss_seco: AnimatedSprite2D = $inimigo_boss_seco
 @onready var canvas_layer: CanvasLayer = $"../CanvasLayer"
+@onready var pause: Control = $"../../Pause"
 
 
 func _on_ready() -> void:
 	if Global.game_events["seco_first_scene_castle"]==false:
+		pause.queue_free()
 		$"../../maycon_itens".get_node("canvas").visible = false
 		canvas_layer.visible = false
 		GameSongs.stop(1)
