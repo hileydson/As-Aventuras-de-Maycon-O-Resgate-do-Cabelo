@@ -17,8 +17,8 @@ func _ready() -> void:
 	# SET CAIXA OU QUEUEFREE SE NAO TIVER TRAGO A CAIXA
 	if Global.game_events["caixa_to_carry_moved"]:
 		Global.game_events["caixa_to_carry_moved"] = false
-	#else:
-	#	caixa_to_carry.queue_free() 
+	else:
+		caixa_to_carry.queue_free() 
 	
 	
 	Global.save_progress(get_tree().current_scene.name)

@@ -15,9 +15,3 @@ func destruir_objeto():
 	
 	# 4. Deleta o objeto original
 	queue_free()
-
-func _on_area_2d_body_entered(body: Node2D) -> void:
-	print("ENCOSTOU")
-	if Input.is_action_pressed("key_q") || Input.is_action_pressed("key_q"):
-		print("ACAO DE GOLPE")
-		destruir_objeto()
