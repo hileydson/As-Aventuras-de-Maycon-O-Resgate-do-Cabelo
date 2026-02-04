@@ -77,6 +77,7 @@ func _on_ready() -> void:
 		
 		#TODO: TEM QUE TER UM IF AQUI PRA NAO IR PRA O MUNDO 3D CASO JAH TENHA IDO E VENCIDO
 		get_tree().paused = false
+		GameSongs.stop(1)
 		get_tree().change_scene_to_file("res://scenes/3D/world_3d.tscn")
 		
 		#TODO: GANHANDO A BATALHA SALVA AS PARADA ABAIXO
