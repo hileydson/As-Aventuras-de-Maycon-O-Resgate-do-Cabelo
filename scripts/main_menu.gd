@@ -11,9 +11,15 @@ extends VBoxContainer
 @onready var v_box_container: VBoxContainer = $"."
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
 @onready var continue_: Button = $Continue_
+@onready var as_aventuras_de_maycon: Label = $"../as_aventuras_de_maycon"
+@onready var o_resgate_do_cabelo: Label = $"../o_resgate_do_cabelo"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	if Global.default_language == Global.language_en:
+		as_aventuras_de_maycon.text = "The Legend of Maycon"
+		o_resgate_do_cabelo.text = "The Cabelo's Rescue"
 	
 	continue_.disabled = !Global.check_load()
 	

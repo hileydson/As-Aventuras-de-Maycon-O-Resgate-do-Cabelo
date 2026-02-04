@@ -1,3 +1,5 @@
+AnimatedSprite2D
+Label
 CollisionShape2D
 Area2D
 Node2D
@@ -8,8 +10,6 @@ CollisionShape3D
 Area3D
 Timer
 Node3D
-Label
 RigidBody3D
 Sprite3D
 Terrain3D
-Control
