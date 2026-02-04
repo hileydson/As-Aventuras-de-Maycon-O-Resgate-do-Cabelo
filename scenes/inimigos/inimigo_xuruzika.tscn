@@ -103,13 +103,13 @@ region = Rect2(149, 185, 149, 185)
 atlas = ExtResource("3_g8d4k")
 region = Rect2(298, 185, 149, 185)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_tb15y"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_opoh0"]
 atlas = ExtResource("3_g8d4k")
-region = Rect2(0, 370, 149, 185)
+region = Rect2(0, 371, 149, 185)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_4ldoy"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2sx6"]
 atlas = ExtResource("3_g8d4k")
-region = Rect2(149, 370, 149, 185)
+region = Rect2(149, 371, 149, 185)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ifjj7"]
 atlas = ExtResource("3_g8d4k")
@@ -237,11 +237,11 @@ animations = [{
 "duration": 1.61,
 "texture": SubResource("AtlasTexture_nlwvv")
 }, {
-"duration": 1.61,
-"texture": SubResource("AtlasTexture_tb15y")
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_opoh0")
 }, {
-"duration": 1.61,
-"texture": SubResource("AtlasTexture_4ldoy")
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v2sx6")
 }],
 "loop": true,
 "name": &"idle",
@@ -615,8 +615,10 @@ position = Vector2(578.99994, 467.99997)
 rotation = 3.1415925
 scale = Vector2(0.9135693, -0.926177)
 sprite_frames = SubResource("SpriteFrames_rt5w4")
-animation = &"idle"
+animation = &"attack"
 autoplay = "idle"
+frame = 13
+frame_progress = 1.0
 flip_h = true
 script = ExtResource("4_dwwiw")
 

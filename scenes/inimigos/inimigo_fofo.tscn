@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://iv6b1ijvsoxd"]
+[gd_scene load_steps=40 format=3 uid="uid://iv6b1ijvsoxd"]
 
 [ext_resource type="Texture2D" uid="uid://djvp6j6ovokxk" path="res://assets/novas_imagens/inimigos/fofo/fofo_attack_1.png" id="1_5v360"]
 [ext_resource type="Texture2D" uid="uid://km444acjn6ii" path="res://assets/novas_imagens/inimigos/fofo/fofo_attack_2.png" id="2_m4fua"]
@@ -34,10 +34,6 @@ region = Rect2(155, 185, 155, 185)
 atlas = ExtResource("1_5v360")
 region = Rect2(308, 185, 138, 185)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_2pl3p"]
-atlas = ExtResource("1_5v360")
-region = Rect2(0, 370, 149, 185)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_s0yh8"]
 atlas = ExtResource("2_m4fua")
 region = Rect2(0, 0, 149, 185)
@@ -69,10 +65,6 @@ region = Rect2(0, 370, 149, 185)
 [sub_resource type="AtlasTexture" id="AtlasTexture_xfpwo"]
 atlas = ExtResource("2_m4fua")
 region = Rect2(149, 370, 149, 185)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pxgex"]
-atlas = ExtResource("2_m4fua")
-region = Rect2(298, 370, 149, 185)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_48lvr"]
 atlas = ExtResource("3_wcqty")
@@ -106,9 +98,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_1u634")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2pl3p")
 }],
 "loop": false,
 "name": &"attack",
@@ -141,9 +130,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xfpwo")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pxgex")
 }],
 "loop": false,
 "name": &"attack_2",
@@ -505,9 +491,9 @@ position = Vector2(539, 449.99997)
 rotation = 3.1415925
 scale = Vector2(1.32701, -1.1675123)
 sprite_frames = SubResource("SpriteFrames_rt5w4")
-animation = &"pain"
+animation = &"attack"
 autoplay = "idle"
-frame = 1
+frame = 5
 frame_progress = 1.0
 script = ExtResource("4_m4fua")
 
