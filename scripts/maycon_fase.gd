@@ -33,7 +33,7 @@ func unpause()->void:
 	pausePlayer = false
 	
 func jump(is_colliding:bool)->void:
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !is_colliding:
+	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		sound_jump.play()
 		Input.start_joy_vibration(0, 0.2, 0.2, 0.1)
 		animated_sprite_2d.play("jump_right")
@@ -41,7 +41,7 @@ func jump(is_colliding:bool)->void:
 		
 				
 func double_jump(is_colliding:bool)->void:
-	if Input.is_action_just_pressed("ui_accept") and !is_on_floor() and !is_colliding:
+	if Input.is_action_just_pressed("ui_accept") and !is_on_floor():
 		if DOUBLE_JUMP_COUNT<1:
 			sound_double_jump.play()
 			Input.start_joy_vibration(0, 0.2, 0.2, 0.2)
@@ -66,13 +66,13 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 		
 	# attack kick
-	if Input.is_action_pressed("key_q"):
+	if Input.is_action_pressed("key_q") && !Input.is_action_pressed("key_down"):
 		if animated_sprite_2d.animation != "attack_punch":
 			punch.play()
 			animated_sprite_2d.play("attack_punch")
 		
 	# attack punch
-	if Input.is_action_pressed("key_w"):
+	if Input.is_action_pressed("key_w") && !Input.is_action_pressed("key_down"):
 		if animated_sprite_2d.animation != "attack_kick":
 			kick.play()
 			animated_sprite_2d.play("attack_kick")

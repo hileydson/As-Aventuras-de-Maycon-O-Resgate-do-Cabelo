@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://bmeon4mpjn614"]
+[gd_scene load_steps=40 format=3 uid="uid://bmeon4mpjn614"]
 
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_hak52"]
 [ext_resource type="Texture2D" uid="uid://dv8x3bopk0uoc" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3.png" id="1_pvy0v"]
@@ -70,7 +70,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0.1),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(1100, -260)]
+"values": [Vector2(761, -202.00003)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -148,16 +148,12 @@ normal = Vector2(1, 0)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
 size = Vector2(788, 178)
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t30a4"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_j5kpr"]
 radius = 22.89917
-height = 489.85986
+height = 597.4011
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
 size = Vector2(1387.625, 178)
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ncgmf"]
-radius = 45.04248
-height = 295.98535
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t7fus"]
 atlas = ExtResource("10_ar2is")
@@ -326,7 +322,7 @@ scale = Vector2(-1.1315826, -1.0231465)
 position = Vector2(16, -2)
 
 [node name="next" type="CollisionShape2D" parent="next_scene"]
-position = Vector2(2739.0002, 544)
+position = Vector2(2490, 538)
 scale = Vector2(5.559998, 2.9600005)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 
@@ -366,18 +362,13 @@ shape = SubResource("RectangleShape2D_hnmna")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
 process_mode = 4
-position = Vector2(2316, 828.99994)
-rotation = 0.70209163
-shape = SubResource("CapsuleShape2D_t30a4")
+position = Vector2(2262, 865.00006)
+rotation = 0.83558524
+shape = SubResource("CapsuleShape2D_j5kpr")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
 position = Vector2(1561, 1072)
 shape = SubResource("RectangleShape2D_p1t4m")
-
-[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(2588, 671.00006)
-rotation = -1.5738535
-shape = SubResource("CapsuleShape2D_ncgmf")
 
 [node name="battle" parent="." instance=ExtResource("5_ar2is")]
 process_mode = 0

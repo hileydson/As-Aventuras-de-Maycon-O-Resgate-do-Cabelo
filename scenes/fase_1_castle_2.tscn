@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://xofol7e84828"]
+[gd_scene load_steps=41 format=3 uid="uid://xofol7e84828"]
 
 [ext_resource type="Texture2D" uid="uid://b7vvpryprwb2m" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_2.png" id="1_7pipl"]
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_wbttt"]
@@ -61,6 +61,18 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector2(-2, -36)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("maycon_fase:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1396.9998, 97.99994)]
+}
 
 [sub_resource type="Animation" id="Animation_wbttt"]
 resource_name = "axe_fall"
@@ -88,10 +100,10 @@ tracks/0/path = NodePath("maycon_fase:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.1),
+"times": PackedFloat32Array(0.06666667),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(1000, -270)]
+"values": [Vector2(805, -221.00003)]
 }
 
 [sub_resource type="Animation" id="Animation_36c4s"]
@@ -143,7 +155,7 @@ glow_enabled = true
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_pg6gg"]
 normal = Vector2(-1, 0)
-distance = 0.89923096
+distance = 22.302155
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7je0d"]
 distance = -60.52633
@@ -154,16 +166,12 @@ normal = Vector2(1, 0)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
 size = Vector2(398, 178)
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_t30a4"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wrggl"]
 radius = 22.89917
-height = 489.85986
+height = 622.1897
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
 size = Vector2(1387.625, 178)
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ncgmf"]
-radius = 45.04248
-height = 221.99854
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t7fus"]
 atlas = ExtResource("7_t30a4")
@@ -288,7 +296,7 @@ libraries = {
 [node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("3_ncgmf")]
 light_mask = 512
 visibility_layer = 524800
-position = Vector2(-1398.9998, 86.99994)
+position = Vector2(-1396.9998, 97.99994)
 scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 261
 collision_mask = 5
@@ -365,17 +373,12 @@ shape = SubResource("RectangleShape2D_hnmna")
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
 process_mode = 4
 position = Vector2(2316, 828.99994)
-rotation = 0.70209163
-shape = SubResource("CapsuleShape2D_t30a4")
+rotation = 0.75447637
+shape = SubResource("CapsuleShape2D_wrggl")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
 position = Vector2(1561, 1072)
 shape = SubResource("RectangleShape2D_p1t4m")
-
-[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(2539.0002, 677)
-rotation = -1.5738535
-shape = SubResource("CapsuleShape2D_ncgmf")
 
 [node name="battle" parent="." instance=ExtResource("5_7cf5f")]
 process_mode = 0

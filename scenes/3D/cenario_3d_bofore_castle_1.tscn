@@ -122,7 +122,7 @@ light_energy = 0.05
 light_specular = 0.519
 
 [node name="maycon_3d" parent="." instance=ExtResource("1_xq8f0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.339691, 23.118591, 23.56311)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.605097, 23.118591, 23.56311)
 
 [node name="chao" type="CSGBox3D" parent="."]
 transform = Transform3D(35.694233, 0, 0, 0, 0.3051597, 0, 0, 0, 53.394855, 0, 0, 0)

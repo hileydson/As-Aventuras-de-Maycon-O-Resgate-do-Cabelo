@@ -231,11 +231,11 @@ size = Vector2(317, 1100)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6v7in"]
 size = Vector2(96.12341, 437.84497)
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nulh8"]
-height = 346.77637
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_im37t"]
+size = Vector2(20, 378.26624)
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6v7in"]
-height = 418.0044
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_afvqi"]
+size = Vector2(19.47525, 408.9987)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0r645"]
 size = Vector2(284, 102)
@@ -554,15 +554,15 @@ rotation = -1.6023498
 shape = SubResource("RectangleShape2D_6v7in")
 
 [node name="CollisionShape2D8" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(2610, 937.0002)
+position = Vector2(2594.6372, 955.7436)
 rotation = 0.80597186
 scale = Vector2(1, 1.2596045)
-shape = SubResource("CapsuleShape2D_nulh8")
+shape = SubResource("RectangleShape2D_im37t")
 
 [node name="CollisionShape2D7" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(2955.9998, 793)
+position = Vector2(2964.5217, 793.2635)
 rotation = -1.5731149
-shape = SubResource("CapsuleShape2D_6v7in")
+shape = SubResource("RectangleShape2D_afvqi")
 
 [node name="portal_slum" type="Area2D" parent="."]
 

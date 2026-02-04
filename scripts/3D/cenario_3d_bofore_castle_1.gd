@@ -9,6 +9,7 @@ extends Node3D
 
 
 func _ready() -> void:
+	GameSongs.stop(1)
 	
 	if Global.default_language == Global.language_pt_br:
 		label_3d.text = "SEU IDIOTA!"

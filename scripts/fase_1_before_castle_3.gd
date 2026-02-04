@@ -17,6 +17,7 @@ func _ready() -> void:
 	Global.battle_background = "1"
 
 	if Global.from_slum:
+		GameSongs.play_song(1)
 		maycon_fase.global_position = back_from_slum.global_position
 
 
