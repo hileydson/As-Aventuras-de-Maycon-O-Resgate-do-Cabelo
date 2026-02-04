@@ -22,7 +22,7 @@ func _on_node_2d_ready() -> void:
 		label.text = "     Fim"
 		end_demo_thanks.text = "  Obrigado por jogar a demo!"
 	
-	Global.reset_save_to_fase_1()
+	#Global.reset_save_to_fase_1()
 	await get_tree().create_timer(3.0).timeout 
 	label.visible = true
 	await get_tree().create_timer(3.0).timeout 
