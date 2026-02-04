@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c1f464or8gmd0"
+path="res://.godot/imported/maycon_base_3d.obj-d8bb83f82b190d43e40907fc9821649c.mesh"
+
+[deps]
+
+files=["res://.godot/imported/maycon_base_3d.obj-d8bb83f82b190d43e40907fc9821649c.mesh"]
+
+source_file="res://assets/modelo_3d/maycon/maycon_base_3d.obj"
+dest_files=["res://.godot/imported/maycon_base_3d.obj-d8bb83f82b190d43e40907fc9821649c.mesh", "res://.godot/imported/maycon_base_3d.obj-d8bb83f82b190d43e40907fc9821649c.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

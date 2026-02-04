@@ -1159,7 +1159,7 @@ current = true
 
 [node name="RayCast3D" type="RayCast3D" parent="CharacterBody3D/Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6887436, 0)
-target_position = Vector3(0, 0, -50)
+target_position = Vector3(0, 0, -2000)
 collision_mask = 520
 collide_with_areas = true
 

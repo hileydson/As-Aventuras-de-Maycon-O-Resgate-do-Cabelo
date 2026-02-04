@@ -1,3 +1,4 @@
+Node3D
 CollisionShape3D
 StaticBody3D
 Label3D
@@ -11,4 +12,3 @@ Marker3D
 AudioStreamPlayer3D
 Area3D
 Timer
-Node3D

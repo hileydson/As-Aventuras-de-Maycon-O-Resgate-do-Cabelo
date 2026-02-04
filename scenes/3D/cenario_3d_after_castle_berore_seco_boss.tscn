@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://cemapjdo6u5wl"]
+[gd_scene load_steps=40 format=3 uid="uid://cemapjdo6u5wl"]
 
 [ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="1_12fbm"]
 [ext_resource type="Texture2D" uid="uid://c58hvspwv25xf" path="res://assets/novas_imagens/3d_cenarios/textura_chao_caminho_das_pegras.png" id="1_34rwn"]
@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://bwxswwjvm1rsh" path="res://scripts/3D/bounce_item.gd" id="13_gbqjv"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="14_v64fo"]
 [ext_resource type="Texture2D" uid="uid://c71odhu3buit" path="res://assets/novas_imagens/3d_battle/arma_3d.png" id="14_whkre"]
+[ext_resource type="ArrayMesh" uid="uid://c1f464or8gmd0" path="res://assets/modelo_3d/maycon/maycon_base_3d.obj" id="19_oyv4m"]
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_whkre"]
 
@@ -872,6 +873,12 @@ label_settings = SubResource("LabelSettings_gbqjv")
 
 [node name="fade" parent="." instance=ExtResource("14_v64fo")]
 z_index = 7
+
+[node name="TEMP" type="Node3D" parent="."]
+
+[node name="MayconBase3d" type="MeshInstance3D" parent="."]
+transform = Transform3D(293.3972, 0, 0, 0, 194.18367, 0, 0, 0, 1, -12.783329, -272.7862, -501.1585)
+mesh = ExtResource("19_oyv4m")
 
 [connection signal="body_entered" from="portal_next_scene" to="." method="_on_portal_next_scene_body_entered"]
 [connection signal="body_entered" from="portal_next_scene2" to="." method="_on_portal_next_scene_2_body_entered"]
