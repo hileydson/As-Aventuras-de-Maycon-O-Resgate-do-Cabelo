@@ -486,6 +486,7 @@ sprite_frames = SubResource("SpriteFrames_ncgmf")
 autoplay = "default"
 
 [connection signal="body_entered" from="Fase1BeforeCastle/axe_area" to="Fase1BeforeCastle" method="_on_axe_area_body_entered"]
+[connection signal="animation_finished" from="Fase1BeforeCastle/animacoes" to="Fase1BeforeCastle" method="_on_animacoes_animation_finished"]
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]
 [connection signal="body_entered" from="back_stage" to="Fase1BeforeCastle" method="_on_back_stage_body_entered"]

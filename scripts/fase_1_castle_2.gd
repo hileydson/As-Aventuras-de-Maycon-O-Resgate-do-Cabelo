@@ -9,6 +9,7 @@ extends Sprite2D
 @onready var caixa_to_carry: RigidBody2D = $caixa_to_carry
 
 var played_axe:bool = false
+var aconteceu_animacao_axe:bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -16,8 +17,8 @@ func _ready() -> void:
 	# SET CAIXA OU QUEUEFREE SE NAO TIVER TRAGO A CAIXA
 	if Global.game_events["caixa_to_carry_moved"]:
 		Global.game_events["caixa_to_carry_moved"] = false
-	else:
-		caixa_to_carry.queue_free() 
+	#else:
+	#	caixa_to_carry.queue_free() 
 	
 	
 	Global.save_progress(get_tree().current_scene.name)
@@ -37,7 +38,6 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
 	if Global.maycon_itens["axe"]==false && Global.game_events["gilhotina_broken"]==false:
 		axe_area.visible = true
 	else:
@@ -79,5 +79,10 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 
 
 func _on_axe_area_body_entered(body: Node2D) -> void:
-	Global.maycon_itens["axe"] = true
-	Global.game_events["axe_taken"] = true
+	if aconteceu_animacao_axe && animacoes.animation_finished:
+		Global.maycon_itens["axe"] = true
+		Global.game_events["axe_taken"] = true
+
+
+func _on_animacoes_animation_finished(anim_name: StringName) -> void:
+	aconteceu_animacao_axe = true
