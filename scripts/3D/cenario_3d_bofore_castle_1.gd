@@ -8,6 +8,8 @@ extends Node3D
 @onready var passagem_pestilenta: Label = $passagem_pestilenta
 @onready var subindo_escada: AudioStreamPlayer = $SubindoEscada
 @onready var blackout: ColorRect = $blackout
+@onready var to_hide: CSGBox3D = $paredes/to_hide
+@onready var pause_3d: Node3D = $pause_3d
 
 var fim_cenario_3d:bool = false
 
@@ -41,11 +43,15 @@ func _process(delta: float) -> void:
 	var player = get_tree().get_first_node_in_group("player")
 	if Global.maycon_pegou_lamp_3d_world && fim_cenario_3d==false:
 		player.get_node("hud_canvas").get_node("control_lamp").visible = true
+		if to_hide:
+			to_hide.queue_free()
 	else:
 		player.get_node("hud_canvas").get_node("control_lamp").visible = false
 	
 	if prompt.visible:
 		if Input.is_action_pressed("ui_accept"):
+			if pause_3d:
+				pause_3d.queue_free()
 			fim_cenario_3d = true
 			get_tree().get_first_node_in_group("player").process_mode = Node.PROCESS_MODE_DISABLED
 			fade.get_node("Transition").play("fade_out")
