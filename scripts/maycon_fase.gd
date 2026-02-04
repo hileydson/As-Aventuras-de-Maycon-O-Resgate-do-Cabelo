@@ -32,7 +32,7 @@ func pause()->void:
 func unpause()->void:
 	pausePlayer = false
 	
-func jump(is_colliding:bool)->void:
+func jump()->void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		sound_jump.play()
 		Input.start_joy_vibration(0, 0.2, 0.2, 0.1)
@@ -40,7 +40,7 @@ func jump(is_colliding:bool)->void:
 		velocity.y = JUMP_VELOCITY
 		
 				
-func double_jump(is_colliding:bool)->void:
+func double_jump()->void:
 	if Input.is_action_just_pressed("ui_accept") and !is_on_floor():
 		if DOUBLE_JUMP_COUNT<1:
 			sound_double_jump.play()
@@ -129,30 +129,49 @@ func _physics_process(delta: float) -> void:
 	elif direction > 0:
 		animated_sprite_2d.flip_h = false			
 			
+
 	move_and_slide()
-	var is_colliding:bool = (get_slide_collision_count()>1) || ($area2d.get_overlapping_areas().size()>0)
+	
+	#var is_colliding:bool = (get_slide_collision_count()>1) || ($area2d.get_overlapping_areas().size()>0)
 	
 	# handles double jump 
-	double_jump(is_colliding)
-	
+	double_jump()
 	# handles jump.
-	jump(is_colliding)
+	jump()
 	
+	# --- NOVA LÓGICA DE IMPACTO ---
+	# 1. Primeiro, pegamos qualquer colisão do movimento normal
+	var col_alvo = null
 	for i in get_slide_collision_count():
-		var desaceleracao = 20000 # Força da frenagem
-		var forca_impulso:int = 150
-		var collision = get_slide_collision(i)
-		if collision.get_collider() is RigidBody2D:
-			if Input.is_action_pressed("key_q") or Input.is_action_pressed("key_w"):
-			# ISSO impede o Maycon de seguir o objeto no ar:
-				velocity = Vector2.ZERO 
-				
-				# Se você quiser um pequeno "coice" para trás (Knockback), use:
-				velocity = collision.get_normal() * 1200 
+		var c = get_slide_collision(i)
+		if c.get_collider() is RigidBody2D:
+			col_alvo = c
+			break
 
-				var multiplicador = 3.0 if Input.is_action_pressed("key_w") else 1.0
-				collision.get_collider().apply_central_impulse(-collision.get_normal() * forca_impulso * multiplicador)
-				break;
+	# 2. Se não achou colisão (porque você está parado), usamos um teste de proximidade
+	if col_alvo == null:
+		var direcao = -20 if animated_sprite_2d.flip_h else 20
+		# Testa uma colisão 20 pixels à frente
+		col_alvo = move_and_collide(Vector2(direcao, 0), true, 0.08, true)
+
+	# 3. Se temos uma colisão com RigidBody, verificamos o input FORA do loop
+	if col_alvo and col_alvo.get_collider() is RigidBody2D:
+		var corpo = col_alvo.get_collider()
+		
+		# Verificação direta de Input (tente usar just_pressed para testar se registra melhor)
+		if Input.is_action_pressed("key_q") or Input.is_action_pressed("key_w"):
+			
+			# ACORDA o objeto (Obrigatório para RigidBody parado)
+			corpo.sleeping = false
+			
+			# Aplica o coice no Maycon
+			velocity = col_alvo.get_normal() * 1200 
+			
+			# Aplica o impulso no objeto
+			var forca_impulso = 180.0
+			var multiplicador = 3.0 if Input.is_action_pressed("key_w") else 1.0
+			
+			corpo.apply_central_impulse(-col_alvo.get_normal() * forca_impulso * multiplicador)
 			
 
 

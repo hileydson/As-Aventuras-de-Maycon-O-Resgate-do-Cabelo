@@ -46,7 +46,6 @@ func _physics_process(delta: float) -> void:
 			if world_3d:
 				world_3d.remove_enemies_count()
 			
-			print("inimigo DESPAWN")
 			queue_free() # Remove o inimigo do jogo
 			return # Para o código aqui para não processar o resto do frame
 		# ----------------------------------------	

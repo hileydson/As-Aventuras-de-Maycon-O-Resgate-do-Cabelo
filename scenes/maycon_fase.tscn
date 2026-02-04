@@ -470,31 +470,31 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 0.81,
+"duration": 0.61,
 "texture": SubResource("AtlasTexture_c0dtt")
 }, {
-"duration": 0.81,
+"duration": 0.61,
 "texture": SubResource("AtlasTexture_hf6ig")
 }, {
-"duration": 0.81,
+"duration": 0.61,
 "texture": SubResource("AtlasTexture_ok1bv")
 }, {
-"duration": 0.81,
+"duration": 0.61,
 "texture": SubResource("AtlasTexture_c8565")
 }, {
-"duration": 0.81,
+"duration": 0.61,
 "texture": SubResource("AtlasTexture_c0dtt")
 }, {
-"duration": 0.81,
+"duration": 0.61,
 "texture": SubResource("AtlasTexture_51b4l")
 }, {
-"duration": 0.81,
+"duration": 0.61,
 "texture": SubResource("AtlasTexture_05pgm")
 }, {
-"duration": 0.81,
+"duration": 0.61,
 "texture": SubResource("AtlasTexture_51b4l")
 }],
-"loop": false,
+"loop": true,
 "name": &"run",
 "speed": 5.0
 }]
@@ -525,7 +525,8 @@ visibility_layer = 524289
 position = Vector2(5, 14)
 scale = Vector2(0.5641026, 0.6875553)
 sprite_frames = SubResource("SpriteFrames_inrnk")
-animation = &"attack_punch"
+animation = &"run"
+frame_progress = 0.4875977
 
 [node name="jump" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("45_ff0lx")
