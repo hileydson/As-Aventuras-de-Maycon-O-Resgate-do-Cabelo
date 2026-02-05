@@ -94,9 +94,7 @@ func _physics_process(delta: float) -> void:
 				if SPEED != SPEED_RUN:
 					SPEED = SPEED_RUN
 				animated_sprite_2d.play("run")
-				print("running")
 			else:
-				print("NOT running")
 				if !sound_walk.is_playing():
 					sound_walk.play()
 				if SPEED != SPEED_DEFAULT:

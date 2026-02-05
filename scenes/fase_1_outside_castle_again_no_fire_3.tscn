@@ -436,7 +436,7 @@ offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[node name="inimigo_camilita" parent="." instance=ExtResource("7_737m3")]
+[node name="cabelo" parent="." instance=ExtResource("7_737m3")]
 position = Vector2(2211, 774)
 
 [node name="FinalCabeloMistery" type="AudioStreamPlayer" parent="."]

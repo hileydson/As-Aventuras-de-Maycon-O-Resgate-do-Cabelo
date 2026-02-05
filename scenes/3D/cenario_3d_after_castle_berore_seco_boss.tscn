@@ -177,8 +177,7 @@ text = "Welcome to the Olindão's Castle"
 
 [node name="FinalCabeloMistery" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_12fbm")
-volume_db = 5.237
-pitch_scale = 0.11
+pitch_scale = 0.45
 autoplay = true
 parameters/looping = true
 

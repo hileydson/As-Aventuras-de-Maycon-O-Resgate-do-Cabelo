@@ -46,7 +46,7 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	await get_tree().create_timer(1.0).timeout 
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout 
-	
+	Global.battle_started = false # para pausar maycon
 	get_tree().change_scene_to_file("res://scenes/demo_end.tscn")
 
 
