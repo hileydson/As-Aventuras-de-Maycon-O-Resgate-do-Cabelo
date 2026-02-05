@@ -594,7 +594,7 @@ offset_bottom = 660.0
 color = Color(0, 0, 0, 1)
 
 [node name="gas" parent="." instance=ExtResource("14_igivi")]
-transform = Transform3D(0.4732505, 0, 0, 0, 0.45709866, 0, 0, 0, 1, -15.62969, 1.4277506, -15.830603)
+transform = Transform3D(0.4732505, 0, 0, 0, 0.45709866, 0, 0, 0, 1, -15.844344, 1.4277506, 1.7551689)
 
 [connection signal="body_entered" from="escada/Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="escada/Area3D" to="." method="_on_area_3d_body_exited"]

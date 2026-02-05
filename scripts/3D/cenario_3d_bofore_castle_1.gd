@@ -28,6 +28,7 @@ func _ready() -> void:
 	await get_tree().create_timer(2.1).timeout
 	sangue_fill_effect.play()
 	sliding.stop()
+	Input.start_joy_vibration(0,0.5, 0.7, 0.3)
 	get_tree().get_first_node_in_group("player").aplicar_shake(0.9)
 	
 	if Global.default_language == Global.language_pt_br:
