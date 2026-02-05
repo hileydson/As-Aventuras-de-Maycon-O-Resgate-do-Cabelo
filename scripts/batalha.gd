@@ -110,7 +110,7 @@ func maycon_died()->void:
 	GameSongs.process_mode = Node.PROCESS_MODE_INHERIT
 	#TODO: para a demo, apenas volta para a fase 1, mas para uma versao final seria 
 	# melhor analisar qual a ultima fase salva e ir por lah
-	Global.reset_died_stage1()
+	Global.load_progress()
 
 func victory()->void:
 	$"../../../maycon_itens".get_node("canvas").visible = false

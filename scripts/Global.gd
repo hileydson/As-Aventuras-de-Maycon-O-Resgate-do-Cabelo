@@ -38,6 +38,31 @@ axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_sc
 var inimigos_mortos = {}
 
 
+func reset_default_values()->void:
+	back_to_main_camera = false
+	back_to_fase = false
+	from_slum = false
+	battle_background = "1" # default o cenario de fogo fora do castelo
+	battle_next_enemy = "0"
+	battle_next_boss = 0
+	battle_started = false
+	last_fase = "fase_1"
+	block_pause_before_prologo = false
+
+	maycon_danos_first_3d_battle = 0
+	seco_danos_first_3d_battle = 0
+	maycon_pegou_lamp_3d_world = false
+	maycon_pegou_gas_3d_world = false
+	maycon_pegou_lamp_fire_3d_world = false
+	maycon_pegou_arma_first_3d_battle = false
+	maycon_pegou_bullet = false
+
+	# data to be saved
+	save_array = {}
+	maycon_hp_count = 0
+	maycon_itens = maycon_itens_default
+	game_events = game_events_default
+	inimigos_mortos = {}
 
 func reset_save_to_castle_1()->void:
 	maycon_hp_count = 0	
@@ -85,6 +110,7 @@ func fade_out_sound(stream_player: AudioStreamPlayer, duracao: float):
 	
 		
 func load_progress()->void:
+	reset_default_values()
 	if FileAccess.file_exists("user://savegame.save"): 
 		can_load = true
 		var file = FileAccess.open("user://savegame.save", FileAccess.READ) 

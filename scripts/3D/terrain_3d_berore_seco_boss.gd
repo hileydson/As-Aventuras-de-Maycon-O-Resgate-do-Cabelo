@@ -38,6 +38,8 @@ func _ready() -> void:
 		maycon_3d.global_position = player_respaw_back.global_position
 		arma.global_position = player_gun_respaw_back.global_position
 	
+	Global.maycon_pegou_lamp_3d_world = false
+	Global.maycon_pegou_lamp_fire_3d_world = false
 	Global.maycon_danos_first_3d_battle = 0
 	Global.maycon_pegou_arma_first_3d_battle = false
 	
