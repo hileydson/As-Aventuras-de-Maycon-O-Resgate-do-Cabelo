@@ -1036,40 +1036,43 @@ label_settings = SubResource("LabelSettings_nbku2")
 
 [node name="run_label" type="Label" parent="black_screen"]
 layout_mode = 0
-offset_left = 756.0
-offset_top = 528.0
-offset_right = 897.0
-offset_bottom = 657.0
+offset_left = 757.0
+offset_top = 417.5
+offset_right = 898.0
+offset_bottom = 546.5
 text = "RUN
 "
 label_settings = SubResource("LabelSettings_gcd8f")
 
 [node name="down_label" type="Label" parent="black_screen"]
+visible = false
 layout_mode = 0
-offset_left = 724.0
-offset_top = 421.0
-offset_right = 959.0
-offset_bottom = 550.0
+offset_left = 725.0
+offset_top = 530.5
+offset_right = 960.0
+offset_bottom = 659.5
 text = "Croutch"
 label_settings = SubResource("LabelSettings_gcd8f")
 
 [node name="ArrowDownKeyLight" type="Sprite2D" parent="black_screen"]
-position = Vector2(992, 458)
+visible = false
+position = Vector2(993, 567.5)
 scale = Vector2(0.75, 0.73)
 texture = ExtResource("19_nru7y")
 
 [node name="ButtonIconSwitchDpadDown" type="Sprite2D" parent="black_screen"]
-position = Vector2(1079, 457)
+visible = false
+position = Vector2(1080, 566.5)
 scale = Vector2(0.77, 0.75)
 texture = ExtResource("20_f2c3o")
 
 [node name="360X" type="Sprite2D" parent="black_screen"]
-position = Vector2(1080.0001, 558)
+position = Vector2(1081.0001, 447.5)
 scale = Vector2(0.77, 0.77)
 texture = ExtResource("21_2hkh7")
 
 [node name="AKeyLight" type="Sprite2D" parent="black_screen"]
-position = Vector2(995, 560)
+position = Vector2(996, 449.5)
 scale = Vector2(0.8, 0.79)
 texture = ExtResource("22_4hiuc")
 

@@ -66,21 +66,21 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 		
 	# attack kick
-	if Input.is_action_pressed("key_q") && !Input.is_action_pressed("key_down"):
+	if Input.is_action_pressed("key_q") : #&& !Input.is_action_pressed("key_down")
 		if animated_sprite_2d.animation != "attack_punch":
 			punch.play()
 			animated_sprite_2d.play("attack_punch")
 		
 	# attack punch
-	if Input.is_action_pressed("key_w") && !Input.is_action_pressed("key_down"):
+	if Input.is_action_pressed("key_w") : #&& !Input.is_action_pressed("key_down")
 		if animated_sprite_2d.animation != "attack_kick":
 			kick.play()
 			animated_sprite_2d.play("attack_kick")
 	
 	# down
-	if Input.is_action_pressed("key_down") && !Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right"):
-		if animated_sprite_2d.animation != "key_down":
-			animated_sprite_2d.play("down")
+	#if Input.is_action_pressed("key_down") && !Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right"):
+	#	if animated_sprite_2d.animation != "key_down":
+	#		animated_sprite_2d.play("down")
 
 	
 	
@@ -94,13 +94,17 @@ func _physics_process(delta: float) -> void:
 				if SPEED != SPEED_RUN:
 					SPEED = SPEED_RUN
 				animated_sprite_2d.play("run")
+				print("running")
 			else:
+				print("NOT running")
 				if !sound_walk.is_playing():
 					sound_walk.play()
 				if SPEED != SPEED_DEFAULT:
 					SPEED = SPEED_DEFAULT
 				animated_sprite_2d.play("right")
 
+	if (!Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right")) && !Input.is_action_pressed("ui_accept") && is_on_floor() && animated_sprite_2d.animation != "attack_punch" && animated_sprite_2d.animation != "attack_kick" && animated_sprite_2d.animation != "down" : 
+			animated_sprite_2d.play("idle_right")
 	#ANIMACAO IDLE
 	#if !Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right") && !Input.is_action_just_pressed("ui_accept")  && !Input.is_action_just_pressed("key_q") && !Input.is_action_just_pressed("key_w") && is_on_floor():		
 	if !animated_sprite_2d.is_playing():
@@ -227,3 +231,8 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	transition.play("zoom_out")
 	pausePlayer = false
 	animation_1_gone = true
+
+
+
+func _on_animated_sprite_2d_animation_finished() -> void:
+	animated_sprite_2d.play("idle_right")
