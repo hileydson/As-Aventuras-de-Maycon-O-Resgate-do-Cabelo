@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://efjafjlo8f64"]
+[gd_scene load_steps=49 format=3 uid="uid://efjafjlo8f64"]
 
 [ext_resource type="Script" uid="uid://nkjnek3wm5yp" path="res://scripts/3D/cenario_3d_bofore_castle_1.gd" id="1_evjeq"]
 [ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="1_xq8f0"]
@@ -12,6 +12,8 @@
 [ext_resource type="Texture2D" uid="uid://b4nuieuqfk5wl" path="res://assets/novas_imagens/buttons/360_A.png" id="5_5yycw"]
 [ext_resource type="Texture2D" uid="uid://casgjkx6xefuq" path="res://assets/novas_imagens/3d_cenarios/escada.png" id="5_ka82m"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="5_thl2i"]
+[ext_resource type="Texture2D" uid="uid://dqid02yacbfn5" path="res://assets/novas_imagens/buttons/Blank_White_Enter.png" id="6_0du57"]
+[ext_resource type="Texture2D" uid="uid://bu87adwoqopfd" path="res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png" id="8_0i7ck"]
 [ext_resource type="PackedScene" uid="uid://c7ojmg3ah36ew" path="res://scenes/3D/lamp.tscn" id="10_cp835"]
 [ext_resource type="PackedScene" uid="uid://b8tlxjtxlay3i" path="res://scenes/3D/gas.tscn" id="14_igivi"]
 
@@ -164,10 +166,20 @@ offset_bottom = 255.0
 scale = Vector2(3.1935484, 4.18)
 text = "climb the stairs?"
 
+[node name="BlankWhiteEnter" type="Sprite2D" parent="escada/prompt"]
+position = Vector2(981.99994, 571)
+scale = Vector2(0.51, 0.52)
+texture = ExtResource("6_0du57")
+
 [node name="button_A" type="Sprite2D" parent="escada/prompt"]
-position = Vector2(1045.5, 608)
+position = Vector2(1044, 588)
 scale = Vector2(0.65, 0.62)
 texture = ExtResource("5_5yycw")
+
+[node name="BlankWhiteSuperWide" type="Sprite2D" parent="escada/prompt"]
+position = Vector2(983.99994, 610)
+scale = Vector2(0.59, 0.58)
+texture = ExtResource("8_0i7ck")
 
 [node name="sprite_escada" type="Sprite3D" parent="escada"]
 transform = Transform3D(0.13988076, 0.031525522, 0.09478579, -0.2862805, 2.370301, 0.0011886464, 1.2247977, 0.55042624, -0.010547405, -16.521187, 5.131012, -20.934017)

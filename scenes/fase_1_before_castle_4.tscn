@@ -601,7 +601,7 @@ offset_top = 7.549121
 offset_right = 132.20142
 offset_bottom = 30.549122
 scale = Vector2(0.08058394, 0.30880532)
-text = "Castle of Seco"
+text = "Castle of Olindão"
 
 [node name="ScarySmile" type="AudioStreamPlayer" parent="enter_the_castle"]
 stream = ExtResource("8_745bc")

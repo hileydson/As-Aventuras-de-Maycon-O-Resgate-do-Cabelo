@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://cj2glpmry1pkv"]
+[gd_scene load_steps=29 format=3 uid="uid://cj2glpmry1pkv"]
 
 [ext_resource type="Script" uid="uid://lhs7w1lfxh4w" path="res://scripts/3D/seco_3d.gd" id="1_ml58b"]
 [ext_resource type="AudioStream" uid="uid://winmr31cwh05" path="res://assets/novos_audios/growl_1.mp3" id="2_0wdaf"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://dvchofw63am8g" path="res://assets/novas_imagens/inimigos/seco/seco_kick.png" id="8_eny66"]
 [ext_resource type="Texture2D" uid="uid://dl7rs3v1uv2q4" path="res://assets/novas_imagens/inimigos/seco/seco_idle_smile_2.png" id="8_uwy75"]
 [ext_resource type="Script" uid="uid://oc3lu102dap5" path="res://scripts/3D/seco_3d_hp.gd" id="10_uwy75"]
+[ext_resource type="FontFile" uid="uid://mqywkexvidu2" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/10 Font/CyberpunkCraftpixPixel.otf" id="11_s73nt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s73nt"]
 atlas = ExtResource("8_uwy75")
@@ -114,6 +115,12 @@ bg_color = Color(0.9972492, 0.87304837, 0.88654727, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s73nt"]
 bg_color = Color(0.5812133, 0.21403438, 0.17860019, 1)
 
+[sub_resource type="LabelSettings" id="LabelSettings_pbgpm"]
+font = ExtResource("11_s73nt")
+font_size = 17
+font_color = Color(0.61161965, 0.5539323, 0.38693678, 1)
+shadow_color = Color(0.98133534, 0.732968, 0.8040008, 0.03529412)
+
 [sub_resource type="Theme" id="Theme_uwy75"]
 default_base_scale = 0.41
 
@@ -176,10 +183,10 @@ anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = 246.0
-offset_top = -312.0
+offset_left = 246.00002
+offset_top = -300.0
 offset_right = 246.0
-offset_bottom = -285.0
+offset_bottom = -273.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.5600003, 0.35999978)
@@ -187,6 +194,15 @@ theme_override_styles/background = SubResource("StyleBoxFlat_uwy75")
 theme_override_styles/fill = SubResource("StyleBoxFlat_s73nt")
 value = 100.0
 show_percentage = false
+
+[node name="olindao" type="Label" parent="CanvasLayer"]
+offset_left = 415.99997
+offset_top = -2.0
+offset_right = 614.0
+offset_bottom = 22.0
+scale = Vector2(1.72, 1.0799996)
+text = "Olindão Tripa Maior"
+label_settings = SubResource("LabelSettings_pbgpm")
 
 [node name="seco_died" type="Label" parent="."]
 visible = false

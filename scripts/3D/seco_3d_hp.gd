@@ -58,7 +58,7 @@ func morrer():
 	if Global.default_language != Global.language_en:
 			seco_died.text = "DERROTADO!"
 			seco_died.visible = true
-			final_msg.text = "      SECO FUGIU!"
+			final_msg.text = "     OLINDÃO FUGIU!"
 			final_msg_2.text = "               MAS EU NÃO! 
 								EU AINDA TE PEGO MALDITO!"
 			
