@@ -1,4 +1,4 @@
-[gd_scene load_steps=74 format=3 uid="uid://d3cev6uiwwro4"]
+[gd_scene load_steps=75 format=3 uid="uid://d3cev6uiwwro4"]
 
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
 [ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
@@ -474,6 +474,8 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="LabelSettings" id="LabelSettings_jph6d"]
+
 [sub_resource type="Texture2DRD" id="Texture2DRD_vi3cd"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_avl2m"]
@@ -719,10 +721,11 @@ stream = ExtResource("15_avl2m")
 [node name="label_stage_1" type="Label" parent="Fase1BeforeCastle1/node2d_stage_1_label"]
 offset_left = -253.0
 offset_top = -325.0
-offset_right = -197.0
+offset_right = -104.288666
 offset_bottom = -302.0
 scale = Vector2(7.76, 7.0000014)
-text = "Maycon's World"
+text = " Olindão's World"
+label_settings = SubResource("LabelSettings_jph6d")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle1"]
 

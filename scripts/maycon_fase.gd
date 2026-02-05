@@ -32,16 +32,16 @@ func pause()->void:
 func unpause()->void:
 	pausePlayer = false
 	
-func jump()->void:
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+func jump(is_colliding_area2d:bool)->void:
+	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !is_colliding_area2d:
 		sound_jump.play()
 		Input.start_joy_vibration(0, 0.2, 0.2, 0.1)
 		animated_sprite_2d.play("jump_right")
 		velocity.y = JUMP_VELOCITY
 		
 				
-func double_jump()->void:
-	if Input.is_action_just_pressed("ui_accept") and !is_on_floor():
+func double_jump(is_colliding_area2d:bool)->void:
+	if Input.is_action_just_pressed("ui_accept") and !is_on_floor() and !is_colliding_area2d:
 		if DOUBLE_JUMP_COUNT<1:
 			sound_double_jump.play()
 			Input.start_joy_vibration(0, 0.2, 0.2, 0.2)
@@ -132,12 +132,12 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	
-	#var is_colliding:bool = (get_slide_collision_count()>1) || ($area2d.get_overlapping_areas().size()>0)
+	var is_colliding_area2d:bool = $area2d.get_overlapping_areas().size()>0
 	
 	# handles double jump 
-	double_jump()
+	double_jump(is_colliding_area2d)
 	# handles jump.
-	jump()
+	jump(is_colliding_area2d)
 	
 	# --- NOVA LÓGICA DE IMPACTO ---
 	# 1. Primeiro, pegamos qualquer colisão do movimento normal

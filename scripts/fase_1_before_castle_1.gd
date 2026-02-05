@@ -14,7 +14,7 @@ func _ready() -> void:
 	GameSongs.play_song(1)
 	
 	if Global.default_language == Global.language_pt_br:
-		label_stage_1.text = "Mundo do Maycon"
+		label_stage_1.text = " Mundo do Olindão"
 	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
