@@ -21,7 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://vjg703nkndy4" path="res://assets/novas_imagens/buttons/Arrow_Down_Key_Light.png" id="19_nru7y"]
 [ext_resource type="Texture2D" uid="uid://d0w7o4h2f8ssn" path="res://assets/novas_imagens/buttons/ButtonIcon-Switch-Dpad_Down.png" id="20_f2c3o"]
 [ext_resource type="Texture2D" uid="uid://c0kqvp1p5iswd" path="res://assets/novas_imagens/buttons/360_X.png" id="21_2hkh7"]
-[ext_resource type="Texture2D" uid="uid://dmf8mrk677jdd" path="res://assets/novas_imagens/buttons/A_Key_Light.png" id="22_4hiuc"]
+[ext_resource type="Texture2D" uid="uid://mmraaf1k0ge3" path="res://assets/novas_imagens/buttons/shift.png" id="22_2hkh7"]
 [ext_resource type="Texture2D" uid="uid://c5esugi7ad25q" path="res://assets/novas_imagens/buttons/Q_Key_Light.png" id="23_gs1sl"]
 [ext_resource type="Texture2D" uid="uid://ca14mbcnug2a1" path="res://assets/novas_imagens/buttons/360_Y.png" id="24_ai0yt"]
 [ext_resource type="Texture2D" uid="uid://dgvpcimo2t1bv" path="res://assets/novas_imagens/buttons/W_Key_Light.png" id="25_57sbn"]
@@ -1071,10 +1071,9 @@ position = Vector2(1081.0001, 447.5)
 scale = Vector2(0.77, 0.77)
 texture = ExtResource("21_2hkh7")
 
-[node name="AKeyLight" type="Sprite2D" parent="black_screen"]
-position = Vector2(996, 449.5)
-scale = Vector2(0.8, 0.79)
-texture = ExtResource("22_4hiuc")
+[node name="Shift" type="Sprite2D" parent="black_screen"]
+position = Vector2(992, 449)
+texture = ExtResource("22_2hkh7")
 
 [node name="QKeyLight" type="Sprite2D" parent="."]
 position = Vector2(1000, 141)

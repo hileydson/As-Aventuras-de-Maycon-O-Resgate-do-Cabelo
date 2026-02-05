@@ -88,7 +88,7 @@ func _physics_process(delta: float) -> void:
 	if (Input.is_action_pressed("ui_left") || Input.is_action_pressed("ui_right")) && !Input.is_action_just_pressed("ui_accept"):	
 		if is_on_floor() && animated_sprite_2d.animation != "attack_punch" && animated_sprite_2d.animation != "attack_kick" :
 	
-			if Input.is_action_pressed("key_a"):
+			if Input.is_action_pressed("run"):
 				if !run.is_playing():
 					run.play()
 				if SPEED != SPEED_RUN:
