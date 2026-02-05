@@ -13,6 +13,7 @@ var aconteceu_animacao_axe:bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Global.game_events["caixa_to_carry_moved"] = true #TODO: TEST
 	
 	# SET CAIXA OU QUEUEFREE SE NAO TIVER TRAGO A CAIXA
 	if Global.game_events["caixa_to_carry_moved"]:
@@ -58,7 +59,7 @@ func _process(delta: float) -> void:
 	if Global.back_to_main_camera:
 		Global.back_to_main_camera = false
 		camera.make_current()
-
+	
 
 
 func _on_next_scene_body_entered(body: Node2D) -> void:
@@ -85,4 +86,5 @@ func _on_axe_area_body_entered(body: Node2D) -> void:
 
 
 func _on_animacoes_animation_finished(anim_name: StringName) -> void:
-	aconteceu_animacao_axe = true
+	if anim_name == "axe_fall":
+		aconteceu_animacao_axe = true
