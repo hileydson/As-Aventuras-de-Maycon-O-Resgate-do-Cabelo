@@ -7,6 +7,7 @@ extends Sprite2D
 @onready var fase_1_before_castle: Sprite2D = $"."
 @onready var mk_dudun: AudioStreamPlayer = $MkDudun
 @onready var cabelo: AnimatedSprite2D = $"../cabelo"
+@onready var smoke: AnimatedSprite2D = $"../smoke"
 @onready var inimigos: Node = $Inimigos
 @onready var fogos: Node2D = $"../fogos"
 @onready var canvas_layer: CanvasLayer = $CanvasLayer
@@ -93,11 +94,13 @@ func _on_division_no_fire_body_exited(body: Node2D) -> void:
 		Global.battle_background = "1"
 		fase_1_before_castle.texture = texture_with_fire
 		cabelo.visible = true
+		smoke.visible = true
 		fogos.visible = true
 	else:
 		Global.battle_background = "2"
 		fase_1_before_castle.texture = texture_no_fire
 		cabelo.visible = false
+		smoke.visible = false
 		fogos.visible = false
 		if inimigos != null:
 			inimigos.queue_free()

@@ -1,7 +1,8 @@
-[gd_scene load_steps=45 format=4 uid="uid://bbvbfgsytow76"]
+[gd_scene load_steps=46 format=4 uid="uid://bbvbfgsytow76"]
 
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="1_3dmrc"]
 [ext_resource type="Texture2D" uid="uid://1dll27f2uadm" path="res://assets/images/TELA-intro-03 _0.png" id="1_mhnvy"]
+[ext_resource type="Script" uid="uid://c0rb3u0qcsmcd" path="res://scripts/menu.gd" id="1_rsfmq"]
 [ext_resource type="Script" uid="uid://s36kwvjcjcdx" path="res://scripts/main_menu.gd" id="1_yqeox"]
 [ext_resource type="FontFile" uid="uid://b1o834pgp267n" path="res://assets/fonts/contrast.ttf" id="3_81l6r"]
 [ext_resource type="AudioStream" uid="uid://5nu088w5ojbl" path="res://assets/audio/kabelo_intro.mp3" id="5_4ytvr"]
@@ -460,7 +461,7 @@ cache/0/25/0/glyphs/71/texture_idx = 0
 line_spacing = 5.0
 font = SubResource("FontFile_g54pe")
 font_size = 46
-font_color = Color(0.65436196, 0.10412992, 0.20074528, 1)
+font_color = Color(0.41574103, 0.04941555, 0.11324484, 1)
 outline_color = Color(0.017732391, 0.017732391, 0.01773239, 1)
 shadow_color = Color(0.8646751, 0.86467516, 0.8646751, 1)
 
@@ -584,6 +585,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_rsfmq")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(577, 324)

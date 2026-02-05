@@ -58,9 +58,8 @@ func morrer():
 	if Global.default_language != Global.language_en:
 			seco_died.text = "DERROTADO!"
 			seco_died.visible = true
-			final_msg.text = "     OLINDÃO FUGIU!"
-			final_msg_2.text = "               MAS EU NÃO! 
-								EU AINDA TE PEGO MALDITO!"
+			final_msg.text = "   OLINDÃO FUGIU!"
+			final_msg_2.text = "EU AINDA TE PEGO SEU MALDITO!"
 			
 	$"../../..".process_mode = Node.PROCESS_MODE_DISABLED
 	$"../../../../maycon_3d".process_mode = Node.PROCESS_MODE_DISABLED
