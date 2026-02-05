@@ -13,7 +13,6 @@ var aconteceu_animacao_axe:bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	Global.game_events["caixa_to_carry_moved"] = true #TODO: TEST
 	
 	# SET CAIXA OU QUEUEFREE SE NAO TIVER TRAGO A CAIXA
 	if Global.game_events["caixa_to_carry_moved"]:
