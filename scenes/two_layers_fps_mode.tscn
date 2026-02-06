@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3 uid="uid://5u8x4fb1wf11"]
+
+[ext_resource type="Script" uid="uid://c6qg6leljxw5h" path="res://scripts/two_layers_fps_mode.gd" id="1_igjxw"]
+[ext_resource type="PackedScene" uid="uid://bgr1w7fk5snwj" path="res://scenes/3D/world_3d.tscn" id="2_s6y5k"]
+[ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="3_dg5n7"]
+
+[node name="two_layers_fps_mode" type="Node3D"]
+script = ExtResource("1_igjxw")
+world_scene = ExtResource("2_s6y5k")
+player_scene = ExtResource("3_dg5n7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer1" type="SubViewportContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+stretch = true
+
+[node name="SubViewport1" type="SubViewport" parent="VBoxContainer/SubViewportContainer1"]
+handle_input_locally = false
+debug_draw = 3
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="SubViewportContainer2" type="SubViewportContainer" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+stretch = true
+
+[node name="SubViewport2" type="SubViewport" parent="VBoxContainer/SubViewportContainer2"]
+handle_input_locally = false
+debug_draw = 3
+size = Vector2i(2, 40)
+render_target_update_mode = 0
