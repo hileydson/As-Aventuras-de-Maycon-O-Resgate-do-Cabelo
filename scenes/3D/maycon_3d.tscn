@@ -1365,7 +1365,7 @@ scale = Vector2(0.31000003, 0.34530595)
 texture = ExtResource("17_xpqs8")
 
 [node name="maycon_hp" type="Node2D" parent="CharacterBody3D/hud_canvas"]
-position = Vector2(-24, 151)
+position = Vector2(-22, 151)
 scale = Vector2(0.72000015, 0.76000035)
 
 [node name="hp_1" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp"]
@@ -1407,7 +1407,7 @@ autoplay = "semi_explotion"
 position = Vector2(361, 22)
 
 [node name="hp_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas"]
-position = Vector2(219, 301)
+position = Vector2(-15, -180)
 
 [node name="jump" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
 stream = ExtResource("2_bd24c")

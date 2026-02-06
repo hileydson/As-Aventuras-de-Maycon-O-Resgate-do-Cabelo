@@ -4,8 +4,6 @@ extends Node3D
 
 @onready var viewport1: SubViewport = $VBoxContainer/SubViewportContainer1/SubViewport1
 @onready var viewport2: SubViewport = $VBoxContainer/SubViewportContainer2/SubViewport2
-@onready var ponto_1: Label = $VBoxContainer/SubViewportContainer1/SubViewport1/ponto_1
-@onready var ponto_2: Label = $VBoxContainer/SubViewportContainer2/SubViewport2/ponto_2
 @onready var hud_player_2_start: CanvasLayer = $hud_node/hud_player_2_start
 @onready var boom: AudioStreamPlayer = $boom
 
@@ -104,6 +102,9 @@ func spawn_players_initial():
 	p2.change_sprite_two_player()
 	print(p1.find_child("hud_canvas"))
 	p1.find_child("hud_canvas").get_node("maycon_hp").visible = true
+	p1.find_child("hud_canvas").get_node("maycon_hp").global_position = p1.find_child("hud_canvas").get_node("hp_position_2_players").global_position
+	p2.find_child("hud_canvas").get_node("maycon_hp").visible = true
+	p2.find_child("hud_canvas").get_node("maycon_hp").global_position = p1.find_child("hud_canvas").get_node("hp_position_2_players").global_position
 	
 	
 	#APRESENTACAO PLAYER 2
@@ -125,8 +126,6 @@ func spawn_players_initial():
 
 
 func setup_cameras(p1_node, p2_node):
-	ponto_1.visible = true
-	ponto_2.visible = true
 	var cam1 = p1_node.find_child("Camera3D", true, false)
 	var cam2 = p2_node.find_child("Camera3D", true, false)
 	
@@ -166,8 +165,6 @@ func setup_cameras(p1_node, p2_node):
 		cam2.make_current()
 		
 func setup_cameras_TEMP(p1_node, p2_node):
-	ponto_1.visible = true
-	ponto_2.visible = true
 	var cam1 = p1_node.find_child("Camera3D", true, false)
 	var cam2 = p2_node.find_child("Camera3D", true, false)
 	

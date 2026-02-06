@@ -444,13 +444,6 @@ handle_input_locally = false
 size = Vector2i(1152, 322)
 render_target_update_mode = 4
 
-[node name="ponto_1" type="Label" parent="VBoxContainer/SubViewportContainer1/SubViewport1"]
-visible = false
-offset_right = 40.0
-offset_bottom = 23.0
-scale = Vector2(2.0754993, 1.8672019)
-text = "."
-
 [node name="SubViewportContainer2" type="SubViewportContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -460,13 +453,6 @@ stretch = true
 handle_input_locally = false
 size = Vector2i(1152, 322)
 render_target_update_mode = 4
-
-[node name="ponto_2" type="Label" parent="VBoxContainer/SubViewportContainer2/SubViewport2"]
-visible = false
-offset_right = 40.0
-offset_bottom = 23.0
-scale = Vector2(2.0754993, 1.8672019)
-text = "."
 
 [node name="hud_node" type="Node3D" parent="."]
 script = ExtResource("5_nq8y0")
