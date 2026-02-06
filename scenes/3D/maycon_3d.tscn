@@ -1220,6 +1220,10 @@ animations = [{
 collision_layer = 1033
 collision_mask = 1033
 script = ExtResource("1_fvdyg")
+SPEED = null
+JUMP_VELOCITY = null
+MOUSE_SENSITIVITY = null
+JOY_SENSITIVITY = null
 
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
 current = true
@@ -1328,7 +1332,6 @@ scale = Vector2(1.2799838, 1.3199955)
 text = "X 99"
 
 [node name="hud_gun_buttons" type="Node2D" parent="CharacterBody3D/hud_canvas/control_gun"]
-visible = false
 
 [node name="ButtonTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun/hud_gun_buttons"]
 position = Vector2(1085, 569)

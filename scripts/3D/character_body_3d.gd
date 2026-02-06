@@ -3,7 +3,7 @@ extends CharacterBody3D
 @export var SPEED : float = 5.0
 @export var JUMP_VELOCITY : float = 4.5
 @export var MOUSE_SENSITIVITY = 0.003
-@export var JOY_SENSITIVITY = 0.05 # Sensibilidade para o controle
+@export var JOY_SENSITIVITY: float = 0.05 # Sensibilidade para o controle
 @onready var hud_canvas: CanvasLayer = $hud_canvas
 @onready var arma_sprite: AnimatedSprite2D = $hud_canvas/control_gun/arma_sprite
 @onready var shoot_fire: AnimatedSprite2D = $hud_canvas/control_gun/shoot
@@ -90,6 +90,16 @@ func aplicar_shake(valor: float):
 	
 
 func _physics_process(delta):
+	if Global.maycon_pegou_arma_first_3d_battle:
+		control_gun.visible = true
+	else:
+		control_gun.visible = false
+		
+	if Global.maycon_pegou_lamp_3d_world:
+		control_lamp.visible = true
+	else:
+		control_lamp.visible = false
+	
 	
 	if Global.maycon_pegou_lamp_3d_world:
 		control_lamp.visible = true
@@ -129,7 +139,13 @@ func _physics_process(delta):
 		camera_3d.v_offset = 0
 	
 	# Faz o tiro - Detecta o botão de tiro específico deste dispositivo
-	var apertou_tiro = Input.is_joy_button_pressed(device_id, JOY_BUTTON_RIGHT_SHOULDER) or (device_id == 0 and Input.is_action_just_pressed("tiro"))
+	var apertou_tiro
+	var trigger_value = Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_RIGHT)
+	
+	if trigger_value > 0.1: # Use a small deadzone
+		apertou_tiro = true
+		
+	#var apertou_tiro = Input.is_joy_button_pressed(device_id, JOY_AXIS_TRIGGER_RIGHT) or (device_id == 0 and Input.is_action_just_pressed("tiro"))
 	
 	if Global.maycon_pegou_arma_first_3d_battle && apertou_tiro && arma_sprite.animation!="shoot" && gun_bullets_count!=0:
 		atirar()
@@ -154,8 +170,7 @@ func _physics_process(delta):
 		Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_Y)
 	)
 
-	if joy_look.length() > 0.1: 
-		# Giro lateral (Gira o corpo)
+	if joy_look.length() > 0.1:
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)
 		
 		# Giro vertical (Gira a câmera de forma independente do corpo)
