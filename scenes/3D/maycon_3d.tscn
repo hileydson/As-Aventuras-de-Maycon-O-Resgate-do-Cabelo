@@ -1328,20 +1328,21 @@ scale = Vector2(2.2777793, 2.6133335)
 text = "."
 
 [node name="Bala" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun"]
-position = Vector2(1073.857, 598.12195)
+position = Vector2(1055.857, 595.12195)
 scale = Vector2(0.17142838, 0.18048783)
 texture = ExtResource("10_11d7m")
 
 [node name="balas_numero" type="Label" parent="CharacterBody3D/hud_canvas/control_gun"]
 layout_mode = 0
-offset_left = 1047.0
-offset_top = 606.0
-offset_right = 1087.0
-offset_bottom = 629.0
+offset_left = 1029.0
+offset_top = 603.0
+offset_right = 1069.0
+offset_bottom = 626.0
 scale = Vector2(1.2799838, 1.3199955)
 text = "X 99"
 
 [node name="hud_gun_buttons" type="Node2D" parent="CharacterBody3D/hud_canvas/control_gun"]
+position = Vector2(-18, -3)
 
 [node name="ButtonTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun/hud_gun_buttons"]
 position = Vector2(1085, 569)
@@ -1394,7 +1395,7 @@ animation = &"semi_explotion"
 autoplay = "semi_explotion"
 
 [node name="gun_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas"]
-position = Vector2(314, -35)
+position = Vector2(361, 22)
 
 [node name="jump" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
 stream = ExtResource("2_bd24c")

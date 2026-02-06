@@ -84,6 +84,10 @@ func spawn_players_initial():
 	if p2.has_method("set_device_id"): p2.set_device_id(1)
 	
 	setup_cameras(p1, p2)
+	
+	#ajusta canvas layer
+	p1.find_child("hud_canvas").custom_viewport = viewport1
+	p2.find_child("hud_canvas").custom_viewport = viewport2
 
 
 
