@@ -1,3 +1,4 @@
+Label
 CollisionShape3D
 AnimatedSprite3D
 Sprite3D
@@ -7,7 +8,6 @@ SubViewportContainer
 HBoxContainer
 AnimationPlayer
 Node2D
-Label
 StaticBody3D
 ColorRect
 Node3D

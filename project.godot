@@ -41,6 +41,8 @@ enabled=PackedStringArray("res://addons/terrain_3d/plugin.cfg")
 
 player=""
 world_3d=""
+3d_before_seco_respaw_on_p1=""
+3d_before_seco_respaw_on_p2=""
 
 [input]
 

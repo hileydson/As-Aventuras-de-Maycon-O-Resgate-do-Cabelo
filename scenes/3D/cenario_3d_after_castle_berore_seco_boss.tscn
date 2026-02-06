@@ -182,13 +182,13 @@ autoplay = true
 parameters/looping = true
 
 [node name="player_respaw_back" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.620274, 1.4474792, -421.7728)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.620274, 11.319305, -421.7728)
 
-[node name="player_respaw_on" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.620274, 1.4474792, 205.32535)
+[node name="player_respaw_on" type="Marker3D" parent="." groups=["3d_before_seco_respaw_on_p1"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.620274, 10.450928, 205.32535)
 
-[node name="player_2_respaw_on" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.620274, 1.4474792, 205.32535)
+[node name="player_2_respaw_on" type="Marker3D" parent="." groups=["3d_before_seco_respaw_on_p2"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.620274, 9.217499, 205.32535)
 
 [node name="player_2_respaw_back" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.620274, 1.4474792, -421.7728)

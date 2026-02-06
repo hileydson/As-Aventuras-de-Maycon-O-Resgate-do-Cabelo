@@ -187,14 +187,18 @@ func _physics_process(delta):
 		Input.start_joy_vibration(device_id, 0.2, 0.2, 0.2)
 		
 	# --- DIREÇÃO DE MOVIMENTO (Analógico Esquerdo) ---
+	# Pegamos os eixos puros. Isso GARANTE que o Controle 1 não afete o Player 2.
 	var input_dir = Vector2(
 		Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X),
 		Input.get_joy_axis(device_id, JOY_AXIS_LEFT_Y)
 	)
 	
-	# Se for o Player 1 e o analógico estiver parado, tenta ler o teclado
+	# Se for o Player 1 (device 0), permitimos o teclado como reserva
 	if device_id == 0 and input_dir.length() < 0.1:
-		input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		# APENAS para o P1 usamos as ações do Input Map (setas/WASD)
+		var k_x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+		var k_y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+		input_dir = Vector2(k_x, k_y)
 
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	

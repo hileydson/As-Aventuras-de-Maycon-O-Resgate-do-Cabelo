@@ -90,7 +90,7 @@ func _process(delta: float) -> void:
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	Global.maycon_pegou_arma_first_3d_battle = true
 	gun_load.play()
-	maycon_3d.get_node("CharacterBody3D").add_bullets_to_gun(5)
+	body.add_bullets_to_gun(5)
 	
 func _on_respaw_timeout() -> void:
 	if enemies_count < 20:
