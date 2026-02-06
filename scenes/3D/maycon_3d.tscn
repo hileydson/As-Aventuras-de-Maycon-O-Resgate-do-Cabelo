@@ -1247,7 +1247,7 @@ autoplay = "idle"
 shape = SubResource("CapsuleShape3D_mwhgs")
 
 [node name="animacao_player_2" parent="CharacterBody3D/Camera3D" instance=ExtResource("4_5yci6")]
-transform = Transform3D(0.31844324, 0, 0, 0, 0.27231514, 0, 0, 0, 0.4143396, 0, 0, 0)
+transform = Transform3D(0.31844324, 0, 0, 0, 0.27231514, 0, 0, 0, 0.4143396, 0, -0.17779541, 0)
 visible = false
 billboard = 1
 animation = &"idle"
@@ -1405,6 +1405,9 @@ autoplay = "semi_explotion"
 
 [node name="gun_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas"]
 position = Vector2(361, 22)
+
+[node name="hp_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas"]
+position = Vector2(219, 301)
 
 [node name="jump" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
 stream = ExtResource("2_bd24c")

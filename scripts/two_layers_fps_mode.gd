@@ -7,6 +7,12 @@ extends Node3D
 @onready var ponto_1: Label = $VBoxContainer/SubViewportContainer1/SubViewport1/ponto_1
 @onready var ponto_2: Label = $VBoxContainer/SubViewportContainer2/SubViewport2/ponto_2
 @onready var hud_player_2_start: CanvasLayer = $hud_node/hud_player_2_start
+@onready var boom: AudioStreamPlayer = $boom
+
+@onready var cigarro_apresenta: Node2D = $hud_node/hud_player_2_start/cigarro_apresenta
+@onready var cigarro_appear: AnimatedSprite2D = $hud_node/hud_player_2_start/cigarro_apresenta/cigarro_appear
+@onready var explosao: AudioStreamPlayer = $hud_node/hud_player_2_start/cigarro_apresenta/Explosao
+
 
 @export var world_scene: PackedScene 
 @export var player_scene: PackedScene 
@@ -35,6 +41,7 @@ func ativar_segunda_tela():
 
 func _ready():
 	Global.is_two_player_active = false
+	cigarro_apresenta.visible = false
 	
 	#setup chamada player 2
 	if p2_ativado==false:
@@ -95,6 +102,23 @@ func spawn_players_initial():
 	p2.find_child("hud_canvas").custom_viewport = viewport2
 	
 	p2.change_sprite_two_player()
+	print(p1.find_child("hud_canvas"))
+	p1.find_child("hud_canvas").get_node("maycon_hp").visible = true
+	
+	
+	#APRESENTACAO PLAYER 2
+	$hud_node/hud_player_2_start/TwoPlayersIcon.visible = false
+	viewport1.process_mode = Node.PROCESS_MODE_DISABLED
+	viewport2.process_mode = Node.PROCESS_MODE_DISABLED
+	cigarro_apresenta.visible = true
+	cigarro_appear.play("fill")
+	explosao.play()
+	await get_tree().create_timer(5.0).timeout
+	viewport1.process_mode = Node.PROCESS_MODE_INHERIT
+	viewport2.process_mode = Node.PROCESS_MODE_INHERIT
+	cigarro_apresenta.visible = false
+	await get_tree().create_timer(1.4).timeout
+	boom.play()
 
 
 

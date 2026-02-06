@@ -18,7 +18,8 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if Input.is_action_just_pressed("ui_cancel"):
+	#NAO DEIXA O SEGUNDO CONTROLE PARA A PARTIDA
+	if Input.is_action_just_pressed("ui_cancel") and !Input.is_joy_button_pressed(1, JOY_BUTTON_START):
 		processa_pause_unpause()
 
 

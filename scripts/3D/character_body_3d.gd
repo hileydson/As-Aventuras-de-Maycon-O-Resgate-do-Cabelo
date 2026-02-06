@@ -24,6 +24,8 @@ extends CharacterBody3D
 @onready var hurt_sound_3d: AudioStreamPlayer2D = $HurtSound3d
 @onready var gun: Control = $hud_canvas/control_gun/gun
 @onready var animacao_player_2: AnimatedSprite3D = $Camera3D/animacao_player_2
+@onready var hp_position_2_players: Marker2D = $hud_canvas/hp_position_2_players
+@onready var maycon_hp: Node2D = $hud_canvas/maycon_hp
 
 
 const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
@@ -74,6 +76,7 @@ func atirar():
 			# sangue.look_at(raycast.get_collision_point() + raycast.get_collision_normal())
 
 func change_sprite_two_player()->void:
+	print("CHAMOU")
 	animacao_player_2.visible = true
 	animacao.visible = false
 
@@ -99,6 +102,7 @@ func _physics_process(delta):
 	
 	if Global.is_two_player_active:
 		gun.global_position = $hud_canvas/gun_position_2_players.global_position
+		maycon_hp.global_position = hp_position_2_players.global_position
 		
 	
 	# HUD de sangue

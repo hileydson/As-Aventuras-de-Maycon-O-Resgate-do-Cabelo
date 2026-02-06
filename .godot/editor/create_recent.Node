@@ -1,14 +1,14 @@
-AnimatedSprite3D
 AnimatedSprite2D
+Node2D
+Label
+AnimatedSprite3D
 Node3D
 CanvasLayer
 Control
 Marker2D
-Label
 CollisionShape3D
 Sprite3D
 VBoxContainer
 SubViewport
 SubViewportContainer
 HBoxContainer
-AnimationPlayer
