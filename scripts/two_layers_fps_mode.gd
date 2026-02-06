@@ -1,4 +1,5 @@
 extends Node3D
+@onready var sub_viewport_container_2: SubViewportContainer = $VBoxContainer/SubViewportContainer2
 
 @onready var viewport1: SubViewport = $VBoxContainer/SubViewportContainer1/SubViewport1
 @onready var viewport2: SubViewport = $VBoxContainer/SubViewportContainer2/SubViewport2
@@ -8,8 +9,23 @@ extends Node3D
 
 var world_instance
 
-func _input(event: InputEvent) -> void:
-	print(event)
+var p1
+var p2
+
+func _input(event):
+	# Primeiro, verificamos se o que foi apertado é um botão de controle (Joypad)
+	if event is InputEventJoypadButton:
+		# Agora filtramos pelo ID do controle
+		if event.device == 0:
+			print("O Controle 1 apertou o botão: ", event.button_index)
+			
+		elif event.device == 1:
+			print("O Controle 2 apertou o botão: ", event.button_index)
+			# Aqui você chamaria sua função:
+			if event.button_index == JOY_BUTTON_START:
+				setup_cameras(p1, p2)
+				sub_viewport_container_2.visible = true
+				
 	
 func _ready():
 	# 1. Instalação básica
@@ -26,14 +42,14 @@ func _ready():
 	viewport2.msaa_3d = viewport1.msaa_3d # Sincroniza qualidade
 	
 	await get_tree().process_frame
-	#spawn_players_initial()
+	spawn_players_initial()
 
 func spawn_players_initial():
-	var p1 = player_scene.instantiate()
+	p1 = player_scene.instantiate()
 	p1.name = "Player1"
 	world_instance.add_child(p1)
 	
-	var p2 = player_scene.instantiate()
+	p2 = player_scene.instantiate()
 	p2.name = "Player2"
 	world_instance.add_child(p2)
 	
@@ -44,7 +60,7 @@ func spawn_players_initial():
 	if p1.has_method("set_device_id"): p1.set_device_id(0)
 	if p2.has_method("set_device_id"): p2.set_device_id(1)
 	
-	setup_cameras(p1, p2)
+	#setup_cameras(p1, p2)
 
 func setup_cameras(p1, p2):
 	var cam1 = p1.find_child("Camera3D", true, false)
