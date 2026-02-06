@@ -5,6 +5,7 @@ const language_en = "EN"
 
 var load_from_castle_1:bool = false
 
+var is_two_player_active = false
 var back_to_main_camera = false
 var back_to_fase = false
 var from_slum = false

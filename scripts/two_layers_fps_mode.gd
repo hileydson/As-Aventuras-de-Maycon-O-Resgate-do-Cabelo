@@ -33,6 +33,8 @@ func ativar_segunda_tela():
 	print("Segunda tela ativada pelo Controle 2!")
 
 func _ready():
+	Global.is_two_player_active = false
+	
 	# Inicialização do mundo
 	world_instance = world_scene.instantiate()
 	viewport1.add_child(world_instance)
@@ -52,6 +54,8 @@ func _ready():
 
 
 func spawn_players_initial():
+	Global.is_two_player_active = true 
+	
 	#p1 = player_scene.instantiate().find_child("CharacterBody3D")
 	p1 = player_scene.instantiate()
 	p1.name = "Player1"

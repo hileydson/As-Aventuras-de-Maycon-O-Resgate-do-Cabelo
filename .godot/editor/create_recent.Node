@@ -1,3 +1,5 @@
+Control
+Marker2D
 Label
 CollisionShape3D
 AnimatedSprite3D
@@ -11,4 +13,3 @@ Node2D
 StaticBody3D
 ColorRect
 Node3D
-Label3D

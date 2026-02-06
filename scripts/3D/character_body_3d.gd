@@ -5,8 +5,8 @@ extends CharacterBody3D
 @export var MOUSE_SENSITIVITY = 0.003
 @export var JOY_SENSITIVITY: float = 0.05 # Sensibilidade para o controle
 @onready var hud_canvas: CanvasLayer = $hud_canvas
-@onready var arma_sprite: AnimatedSprite2D = $hud_canvas/control_gun/arma_sprite
-@onready var shoot_fire: AnimatedSprite2D = $hud_canvas/control_gun/shoot
+@onready var arma_sprite: AnimatedSprite2D = $hud_canvas/control_gun/gun/arma_sprite
+@onready var shoot_fire: AnimatedSprite2D = $hud_canvas/control_gun/gun/shoot
 @onready var balas_numero: Label = $hud_canvas/control_gun/balas_numero
 @onready var control_gun: Control = $hud_canvas/control_gun
 @onready var camera_3d: Camera3D = $Camera3D
@@ -22,6 +22,7 @@ extends CharacterBody3D
 @onready var gun_load: AudioStreamPlayer2D = $GunLoad
 @onready var gun_shot: AudioStreamPlayer2D = $GunShot
 @onready var hurt_sound_3d: AudioStreamPlayer2D = $HurtSound3d
+@onready var gun: Control = $hud_canvas/control_gun/gun
 
 
 const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
@@ -90,21 +91,10 @@ func aplicar_shake(valor: float):
 	
 
 func _physics_process(delta):
-	if Global.maycon_pegou_arma_first_3d_battle:
-		control_gun.visible = true
-	else:
-		control_gun.visible = false
+	
+	if Global.is_two_player_active:
+		gun.global_position = $hud_canvas/gun_position_2_players.global_position
 		
-	if Global.maycon_pegou_lamp_3d_world:
-		control_lamp.visible = true
-	else:
-		control_lamp.visible = false
-	
-	
-	if Global.maycon_pegou_lamp_3d_world:
-		control_lamp.visible = true
-	else:
-		control_lamp.visible = false
 	
 	# HUD de sangue
 	$hud_canvas/maycon_hp/hp_1.visible = Global.maycon_danos_first_3d_battle<=4

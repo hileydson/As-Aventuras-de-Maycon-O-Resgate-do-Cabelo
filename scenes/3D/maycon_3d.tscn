@@ -1220,10 +1220,6 @@ animations = [{
 collision_layer = 1033
 collision_mask = 1033
 script = ExtResource("1_fvdyg")
-SPEED = null
-JUMP_VELOCITY = null
-MOUSE_SENSITIVITY = null
-JOY_SENSITIVITY = null
 
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
 current = true
@@ -1271,6 +1267,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -549.0
+offset_top = -670.0
+offset_right = -549.0
+offset_bottom = -670.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -1282,38 +1282,48 @@ animation = &"idle"
 autoplay = "idle"
 
 [node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas"]
-visible = false
 layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -542.0
+offset_top = -644.0
+offset_right = -542.0
+offset_bottom = -644.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="shoot" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun"]
-position = Vector2(635, 375.00003)
-rotation = -0.8875863
-scale = Vector2(1.5917358, 2.0518117)
+[node name="gun" type="Control" parent="CharacterBody3D/hud_canvas/control_gun"]
+anchors_preset = 0
+offset_left = 323.0
+offset_top = 153.0
+offset_right = 981.0
+offset_bottom = 705.0
+
+[node name="shoot" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
+position = Vector2(312, 222.00003)
+rotation = -0.88758624
+scale = Vector2(1.5917357, 2.0518117)
 sprite_frames = SubResource("SpriteFrames_jvhfj")
 animation = &"shoot"
 frame = 8
 frame_progress = 1.0
 
-[node name="arma_sprite" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun"]
-position = Vector2(712, 483)
+[node name="arma_sprite" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
+position = Vector2(389, 330)
 scale = Vector2(0.81, 0.774)
 sprite_frames = SubResource("SpriteFrames_xqtj4")
 animation = &"idle"
 autoplay = "idle"
 
-[node name="ponto" type="Label" parent="CharacterBody3D/hud_canvas/control_gun"]
+[node name="ponto" type="Label" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
 layout_mode = 0
-offset_left = 534.0
-offset_top = 226.0
-offset_right = 574.0
-offset_bottom = 249.0
+offset_left = 211.0
+offset_top = 73.0
+offset_right = 251.0
+offset_bottom = 96.0
 scale = Vector2(2.2777793, 2.6133335)
 text = "."
 
@@ -1383,6 +1393,9 @@ sprite_frames = SubResource("SpriteFrames_ievb8")
 animation = &"semi_explotion"
 autoplay = "semi_explotion"
 
+[node name="gun_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas"]
+position = Vector2(314, -35)
+
 [node name="jump" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
 stream = ExtResource("2_bd24c")
 volume_db = 9.797
@@ -1408,7 +1421,7 @@ parameters/looping = false
 
 [connection signal="animation_finished" from="CharacterBody3D/Camera3D/animacao" to="CharacterBody3D" method="_on_animacao_animation_finished"]
 [connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_lamp/lamp" to="CharacterBody3D" method="_on_lamp_animation_finished"]
-[connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_gun/arma_sprite" to="CharacterBody3D" method="_on_animated_sprite_2d_animation_finished"]
+[connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_gun/gun/arma_sprite" to="CharacterBody3D" method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="animation_changed" from="CharacterBody3D/hud_canvas/maycon_hp/hp_1" to="CharacterBody3D/hud_canvas/maycon_hp/hp_1" method="_on_animation_changed"]
 [connection signal="animation_finished" from="CharacterBody3D/hud_canvas/maycon_hp/hp_1" to="CharacterBody3D/hud_canvas/maycon_hp/hp_1" method="_on_animation_finished"]
 [connection signal="animation_changed" from="CharacterBody3D/hud_canvas/maycon_hp/hp_2" to="CharacterBody3D/hud_canvas/maycon_hp/hp_2" method="_on_animation_changed"]

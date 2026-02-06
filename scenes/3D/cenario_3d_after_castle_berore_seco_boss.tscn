@@ -857,6 +857,19 @@ transform = Transform3D(0.21750571, 0, 0, 0, 0.2945554, 0, 0, 0, 1, 0.5165138, 0
 billboard = 1
 texture = ExtResource("14_whkre")
 
+[node name="Area3D2" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.554935, 0, 202.4033)
+script = ExtResource("13_gbqjv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.57199097, 0.85167503, -2.6880589)
+shape = SubResource("SphereShape3D_2guod")
+
+[node name="Sprite3D" type="Sprite3D" parent="Area3D2"]
+transform = Transform3D(0.21750571, 0, 0, 0, 0.2945554, 0, 0, 0, 1, 0.5165138, 0.9057617, -2.5906677)
+billboard = 1
+texture = ExtResource("14_whkre")
+
 [node name="caminho_das_pedras" type="Label" parent="."]
 visible = false
 offset_left = 289.0
@@ -893,3 +906,4 @@ mesh = ExtResource("19_oyv4m")
 [connection signal="timeout" from="respaw" to="." method="_on_respaw_timeout"]
 [connection signal="timeout" from="bake_again" to="." method="_on_bake_again_timeout"]
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_entered" from="Area3D2" to="." method="_on_area_3d_body_entered"]
