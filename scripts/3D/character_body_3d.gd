@@ -140,7 +140,6 @@ func _physics_process(delta):
 		camera_3d.v_offset = 0
 	
 	# Faz o tiro - Detecta o botão de tiro específico deste dispositivo
-	# (Verifica botão do joypad ou tecla de tiro se for o P1)
 	var apertou_tiro = Input.is_joy_button_pressed(device_id, JOY_BUTTON_RIGHT_SHOULDER) or (device_id == 0 and Input.is_action_just_pressed("tiro"))
 	
 	if Global.maycon_pegou_arma_first_3d_battle && apertou_tiro && arma_sprite.animation!="shoot" && gun_bullets_count!=0:
@@ -161,18 +160,16 @@ func _physics_process(delta):
 		hud_gun_buttons.visible = false
 	
 	# --- LÓGICA DO ANALÓGICO DIREITO (OLHAR) ---
-	
 	var joy_look = Vector2(
 		Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X),
 		Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_Y)
 	)
 
 	if joy_look.length() > 0.1: 
-		# Giro lateral (Gira o corpo, o RemoteTransform leva o Pivot junto)
+		# Giro lateral (Gira o corpo)
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)
 		
-		# Giro vertical (Gira a câmera dentro do Pivot no Viewport)
-		# No script do Maycon
+		# Giro vertical (Gira a câmera de forma independente do corpo)
 		if camera_3d:
 			camera_3d.rotate_x(-joy_look.y * JOY_SENSITIVITY)
 			camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-89), deg_to_rad(89))
@@ -181,30 +178,29 @@ func _physics_process(delta):
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
-	# Pulo - Verifica o botão A/X do joypad ou a tecla accept se for o P1
-	var apertou_pulo = Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) or (device_id == 0 and Input.is_action_just_pressed("ui_accept"))
+	# --- PULO INDEPENDENTE (Ajustado) ---
+	# Verifica o botão A do controle atual. A tecla 'ui_accept' só funciona para o Player 1.
+	var apertou_pulo = Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) # or (device_id == 0 and Input.is_action_just_pressed("ui_accept"))
 
 	if apertou_pulo and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		jump.play()
 		arma_sprite.play("walk")
+		print(device_id)
 		Input.start_joy_vibration(device_id, 0.2, 0.2, 0.2)
 		
-	# --- DIREÇÃO DE MOVIMENTO (Analógico Esquerdo) ---
+	# --- DIREÇÃO DE MOVIMENTO (Analógico Esquerdo com Deadzone) ---
 	var raw_input = Vector2(
 		Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X),
 		Input.get_joy_axis(device_id, JOY_AXIS_LEFT_Y)
 	)
 	
 	var input_dir = Vector2.ZERO
-	
-	# Aplicamos a Deadzone (0.2 é um valor seguro para a maioria dos controles)
-	if raw_input.length() > 0.2:
+	if raw_input.length() > 0.2: # Deadzone para evitar drift
 		input_dir = raw_input
 	
-	# Se for o Player 1 (device 0), permitimos o teclado como reserva
+	# Teclado apenas para o Player 1 como reserva
 	if device_id == 0 and input_dir.length() < 0.1:
-		# APENAS para o P1 usamos as ações do Input Map (setas/WASD)
 		var k_x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 		var k_y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 		input_dir = Vector2(k_x, k_y)
