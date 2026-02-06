@@ -1,10 +1,8 @@
-[gd_scene load_steps=121 format=3 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=120 format=3 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="2_bd24c"]
 [ext_resource type="AudioStream" uid="uid://o0m05edowij" path="res://assets/audio/passos_maycon.mp3" id="2_o46vj"]
-[ext_resource type="AudioStream" uid="uid://1w11c4koxm1e" path="res://assets/novos_audios/kick.mp3" id="3_xqtj4"]
-[ext_resource type="AudioStream" uid="uid://cgkrv61ssnnmh" path="res://assets/novos_audios/punch.mp3" id="4_8in0v"]
 [ext_resource type="AudioStream" uid="uid://barhr1sntfpf6" path="res://assets/novos_audios/gun_load.mp3" id="5_uh0k5"]
 [ext_resource type="Texture2D" uid="uid://dhv5ghy38te6w" path="res://assets/novas_imagens/3d_battle/segurando_arma_3d.png" id="6_xqtj4"]
 [ext_resource type="AudioStream" uid="uid://dxlxhstdapo76" path="res://assets/novos_audios/gun_shot.mp3" id="6_y4gmr"]
@@ -23,6 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://b8xm3n05un7xf" path="res://assets/novas_imagens/effects/Explosion/1.png" id="16_m47l0"]
 [ext_resource type="Texture2D" uid="uid://dlowt45jrflns" path="res://assets/novas_imagens/effects/Explosion/3.png" id="17_doy81"]
 [ext_resource type="Texture2D" uid="uid://cn553mn1ycaas" path="res://assets/novas_imagens/buttons/mouse_trigger.png" id="17_xpqs8"]
+[ext_resource type="AudioStream" uid="uid://clwe6bwguowon" path="res://assets/novos_audios/hurt_sound_3d.mp3" id="22_ievb8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7qlvo"]
 atlas = ExtResource("8_ievb8")
@@ -1217,30 +1216,6 @@ animations = [{
 
 [node name="maycon_3d" type="Node3D"]
 
-[node name="jump" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("2_bd24c")
-volume_db = 9.797
-
-[node name="walk" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("2_o46vj")
-volume_db = 10.474
-parameters/looping = false
-
-[node name="Kick" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_xqtj4")
-volume_db = -8.71
-
-[node name="Punch" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("4_8in0v")
-volume_db = -11.019
-
-[node name="GunLoad" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_uh0k5")
-
-[node name="GunShot" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("6_y4gmr")
-volume_db = -4.489
-
 [node name="CharacterBody3D" type="CharacterBody3D" parent="." groups=["player"]]
 collision_layer = 1033
 collision_mask = 1033
@@ -1287,9 +1262,13 @@ color = Color(1, 0, 0, 0)
 [node name="control_lamp" type="Control" parent="CharacterBody3D/hud_canvas"]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="lamp" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_lamp"]
 position = Vector2(564, 489)
@@ -1301,11 +1280,13 @@ autoplay = "idle"
 [node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas"]
 visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_left = 34.0
-offset_top = 8.0
-offset_right = 74.0
-offset_bottom = 48.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="shoot" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun"]
 position = Vector2(635, 375.00003)
@@ -1398,6 +1379,29 @@ scale = Vector2(0.3042036, 0.26972094)
 sprite_frames = SubResource("SpriteFrames_ievb8")
 animation = &"semi_explotion"
 autoplay = "semi_explotion"
+
+[node name="jump" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+stream = ExtResource("2_bd24c")
+volume_db = 9.797
+
+[node name="walk" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+stream = ExtResource("2_o46vj")
+volume_db = 10.474
+parameters/looping = false
+
+[node name="GunLoad" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+stream = ExtResource("5_uh0k5")
+volume_db = 10.474
+parameters/looping = false
+
+[node name="GunShot" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+stream = ExtResource("6_y4gmr")
+volume_db = -4.5
+parameters/looping = false
+
+[node name="HurtSound3d" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+stream = ExtResource("22_ievb8")
+parameters/looping = false
 
 [connection signal="animation_finished" from="CharacterBody3D/Camera3D/animacao" to="CharacterBody3D" method="_on_animacao_animation_finished"]
 [connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_lamp/lamp" to="CharacterBody3D" method="_on_lamp_animation_finished"]

@@ -4,17 +4,12 @@ extends CharacterBody3D
 @export var JUMP_VELOCITY : float = 4.5
 @export var MOUSE_SENSITIVITY = 0.003
 @export var JOY_SENSITIVITY = 0.05 # Sensibilidade para o controle
-@onready var walk: AudioStreamPlayer2D = $"../walk"
-@onready var jump: AudioStreamPlayer2D = $"../jump"
 @onready var hud_canvas: CanvasLayer = $hud_canvas
 @onready var arma_sprite: AnimatedSprite2D = $hud_canvas/control_gun/arma_sprite
-@onready var gun_load: AudioStreamPlayer = $"../GunLoad"
-@onready var gun_shot: AudioStreamPlayer = $"../GunShot"
 @onready var shoot_fire: AnimatedSprite2D = $hud_canvas/control_gun/shoot
 @onready var balas_numero: Label = $hud_canvas/control_gun/balas_numero
 @onready var control_gun: Control = $hud_canvas/control_gun
 @onready var camera_3d: Camera3D = $Camera3D
-@onready var hurt_sound_3d: AudioStreamPlayer = $"../../HurtSound3d"
 @onready var color_rect: ColorRect = $hud_canvas/ColorRect
 @onready var camera = $Camera3D
 @onready var hud_gun_buttons: Node2D = $hud_canvas/control_gun/hud_gun_buttons
@@ -22,6 +17,12 @@ extends CharacterBody3D
 @onready var lamp: AnimatedSprite2D = $hud_canvas/control_lamp/lamp
 @onready var control_lamp: Control = $hud_canvas/control_lamp
 @onready var animacao: AnimatedSprite3D = $Camera3D/animacao
+@onready var jump: AudioStreamPlayer2D = $jump
+@onready var walk: AudioStreamPlayer2D = $walk
+@onready var gun_load: AudioStreamPlayer2D = $GunLoad
+@onready var gun_shot: AudioStreamPlayer2D = $GunShot
+@onready var hurt_sound_3d: AudioStreamPlayer2D = $HurtSound3d
+
 
 const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
 
@@ -74,19 +75,7 @@ func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
-func _input(event):
-	if event is InputEventMouseMotion:
-		# Aqui é onde a mágica acontece
-		rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
-		camera.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
-		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))
-		
-func _unhandled_input(event):
-	# O mouse continua funcionando normalmente aqui
-	if event is InputEventMouseMotion:
-		rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
-		camera.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
-		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-89), deg_to_rad(89))
+
 
 func aplicar_shake(valor: float):
 	shake_intensity = valor
