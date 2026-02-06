@@ -34,7 +34,7 @@ region = Rect2(312, 177, 156, 177)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_csxxf"]
 atlas = ExtResource("8_ievb8")
-region = Rect2(312, 354, 156, 177)
+region = Rect2(159, 180, 154, 176)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yndem"]
 atlas = ExtResource("9_5yci6")
@@ -69,7 +69,7 @@ animations = [{
 "duration": 1.71,
 "texture": SubResource("AtlasTexture_o6ctg")
 }, {
-"duration": 1.71,
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_csxxf")
 }],
 "loop": true,
@@ -1261,9 +1261,8 @@ light_energy = 1.5
 [node name="animacao" type="AnimatedSprite3D" parent="CharacterBody3D/Camera3D"]
 billboard = 1
 sprite_frames = SubResource("SpriteFrames_fbcau")
-animation = &"run"
 autoplay = "default"
-frame_progress = 0.8318096
+frame_progress = 0.70335037
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Camera3D/animacao"]
 shape = SubResource("CapsuleShape3D_mwhgs")
