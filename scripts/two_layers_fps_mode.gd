@@ -8,6 +8,9 @@ extends Node3D
 
 var world_instance
 
+func _input(event: InputEvent) -> void:
+	print(event)
+	
 func _ready():
 	# 1. Instalação básica
 	world_instance = world_scene.instantiate()
@@ -23,7 +26,7 @@ func _ready():
 	viewport2.msaa_3d = viewport1.msaa_3d # Sincroniza qualidade
 	
 	await get_tree().process_frame
-	spawn_players_initial()
+	#spawn_players_initial()
 
 func spawn_players_initial():
 	var p1 = player_scene.instantiate()
