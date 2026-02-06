@@ -166,7 +166,6 @@ func _physics_process(delta):
 		Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X),
 		Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_Y)
 	)
-	
 
 	if joy_look.length() > 0.1: 
 		# Giro lateral (Gira o corpo, o RemoteTransform leva o Pivot junto)
@@ -192,11 +191,16 @@ func _physics_process(delta):
 		Input.start_joy_vibration(device_id, 0.2, 0.2, 0.2)
 		
 	# --- DIREÇÃO DE MOVIMENTO (Analógico Esquerdo) ---
-	# Pegamos os eixos puros. Isso GARANTE que o Controle 1 não afete o Player 2.
-	var input_dir = Vector2(
+	var raw_input = Vector2(
 		Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X),
 		Input.get_joy_axis(device_id, JOY_AXIS_LEFT_Y)
 	)
+	
+	var input_dir = Vector2.ZERO
+	
+	# Aplicamos a Deadzone (0.2 é um valor seguro para a maioria dos controles)
+	if raw_input.length() > 0.2:
+		input_dir = raw_input
 	
 	# Se for o Player 1 (device 0), permitimos o teclado como reserva
 	if device_id == 0 and input_dir.length() < 0.1:
