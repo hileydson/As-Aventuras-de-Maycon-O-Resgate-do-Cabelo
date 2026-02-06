@@ -16,7 +16,7 @@ var p2
 var p2_ativado = false # Trava para ativar apenas uma vez
 
 func _process(delta: float) -> void:
-	print(get_tree().get_nodes_in_group("player").size())
+	pass # print(get_tree().get_nodes_in_group("player").size())
 
 func _input(event):
 	# Detecta o botão START apenas no Controle 2 (device 1)
@@ -81,7 +81,52 @@ func spawn_players_initial():
 	
 	setup_cameras(p1, p2)
 
+
+
+
+
 func setup_cameras(p1_node, p2_node):
+	ponto_1.visible = true
+	ponto_2.visible = true
+	var cam1 = p1_node.find_child("Camera3D", true, false)
+	var cam2 = p2_node.find_child("Camera3D", true, false)
+	
+	if cam1 and cam2:
+		# Player 1 mantém a câmera no Viewport 1
+		cam1.make_current()
+		
+		# --- LÓGICA DO PLAYER 2 ---
+		
+		# 1. Identificamos quem era o pai da câmera no Maycon antes de movê-la
+		var pai_original_da_camera = cam2.get_parent()
+		
+		# 2. Criamos um Pivot no Viewport 2 para receber a posição
+		var cam_pivot = Node3D.new()
+		cam_pivot.name = "Cam2Pivot"
+		viewport2.add_child(cam_pivot)
+		
+		# 3. Movemos a câmera para dentro desse Pivot no Viewport
+		pai_original_da_camera.remove_child(cam2)
+		cam_pivot.add_child(cam2)
+		
+		# 4. Criamos o RemoteTransform no lugar onde a câmera estava
+		var remote = RemoteTransform3D.new()
+		pai_original_da_camera.add_child(remote) # Agora não dá erro de null!
+		
+		# 5. Configuramos o Remote para seguir o Pivot (que carrega a câmera)
+		remote.remote_path = cam_pivot.get_path()
+		remote.update_rotation = true 
+		
+		# 6. RECONEXÃO: Dizemos ao script do Maycon que a câmera dele é a que está no Viewport
+		p2_node.camera_3d = cam2
+		
+		# Sincroniza ambiente
+		if cam1.environment:
+			cam2.environment = cam1.environment
+		
+		cam2.make_current()
+		
+func setup_cameras_TEMP(p1_node, p2_node):
 	ponto_1.visible = true
 	ponto_2.visible = true
 	var cam1 = p1_node.find_child("Camera3D", true, false)

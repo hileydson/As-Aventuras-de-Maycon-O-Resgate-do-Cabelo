@@ -161,17 +161,22 @@ func _physics_process(delta):
 		hud_gun_buttons.visible = false
 	
 	# --- LÓGICA DO ANALÓGICO DIREITO (OLHAR) ---
-	# Lê os eixos brutos do analógico direito do device_id atual
+	
 	var joy_look = Vector2(
 		Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X),
 		Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_Y)
 	)
 	
-	if joy_look.length() > 0.1: # Deadzone para evitar drift
+
+	if joy_look.length() > 0.1: 
+		# Giro lateral (Gira o corpo, o RemoteTransform leva o Pivot junto)
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)
-		camera.rotate_x(-joy_look.y * JOY_SENSITIVITY)
-		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-89), deg_to_rad(89))
-	# -------------------------------------------
+		
+		# Giro vertical (Gira a câmera dentro do Pivot no Viewport)
+		# No script do Maycon
+		if camera_3d:
+			camera_3d.rotate_x(-joy_look.y * JOY_SENSITIVITY)
+			camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 
 	# Movimentação normal (Física)
 	if not is_on_floor():

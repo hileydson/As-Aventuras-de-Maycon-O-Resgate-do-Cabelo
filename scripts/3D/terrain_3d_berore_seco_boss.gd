@@ -151,7 +151,7 @@ func _on_bake_again_timeout() -> void:
 
 
 func _on_portal_next_scene_body_entered(body: Node3D) -> void:
-	if body is CharacterBody3D:
+	if body is CharacterBody3D and body.has_node("Camera3D"):
 		#NEXT SCENE
 		fade.get_node("Transition").play("fade_out")
 		await get_tree().create_timer(2.0).timeout
@@ -159,7 +159,7 @@ func _on_portal_next_scene_body_entered(body: Node3D) -> void:
 
 
 func _on_portal_next_scene_2_body_entered(body: Node3D) -> void:
-	if body is CharacterBody3D:
+	if body is CharacterBody3D and body.has_node("Camera3D"):
 		#NEXT SCENE
 		fade.get_node("Transition").play("fade_out")
 		await get_tree().create_timer(2.0).timeout
