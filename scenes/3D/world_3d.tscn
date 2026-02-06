@@ -149,5 +149,11 @@ label_settings = SubResource("LabelSettings_fki46")
 [node name="fade" parent="." instance=ExtResource("1_g4aeq")]
 z_index = 7
 
+[node name="marker_player_1" type="Marker3D" parent="." groups=["marker_player_1"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.091919, 1.9893799, 23.777832)
+
+[node name="marker_player_2" type="Marker3D" parent="." groups=["marker_player_2"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.98217773, 1.9893799, 23.801392)
+
 [connection signal="timeout" from="respaw" to="." method="_on_respaw_timeout"]
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

@@ -1,8 +1,9 @@
-[gd_scene load_steps=68 format=3 uid="uid://br6e76qsjxdw8"]
+[gd_scene load_steps=69 format=3 uid="uid://br6e76qsjxdw8"]
 
 [ext_resource type="Script" uid="uid://c6qg6leljxw5h" path="res://scripts/two_layers_fps_mode.gd" id="1_igjxw"]
-[ext_resource type="PackedScene" uid="uid://cemapjdo6u5wl" path="res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn" id="2_s6y5k"]
+[ext_resource type="PackedScene" uid="uid://bgr1w7fk5snwj" path="res://scenes/3D/world_3d.tscn" id="2_s6y5k"]
 [ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="3_dg5n7"]
+[ext_resource type="PackedScene" uid="uid://cemapjdo6u5wl" path="res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn" id="3_hiybt"]
 [ext_resource type="PackedScene" uid="uid://bysc8ns18xmwv" path="res://scenes/3D/pause_3d.tscn" id="4_dg5n7"]
 [ext_resource type="Texture2D" uid="uid://jc4skdq05hnb" path="res://assets/novas_imagens/buttons/two_players_icon.png" id="4_t4hml"]
 [ext_resource type="Script" uid="uid://bwxswwjvm1rsh" path="res://scripts/3D/bounce_item.gd" id="5_nq8y0"]
@@ -425,6 +426,7 @@ animations = [{
 [node name="two_layers_fps_mode" type="Node3D"]
 script = ExtResource("1_igjxw")
 world_scene = ExtResource("2_s6y5k")
+world_scene_caminho_das_pedras = ExtResource("3_hiybt")
 player_scene = ExtResource("3_dg5n7")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]

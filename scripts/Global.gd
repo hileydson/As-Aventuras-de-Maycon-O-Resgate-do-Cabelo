@@ -5,6 +5,8 @@ const language_en = "EN"
 
 var load_from_castle_1:bool = false
 
+var cena_caminho_das_pedras = false
+var cena_first_seco_boss = false
 var is_two_player_active = false
 var back_to_main_camera = false
 var back_to_fase = false

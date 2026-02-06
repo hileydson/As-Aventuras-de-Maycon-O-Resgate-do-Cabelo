@@ -13,6 +13,7 @@ extends Node3D
 
 
 @export var world_scene: PackedScene 
+@export var world_scene_caminho_das_pedras: PackedScene 
 @export var player_scene: PackedScene 
 
 var world_instance
@@ -21,7 +22,8 @@ var p2
 var p2_ativado = false # Trava para ativar apenas uma vez
 
 func _process(delta: float) -> void:
-	pass # print(get_tree().get_nodes_in_group("player").size())
+	#pass # print(get_tree().get_nodes_in_group("player").size())
+	print(get_tree().get_first_node_in_group("marker_player_1"))
 
 func _input(event):
 	# Detecta o botão START apenas no Controle 2 (device 1)
@@ -39,14 +41,19 @@ func ativar_segunda_tela():
 
 func _ready():
 	Global.is_two_player_active = false
-	cigarro_apresenta.visible = false
+	cigarro_apresenta.visible = false	
 	
 	#setup chamada player 2
 	if p2_ativado==false:
 		hud_player_2_start.visible = true
 	
 	# Inicialização do mundo
-	world_instance = world_scene.instantiate()
+		#chama o world por demanda
+	if Global.cena_caminho_das_pedras:
+		world_instance = world_scene_caminho_das_pedras.instantiate()
+	else:
+		world_instance = world_scene.instantiate()
+	
 	viewport1.add_child(world_instance)
 	
 	# Configuração do Viewport 2 (Compartilhando o mundo do 1)
@@ -83,8 +90,18 @@ func spawn_players_initial():
 	#p1.global_position = Vector3(0, 5, 0)
 	#p2.global_position = Vector3(-100, -100, -100)
 	#p2.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_on_p2").global_position
-	p1.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_on_p1").global_position
-	p2.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_on_p2").global_position
+	if Global.cena_caminho_das_pedras:
+		if Global.back_to_fase:
+			Global.back_to_fase=false
+			p1.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_back_p1").global_position
+			p2.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_back_p2").global_position
+		else:
+			p1.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_on_p1").global_position
+			p2.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_on_p2").global_position
+	else:
+		#BOSS FIRST SECO
+		p1.global_position = get_tree().get_first_node_in_group("marker_player_1").global_position
+		p2.global_position = get_tree().get_first_node_in_group("marker_player_2").global_position
 	
 	#p1.global_position = Vector3(1, 5, 1)
 	#p2.global_position = Vector3(2, 5, 2)
