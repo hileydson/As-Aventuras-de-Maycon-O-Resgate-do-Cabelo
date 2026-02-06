@@ -1,8 +1,9 @@
-[gd_scene load_steps=120 format=3 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=121 format=3 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="2_bd24c"]
 [ext_resource type="AudioStream" uid="uid://o0m05edowij" path="res://assets/audio/passos_maycon.mp3" id="2_o46vj"]
+[ext_resource type="PackedScene" uid="uid://b08rp3cauqekx" path="res://scenes/3D/cigarro_two_player.tscn" id="4_5yci6"]
 [ext_resource type="AudioStream" uid="uid://barhr1sntfpf6" path="res://assets/novos_audios/gun_load.mp3" id="5_uh0k5"]
 [ext_resource type="Texture2D" uid="uid://dhv5ghy38te6w" path="res://assets/novas_imagens/3d_battle/segurando_arma_3d.png" id="6_xqtj4"]
 [ext_resource type="AudioStream" uid="uid://dxlxhstdapo76" path="res://assets/novos_audios/gun_shot.mp3" id="6_y4gmr"]
@@ -1239,12 +1240,19 @@ light_energy = 1.5
 [node name="animacao" type="AnimatedSprite3D" parent="CharacterBody3D/Camera3D"]
 billboard = 1
 sprite_frames = SubResource("SpriteFrames_fbcau")
-animation = &"run"
+animation = &"idle"
 autoplay = "idle"
-frame = 8
-frame_progress = 1.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Camera3D/animacao"]
+shape = SubResource("CapsuleShape3D_mwhgs")
+
+[node name="animacao_player_2" parent="CharacterBody3D/Camera3D" instance=ExtResource("4_5yci6")]
+transform = Transform3D(0.31844324, 0, 0, 0, 0.27231514, 0, 0, 0, 0.4143396, 0, 0, 0)
+visible = false
+billboard = 1
+animation = &"idle"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Camera3D/animacao_player_2"]
 shape = SubResource("CapsuleShape3D_mwhgs")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
@@ -1282,6 +1290,7 @@ animation = &"idle"
 autoplay = "idle"
 
 [node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas"]
+visible = false
 layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
@@ -1421,6 +1430,7 @@ stream = ExtResource("22_ievb8")
 parameters/looping = false
 
 [connection signal="animation_finished" from="CharacterBody3D/Camera3D/animacao" to="CharacterBody3D" method="_on_animacao_animation_finished"]
+[connection signal="animation_finished" from="CharacterBody3D/Camera3D/animacao_player_2" to="CharacterBody3D" method="_on_animacao_player_2_animation_finished"]
 [connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_lamp/lamp" to="CharacterBody3D" method="_on_lamp_animation_finished"]
 [connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_gun/gun/arma_sprite" to="CharacterBody3D" method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="animation_changed" from="CharacterBody3D/hud_canvas/maycon_hp/hp_1" to="CharacterBody3D/hud_canvas/maycon_hp/hp_1" method="_on_animation_changed"]

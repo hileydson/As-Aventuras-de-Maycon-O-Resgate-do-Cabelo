@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://br6e76qsjxdw8"]
+[gd_scene load_steps=7 format=3 uid="uid://br6e76qsjxdw8"]
 
 [ext_resource type="Script" uid="uid://c6qg6leljxw5h" path="res://scripts/two_layers_fps_mode.gd" id="1_igjxw"]
 [ext_resource type="PackedScene" uid="uid://cemapjdo6u5wl" path="res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn" id="2_s6y5k"]
 [ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="3_dg5n7"]
 [ext_resource type="PackedScene" uid="uid://bysc8ns18xmwv" path="res://scenes/3D/pause_3d.tscn" id="4_dg5n7"]
+[ext_resource type="Texture2D" uid="uid://jc4skdq05hnb" path="res://assets/novas_imagens/buttons/two_players_icon.png" id="4_t4hml"]
+[ext_resource type="Script" uid="uid://bwxswwjvm1rsh" path="res://scripts/3D/bounce_item.gd" id="5_nq8y0"]
 
 [node name="two_layers_fps_mode" type="Node3D"]
 script = ExtResource("1_igjxw")
@@ -50,5 +52,18 @@ offset_right = 40.0
 offset_bottom = 23.0
 scale = Vector2(2.0754993, 1.8672019)
 text = "."
+
+[node name="hud_node" type="Node3D" parent="."]
+script = ExtResource("5_nq8y0")
+velocidade = 20.0
+amplitude = 0.15
+
+[node name="hud_player_2_start" type="CanvasLayer" parent="hud_node"]
+visible = false
+
+[node name="TwoPlayersIcon" type="Sprite2D" parent="hud_node/hud_player_2_start"]
+position = Vector2(41, 36)
+scale = Vector2(0.2890625, 0.2897196)
+texture = ExtResource("4_t4hml")
 
 [node name="pause_3d" parent="." instance=ExtResource("4_dg5n7")]

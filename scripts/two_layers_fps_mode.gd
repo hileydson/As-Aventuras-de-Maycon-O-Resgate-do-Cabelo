@@ -6,6 +6,7 @@ extends Node3D
 @onready var viewport2: SubViewport = $VBoxContainer/SubViewportContainer2/SubViewport2
 @onready var ponto_1: Label = $VBoxContainer/SubViewportContainer1/SubViewport1/ponto_1
 @onready var ponto_2: Label = $VBoxContainer/SubViewportContainer2/SubViewport2/ponto_2
+@onready var hud_player_2_start: CanvasLayer = $hud_node/hud_player_2_start
 
 @export var world_scene: PackedScene 
 @export var player_scene: PackedScene 
@@ -34,6 +35,10 @@ func ativar_segunda_tela():
 
 func _ready():
 	Global.is_two_player_active = false
+	
+	#setup chamada player 2
+	if p2_ativado==false:
+		hud_player_2_start.visible = true
 	
 	# Inicialização do mundo
 	world_instance = world_scene.instantiate()
@@ -88,6 +93,8 @@ func spawn_players_initial():
 	#ajusta canvas layer
 	p1.find_child("hud_canvas").custom_viewport = viewport1
 	p2.find_child("hud_canvas").custom_viewport = viewport2
+	
+	p2.change_sprite_two_player()
 
 
 

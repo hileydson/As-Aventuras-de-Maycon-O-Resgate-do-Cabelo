@@ -23,6 +23,7 @@ extends CharacterBody3D
 @onready var gun_shot: AudioStreamPlayer2D = $GunShot
 @onready var hurt_sound_3d: AudioStreamPlayer2D = $HurtSound3d
 @onready var gun: Control = $hud_canvas/control_gun/gun
+@onready var animacao_player_2: AnimatedSprite3D = $Camera3D/animacao_player_2
 
 
 const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
@@ -71,6 +72,10 @@ func atirar():
 			
 			# Opcional: Faz o sangue espirrar na direção oposta ao tiro
 			# sangue.look_at(raycast.get_collision_point() + raycast.get_collision_normal())
+
+func change_sprite_two_player()->void:
+	animacao_player_2.visible = true
+	animacao.visible = false
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -242,4 +247,8 @@ func _on_lamp_animation_finished() -> void:
 
 
 func _on_animacao_animation_finished() -> void:
+	animacao.play("idle")
+
+
+func _on_animacao_player_2_animation_finished() -> void:
 	animacao.play("idle")

@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://b08rp3cauqekx"]
+
+[ext_resource type="Texture2D" uid="uid://b7ukdc2kwsyj2" path="res://assets/novas_imagens/cigarro/cigarro.png" id="1_jwind"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jwind"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_jwind")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": false,
+"name": &"run",
+"speed": 5.0
+}]
+
+[node name="animacao_player_2" type="AnimatedSprite3D"]
+sprite_frames = SubResource("SpriteFrames_jwind")
+animation = &"run"
+autoplay = "idle"
