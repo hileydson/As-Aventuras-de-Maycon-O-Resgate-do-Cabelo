@@ -21,6 +21,7 @@ extends CharacterBody3D
 @onready var lamp_light: OmniLight3D = $Camera3D/lamp_light
 @onready var lamp: AnimatedSprite2D = $hud_canvas/control_lamp/lamp
 @onready var control_lamp: Control = $hud_canvas/control_lamp
+@onready var animacao: AnimatedSprite3D = $Camera3D/animacao
 
 const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
 
@@ -197,6 +198,9 @@ func _physics_process(delta):
 
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
+	if !direction.is_zero_approx():
+		animacao.play("run")
+		
 	if !direction.is_zero_approx() && !walk.is_playing() && is_on_floor() && !(velocity == Vector3.ZERO):
 		walk.play()
 		arma_sprite.play("walk")
@@ -209,6 +213,11 @@ func _physics_process(delta):
 			lamp_light.visible = false
 	
 	if direction:
+		var forward_dot = transform.basis.z.dot(direction)
+		if forward_dot < 0:
+			animacao.flip_h = false
+		else:
+			animacao.flip_h = true
 		velocity.x = direction.x * SPEED
 		velocity.z = direction.z * SPEED
 	else:
@@ -227,3 +236,7 @@ func _on_lamp_animation_finished() -> void:
 			lamp.play("idle_with_light")
 		else:
 			lamp.play("idle")
+
+
+func _on_animacao_animation_finished() -> void:
+	animacao.play("idle")
