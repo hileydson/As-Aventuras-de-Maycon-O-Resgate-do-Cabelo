@@ -1,4 +1,4 @@
-[gd_scene load_steps=108 format=3 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=121 format=3 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="2_bd24c"]
@@ -9,7 +9,9 @@
 [ext_resource type="Texture2D" uid="uid://dhv5ghy38te6w" path="res://assets/novas_imagens/3d_battle/segurando_arma_3d.png" id="6_xqtj4"]
 [ext_resource type="AudioStream" uid="uid://dxlxhstdapo76" path="res://assets/novos_audios/gun_shot.mp3" id="6_y4gmr"]
 [ext_resource type="Texture2D" uid="uid://xdd1agi20lk7" path="res://assets/novas_imagens/3d_cenarios/lamp/lamp_na_mao_no_light.png" id="8_1ocj4"]
+[ext_resource type="Texture2D" uid="uid://b231oswqr842e" path="res://assets/novas_imagens/maycon/maycon_idle.png" id="8_ievb8"]
 [ext_resource type="Texture2D" uid="uid://v26pfw0k1oo0" path="res://assets/novas_imagens/effects/Pixel fire/fire asset yellow floored/Group 7 - 5/Group 7 - 5.png" id="8_y4gmr"]
+[ext_resource type="Texture2D" uid="uid://d3co1rwdx1gkd" path="res://assets/novas_imagens/maycon/maycon_run.png" id="9_5yci6"]
 [ext_resource type="Texture2D" uid="uid://dl1flpd73rljh" path="res://assets/novas_imagens/3d_cenarios/lamp/lamp_na_mao.png" id="9_ievb8"]
 [ext_resource type="Texture2D" uid="uid://cy1x2n0ltysjh" path="res://assets/novas_imagens/3d_battle/bala.png" id="10_11d7m"]
 [ext_resource type="Texture2D" uid="uid://d20k0m5bseynp" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_1.png" id="10_fakjw"]
@@ -21,6 +23,93 @@
 [ext_resource type="Texture2D" uid="uid://b8xm3n05un7xf" path="res://assets/novas_imagens/effects/Explosion/1.png" id="16_m47l0"]
 [ext_resource type="Texture2D" uid="uid://dlowt45jrflns" path="res://assets/novas_imagens/effects/Explosion/3.png" id="17_doy81"]
 [ext_resource type="Texture2D" uid="uid://cn553mn1ycaas" path="res://assets/novas_imagens/buttons/mouse_trigger.png" id="17_xpqs8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7qlvo"]
+atlas = ExtResource("8_ievb8")
+region = Rect2(156, 177, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6ctg"]
+atlas = ExtResource("8_ievb8")
+region = Rect2(312, 177, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_csxxf"]
+atlas = ExtResource("8_ievb8")
+region = Rect2(312, 354, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yndem"]
+atlas = ExtResource("9_5yci6")
+region = Rect2(312, 354, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nk7om"]
+atlas = ExtResource("9_5yci6")
+region = Rect2(156, 354, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_elhv1"]
+atlas = ExtResource("9_5yci6")
+region = Rect2(0, 354, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e4f44"]
+atlas = ExtResource("9_5yci6")
+region = Rect2(312, 177, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p8tpw"]
+atlas = ExtResource("9_5yci6")
+region = Rect2(156, 177, 156, 177)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fbcau"]
+atlas = ExtResource("9_5yci6")
+region = Rect2(0, 2, 156, 176)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fbcau"]
+animations = [{
+"frames": [{
+"duration": 1.71,
+"texture": SubResource("AtlasTexture_7qlvo")
+}, {
+"duration": 1.71,
+"texture": SubResource("AtlasTexture_o6ctg")
+}, {
+"duration": 1.71,
+"texture": SubResource("AtlasTexture_csxxf")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_yndem")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_nk7om")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_elhv1")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_e4f44")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_p8tpw")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_fbcau")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_e4f44")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_elhv1")
+}, {
+"duration": 0.71,
+"texture": SubResource("AtlasTexture_nk7om")
+}],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mwhgs"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ss8dx"]
 
@@ -1168,6 +1257,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.01940918, -0.0018920898, -
 visible = false
 light_color = Color(0.90727174, 0.55628204, 0.14874196, 1)
 light_energy = 1.5
+
+[node name="animacao" type="AnimatedSprite3D" parent="CharacterBody3D/Camera3D"]
+billboard = 1
+sprite_frames = SubResource("SpriteFrames_fbcau")
+animation = &"run"
+autoplay = "default"
+frame_progress = 0.8318096
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Camera3D/animacao"]
+shape = SubResource("CapsuleShape3D_mwhgs")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
 shape = SubResource("CapsuleShape3D_ss8dx")

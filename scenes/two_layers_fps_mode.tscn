@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://b65rsqdn7kjgj"]
+[gd_scene load_steps=4 format=3 uid="uid://br6e76qsjxdw8"]
 
 [ext_resource type="Script" uid="uid://c6qg6leljxw5h" path="res://scripts/two_layers_fps_mode.gd" id="1_igjxw"]
 [ext_resource type="PackedScene" uid="uid://cemapjdo6u5wl" path="res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn" id="2_s6y5k"]
@@ -34,5 +34,5 @@ stretch = true
 
 [node name="SubViewport2" type="SubViewport" parent="VBoxContainer/SubViewportContainer2"]
 handle_input_locally = false
-size = Vector2i(1152, 322)
+size = Vector2i(2, 2)
 render_target_update_mode = 0
