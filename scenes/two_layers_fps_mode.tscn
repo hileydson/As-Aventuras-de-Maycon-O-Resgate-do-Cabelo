@@ -423,7 +423,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="two_layers_fps_mode" type="Node3D"]
+[node name="two_layers_fps_mode" type="Node3D" groups=["two_layers_fps_mode"]]
 script = ExtResource("1_igjxw")
 world_scene = ExtResource("2_s6y5k")
 world_scene_caminho_das_pedras = ExtResource("3_hiybt")

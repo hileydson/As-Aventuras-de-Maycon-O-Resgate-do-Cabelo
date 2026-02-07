@@ -43,6 +43,7 @@ func set_device_id(id: int):
 	print("Maycon configurado para o controle: ", device_id) # Isso vai confirmar no console
 	
 func add_bullets_to_gun(number:int):
+	arma_sprite.play("reload")
 	gun_bullets_count = gun_bullets_count+number
 	#gun_bullets_count = 50+number #TODO: TESTE
 
@@ -118,11 +119,6 @@ func _physics_process(delta):
 		aplicar_shake(0.4)
 		hurt_sound_3d.play()
 		
-	# Se pegou bala nova soma na contagem
-	if Global.maycon_pegou_bullet:
-		arma_sprite.play("reload")
-		Global.maycon_pegou_bullet = false
-		add_bullets_to_gun(4)
 	
 	# CONTA BALAS
 	balas_numero.text = "X "+str(gun_bullets_count)

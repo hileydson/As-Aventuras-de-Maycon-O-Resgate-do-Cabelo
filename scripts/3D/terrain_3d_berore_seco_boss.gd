@@ -90,6 +90,7 @@ func _process(delta: float) -> void:
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	Global.maycon_pegou_arma_first_3d_battle = true
 	gun_load.play()
+	#get_tree().get_first_node_in_group("two_layers_fps_mode").find_child("")
 	body.add_bullets_to_gun(5)
 	
 func _on_respaw_timeout() -> void:
