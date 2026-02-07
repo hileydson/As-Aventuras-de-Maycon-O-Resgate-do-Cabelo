@@ -76,11 +76,11 @@ func spawn_players_initial():
 	
 	#p1 = player_scene.instantiate().find_child("CharacterBody3D")
 	p1 = player_scene.instantiate()
-	p1.name = "Player1"
+	p1.get_node("CharacterBody3D").name = "Maycon"
 	world_instance.add_child(p1)
 	
 	p2 = get_tree().get_first_node_in_group("player")
-	p2.name = "Player2"
+	p2.name = "Cigarro"
 	#world_instance.add_child(p2)
 	
 	# Aguarda um frame para o motor de física reconhecer os novos nós

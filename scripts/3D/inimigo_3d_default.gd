@@ -91,7 +91,7 @@ func look_at_target(target_pos):
 		
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	animated_sprite_3d.play("attack")
-	Global.maycon_danos_first_3d_battle += 1
+	body.levou_dano(1)
 	await get_tree().create_timer(1.0).timeout
 	animated_sprite_3d.play("died")
 	await get_tree().create_timer(1.0).timeout

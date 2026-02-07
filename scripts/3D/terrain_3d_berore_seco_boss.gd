@@ -40,7 +40,6 @@ func _ready() -> void:
 	
 	Global.maycon_pegou_lamp_3d_world = false
 	Global.maycon_pegou_lamp_fire_3d_world = false
-	Global.maycon_danos_first_3d_battle = 0
 	Global.maycon_pegou_arma_first_3d_battle = false
 	
 	if Global.default_language == Global.language_pt_br:
@@ -78,8 +77,11 @@ func maycon_died()->void:
 func _process(delta: float) -> void:
 	
 	# YOU DIED
-	if Global.maycon_danos_first_3d_battle == 5:
+	if Global.is_two_player_active && Global.players_dead_count > 1:
 		maycon_died()
+	elif !Global.is_two_player_active && Global.players_dead_count > 0:
+		maycon_died()
+	
 	
 	#print("DANOS SECO: -> "+str(Global.seco_danos_first_3d_battle))
 	

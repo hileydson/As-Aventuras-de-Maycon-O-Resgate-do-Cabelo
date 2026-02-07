@@ -20,7 +20,7 @@ var last_fase = "fase_1"
 var block_pause_before_prologo = false
 #var before_prologo:bool = false #TESTE - correto eh TRUE
 
-var maycon_danos_first_3d_battle:int = 0
+var players_dead_count:int = 0
 var seco_danos_first_3d_battle:int = 0
 var maycon_pegou_lamp_3d_world:bool = false
 var maycon_pegou_gas_3d_world:bool = false
@@ -57,7 +57,6 @@ func reset_default_values()->void:
 	last_fase = "fase_1"
 	block_pause_before_prologo = false
 
-	maycon_danos_first_3d_battle = 0
 	seco_danos_first_3d_battle = 0
 	maycon_pegou_lamp_3d_world = false
 	maycon_pegou_gas_3d_world = false
@@ -73,7 +72,6 @@ func reset_default_values()->void:
 	inimigos_mortos = {}
 
 func reset_save_to_castle_1()->void:
-	maycon_danos_first_3d_battle = 0
 	seco_danos_first_3d_battle = 0
 	maycon_pegou_lamp_3d_world = false
 	maycon_pegou_gas_3d_world = false

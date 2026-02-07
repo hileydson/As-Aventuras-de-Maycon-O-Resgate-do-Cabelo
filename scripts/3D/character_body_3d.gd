@@ -98,6 +98,13 @@ func aplicar_shake(valor: float):
 	
 	
 
+func levou_dano(dano:int)->void:
+	# Acabou de levar um dano - Vibra apenas o controle do jogador atual
+	danos_count -= dano
+	Input.start_joy_vibration(device_id, 0.5, 0.7, 0.3)
+	aplicar_shake(0.4)
+	hurt_sound_3d.play()
+		
 func _physics_process(delta):
 
 	if Global.is_two_player_active:
@@ -106,19 +113,15 @@ func _physics_process(delta):
 		
 	
 	# HUD de sangue
-	$hud_canvas/maycon_hp/hp_1.visible = Global.maycon_danos_first_3d_battle<=4
-	$hud_canvas/maycon_hp/hp_2.visible = Global.maycon_danos_first_3d_battle<=3
-	$hud_canvas/maycon_hp/hp_3.visible = Global.maycon_danos_first_3d_battle<=2
-	$hud_canvas/maycon_hp/hp_4.visible = Global.maycon_danos_first_3d_battle<=1
-	$hud_canvas/maycon_hp/hp_5.visible = Global.maycon_danos_first_3d_battle<=0
+	$hud_canvas/maycon_hp/hp_1.visible = danos_count<=4
+	$hud_canvas/maycon_hp/hp_2.visible = danos_count<=3
+	$hud_canvas/maycon_hp/hp_3.visible = danos_count<=2
+	$hud_canvas/maycon_hp/hp_4.visible = danos_count<=1
+	$hud_canvas/maycon_hp/hp_5.visible = danos_count<=0
 	
-	# Acabou de levar um dano - Vibra apenas o controle do jogador atual
-	if Global.maycon_danos_first_3d_battle != danos_count:
-		danos_count = Global.maycon_danos_first_3d_battle
-		Input.start_joy_vibration(device_id, 0.5, 0.7, 0.3)
-		aplicar_shake(0.4)
-		hurt_sound_3d.play()
-		
+	if danos_count == 5:
+		danos_count = -1 #somente para nao parar mais nessa condicao
+		Global.players_dead_count += 1
 	
 	# CONTA BALAS
 	balas_numero.text = "X "+str(gun_bullets_count)
