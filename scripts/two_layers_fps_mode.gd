@@ -70,7 +70,7 @@ func _ready():
 
 
 func spawn_players_initial():
-	Global.is_two_player_active = true 
+	#Global.is_two_player_active = true 
 	
 	#p1 = player_scene.instantiate().find_child("CharacterBody3D")
 	p1 = player_scene.instantiate()
@@ -136,6 +136,9 @@ func spawn_players_initial():
 	cigarro_apresenta.visible = false
 	await get_tree().create_timer(1.4).timeout
 	boom.play()
+	
+	await get_tree().create_timer(2.0).timeout
+	Global.is_two_player_active = true 
 
 
 
