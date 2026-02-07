@@ -181,6 +181,14 @@ func setup_cameras(p1_node, p2_node):
 			cam2.environment = cam1.environment
 		
 		cam2.make_current()
+
+		# ADICIONE ESTAS LINHAS:
+		viewport1.audio_listener_enable_2d = true
+		viewport1.audio_listener_enable_3d = true
+		
+		viewport2.audio_listener_enable_2d = true
+		viewport2.audio_listener_enable_3d = true
+		
 		
 func setup_cameras_TEMP(p1_node, p2_node):
 	var cam1 = p1_node.find_child("Camera3D", true, false)
