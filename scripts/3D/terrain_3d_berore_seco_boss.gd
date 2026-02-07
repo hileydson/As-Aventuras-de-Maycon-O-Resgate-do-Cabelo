@@ -60,27 +60,48 @@ func _ready() -> void:
 	await get_tree().create_timer(5.0).timeout
 	respaw.start()
 
-func maycon_died()->void:
+func maycon_died(two_players:bool)->void:
 	if Global.default_language != Global.language_en:
 			you_died.text = "VOCÊ MORREU!"
 	you_died.visible = true
 	
-	maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
-	await get_tree().create_timer(3.0).timeout 
-	var player = get_tree().get_first_node_in_group("player")
-	player.get_node("hud_canvas").visible = false
-	fade.get_node("Transition").play("fade_out")
-	await get_tree().create_timer(2.0).timeout 
-	get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn") 
-	# Called every frame. 'delta' is the elapsed time since the previous frame.
+	if two_players:
+		
+		for p in get_tree().get_nodes_in_group("player"):
+			p.process_mode = Node.PROCESS_MODE_DISABLED
+		
+		await get_tree().create_timer(3.0).timeout 
+		#for p in get_tree().get_nodes_in_group("player"):
+		#	p.process_mode = Node.PROCESS_MODE_DISABLED
+		#	p.get_node("hud_canvas").visible = false
+		#	p.get_node("fade").get_node("Transition").play("fade_out")
+		
+		#await get_tree().create_timer(2.0).timeout 
+		
+		#bug que virou feature... se morrer voltando... jah cai lah na volta... nao ha porque penalisar por querer voltar
+		get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn") 
+		# Called every frame. 'delta' is the elapsed time since the previous frame.
+		
+	else:
+
+		maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
+		await get_tree().create_timer(3.0).timeout 
+		maycon_3d.get_node("hud_canvas").visible = false
+		fade.get_node("Transition").play("fade_out")
+		await get_tree().create_timer(2.0).timeout 
+		get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn") 
+		# Called every frame. 'delta' is the elapsed time since the previous frame.
+	
+		
+	
 	
 func _process(delta: float) -> void:
 	
 	# YOU DIED
 	if Global.is_two_player_active && Global.players_dead_count > 1:
-		maycon_died()
+		maycon_died(true)
 	elif !Global.is_two_player_active && Global.players_dead_count > 0:
-		maycon_died()
+		maycon_died(false)
 	
 	
 	#print("DANOS SECO: -> "+str(Global.seco_danos_first_3d_battle))

@@ -129,6 +129,9 @@ func _physics_process(delta):
 			self.process_mode = Node.PROCESS_MODE_DISABLED
 			if Global.players_dead_count == 1:
 				two_player_died.visible = true
+			#PLAY ANIMATION DEAD
+			animacao.play("died")
+			self.remove_from_group("players")
 	
 	# CONTA BALAS
 	balas_numero.text = "X "+str(gun_bullets_count)

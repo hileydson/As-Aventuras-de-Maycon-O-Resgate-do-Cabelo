@@ -216,3 +216,7 @@ func setup_cameras_TEMP(p1_node, p2_node):
 	
 	
 	
+
+
+func _on_cigarro_appear_animation_finished() -> void:
+	$hud_node/hud_player_2_start/cigarro_apresenta/TwoPlayersIcon.visible = false

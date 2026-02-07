@@ -1,4 +1,4 @@
-[gd_scene load_steps=69 format=3 uid="uid://br6e76qsjxdw8"]
+[gd_scene load_steps=70 format=3 uid="uid://br6e76qsjxdw8"]
 
 [ext_resource type="Script" uid="uid://c6qg6leljxw5h" path="res://scripts/two_layers_fps_mode.gd" id="1_igjxw"]
 [ext_resource type="PackedScene" uid="uid://bgr1w7fk5snwj" path="res://scenes/3D/world_3d.tscn" id="2_s6y5k"]
@@ -10,6 +10,7 @@
 [ext_resource type="AudioStream" uid="uid://df08t0n8ym22n" path="res://assets/novos_audios/sangue_fill_effect.mp3" id="7_nq8y0"]
 [ext_resource type="Texture2D" uid="uid://b7ukdc2kwsyj2" path="res://assets/novas_imagens/cigarro/cigarro.png" id="8_ijgvr"]
 [ext_resource type="Texture2D" uid="uid://b8xm3n05un7xf" path="res://assets/novas_imagens/effects/Explosion/1.png" id="9_3b2fx"]
+[ext_resource type="Texture2D" uid="uid://cnlrevk7je1ub" path="res://assets/novas_imagens/buttons/p2.png" id="9_d6wt7"]
 [ext_resource type="Texture2D" uid="uid://dlowt45jrflns" path="res://assets/novas_imagens/effects/Explosion/3.png" id="10_hiybt"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="11_3b2fx"]
 
@@ -488,17 +489,22 @@ volume_db = -2.993
 pitch_scale = 1.52
 parameters/looping = false
 
-[node name="TwoPlayersIcon" type="Sprite2D" parent="hud_node/hud_player_2_start/cigarro_apresenta"]
-position = Vector2(742, 427)
-scale = Vector2(1.0664064, 1.0700935)
-texture = ExtResource("4_t4hml")
+[node name="P2" type="Sprite2D" parent="hud_node/hud_player_2_start/cigarro_apresenta"]
+position = Vector2(568, 39.000004)
+scale = Vector2(0.17456481, 0.20020747)
+texture = ExtResource("9_d6wt7")
 
 [node name="cigarro_appear" type="AnimatedSprite2D" parent="hud_node/hud_player_2_start/cigarro_apresenta"]
-position = Vector2(573, 283)
+position = Vector2(535, 281.00003)
 scale = Vector2(3.6050303, 3.4670172)
 sprite_frames = SubResource("SpriteFrames_d6wt7")
 animation = &"fill"
 autoplay = "idle"
+
+[node name="TwoPlayersIcon" type="Sprite2D" parent="hud_node/hud_player_2_start/cigarro_apresenta"]
+position = Vector2(567, 278)
+scale = Vector2(1.0664064, 1.0700935)
+texture = ExtResource("4_t4hml")
 
 [node name="pause_3d" parent="." instance=ExtResource("4_dg5n7")]
 
@@ -507,4 +513,4 @@ stream = ExtResource("7_nq8y0")
 volume_db = -4.489
 
 [connection signal="animation_changed" from="hud_node/hud_player_2_start/cigarro_apresenta/cigarro_appear" to="hud_node/hud_player_2_start/cigarro_apresenta/cigarro_appear" method="_on_animation_changed"]
-[connection signal="animation_finished" from="hud_node/hud_player_2_start/cigarro_apresenta/cigarro_appear" to="hud_node/hud_player_2_start/cigarro_apresenta/cigarro_appear" method="_on_animation_finished"]
+[connection signal="animation_finished" from="hud_node/hud_player_2_start/cigarro_apresenta/cigarro_appear" to="." method="_on_cigarro_appear_animation_finished"]
