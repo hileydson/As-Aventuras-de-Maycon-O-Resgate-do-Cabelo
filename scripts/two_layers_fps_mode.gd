@@ -23,7 +23,8 @@ var p2_ativado = false # Trava para ativar apenas uma vez
 
 func _process(delta: float) -> void:
 	#pass # print(get_tree().get_nodes_in_group("player").size())
-	print(get_tree().get_first_node_in_group("marker_player_1"))
+	pass #print(get_tree().get_first_node_in_group("marker_player_1"))
+	#print(Global.back_to_fase)
 
 func _input(event):
 	# Detecta o botão START apenas no Controle 2 (device 1)
@@ -91,11 +92,13 @@ func spawn_players_initial():
 	#p2.global_position = Vector3(-100, -100, -100)
 	#p2.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_on_p2").global_position
 	if Global.cena_caminho_das_pedras:
-		if Global.back_to_fase:
-			Global.back_to_fase=false
+		if Global.back_caminho_das_pedras:
+			Global.back_caminho_das_pedras=false
+			print("BACK")
 			p1.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_back_p1").global_position
 			p2.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_back_p2").global_position
 		else:
+			print("ON")
 			p1.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_on_p1").global_position
 			p2.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_on_p2").global_position
 	else:
@@ -117,7 +120,7 @@ func spawn_players_initial():
 	p2.find_child("hud_canvas").custom_viewport = viewport2
 	
 	p2.change_sprite_two_player()
-	print(p1.find_child("hud_canvas"))
+	#print(p1.find_child("hud_canvas"))
 	p1.find_child("hud_canvas").get_node("maycon_hp").visible = true
 	p1.find_child("hud_canvas").get_node("maycon_hp").global_position = p1.find_child("hud_canvas").get_node("hp_position_2_players").global_position
 	p2.find_child("hud_canvas").get_node("maycon_hp").visible = true

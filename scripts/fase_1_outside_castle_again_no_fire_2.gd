@@ -93,6 +93,7 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 	get_tree().paused = false
 	#get_tree().change_scene_to_file("res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn")
 	Global.cena_caminho_das_pedras = true
+	Global.back_caminho_das_pedras = true
 	get_tree().change_scene_to_file("res://scenes/two_layers_fps_mode.tscn")
 
 

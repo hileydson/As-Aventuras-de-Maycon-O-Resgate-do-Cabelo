@@ -5,6 +5,7 @@ const language_en = "EN"
 
 var load_from_castle_1:bool = false
 
+var back_caminho_das_pedras = false
 var cena_caminho_das_pedras = false
 var cena_first_seco_boss = false
 var is_two_player_active = false
@@ -42,6 +43,8 @@ var game_events = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_h
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
 var inimigos_mortos = {}
 
+func _process(delta: float) -> void:
+	pass #print(back_caminho_das_pedras)
 
 func reset_default_values()->void:
 	back_to_main_camera = false

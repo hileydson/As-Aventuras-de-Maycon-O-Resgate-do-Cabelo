@@ -99,7 +99,7 @@ func aplicar_shake(valor: float):
 	
 
 func _physics_process(delta):
-	
+
 	if Global.is_two_player_active:
 		gun.global_position = $hud_canvas/gun_position_2_players.global_position
 		#maycon_hp.global_position = hp_position_2_players.global_position
