@@ -76,7 +76,6 @@ func atirar():
 			# sangue.look_at(raycast.get_collision_point() + raycast.get_collision_normal())
 
 func change_sprite_two_player()->void:
-	print("CHAMOU")
 	animacao_player_2.visible = true
 	animacao.visible = false
 

@@ -94,11 +94,9 @@ func spawn_players_initial():
 	if Global.cena_caminho_das_pedras:
 		if Global.back_caminho_das_pedras:
 			Global.back_caminho_das_pedras=false
-			print("BACK")
 			p1.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_back_p1").global_position
 			p2.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_back_p2").global_position
 		else:
-			print("ON")
 			p1.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_on_p1").global_position
 			p2.global_position = get_tree().get_first_node_in_group("3d_before_seco_respaw_on_p2").global_position
 	else:
