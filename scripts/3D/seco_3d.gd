@@ -5,6 +5,8 @@ extends CharacterBody3D
 @onready var seco_3d_power: AudioStreamPlayer = $"../Seco3dPower"
 @onready var timer_enemy_attack: Timer = $"../Timer_enemy_attack"
 @onready var animated_sprite_3d: AnimatedSprite3D = $AnimatedSprite3D
+@onready var progress_bar: ProgressBar = $"../CanvasLayer/ProgressBar"
+@onready var mark_progressbar_two_player: Marker2D = $"../CanvasLayer/mark_progressbar_two_player"
 
 # Arraste o arquivo da OndaDePoder.tscn para cá no Inspetor
 @export var onda_scene : PackedScene 
@@ -20,11 +22,12 @@ func disparar_onda():
 func _ready() -> void:
 	await get_tree().create_timer(1.0).timeout
 	timer_enemy_attack.start()
-
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	if Global.is_two_player_active:
+		progress_bar.global_position = mark_progressbar_two_player.global_position
 		
 
 

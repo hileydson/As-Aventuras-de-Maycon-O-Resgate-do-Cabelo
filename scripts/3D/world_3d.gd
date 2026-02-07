@@ -84,14 +84,21 @@ func maycon_died()->void:
 	you_died.visible = true
 	
 	fire_seco_3d.process_mode = Node.PROCESS_MODE_DISABLED
-	maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
+	for p in get_tree().get_nodes_in_group("player"):
+		p.process_mode = Node.PROCESS_MODE_DISABLED
+	
 	await get_tree().create_timer(3.0).timeout 
-	var player = get_tree().get_first_node_in_group("player")
-	player.get_node("hud_canvas").visible = false
+	
+	for p in get_tree().get_nodes_in_group("player"):
+		p.process_mode = Node.PROCESS_MODE_DISABLED
+		p.get_node("hud_canvas").visible = false
+	
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout 
 	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn") 
 	# Called every frame. 'delta' is the elapsed time since the previous frame.
+	
+
 	
 func _process(delta: float) -> void:
 	
@@ -108,9 +115,10 @@ func _process(delta: float) -> void:
 	
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
-	Global.maycon_pegou_arma_first_3d_battle = true
-	gun_load.play()
-	body.add_bullets_to_gun(5)
+	if body is CharacterBody3D and body.name in ["Maycon", "Cigarro"]:
+		Global.maycon_pegou_arma_first_3d_battle = true
+		gun_load.play()
+		body.add_bullets_to_gun(5)
 	
 func _on_respaw_timeout() -> void:
 	#plotar novo inimigo

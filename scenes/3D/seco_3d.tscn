@@ -183,9 +183,9 @@ anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = 246.00002
+offset_left = 245.0
 offset_top = -300.0
-offset_right = 246.0
+offset_right = 245.0
 offset_bottom = -273.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -203,6 +203,9 @@ offset_bottom = 22.0
 scale = Vector2(1.72, 1.0799996)
 text = "Olindão Tripa Maior"
 label_settings = SubResource("LabelSettings_pbgpm")
+
+[node name="mark_progressbar_two_player" type="Marker2D" parent="CanvasLayer"]
+position = Vector2(247, 27)
 
 [node name="seco_died" type="Label" parent="."]
 visible = false

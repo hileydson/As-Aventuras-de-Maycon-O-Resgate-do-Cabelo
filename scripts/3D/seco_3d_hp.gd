@@ -11,8 +11,8 @@ extends Area3D
 var hp:int = 100
 
 func receber_dano(dano:int)->void:
-	#hp -= dano
-	hp -= 90 # TESTE
+	hp -= dano
+	#hp -= 90 # TESTE
 	
 	# 0.2 de velocidade (bem lento) por 0.3 segundos reais
 	efeito_camera_lenta(0.2, 0.3)
