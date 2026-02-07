@@ -22,9 +22,7 @@ var p2
 var p2_ativado = false # Trava para ativar apenas uma vez
 
 func _process(delta: float) -> void:
-	#pass # print(get_tree().get_nodes_in_group("player").size())
-	pass #print(get_tree().get_first_node_in_group("marker_player_1"))
-	#print(Global.back_to_fase)
+	pass
 
 func _input(event):
 	# Detecta o botão START apenas no Controle 2 (device 1)
@@ -189,33 +187,7 @@ func setup_cameras(p1_node, p2_node):
 		viewport2.audio_listener_enable_2d = true
 		viewport2.audio_listener_enable_3d = true
 		
-		
-func setup_cameras_TEMP(p1_node, p2_node):
-	var cam1 = p1_node.find_child("Camera3D", true, false)
-	var cam2 = p2_node.find_child("Camera3D", true, false)
-	
-	if cam1 and cam2:
-		# Player 1 mantém a câmera no Viewport 1
-		cam1.make_current()
-		
-		# Player 2 move a câmera para o Viewport 2
-		var remote = RemoteTransform3D.new()
-		cam2.get_parent().add_child(remote)
-		
-		var cam2_parent = cam2.get_parent()
-		cam2_parent.remove_child(cam2)
-		viewport2.add_child(cam2)
-		
-		remote.remote_path = cam2.get_path()
-		
-		# Sincroniza ambiente para evitar tela azul/transparente
-		if cam1.environment:
-			cam2.environment = cam1.environment
-		
-		cam2.make_current()
-	
-	
-	
+
 
 
 func _on_cigarro_appear_animation_finished() -> void:

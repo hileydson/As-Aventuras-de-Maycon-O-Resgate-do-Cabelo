@@ -131,7 +131,7 @@ func _physics_process(delta):
 				two_player_died.visible = true
 			#PLAY ANIMATION DEAD
 			animacao.play("died")
-			self.remove_from_group("players")
+			self.remove_from_group("players") # pra nao ser perseguido mais
 	
 	# CONTA BALAS
 	balas_numero.text = "X "+str(gun_bullets_count)

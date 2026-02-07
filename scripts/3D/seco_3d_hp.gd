@@ -11,8 +11,8 @@ extends Area3D
 var hp:int = 100
 
 func receber_dano(dano:int)->void:
-	hp -= dano
-	#hp -= 90 # TESTE
+	#hp -= dano
+	hp -= 90 # TESTE
 	
 	# 0.2 de velocidade (bem lento) por 0.3 segundos reais
 	efeito_camera_lenta(0.2, 0.3)
@@ -55,10 +55,17 @@ func atualizar_barra():
 	tween.tween_property(barra_vida, "value", hp, 0.2)
 
 func morrer():
+	
+	if Global.is_two_player_active:
+		for p in get_tree().get_nodes_in_group("player"):
+			p.find_child("hud_canvas").visible = false
+			
+		get_tree().get_first_node_in_group("two_layers_fps_mode").find_child("SubViewportContainer2").visible = false
+	
 	if Global.default_language != Global.language_en:
 			seco_died.text = "DERROTADO!"
 			seco_died.visible = true
-			final_msg.text = "   OLINDÃO FUGIU!"
+			final_msg.text = " OLINDÃO FUGIU!"
 			final_msg_2.text = "EU AINDA TE PEGO SEU MALDITO!"
 			
 	$"../../..".process_mode = Node.PROCESS_MODE_DISABLED

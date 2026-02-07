@@ -3,6 +3,7 @@ extends Area3D
 @onready var animated_sprite_3d: AnimatedSprite3D = $"../AnimatedSprite3D"
 @onready var me: Node3D = $"../.."
 @onready var growl_1: AudioStreamPlayer = $"../Growl1"
+@onready var inimigo_body3d: CharacterBody3D = $".."
 
 # Substitua pelo caminho correto da sua cena de munição
 const MUNICAO_SCENE = preload("res://scenes/3D/bullets.tscn")
@@ -30,12 +31,14 @@ func receber_dano(dano:int)->void:
 		morrer()
 
 func morrer():
+	inimigo_body3d.process_mode = Node.PROCESS_MODE_DISABLED
 	var world_3d = get_tree().get_first_node_in_group("world_3d")
 	world_3d.remove_enemies_count()
 	stop_seek()
 	animated_sprite_3d.play("died")
 	await get_tree().create_timer(0.5).timeout
-	drop_municao()
+	if Global.maycon_pegou_arma_first_3d_battle:
+		drop_municao()
 	me.queue_free()
 	
 func drop_municao():

@@ -225,20 +225,20 @@ color = Color(0, 0, 0, 1)
 [node name="final_msg" type="Label" parent="ColorRect"]
 visible = false
 layout_mode = 0
-offset_left = 296.0
-offset_top = 197.0
-offset_right = 429.0
-offset_bottom = 221.0
+offset_left = 293.0
+offset_top = 214.0
+offset_right = 426.0
+offset_bottom = 238.0
 scale = Vector2(4.04, 4.04)
 text = "SECO RAN AWAY!"
 
 [node name="final_msg2" type="Label" parent="ColorRect"]
 visible = false
 layout_mode = 0
-offset_left = 315.00003
-offset_top = 420.00003
-offset_right = 511.00003
-offset_bottom = 469.00003
+offset_left = 309.0
+offset_top = 436.0
+offset_right = 505.0
+offset_bottom = 485.0
 scale = Vector2(2.451632, 2.2109091)
 text = "           BUT I'M NOT! 
 YOU'LL CATCH YOU MAN!"
