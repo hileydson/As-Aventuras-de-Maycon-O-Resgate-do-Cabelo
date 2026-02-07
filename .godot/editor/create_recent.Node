@@ -1,7 +1,8 @@
-Marker3D
-AnimatedSprite2D
 Node2D
 Label
+ColorRect
+Marker3D
+AnimatedSprite2D
 AnimatedSprite3D
 Node3D
 CanvasLayer
@@ -11,5 +12,3 @@ CollisionShape3D
 Sprite3D
 VBoxContainer
 SubViewport
-SubViewportContainer
-HBoxContainer

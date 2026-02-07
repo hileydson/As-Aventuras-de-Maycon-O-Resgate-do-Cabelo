@@ -90,13 +90,15 @@ func look_at_target(target_pos):
 		look_at(look_pos, Vector3.UP)
 		
 func _on_area_3d_body_entered(body: Node3D) -> void:
-	animated_sprite_3d.play("attack")
-	body.levou_dano(1)
-	await get_tree().create_timer(1.0).timeout
-	animated_sprite_3d.play("died")
-	await get_tree().create_timer(1.0).timeout
-	var world_3d = get_tree().get_first_node_in_group("world_3d")
-	world_3d.remove_enemies_count()
-	parar_por_dano()
-	area_3d.drop_municao()
-	queue_free()
+	
+	if body is CharacterBody3D and body.name in ["Maycon", "Cigarro"]:
+		animated_sprite_3d.play("attack")
+		body.levou_dano(1)
+		await get_tree().create_timer(1.0).timeout
+		animated_sprite_3d.play("died")
+		await get_tree().create_timer(1.0).timeout
+		var world_3d = get_tree().get_first_node_in_group("world_3d")
+		world_3d.remove_enemies_count()
+		parar_por_dano()
+		area_3d.drop_municao()
+		queue_free()

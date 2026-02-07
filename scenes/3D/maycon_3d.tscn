@@ -1,4 +1,4 @@
-[gd_scene load_steps=121 format=3 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=122 format=3 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="AudioStream" uid="uid://dmk7ag335ld5j" path="res://assets/audio/pulo_maycon.mp3" id="2_bd24c"]
@@ -113,6 +113,9 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mwhgs"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_5yci6"]
+font_color = Color(1, 0.23000002, 0.23000002, 1)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ss8dx"]
 
@@ -1254,6 +1257,24 @@ animation = &"idle"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Camera3D/animacao_player_2"]
 shape = SubResource("CapsuleShape3D_mwhgs")
+
+[node name="two_player_died" type="Node2D" parent="CharacterBody3D/Camera3D"]
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="CharacterBody3D/Camera3D/two_player_died"]
+offset_right = 1167.0
+offset_bottom = 660.0
+color = Color(0, 0, 0, 0.49411765)
+
+[node name="Label" type="Label" parent="CharacterBody3D/Camera3D/two_player_died/ColorRect"]
+layout_mode = 0
+offset_left = 524.0
+offset_top = 124.00001
+offset_right = 564.0
+offset_bottom = 147.0
+scale = Vector2(8.520001, 5.3200006)
+text = "X"
+label_settings = SubResource("LabelSettings_5yci6")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
 shape = SubResource("CapsuleShape3D_ss8dx")

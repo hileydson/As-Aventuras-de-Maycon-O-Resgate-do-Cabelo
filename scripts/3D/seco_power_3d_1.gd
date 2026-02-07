@@ -18,4 +18,5 @@ func _physics_process(delta):
 		queue_free()
 
 func _on_body_entered(body):
-	body.levou_dano(1)
+	if body is CharacterBody3D and body.name in ["Maycon", "Cigarro"]:
+		body.levou_dano(1)

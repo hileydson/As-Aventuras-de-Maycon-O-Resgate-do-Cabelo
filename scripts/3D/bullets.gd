@@ -17,7 +17,6 @@ func _process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node3D) -> void:
-	print(body.name)
 	if body is CharacterBody3D and body.name in ["Maycon", "Cigarro"]:
 		#Global.maycon_pegou_bullet = true
 		body.add_bullets_to_gun(5) # NAO TA ACHANDO

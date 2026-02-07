@@ -26,6 +26,7 @@ extends CharacterBody3D
 @onready var animacao_player_2: AnimatedSprite3D = $Camera3D/animacao_player_2
 @onready var hp_position_2_players: Marker2D = $hud_canvas/hp_position_2_players
 @onready var maycon_hp: Node2D = $hud_canvas/maycon_hp
+@onready var two_player_died: Node2D = $Camera3D/two_player_died
 
 
 const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
@@ -34,7 +35,8 @@ var shake_intensity = 0.0
 var shake_decay = 5.0 # Quão rápido a tremedeira para
 
 var gun_bullets_count=0
-var danos_count = 0
+var danos_count:int = 0
+var danos_count_limit:int = 5
 
 var device_id : int = 0
 
@@ -100,10 +102,11 @@ func aplicar_shake(valor: float):
 
 func levou_dano(dano:int)->void:
 	# Acabou de levar um dano - Vibra apenas o controle do jogador atual
-	danos_count -= dano
-	Input.start_joy_vibration(device_id, 0.5, 0.7, 0.3)
-	aplicar_shake(0.4)
-	hurt_sound_3d.play()
+	if (danos_count <= danos_count_limit):
+		danos_count += dano
+		Input.start_joy_vibration(device_id, 0.5, 0.7, 0.3)
+		aplicar_shake(0.4)
+		hurt_sound_3d.play()
 		
 func _physics_process(delta):
 
@@ -119,9 +122,13 @@ func _physics_process(delta):
 	$hud_canvas/maycon_hp/hp_4.visible = danos_count<=1
 	$hud_canvas/maycon_hp/hp_5.visible = danos_count<=0
 	
-	if danos_count == 5:
-		danos_count = -1 #somente para nao parar mais nessa condicao
+	if danos_count == danos_count_limit:
+		danos_count += 1 #somente para nao parar mais nessa condicao
 		Global.players_dead_count += 1
+		if Global.is_two_player_active:
+			self.process_mode = Node.PROCESS_MODE_DISABLED
+			if Global.players_dead_count == 1:
+				two_player_died.visible = true
 	
 	# CONTA BALAS
 	balas_numero.text = "X "+str(gun_bullets_count)
