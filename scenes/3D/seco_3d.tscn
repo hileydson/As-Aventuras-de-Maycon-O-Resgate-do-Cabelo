@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://cj2glpmry1pkv"]
+[gd_scene load_steps=30 format=3 uid="uid://cj2glpmry1pkv"]
 
 [ext_resource type="Script" uid="uid://lhs7w1lfxh4w" path="res://scripts/3D/seco_3d.gd" id="1_ml58b"]
 [ext_resource type="AudioStream" uid="uid://winmr31cwh05" path="res://assets/novos_audios/growl_1.mp3" id="2_0wdaf"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://dl7rs3v1uv2q4" path="res://assets/novas_imagens/inimigos/seco/seco_idle_smile_2.png" id="8_uwy75"]
 [ext_resource type="Script" uid="uid://oc3lu102dap5" path="res://scripts/3D/seco_3d_hp.gd" id="10_uwy75"]
 [ext_resource type="FontFile" uid="uid://mqywkexvidu2" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/10 Font/CyberpunkCraftpixPixel.otf" id="11_s73nt"]
+[ext_resource type="PackedScene" uid="uid://dqygg3h3b6qgp" path="res://assets/novas_imagens/3d_enemies/olindao_3d_animations.glb" id="12_pbgpm"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s73nt"]
 atlas = ExtResource("8_uwy75")
@@ -156,6 +157,7 @@ volume_db = 3.838
 wait_time = 4.66
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+visible = false
 collision_mask = 513
 script = ExtResource("1_ml58b")
 onda_scene = ExtResource("6_uf71k")
@@ -217,6 +219,9 @@ scale = Vector2(4.455126, 6.8819976)
 theme = SubResource("Theme_uwy75")
 text = "DEFEATED!!"
 label_settings = SubResource("LabelSettings_s73nt")
+
+[node name="olindao_3d_animations" parent="." instance=ExtResource("12_pbgpm")]
+transform = Transform3D(2.6980104, 0, 0, 0, 4.203495, 0, 0, 0, 2.674044, 0, 0, 0.8868408)
 
 [node name="ColorRect" type="ColorRect" parent="."]
 visible = false
