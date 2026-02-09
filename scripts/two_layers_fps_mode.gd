@@ -55,6 +55,11 @@ func _ready():
 	
 	viewport1.add_child(world_instance)
 	
+	# --- ADICIONE ESTAS LINHAS AQUI PARA O SINGLE PLAYER TER SOM ---
+	viewport1.audio_listener_enable_2d = true
+	viewport1.audio_listener_enable_3d = true
+	# --------------------------------------------------------------
+	
 	# Configuração do Viewport 2 (Compartilhando o mundo do 1)
 	viewport2.world_3d = viewport1.world_3d
 	viewport2.own_world_3d = false

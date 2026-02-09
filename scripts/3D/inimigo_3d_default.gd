@@ -12,6 +12,19 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var esta_atordoado: bool = false
 var player = null
 
+func buscar_alvo_mais_proximo():
+	var players = get_tree().get_nodes_in_group("player")
+	var alvo_proximo = null
+	var menor_distancia = 99999.0 # Valor alto inicial
+
+	for p in players:
+		var distancia = global_position.distance_to(p.global_position)
+		if distancia < menor_distancia:
+			menor_distancia = distancia
+			alvo_proximo = p
+	
+	return alvo_proximo
+	
 # Função chamada pela Area3D
 func parar_por_dano():
 	esta_atordoado = true
@@ -28,15 +41,29 @@ func _ready() -> void:
 	# Busca o player pelo grupo (certifique-se de que o player está no grupo "player")
 	player = get_tree().get_first_node_in_group("player")
 	#player = $"../maycon_3d"
+	
+	name = "Inimigo"
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
+	# --- BUSCA O PLAYER MAIS PRÓXIMO (Para Multiplayer) ---
+	var players = get_tree().get_nodes_in_group("player")
+	var menor_distancia_encontrada = 99999.0
+	
+	for p in players:
+		var d = global_position.distance_to(p.global_position)
+		if d < menor_distancia_encontrada:
+			menor_distancia_encontrada = d
+			player = p # Define o alvo atual como o mais próximo
+	# ------------------------------------------------------
+
 	# 1. GRAVIDADE (Calculada primeiro)
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 	else:
 		velocity.y = 0
 
-		# --- LÓGICA DE DISTÂNCIA (QUEUE_FREE) ---
+	# --- LÓGICA DE DISTÂNCIA (QUEUE_FREE) ---
 	if player:
 		var distancia_atual = global_position.distance_to(player.global_position)
 
@@ -48,7 +75,7 @@ func _physics_process(delta: float) -> void:
 			
 			queue_free() # Remove o inimigo do jogo
 			return # Para o código aqui para não processar o resto do frame
-		# ----------------------------------------	
+	# ----------------------------------------	
 
 	if esta_atordoado:
 		# O inimigo fica parado horizontalmente enquanto leva o hit
@@ -61,6 +88,7 @@ func _physics_process(delta: float) -> void:
 	if player:
 		if animated_sprite_3d.animation != "attack" && animated_sprite_3d.animation != "died":
 			animated_sprite_3d.play("run")
+		
 		nav_agent.target_position = player.global_position
 		
 		# Verificamos se o GPS já calculou o caminho e se não chegamos no alvo
@@ -91,7 +119,7 @@ func look_at_target(target_pos):
 		
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	
-	if body is CharacterBody3D and body.name in ["Maycon", "Cigarro"]:
+	if (body is CharacterBody3D and Global.is_two_player_active and body.name in ["Maycon", "Cigarro"]) or (body is CharacterBody3D and !Global.is_two_player_active and body.name == "CharacterBody3D"):
 		animated_sprite_3d.play("attack")
 		body.levou_dano(1)
 		await get_tree().create_timer(1.0).timeout

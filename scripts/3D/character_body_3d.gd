@@ -40,6 +40,8 @@ var danos_count_limit:int = 5
 
 var device_id : int = 0
 
+var gatilho_pressionado = false
+
 func set_device_id(id: int):
 	device_id = id
 	print("Maycon configurado para o controle: ", device_id) # Isso vai confirmar no console
@@ -84,7 +86,11 @@ func change_sprite_two_player()->void:
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)j  asf                                                                                                   
+	
+	#seta o nome para o caso de single player... se for two palyers tem um rename
+	#if Global.is_two_player_active==false:
+	#	self.name = "Maycon"
 	
 
 
@@ -109,11 +115,10 @@ func levou_dano(dano:int)->void:
 		hurt_sound_3d.play()
 		
 func _physics_process(delta):
-
+	
 	if Global.is_two_player_active:
 		gun.global_position = $hud_canvas/gun_position_2_players.global_position
 		#maycon_hp.global_position = hp_position_2_players.global_position
-		
 	
 	# HUD de sangue
 	$hud_canvas/maycon_hp/hp_1.visible = danos_count<=4
@@ -123,15 +128,14 @@ func _physics_process(delta):
 	$hud_canvas/maycon_hp/hp_5.visible = danos_count<=0
 	
 	if danos_count == danos_count_limit:
-		danos_count += 1 #somente para nao parar mais nessa condicao
+		danos_count += 1 
 		Global.players_dead_count += 1
 		if Global.is_two_player_active:
 			self.process_mode = Node.PROCESS_MODE_DISABLED
 			if Global.players_dead_count == 1:
 				two_player_died.visible = true
-			#PLAY ANIMATION DEAD
 			animacao.play("died")
-			self.remove_from_group("players") # pra nao ser perseguido mais
+			self.remove_from_group("players") 
 	
 	# CONTA BALAS
 	balas_numero.text = "X "+str(gun_bullets_count)
@@ -145,14 +149,21 @@ func _physics_process(delta):
 		camera_3d.h_offset = 0
 		camera_3d.v_offset = 0
 	
-	# Faz o tiro - Detecta o botão de tiro específico deste dispositivo
-	var apertou_tiro
+	# --- LÓGICA DE TIRO (Gatilho Analógico como Botão Único) ---
 	var trigger_value = Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_RIGHT)
+	var apertou_tiro = false
 	
-	if trigger_value > 0.1: # Use a small deadzone
-		apertou_tiro = true
+	# Se o gatilho passou de 0.5 e a trava está solta, registra UM tiro
+	if trigger_value > 0.5: 
+		if not gatilho_pressionado:
+			apertou_tiro = true
+			gatilho_pressionado = true # Ativa a trava (impede repetição)
+	else:
+		gatilho_pressionado = false # Soltou o gatilho, libera para o próximo tiro
 		
-	#var apertou_tiro = Input.is_joy_button_pressed(device_id, JOY_AXIS_TRIGGER_RIGHT) or (device_id == 0 and Input.is_action_just_pressed("tiro"))
+	# Suporte opcional para teclado no Player 1
+	if device_id == 0 and Input.is_action_just_pressed("tiro"):
+		apertou_tiro = true
 	
 	if Global.maycon_pegou_arma_first_3d_battle && apertou_tiro && arma_sprite.animation!="shoot" && gun_bullets_count!=0:
 		atirar()
@@ -179,38 +190,33 @@ func _physics_process(delta):
 
 	if joy_look.length() > 0.1:
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)
-		
-		# Giro vertical (Gira a câmera de forma independente do corpo)
 		if camera_3d:
 			camera_3d.rotate_x(-joy_look.y * JOY_SENSITIVITY)
 			camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 
-	# Movimentação normal (Física)
+	# Física e Gravidade
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
-	# --- PULO INDEPENDENTE (Ajustado) ---
-	# Verifica o botão A do controle atual. A tecla 'ui_accept' só funciona para o Player 1.
-	var apertou_pulo = Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) # or (device_id == 0 and Input.is_action_just_pressed("ui_accept"))
+	# Pulo
+	var apertou_pulo = Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) 
 
 	if apertou_pulo and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		jump.play()
 		arma_sprite.play("walk")
-		print(device_id)
 		Input.start_joy_vibration(device_id, 0.2, 0.2, 0.2)
 		
-	# --- DIREÇÃO DE MOVIMENTO (Analógico Esquerdo com Deadzone) ---
+	# Movimento (Analógico Esquerdo)
 	var raw_input = Vector2(
 		Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X),
 		Input.get_joy_axis(device_id, JOY_AXIS_LEFT_Y)
 	)
 	
 	var input_dir = Vector2.ZERO
-	if raw_input.length() > 0.2: # Deadzone para evitar drift
+	if raw_input.length() > 0.2:
 		input_dir = raw_input
 	
-	# Teclado apenas para o Player 1 como reserva
 	if device_id == 0 and input_dir.length() < 0.1:
 		var k_x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 		var k_y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")

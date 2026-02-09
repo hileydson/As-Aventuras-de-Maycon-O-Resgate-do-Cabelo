@@ -115,14 +115,14 @@ func _process(delta: float) -> void:
 	
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
-	if body is CharacterBody3D and body.name in ["Maycon", "Cigarro"]:
+	if (body is CharacterBody3D and Global.is_two_player_active and body.name in ["Maycon", "Cigarro"]) or (body is CharacterBody3D and !Global.is_two_player_active and body.name == "CharacterBody3D"):
 		Global.maycon_pegou_arma_first_3d_battle = true
 		gun_load.play()
 		body.add_bullets_to_gun(5)
 	
 func _on_respaw_timeout() -> void:
 	#plotar novo inimigo
-	if enemies_count < 3:
+	if enemies_count < 5:
 		respaw_sound.play()
 	
 		var novo_inimigo

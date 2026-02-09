@@ -18,5 +18,5 @@ func _physics_process(delta):
 		queue_free()
 
 func _on_body_entered(body):
-	if body is CharacterBody3D and body.name in ["Maycon", "Cigarro"]:
+	if (body is CharacterBody3D and Global.is_two_player_active and body.name in ["Maycon", "Cigarro"]) or (body is CharacterBody3D and !Global.is_two_player_active and body.name == "CharacterBody3D"):
 		body.levou_dano(1)

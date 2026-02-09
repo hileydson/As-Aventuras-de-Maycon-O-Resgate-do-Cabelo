@@ -17,7 +17,7 @@ func _process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node3D) -> void:
-	if body is CharacterBody3D and body.name in ["Maycon", "Cigarro"]:
+	if (body is CharacterBody3D and Global.is_two_player_active and body.name in ["Maycon", "Cigarro"]) or (body is CharacterBody3D and !Global.is_two_player_active and body.name == "CharacterBody3D"):
 		#Global.maycon_pegou_bullet = true
 		body.add_bullets_to_gun(5) # NAO TA ACHANDO
 		gun_load.play()
