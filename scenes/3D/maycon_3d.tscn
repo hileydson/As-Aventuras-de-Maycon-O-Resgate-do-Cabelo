@@ -1482,7 +1482,6 @@ parameters/looping = false
 
 [node name="GunShot" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
 stream = ExtResource("6_y4gmr")
-volume_db = -4.5
 parameters/looping = false
 
 [node name="HurtSound3d" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
