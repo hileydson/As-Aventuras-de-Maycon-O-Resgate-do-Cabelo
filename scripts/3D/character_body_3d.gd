@@ -27,7 +27,10 @@ extends CharacterBody3D
 @onready var hp_position_2_players: Marker2D = $hud_canvas/hp_position_2_players
 @onready var maycon_hp: Node2D = $hud_canvas/maycon_hp
 @onready var two_player_died: Node2D = $Camera3D/two_player_died
+@onready var maycon_3d_model_ia_animations: Node3D = $maycon_3d_model_ia_animations
+@onready var cigarro_perfect_animations: Node3D = $cigarro_perfect_animations
 
+var animation_tree_playback
 
 const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
 
@@ -41,6 +44,12 @@ var danos_count_limit:int = 5
 var device_id : int = 0
 
 var gatilho_pressionado = false
+
+func set_cigarro_3d_model()->void:
+	animation_tree_playback = cigarro_perfect_animations.get_node("AnimationTree").get("parameters/playback")
+	maycon_3d_model_ia_animations.visible = false
+	cigarro_perfect_animations.visible = true
+	
 
 func set_device_id(id: int):
 	device_id = id
@@ -81,8 +90,9 @@ func atirar():
 			# sangue.look_at(raycast.get_collision_point() + raycast.get_collision_normal())
 
 func change_sprite_two_player()->void:
-	animacao_player_2.visible = true
+	animacao_player_2.visible = false
 	animacao.visible = false
+	set_cigarro_3d_model()
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -91,6 +101,10 @@ func _ready():
 	#seta o nome para o caso de single player... se for two palyers tem um rename
 	#if Global.is_two_player_active==false:
 	#	self.name = "Maycon"
+	
+	#MAYCON EH O PADRAO
+	animation_tree_playback = maycon_3d_model_ia_animations.get_node("AnimationTree").get("parameters/playback")
+
 	
 
 
@@ -135,6 +149,7 @@ func _physics_process(delta):
 			if Global.players_dead_count == 1:
 				two_player_died.visible = true
 			animacao.play("died")
+			animation_tree_playback.travel("dead")
 			self.remove_from_group("players") 
 	
 	# CONTA BALAS
@@ -226,6 +241,7 @@ func _physics_process(delta):
 	
 	if !direction.is_zero_approx():
 		animacao.play("run")
+		animation_tree_playback.travel("run")
 		
 	if !direction.is_zero_approx() && !walk.is_playing() && is_on_floor() && !(velocity == Vector3.ZERO):
 		walk.play()
@@ -266,7 +282,10 @@ func _on_lamp_animation_finished() -> void:
 
 func _on_animacao_animation_finished() -> void:
 	animacao.play("idle")
+	animation_tree_playback.stop
+	animation_tree_playback.travel("idle")
 
 
 func _on_animacao_player_2_animation_finished() -> void:
 	animacao.play("idle")
+	animation_tree_playback.travel("idle")
