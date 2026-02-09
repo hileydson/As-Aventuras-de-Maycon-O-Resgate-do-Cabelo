@@ -8,6 +8,7 @@ extends CharacterBody3D
 @onready var progress_bar: ProgressBar = $"../CanvasLayer/ProgressBar"
 @onready var mark_progressbar_two_player: Marker2D = $"../CanvasLayer/mark_progressbar_two_player"
 @onready var olindao_3d_animations: Node3D = $"../olindao_3d_animations"
+@onready var animation_tree: AnimationTree = $"../olindao_3d_animations/AnimationTree"
 
 # Arraste o arquivo da OndaDePoder.tscn para cá no Inspetor
 @export var onda_scene : PackedScene 
@@ -21,9 +22,9 @@ func disparar_onda():
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	olindao_3d_animations.get_node("AnimationPlayer").play("Skill_03")
+	animation_tree.get("parameters/playback").travel("scream") # .get_node("AnimationPlayer").play("Skill_03")
 	await get_tree().create_timer(1.2).timeout
-	olindao_3d_animations.get_node("AnimationPlayer").play("Walking")
+	animation_tree.get("parameters/playback").travel("idle_slow_walk") #.get_node("AnimationPlayer").play("Walking")
 	timer_enemy_attack.start()
 	#await get_tree().create_timer(1.2).timeout	
 	
@@ -38,11 +39,11 @@ func _process(delta: float) -> void:
 func _on_timer_enemy_attack_timeout() -> void:
 	growl_2.play()
 	animated_sprite_3d.play("power_attack_1")
-	olindao_3d_animations.get_node("AnimationPlayer").play("Slow_Orc_Walk")
+	animation_tree.get("parameters/playback").travel("attack_1") #.get_node("AnimationPlayer").play("Slow_Orc_Walk")
 	await get_tree().create_timer(0.8).timeout
 	disparar_onda()
 	await get_tree().create_timer(1.0).timeout
-	olindao_3d_animations.get_node("AnimationPlayer").play("Walking")
+	animation_tree.get("parameters/playback").travel("idle_slow_walk") #.get_node("AnimationPlayer").play("Walking")
 
 
 func _on_animated_sprite_3d_animation_finished() -> void:

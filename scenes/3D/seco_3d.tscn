@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://cj2glpmry1pkv"]
+[gd_scene load_steps=39 format=3 uid="uid://cj2glpmry1pkv"]
 
 [ext_resource type="Script" uid="uid://lhs7w1lfxh4w" path="res://scripts/3D/seco_3d.gd" id="1_ml58b"]
 [ext_resource type="AudioStream" uid="uid://winmr31cwh05" path="res://assets/novos_audios/growl_1.mp3" id="2_0wdaf"]
@@ -128,6 +128,49 @@ default_base_scale = 0.41
 [sub_resource type="LabelSettings" id="LabelSettings_s73nt"]
 font_color = Color(0.7247769, 0.55789757, 0.40297788, 1)
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lgfgi"]
+animation = &"Slow_Orc_Walk"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_tbidp"]
+animation = &"Walking"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pbgpm"]
+animation = &"Skill_03"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_pbgpm"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_tbidp"]
+xfade_time = 0.2
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_lgfgi"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_rob6r"]
+xfade_time = 0.2
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_vy1jm"]
+xfade_time = 0.2
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_rob6r"]
+states/End/position = Vector2(677, 107)
+states/Start/position = Vector2(145, 75)
+states/attack_1/node = SubResource("AnimationNodeAnimation_lgfgi")
+states/attack_1/position = Vector2(498, 65)
+states/idle_slow_walk/node = SubResource("AnimationNodeAnimation_tbidp")
+states/idle_slow_walk/position = Vector2(554, 174)
+states/scream/node = SubResource("AnimationNodeAnimation_pbgpm")
+states/scream/position = Vector2(211, 174)
+transitions = ["Start", "scream", SubResource("AnimationNodeStateMachineTransition_pbgpm"), "scream", "idle_slow_walk", SubResource("AnimationNodeStateMachineTransition_tbidp"), "idle_slow_walk", "End", SubResource("AnimationNodeStateMachineTransition_lgfgi"), "idle_slow_walk", "attack_1", SubResource("AnimationNodeStateMachineTransition_rob6r"), "attack_1", "idle_slow_walk", SubResource("AnimationNodeStateMachineTransition_vy1jm")]
+
 [node name="seco_3d" type="Node3D"]
 
 [node name="Growl1" type="AudioStreamPlayer" parent="."]
@@ -223,6 +266,10 @@ label_settings = SubResource("LabelSettings_s73nt")
 [node name="olindao_3d_animations" parent="." instance=ExtResource("12_pbgpm")]
 transform = Transform3D(2.6980104, 0, 0, 0, 4.203495, 0, 0, 0, 2.674044, 0, 0, 0.8868408)
 
+[node name="AnimationTree" type="AnimationTree" parent="olindao_3d_animations"]
+tree_root = SubResource("AnimationNodeStateMachine_rob6r")
+anim_player = NodePath("../AnimationPlayer")
+
 [node name="ColorRect" type="ColorRect" parent="."]
 visible = false
 z_index = 10
@@ -253,3 +300,5 @@ YOU'LL CATCH YOU MAN!"
 
 [connection signal="timeout" from="Timer_enemy_attack" to="CharacterBody3D" method="_on_timer_enemy_attack_timeout"]
 [connection signal="animation_finished" from="CharacterBody3D/AnimatedSprite3D" to="CharacterBody3D" method="_on_animated_sprite_3d_animation_finished"]
+
+[editable path="olindao_3d_animations"]

@@ -12,4 +12,3 @@ Control
 CollisionShape3D
 Sprite3D
 VBoxContainer
-SubViewport
