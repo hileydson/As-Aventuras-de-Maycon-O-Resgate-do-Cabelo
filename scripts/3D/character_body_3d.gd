@@ -1,9 +1,5 @@
 extends CharacterBody3D
 
-@export var SPEED : float = 5.0
-@export var JUMP_VELOCITY : float = 4.5
-@export var MOUSE_SENSITIVITY = 0.003
-@export var JOY_SENSITIVITY: float = 0.05 # Sensibilidade para o controle
 @onready var hud_canvas: CanvasLayer = $hud_canvas
 @onready var arma_sprite: AnimatedSprite2D = $hud_canvas/control_gun/gun/arma_sprite
 @onready var shoot_fire: AnimatedSprite2D = $hud_canvas/control_gun/gun/shoot
@@ -29,6 +25,15 @@ extends CharacterBody3D
 @onready var two_player_died: Node2D = $Camera3D/two_player_died
 @onready var maycon_3d_model_ia_animations: Node3D = $maycon_3d_model_ia_animations
 @onready var cigarro_perfect_animations: Node3D = $cigarro_perfect_animations
+@onready var control_moto: Control = $hud_canvas/control_moto
+@onready var moto_parada: AudioStreamPlayer = $hud_canvas/control_moto/moto_parada
+@onready var moto_acelerando: AudioStreamPlayer = $hud_canvas/control_moto/ModoAcelerando
+@onready var farol_moto_cigarro: SpotLight3D = $farol_moto_cigarro
+
+@export var SPEED : float = 5.0
+@export var JUMP_VELOCITY : float = 4.5
+@export var MOUSE_SENSITIVITY = 0.003
+@export var JOY_SENSITIVITY: float = 0.05 # Sensibilidade para o controle
 
 var animation_tree_playback
 
@@ -44,6 +49,19 @@ var danos_count_limit:int = 5
 var device_id : int = 0
 
 var gatilho_pressionado = false
+
+var on_moto = false
+
+func set_final_game()->void:
+	on_moto = true
+	control_lamp.visible = false
+	control_gun.visible = false
+	control_moto.visible = true
+	farol_moto_cigarro.visible = true
+	maycon_hp.visible = false
+	camera.position.y += 2.1
+	moto_parada.play()
+	
 
 func set_cigarro_3d_model()->void:
 	animation_tree_playback = cigarro_perfect_animations.get_node("AnimationTree").get("parameters/playback")
@@ -127,19 +145,19 @@ func levou_dano(dano:int)->void:
 		Input.start_joy_vibration(device_id, 0.5, 0.7, 0.3)
 		aplicar_shake(0.4)
 		hurt_sound_3d.play()
-		
+
+
 func _physics_process(delta):
-	
+	# --- 1. CONFIGURAÇÕES TÉCNICAS E HUD ---
 	if Global.is_two_player_active:
 		gun.global_position = $hud_canvas/gun_position_2_players.global_position
-		#maycon_hp.global_position = hp_position_2_players.global_position
 	
-	# HUD de sangue
-	$hud_canvas/maycon_hp/hp_1.visible = danos_count<=4
-	$hud_canvas/maycon_hp/hp_2.visible = danos_count<=3
-	$hud_canvas/maycon_hp/hp_3.visible = danos_count<=2
-	$hud_canvas/maycon_hp/hp_4.visible = danos_count<=1
-	$hud_canvas/maycon_hp/hp_5.visible = danos_count<=0
+	# HUD de HP
+	$hud_canvas/maycon_hp/hp_1.visible = danos_count <= 4
+	$hud_canvas/maycon_hp/hp_2.visible = danos_count <= 3
+	$hud_canvas/maycon_hp/hp_3.visible = danos_count <= 2
+	$hud_canvas/maycon_hp/hp_4.visible = danos_count <= 1
+	$hud_canvas/maycon_hp/hp_5.visible = danos_count <= 0
 	
 	if danos_count == danos_count_limit:
 		danos_count += 1 
@@ -151,9 +169,9 @@ func _physics_process(delta):
 			animacao.play("died")
 			animation_tree_playback.travel("dead")
 			self.remove_from_group("players") 
-	
-	# CONTA BALAS
-	balas_numero.text = "X "+str(gun_bullets_count)
+		return
+
+	balas_numero.text = "X " + str(gun_bullets_count)
 	
 	# Tela tremer
 	if shake_intensity > 0:
@@ -163,111 +181,116 @@ func _physics_process(delta):
 	else:
 		camera_3d.h_offset = 0
 		camera_3d.v_offset = 0
-	
-	# --- LÓGICA DE TIRO (Gatilho Analógico como Botão Único) ---
-	var trigger_value = Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_RIGHT)
+
+	# --- 2. LÓGICA DE TIRO (Apenas se NÃO estiver na moto) ---
 	var apertou_tiro = false
-	
-	# Se o gatilho passou de 0.5 e a trava está solta, registra UM tiro
-	if trigger_value > 0.5: 
-		if not gatilho_pressionado:
+	if not on_moto:
+		var trigger_right = Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_RIGHT)
+		if trigger_right > 0.5: 
+			if not gatilho_pressionado:
+				apertou_tiro = true
+				gatilho_pressionado = true
+		else:
+			gatilho_pressionado = false
+			
+		if device_id == 0 and Input.is_action_just_pressed("tiro"):
 			apertou_tiro = true
-			gatilho_pressionado = true # Ativa a trava (impede repetição)
-	else:
-		gatilho_pressionado = false # Soltou o gatilho, libera para o próximo tiro
 		
-	# Suporte opcional para teclado no Player 1
-	if device_id == 0 and Input.is_action_just_pressed("tiro"):
-		apertou_tiro = true
+		if Global.maycon_pegou_arma_first_3d_battle && apertou_tiro && arma_sprite.animation != "shoot" && gun_bullets_count != 0:
+			atirar()
+			shoot_fire.play("shoot")
+			arma_sprite.play("shoot")
+			Input.start_joy_vibration(device_id, 0.4, 0.1, 0.2)
+			gun_shot.play()
+			remove_bullets_from_gun()
 	
-	if Global.maycon_pegou_arma_first_3d_battle && apertou_tiro && arma_sprite.animation!="shoot" && gun_bullets_count!=0:
-		atirar()
-		shoot_fire.play("shoot")
-		arma_sprite.play("shoot")
-		Input.start_joy_vibration(device_id, 0.4, 0.1, 0.2)
-		gun_shot.play()
-		remove_bullets_from_gun()
-	
+	# Controle visual da arma
 	if Global.maycon_pegou_arma_first_3d_battle:
-		if control_gun.visible == false:
-			arma_sprite.play("reload")
 		control_gun.visible = true
 		hud_gun_buttons.visible = true
 	else:
 		control_gun.visible = false
 		hud_gun_buttons.visible = false
-	
-	# --- LÓGICA DO ANALÓGICO DIREITO (OLHAR) ---
-	var joy_look = Vector2(
-		Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X),
-		Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_Y)
-	)
+
+	# --- 3. LÓGICA DE OLHAR (Analógico Direito) ---
+	var joy_look = Vector2.ZERO
+	if on_moto:
+		joy_look = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X), 0)
+	else:
+		joy_look = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X), Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_Y))
 
 	if joy_look.length() > 0.1:
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)
-		if camera_3d:
+		if camera_3d and not on_moto:
 			camera_3d.rotate_x(-joy_look.y * JOY_SENSITIVITY)
-			camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-89), deg_to_rad(89))
+			camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 
-	# Física e Gravidade
+	# --- 4. FÍSICA GLOBAL ---
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
-	# Pulo
+	# Pulo (Bloqueado na moto)
 	var apertou_pulo = Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) 
-
-	if apertou_pulo and is_on_floor():
+	if apertou_pulo and is_on_floor() and not on_moto:
 		velocity.y = JUMP_VELOCITY
 		jump.play()
-		arma_sprite.play("walk")
-		Input.start_joy_vibration(device_id, 0.2, 0.2, 0.2)
-		
-	# Movimento (Analógico Esquerdo)
-	var raw_input = Vector2(
-		Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X),
-		Input.get_joy_axis(device_id, JOY_AXIS_LEFT_Y)
-	)
-	
-	var input_dir = Vector2.ZERO
-	if raw_input.length() > 0.2:
-		input_dir = raw_input
-	
-	if device_id == 0 and input_dir.length() < 0.1:
-		var k_x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
-		var k_y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
-		input_dir = Vector2(k_x, k_y)
 
-	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	
-	if !direction.is_zero_approx():
-		animacao.play("run")
-		animation_tree_playback.travel("run")
+	# --- 5. MOVIMENTO (MOTO VS A PÉ) ---
+	if on_moto:
+		var r2_acelerar = Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_RIGHT)
+		var l2_re = Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_LEFT)
 		
-	if !direction.is_zero_approx() && !walk.is_playing() && is_on_floor() && !(velocity == Vector3.ZERO):
-		walk.play()
-		arma_sprite.play("walk")
+		var forward_dir = -transform.basis.z 
 		
-		if Global.maycon_pegou_lamp_fire_3d_world:
-			lamp.play("walk_with_light")
-			lamp_light.visible = true
+		if r2_acelerar > 0.1:
+			# ACELERAÇÃO PARA FRENTE (Até 20)
+			var target_vel = forward_dir * 20.0
+			velocity.x = move_toward(velocity.x, target_vel.x, 12.0 * delta)
+			velocity.z = move_toward(velocity.z, target_vel.z, 12.0 * delta)
+			if !moto_acelerando.is_playing():moto_acelerando.play()
+		elif l2_re > 0.1:
+			# RÉ (Mais devagar, até 10)
+			var target_vel = -forward_dir * 10.0
+			velocity.x = move_toward(velocity.x, target_vel.x, 6.0 * delta)
+			velocity.z = move_toward(velocity.z, target_vel.z, 6.0 * delta)
 		else:
-			lamp.play("walk")
-			lamp_light.visible = false
-	
-	if direction:
-		var forward_dot = transform.basis.z.dot(direction)
-		if forward_dot < 0:
-			animacao.flip_h = false
-		else:
-			animacao.flip_h = true
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+			# DESACELERAÇÃO (Fricção)
+			velocity.x = move_toward(velocity.x, 0, 8.0 * delta)
+			velocity.z = move_toward(velocity.z, 0, 8.0 * delta)
+			moto_acelerando.stop()
+		
+		if velocity.length() > 0.5:
+			if !walk.is_playing(): walk.play()
+		
+		
+		
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+		# MOVIMENTO A PÉ
+		var raw_input = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X), Input.get_joy_axis(device_id, JOY_AXIS_LEFT_Y))
+		var input_dir = Vector2.ZERO
+		if raw_input.length() > 0.2: input_dir = raw_input
+		
+		if device_id == 0 and input_dir.length() < 0.1:
+			var k_x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+			var k_y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+			input_dir = Vector2(k_x, k_y)
+
+		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+		
+		if direction:
+			velocity.x = direction.x * SPEED
+			velocity.z = direction.z * SPEED
+			animacao.play("run")
+			animation_tree_playback.travel("run")
+			
+			var forward_dot = transform.basis.z.dot(direction)
+			animacao.flip_h = forward_dot >= 0
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+			velocity.z = move_toward(velocity.z, 0, SPEED)
+			animation_tree_playback.travel("idle")
 
 	move_and_slide()
-
 
 func _on_animated_sprite_2d_animation_finished() -> void:
 	arma_sprite.play("idle")

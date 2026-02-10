@@ -1,0 +1,11 @@
+Model Information:
+* title:	Map 70
+* source:	https://sketchfab.com/3d-models/map-70-af9647b7865b4bceb5b036bc653f8668
+* author:	Elite Big Speakerman (https://sketchfab.com/EvesStudio2008)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Map 70" (https://sketchfab.com/3d-models/map-70-af9647b7865b4bceb5b036bc653f8668) by Elite Big Speakerman (https://sketchfab.com/EvesStudio2008) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

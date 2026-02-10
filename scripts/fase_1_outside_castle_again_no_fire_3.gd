@@ -7,12 +7,22 @@ extends Sprite2D
 @onready var fase_1_before_castle: Sprite2D = $"."
 @onready var mk_dudun: AudioStreamPlayer = $MkDudun
 @onready var fade: Node2D = $"../fade"
+@onready var apresentacao_pra_cidade: Node2D = $"../apresentacao_pra_cidade"
+@onready var camera_apresentacao: Camera2D = $"../apresentacao_pra_cidade/camera_apresentacao"
+@onready var balao_marker: Marker2D = $"../cigarro/balao"
+@onready var maycon_itens: Node2D = $"../maycon_itens"
+@onready var color_rect: ColorRect = $"../apresentacao_pra_cidade/ColorRect"
+@onready var city: Label = $"../PlacaCidade/city"
 
+var balao_
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
 	
+	if Global.default_language == Global.language_pt_br:
+		city.text = "Cidade"
+		
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = "0"
@@ -24,32 +34,29 @@ func _ready() -> void:
 		await get_tree().create_timer(1.0).timeout
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	
-	# previne bug da batalha iniciar e nao haver collision com o maycon
-	if Global.battle_started:
-		maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
-	else:
-		maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
-	
-	#pra VOLTAR
-	if Global.back_to_main_camera:
-		Global.back_to_main_camera = false
-		camera.make_current()
-
-
 
 func _on_next_scene_body_entered(body: Node2D) -> void:
-	#get_tree().paused = true
-	Global.battle_started = true # para pausar maycon
-	await get_tree().create_timer(1.0).timeout 
+	maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
+	await get_tree().create_timer(0.4).timeout 
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout 
-	Global.battle_started = false # para pausar maycon
-	get_tree().change_scene_to_file("res://scenes/demo_end.tscn")
+	camera_apresentacao.make_current()
+	apresentacao_pra_cidade.visible = true
+	await get_tree().create_timer(2.0).timeout 
+	
+	#CHAMA BALAOZINHO
+	balao_ = preload("res://scenes/balao_conversa.tscn").instantiate()
+	balao_marker.add_child(balao_)
+	
+	if Global.default_language == Global.language_pt_br:
+		balao_.falas = ["...", "Como seu melhor amigo do coração!", "Venho te ajudar!", "Sei que está nessa busca pelo Cabelo!", "Confio em você Maycon!", "O Olindão largou ele em algum lugar da cidade", "Tome cuidado com a gasolina!", "Sei que na cidade tem um posto!", "Caso esteja com pouca gasolina vá lá!", "É logo ao sair da ponto!", "Boa sorte amigo!!"]
+	else:
+		balao_.falas = ["...", "As your best friend!", "I'm here to help you!", "I know you're on this quest for Cabelo!", "I trust you, Maycon!", "Olindão left him somewhere in the city", "Be careful with the gas!", "I know there's a gas station in town!", "If you're low on gas, go there!", "It's right after you leave the bus stop!", "Good luck, my friend!!"]
+	
+	maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
+	get_tree().change_scene_to_file("res://scenes/3D/last_fight_before_end.tscn")
 
-
+	
 func _on_dead_line_body_entered(body: Node2D) -> void:
 	get_tree().reload_current_scene()
 

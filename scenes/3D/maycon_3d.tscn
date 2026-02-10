@@ -1,4 +1,4 @@
-[gd_scene load_steps=163 format=4 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=176 format=4 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="Texture2D" uid="uid://bs67ndmklpp1b" path="res://assets/novas_imagens/maycon/maycon_falling.png" id="2_aob2u"]
@@ -21,16 +21,17 @@
 [ext_resource type="Texture2D" uid="uid://d20k0m5bseynp" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_1.png" id="10_fakjw"]
 [ext_resource type="Texture2D" uid="uid://bgxxn46q4nutx" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_2.png" id="11_1she0"]
 [ext_resource type="Texture2D" uid="uid://b1nhpgedhfvw3" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_3.png" id="12_m47l0"]
+[ext_resource type="Texture2D" uid="uid://reyl5mf2bho2" path="res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_moto.png" id="12_owhm4"]
 [ext_resource type="Texture2D" uid="uid://c54ujioar2c72" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_4.png" id="13_doy81"]
 [ext_resource type="Texture2D" uid="uid://bpd6r1c6dq1eq" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_5.png" id="14_jvhfj"]
 [ext_resource type="Texture2D" uid="uid://c47is26nrvf1s" path="res://assets/novas_imagens/buttons/button_trigger.png" id="16_jvhfj"]
 [ext_resource type="Texture2D" uid="uid://b8xm3n05un7xf" path="res://assets/novas_imagens/effects/Explosion/1.png" id="16_m47l0"]
 [ext_resource type="Texture2D" uid="uid://dlowt45jrflns" path="res://assets/novas_imagens/effects/Explosion/3.png" id="17_doy81"]
 [ext_resource type="Texture2D" uid="uid://cn553mn1ycaas" path="res://assets/novas_imagens/buttons/mouse_trigger.png" id="17_xpqs8"]
+[ext_resource type="Texture2D" uid="uid://b1fgp6ussyeji" path="res://assets/novas_imagens/3d_battle/segurando_arma_3d_uma_mao.png" id="21_yndem"]
 [ext_resource type="AudioStream" uid="uid://clwe6bwguowon" path="res://assets/novos_audios/hurt_sound_3d.mp3" id="22_ievb8"]
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bet6o"]
-animation = &"Casual_Walk"
+[ext_resource type="AudioStream" uid="uid://b0mccquxgce6d" path="res://assets/novos_audios/motorcycle_sound.mp3" id="25_pti3k"]
+[ext_resource type="AudioStream" uid="uid://c21fjct4a2rfb" path="res://assets/novos_audios/modo_acelerando.mp3" id="26_yndem"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_6h74x"]
 animation = &"Walking"
@@ -53,29 +54,12 @@ xfade_time = 0.2
 switch_mode = 2
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_elhv1"]
-xfade_time = 0.2
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_e4f44"]
-xfade_time = 0.2
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7qlvo"]
-xfade_time = 0.2
-switch_mode = 2
-advance_mode = 2
-
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_bet6o"]
-states/dead/node = SubResource("AnimationNodeAnimation_bet6o")
-states/dead/position = Vector2(478, 42)
 states/idle/node = SubResource("AnimationNodeAnimation_6h74x")
 states/idle/position = Vector2(325, 160)
 states/run/node = SubResource("AnimationNodeAnimation_owhm4")
 states/run/position = Vector2(614, 160)
-transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_pti3k"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_yndem"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_nk7om"), "idle", "dead", SubResource("AnimationNodeStateMachineTransition_elhv1"), "run", "dead", SubResource("AnimationNodeStateMachineTransition_e4f44"), "dead", "End", SubResource("AnimationNodeStateMachineTransition_7qlvo")]
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_pti3k"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_yndem"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_nk7om")]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3h2cw"]
 resource_name = "Material_1"
@@ -3037,9 +3021,6 @@ _data = {
 &"Walking": SubResource("Animation_njav3")
 }
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pti3k"]
-animation = &"Walking"
-
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_yndem"]
 animation = &"Casual_Walk"
 
@@ -3061,28 +3042,12 @@ xfade_time = 0.2
 switch_mode = 2
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fbcau"]
-xfade_time = 0.2
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mwhgs"]
-xfade_time = 0.2
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_01a3d"]
-switch_mode = 2
-advance_mode = 2
-
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_0e2ag"]
-states/dead/node = SubResource("AnimationNodeAnimation_pti3k")
-states/dead/position = Vector2(487, 42)
 states/idle/node = SubResource("AnimationNodeAnimation_yndem")
 states/idle/position = Vector2(360, 167)
 states/run/node = SubResource("AnimationNodeAnimation_nk7om")
 states/run/position = Vector2(573, 157)
-transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_o6ctg"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_p8tpw"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_csxxf"), "idle", "dead", SubResource("AnimationNodeStateMachineTransition_fbcau"), "run", "dead", SubResource("AnimationNodeStateMachineTransition_mwhgs"), "dead", "End", SubResource("AnimationNodeStateMachineTransition_01a3d")]
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_o6ctg"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_p8tpw"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_csxxf")]
 graph_offset = Vector2(-61, -6.1152267)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mwhgs"]
@@ -3330,6 +3295,58 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_01a3d"]
+atlas = ExtResource("12_owhm4")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0e2ag"]
+atlas = ExtResource("12_owhm4")
+region = Rect2(0, 4, 500, 496)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1i6hd"]
+atlas = ExtResource("12_owhm4")
+region = Rect2(0, 8, 500, 492)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qs4bo"]
+atlas = ExtResource("12_owhm4")
+region = Rect2(0, 12, 500, 488)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u35kw"]
+atlas = ExtResource("12_owhm4")
+region = Rect2(0, 16, 500, 484)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mtddw"]
+animations = [{
+"frames": [{
+"duration": 0.01,
+"texture": SubResource("AtlasTexture_01a3d")
+}, {
+"duration": 0.01,
+"texture": SubResource("AtlasTexture_0e2ag")
+}, {
+"duration": 0.01,
+"texture": SubResource("AtlasTexture_1i6hd")
+}, {
+"duration": 0.01,
+"texture": SubResource("AtlasTexture_qs4bo")
+}, {
+"duration": 0.01,
+"texture": SubResource("AtlasTexture_u35kw")
+}, {
+"duration": 0.01,
+"texture": SubResource("AtlasTexture_qs4bo")
+}, {
+"duration": 0.01,
+"texture": SubResource("AtlasTexture_1i6hd")
+}, {
+"duration": 0.01,
+"texture": SubResource("AtlasTexture_0e2ag")
+}],
+"loop": true,
+"name": &"moto",
+"speed": 5.0
+}]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_s4l0a"]
 atlas = ExtResource("8_y4gmr")
 region = Rect2(0, 0, 32, 32)
@@ -3499,6 +3516,138 @@ animations = [{
 "texture": SubResource("AtlasTexture_8in0v")
 }],
 "loop": false,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mtddw"]
+atlas = ExtResource("21_yndem")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n46ji"]
+atlas = ExtResource("21_yndem")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ld7rd"]
+atlas = ExtResource("21_yndem")
+region = Rect2(0, 4, 500, 496)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qlmdp"]
+atlas = ExtResource("21_yndem")
+region = Rect2(0, 8, 500, 492)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ycn8"]
+atlas = ExtResource("21_yndem")
+region = Rect2(0, 12, 500, 488)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ykxx5"]
+atlas = ExtResource("21_yndem")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cunxc"]
+atlas = ExtResource("21_yndem")
+region = Rect2(0, 4, 500, 496)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_joi5o"]
+atlas = ExtResource("21_yndem")
+region = Rect2(0, 8, 500, 492)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2crhr"]
+atlas = ExtResource("21_yndem")
+region = Rect2(0, 12, 500, 488)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_14nyc"]
+atlas = ExtResource("21_yndem")
+region = Rect2(0, 16, 500, 484)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_nxdkf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mtddw")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.41,
+"texture": ExtResource("10_fakjw")
+}, {
+"duration": 0.41,
+"texture": ExtResource("11_1she0")
+}, {
+"duration": 0.41,
+"texture": ExtResource("11_1she0")
+}, {
+"duration": 0.41,
+"texture": ExtResource("13_doy81")
+}, {
+"duration": 0.41,
+"texture": ExtResource("13_doy81")
+}, {
+"duration": 0.41,
+"texture": ExtResource("14_jvhfj")
+}, {
+"duration": 0.41,
+"texture": ExtResource("12_m47l0")
+}, {
+"duration": 0.41,
+"texture": ExtResource("10_fakjw")
+}],
+"loop": false,
+"name": &"reload",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_n46ji")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_ld7rd")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_qlmdp")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_1ycn8")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_qlmdp")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_ld7rd")
+}],
+"loop": false,
+"name": &"shoot",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_ykxx5")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_cunxc")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_joi5o")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_2crhr")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_14nyc")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_2crhr")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_joi5o")
+}, {
+"duration": 0.41,
+"texture": SubResource("AtlasTexture_cunxc")
+}],
+"loop": true,
 "name": &"walk",
 "speed": 5.0
 }]
@@ -4322,50 +4471,6 @@ script = ExtResource("1_fvdyg")
 [node name="maycon_3d_model_ia_animations" parent="CharacterBody3D" instance=ExtResource("2_str34")]
 transform = Transform3D(-0.98718643, 0, 0.110399276, 0, 0.99058217, 0, -0.15957099, 0, -0.6829855, -0.0010200542, -0.88397217, -0.048545733)
 
-[node name="Skeleton3D" parent="CharacterBody3D/maycon_3d_model_ia_animations/Armature" index="0"]
-bones/0/position = Vector3(-0.998613, 69.93983, 3.164774)
-bones/0/rotation = Quaternion(0.61213285, -0.3259148, -0.022692755, -0.72010976)
-bones/0/scale = Vector3(1.0000001, 1.0000002, 1)
-bones/1/position = Vector3(12.810268, -5.5912466, 0.16389285)
-bones/1/rotation = Quaternion(-0.91387403, 0.118081145, -0.20468648, 0.33014342)
-bones/2/position = Vector3(-2.0410052e-06, 27.136177, -8.448967e-08)
-bones/2/rotation = Quaternion(0.28237805, 0.037168764, -0.010358335, 0.9585269)
-bones/3/position = Vector3(-1.0522166e-07, 36.851994, -1.4435085e-06)
-bones/3/rotation = Quaternion(-0.32860884, -0.031585593, -0.05353369, 0.94241863)
-bones/4/rotation = Quaternion(-0.41576955, -0.05515357, -0.0065531535, 0.90777254)
-bones/5/rotation = Quaternion(-0.5908065, 0.07290232, -0.3858958, 0.7047819)
-bones/6/rotation = Quaternion(0.79625165, -0.022377033, 0.099732175, 0.5962684)
-bones/7/rotation = Quaternion(-0.28365147, 0.017786821, -0.022508428, 0.9584983)
-bones/8/rotation = Quaternion(-0.43939757, 0.091177404, -0.008780453, 0.8936103)
-bones/9/rotation = Quaternion(0.857496, -0.30304503, 0.08308378, 0.40738362)
-bones/10/position = Vector3(-6.4263986e-08, 16.340004, -1.9269064e-06)
-bones/10/rotation = Quaternion(0.056868453, 0.14442402, -0.039007984, 0.98711)
-bones/11/position = Vector3(5.3285333e-07, 16.339981, 8.3089035e-06)
-bones/11/rotation = Quaternion(-0.03194222, -0.008841235, 0.004594437, 0.9994401)
-bones/12/position = Vector3(4.2359896, 5.2202973, -0.3022444)
-bones/12/rotation = Quaternion(0.49452427, 0.5993037, -0.42769197, 0.4619096)
-bones/13/position = Vector3(4.5451297e-06, 17.374582, -6.3585503e-07)
-bones/13/rotation = Quaternion(0.47563824, 0.709974, 0.36111984, 0.37322614)
-bones/14/position = Vector3(1.6582935e-06, 25.14006, 3.2474475e-06)
-bones/14/rotation = Quaternion(-0.21471946, 0.04828767, 0.09167368, 0.97116417)
-bones/15/position = Vector3(-1.3117487e-06, 21.534628, -8.614761e-06)
-bones/15/rotation = Quaternion(0.015903702, -0.044248886, 0.31831455, 0.9468184)
-bones/16/position = Vector3(-4.086553, 3.6015103, -0.72748524)
-bones/16/rotation = Quaternion(-0.4641276, 0.59853673, -0.34729278, -0.55292594)
-bones/17/position = Vector3(-1.436898e-06, 16.162207, -1.7826551e-07)
-bones/17/rotation = Quaternion(0.27670598, -0.1179363, -0.4958474, 0.8146534)
-bones/18/position = Vector3(-2.5966106e-06, 24.342646, -3.8209764e-06)
-bones/18/rotation = Quaternion(-0.7678449, -0.13459644, -0.1980671, 0.5941948)
-bones/19/position = Vector3(5.1274305e-06, 20.717552, 6.3345615e-06)
-bones/19/rotation = Quaternion(0.06939235, -0.5210627, -0.026240613, 0.85028815)
-bones/20/position = Vector3(-0.14943175, 14.142031, 1.0296719)
-bones/20/rotation = Quaternion(-0.073123455, 0.010750811, 0.046720438, 0.99617004)
-bones/21/position = Vector3(-1.4420149e-06, 6.829415, 2.5112438e-06)
-bones/21/rotation = Quaternion(0.32534003, -0.07739868, 0.024564192, 0.9421041)
-bones/22/position = Vector3(0.113591745, 18.27721, -11.145918)
-bones/22/rotation = Quaternion(-0.27039453, 1.1852411e-09, -0.0027557458, 0.96274567)
-bones/23/rotation = Quaternion(0.33377934, 4.9290165e-08, 0.0034016836, 0.94264513)
-
 [node name="AnimationTree" type="AnimationTree" parent="CharacterBody3D/maycon_3d_model_ia_animations"]
 tree_root = SubResource("AnimationNodeStateMachine_bet6o")
 anim_player = NodePath("../AnimationPlayer")
@@ -4560,12 +4665,23 @@ libraries = {
 tree_root = SubResource("AnimationNodeStateMachine_0e2ag")
 anim_player = NodePath("../AnimationPlayer")
 
+[node name="farol_moto_cigarro" type="SpotLight3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36920166, -0.8621521)
+visible = false
+light_energy = 16.0
+light_indirect_energy = 3.824
+light_volumetric_fog_energy = 5.141
+light_specular = 2.947
+shadow_enabled = true
+distance_fade_enabled = true
+spot_range = 45.0
+
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.38232422)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6043091, -0.48493958)
 current = true
 
 [node name="RayCast3D" type="RayCast3D" parent="CharacterBody3D/Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6887436, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5990372, 0)
 target_position = Vector3(0, 0, -2000)
 collision_mask = 520
 collide_with_areas = true
@@ -4648,6 +4764,39 @@ sprite_frames = SubResource("SpriteFrames_5yci6")
 animation = &"idle"
 autoplay = "idle"
 
+[node name="control_moto" type="Control" parent="CharacterBody3D/hud_canvas"]
+visible = false
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -549.0
+offset_top = -670.0
+offset_right = -549.0
+offset_bottom = -670.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="moto" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_moto"]
+position = Vector2(543.00006, 584)
+scale = Vector2(0.928, 0.886)
+sprite_frames = SubResource("SpriteFrames_mtddw")
+animation = &"moto"
+autoplay = "moto"
+frame_progress = 0.9826667
+
+[node name="ModoAcelerando" type="AudioStreamPlayer" parent="CharacterBody3D/hud_canvas/control_moto"]
+stream = ExtResource("26_yndem")
+pitch_scale = 0.79
+
+[node name="moto_parada" type="AudioStreamPlayer" parent="CharacterBody3D/hud_canvas/control_moto"]
+stream = ExtResource("25_pti3k")
+volume_db = -7.505
+pitch_scale = 0.84
+parameters/looping = true
+
 [node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas"]
 visible = false
 layout_mode = 3
@@ -4680,9 +4829,17 @@ frame = 8
 frame_progress = 1.0
 
 [node name="arma_sprite" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
+visible = false
 position = Vector2(389, 330)
 scale = Vector2(0.81, 0.774)
 sprite_frames = SubResource("SpriteFrames_xqtj4")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="arma_sprite_uma_mao" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
+position = Vector2(389, 330)
+scale = Vector2(0.81, 0.774)
+sprite_frames = SubResource("SpriteFrames_nxdkf")
 animation = &"idle"
 autoplay = "idle"
 
@@ -4793,7 +4950,9 @@ parameters/looping = false
 [connection signal="animation_finished" from="CharacterBody3D/Camera3D/animacao" to="CharacterBody3D" method="_on_animacao_animation_finished"]
 [connection signal="animation_finished" from="CharacterBody3D/Camera3D/animacao_player_2" to="CharacterBody3D" method="_on_animacao_player_2_animation_finished"]
 [connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_lamp/lamp" to="CharacterBody3D" method="_on_lamp_animation_finished"]
+[connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_moto/moto" to="CharacterBody3D" method="_on_lamp_animation_finished"]
 [connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_gun/gun/arma_sprite" to="CharacterBody3D" method="_on_animated_sprite_2d_animation_finished"]
+[connection signal="animation_finished" from="CharacterBody3D/hud_canvas/control_gun/gun/arma_sprite_uma_mao" to="CharacterBody3D" method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="animation_changed" from="CharacterBody3D/hud_canvas/maycon_hp/hp_1" to="CharacterBody3D/hud_canvas/maycon_hp/hp_1" method="_on_animation_changed"]
 [connection signal="animation_finished" from="CharacterBody3D/hud_canvas/maycon_hp/hp_1" to="CharacterBody3D/hud_canvas/maycon_hp/hp_1" method="_on_animation_finished"]
 [connection signal="animation_changed" from="CharacterBody3D/hud_canvas/maycon_hp/hp_2" to="CharacterBody3D/hud_canvas/maycon_hp/hp_2" method="_on_animation_changed"]

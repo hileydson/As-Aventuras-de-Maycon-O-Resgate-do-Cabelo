@@ -1,0 +1,69 @@
+extends Node3D
+
+@onready var control: Control = $Control
+@onready var close: Button = $Control/VBoxContainer/close
+@onready var quit: Button = $Control/VBoxContainer/quit
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	set_process_mode(Node.PROCESS_MODE_ALWAYS)
+	
+	if Global.default_language == Global.language_pt_br:
+		quit.text = "Sair"
+		close.text = "Fechar"
+	else:
+		quit.text = "Quit"
+		close.text = "Close"
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	
+	#NAO DEIXA O SEGUNDO CONTROLE PARAR A PARTIDA NO PRIMEIRO START - DAI DEPOIS SIM
+	if (Input.is_action_just_pressed("ui_cancel") and !Input.is_joy_button_pressed(1, JOY_BUTTON_START)) or (Input.is_action_just_pressed("ui_cancel") and Input.is_joy_button_pressed(1, JOY_BUTTON_START) and Global.is_two_player_active):
+		processa_pause_unpause()
+
+
+
+
+func processa_pause_unpause()->void:
+	var player = get_tree().get_first_node_in_group("player")
+	player.get_node("hud_canvas").get_node("control_gun").visible = false
+	player.get_node("hud_canvas").get_node("control_lamp").visible = false
+	
+	if get_tree().paused:
+		if player:
+			player.get_node("hud_canvas").get_node("control_moto").visible = true
+			$"../maycon_3d/CharacterBody3D/mapa_maycon".visible = false
+			$"../cabelo/mapa_cabelo".visible = false
+		
+		if $camera_pause:
+			$camera_pause.current = false	
+			$luz_mapa.visible = false
+			
+		control.visible = false
+		get_tree().paused = false
+	else:
+		if player:
+			player.get_node("hud_canvas").get_node("control_moto").visible = false
+			$"../maycon_3d/CharacterBody3D/mapa_maycon".visible = true
+			$"../cabelo/mapa_cabelo".visible = true
+		
+		if $camera_pause:
+			$camera_pause.make_current()
+			$luz_mapa.visible = true
+		
+		close.grab_focus()
+		control.visible = true
+		get_tree().paused = true
+		
+		
+func _on_close_pressed() -> void:
+	processa_pause_unpause()
+
+
+func _on_quit_pressed() -> void:
+	GameSongs.stop(1)
+	Global.back_to_main_camera = true
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")

@@ -1,0 +1,58 @@
+[gd_scene load_steps=6 format=3 uid="uid://bavgd1kxocp5e"]
+
+[ext_resource type="Script" uid="uid://c1olx6sv1qehb" path="res://scripts/balao_conversa.gd" id="1_7enc1"]
+[ext_resource type="AudioStream" uid="uid://c7pnjesmk0lih" path="res://assets/novos_audios/balao_conversa.mp3" id="2_3taxc"]
+[ext_resource type="Texture2D" uid="uid://clkgb4q1xsqpt" path="res://assets/novas_imagens/inimigos/balao_conversa.png" id="2_s3uew"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_647pf"]
+atlas = ExtResource("2_s3uew")
+region = Rect2(0, 227, 274, 227)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_chjw5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_647pf")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = ExtResource("1_7enc1")
+
+[node name="Panel" type="Panel" parent="."]
+offset_right = 178.0
+offset_bottom = 110.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Panel"]
+modulate = Color(0.8474667, 0.8474667, 0.8474667, 1)
+position = Vector2(96, 77)
+scale = Vector2(1.0474453, 1.0462555)
+sprite_frames = SubResource("SpriteFrames_chjw5")
+autoplay = "default"
+flip_h = true
+
+[node name="ColorRect" type="ColorRect" parent="Panel"]
+visible = false
+layout_mode = 0
+offset_right = 176.0
+offset_bottom = 110.0
+color = Color(1, 1, 1, 0.42745098)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Panel"]
+layout_mode = 0
+offset_right = 174.0
+offset_bottom = 107.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Panel"]
+stream = ExtResource("2_3taxc")
+volume_db = -6.433
+pitch_scale = 0.3
+
+[node name="Timer" type="Timer" parent="Panel"]
+wait_time = 0.05
+
+[connection signal="timeout" from="Panel/Timer" to="." method="_on_timer_timeout"]
