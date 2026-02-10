@@ -282,7 +282,6 @@ func _on_lamp_animation_finished() -> void:
 
 func _on_animacao_animation_finished() -> void:
 	animacao.play("idle")
-	animation_tree_playback.stop
 	animation_tree_playback.travel("idle")
 
 
