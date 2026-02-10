@@ -52,17 +52,17 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	
 	#CHAMA BALAOZINHO
 	balao_ = preload("res://scenes/balao_conversa.tscn").instantiate()
-	balao_marker.add_child(balao_)
-	
 	if Global.default_language == Global.language_pt_br:
 		balao_.falas = ["...", "Como seu melhor amigo do coração!", "Venho te ajudar!", "Sei que está nessa busca pelo Cabelo!", "Confio em você Maycon!", "O Olindão largou ele em algum lugar da cidade", "Tome cuidado com a gasolina!", "Sei que na cidade tem um posto!", "Caso esteja com pouca gasolina vá lá!", "É logo ao sair da ponto!", "Boa sorte amigo!!"]
 	else:
 		balao_.falas = ["...", "As your best friend!", "I'm here to help you!", "I know you're on this quest for Cabelo!", "I trust you, Maycon!", "Olindão left him somewhere in the city", "Be careful with the gas!", "I know there's a gas station in town!", "If you're low on gas, go there!", "It's right after you leave the bus stop!", "Good luck, my friend!!"]
 	
-	
-	
 	#PEGAR O SINAL FINAL DE CONVERSA E FADEOUT
 	balao_.conversa_terminou.connect(terminou_ultimo_dialogo)
+	
+	balao_marker.add_child(balao_)
+	
+	
 	
 
 func terminou_ultimo_dialogo()->void:
