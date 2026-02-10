@@ -4785,15 +4785,16 @@ scale = Vector2(0.928, 0.886)
 sprite_frames = SubResource("SpriteFrames_mtddw")
 animation = &"moto"
 autoplay = "moto"
-frame_progress = 0.9826667
+frame_progress = 1.0
 
 [node name="ModoAcelerando" type="AudioStreamPlayer" parent="CharacterBody3D/hud_canvas/control_moto"]
 stream = ExtResource("26_yndem")
+volume_db = 1.072
 pitch_scale = 0.79
 
 [node name="moto_parada" type="AudioStreamPlayer" parent="CharacterBody3D/hud_canvas/control_moto"]
 stream = ExtResource("25_pti3k")
-volume_db = -7.505
+volume_db = -8.577
 pitch_scale = 0.84
 parameters/looping = true
 

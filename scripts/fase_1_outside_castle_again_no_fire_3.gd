@@ -16,6 +16,7 @@ extends Sprite2D
 
 var balao_
 
+var next_scene = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
@@ -33,7 +34,10 @@ func _ready() -> void:
 		animacoes.play("maycon_back_to_fase")
 		await get_tree().create_timer(1.0).timeout
 
-
+func _process(delta: float) -> void:
+	if next_scene:
+		next_scene = false
+		get_tree().change_scene_to_file("res://scenes/3D/last_fight_before_end.tscn")
 
 func _on_next_scene_body_entered(body: Node2D) -> void:
 	maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
@@ -42,6 +46,8 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	await get_tree().create_timer(2.0).timeout 
 	camera_apresentacao.make_current()
 	apresentacao_pra_cidade.visible = true
+	#maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
+	maycon_fase.queue_free()
 	await get_tree().create_timer(2.0).timeout 
 	
 	#CHAMA BALAOZINHO
@@ -53,9 +59,17 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	else:
 		balao_.falas = ["...", "As your best friend!", "I'm here to help you!", "I know you're on this quest for Cabelo!", "I trust you, Maycon!", "Olindão left him somewhere in the city", "Be careful with the gas!", "I know there's a gas station in town!", "If you're low on gas, go there!", "It's right after you leave the bus stop!", "Good luck, my friend!!"]
 	
-	maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
-	get_tree().change_scene_to_file("res://scenes/3D/last_fight_before_end.tscn")
+	
+	
+	#PEGAR O SINAL FINAL DE CONVERSA E FADEOUT
+	balao_.conversa_terminou.connect(terminou_ultimo_dialogo)
+	
 
+func terminou_ultimo_dialogo()->void:
+	fade.get_node("Transition").play("fade_out")
+	await get_tree().create_timer(2.0).timeout 
+	next_scene = true
+	
 	
 func _on_dead_line_body_entered(body: Node2D) -> void:
 	get_tree().reload_current_scene()

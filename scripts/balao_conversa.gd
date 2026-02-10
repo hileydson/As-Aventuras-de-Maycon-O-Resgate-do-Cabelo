@@ -9,6 +9,8 @@ var falas: Array = ["..."]
 var fala_atual: int = 0
 var terminando_frase: bool = false
 
+signal conversa_terminou
+
 func _ready():
 	exibir_fala()
 
@@ -46,6 +48,7 @@ func exibir_fala():
 		label.visible_ratio = 0.0 # Esconde o texto
 		timer.start(0.05) # Velocidade das letras (menor = mais rápido)
 	else:
+		conversa_terminou.emit()
 		queue_free() # Fecha o balão quando acabarem as falas
 
 func proxima_fala():

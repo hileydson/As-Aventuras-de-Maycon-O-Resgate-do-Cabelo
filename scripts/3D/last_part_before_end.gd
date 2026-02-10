@@ -1,12 +1,18 @@
 extends Node3D
 @onready var maycon_3d: Node3D = $maycon_3d
 @onready var fade: Node2D = $fade
+@onready var cidade_perdida: Label = $cidade_perdida
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	#seta final do game para pegar equipar a moto
 	get_tree().get_first_node_in_group("player").set_final_game()
+	
+	await get_tree().create_timer(2.0).timeout 
+	cidade_perdida.visible = true
+	await get_tree().create_timer(3.0).timeout 
+	cidade_perdida.visible = false
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
