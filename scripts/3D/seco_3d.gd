@@ -40,10 +40,10 @@ func _on_timer_enemy_attack_timeout() -> void:
 	growl_2.play()
 	animated_sprite_3d.play("power_attack_1")
 	animation_tree.get("parameters/playback").travel("attack_1") #.get_node("AnimationPlayer").play("Slow_Orc_Walk")
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.6).timeout
 	disparar_onda()
-	await get_tree().create_timer(1.0).timeout
-	animation_tree.get("parameters/playback").travel("idle_slow_walk") #.get_node("AnimationPlayer").play("Walking")
+	#await get_tree().create_timer(1.0).timeout
+	#animation_tree.get("parameters/playback").travel("idle_slow_walk") #.get_node("AnimationPlayer").play("Walking")
 
 
 func _on_animated_sprite_3d_animation_finished() -> void:

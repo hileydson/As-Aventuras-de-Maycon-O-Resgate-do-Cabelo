@@ -118,6 +118,8 @@ func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)                                                                                               
 	
+	danos_count = 0
+	
 	#seta o nome para o caso de single player... se for two palyers tem um rename
 	#if Global.is_two_player_active==false:
 	#	self.name = "Maycon"
@@ -266,7 +268,7 @@ func _physics_process(delta):
 		velocity += get_gravity() * delta
 
 	# Pulo (Bloqueado na moto)
-	var apertou_pulo = Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) 
+	var apertou_pulo = Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) or Input.is_key_pressed(KEY_SPACE)
 	if apertou_pulo and is_on_floor() and not on_moto:
 		velocity.y = JUMP_VELOCITY
 		jump.play()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://cj2glpmry1pkv"]
+[gd_scene load_steps=38 format=3 uid="uid://cj2glpmry1pkv"]
 
 [ext_resource type="Script" uid="uid://lhs7w1lfxh4w" path="res://scripts/3D/seco_3d.gd" id="1_ml58b"]
 [ext_resource type="AudioStream" uid="uid://winmr31cwh05" path="res://assets/novos_audios/growl_1.mp3" id="2_0wdaf"]
@@ -146,30 +146,25 @@ xfade_time = 0.2
 switch_mode = 2
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_lgfgi"]
-switch_mode = 2
-advance_mode = 2
-
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_rob6r"]
 xfade_time = 0.2
 switch_mode = 2
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_vy1jm"]
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1ycbj"]
 xfade_time = 0.2
 switch_mode = 2
-advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_rob6r"]
 states/End/position = Vector2(677, 107)
-states/Start/position = Vector2(145, 75)
+states/Start/position = Vector2(102, 40)
 states/attack_1/node = SubResource("AnimationNodeAnimation_lgfgi")
-states/attack_1/position = Vector2(498, 65)
+states/attack_1/position = Vector2(386, 52)
 states/idle_slow_walk/node = SubResource("AnimationNodeAnimation_tbidp")
 states/idle_slow_walk/position = Vector2(554, 174)
 states/scream/node = SubResource("AnimationNodeAnimation_pbgpm")
 states/scream/position = Vector2(211, 174)
-transitions = ["Start", "scream", SubResource("AnimationNodeStateMachineTransition_pbgpm"), "scream", "idle_slow_walk", SubResource("AnimationNodeStateMachineTransition_tbidp"), "idle_slow_walk", "End", SubResource("AnimationNodeStateMachineTransition_lgfgi"), "idle_slow_walk", "attack_1", SubResource("AnimationNodeStateMachineTransition_rob6r"), "attack_1", "idle_slow_walk", SubResource("AnimationNodeStateMachineTransition_vy1jm")]
+transitions = ["Start", "scream", SubResource("AnimationNodeStateMachineTransition_pbgpm"), "scream", "idle_slow_walk", SubResource("AnimationNodeStateMachineTransition_tbidp"), "attack_1", "idle_slow_walk", SubResource("AnimationNodeStateMachineTransition_rob6r"), "Start", "attack_1", SubResource("AnimationNodeStateMachineTransition_1ycbj")]
 
 [node name="seco_3d" type="Node3D"]
 

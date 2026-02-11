@@ -41,6 +41,9 @@ func _process(delta: float) -> void:
 
 
 func load_3d()->void:
+	var scene_alive = get_tree().get_first_node_in_group("two_layers_fps_mode")
+	if scene_alive:
+		scene_alive.queue_free()
 	get_tree().change_scene_to_file("res://scenes/3D/world_3d.tscn")
 
 func _on_next_scene_body_entered(body: Node2D) -> void:	

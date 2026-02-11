@@ -41,10 +41,16 @@ func ativar_segunda_tela():
 func _ready():
 	Global.is_two_player_active = false
 	cigarro_apresenta.visible = false	
+	p2_ativado = false 
+	
 	
 	#setup chamada player 2
 	if p2_ativado==false:
 		hud_player_2_start.visible = true
+	
+	#limpa as anteriores
+	for child in viewport1.get_children():
+		child.queue_free()
 	
 	# Inicialização do mundo
 		#chama o world por demanda
@@ -52,6 +58,7 @@ func _ready():
 		world_instance = world_scene_caminho_das_pedras.instantiate()
 	else:
 		world_instance = world_scene.instantiate()
+	
 	
 	viewport1.add_child(world_instance)
 	

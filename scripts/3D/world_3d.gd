@@ -79,6 +79,7 @@ func _ready() -> void:
 	respaw.start()
 
 func maycon_died()->void:
+	Global.players_dead_count = 0
 	if Global.default_language != Global.language_en:
 			you_died.text = "VOCÊ MORREU!"
 	you_died.visible = true
