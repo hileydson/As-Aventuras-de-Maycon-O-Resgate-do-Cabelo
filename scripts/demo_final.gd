@@ -4,14 +4,16 @@ extends Sprite2D
 @onready var end_demo_thanks: Label = $end_demo_thanks
 @onready var label: Label = $Label
 
-
+var time_to_skip:bool = false
+func _ready() -> void:
+	await get_tree().create_timer(25.0).timeout 
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	#pra VOLTAR do inicio
-	await get_tree().create_timer(25.0).timeout 
-	if Input.is_action_just_pressed("ui_accept"):
+	#pra tela inicial
+	if time_to_skip and Input.is_action_just_pressed("ui_accept"):
 		get_tree().change_scene_to_file("res://scenes/menu.tscn")
 	
 
@@ -30,8 +32,7 @@ func _on_node_2d_ready() -> void:
 	end_demo_thanks.visible = true
 	
 	
-	
-	
-	
-	
-	
+
+func _on_end_movie_animation_finished(anim_name: StringName) -> void:
+	if anim_name == "the_end":
+		get_tree().change_scene_to_file("res://scenes/menu.tscn")

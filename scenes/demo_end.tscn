@@ -246,10 +246,58 @@ tracks/5/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("take_3:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("take_credits:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("take_credits/credits:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("take_credits/RichTextLabel:position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(187, 853)]
+}
 
 [sub_resource type="Animation" id="Animation_hvkwn"]
 resource_name = "the_end"
-length = 30.0
+length = 60.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -281,10 +329,10 @@ tracks/2/path = NodePath("take_3:modulate")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(16.066668, 26),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(16.066668, 26, 29.666666),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -341,10 +389,46 @@ tracks/7/path = NodePath("take_moto:modulate")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0.033333335, 6.5666666, 8.933333),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0.033333335, 6.5666666, 8.933333, 24.966667, 29.666666),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.59607846), Color(1, 1, 1, 1)]
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.59607846), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("take_credits:visible")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0.033333335, 26),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("take_credits/credits:modulate")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(25, 29.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("take_credits/RichTextLabel:position")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(29.522646, 44, 47.5, 59.833332),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(204, 820), Vector2(208, -695), Vector2(208, -695), Vector2(209, -1315)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_42jx3"]
@@ -461,6 +545,69 @@ pitch_scale = 0.84
 autoplay = true
 parameters/looping = true
 
+[node name="take_credits" type="Node2D" parent="."]
+visible = false
+
+[node name="credits" type="ColorRect" parent="take_credits"]
+offset_left = -81.0
+offset_top = -71.0
+offset_right = 1357.0
+offset_bottom = 695.0
+color = Color(0, 0, 0, 1)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="take_credits"]
+offset_left = 187.0
+offset_top = 853.0
+offset_right = 949.0
+offset_bottom = 1983.0
+text = "Créditos
+
+
+
+
+Desenvolvedor: Hileydson Luiz Cogo
+
+Arte 2D: 		Léo London
+				Amigo Gemini
+
+Arte 3D: 		Hileydson Luiz Cogo 
+				Free Stuff Online
+
+Game Design:	Hileydson Luiz Cogo 
+
+Direção:		Hileydson Luiz Cogo 
+
+Áudio:			Hileydson Luiz Cogo 
+
+SFX:			Hileydson Luiz Cogo 
+
+Música:			Hileydson Luiz Cogo 
+				Amigo Gemini
+
+Engine:			Godot
+
+3D Model:		Blender
+
+Plugin:			Terrian3d
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Queria agredecer minha linda esposa por me apoiar
+
+Quero reclamar da Driely que me ligava sempre que tava ocupado"
+horizontal_alignment = 1
+
 [node name="end_movie" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_42jx3")
@@ -468,3 +615,4 @@ libraries = {
 autoplay = "the_end"
 
 [connection signal="ready" from="." to="Fase1BeforeCastle" method="_on_node_2d_ready"]
+[connection signal="animation_finished" from="end_movie" to="Fase1BeforeCastle" method="_on_end_movie_animation_finished"]
