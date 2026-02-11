@@ -157,6 +157,10 @@ func levou_dano(dano:int)->void:
 
 
 func _physics_process(delta):
+	
+	if Global.in_cutscene:
+		return
+	
 	# --- 1. CONFIGURAÇÕES TÉCNICAS E HUD ---
 	if Global.is_two_player_active:
 		gun.global_position = $hud_canvas/gun_position_2_players.global_position
