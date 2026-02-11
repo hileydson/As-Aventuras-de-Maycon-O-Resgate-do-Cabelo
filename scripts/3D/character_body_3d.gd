@@ -248,11 +248,13 @@ func _physics_process(delta):
 			velocity.x = move_toward(velocity.x, target_vel.x, 12.0 * delta)
 			velocity.z = move_toward(velocity.z, target_vel.z, 12.0 * delta)
 			if !moto_acelerando.is_playing():moto_acelerando.play()
+			Input.start_joy_vibration(device_id, 0.2, 0.1, 0.1)
 		elif l2_re > 0.1:
 			# RÉ (Mais devagar, até 10)
 			var target_vel = -forward_dir * 10.0
 			velocity.x = move_toward(velocity.x, target_vel.x, 6.0 * delta)
 			velocity.z = move_toward(velocity.z, target_vel.z, 6.0 * delta)
+			Input.start_joy_vibration(device_id, 0.08, 0.1, 0.1)
 		else:
 			# DESACELERAÇÃO (Fricção)
 			velocity.x = move_toward(velocity.x, 0, 8.0 * delta)
