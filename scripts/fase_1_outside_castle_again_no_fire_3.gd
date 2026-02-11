@@ -1,16 +1,12 @@
 extends Sprite2D
 
 @onready var animacoes: AnimationPlayer = $animacoes
-@onready var maycon_falling: AnimatedSprite2D = $maycon_falling
 @onready var camera: Camera2D = $maycon_fase/Camera2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
-@onready var fase_1_before_castle: Sprite2D = $"."
-@onready var mk_dudun: AudioStreamPlayer = $MkDudun
 @onready var fade: Node2D = $"../fade"
 @onready var apresentacao_pra_cidade: Node2D = $"../apresentacao_pra_cidade"
 @onready var camera_apresentacao: Camera2D = $"../apresentacao_pra_cidade/camera_apresentacao"
 @onready var balao_marker: Marker2D = $"../cigarro/balao"
-@onready var maycon_itens: Node2D = $"../maycon_itens"
 @onready var color_rect: ColorRect = $"../apresentacao_pra_cidade/ColorRect"
 @onready var city: Label = $"../PlacaCidade/city"
 
@@ -20,6 +16,7 @@ var next_scene = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
+	get_tree().paused = false
 	
 	if Global.default_language == Global.language_pt_br:
 		city.text = "Cidade"
@@ -29,10 +26,11 @@ func _ready() -> void:
 	Global.battle_next_enemy = "0"
 	Global.battle_background = "2"
 	
-	if Global.back_to_fase == true:
-		Global.back_to_fase = false
-		animacoes.play("maycon_back_to_fase")
-		await get_tree().create_timer(1.0).timeout
+#	if Global.back_to_fase == true:
+#		Global.back_to_fase = false
+#		animacoes.play("maycon_back_to_fase")
+#		await get_tree().create_timer(1.0).timeout
+
 
 func _process(delta: float) -> void:
 	if next_scene:
