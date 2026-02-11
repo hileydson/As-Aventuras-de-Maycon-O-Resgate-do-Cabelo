@@ -1,11 +1,10 @@
-[gd_scene load_steps=50 format=3 uid="uid://dscts1war82ip"]
+[gd_scene load_steps=49 format=3 uid="uid://dscts1war82ip"]
 
 [ext_resource type="Texture2D" uid="uid://c4anaqd7mthox" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_3.png" id="1_2qpmw"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="1_u2g44"]
 [ext_resource type="Script" uid="uid://08u2yya4bxkg" path="res://scripts/fase_1_outside_castle_again_no_fire_3.gd" id="2_2qpmw"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_lq5u0"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="4_737m3"]
-[ext_resource type="PackedScene" uid="uid://143260dknkmv" path="res://scenes/inimigos/cabelo.tscn" id="7_737m3"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="7_kpgq7"]
 [ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="8_u2g44"]
 [ext_resource type="Texture2D" uid="uid://5x3arlktkuq8" path="res://assets/novas_imagens/effects/smoke_sheet.png" id="9_0pvwr"]
@@ -471,10 +470,6 @@ position = Vector2(927.78345, 1173.4918)
 rotation = -0.07896982
 shape = SubResource("RectangleShape2D_hnmna")
 
-[node name="cabelo" parent="." instance=ExtResource("7_737m3")]
-visible = false
-position = Vector2(2211, 774)
-
 [node name="FinalCabeloMistery" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_u2g44")
 pitch_scale = 1.28
@@ -530,7 +525,7 @@ autoplay = "default"
 frame_progress = 0.24538311
 
 [node name="balao" type="Marker2D" parent="cigarro" groups=["balao_conversa"]]
-position = Vector2(-244.3182, -278.84515)
+position = Vector2(-179.92426, -216.87956)
 scale = Vector2(1.8939395, 2.0655196)
 
 [node name="apresentacao_pra_cidade" type="Node2D" parent="."]
