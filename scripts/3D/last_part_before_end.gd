@@ -4,6 +4,7 @@ extends Node3D
 @onready var cidade_perdida: Label = $cidade_perdida
 @onready var cutscene_inicio: AnimationPlayer = $cutscene/cutscene_inicio
 @onready var the_almost_end_song: AudioStreamPlayer = $TheAlmostEndSong
+@onready var luz_mapa: DirectionalLight3D = $pause_3d_moto_cidade/luz_mapa
 
 
 # Called when the node enters the scene tree for the first time.
@@ -11,6 +12,7 @@ func _ready() -> void:
 	# cutscene
 	get_tree().get_first_node_in_group("player").get_node("hud_canvas").get_node("maycon_hp").visible = false
 	Global.in_cutscene = true
+	luz_mapa.visible = true
 	cutscene_inicio.play("intro_mapa")
 
 
@@ -34,6 +36,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 
 func _on_cutscene_inicio_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "intro_mapa":
+		luz_mapa.visible = false
 		#seta final do game para pegar equipar a moto
 		fade.get_node("Transition").play("fade_in")
 		var player = get_tree().get_first_node_in_group("player")
