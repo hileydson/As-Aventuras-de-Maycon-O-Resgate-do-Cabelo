@@ -29,6 +29,8 @@ extends CharacterBody3D
 @onready var moto_parada: AudioStreamPlayer = $hud_canvas/control_moto/moto_parada
 @onready var moto_acelerando: AudioStreamPlayer = $hud_canvas/control_moto/ModoAcelerando
 @onready var farol_moto_cigarro: SpotLight3D = $farol_moto_cigarro
+@onready var rain: GPUParticles3D = $chuva
+@onready var raining: AudioStreamPlayer = $Raining
 
 @export var SPEED : float = 5.0
 @export var JUMP_VELOCITY : float = 4.5
@@ -123,7 +125,14 @@ func _ready():
 	#MAYCON EH O PADRAO
 	animation_tree_playback = maycon_3d_model_ia_animations.get_node("AnimationTree").get("parameters/playback")
 
-	
+func set_rain(is_raining:bool)->void:
+	if is_raining:
+		rain.visible = true
+		#raining.play()
+	else:
+		rain.visible = false	
+		#if raining.playing:
+			#raining.stop()
 
 
 func aplicar_shake(valor: float):

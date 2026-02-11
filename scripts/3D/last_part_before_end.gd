@@ -38,4 +38,5 @@ func _on_cutscene_inicio_animation_finished(anim_name: StringName) -> void:
 		var player = get_tree().get_first_node_in_group("player")
 		player.set_final_game()
 		player.get_node("hud_canvas").get_node("maycon_hp").visible = true
+		player.set_rain(true)
 		the_almost_end_song.play()

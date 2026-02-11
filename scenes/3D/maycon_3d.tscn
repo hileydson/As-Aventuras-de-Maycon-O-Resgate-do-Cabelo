@@ -1,4 +1,4 @@
-[gd_scene load_steps=176 format=4 uid="uid://c5do17jvoskfm"]
+[gd_scene load_steps=180 format=4 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="Texture2D" uid="uid://bs67ndmklpp1b" path="res://assets/novas_imagens/maycon/maycon_falling.png" id="2_aob2u"]
@@ -32,6 +32,27 @@
 [ext_resource type="AudioStream" uid="uid://clwe6bwguowon" path="res://assets/novos_audios/hurt_sound_3d.mp3" id="22_ievb8"]
 [ext_resource type="AudioStream" uid="uid://b0mccquxgce6d" path="res://assets/novos_audios/motorcycle_sound.mp3" id="25_pti3k"]
 [ext_resource type="AudioStream" uid="uid://c21fjct4a2rfb" path="res://assets/novos_audios/modo_acelerando.mp3" id="26_yndem"]
+[ext_resource type="AudioStream" uid="uid://dc43lyrfshuje" path="res://assets/novos_audios/raining.mp3" id="28_elhv1"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_nk7om"]
+emission_shape = 3
+emission_box_extents = Vector3(20, 1, 20)
+direction = Vector3(0, -1, 0)
+initial_velocity_min = 10.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, -20, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nk7om"]
+transparency = 1
+shading_mode = 0
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_elhv1"]
+material = SubResource("StandardMaterial3D_nk7om")
+size = Vector2(0.02, 0.2)
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_6h74x"]
 animation = &"Walking"
@@ -4468,6 +4489,12 @@ collision_layer = 1033
 collision_mask = 1033
 script = ExtResource("1_fvdyg")
 
+[node name="chuva" type="GPUParticles3D" parent="CharacterBody3D"]
+transform = Transform3D(1.3829904, 0, 0, 0, 1.4637669, 0, 0, 0, 1.4273663, 0.8960018, 7.800041, -18.819576)
+amount = 4000
+process_material = SubResource("ParticleProcessMaterial_nk7om")
+draw_pass_1 = SubResource("QuadMesh_elhv1")
+
 [node name="maycon_3d_model_ia_animations" parent="CharacterBody3D" instance=ExtResource("2_str34")]
 transform = Transform3D(-0.98718643, 0, 0.110399276, 0, 0.99058217, 0, -0.15957099, 0, -0.6829855, -0.0010200542, -0.88397217, -0.048545733)
 
@@ -4681,7 +4708,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6043091, -0.48493958)
 current = true
 
 [node name="RayCast3D" type="RayCast3D" parent="CharacterBody3D/Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5990372, 0)
+transform = Transform3D(0.067362815, 0, 0, 0, 0.30156854, 0, 0, 0, 0.9027699, -7.6293945e-05, 0.23455429, 0)
 target_position = Vector3(0, 0, -2000)
 collision_mask = 520
 collide_with_areas = true
@@ -4799,7 +4826,6 @@ pitch_scale = 0.84
 parameters/looping = true
 
 [node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas"]
-visible = false
 layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
@@ -4830,7 +4856,6 @@ frame = 8
 frame_progress = 1.0
 
 [node name="arma_sprite" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
-visible = false
 position = Vector2(389, 330)
 scale = Vector2(0.81, 0.774)
 sprite_frames = SubResource("SpriteFrames_xqtj4")
@@ -4838,6 +4863,7 @@ animation = &"idle"
 autoplay = "idle"
 
 [node name="arma_sprite_uma_mao" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
+visible = false
 position = Vector2(389, 330)
 scale = Vector2(0.81, 0.774)
 sprite_frames = SubResource("SpriteFrames_nxdkf")
@@ -4846,11 +4872,11 @@ autoplay = "idle"
 
 [node name="ponto" type="Label" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
 layout_mode = 0
-offset_left = 211.0
-offset_top = 73.0
-offset_right = 251.0
-offset_bottom = 96.0
-scale = Vector2(2.2777793, 2.6133335)
+offset_left = 215.0
+offset_top = 117.0
+offset_right = 255.0
+offset_bottom = 140.0
+scale = Vector2(2.2777793, 2.293334)
 text = "."
 
 [node name="Bala" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun"]
@@ -4926,6 +4952,11 @@ position = Vector2(361, 22)
 [node name="hp_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas"]
 position = Vector2(-15, -180)
 
+[node name="Raining" type="AudioStreamPlayer" parent="CharacterBody3D"]
+stream = ExtResource("28_elhv1")
+volume_db = -5.361
+parameters/looping = true
+
 [node name="jump" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
 stream = ExtResource("2_bd24c")
 volume_db = 9.797
@@ -4937,7 +4968,7 @@ parameters/looping = false
 
 [node name="GunLoad" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
 stream = ExtResource("5_uh0k5")
-volume_db = 10.474
+volume_db = 5.113
 parameters/looping = false
 
 [node name="GunShot" type="AudioStreamPlayer2D" parent="CharacterBody3D"]

@@ -64,34 +64,16 @@ func maycon_died(two_players:bool)->void:
 	if Global.default_language != Global.language_en:
 			you_died.text = "VOCÊ MORREU!"
 	you_died.visible = true
-	
-	if two_players:
-		
-		for p in get_tree().get_nodes_in_group("player"):
-			p.process_mode = Node.PROCESS_MODE_DISABLED
-		
-		await get_tree().create_timer(3.0).timeout 
-		#for p in get_tree().get_nodes_in_group("player"):
-		#	p.process_mode = Node.PROCESS_MODE_DISABLED
-		#	p.get_node("hud_canvas").visible = false
-		#	p.get_node("fade").get_node("Transition").play("fade_out")
-		
-		#await get_tree().create_timer(2.0).timeout 
-		
-		#bug que virou feature... se morrer voltando... jah cai lah na volta... nao ha porque penalisar por querer voltar
-		get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn") 
-		# Called every frame. 'delta' is the elapsed time since the previous frame.
-		
-	else:
 
-		maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
-		await get_tree().create_timer(3.0).timeout 
-		maycon_3d.get_node("hud_canvas").visible = false
-		fade.get_node("Transition").play("fade_out")
-		await get_tree().create_timer(2.0).timeout 
-		get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn") 
-		# Called every frame. 'delta' is the elapsed time since the previous frame.
+	for p in get_tree().get_nodes_in_group("player"):
+		p.process_mode = Node.PROCESS_MODE_DISABLED
+		p.get_node("hud_canvas").visible = false
 	
+	await get_tree().create_timer(3.0).timeout 	
+	fade.get_node("Transition").play("fade_out")
+	await get_tree().create_timer(2.0).timeout 
+	get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn") 
+
 		
 	
 	

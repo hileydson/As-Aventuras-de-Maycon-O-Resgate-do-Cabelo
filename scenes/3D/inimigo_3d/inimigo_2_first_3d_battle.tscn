@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://ccq7i7c6to5yt"]
+[gd_scene load_steps=42 format=3 uid="uid://ccq7i7c6to5yt"]
 
 [ext_resource type="Script" uid="uid://dq25ryu2ggdlp" path="res://scripts/3D/inimigo_3d_default.gd" id="1_ps2ur"]
 [ext_resource type="AudioStream" uid="uid://winmr31cwh05" path="res://assets/novos_audios/growl_1.mp3" id="2_g72og"]
@@ -262,7 +262,11 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mk02k"]
+
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1h8fw"]
+radius = 0.4091797
+height = 1.34375
 
 [node name="inimigo_1_first_3d_battle" type="Node3D"]
 
@@ -293,8 +297,8 @@ autoplay = "idle"
 frame_progress = 0.62865037
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 0.6690386, 0, 0, 0, 0.6998706, 0, -0.036315918, 0)
-shape = SubResource("CapsuleShape3D_1h8fw")
+transform = Transform3D(0.92688555, 0, 0, 0, 0.48051652, 0, 0, 0, 0.63581616, 0, -0.036565304, 0)
+shape = SubResource("CapsuleShape3D_mk02k")
 
 [node name="Area3D" type="Area3D" parent="CharacterBody3D"]
 collision_layer = 8
@@ -302,7 +306,7 @@ collision_mask = 8
 script = ExtResource("6_6qnki")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Area3D"]
-transform = Transform3D(1.4028946, 0, 0, 0, 1, 0, 0, 0, 1.6111255, 0, 0, 0)
+transform = Transform3D(1.3003228, 0, 0, 0, 0.71821946, 0, 0, 0, 1.46367, 0, -0.03783655, 0)
 shape = SubResource("CapsuleShape3D_1h8fw")
 
 [connection signal="body_entered" from="CharacterBody3D/Area3D" to="CharacterBody3D" method="_on_area_3d_body_entered"]

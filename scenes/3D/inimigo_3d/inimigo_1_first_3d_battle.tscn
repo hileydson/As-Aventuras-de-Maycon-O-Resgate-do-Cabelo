@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://dlqycyx4v715r"]
+[gd_scene load_steps=43 format=3 uid="uid://dlqycyx4v715r"]
 
 [ext_resource type="Script" uid="uid://dq25ryu2ggdlp" path="res://scripts/3D/inimigo_3d_default.gd" id="1_i4pi1"]
 [ext_resource type="AudioStream" uid="uid://b1gdi2twv57tt" path="res://assets/novos_audios/dog_running.mp3" id="2_eyvy2"]
@@ -269,7 +269,12 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_eyvy2"]
+height = 1.9448242
+
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1h8fw"]
+radius = 0.3774414
+height = 1.4666748
 
 [node name="inimigo_1_first_3d_battle" type="Node3D"]
 
@@ -299,8 +304,8 @@ autoplay = "idle"
 frame_progress = 0.7707436
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="CharacterBody3D"]
-transform = Transform3D(0.7102158, 0, 0, 0, 0.6631042, 0, 0, 0, 1, 0, -0.016784668, 0)
-shape = SubResource("CapsuleShape3D_1h8fw")
+transform = Transform3D(0.7102158, 0, 0, 0, 0.4090631, 0, 0, 0, 1, 0, -0.07327384, 0)
+shape = SubResource("CapsuleShape3D_eyvy2")
 
 [node name="Area3D" type="Area3D" parent="CharacterBody3D"]
 collision_layer = 8
@@ -308,7 +313,7 @@ collision_mask = 8
 script = ExtResource("6_fawpx")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Area3D"]
-transform = Transform3D(1.4028946, 0, 0, 0, 1, 0, 0, 0, 1.6111255, 0, 0, 0)
+transform = Transform3D(1.4028946, 0, 0, 0, 0.61689115, 0, 0, 0, 1.6111255, 0, -0.07809335, 0)
 shape = SubResource("CapsuleShape3D_1h8fw")
 
 [connection signal="body_entered" from="CharacterBody3D/Area3D" to="CharacterBody3D" method="_on_area_3d_body_entered"]
