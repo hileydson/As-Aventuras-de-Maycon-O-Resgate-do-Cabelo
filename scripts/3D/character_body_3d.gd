@@ -116,7 +116,7 @@ func change_sprite_two_player()->void:
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)j  asf                                                                                                   
+	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)                                                                                               
 	
 	#seta o nome para o caso de single player... se for two palyers tem um rename
 	#if Global.is_two_player_active==false:
@@ -238,6 +238,29 @@ func _physics_process(delta):
 			camera_3d.rotate_x(-joy_look.y * JOY_SENSITIVITY)
 			camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 
+
+	# --- LÓGICA DE OLHAR (MOUSE) ---
+	# Só processa o mouse se ele estiver capturado (preso na tela)
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		# Pega a velocidade do mouse no frame atual
+		var mouse_velocity = Input.get_last_mouse_velocity()
+		
+		# Verificamos se há movimento para evitar cálculos desnecessários
+		if mouse_velocity.length() > 0.1:
+			# Rotação Horizontal (Maycon vira para os lados)
+			# Multiplicamos por delta para a velocidade ser consistente
+			var rotation_y = -mouse_velocity.x * MOUSE_SENSITIVITY * delta
+			rotate_y(rotation_y)
+			
+			# Rotação Vertical (Câmera olha para cima e para baixo)
+			if camera_3d and not on_moto:
+				var rotation_x = -mouse_velocity.y * MOUSE_SENSITIVITY * delta
+				camera_3d.rotate_x(rotation_x)
+				
+				# Trava a visão para não girar 360 graus verticalmente
+				camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-80), deg_to_rad(80))
+				
+
 	# --- 4. FÍSICA GLOBAL ---
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -255,14 +278,14 @@ func _physics_process(delta):
 		
 		var forward_dir = -transform.basis.z 
 		
-		if r2_acelerar > 0.1:
+		if (r2_acelerar > 0.1) or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			# ACELERAÇÃO PARA FRENTE (Até 20)
 			var target_vel = forward_dir * 20.0
 			velocity.x = move_toward(velocity.x, target_vel.x, 12.0 * delta)
 			velocity.z = move_toward(velocity.z, target_vel.z, 12.0 * delta)
 			if !moto_acelerando.is_playing():moto_acelerando.play()
 			Input.start_joy_vibration(device_id, 0.2, 0.1, 0.1)
-		elif l2_re > 0.1:
+		elif (l2_re > 0.1) or Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 			# RÉ (Mais devagar, até 10)
 			var target_vel = -forward_dir * 10.0
 			velocity.x = move_toward(velocity.x, target_vel.x, 6.0 * delta)
