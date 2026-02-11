@@ -4,9 +4,12 @@ extends CanvasLayer
 @onready var som_bip = $Panel/AudioStreamPlayer
 @onready var timer: Timer = $Panel/Timer
 @onready var panel: Panel = $Panel
+@onready var balao: AnimatedSprite2D = $Panel/AnimatedSprite2D
 
 var falas: Array = [] # Começa vazio para receber do outro script
 var fala_atual: int = 0
+
+var balao_sem_seta:bool = false
 
 signal conversa_terminou
 
@@ -21,6 +24,12 @@ func _ready():
 		exibir_fala()
 
 func _process(_delta: float) -> void:
+	
+	if balao_sem_seta:
+		balao.play("balao_sem_seta")
+	else:
+		balao.play("default")
+	
 	# Lógica de seguir o marcador
 	var balao_marker = get_tree().get_first_node_in_group("balao_conversa")
 	if is_instance_valid(balao_marker):

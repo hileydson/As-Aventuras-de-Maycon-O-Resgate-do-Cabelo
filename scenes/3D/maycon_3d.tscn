@@ -4694,15 +4694,15 @@ tree_root = SubResource("AnimationNodeStateMachine_0e2ag")
 anim_player = NodePath("../AnimationPlayer")
 
 [node name="farol_moto_cigarro" type="SpotLight3D" parent="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36920166, -0.8621521)
+transform = Transform3D(1, 0, 0, 0, 0.91860515, 0.39517677, 0, -0.39517677, 0.91860515, 0, 0.36920166, -0.8621521)
 visible = false
-light_energy = 16.0
-light_indirect_energy = 3.824
-light_volumetric_fog_energy = 5.141
-light_specular = 2.947
+light_energy = 14.682
+light_indirect_energy = 15.118
+light_volumetric_fog_energy = 9.282
 shadow_enabled = true
 distance_fade_enabled = true
-spot_range = 45.0
+spot_range = 98.446
+spot_angle = 66.17
 
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6043091, -0.48493958)

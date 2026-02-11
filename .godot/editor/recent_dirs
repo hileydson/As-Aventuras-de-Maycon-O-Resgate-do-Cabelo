@@ -1,9 +1,10 @@
-res://assets/novas_imagens/3d_battle
-res://assets/novas_imagens/cabelo
+res://assets/novas_imagens/npcs
 res://assets/novas_imagens/inimigos
+res://assets/novas_imagens/cabelo
+res://assets/novas_imagens/cigarro
+res://assets/novas_imagens/3d_battle
 res://scenes
 res://scripts
-res://assets/novas_imagens/cigarro
 res://scripts/3D
 res://assets/novas_imagens/3d_cenarios/maycon_on_3d
 res://scenes/3D
@@ -19,4 +20,3 @@ res://assets/novas_imagens/inimigos/seco
 res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Black_Werewolf
 res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf
 res://assets/novas_imagens/3d_battle/packs/free-gorgon-pixel-art-character-sprite-sheets/Gorgon_3
-res://assets/novas_imagens/3d_battle/packs/free-gorgon-pixel-art-character-sprite-sheets/Gorgon_2

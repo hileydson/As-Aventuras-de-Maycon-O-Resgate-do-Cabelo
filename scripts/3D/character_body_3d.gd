@@ -274,12 +274,12 @@ func _physics_process(delta):
 			velocity.z = move_toward(velocity.z, 0, 8.0 * delta)
 			moto_acelerando.stop()
 		
-		if velocity.length() > 0.5:
-			if !walk.is_playing(): walk.play()
-		
 		
 		
 	else:
+		if velocity.length() > 0.5:
+			if !walk.is_playing(): walk.play()
+			
 		# MOVIMENTO A PÉ
 		var raw_input = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X), Input.get_joy_axis(device_id, JOY_AXIS_LEFT_Y))
 		var input_dir = Vector2.ZERO

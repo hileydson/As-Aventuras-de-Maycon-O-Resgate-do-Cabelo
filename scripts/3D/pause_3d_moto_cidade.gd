@@ -39,6 +39,8 @@ func processa_pause_unpause()->void:
 			player.get_node("hud_canvas").get_node("control_moto").visible = true
 			$"../maycon_3d/CharacterBody3D/mapa_maycon".visible = false
 			$"../cabelo/mapa_cabelo".visible = false
+			$"../cigarro/mapa_cabelo".visible = false
+			$"../lipao/mapa_cabelo".visible = false
 		
 		if $camera_pause:
 			$camera_pause.current = false	
@@ -51,6 +53,8 @@ func processa_pause_unpause()->void:
 			player.get_node("hud_canvas").get_node("control_moto").visible = false
 			$"../maycon_3d/CharacterBody3D/mapa_maycon".visible = true
 			$"../cabelo/mapa_cabelo".visible = true
+			$"../cigarro/mapa_cabelo".visible = true
+			$"../lipao/mapa_cabelo".visible = true
 		
 		if $camera_pause:
 			$camera_pause.make_current()
