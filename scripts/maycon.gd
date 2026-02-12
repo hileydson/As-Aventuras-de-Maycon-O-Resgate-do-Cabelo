@@ -17,6 +17,7 @@ extends CharacterBody2D
 @onready var fires_above_seco: Node2D = $"../fires_above_seco"
 @onready var logo_inimigo_seco: AnimatedSprite2D = $"../node_logo_seco/logo_inimigo_seco"
 @onready var node_logo_seco: Node2D = $"../node_logo_seco"
+@onready var mark_balao_seco: Marker2D = $"../mark_balao_seco"
 
 var pausePlayer:bool = false
 var animation_1_gone = false
@@ -117,47 +118,25 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	await get_tree().create_timer(4.0).timeout
 	fires_above_seco.visible = false
 	
-	if(Global.default_language == Global.language_pt_br):
-		await get_tree().create_timer(3.0).timeout
-		node_logo_seco.visible = false
-		msg.text = "Maycon seu safado!"
-		balao_conversa.visible = true
-		inimigo_seco.get_node("AnimatedSprite2D").play("talking")
-		inimigo_seco.get_node("AnimatedSprite2D").modulate = Color(1,1,1,1)
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Esquece o cabelo!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Levarei ele para um outro lugar..."
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "fora do mundo real!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Somente lá voce encontrará ele!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Venha seu safado!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Entre! \nEntre no fogo!!"
-		await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(3.0).timeout
+	node_logo_seco.visible = false
+	inimigo_seco.get_node("AnimatedSprite2D").play("talking")
+	inimigo_seco.get_node("AnimatedSprite2D").modulate = Color(1,1,1,1)
+	
+	#CHAMA BALAOZINHO
+	var balao_ = preload("res://scenes/balao_conversa.tscn").instantiate()
+	if Global.default_language == Global.language_pt_br:
+		balao_.falas = ["...", "Maycon seu safado!", "Esquece o cabelo!", "Levarei ele para um outro lugar...", "Somente lá voce encontrará ele!", "Venha seu safado!", "Entre!", "Entre no fogo que queima gostoso!!"]
 	else:
-		await get_tree().create_timer(3.0).timeout
-		node_logo_seco.visible = false
-		msg.text = "Maycon you asshole!"
-		balao_conversa.visible = true
-		inimigo_seco.get_node("AnimatedSprite2D").play("talking")
-		inimigo_seco.get_node("AnimatedSprite2D").modulate = Color(1,1,1,1)
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Forget about cabelo!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Im gonna take him \nto another place!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "A not real one!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Only there you can rescue him!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Come on! you asshole!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Enter! \nTouch the fire!!"
-		await get_tree().create_timer(3.0).timeout
-		
+		balao_.falas = ["...", "Maycon you asshole!", "Forget about cabelo!", "Im gonna take him to another place!", "A not real one!", "Only there you can rescue him!", "Come on! you asshole!", "Enter!", "Touch the fire!!"]
+	
+	#PEGAR O SINAL FINAL DE CONVERSA E FADEOUT
+	balao_.conversa_terminou.connect(conversa_terminou)
+	
+	mark_balao_seco.add_child(balao_)
+	
+	
+func conversa_terminou()->void:
 	inimigo_seco.visible = false
 	balao_conversa.visible = false
 	explosao_portal.get_node("hp").play("explotion")
@@ -166,4 +145,3 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	transition.play("zoom_out")
 	pausePlayer = false
 	animation_1_gone = true
-	

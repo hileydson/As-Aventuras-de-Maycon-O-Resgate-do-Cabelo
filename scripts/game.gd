@@ -5,12 +5,15 @@ extends Node2D
 @onready var inimigo_1: Node2D = $Inimigo1
 @onready var camera: Camera2D = $Maycon/Camera2D
 @onready var inimigo_seco: Node2D = $Inimigo_seco
+@onready var mark_balao_seco: Marker2D = $mark_balao_seco
+@onready var explosao_portal_2: Node2D = $explosao_portal2
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Global.game_events["before_prologo"] = true 
 	explosao_portal.get_node("hp").play("semi_explotion")
+	explosao_portal_2.get_node("hp").play("semi_explotion")
 	
 
 

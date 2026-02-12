@@ -436,13 +436,13 @@ shape = SubResource("SegmentShape2D_u5sy4")
 position = Vector2(765.1608, -29.2613)
 scale = Vector2(-1.259191, 1.0362632)
 
-[node name="explosao_portal" parent="." instance=ExtResource("6_vtaks")]
-position = Vector2(741.8107, 57.059586)
-scale = Vector2(24.778183, 23.184599)
-
 [node name="explosao_portal2" parent="." instance=ExtResource("6_vtaks")]
 position = Vector2(741.8107, 57.059586)
 scale = Vector2(24.778183, 23.184599)
+
+[node name="explosao_portal" parent="." instance=ExtResource("6_vtaks")]
+position = Vector2(741.81067, 57.059586)
+scale = Vector2(24.778183, 23.184597)
 
 [node name="JamelaoSong" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_iywne")
@@ -672,6 +672,9 @@ rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
+
+[node name="mark_balao_seco" type="Marker2D" parent="." groups=["balao_conversa"]]
+position = Vector2(511.00528, -110.461464)
 
 [connection signal="body_entered" from="Area2D" to="Maycon" method="_on_area_2d_body_entered"]
 [connection signal="body_entered" from="Area2_portal" to="." method="_on_area_2_portal_body_entered"]
