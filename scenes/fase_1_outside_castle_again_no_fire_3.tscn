@@ -340,7 +340,7 @@ zoom = Vector2(0.5, 0.5)
 limit_left = 7
 limit_top = 21
 limit_right = 3154
-limit_bottom = 1357
+limit_bottom = 1349
 
 [node name="smoke25" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
 position = Vector2(1368.0001, 738.99994)

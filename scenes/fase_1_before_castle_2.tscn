@@ -375,7 +375,7 @@ zoom = Vector2(0.5, 0.5)
 limit_left = 7
 limit_top = 21
 limit_right = 3165
-limit_bottom = 1355
+limit_bottom = 1349
 
 [node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
 

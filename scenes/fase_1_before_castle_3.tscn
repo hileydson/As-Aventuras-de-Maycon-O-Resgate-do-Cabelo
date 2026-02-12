@@ -276,7 +276,7 @@ zoom = Vector2(0.5, 0.5)
 limit_left = 7
 limit_top = 21
 limit_right = 3164
-limit_bottom = 1355
+limit_bottom = 1349
 
 [node name="bloqueio_passagem" type="Node2D" parent="Fase1BeforeCastle"]
 position = Vector2(-1586, -683)
