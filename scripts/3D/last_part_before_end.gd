@@ -16,6 +16,7 @@ func _ready() -> void:
 	get_tree().get_first_node_in_group("player").get_node("hud_canvas").get_node("maycon_hp").visible = false
 	Global.in_cutscene = true
 	luz_mapa.visible = true
+	maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
 	cutscene_inicio.play("intro_mapa")
 	#_on_cutscene_inicio_animation_finished("intro_mapa")
 	
@@ -41,6 +42,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 
 func _on_cutscene_inicio_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "intro_mapa":
+		maycon_3d.process_mode = Node.PROCESS_MODE_INHERIT
 		luz_mapa.visible = false
 		#seta final do game para pegar equipar a moto
 		fade.get_node("Transition").play("fade_in")

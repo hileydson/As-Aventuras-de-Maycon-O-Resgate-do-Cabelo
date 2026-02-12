@@ -531,57 +531,6 @@ transform = Transform3D(0.6969675, 0, 0, 0, 0.57240975, 0, 0, 0, 1, 555.51996, -
 [node name="CharacterBody3D" parent="maycon_3d" index="0"]
 transform = Transform3D(0.017941065, 0, 0.99983907, 0, 1, 0, -0.99983907, 0, 0.017941065, 0, 0, 0)
 
-[node name="Skeleton3D" parent="maycon_3d/CharacterBody3D/maycon_3d_model_ia_animations/Armature" index="0"]
-bones/0/position = Vector3(-9.500724, 87.552086, 2.8185468)
-bones/0/rotation = Quaternion(0.719269, -0.13297361, 0.41428643, -0.54160595)
-bones/1/rotation = Quaternion(-0.56728363, -0.21338597, -0.45273274, 0.65397924)
-bones/2/rotation = Quaternion(0.2748608, 0.07855185, -0.025348509, 0.9579346)
-bones/3/rotation = Quaternion(-0.51359797, -0.10309544, 0.13797203, 0.8405666)
-bones/4/rotation = Quaternion(-0.3699175, -0.038601585, 0.007084487, 0.9282353)
-bones/5/rotation = Quaternion(-0.35069442, 0.29533058, -0.3072564, 0.8338986)
-bones/6/rotation = Quaternion(0.2988461, -0.25683805, 0.061955146, 0.9169988)
-bones/7/rotation = Quaternion(-0.63838625, 0.09255743, -0.104787886, 0.756912)
-bones/8/rotation = Quaternion(-0.36541352, 0.04151457, 0.020711785, 0.9296884)
-bones/9/rotation = Quaternion(0.81913733, -0.41284037, -0.014954648, 0.39793634)
-bones/10/rotation = Quaternion(0.09917135, -0.027610078, -0.0035917861, 0.99468076)
-bones/11/rotation = Quaternion(0.056095734, -0.013182931, -0.017993076, 0.9981762)
-bones/12/rotation = Quaternion(0.563741, 0.5144807, -0.46244213, 0.45127925)
-bones/13/rotation = Quaternion(0.5346289, 0.47443718, 0.29181495, 0.6355513)
-bones/14/rotation = Quaternion(-0.50231206, 0.1353445, 0.17381094, 0.8361544)
-bones/15/rotation = Quaternion(0.006217464, 0.1772251, -0.0039028116, 0.98414296)
-bones/16/rotation = Quaternion(-0.5552331, 0.53344995, -0.51286155, -0.37963206)
-bones/17/rotation = Quaternion(0.60399216, -0.46699336, -0.219154, 0.6075215)
-bones/18/rotation = Quaternion(-0.5048916, -0.11169834, -0.16551507, 0.8397694)
-bones/19/rotation = Quaternion(0.08182121, -0.1832171, 0.02932323, 0.97922266)
-bones/20/rotation = Quaternion(0.04659661, -0.13503009, -0.055954292, 0.98816234)
-bones/21/rotation = Quaternion(0.39252937, -0.24951749, 0.17792381, 0.8671822)
-bones/22/rotation = Quaternion(-0.2714218, 0.0015443154, 0.0044118143, 0.96244913)
-
-[node name="Skeleton3D" parent="maycon_3d/CharacterBody3D/cigarro_perfect_animations/Armature" index="0"]
-bones/0/position = Vector3(3.6477685, 87.29478, 2.885045)
-bones/0/rotation = Quaternion(0.43893638, 0.55041075, 0.59189206, -0.3924878)
-bones/1/rotation = Quaternion(0.17458877, 0.84300053, -0.45260793, -0.23241131)
-bones/2/rotation = Quaternion(0.36394632, 0.022393173, 0.0025669849, 0.9311472)
-bones/3/rotation = Quaternion(-0.5469252, 0.12440977, 0.14067845, 0.8158461)
-bones/4/rotation = Quaternion(-0.39891246, -0.03910383, 0.0047862767, 0.91614246)
-bones/5/rotation = Quaternion(0.70674115, 0.3005715, -0.3961733, -0.5032102)
-bones/6/rotation = Quaternion(0.3130747, -0.020451989, 0.007642282, 0.9494776)
-bones/7/rotation = Quaternion(-0.57982683, -0.011690049, -0.17520043, 0.79559344)
-bones/8/rotation = Quaternion(-0.41432434, 0.06745472, -0.010790867, 0.9075621)
-bones/9/rotation = Quaternion(0.49768764, 0.49267542, 0.5514724, 0.4532728)
-bones/10/rotation = Quaternion(0.030098058, -0.007983344, 0.01144871, 0.9994495)
-bones/11/rotation = Quaternion(-0.06950763, -0.0037067933, 0.006943394, 0.99755037)
-bones/12/rotation = Quaternion(0.39898518, 0.7003334, -0.42698586, 0.4099112)
-bones/13/rotation = Quaternion(0.5737109, 0.6361684, 0.30962664, 0.4126462)
-bones/14/rotation = Quaternion(-0.4449785, -0.03586723, 0.123474345, 0.8862629)
-bones/15/rotation = Quaternion(0.09355424, -0.11908531, 0.16180533, 0.97513354)
-bones/16/rotation = Quaternion(-0.5409214, 0.52381134, -0.31261382, -0.5790495)
-bones/17/rotation = Quaternion(0.48439792, -0.5048115, -0.36656004, 0.61331695)
-bones/18/rotation = Quaternion(-0.586043, 0.025555972, -0.16979298, 0.7918781)
-bones/19/rotation = Quaternion(0.25250852, -0.2947929, -0.18610469, 0.90260834)
-bones/20/rotation = Quaternion(0.02922171, -0.15489553, -0.012428278, 0.98742044)
-bones/21/rotation = Quaternion(0.46385556, -0.0464751, 0.040621378, 0.88375795)
-
 [node name="mapa_maycon" type="Sprite3D" parent="maycon_3d/CharacterBody3D" index="11"]
 transform = Transform3D(3.0495455, 0, -25.66291, 0, -166.10393, 0, 169.94835, 0, 0.46049407, 0, 141.60233, 0)
 visible = false
@@ -793,7 +742,7 @@ stream = ExtResource("13_ut78q")
 volume_db = -4.522
 
 [node name="Camera3D" type="Camera3D" parent="cutscene"]
-transform = Transform3D(-0.0542008, 0, -0.9985295, 0, 1, 0, 0.99852955, 0, -0.054200795, -448.43515, 213.47897, 217.57733)
+transform = Transform3D(-0.05420079, 0, -0.9985294, 0, 1, 0, 0.99852943, 0, -0.054200787, -448.43515, 213.47897, 217.57733)
 
 [node name="chuva" type="GPUParticles3D" parent="cutscene/Camera3D"]
 transform = Transform3D(1.8595114, -4.656613e-10, 2.9802322e-08, 4.656613e-10, 1.0954939, -1.7331331e-08, 4.4703484e-08, 7.537892e-09, 1.8346369, 0.028381348, 6.9735413, 0.39990234)
@@ -824,4 +773,5 @@ scale = Vector2(1.8939395, 2.0655196)
 [connection signal="animation_finished" from="cutscene/cutscene_inicio" to="." method="_on_cutscene_inicio_animation_finished"]
 
 [editable path="maycon_3d"]
+[editable path="maycon_3d/CharacterBody3D/cigarro_perfect_animations"]
 [editable path="maycon_3d/CharacterBody3D/maycon_3d_model_ia_animations"]

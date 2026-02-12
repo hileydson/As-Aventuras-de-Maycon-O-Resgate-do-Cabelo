@@ -32,6 +32,7 @@ extends CharacterBody3D
 @onready var rain: GPUParticles3D = $chuva
 @onready var raining: AudioStreamPlayer = $Raining
 @onready var two_player_icon: AnimatedSprite2D = $hud_canvas/two_player_icon
+@onready var moto_re: AudioStreamPlayer = $hud_canvas/control_moto/ModoRe
 
 @export var SPEED : float = 5.0
 @export var JUMP_VELOCITY : float = 4.5
@@ -304,12 +305,14 @@ func _physics_process(delta):
 			var target_vel = -forward_dir * 10.0
 			velocity.x = move_toward(velocity.x, target_vel.x, 6.0 * delta)
 			velocity.z = move_toward(velocity.z, target_vel.z, 6.0 * delta)
+			if !moto_re.is_playing():moto_re.play()
 			Input.start_joy_vibration(device_id, 0.08, 0.1, 0.1)
 		else:
 			# DESACELERAÇÃO (Fricção)
 			velocity.x = move_toward(velocity.x, 0, 8.0 * delta)
 			velocity.z = move_toward(velocity.z, 0, 8.0 * delta)
 			moto_acelerando.stop()
+			moto_re.stop()
 		
 		
 		
