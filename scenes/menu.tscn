@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=4 uid="uid://bbvbfgsytow76"]
+[gd_scene load_steps=47 format=4 uid="uid://bbvbfgsytow76"]
 
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="1_3dmrc"]
 [ext_resource type="Texture2D" uid="uid://1dll27f2uadm" path="res://assets/images/TELA-intro-03 _0.png" id="1_mhnvy"]
@@ -513,6 +513,9 @@ animations = [{
 
 [sub_resource type="ImageTexture" id="ImageTexture_oi1it"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_rsfmq"]
+font_color = Color(1, 1, 1, 0.629)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_rsfmq"]
 atlas = ExtResource("19_81l6r")
 region = Rect2(0, 256, 256, 256)
@@ -679,6 +682,15 @@ text = "Continuar"
 [node name="Exit" type="Button" parent="Camera2D/VBoxContainer"]
 layout_mode = 2
 text = "Sair"
+
+[node name="version" type="Label" parent="Camera2D"]
+offset_left = 555.0
+offset_top = 312.0
+offset_right = 595.0
+offset_bottom = 335.0
+scale = Vector2(0.62459505, 0.5314849)
+text = "X.X"
+label_settings = SubResource("LabelSettings_rsfmq")
 
 [node name="effect_cabelo" type="AnimatedSprite2D" parent="."]
 position = Vector2(931, 274.00006)
