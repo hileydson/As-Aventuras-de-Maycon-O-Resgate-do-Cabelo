@@ -1,7 +1,8 @@
+AnimatedSprite2D
+AnimatedSprite3D
 RichTextLabel
 Node2D
 ColorRect
-AnimatedSprite3D
 StaticBody3D
 SpotLight3D
 OmniLight3D
@@ -12,4 +13,3 @@ Camera3D
 Node3D
 Label
 DirectionalLight3D
-CollisionShape3D

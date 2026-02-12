@@ -31,6 +31,7 @@ extends CharacterBody3D
 @onready var farol_moto_cigarro: SpotLight3D = $farol_moto_cigarro
 @onready var rain: GPUParticles3D = $chuva
 @onready var raining: AudioStreamPlayer = $Raining
+@onready var two_player_icon: AnimatedSprite2D = $hud_canvas/two_player_icon
 
 @export var SPEED : float = 5.0
 @export var JUMP_VELOCITY : float = 4.5
@@ -38,11 +39,13 @@ extends CharacterBody3D
 @export var JOY_SENSITIVITY: float = 0.05 # Sensibilidade para o controle
 
 var animation_tree_playback
+var animation_tree
 
 const SANGUE_SCENE = preload("res://scenes/3D/blood.tscn")
 
 var shake_intensity = 0.0
 var shake_decay = 5.0 # Quão rápido a tremedeira para
+var estou_morto = false
 
 var gun_bullets_count=0
 var danos_count:int = 0
@@ -66,7 +69,8 @@ func set_final_game()->void:
 	
 
 func set_cigarro_3d_model()->void:
-	animation_tree_playback = cigarro_perfect_animations.get_node("AnimationTree").get("parameters/playback")
+	animation_tree = cigarro_perfect_animations.get_node("AnimationTree")
+	animation_tree_playback = animation_tree.get("parameters/playback")
 	maycon_3d_model_ia_animations.visible = false
 	cigarro_perfect_animations.visible = true
 	
@@ -125,7 +129,11 @@ func _ready():
 	#	self.name = "Maycon"
 	
 	#MAYCON EH O PADRAO
-	animation_tree_playback = maycon_3d_model_ia_animations.get_node("AnimationTree").get("parameters/playback")
+	animation_tree = maycon_3d_model_ia_animations.get_node("AnimationTree")
+	animation_tree_playback = animation_tree.get("parameters/playback")
+	#animation_tree.set("parameters/conditions/dead", false)
+	
+	
 
 func set_rain(is_raining:bool)->void:
 	if is_raining:
@@ -159,13 +167,14 @@ func levou_dano(dano:int)->void:
 
 
 func _physics_process(delta):
-	
-	if Global.in_cutscene:
-		return
-	
+	 
 	# --- 1. CONFIGURAÇÕES TÉCNICAS E HUD ---
 	if Global.is_two_player_active:
 		gun.global_position = $hud_canvas/gun_position_2_players.global_position
+		if name == "Cigarro":
+			two_player_icon.play("cigarro")
+		two_player_icon.visible = true
+		
 	
 	# HUD de HP
 	$hud_canvas/maycon_hp/hp_1.visible = danos_count <= 4
@@ -178,12 +187,14 @@ func _physics_process(delta):
 		danos_count += 1 
 		Global.players_dead_count += 1
 		if Global.is_two_player_active:
-			self.process_mode = Node.PROCESS_MODE_DISABLED
-			if Global.players_dead_count == 1:
-				two_player_died.visible = true
 			animacao.play("died")
 			animation_tree_playback.travel("dead")
+			estou_morto = true
 			self.remove_from_group("players") 
+			if Global.players_dead_count == 1:
+				two_player_died.visible = true
+			await get_tree().create_timer(3.0).timeout 	
+			self.process_mode = Node.PROCESS_MODE_DISABLED
 		return
 
 	balas_numero.text = "X " + str(gun_bullets_count)
@@ -227,14 +238,15 @@ func _physics_process(delta):
 		control_gun.visible = false
 		hud_gun_buttons.visible = false
 
-	# --- 3. LÓGICA DE OLHAR (Analógico Direito) ---
+# --- 3. LÓGICA DE OLHAR (Analógico Direito) ---
 	var joy_look = Vector2.ZERO
 	if on_moto:
 		joy_look = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X), 0)
 	else:
 		joy_look = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X), Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_Y))
 
-	if joy_look.length() > 0.1:
+	# Aumentamos de 0.1 para 0.2 para ignorar pequenos movimentos fantasmas do analógico
+	if joy_look.length() > 0.13: 
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)
 		if camera_3d and not on_moto:
 			camera_3d.rotate_x(-joy_look.y * JOY_SENSITIVITY)
@@ -321,14 +333,14 @@ func _physics_process(delta):
 			velocity.x = direction.x * SPEED
 			velocity.z = direction.z * SPEED
 			animacao.play("run")
-			animation_tree_playback.travel("run")
+			if !estou_morto: animation_tree_playback.travel("run")
 			
 			var forward_dot = transform.basis.z.dot(direction)
 			animacao.flip_h = forward_dot >= 0
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.z = move_toward(velocity.z, 0, SPEED)
-			animation_tree_playback.travel("idle")
+			if !estou_morto: animation_tree_playback.travel("idle")
 
 	move_and_slide()
 
@@ -345,9 +357,22 @@ func _on_lamp_animation_finished() -> void:
 
 func _on_animacao_animation_finished() -> void:
 	animacao.play("idle")
-	animation_tree_playback.travel("idle")
+	if !estou_morto: animation_tree_playback.travel("idle")
 
 
 func _on_animacao_player_2_animation_finished() -> void:
 	animacao.play("idle")
-	animation_tree_playback.travel("idle")
+	if !estou_morto: animation_tree_playback.travel("idle")
+
+
+func _on_animation_tree_animation_finished(anim_name: StringName) -> void:
+	print("NOME:" + name + "  --  "+anim_name)
+	if (name=="Maycon" and anim_name == "Walking") or (name=="Cigarro" and anim_name == "Casual_Walk"): # EH COMO FOI IMPORTADO... OS NOMES NAO BATEM COM AS ANIMACOES--- e os nomes estao trocados tb
+		print("PLAYED DEAD")
+		
+		#animation_tree.set("parameters/conditions/dead", true)
+		animation_tree_playback.travel("dead")
+		
+		#if Global.players_dead_count == 1:
+		#	two_player_died.visible = true
+		#self.process_mode = Node.PROCESS_MODE_DISABLED

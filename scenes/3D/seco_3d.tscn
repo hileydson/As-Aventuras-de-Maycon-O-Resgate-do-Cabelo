@@ -151,20 +151,20 @@ xfade_time = 0.2
 switch_mode = 2
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1ycbj"]
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_lgfgi"]
 xfade_time = 0.2
 switch_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_rob6r"]
-states/End/position = Vector2(677, 107)
+states/End/position = Vector2(774, 92)
 states/Start/position = Vector2(102, 40)
 states/attack_1/node = SubResource("AnimationNodeAnimation_lgfgi")
-states/attack_1/position = Vector2(386, 52)
+states/attack_1/position = Vector2(541, 50)
 states/idle_slow_walk/node = SubResource("AnimationNodeAnimation_tbidp")
 states/idle_slow_walk/position = Vector2(554, 174)
 states/scream/node = SubResource("AnimationNodeAnimation_pbgpm")
 states/scream/position = Vector2(211, 174)
-transitions = ["Start", "scream", SubResource("AnimationNodeStateMachineTransition_pbgpm"), "scream", "idle_slow_walk", SubResource("AnimationNodeStateMachineTransition_tbidp"), "attack_1", "idle_slow_walk", SubResource("AnimationNodeStateMachineTransition_rob6r"), "Start", "attack_1", SubResource("AnimationNodeStateMachineTransition_1ycbj")]
+transitions = ["Start", "scream", SubResource("AnimationNodeStateMachineTransition_pbgpm"), "scream", "idle_slow_walk", SubResource("AnimationNodeStateMachineTransition_tbidp"), "attack_1", "idle_slow_walk", SubResource("AnimationNodeStateMachineTransition_rob6r"), "Start", "attack_1", SubResource("AnimationNodeStateMachineTransition_lgfgi")]
 
 [node name="seco_3d" type="Node3D"]
 
@@ -260,6 +260,45 @@ label_settings = SubResource("LabelSettings_s73nt")
 
 [node name="olindao_3d_animations" parent="." instance=ExtResource("12_pbgpm")]
 transform = Transform3D(2.6980104, 0, 0, 0, 4.203495, 0, 0, 0, 2.674044, 0, 0, 0.8868408)
+
+[node name="Skeleton3D" parent="olindao_3d_animations/Armature" index="0"]
+bones/0/position = Vector3(-6.902299, 61.238297, -14.34985)
+bones/0/rotation = Quaternion(0.40403464, 0.46521437, 0.0020941347, 0.78760856)
+bones/1/rotation = Quaternion(0.5828587, 0.0056871795, 0.16163768, 0.7963144)
+bones/2/position = Vector3(-4.1009926e-06, 32.46609, 9.850355e-06)
+bones/2/rotation = Quaternion(0.7859826, 0.0666814, -0.12265396, 0.60227984)
+bones/3/rotation = Quaternion(-0.63062775, 0.04787074, 0.336668, 0.69761866)
+bones/4/rotation = Quaternion(-0.5077509, -0.031180922, 0.04801359, 0.8595997)
+bones/5/position = Vector3(-11.066022, -4.5659795, 0.81300086)
+bones/5/rotation = Quaternion(0.29324248, -0.27815503, 0.47586006, 0.78115034)
+bones/6/rotation = Quaternion(0.8578125, -0.07555954, 0.1524982, 0.48496675)
+bones/7/rotation = Quaternion(-0.62683403, 0.05399342, -0.14886306, 0.7628917)
+bones/8/rotation = Quaternion(-0.4560858, 0.046292365, 0.02588479, 0.88835394)
+bones/9/rotation = Quaternion(-0.16327597, -0.22215882, 0.05549898, 0.95963866)
+bones/10/rotation = Quaternion(0.026136111, 0.008528442, -0.039229095, 0.99885195)
+bones/11/position = Vector3(-1.7992653e-06, 7.3466797, 3.7473942e-06)
+bones/11/rotation = Quaternion(-0.5719177, 0.021000326, 0.001484859, 0.82004076)
+bones/12/rotation = Quaternion(-0.15454881, -0.73391724, -0.049629945, 0.65955824)
+bones/13/position = Vector3(6.5387976e-06, 52.929974, -8.5102165e-06)
+bones/13/rotation = Quaternion(-0.38976967, -0.18140425, 0.73123467, 0.52959234)
+bones/14/position = Vector3(2.5773697e-06, 52.68433, -1.2180142e-05)
+bones/14/rotation = Quaternion(-0.03439186, 0.13347137, 0.3724227, 0.91777116)
+bones/15/position = Vector3(-1.863491e-06, 47.792248, -3.7028462e-06)
+bones/15/rotation = Quaternion(0.00991168, -0.17769583, 0.09635686, 0.97930664)
+bones/16/rotation = Quaternion(-0.275504, 0.7734067, 0.07285816, 0.5662433)
+bones/17/position = Vector3(-6.5180316e-06, 52.56167, 2.4578526e-07)
+bones/17/rotation = Quaternion(-0.4005452, 0.2539284, -0.75798875, 0.44781345)
+bones/18/position = Vector3(-3.1618165e-06, 51.438404, -9.510768e-07)
+bones/18/rotation = Quaternion(-0.014517623, -0.12569551, -0.28595883, 0.9498513)
+bones/19/position = Vector3(-1.1526617e-05, 47.791485, 4.245043e-06)
+bones/19/rotation = Quaternion(0.1441199, -0.12962413, -0.08030917, 0.977741)
+bones/20/rotation = Quaternion(0.9812185, -0.060652606, -0.058681596, 0.17345919)
+bones/21/position = Vector3(-1.2797236e-06, 129.13838, -8.354138e-06)
+bones/21/rotation = Quaternion(0.0044759233, 0.1546259, 0.06130226, 0.98605925)
+bones/22/position = Vector3(-0.12937383, 10.444975, -0.3472874)
+bones/22/rotation = Quaternion(-0.016617075, -1.7208569e-06, 0.0061901617, 0.99984276)
+bones/23/position = Vector3(0.12936687, 17.854181, 0.347277)
+bones/23/rotation = Quaternion(0.009723968, -2.1599867e-06, -0.0036223307, 0.9999462)
 
 [node name="AnimationTree" type="AnimationTree" parent="olindao_3d_animations"]
 tree_root = SubResource("AnimationNodeStateMachine_rob6r")

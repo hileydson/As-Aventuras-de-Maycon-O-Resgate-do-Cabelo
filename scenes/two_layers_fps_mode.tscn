@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=3 uid="uid://br6e76qsjxdw8"]
+[gd_scene load_steps=74 format=3 uid="uid://br6e76qsjxdw8"]
 
 [ext_resource type="Script" uid="uid://c6qg6leljxw5h" path="res://scripts/two_layers_fps_mode.gd" id="1_igjxw"]
 [ext_resource type="PackedScene" uid="uid://bgr1w7fk5snwj" path="res://scenes/3D/world_3d.tscn" id="2_s6y5k"]
@@ -7,12 +7,18 @@
 [ext_resource type="PackedScene" uid="uid://bysc8ns18xmwv" path="res://scenes/3D/pause_3d.tscn" id="4_dg5n7"]
 [ext_resource type="Texture2D" uid="uid://jc4skdq05hnb" path="res://assets/novas_imagens/buttons/two_players_icon.png" id="4_t4hml"]
 [ext_resource type="Script" uid="uid://bwxswwjvm1rsh" path="res://scripts/3D/bounce_item.gd" id="5_nq8y0"]
+[ext_resource type="Shader" uid="uid://bvhlhp2mlbqdp" path="res://scenes/inverter.gdshader" id="6_ciyei"]
+[ext_resource type="Texture2D" uid="uid://dl1a1st0xhm6j" path="res://assets/novas_imagens/3d_cenarios/two_players_icon.png" id="6_rndyq"]
 [ext_resource type="AudioStream" uid="uid://df08t0n8ym22n" path="res://assets/novos_audios/sangue_fill_effect.mp3" id="7_nq8y0"]
 [ext_resource type="Texture2D" uid="uid://b7ukdc2kwsyj2" path="res://assets/novas_imagens/cigarro/cigarro.png" id="8_ijgvr"]
 [ext_resource type="Texture2D" uid="uid://b8xm3n05un7xf" path="res://assets/novas_imagens/effects/Explosion/1.png" id="9_3b2fx"]
 [ext_resource type="Texture2D" uid="uid://cnlrevk7je1ub" path="res://assets/novas_imagens/buttons/p2.png" id="9_d6wt7"]
 [ext_resource type="Texture2D" uid="uid://dlowt45jrflns" path="res://assets/novas_imagens/effects/Explosion/3.png" id="10_hiybt"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="11_3b2fx"]
+[ext_resource type="Texture2D" uid="uid://dcv4c0nrbvgd6" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/3 Icons/Icons/Icon_34.png" id="12_1tmld"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_45kxf"]
+shader = ExtResource("6_ciyei")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wra3s"]
 atlas = ExtResource("9_3b2fx")
@@ -465,9 +471,10 @@ amplitude = 0.15
 [node name="hud_player_2_start" type="CanvasLayer" parent="hud_node"]
 
 [node name="TwoPlayersIcon" type="Sprite2D" parent="hud_node/hud_player_2_start"]
-position = Vector2(41, 36)
-scale = Vector2(0.2890625, 0.2897196)
-texture = ExtResource("4_t4hml")
+material = SubResource("ShaderMaterial_45kxf")
+position = Vector2(31.348635, 31.634346)
+scale = Vector2(0.14161684, 0.13647485)
+texture = ExtResource("6_rndyq")
 
 [node name="cigarro_apresenta" type="Node2D" parent="hud_node/hud_player_2_start"]
 
@@ -485,8 +492,8 @@ text = "Cigarro"
 
 [node name="Explosao" type="AudioStreamPlayer" parent="hud_node/hud_player_2_start/cigarro_apresenta"]
 stream = ExtResource("11_3b2fx")
-volume_db = -2.993
-pitch_scale = 1.52
+volume_db = -10.498
+pitch_scale = 1.91
 parameters/looping = false
 
 [node name="P2" type="Sprite2D" parent="hud_node/hud_player_2_start/cigarro_apresenta"]
@@ -505,6 +512,12 @@ autoplay = "idle"
 position = Vector2(567, 278)
 scale = Vector2(1.0664064, 1.0700935)
 texture = ExtResource("4_t4hml")
+
+[node name="seta" type="Sprite2D" parent="hud_node/hud_player_2_start/cigarro_apresenta"]
+position = Vector2(564, 614.99994)
+rotation = 1.5684747
+scale = Vector2(3.08, 2.6000004)
+texture = ExtResource("12_1tmld")
 
 [node name="pause_3d" parent="." instance=ExtResource("4_dg5n7")]
 
