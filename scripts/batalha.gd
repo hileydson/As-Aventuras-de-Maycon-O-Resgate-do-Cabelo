@@ -264,7 +264,7 @@ func _process(delta: float) -> void:
 	
 
 	# TEMP PARA ANALISAR TODAS AS FASES
-	# sreturn
+	return
 	
 	
 	# PLOTAR INIMIGO EM BATALHA

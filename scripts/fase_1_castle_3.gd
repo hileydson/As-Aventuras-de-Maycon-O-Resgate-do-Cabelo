@@ -17,14 +17,20 @@ var texture_no_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1
 var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3.png")
 
 var temp_canvas_layer_fogo = canvas_layer
+var portal_funcionar:bool = true
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
 	# SET CAIXA OU QUEUEFREE SE NAO TIVER TRAGO A CAIXA
 	if Global.game_events["caixa_to_carry_moved"]:
+		portal_funcionar = false
 		Global.game_events["caixa_to_carry_moved"] = false
 	else:
+		portal_funcionar = true
 		caixa_to_carry.queue_free() 
+	
+	if Global.game_events["gilhotina_broken"] or Global.game_events["axe_taken"] or Global.back_to_fase:
+		portal_funcionar = false
 	
 	Global.save_progress(get_tree().current_scene.name)
 	
@@ -81,6 +87,12 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 
 
 func _on_division_no_fire_body_exited(body: Node2D) -> void:
+	
+	if portal_funcionar == false:
+		return
+	
+	portal_funcionar = false
+	
 	mk_dudun.play()
 	GameSongs.stop(1)
 	
