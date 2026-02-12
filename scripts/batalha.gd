@@ -60,6 +60,8 @@ var inimigos = {
 
 signal player_clicou
 
+var travar_batalha:bool = false
+
 var current_enemy = null
 
 var power_limit_reached:bool = false
@@ -237,7 +239,6 @@ func show_first_battle() -> void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
 	#carrega mapa correto
 	battleground.texture = mapas_backgrounds[Global.battle_background]
 	# se for cenario de fogo dai mostra os fire effects
@@ -263,7 +264,7 @@ func _process(delta: float) -> void:
 	
 
 	# TEMP PARA ANALISAR TODAS AS FASES
-	return
+	# sreturn
 	
 	
 	# PLOTAR INIMIGO EM BATALHA
@@ -278,6 +279,9 @@ func _process(delta: float) -> void:
 		BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").stop_effect()
 		play_inicio()
 		$"../../../maycon_itens".get_node("canvas").visible = true
+		travar_batalha = true
+		await get_tree().create_timer(3.5).timeout
+		travar_batalha = false
 		
 		
 		
@@ -292,8 +296,11 @@ func _process(delta: float) -> void:
 		play_inicio()
 		Global.battle_next_boss = 0
 		$"../../../maycon_itens".get_node("canvas").visible = true
+		travar_batalha = true
+		await get_tree().create_timer(3.5).timeout
+		travar_batalha = false
 		
-	if Global.battle_started == false:
+	if Global.battle_started == false or travar_batalha:
 		return
 		
 	if died:

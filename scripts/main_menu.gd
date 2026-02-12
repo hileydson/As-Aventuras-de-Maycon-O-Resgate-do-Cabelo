@@ -50,6 +50,10 @@ func _on_menu_ready() -> void:
 
 
 func _on_new_game_pressed() -> void:
+	
+	#reseta tudo pra defaults pra quando o jogo iniciar 
+	Global.reset_default_values()
+	
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout
 	get_tree().change_scene_to_file("res://scenes/intro_game.tscn")
