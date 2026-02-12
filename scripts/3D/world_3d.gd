@@ -65,6 +65,8 @@ func create_dungeon_floor():
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	GameSongs.stop(1)
+	
 	setup_materials()
 	create_dungeon_floor()
 	

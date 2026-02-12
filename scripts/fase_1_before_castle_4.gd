@@ -14,6 +14,8 @@ extends Sprite2D
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
 	
+	GameSongs.play_song(1)
+	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = "0"
@@ -22,7 +24,6 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
 	# previne bug da batalha iniciar e nao haver collision com o maycon
 	if Global.battle_started:
 		maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED

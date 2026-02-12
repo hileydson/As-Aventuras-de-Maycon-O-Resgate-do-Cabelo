@@ -858,10 +858,10 @@ texture = ExtResource("14_whkre")
 
 [node name="caminho_das_pedras" type="Label" parent="."]
 visible = false
-offset_left = 289.0
-offset_top = 165.00002
-offset_right = 407.0
-offset_bottom = 188.00002
+offset_left = 267.0
+offset_top = 168.00002
+offset_right = 385.0
+offset_bottom = 191.00002
 scale = Vector2(4.0000005, 4.6400003)
 text = "        Rocks Path"
 
