@@ -1,4 +1,4 @@
-[gd_scene load_steps=74 format=3 uid="uid://br6e76qsjxdw8"]
+[gd_scene load_steps=75 format=3 uid="uid://br6e76qsjxdw8"]
 
 [ext_resource type="Script" uid="uid://c6qg6leljxw5h" path="res://scripts/two_layers_fps_mode.gd" id="1_igjxw"]
 [ext_resource type="PackedScene" uid="uid://bgr1w7fk5snwj" path="res://scenes/3D/world_3d.tscn" id="2_s6y5k"]
@@ -10,6 +10,7 @@
 [ext_resource type="Shader" uid="uid://bvhlhp2mlbqdp" path="res://scenes/inverter.gdshader" id="6_ciyei"]
 [ext_resource type="Texture2D" uid="uid://dl1a1st0xhm6j" path="res://assets/novas_imagens/3d_cenarios/two_players_icon.png" id="6_rndyq"]
 [ext_resource type="AudioStream" uid="uid://df08t0n8ym22n" path="res://assets/novos_audios/sangue_fill_effect.mp3" id="7_nq8y0"]
+[ext_resource type="Texture2D" uid="uid://bty0lf2j5wdv5" path="res://assets/novas_imagens/buttons/start_black.png" id="8_45kxf"]
 [ext_resource type="Texture2D" uid="uid://b7ukdc2kwsyj2" path="res://assets/novas_imagens/cigarro/cigarro.png" id="8_ijgvr"]
 [ext_resource type="Texture2D" uid="uid://b8xm3n05un7xf" path="res://assets/novas_imagens/effects/Explosion/1.png" id="9_3b2fx"]
 [ext_resource type="Texture2D" uid="uid://cnlrevk7je1ub" path="res://assets/novas_imagens/buttons/p2.png" id="9_d6wt7"]
@@ -475,6 +476,11 @@ material = SubResource("ShaderMaterial_45kxf")
 position = Vector2(31.348635, 31.634346)
 scale = Vector2(0.14161684, 0.13647485)
 texture = ExtResource("6_rndyq")
+
+[node name="StartBlack" type="Sprite2D" parent="hud_node/hud_player_2_start/TwoPlayersIcon"]
+position = Vector2(4.599483, 193.19058)
+scale = Vector2(2.965749, 2.418028)
+texture = ExtResource("8_45kxf")
 
 [node name="cigarro_apresenta" type="Node2D" parent="hud_node/hud_player_2_start"]
 
