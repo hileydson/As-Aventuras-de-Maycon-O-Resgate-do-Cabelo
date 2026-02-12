@@ -846,6 +846,36 @@ scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_isw4w")
 autoplay = "default"
 
+[node name="fogo7" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(2991, 1258)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
+[node name="fogo8" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(3074, 1258)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
+[node name="fogo9" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(3124, 1218)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
+[node name="fogo10" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(3006.0002, 1183)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
+[node name="fogo11" type="AnimatedSprite2D" parent="effects"]
+position = Vector2(3056.0002, 1152)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_isw4w")
+autoplay = "default"
+
 [node name="smoke" type="AnimatedSprite2D" parent="effects"]
 position = Vector2(1367.0078, 162.5311)
 rotation = 3.1415431

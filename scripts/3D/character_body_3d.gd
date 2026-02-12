@@ -314,7 +314,7 @@ func _physics_process(delta):
 		
 		
 	else:
-		if velocity.length() > 0.5:
+		if velocity.length() > 0.5 and is_on_floor():
 			if !walk.is_playing(): walk.play()
 			
 		# MOVIMENTO A PÉ

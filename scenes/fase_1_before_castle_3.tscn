@@ -220,13 +220,13 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dg1pv"]
-size = Vector2(554, 178)
+size = Vector2(554, 691.73047)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nulh8"]
 size = Vector2(985.25, 178)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y6tgn"]
-size = Vector2(317, 1100)
+size = Vector2(317, 1539)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6v7in"]
 size = Vector2(96.12341, 437.84497)
@@ -536,7 +536,7 @@ collision_mask = 524291
 process_mode = 4
 light_mask = 524289
 visibility_layer = 524289
-position = Vector2(281, 1164.2697)
+position = Vector2(281, 1421.1348)
 shape = SubResource("RectangleShape2D_dg1pv")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
@@ -545,7 +545,7 @@ position = Vector2(1663.375, 1164.2697)
 shape = SubResource("RectangleShape2D_nulh8")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(1013, 804)
+position = Vector2(1013, 1023.5)
 shape = SubResource("RectangleShape2D_y6tgn")
 
 [node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
@@ -567,7 +567,7 @@ shape = SubResource("RectangleShape2D_afvqi")
 [node name="portal_slum" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="portal_slum"]
-position = Vector2(705, 1302)
+position = Vector2(705, 1648)
 shape = SubResource("RectangleShape2D_0r645")
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
