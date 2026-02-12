@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://143260dknkmv"]
+[gd_scene load_steps=20 format=3 uid="uid://143260dknkmv"]
 
 [ext_resource type="Texture2D" uid="uid://dc6fyyx8xncpv" path="res://assets/novas_imagens/inimigos/camilita/camilita_attack.png" id="1_r1yt6"]
 [ext_resource type="Texture2D" uid="uid://jpruwl1kxn8m" path="res://assets/novas_imagens/cabelo/cabelo_idle.png" id="3_idtwr"]
@@ -6,43 +6,29 @@
 [ext_resource type="AudioStream" uid="uid://dasniorc2jiw6" path="res://assets/novos_audios/inimigo_1_attack_magic.mp3" id="6_cqfj5"]
 [ext_resource type="AudioStream" uid="uid://4dsrxbn0hoiw" path="res://assets/novos_audios/inimigo_1_voice_attack.mp3" id="7_wx1q8"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_tlxdt"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_7lsjc"]
 atlas = ExtResource("3_idtwr")
-region = Rect2(0, 0, 158, 197)
+region = Rect2(0, 0, 155, 195)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_q3qoc"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_knoky"]
 atlas = ExtResource("3_idtwr")
-region = Rect2(158, 0, 158, 197)
+region = Rect2(0, 0, 153, 196)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fkove"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_r1yt6"]
 atlas = ExtResource("3_idtwr")
-region = Rect2(0, 394, 158, 197)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cqfj5"]
-atlas = ExtResource("3_idtwr")
-region = Rect2(158, 394, 158, 197)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wx1q8"]
-atlas = ExtResource("3_idtwr")
-region = Rect2(0, 591, 158, 197)
+region = Rect2(0, 0, 150, 196)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7lsjc"]
 animations = [{
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_tlxdt")
+"duration": 1.41,
+"texture": SubResource("AtlasTexture_7lsjc")
 }, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_q3qoc")
+"duration": 1.41,
+"texture": SubResource("AtlasTexture_knoky")
 }, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fkove")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cqfj5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wx1q8")
+"duration": 1.41,
+"texture": SubResource("AtlasTexture_r1yt6")
 }],
 "loop": true,
 "name": &"idle",
@@ -254,6 +240,7 @@ scale = Vector2(1.1484176, -1.0231465)
 sprite_frames = SubResource("SpriteFrames_7lsjc")
 animation = &"idle"
 autoplay = "idle"
+frame_progress = 0.8455065
 
 [node name="to_battle" type="Area2D" parent="."]
 light_mask = 517
