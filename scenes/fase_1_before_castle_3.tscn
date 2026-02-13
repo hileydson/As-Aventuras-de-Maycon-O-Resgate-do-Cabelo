@@ -260,6 +260,10 @@ libraries = {
 &"": SubResource("AnimationLibrary_ahm46")
 }
 
+[node name="Escada" type="Sprite2D" parent="Fase1BeforeCastle"]
+position = Vector2(718, 578)
+texture = ExtResource("12_nj030")
+
 [node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("3_3dovv")]
 light_mask = 512
 visibility_layer = 524800
@@ -523,10 +527,6 @@ rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_3dovv")
 autoplay = "default"
-
-[node name="Escada" type="Sprite2D" parent="."]
-position = Vector2(2304, 1222)
-texture = ExtResource("12_nj030")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 collision_layer = 524291

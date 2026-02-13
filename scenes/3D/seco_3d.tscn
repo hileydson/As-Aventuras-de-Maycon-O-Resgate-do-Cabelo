@@ -255,7 +255,7 @@ offset_right = 440.0
 offset_bottom = 241.0
 scale = Vector2(4.455126, 6.8819976)
 theme = SubResource("Theme_uwy75")
-text = "DEFEATED!!"
+text = "YOU MISSED IT!"
 label_settings = SubResource("LabelSettings_s73nt")
 
 [node name="olindao_3d_animations" parent="." instance=ExtResource("12_pbgpm")]

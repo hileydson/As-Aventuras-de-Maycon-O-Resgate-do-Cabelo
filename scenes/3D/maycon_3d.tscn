@@ -284,28 +284,28 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_1ocj4")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_ievb8")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_5yci6")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_j1g22")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_aob2u")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_j1g22")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_5yci6")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_ievb8")
 }],
 "loop": false,
@@ -313,28 +313,28 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_str34")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_bet6o")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_6h74x")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_owhm4")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_pti3k")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_owhm4")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_6h74x")
 }, {
-"duration": 0.41,
+"duration": 0.51,
 "texture": SubResource("AtlasTexture_bet6o")
 }],
 "loop": false,
@@ -1652,10 +1652,10 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="lamp" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_lamp"]
-position = Vector2(564, 489)
+position = Vector2(562.00006, 516)
 scale = Vector2(0.928, 0.886)
 sprite_frames = SubResource("SpriteFrames_5yci6")
-animation = &"idle"
+animation = &"walk"
 autoplay = "idle"
 
 [node name="control_moto" type="Control" parent="CharacterBody3D/hud_canvas"]

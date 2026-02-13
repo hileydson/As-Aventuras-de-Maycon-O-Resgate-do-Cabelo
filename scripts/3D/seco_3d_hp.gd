@@ -63,10 +63,10 @@ func morrer():
 		get_tree().get_first_node_in_group("two_layers_fps_mode").find_child("SubViewportContainer2").visible = false
 	
 	if Global.default_language != Global.language_en:
-			seco_died.text = "DERROTADO!"
+			seco_died.text = "OLINDÃO DESVIOU!"
 			seco_died.visible = true
 			final_msg.text = " OLINDÃO FUGIU!"
-			final_msg_2.text = "EU AINDA TE PEGO SEU MALDITO!"
+			final_msg_2.text = "  SAFADAMENTE... "
 			
 	$"../../..".process_mode = Node.PROCESS_MODE_DISABLED
 	$"../../../../maycon_3d".process_mode = Node.PROCESS_MODE_DISABLED

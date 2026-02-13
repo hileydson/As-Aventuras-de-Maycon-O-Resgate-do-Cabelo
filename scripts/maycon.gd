@@ -112,6 +112,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	pausePlayer = true
 	transition.play("semi_fade_out")
 	mk_dudun.play()
+	$"../ScarySmile".stop()
 	node_logo_seco.visible = true
 	logo_inimigo_seco.play("default")
 	

@@ -168,7 +168,6 @@ func levou_dano(dano:int)->void:
 
 
 func _physics_process(delta):
-	 
 	# --- 1. CONFIGURAÇÕES TÉCNICAS E HUD ---
 	if Global.is_two_player_active:
 		gun.global_position = $hud_canvas/gun_position_2_players.global_position
@@ -176,7 +175,11 @@ func _physics_process(delta):
 			two_player_icon.play("cigarro")
 		two_player_icon.visible = true
 		
-	
+	if Global.maycon_pegou_lamp_3d_world:
+		control_lamp.visible = true
+	else:
+		control_lamp.visible = false
+		
 	# HUD de HP
 	$hud_canvas/maycon_hp/hp_1.visible = danos_count <= 4
 	$hud_canvas/maycon_hp/hp_2.visible = danos_count <= 3
@@ -239,6 +242,7 @@ func _physics_process(delta):
 		control_gun.visible = false
 		hud_gun_buttons.visible = false
 
+	
 # --- 3. LÓGICA DE OLHAR (Analógico Direito) ---
 	var joy_look = Vector2.ZERO
 	if on_moto:
@@ -319,6 +323,13 @@ func _physics_process(delta):
 	else:
 		if velocity.length() > 0.5 and is_on_floor():
 			if !walk.is_playing(): walk.play()
+			# Logica da lampada
+			if Global.maycon_pegou_lamp_fire_3d_world:
+				lamp.play("walk_with_light")
+				lamp_light.visible = true
+			else:
+				lamp.play("walk")
+				lamp_light.visible = false		
 			
 		# MOVIMENTO A PÉ
 		var raw_input = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X), Input.get_joy_axis(device_id, JOY_AXIS_LEFT_Y))
@@ -337,6 +348,7 @@ func _physics_process(delta):
 			velocity.z = direction.z * SPEED
 			animacao.play("run")
 			if !estou_morto: animation_tree_playback.travel("run")
+			if arma_sprite.animation!="reload": arma_sprite.play("walk")
 			
 			var forward_dot = transform.basis.z.dot(direction)
 			animacao.flip_h = forward_dot >= 0
@@ -351,11 +363,12 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 	arma_sprite.play("idle")
 
 
+
 func _on_lamp_animation_finished() -> void:
-		if Global.maycon_pegou_lamp_fire_3d_world:
-			lamp.play("idle_with_light")
-		else:
-			lamp.play("idle")
+	if Global.maycon_pegou_lamp_fire_3d_world:
+		lamp.play("idle_with_light")
+	else:
+		lamp.play("idle")
 
 
 func _on_animacao_animation_finished() -> void:
@@ -369,12 +382,15 @@ func _on_animacao_player_2_animation_finished() -> void:
 
 
 func _on_animation_tree_animation_finished(anim_name: StringName) -> void:
-	print("NOME:" + name + "  --  "+anim_name)
+	
+	#INUTILIZADO ATEH EU APRENDER A USAR ESSE ANIMATION TREE
+	
+	#print("NOME:" + name + "  --  "+anim_name)
 	if (name=="Maycon" and anim_name == "Walking") or (name=="Cigarro" and anim_name == "Casual_Walk"): # EH COMO FOI IMPORTADO... OS NOMES NAO BATEM COM AS ANIMACOES--- e os nomes estao trocados tb
 		print("PLAYED DEAD")
 		
 		#animation_tree.set("parameters/conditions/dead", true)
-		animation_tree_playback.travel("dead")
+		# animation_tree_playback.travel("dead")
 		
 		#if Global.players_dead_count == 1:
 		#	two_player_died.visible = true

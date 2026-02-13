@@ -32,6 +32,9 @@ func remove_enemies_count()->void:
 
 func _ready() -> void:
 	
+	#reseta mortes
+	Global.players_dead_count = 0
+	
 	if Global.back_to_fase:
 		maycon_3d.get_node("CharacterBody3D").rotation_degrees.y += 180
 		Global.back_to_fase = false
@@ -85,8 +88,6 @@ func _process(delta: float) -> void:
 	elif !Global.is_two_player_active && Global.players_dead_count > 0:
 		maycon_died(false)
 	
-	
-	#print("DANOS SECO: -> "+str(Global.seco_danos_first_3d_battle))
 	
 	if Global.maycon_pegou_arma_first_3d_battle && arma:
 		arma.queue_free()
