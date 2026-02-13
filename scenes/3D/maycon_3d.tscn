@@ -1535,6 +1535,7 @@ animations = [{
 [node name="CharacterBody3D" type="CharacterBody3D" parent="." groups=["player"]]
 collision_layer = 1033
 collision_mask = 1033
+safe_margin = 0.07
 script = ExtResource("1_fvdyg")
 
 [node name="chuva" type="GPUParticles3D" parent="CharacterBody3D"]

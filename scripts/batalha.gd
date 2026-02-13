@@ -46,6 +46,8 @@ extends AnimationPlayer
 @onready var no_fire_effects: Node2D = $"../no_fire_effects"
 @onready var sound_seco_capsule: AudioStreamPlayer = $"../sound_seco_capsule"
 
+@export var bloquear_batalha:bool = false
+
 var inimigos = {
 	# ENEMIES
 	"1" = preload("res://scenes/inimigos/inimigo_camilita.tscn"),
@@ -264,7 +266,8 @@ func _process(delta: float) -> void:
 	
 
 	# TEMP PARA ANALISAR TODAS AS FASES
-	return
+	if bloquear_batalha:
+		return
 	
 	
 	# PLOTAR INIMIGO EM BATALHA

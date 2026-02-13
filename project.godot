@@ -50,6 +50,10 @@ marker_player_2=""
 two_layers_fps_mode=""
 balao_conversa=""
 
+[gui]
+
+theme/default_font_antialiasing=0
+
 [input]
 
 ui_accept={

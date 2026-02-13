@@ -29,7 +29,7 @@ func _ready() -> void:
 		portal_funcionar = true
 		caixa_to_carry.queue_free() 
 	
-	if Global.game_events["gilhotina_broken"] or Global.game_events["axe_taken"] or Global.back_to_fase:
+	if Global.back_to_fase:
 		portal_funcionar = false
 	
 	Global.save_progress(get_tree().current_scene.name)
@@ -49,6 +49,8 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	#print(portal_funcionar)
+	#print(Global.game_events["gilhotina_broken"] or Global.game_events["axe_taken"] or Global.back_to_fase)
 	
 	# previne bug da batalha iniciar e nao haver collision com o maycon
 	if Global.battle_started:
