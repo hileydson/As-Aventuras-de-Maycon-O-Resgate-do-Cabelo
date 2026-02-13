@@ -33,6 +33,7 @@ extends CharacterBody3D
 @onready var raining: AudioStreamPlayer = $Raining
 @onready var two_player_icon: AnimatedSprite2D = $hud_canvas/two_player_icon
 @onready var moto_re: AudioStreamPlayer = $hud_canvas/control_moto/ModoRe
+@onready var run: AudioStreamPlayer2D = $run
 
 @export var SPEED : float = 5.0
 @export var JUMP_VELOCITY : float = 4.5
@@ -57,6 +58,13 @@ var device_id : int = 0
 var gatilho_pressionado = false
 
 var on_moto = false
+
+
+@export var SPRINT_SPEED = 9.0  # Velocidade ao correr
+var estamina_atual = 100.0
+var estamina_maxima = 100.0
+var pode_correr = true # Trava para esperar voltar ao 100%
+var esta_correndo = false
 
 func set_final_game()->void:
 	on_moto = true
@@ -321,41 +329,71 @@ func _physics_process(delta):
 		
 		
 	else:
+		# --- LÓGICA DE ESTAMINA E SPRINT ---
+		var apertou_sprint = Input.is_joy_button_pressed(device_id, JOY_BUTTON_RIGHT_SHOULDER) or Input.is_key_pressed(KEY_SHIFT)
+		
+		# Tenta correr: Precisa apertar o botão, ter estamina, ter permissão e estar se movendo
+		if apertou_sprint and estamina_atual > 0 and pode_correr and velocity.length() > 0.1:
+			esta_correndo = true
+			estamina_atual -= 40.0 * delta # Gasta 40 por segundo (dura 2.5 seg)
+			if estamina_atual <= 0:
+				estamina_atual = 0
+				pode_correr = false # Acabou? Trava até recuperar tudo
+			if !run.is_playing(): run.play()
+		else:
+			esta_correndo = false
+			# Regeneração: Se não está correndo, recupera estamina
+			estamina_atual += 20.0 * delta # Recupera 20 por segundo (leva 5 seg)
+			if estamina_atual >= estamina_maxima:
+				estamina_atual = estamina_maxima
+				pode_correr = true # Recuperou 100%? Pode correr de novo
+		
 		if velocity.length() > 0.5 and is_on_floor():
-			if !walk.is_playing(): walk.play()
+			if !run.is_playing() and !walk.is_playing(): walk.play()
 			# Logica da lampada
 			if Global.maycon_pegou_lamp_fire_3d_world:
 				lamp.play("walk_with_light")
 				lamp_light.visible = true
 			else:
 				lamp.play("walk")
-				lamp_light.visible = false		
-			
-		# MOVIMENTO A PÉ
+				lamp_light.visible = false	
+		
+		# Exemplo: Se não pode correr, deixa a HUD de balas ou o ícone do player meio vermelho/transparente
+		if not pode_correr:
+			$hud_canvas/maycon_hp.modulate = Color(1, 0.5, 0.5, 0.8) # Tom avermelhado
+		else:
+			$hud_canvas/maycon_hp.modulate = Color(1, 1, 1, 1) # Normal	
+		# Define a velocidade atual baseada no estado
+		var velocidade_final = SPRINT_SPEED if esta_correndo else SPEED
+
+		# --- SEU CÓDIGO DE MOVIMENTO A PÉ AJUSTADO ---
 		var raw_input = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X), Input.get_joy_axis(device_id, JOY_AXIS_LEFT_Y))
 		var input_dir = Vector2.ZERO
 		if raw_input.length() > 0.2: input_dir = raw_input
 		
-		if device_id == 0 and input_dir.length() < 0.1:
-			var k_x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
-			var k_y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
-			input_dir = Vector2(k_x, k_y)
+		# (Mantenha seu código de teclado ui_right, etc aqui...)
 
 		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		
 		if direction:
-			velocity.x = direction.x * SPEED
-			velocity.z = direction.z * SPEED
-			animacao.play("run")
-			if !estou_morto: animation_tree_playback.travel("run")
-			if arma_sprite.animation!="reload": arma_sprite.play("walk")
+			# USA A VELOCIDADE FINAL AQUI
+			velocity.x = direction.x * velocidade_final
+			velocity.z = direction.z * velocidade_final
 			
-			var forward_dot = transform.basis.z.dot(direction)
-			animacao.flip_h = forward_dot >= 0
+			# Ajuste de animação: se estiver correndo rápido, pode mudar o scale da animação
+			animacao.play("run")
+			if esta_correndo:
+				animacao.speed_scale = 1.5 # Deixa a animação de correr mais rápida visualmente
+			else:
+				animacao.speed_scale = 1.0
+				
+			if !estou_morto: animation_tree_playback.travel("run")
+			# ... resto do seu código de flip_h e arma ...
 		else:
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-			velocity.z = move_toward(velocity.z, 0, SPEED)
+			velocity.x = move_toward(velocity.x, 0, velocidade_final)
+			velocity.z = move_toward(velocity.z, 0, velocidade_final)
 			if !estou_morto: animation_tree_playback.travel("idle")
+			animacao.speed_scale = 1.0
 
 	move_and_slide()
 

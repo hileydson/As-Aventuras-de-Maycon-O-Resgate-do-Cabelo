@@ -1,6 +1,6 @@
-[gd_scene load_steps=57 format=3 uid="uid://ckijr0oss3x3d"]
+[gd_scene load_steps=57 format=3 uid="uid://cd67dvyihbwnt"]
 
-[ext_resource type="Script" uid="uid://cdle03k43r5ga" path="res://scripts/3D/last_part_before_end.gd" id="1_b2l8u"]
+[ext_resource type="Script" path="res://scripts/3D/last_part_before_end.gd" id="1_b2l8u"]
 [ext_resource type="PackedScene" uid="uid://c5do17jvoskfm" path="res://scenes/3D/maycon_3d.tscn" id="2_62mo4"]
 [ext_resource type="AudioStream" uid="uid://dc43lyrfshuje" path="res://assets/novos_audios/raining.mp3" id="2_cdnep"]
 [ext_resource type="PackedScene" uid="uid://flcvrefsfqqn" path="res://assets/novas_imagens/3d_cenarios/map_-_streets_of_crime_car_thief_3d/scene.gltf" id="2_nhhbp"]
@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://fjql0fxruscu" path="res://assets/novas_imagens/3d_cenarios/lua.png" id="5_igx7d"]
 [ext_resource type="Texture2D" uid="uid://jpruwl1kxn8m" path="res://assets/novas_imagens/cabelo/cabelo_idle.png" id="7_p8iuc"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="8_biole"]
-[ext_resource type="PackedScene" uid="uid://cqxowrnc2yxoy" path="res://scenes/3D/pause_3d_moto_cidade.tscn" id="8_q3404"]
+[ext_resource type="PackedScene" path="res://scenes/3D/pause_3d_moto_cidade.tscn" id="8_q3404"]
 [ext_resource type="Texture2D" uid="uid://dgp6h015l1dye" path="res://assets/novas_imagens/objects/interrogacao.png" id="9_qiu4f"]
 [ext_resource type="Texture2D" uid="uid://b7ukdc2kwsyj2" path="res://assets/novas_imagens/cigarro/cigarro.png" id="9_ut78q"]
 [ext_resource type="AudioStream" uid="uid://dvbmi0w8buqmi" path="res://assets/novos_audios/the_almost_end_song.mp3" id="10_iqprw"]
@@ -742,7 +742,7 @@ stream = ExtResource("13_ut78q")
 volume_db = -4.522
 
 [node name="Camera3D" type="Camera3D" parent="cutscene"]
-transform = Transform3D(-0.05420079, 0, -0.9985294, 0, 1, 0, 0.99852943, 0, -0.054200787, -448.43515, 213.47897, 217.57733)
+transform = Transform3D(-0.054200787, 0, -0.9985293, 0, 1, 0, 0.9985294, 0, -0.054200787, -448.43515, 213.47897, 217.57733)
 
 [node name="chuva" type="GPUParticles3D" parent="cutscene/Camera3D"]
 transform = Transform3D(1.8595114, -4.656613e-10, 2.9802322e-08, 4.656613e-10, 1.0954939, -1.7331331e-08, 4.4703484e-08, 7.537892e-09, 1.8346369, 0.028381348, 6.9735413, 0.39990234)
