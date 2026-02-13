@@ -52,7 +52,7 @@ balao_conversa=""
 
 [gui]
 
-theme/default_font_antialiasing=0
+theme/default_font_antialiasing=2
 
 [input]
 
