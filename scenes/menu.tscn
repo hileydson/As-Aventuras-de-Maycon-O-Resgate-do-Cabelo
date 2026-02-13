@@ -589,7 +589,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rsfmq")
-load_from_outside_1 = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(577, 324)

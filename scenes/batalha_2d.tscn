@@ -1579,7 +1579,6 @@ libraries = {
 &"": SubResource("AnimationLibrary_2117e")
 }
 script = ExtResource("1_3ps70")
-bloquear_batalha = true
 
 [node name="Battleground" type="Sprite2D" parent="Cenario de batalha"]
 position = Vector2(1.440628, 2.49996)
