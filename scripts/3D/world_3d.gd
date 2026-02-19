@@ -73,6 +73,7 @@ func _ready() -> void:
 	Global.maycon_pegou_lamp_3d_world = false
 	Global.maycon_pegou_lamp_fire_3d_world = false
 	Global.maycon_pegou_arma_first_3d_battle = false
+	Global.players_dead_count = 0
 	
 	await get_tree().create_timer(3.0).timeout
 	seco_welcome.play()

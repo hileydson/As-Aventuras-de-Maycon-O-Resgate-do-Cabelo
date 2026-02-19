@@ -68,6 +68,7 @@ var esta_correndo = false
 
 func set_final_game()->void:
 	on_moto = true
+	maycon_hp.visible = false
 	control_lamp.visible = false
 	control_gun.visible = false
 	control_moto.visible = true
@@ -183,7 +184,7 @@ func _physics_process(delta):
 			two_player_icon.play("cigarro")
 		two_player_icon.visible = true
 		
-	if Global.maycon_pegou_lamp_3d_world:
+	if Global.maycon_pegou_lamp_3d_world and !on_moto:
 		control_lamp.visible = true
 	else:
 		control_lamp.visible = false
@@ -243,7 +244,7 @@ func _physics_process(delta):
 			remove_bullets_from_gun()
 	
 	# Controle visual da arma
-	if Global.maycon_pegou_arma_first_3d_battle:
+	if Global.maycon_pegou_arma_first_3d_battle and !on_moto:
 		control_gun.visible = true
 		hud_gun_buttons.visible = true
 	else:
@@ -351,12 +352,17 @@ func _physics_process(delta):
 		if velocity.length() > 0.5 and is_on_floor():
 			if !run.is_playing() and !walk.is_playing(): walk.play()
 			# Logica da lampada
-			if Global.maycon_pegou_lamp_fire_3d_world:
+			if Global.maycon_pegou_lamp_fire_3d_world and !on_moto:
 				lamp.play("walk_with_light")
 				lamp_light.visible = true
 			else:
 				lamp.play("walk")
 				lamp_light.visible = false	
+			
+			# Logica da arma
+			if Global.maycon_pegou_arma_first_3d_battle and !on_moto:
+				arma_sprite.play("walk")
+				control_gun.visible = true
 		
 		# Exemplo: Se não pode correr, deixa a HUD de balas ou o ícone do player meio vermelho/transparente
 		if not pode_correr:
@@ -372,6 +378,20 @@ func _physics_process(delta):
 		if raw_input.length() > 0.2: input_dir = raw_input
 		
 		# (Mantenha seu código de teclado ui_right, etc aqui...)
+
+		
+		# Se não estiver usando analógico (ou for o Player 1), verifica o Teclado (WASD + Setas)
+		if device_id == 0 and input_dir.length() < 0.1:
+			# get_vector mapeia automaticamente 4 direções para um Vector2
+			# Certifique-se de que essas ações (W,A,S,D) estão no seu Input Map
+			input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+			
+			# Caso você não tenha configurado o WASD no Input Map (ui_left etc), 
+			# você pode usar esta alternativa manual abaixo:
+			if input_dir.length() == 0:
+				var k_x = Input.get_action_strength("d") - Input.get_action_strength("a")
+				var k_y = Input.get_action_strength("s") - Input.get_action_strength("w")
+				input_dir = Vector2(k_x, k_y)
 
 		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		

@@ -297,7 +297,7 @@ autoplay = "idle"
 frame_progress = 0.62865037
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="CharacterBody3D"]
-transform = Transform3D(0.92688555, 0, 0, 0, 0.48051652, 0, 0, 0, 0.63581616, 0, -0.036565304, 0)
+transform = Transform3D(1.4468992, 0, 0, 0, 0.73313075, 0, 0, 0, 0.86433905, 0, -0.03623116, 0)
 shape = SubResource("CapsuleShape3D_mk02k")
 
 [node name="Area3D" type="Area3D" parent="CharacterBody3D"]
@@ -306,7 +306,7 @@ collision_mask = 8
 script = ExtResource("6_6qnki")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Area3D"]
-transform = Transform3D(1.3003228, 0, 0, 0, 0.71821946, 0, 0, 0, 1.46367, 0, -0.03783655, 0)
+transform = Transform3D(2.0298471, 0, 0, 0, 1.0957974, 0, 0, 0, 1.9897373, 0, -0.038170695, 0)
 shape = SubResource("CapsuleShape3D_1h8fw")
 
 [connection signal="body_entered" from="CharacterBody3D/Area3D" to="CharacterBody3D" method="_on_area_3d_body_entered"]

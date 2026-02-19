@@ -699,7 +699,7 @@ animations = [{
 "duration": 0.41,
 "texture": SubResource("AtlasTexture_cunxc")
 }],
-"loop": true,
+"loop": false,
 "name": &"walk",
 "speed": 5.0
 }]
@@ -1774,7 +1774,7 @@ frame_progress = 1.0
 position = Vector2(389, 330)
 scale = Vector2(0.81, 0.774)
 sprite_frames = SubResource("SpriteFrames_xqtj4")
-animation = &"idle"
+animation = &"walk"
 autoplay = "idle"
 
 [node name="arma_sprite_uma_mao" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
@@ -1782,7 +1782,7 @@ visible = false
 position = Vector2(389, 330)
 scale = Vector2(0.81, 0.774)
 sprite_frames = SubResource("SpriteFrames_nxdkf")
-animation = &"idle"
+animation = &"walk"
 autoplay = "idle"
 
 [node name="ponto" type="Label" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
