@@ -15,12 +15,12 @@ const ENEMY_SCENES = {
 }
 
 const ENEMY_STATS = {
-	"1":{"name":"Camilita", "hp":70.0, "speed":112.0, "damage":12.0, "scale":1.05},
-	"2":{"name":"Bomba Pretti", "hp":110.0, "speed":92.0, "damage":17.0, "scale":1.0},
-	"3":{"name":"Fofo", "hp":140.0, "speed":82.0, "damage":20.0, "scale":1.12},
-	"4":{"name":"Xuruzika", "hp":90.0, "speed":142.0, "damage":14.0, "scale":0.95},
-	"5":{"name":"Manga", "hp":120.0, "speed":118.0, "damage":18.0, "scale":2.3},
-	"1001":{"name":"Seco", "hp":260.0, "speed":125.0, "damage":24.0, "scale":1.28}
+	"1":{"name":"Camilita", "hp":180.0, "speed":112.0, "damage":16.0, "scale":1.05},
+	"2":{"name":"Bomba Pretti", "hp":250.0, "speed":92.0, "damage":22.0, "scale":1.0},
+	"3":{"name":"Fofo", "hp":330.0, "speed":85.0, "damage":26.0, "scale":1.12},
+	"4":{"name":"Xuruzika", "hp":230.0, "speed":145.0, "damage":18.0, "scale":0.95},
+	"5":{"name":"Manga", "hp":290.0, "speed":120.0, "damage":24.0, "scale":2.3},
+	"1001":{"name":"Seco", "hp":560.0, "speed":128.0, "damage":32.0, "scale":1.28}
 }
 
 const ENEMY_POWER_STATS = {
@@ -30,6 +30,117 @@ const ENEMY_POWER_STATS = {
 	"4":{"speed":720.0, "size":135.0, "radius":38.0, "damage":13.0, "color":"ff70a6", "spin":7.0},
 	"5":{"speed":525.0, "size":175.0, "radius":52.0, "damage":17.0, "color":"80ed99", "spin":2.8},
 	"1001":{"speed":690.0, "size":190.0, "radius":56.0, "damage":23.0, "color":"ef233c", "spin":5.8}
+}
+
+const MINION_VARIANTS = [
+	{
+		"id":"knight_shadow",
+		"name_pt":"Guarda das Sombras",
+		"name_en":"Shadow Guard",
+		"path":"res://assets/novas_imagens/inimigos/capangas/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets",
+		"modulate":Color(1.0, 1.0, 1.0, 1.0),
+		"scale":2.4,
+		"hp_min":45.0, "hp_max":62.0,
+		"speed_min":115.0, "speed_max":140.0,
+		"damage_min":10.0, "damage_max":14.0,
+		"style":"balanced"
+	},
+	{
+		"id":"knight_royal_paladin",
+		"name_pt":"Paladino Real",
+		"name_en":"Royal Paladin",
+		"path":"res://assets/novas_imagens/inimigos/capangas/FreeKnight_v1/Colour2/Outline/120x80_PNGSheets",
+		"modulate":Color(1.05, 1.05, 1.15, 1.0),
+		"scale":2.6,
+		"hp_min":60.0, "hp_max":82.0,
+		"speed_min":95.0, "speed_max":118.0,
+		"damage_min":14.0, "damage_max":18.0,
+		"style":"heavy"
+	},
+	{
+		"id":"knight_assassin",
+		"name_pt":"Assassino Furtivo",
+		"name_en":"Stealth Assassin",
+		"path":"res://assets/novas_imagens/inimigos/capangas/FreeKnight_v1/Colour1/NoOutline/120x80_PNGSheets",
+		"modulate":Color(0.85, 0.78, 0.98, 1.0),
+		"scale":2.2,
+		"hp_min":35.0, "hp_max":50.0,
+		"speed_min":150.0, "speed_max":180.0,
+		"damage_min":8.0, "damage_max":12.0,
+		"style":"agile"
+	},
+	{
+		"id":"knight_frost_sentinel",
+		"name_pt":"Sentinela Glacial",
+		"name_en":"Frost Sentinel",
+		"path":"res://assets/novas_imagens/inimigos/capangas/FreeKnight_v1/Colour2/NoOutline/120x80_PNGSheets",
+		"modulate":Color(0.72, 0.95, 1.25, 1.0),
+		"scale":2.4,
+		"hp_min":45.0, "hp_max":65.0,
+		"speed_min":125.0, "speed_max":148.0,
+		"damage_min":11.0, "damage_max":15.0,
+		"style":"tactical"
+	},
+	{
+		"id":"knight_berserker",
+		"name_pt":"Berserker Carmesim",
+		"name_en":"Crimson Berserker",
+		"path":"res://assets/novas_imagens/inimigos/capangas/FreeKnight_v1/Colour1/Outline/120x80_PNGSheets",
+		"modulate":Color(1.35, 0.7, 0.7, 1.0),
+		"scale":2.5,
+		"hp_min":52.0, "hp_max":74.0,
+		"speed_min":135.0, "speed_max":160.0,
+		"damage_min":15.0, "damage_max":20.0,
+		"style":"frenzy"
+	},
+	{
+		"id":"knight_golden_commander",
+		"name_pt":"Comandante Áureo",
+		"name_en":"Golden Commander",
+		"path":"res://assets/novas_imagens/inimigos/capangas/FreeKnight_v1/Colour2/Outline/120x80_PNGSheets",
+		"modulate":Color(1.3, 1.2, 0.65, 1.0),
+		"scale":2.7,
+		"hp_min":70.0, "hp_max":92.0,
+		"speed_min":105.0, "speed_max":125.0,
+		"damage_min":16.0, "damage_max":22.0,
+		"style":"elite"
+	},
+	{
+		"id":"knight_toxic_duelist",
+		"name_pt":"Duelista Tóxico",
+		"name_en":"Toxic Duelist",
+		"path":"res://assets/novas_imagens/inimigos/capangas/FreeKnight_v1/Colour1/NoOutline/120x80_PNGSheets",
+		"modulate":Color(0.75, 1.25, 0.78, 1.0),
+		"scale":2.3,
+		"hp_min":40.0, "hp_max":56.0,
+		"speed_min":140.0, "speed_max":165.0,
+		"damage_min":12.0, "damage_max":16.0,
+		"style":"agile"
+	},
+	{
+		"id":"knight_iron_juggernaut",
+		"name_pt":"Colosso de Ferro",
+		"name_en":"Iron Colossus",
+		"path":"res://assets/novas_imagens/inimigos/capangas/FreeKnight_v1/Colour2/NoOutline/120x80_PNGSheets",
+		"modulate":Color(0.7, 0.72, 0.8, 1.0),
+		"scale":2.85,
+		"hp_min":80.0, "hp_max":115.0,
+		"speed_min":80.0, "speed_max":100.0,
+		"damage_min":18.0, "damage_max":25.0,
+		"style":"heavy"
+	}
+]
+
+const MINION_ANIMS = {
+	"idle":{"files":["_Idle.png"], "frames":10, "speed":8.0, "loop":true},
+	"run":{"files":["_Run.png"], "frames":10, "speed":10.0, "loop":true},
+	"attack":{"files":["_Attack.png"], "frames":4, "speed":9.0, "loop":false},
+	"attack_2":{"files":["_Attack2.png"], "frames":6, "speed":9.0, "loop":false},
+	"attack_combo":{"files":["_AttackCombo2hit.png", "_AttackCombo.png"], "frames":10, "speed":10.0, "loop":false},
+	"pain":{"files":["_Hit.png"], "frames":1, "speed":5.0, "loop":false},
+	"death":{"files":["_Death.png"], "frames":10, "speed":8.0, "loop":false},
+	"dash":{"files":["_Dash.png"], "frames":2, "speed":10.0, "loop":false},
+	"roll":{"files":["_Roll.png"], "frames":12, "speed":12.0, "loop":false}
 }
 
 var player:AnimatedSprite2D
@@ -117,6 +228,9 @@ var power_trails:Array[Dictionary] = []
 var enemy_power_frames:Dictionary = {}
 var enemy_power_sound_stream:AudioStream
 var enemy_voice_sound_stream:AudioStream
+var minions:Array[Dictionary] = []
+var minion_sprite_frames_cache:Dictionary = {}
+var minion_hit_sound:AudioStreamPlayer
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -146,6 +260,9 @@ func _ready() -> void:
 	set_world_audio_paused(true)
 	battle_song.play()
 	start_entry_sequence()
+	print("BATTLE STARTED: Enemy %s (HP %d/%d) - Minions spawned: %d" % [enemy_name, int(enemy_hp), int(enemy_max_hp), minions.size()])
+	for m in minions:
+		print("  -> Minion: %s (%s) HP: %.1f Speed: %.1f Damage: %.1f Style: %s Scale: %.2f" % [m.name, m.variant, m.hp, m.speed, m.damage, m.style, m.base_scale])
 	queue_redraw()
 
 func build_background() -> void:
@@ -194,6 +311,7 @@ func build_fighters() -> void:
 	enemy.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(enemy)
 	cache_enemy_power_frames()
+	spawn_minions()
 	update_fighter_transforms()
 
 func cache_enemy_power_frames() -> void:
@@ -223,6 +341,279 @@ func sprite_from_scene(path:String, nested_sprite:bool) -> AnimatedSprite2D:
 	sprite.offset = source_sprite.offset
 	source.free()
 	return sprite
+
+func load_battle_texture(res_path:String) -> Texture2D:
+	if ResourceLoader.exists(res_path):
+		var res = load(res_path)
+		if res is Texture2D:
+			return res
+	var global_path = ProjectSettings.globalize_path(res_path)
+	if FileAccess.file_exists(global_path):
+		var img = Image.load_from_file(global_path)
+		if img:
+			return ImageTexture.create_from_image(img)
+	return null
+
+func build_minion_sprite_frames(variant_path:String) -> SpriteFrames:
+	if minion_sprite_frames_cache.has(variant_path):
+		return minion_sprite_frames_cache[variant_path]
+	var frames = SpriteFrames.new()
+	if frames.has_animation("default"):
+		frames.remove_animation("default")
+	for anim_name in MINION_ANIMS:
+		var anim_config:Dictionary = MINION_ANIMS[anim_name]
+		var sheet_texture:Texture2D = null
+		for file_name in anim_config.files:
+			var sheet_path = variant_path + "/" + file_name
+			sheet_texture = load_battle_texture(sheet_path)
+			if sheet_texture:
+				break
+		if !sheet_texture:
+			continue
+		frames.add_animation(anim_name)
+		frames.set_animation_speed(anim_name, anim_config.speed)
+		frames.set_animation_loop(anim_name, anim_config.loop)
+		for frame_index in anim_config.frames:
+			var atlas = AtlasTexture.new()
+			atlas.atlas = sheet_texture
+			atlas.region = Rect2(frame_index * 120, 0, 120, 80)
+			frames.add_frame(anim_name, atlas)
+	minion_sprite_frames_cache[variant_path] = frames
+	return frames
+
+func spawn_minions() -> void:
+	var minion_count = randi_range(3, 5) if enemy_id == "1001" else randi_range(2, 4)
+	var available_variants = MINION_VARIANTS.duplicate()
+	available_variants.shuffle()
+	for minion_index in minion_count:
+		var variant = available_variants[minion_index % available_variants.size()]
+		var sprite_frames = build_minion_sprite_frames(variant.path)
+		var sprite = AnimatedSprite2D.new()
+		sprite.sprite_frames = sprite_frames
+		sprite.centered = true
+		sprite.modulate = variant.modulate
+		sprite.play("idle")
+		sprite.process_mode = Node.PROCESS_MODE_PAUSABLE
+		add_child(sprite)
+		var spawn_x = clampf(enemy_position.x + randf_range(-340.0, 340.0), 220.0, ARENA_WIDTH - 220.0)
+		if absf(spawn_x - player_position.x) < 220.0:
+			spawn_x = clampf(player_position.x + signf(enemy_position.x - player_position.x) * randf_range(280.0, 480.0), 220.0, ARENA_WIDTH - 220.0)
+		var spawn_y = clampf(randf_range(MIN_Y + 15.0, MAX_Y - 15.0), MIN_Y, MAX_Y)
+		var minion_hp = randf_range(variant.hp_min, variant.hp_max)
+		var minion_data:Dictionary = {
+			"sprite":sprite,
+			"position":Vector2(spawn_x, spawn_y),
+			"hp":minion_hp,
+			"max_hp":minion_hp,
+			"speed":randf_range(variant.speed_min, variant.speed_max),
+			"damage":randf_range(variant.damage_min, variant.damage_max),
+			"dead":false,
+			"attack_time":0.0,
+			"attack_hit_time":0.0,
+			"hit_pending":false,
+			"cooldown":randf_range(1.2, 2.6),
+			"behavior":"approach",
+			"behavior_time":0.0,
+			"strafe_dir":Vector2(0.0, 1.0),
+			"variant":variant.id,
+			"style":variant.style,
+			"name":tr_text(variant.name_pt, variant.name_en),
+			"facing":1.0,
+			"death_time":0.0,
+			"base_scale":variant.scale,
+			"base_modulate":variant.modulate
+		}
+		minions.append(minion_data)
+
+func update_minions(delta:float) -> void:
+	for minion_index in range(minions.size() - 1, -1, -1):
+		var minion = minions[minion_index]
+		if minion.dead:
+			minion.death_time -= delta
+			if minion.death_time <= 0.0:
+				if is_instance_valid(minion.sprite):
+					minion.sprite.queue_free()
+				minions.remove_at(minion_index)
+			continue
+		update_single_minion(minion, delta)
+		minions[minion_index] = minion
+
+func update_single_minion(minion:Dictionary, delta:float) -> void:
+	minion.cooldown = maxf(0.0, minion.cooldown - delta)
+	if minion.attack_time > 0.0:
+		var previous = minion.attack_time
+		minion.attack_time = maxf(0.0, minion.attack_time - delta)
+		if minion.hit_pending && previous > minion.attack_hit_time && minion.attack_time <= minion.attack_hit_time:
+			minion.hit_pending = false
+			resolve_single_minion_hit(minion)
+		if minion.attack_time <= 0.0:
+			play_if_changed(minion.sprite, "idle")
+		return
+
+	var offset = player_position - minion.position
+	if minion.behavior == "retreat":
+		minion.behavior_time -= delta
+		var retreat_dir = Vector2(-signf(offset.x), minion.strafe_dir.y * 0.5).normalized()
+		move_minion(minion, retreat_dir, minion.speed * 1.2, delta)
+		if minion.behavior_time <= 0.0:
+			minion.behavior = "strafe"
+			minion.behavior_time = randf_range(0.5, 1.0)
+			minion.strafe_dir = Vector2(randf_range(-0.3, 0.3), -1.0 if randf() < 0.5 else 1.0)
+		return
+
+	if minion.behavior == "strafe":
+		minion.behavior_time -= delta
+		var strafe = Vector2(minion.strafe_dir.x, minion.strafe_dir.y)
+		if absf(offset.x) > 200.0:
+			strafe.x += signf(offset.x) * 0.7
+		move_minion(minion, strafe.normalized(), minion.speed * 0.9, delta)
+		if minion.behavior_time <= 0.0:
+			minion.behavior = "approach"
+		return
+
+	var close_enough = absf(offset.x) < 95.0 && absf(offset.y) < 48.0
+	if close_enough && minion.cooldown <= 0.0:
+		start_minion_attack(minion)
+		return
+
+	var movement := Vector2.ZERO
+	if absf(offset.x) > 72.0:
+		movement.x = signf(offset.x)
+	if absf(offset.y) > 28.0:
+		movement.y = signf(offset.y) * 0.7
+	if movement.length() > 0.0:
+		move_minion(minion, movement.normalized(), minion.speed, delta)
+	else:
+		play_if_changed(minion.sprite, "idle")
+
+	for other_minion in minions:
+		if other_minion == minion || other_minion.dead:
+			continue
+		var separation = minion.position - other_minion.position
+		if separation.length() < 50.0:
+			var push_dir = separation.normalized() if separation.length() > 1.0 else Vector2(randf_range(-1.0, 1.0), 0.0).normalized()
+			minion.position += push_dir * 60.0 * delta
+
+	var enemy_separation = minion.position - enemy_position
+	if enemy_separation.length() < 60.0:
+		var push_dir = enemy_separation.normalized() if enemy_separation.length() > 1.0 else Vector2(1.0, 0.0)
+		minion.position += push_dir * 80.0 * delta
+
+	minion.position.x = clampf(minion.position.x, 100.0, ARENA_WIDTH - 100.0)
+	minion.position.y = clampf(minion.position.y, MIN_Y, MAX_Y)
+
+func move_minion(minion:Dictionary, direction:Vector2, speed:float, delta:float) -> void:
+	minion.position += direction * speed * delta
+	if absf(direction.x) > 0.05:
+		minion.facing = signf(direction.x)
+		minion.sprite.flip_h = minion.facing < 0.0
+	play_if_changed(minion.sprite, "run")
+	minion.position.x = clampf(minion.position.x, 100.0, ARENA_WIDTH - 100.0)
+	minion.position.y = clampf(minion.position.y, MIN_Y, MAX_Y)
+
+func start_minion_attack(minion:Dictionary) -> void:
+	minion.sprite.flip_h = player_position.x < minion.position.x
+	minion.facing = -1.0 if minion.sprite.flip_h else 1.0
+	var style = minion.get("style", "balanced")
+	var attack_name = "attack"
+	if style == "heavy" && minion.sprite.sprite_frames.has_animation("attack_2"):
+		attack_name = "attack_2"
+	elif style == "agile" && minion.sprite.sprite_frames.has_animation("attack_combo"):
+		attack_name = "attack_combo"
+	elif style == "frenzy":
+		attack_name = "attack_combo" if (minion.sprite.sprite_frames.has_animation("attack_combo") && randf() > 0.4) else "attack_2"
+	elif style == "elite":
+		attack_name = "attack_combo" if randf() > 0.5 else "attack_2"
+	else:
+		var choices = ["attack"]
+		if minion.sprite.sprite_frames.has_animation("attack_2"):
+			choices.append("attack_2")
+		if minion.sprite.sprite_frames.has_animation("attack_combo"):
+			choices.append("attack_combo")
+		attack_name = choices[randi() % choices.size()]
+
+	minion.attack_time = get_sprite_animation_duration(minion.sprite, attack_name, 0.45, 2.0)
+	minion.attack_hit_time = minion.attack_time * 0.48
+	minion.cooldown = randf_range(1.3, 2.6)
+	minion.hit_pending = true
+	minion.sprite.play(attack_name)
+	spawn_impact(minion.position + Vector2(36.0 * minion.facing, -28.0), Color("ff8c42"), minion.facing)
+
+func resolve_single_minion_hit(minion:Dictionary) -> void:
+	if player_dead || player_invulnerability > 0.0:
+		return
+	var distance = player_position - minion.position
+	if absf(distance.x) <= 105.0 && absf(distance.y) <= 52.0:
+		damage_player(minion.damage, signf(distance.x))
+
+func resolve_player_hit_minions(kick:bool) -> bool:
+	var hit_any = false
+	for minion_index in minions.size():
+		var minion = minions[minion_index]
+		if minion.dead:
+			continue
+		var distance = minion.position - player_position
+		var facing_ok = distance.x * player_facing >= 0.0
+		if absf(distance.x) <= (130.0 if kick else 100.0) && absf(distance.y) <= 58.0 && facing_ok:
+			hit_any = true
+			var damage = 18.0 if kick else 12.0
+			damage += minf(combo * 1.0, 8.0)
+			minion.hp = maxf(0.0, minion.hp - damage)
+			minion.position.x += player_facing * (35.0 if kick else 20.0)
+			if minion.attack_time <= 0.0:
+				minion.sprite.play("pain")
+			if minion_hit_sound:
+				minion_hit_sound.pitch_scale = randf_range(0.85, 1.15)
+				minion_hit_sound.play()
+			spawn_blood(minion.position + Vector2(0, -30), 8 if kick else 5, player_facing)
+			spawn_impact(minion.position + Vector2(0, -28), Color("ffb74d" if kick else "ffa726"), player_facing)
+			shake(3.0 if kick else 2.0, 0.12)
+			if minion.hp <= 0.0:
+				defeat_minion(minion_index)
+			elif minion.attack_time <= 0.0:
+				minion.behavior = "retreat"
+				minion.behavior_time = randf_range(0.3, 0.6)
+				minion.strafe_dir = Vector2(-player_facing, -1.0 if randf() < 0.5 else 1.0)
+			minions[minion_index] = minion
+	return hit_any
+
+func defeat_minion(minion_index:int) -> void:
+	var minion = minions[minion_index]
+	minion.dead = true
+	minion.death_time = 2.0
+	minion.hit_pending = false
+	if minion.sprite.sprite_frames.has_animation("death"):
+		minion.sprite.play("death")
+	else:
+		minion.sprite.play("pain")
+	spawn_blood_explosion(minion.position + Vector2(0, -30), 32)
+	for index in range(3):
+		spawn_impact(minion.position + Vector2(randf_range(-30, 30), randf_range(-55, 5)), Color("d90429"), 1.0 if randf() > 0.5 else -1.0)
+	for index in range(4):
+		stains.append({"position":minion.position + Vector2(randf_range(-40, 40), randf_range(15, 42)), "radius":randf_range(10.0, 22.0), "alpha":randf_range(0.55, 0.82)})
+	shake(6.0, 0.22)
+	minions[minion_index] = minion
+
+func defeat_all_minions() -> void:
+	for minion_index in minions.size():
+		var minion = minions[minion_index]
+		if !minion.dead:
+			defeat_minion(minion_index)
+
+func update_minion_transforms() -> void:
+	for minion in minions:
+		if !is_instance_valid(minion.sprite):
+			continue
+		minion.sprite.position = minion.position
+		minion.sprite.z_index = int(minion.position.y)
+		var depth_scale = remap(minion.position.y, MIN_Y, MAX_Y, 0.88, 1.15)
+		minion.sprite.scale = Vector2(depth_scale * minion.base_scale, depth_scale * minion.base_scale)
+		var base_mod:Color = minion.get("base_modulate", Color.WHITE)
+		if minion.dead:
+			var death_alpha = clampf(minion.death_time / 0.8, 0.0, 1.0)
+			minion.sprite.modulate = Color(base_mod.r, base_mod.g, base_mod.b, death_alpha)
+		elif intro_time <= 0.0:
+			minion.sprite.modulate = base_mod
 
 func build_world_bars() -> void:
 	player_bar = create_health_bar(Color("b3132b"), 205)
@@ -373,6 +764,11 @@ func start_entry_sequence() -> void:
 	tween.tween_property(intro_label, "modulate:a", 0.0, 0.55).set_delay(0.42)
 	tween.tween_property(player, "modulate:a", 1.0, 0.55).set_delay(0.55)
 	tween.tween_property(enemy, "modulate:a", 1.0, 0.55).set_delay(0.65)
+	for minion in minions:
+		if is_instance_valid(minion.sprite):
+			var base_mod:Color = minion.get("base_modulate", Color.WHITE)
+			minion.sprite.modulate = Color(base_mod.r, base_mod.g, base_mod.b, 0.0)
+			tween.tween_property(minion.sprite, "modulate:a", 1.0, 0.55).set_delay(randf_range(0.6, 0.85))
 	tween.tween_property(camera, "zoom", Vector2.ONE, 1.25)
 
 func build_audio() -> void:
@@ -387,6 +783,7 @@ func build_audio() -> void:
 	enemy_power_sound = create_audio_from_stream(enemy_power_sound_stream, -2.0)
 	enemy_voice_sound = create_audio_from_stream(enemy_voice_sound_stream, -1.0)
 	enemy_teleport_sound = create_audio("res://assets/novos_audios/respaw.mp3", -4.0)
+	minion_hit_sound = create_audio("res://assets/novos_audios/punch_3.mp3", -5.0)
 
 func create_audio(path:String, volume:float, looping:bool = false) -> AudioStreamPlayer:
 	var audio = AudioStreamPlayer.new()
@@ -434,6 +831,7 @@ func _process(delta:float) -> void:
 		queue_redraw()
 		return
 	update_player(delta)
+	update_minions(delta)
 	if !enemy_dead:
 		update_enemy(delta)
 	else:
@@ -441,6 +839,7 @@ func _process(delta:float) -> void:
 		if exit_open && player_position.x >= ARENA_WIDTH - 150.0:
 			finish_battle()
 	update_fighter_transforms()
+	update_minion_transforms()
 	update_bars()
 	camera.position.x = clamp(player_position.x + 260.0, 576.0, ARENA_WIDTH - 576.0)
 	var visible_camera_center = camera.get_screen_center_position().x
@@ -531,33 +930,39 @@ func start_player_attack(kick:bool) -> void:
 	resolve_player_hit(kick)
 
 func resolve_player_hit(kick:bool) -> void:
-	if enemy_dead:
-		return
-	var distance = enemy_position - player_position
-	var facing_ok = distance.x * player_facing >= 0.0
-	if absf(distance.x) <= (145.0 if kick else 115.0) && absf(distance.y) <= 64.0 && facing_ok:
-		var enemy_was_attacking = enemy_attack_time > 0.0
-		var damage = 19.0 if kick else 13.0
+	var hit_enemy = false
+	if !enemy_dead:
+		var distance = enemy_position - player_position
+		var facing_ok = distance.x * player_facing >= 0.0
+		if absf(distance.x) <= (145.0 if kick else 115.0) && absf(distance.y) <= 64.0 && facing_ok:
+			hit_enemy = true
+			var enemy_was_attacking = enemy_attack_time > 0.0
+			var damage = 19.0 if kick else 13.0
+			combo += 1
+			combo_timeout = 2.2
+			damage += minf(combo * 1.5, 10.0)
+			enemy_hp = maxf(0.0, enemy_hp - damage)
+			enemy_position.x += player_facing * (42.0 if kick else 25.0)
+			if !enemy_was_attacking:
+				enemy.play("pain")
+			enemy_pressure += 2 if kick else 1
+			hit_sound.pitch_scale = randf_range(0.9, 1.13)
+			hit_sound.play()
+			spawn_blood(enemy_position + Vector2(0, -45), 13 if kick else 8, player_facing)
+			spawn_impact(enemy_position + Vector2(0, -42), Color("fff176" if kick else "ffd166"), player_facing)
+			shake(5.0 if kick else 3.0, 0.18)
+			combo_label.text = "%d HIT\nCOMBO" % combo if combo > 1 else ""
+			if enemy_hp <= 0.0:
+				defeat_enemy()
+			elif !enemy_was_attacking && (enemy_pressure >= 2 || combo >= 3) && enemy_teleport_cooldown <= 0.0:
+				begin_enemy_teleport()
+			elif !enemy_was_attacking && combo % 2 == 0:
+				begin_enemy_retreat()
+	var hit_minions = resolve_player_hit_minions(kick)
+	if hit_minions && !hit_enemy:
 		combo += 1
 		combo_timeout = 2.2
-		damage += minf(combo * 1.5, 10.0)
-		enemy_hp = maxf(0.0, enemy_hp - damage)
-		enemy_position.x += player_facing * (42.0 if kick else 25.0)
-		if !enemy_was_attacking:
-			enemy.play("pain")
-		enemy_pressure += 2 if kick else 1
-		hit_sound.pitch_scale = randf_range(0.9, 1.13)
-		hit_sound.play()
-		spawn_blood(enemy_position + Vector2(0, -45), 13 if kick else 8, player_facing)
-		spawn_impact(enemy_position + Vector2(0, -42), Color("fff176" if kick else "ffd166"), player_facing)
-		shake(5.0 if kick else 3.0, 0.18)
 		combo_label.text = "%d HIT\nCOMBO" % combo if combo > 1 else ""
-		if enemy_hp <= 0.0:
-			defeat_enemy()
-		elif !enemy_was_attacking && (enemy_pressure >= 2 || combo >= 3) && enemy_teleport_cooldown <= 0.0:
-			begin_enemy_teleport()
-		elif !enemy_was_attacking && combo % 2 == 0:
-			begin_enemy_retreat()
 
 func update_enemy(delta:float) -> void:
 	enemy_cooldown = maxf(0.0, enemy_cooldown - delta)
@@ -840,6 +1245,7 @@ func defeat_enemy() -> void:
 	shake(22.0, 0.72)
 	enemy_explosion_time = 0.92
 	status_label.text = tr_text("EXPLOSÃO DE SANGUE!", "BLOOD EXPLOSION!")
+	defeat_all_minions()
 
 func update_enemy_explosion(delta:float) -> void:
 	if exit_open:
@@ -1097,6 +1503,16 @@ func _draw() -> void:
 	for trail in power_trails:
 		var trail_alpha = clampf(trail.life / trail.max_life, 0.0, 1.0) * 0.58
 		draw_circle(trail.position, trail.radius, Color(trail.color, trail_alpha))
+	for minion in minions:
+		if minion.dead || !is_instance_valid(minion.sprite):
+			continue
+		var bar_w = 42.0
+		var bar_h = 4.0
+		var bar_pos = minion.position + Vector2(-bar_w * 0.5, -62.0)
+		draw_rect(Rect2(bar_pos + Vector2(-1, -1), Vector2(bar_w + 2, bar_h + 2)), Color(0.04, 0.04, 0.06, 0.85))
+		var pct = clampf(minion.hp / maxf(1.0, minion.max_hp), 0.0, 1.0)
+		var fill_color = Color("e63946") if pct < 0.35 else (Color("f4a261") if pct < 0.7 else Color("2a9d8f"))
+		draw_rect(Rect2(bar_pos, Vector2(bar_w * pct, bar_h)), fill_color)
 	if exit_open:
 		draw_rect(Rect2(2470, 315, 90, 245), Color(0.18, 0.95, 0.45, 0.12))
 		draw_line(Vector2(2490, 340), Vector2(2490, 535), Color("80ed99"), 6)

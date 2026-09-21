@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1790000972
+::res://::1790005829
 AGENTS.md::TextFile::-1::1789958757::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1789958757::0::1::::<><><>0<>0<><>::
 export_presets.cfg::TextFile::-1::1771524570::0::1::::<><><>0<>0<><>::
@@ -3636,7 +3636,7 @@ maycon_fase.gd::GDScript::2636479185831734840::1770311722::0::1::::<>CharacterBo
 maycon_itens.gd::GDScript::3608571195747589650::1789998374::0::1::::<>Node2D<><>0<>0<><>::
 menu.gd::GDScript::6562768689195605607::1770984867::0::1::::<>Control<><>0<>0<><>::
 pause.gd::GDScript::7449233017950370426::1789998374::0::1::::<>Control<><>0<>0<><>::
-realtime_battle.gd::GDScript::7867064034200866415::1790001370::0::1::::<>Node2D<><>0<>0<><>::
+realtime_battle.gd::GDScript::7867064034200866415::1790005835::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_3d.gd::GDScript::2141243869699419406::1790001021::0::1::::<>CanvasLayer<><>0<>0<><>::
 realtime_battle_background.gd::GDScript::3540749457985720226::1790000226::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_foreground.gd::GDScript::2882700291306978348::1790000216::0::1::::<>Node2D<><>0<>0<><>::
