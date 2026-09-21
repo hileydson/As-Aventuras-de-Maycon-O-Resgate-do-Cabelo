@@ -77,6 +77,7 @@ var player_invulnerability:float = 0.0
 var dodge_time:float = 0.0
 var dodge_cooldown:float = 0.0
 var dodge_direction := Vector2.RIGHT
+var dodge_ghost_timer:float = 0.0
 var enemy_attack_time:float = 0.0
 var enemy_attack_hit_time:float = 0.0
 var enemy_cooldown:float = 0.8
@@ -471,6 +472,10 @@ func update_player(delta:float) -> void:
 		player_position += dodge_direction * 610.0 * delta
 		player_invulnerability = maxf(player_invulnerability, 0.12)
 		play_if_changed(player, "double_jump")
+		dodge_ghost_timer -= delta
+		if dodge_ghost_timer <= 0.0:
+			dodge_ghost_timer = 0.04
+			spawn_player_ghost()
 	elif player_attack_time <= 0.0:
 		if Input.is_action_just_pressed("ui_accept") && dodge_cooldown <= 0.0:
 			start_dodge()
@@ -503,10 +508,13 @@ func start_dodge() -> void:
 	dodge_time = 0.24
 	dodge_cooldown = 0.72
 	player_invulnerability = 0.34
+	play_if_changed(player, "double_jump")
 	dash_sound.pitch_scale = randf_range(0.94, 1.04)
 	dash_sound.play()
 	var fart_origin = player_position + Vector2(-32.0 * player_facing, 18.0)
 	spawn_impact(fart_origin, Color("7bdff2"), -dodge_direction)
+	dodge_ghost_timer = 0.04
+	spawn_player_ghost()
 
 func start_player_attack(kick:bool) -> void:
 	var attack_name = "attack_kick" if kick else "attack_punch"
@@ -937,6 +945,37 @@ func get_impact_angle(direction_value:Variant) -> float:
 func spawn_impact(position_value:Vector2, color:Color, direction_value:Variant = 1.0) -> void:
 	var angle = get_impact_angle(direction_value)
 	impacts.append({"position":position_value, "life":0.22, "color":color, "angle":angle})
+
+func spawn_player_ghost() -> void:
+	if !player or !player.sprite_frames:
+		return
+	var anim_name = player.animation
+	if !player.sprite_frames.has_animation(anim_name):
+		anim_name = "double_jump"
+	var current_texture = player.sprite_frames.get_frame_texture(anim_name, player.frame)
+	if !current_texture:
+		current_texture = player.sprite_frames.get_frame_texture("double_jump", 0)
+	if !current_texture:
+		current_texture = player.sprite_frames.get_frame_texture("idle_right", 0)
+	if !current_texture:
+		return
+
+	var ghost = Sprite2D.new()
+	ghost.texture = current_texture
+	ghost.centered = player.centered
+	ghost.offset = player.offset
+	ghost.flip_h = player.flip_h
+	ghost.position = player_position
+	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.9, 1.18)
+	ghost.scale = Vector2(player_depth_scale * player_base_scale, player_depth_scale * player_base_scale)
+	ghost.z_index = max(1, int(player_position.y) - 1)
+	ghost.modulate = Color(0.82, 0.92, 1.0, 0.72)
+	ghost.process_mode = Node.PROCESS_MODE_PAUSABLE
+	add_child(ghost)
+
+	var tween = ghost.create_tween()
+	tween.tween_property(ghost, "modulate", Color(0.3, 0.65, 1.0, 0.0), 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_callback(ghost.queue_free)
 
 func spawn_enemy_dust(origin:Vector2) -> void:
 	for index in range(5):
