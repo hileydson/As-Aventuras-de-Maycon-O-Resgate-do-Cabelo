@@ -37,10 +37,6 @@ func draw_silhouette(x:float, palette:Dictionary) -> void:
 			draw_colored_polygon(PackedVector2Array([Vector2(x, 110), Vector2(x + 48, 42), Vector2(x + 96, 110)]), shadow)
 
 func draw_foreground_details(palette:Dictionary) -> void:
-	for x in range(180, int(arena_width), 480):
-		draw_rect(Rect2(x, 315, 18, 92), Color("211a19"))
-		draw_circle(Vector2(x + 9, 315), 30, Color(palette.light, 0.22))
-		draw_circle(Vector2(x + 9, 315), 10, palette.light)
 	for x in range(80, int(arena_width), 320):
 		draw_colored_polygon(PackedVector2Array([
 			Vector2(x, 560), Vector2(x + 24, 545), Vector2(x + 62, 552), Vector2(x + 74, 570), Vector2(x + 20, 578)

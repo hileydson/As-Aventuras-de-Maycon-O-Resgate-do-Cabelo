@@ -37,6 +37,7 @@ var enemy:AnimatedSprite2D
 var camera:Camera2D
 var stage_3d:CanvasLayer
 var background_layer:Node2D
+var foreground_layer:Node2D
 var hud_canvas:CanvasLayer
 var player_bar:ProgressBar
 var player_hp_label:Label
@@ -55,6 +56,7 @@ var victory_sound:AudioStreamPlayer
 var dash_sound:AudioStreamPlayer
 var enemy_power_sound:AudioStreamPlayer
 var enemy_voice_sound:AudioStreamPlayer
+var enemy_teleport_sound:AudioStreamPlayer
 
 var player_position := Vector2(280, 500)
 var enemy_position := Vector2(1060, 475)
@@ -95,7 +97,7 @@ var intro_time:float = 1.45
 var enemy_behavior:String = "approach"
 var enemy_behavior_time:float = 0.0
 var enemy_decision_cooldown:float = 1.0
-var enemy_teleport_cooldown:float = 2.8
+var enemy_teleport_cooldown:float = 1.2
 var enemy_pressure:int = 0
 var enemy_strafe_direction := Vector2(0.0, 1.0)
 var enemy_cover_target := Vector2.ZERO
@@ -155,6 +157,12 @@ func build_background() -> void:
 	background_layer.z_index = -100
 	background_layer.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(background_layer)
+	foreground_layer = preload("res://scripts/realtime_battle_foreground.gd").new()
+	foreground_layer.theme_id = Global.realtime_arena_theme
+	foreground_layer.arena_width = ARENA_WIDTH
+	foreground_layer.z_index = 650
+	foreground_layer.process_mode = Node.PROCESS_MODE_PAUSABLE
+	add_child(foreground_layer)
 
 func build_fighters() -> void:
 	player = sprite_from_scene("res://scenes/maycon_fase.tscn", true)
@@ -375,6 +383,7 @@ func build_audio() -> void:
 	dash_sound = create_audio("res://assets/audio/peido.mp3", -4.0)
 	enemy_power_sound = create_audio_from_stream(enemy_power_sound_stream, -2.0)
 	enemy_voice_sound = create_audio_from_stream(enemy_voice_sound_stream, -1.0)
+	enemy_teleport_sound = create_audio("res://assets/novos_audios/respaw.mp3", -4.0)
 
 func create_audio(path:String, volume:float, looping:bool = false) -> AudioStreamPlayer:
 	var audio = AudioStreamPlayer.new()
@@ -492,7 +501,7 @@ func start_dodge() -> void:
 	player_invulnerability = 0.34
 	dash_sound.pitch_scale = randf_range(0.94, 1.04)
 	dash_sound.play()
-	spawn_impact(player_position + Vector2(0, 25), Color("7bdff2"))
+	spawn_impact(player_position + Vector2(0, 25), Color("7bdff2"), dodge_direction)
 
 func start_player_attack(kick:bool) -> void:
 	var attack_name = "attack_kick" if kick else "attack_punch"
@@ -505,7 +514,7 @@ func start_player_attack(kick:bool) -> void:
 	var attack_sound = kick_sound if kick else punch_sound
 	attack_sound.pitch_scale = randf_range(0.94, 1.06)
 	attack_sound.play()
-	spawn_impact(player_position + Vector2(60.0 * player_facing, -35), Color("ffd166"))
+	spawn_impact(player_position + Vector2(60.0 * player_facing, -35), Color("ffd166"), player_facing)
 	resolve_player_hit(kick)
 
 func resolve_player_hit(kick:bool) -> void:
@@ -527,11 +536,12 @@ func resolve_player_hit(kick:bool) -> void:
 		hit_sound.pitch_scale = randf_range(0.9, 1.13)
 		hit_sound.play()
 		spawn_blood(enemy_position + Vector2(0, -45), 13 if kick else 8, player_facing)
+		spawn_impact(enemy_position + Vector2(0, -42), Color("fff176" if kick else "ffd166"), player_facing)
 		shake(5.0 if kick else 3.0, 0.18)
 		combo_label.text = "%d HIT\nCOMBO" % combo if combo > 1 else ""
 		if enemy_hp <= 0.0:
 			defeat_enemy()
-		elif !enemy_was_attacking && enemy_pressure >= 3 && enemy_teleport_cooldown <= 0.0:
+		elif !enemy_was_attacking && (enemy_pressure >= 2 || combo >= 3) && enemy_teleport_cooldown <= 0.0:
 			begin_enemy_teleport()
 		elif !enemy_was_attacking && combo % 2 == 0:
 			begin_enemy_retreat()
@@ -559,6 +569,13 @@ func update_enemy(delta:float) -> void:
 	if power_range && enemy_power_cooldown <= 0.0 && power_projectiles.size() < 4:
 		start_enemy_power_attack()
 		return
+	if enemy_teleport_cooldown <= 0.0:
+		if offset.length() > 330.0 && randf() < 0.55:
+			begin_enemy_teleport()
+			return
+		elif enemy_decision_cooldown <= 0.0 && randf() < 0.38:
+			begin_enemy_teleport()
+			return
 	if enemy_behavior == "retreat":
 		enemy_behavior_time -= delta
 		var retreat_direction = Vector2(-signf(offset.x), enemy_strafe_direction.y * 0.55).normalized()
@@ -655,10 +672,14 @@ func begin_enemy_teleport() -> void:
 	enemy_pressure = 0
 	enemy_behavior = "teleport"
 	enemy_behavior_time = 0.82
-	enemy_teleport_cooldown = randf_range(4.0, 6.5)
+	enemy_teleport_cooldown = randf_range(2.4, 3.8) if enemy_id != "1001" else randf_range(1.8, 2.9)
 	teleport_moved = false
 	enemy_hit_pending = false
-	spawn_impact(enemy_position + Vector2(0, -45), Color("d45cff"))
+	if enemy_teleport_sound && enemy_teleport_sound.stream:
+		enemy_teleport_sound.pitch_scale = randf_range(1.08, 1.25)
+		enemy_teleport_sound.play()
+	spawn_impact(enemy_position + Vector2(0, -45), Color("d45cff"), 1.0)
+	spawn_impact(enemy_position + Vector2(0, -45), Color("d45cff"), -1.0)
 
 func update_enemy_teleport(delta:float) -> void:
 	enemy_behavior_time -= delta
@@ -670,7 +691,11 @@ func update_enemy_teleport(delta:float) -> void:
 		if randf() < 0.42:
 			side *= -1.0
 		enemy_position = Vector2(clampf(player_position.x + side * randf_range(125.0, 175.0), 120.0, ARENA_WIDTH - 180.0), clampf(player_position.y + randf_range(-60.0, 60.0), MIN_Y, MAX_Y))
-		spawn_impact(enemy_position + Vector2(0, -45), Color("d45cff"))
+		if enemy_teleport_sound && enemy_teleport_sound.stream:
+			enemy_teleport_sound.pitch_scale = randf_range(0.85, 0.98)
+			enemy_teleport_sound.play()
+		spawn_impact(enemy_position + Vector2(0, -45), Color("d45cff"), 1.0)
+		spawn_impact(enemy_position + Vector2(0, -45), Color("d45cff"), -1.0)
 	else:
 		enemy.modulate.a = clampf(remap(enemy_behavior_time, 0.42, 0.0, 0.03, 1.0), 0.03, 1.0)
 	if enemy_behavior_time <= 0.0:
@@ -688,7 +713,8 @@ func start_enemy_attack() -> void:
 	enemy_cooldown = randf_range(0.95, 1.55) if enemy_id != "1001" else randf_range(0.58, 1.0)
 	enemy_hit_pending = true
 	enemy.play(attack_name)
-	spawn_impact(enemy_position + Vector2((-48.0 if enemy.flip_h else 48.0), -42.0), Color("ff5d73"))
+	var facing = -1.0 if enemy.flip_h else 1.0
+	spawn_impact(enemy_position + Vector2((-48.0 if enemy.flip_h else 48.0), -42.0), Color("ff5d73"), facing)
 
 func start_enemy_power_attack() -> void:
 	var power_variant = 2 if enemy_power_frames.has(2) && randf() > 0.48 else 1
@@ -711,7 +737,8 @@ func start_enemy_power_attack() -> void:
 		if volley_count > 1:
 			spread = deg_to_rad(lerpf(-13.0, 13.0, float(projectile_index) / float(volley_count - 1)))
 		spawn_enemy_power_projectile(power_variant, launch_delay + projectile_index * 0.07, spread)
-	spawn_impact(enemy_position + Vector2(0, -58), Color(ENEMY_POWER_STATS[enemy_id].color))
+	var facing = -1.0 if enemy.flip_h else 1.0
+	spawn_impact(enemy_position + Vector2(0, -58), Color(ENEMY_POWER_STATS[enemy_id].color), facing)
 	shake(3.0, 0.2)
 
 func spawn_enemy_power_projectile(power_variant:int, delay:float, spread:float) -> void:
@@ -774,7 +801,7 @@ func damage_player(damage:float, hit_direction:float) -> void:
 	hurt_sound.play()
 	spawn_blood(player_position + Vector2(0, -35), 16, hit_direction)
 	shake(10.0, 0.38)
-	spawn_impact(player_position + Vector2(0, -38), Color("ff304f"))
+	spawn_impact(player_position + Vector2(0, -38), Color("ff304f"), hit_direction)
 	Input.start_joy_vibration(0, 0.65, 0.85, 0.28)
 	if player_hp <= 0.0:
 		lose_battle()
@@ -794,7 +821,7 @@ func defeat_enemy() -> void:
 	restore_normal_time_after_explosion()
 	spawn_blood_explosion(enemy_position + Vector2(0, -45), 96)
 	for index in range(7):
-		spawn_impact(enemy_position + Vector2(randf_range(-55, 55), randf_range(-95, 15)), Color("d90429"))
+		spawn_impact(enemy_position + Vector2(randf_range(-55, 55), randf_range(-95, 15)), Color("d90429"), 1.0 if randf() > 0.5 else -1.0)
 	for index in range(8):
 		stains.append({"position":enemy_position + Vector2(randf_range(-65, 65), randf_range(20, 58)), "radius":randf_range(16.0, 34.0), "alpha":randf_range(0.68, 0.94)})
 	shake(22.0, 0.72)
@@ -893,8 +920,18 @@ func spawn_blood_explosion(origin:Vector2, amount:int) -> void:
 		var velocity = Vector2(randf_range(-430.0, 430.0), randf_range(-560.0, -90.0))
 		droplets.append({"position":origin + Vector2(randf_range(-24, 24), randf_range(-28, 24)), "velocity":velocity, "target_y":origin.y + randf_range(65, 145), "radius":randf_range(2.5, 9.5)})
 
-func spawn_impact(position_value:Vector2, color:Color) -> void:
-	impacts.append({"position":position_value, "life":0.22, "color":color})
+func get_impact_angle(direction_value:Variant) -> float:
+	if direction_value is Vector2:
+		if direction_value.length_squared() > 0.0001:
+			return direction_value.angle()
+		return 0.0
+	elif direction_value is float || direction_value is int:
+		return 0.0 if float(direction_value) >= 0.0 else PI
+	return 0.0
+
+func spawn_impact(position_value:Vector2, color:Color, direction_value:Variant = 1.0) -> void:
+	var angle = get_impact_angle(direction_value)
+	impacts.append({"position":position_value, "life":0.22, "color":color, "angle":angle})
 
 func spawn_enemy_dust(origin:Vector2) -> void:
 	for index in range(5):
@@ -962,7 +999,7 @@ func update_power_projectiles(delta:float) -> void:
 		if hit_player:
 			if player_invulnerability <= 0.0:
 				damage_player(projectile.damage, signf(projectile.velocity.x))
-			spawn_impact(projectile.position, projectile.color)
+			spawn_impact(projectile.position, projectile.color, projectile.velocity.normalized())
 			remove_power_projectile(index)
 		elif projectile.life <= 0.0 || outside_arena:
 			remove_power_projectile(index)
@@ -1006,7 +1043,8 @@ func _draw() -> void:
 		draw_circle(drop.position, drop.radius, Color("a8001c"))
 	for impact in impacts:
 		var progress = 1.0 - impact.life / 0.22
-		draw_arc(impact.position, 25.0 + progress * 38.0, -1.0, 1.0, 14, Color(impact.color, 1.0 - progress), 5.0)
+		var angle = impact.get("angle", 0.0)
+		draw_arc(impact.position, 25.0 + progress * 38.0, angle - 1.0, angle + 1.0, 14, Color(impact.color, 1.0 - progress), 5.0)
 	for dust in dust_particles:
 		var dust_alpha = clampf(dust.life / dust.max_life, 0.0, 1.0) * 0.58
 		draw_set_transform(dust.position, 0.0, Vector2(1.5, 0.74))
