@@ -106,9 +106,9 @@ func build_theme_details(palette:Dictionary, wall_material:StandardMaterial3D) -
 	match theme_id:
 		"forest_road":
 			for x in range(-56, 58, 3):
-				add_tree(Vector3(x, 0, -11.0 + randf_range(-1.0, 0.8)), palette, 1.45 + randf_range(-0.15, 0.35))
+				add_tree(Vector3(x, 0, -12.5 + randf_range(-1.0, 0.8)), palette, 1.45 + randf_range(-0.15, 0.35))
 			for x in range(-54, 56, 5):
-				add_tree(Vector3(x, 0, -8.2 + randf_range(-0.6, 0.6)), palette, 1.2 + randf_range(-0.15, 0.25))
+				add_tree(Vector3(x, 0, -9.6 + randf_range(-0.6, 0.6)), palette, 1.2 + randf_range(-0.15, 0.25))
 			for x in [-44.0, -32.0, -22.0, -15.0, -4.0, 8.0, 18.0, 28.0, 38.0, 48.0]:
 				add_rock(Vector3(x, 0.2, randf_range(-5.5, -2.5)), palette.rock, 0.85)
 		"ash_wasteland":

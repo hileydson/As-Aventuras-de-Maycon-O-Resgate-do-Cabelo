@@ -1,7 +1,7 @@
 extends Node2D
 
 const ARENA_WIDTH:float = 2600.0
-const MIN_Y:float = 215.0
+const MIN_Y:float = 260.0
 const MAX_Y:float = 585.0
 const PLAYER_SPEED:float = 285.0
 
@@ -839,7 +839,9 @@ func defeat_minion(minion_index:int) -> void:
 	for index in range(3):
 		spawn_impact(minion.position + Vector2(randf_range(-30, 30), randf_range(-45, 15)), Color("d90429"), 1.0 if randf() > 0.5 else -1.0)
 	for index in range(4):
-		stains.append({"position":minion.position + Vector2(randf_range(-40, 40), randf_range(20, 50)), "radius":randf_range(12.0, 26.0), "alpha":randf_range(0.55, 0.82)})
+		var s_pos = minion.position + Vector2(randf_range(-40, 40), randf_range(20, 50))
+		s_pos.y = clampf(s_pos.y, MIN_Y + 12.0, MAX_Y + 15.0)
+		stains.append({"position":s_pos, "radius":randf_range(12.0, 26.0), "alpha":randf_range(0.55, 0.82)})
 	shake(6.0, 0.22)
 	minions[minion_index] = minion
 
@@ -856,7 +858,7 @@ func update_minion_transforms() -> void:
 			continue
 		minion.sprite.position = minion.position
 		minion.sprite.z_index = int(minion.position.y)
-		var depth_scale = remap(minion.position.y, MIN_Y, MAX_Y, 0.80, 1.15)
+		var depth_scale = remap(minion.position.y, MIN_Y, MAX_Y, 0.85, 1.15)
 		minion.sprite.scale = Vector2(depth_scale * minion.base_scale, depth_scale * minion.base_scale)
 		var base_mod:Color = minion.get("base_modulate", Color.WHITE)
 		if minion.dead:
@@ -1525,7 +1527,9 @@ func defeat_enemy() -> void:
 	for index in range(7):
 		spawn_impact(enemy_position + Vector2(randf_range(-55, 55), randf_range(-95, 15)), Color("d90429"), 1.0 if randf() > 0.5 else -1.0)
 	for index in range(8):
-		stains.append({"position":enemy_position + Vector2(randf_range(-65, 65), randf_range(20, 58)), "radius":randf_range(16.0, 34.0), "alpha":randf_range(0.68, 0.94)})
+		var s_pos = enemy_position + Vector2(randf_range(-65, 65), randf_range(20, 58))
+		s_pos.y = clampf(s_pos.y, MIN_Y + 12.0, MAX_Y + 15.0)
+		stains.append({"position":s_pos, "radius":randf_range(16.0, 34.0), "alpha":randf_range(0.68, 0.94)})
 	shake(22.0, 0.72)
 	enemy_explosion_time = 0.92
 	status_label.text = tr_text("EXPLOSÃO DE SANGUE!", "BLOOD EXPLOSION!")
@@ -1636,8 +1640,8 @@ func update_fighter_transforms() -> void:
 	enemy.position = enemy_position
 	player.z_index = int(player_position.y)
 	enemy.z_index = int(enemy_position.y)
-	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.82, 1.18)
-	var enemy_depth_scale = remap(enemy_position.y, MIN_Y, MAX_Y, 0.80, 1.15)
+	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.86, 1.18)
+	var enemy_depth_scale = remap(enemy_position.y, MIN_Y, MAX_Y, 0.85, 1.15)
 	player.scale = Vector2(player_depth_scale * player_base_scale, player_depth_scale * player_base_scale)
 	enemy.scale = Vector2(enemy_depth_scale * enemy_base_scale, enemy_depth_scale * enemy_base_scale)
 
@@ -1658,12 +1662,14 @@ func play_if_changed(sprite:AnimatedSprite2D, animation_name:String) -> void:
 func spawn_blood(origin:Vector2, amount:int, direction:float) -> void:
 	for index in amount:
 		var velocity = Vector2(randf_range(70.0, 220.0) * direction + randf_range(-80.0, 80.0), randf_range(-330.0, -120.0))
-		droplets.append({"position":origin + Vector2(randf_range(-12, 12), randf_range(-12, 10)), "velocity":velocity, "target_y":origin.y + randf_range(38, 88), "radius":randf_range(2.0, 5.5)})
+		var target_y = clampf(origin.y + randf_range(35, 75), MIN_Y + 12.0, MAX_Y + 15.0)
+		droplets.append({"position":origin + Vector2(randf_range(-12, 12), randf_range(-12, 10)), "velocity":velocity, "target_y":target_y, "radius":randf_range(2.0, 5.5)})
 
 func spawn_blood_explosion(origin:Vector2, amount:int) -> void:
 	for index in amount:
 		var velocity = Vector2(randf_range(-430.0, 430.0), randf_range(-560.0, -90.0))
-		droplets.append({"position":origin + Vector2(randf_range(-24, 24), randf_range(-28, 24)), "velocity":velocity, "target_y":origin.y + randf_range(65, 145), "radius":randf_range(2.5, 9.5)})
+		var target_y = clampf(origin.y + randf_range(40, 95), MIN_Y + 12.0, MAX_Y + 15.0)
+		droplets.append({"position":origin + Vector2(randf_range(-24, 24), randf_range(-28, 24)), "velocity":velocity, "target_y":target_y, "radius":randf_range(2.5, 9.5)})
 
 func get_impact_angle(direction_value:Variant) -> float:
 	if direction_value is Vector2:
@@ -1747,7 +1753,7 @@ func spawn_player_ghost() -> void:
 	ghost.offset = player.offset
 	ghost.flip_h = player.flip_h
 	ghost.position = player_position
-	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.82, 1.18)
+	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.86, 1.18)
 	ghost.scale = Vector2(player_depth_scale * player_base_scale, player_depth_scale * player_base_scale)
 	ghost.z_index = max(1, int(player_position.y) - 1)
 	ghost.modulate = Color(0.82, 0.92, 1.0, 0.72)
@@ -1770,7 +1776,8 @@ func update_effects(delta:float) -> void:
 		drop.velocity.y += 620.0 * delta
 		drop.position += drop.velocity * delta
 		if drop.position.y >= drop.target_y:
-			stains.append({"position":Vector2(drop.position.x, drop.target_y), "radius":randf_range(7.0, 18.0), "alpha":randf_range(0.48, 0.78)})
+			var stain_y = clampf(drop.target_y, MIN_Y + 12.0, MAX_Y + 15.0)
+			stains.append({"position":Vector2(drop.position.x, stain_y), "radius":randf_range(7.0, 18.0), "alpha":randf_range(0.48, 0.78)})
 			droplets.remove_at(index)
 		else:
 			droplets[index] = drop
@@ -1862,10 +1869,14 @@ func update_shake(delta:float) -> void:
 
 func _draw() -> void:
 	for stain in stains:
+		if stain.position.y < MIN_Y + 8.0:
+			continue
 		draw_set_transform(stain.position, 0.0, Vector2(1.8, 0.42))
 		draw_circle(Vector2.ZERO, stain.radius, Color(0.34, 0.0, 0.025, stain.alpha))
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	for drop in droplets:
+		if drop.position.y < MIN_Y - 15.0:
+			continue
 		draw_circle(drop.position, drop.radius, Color("a8001c"))
 	for impact in impacts:
 		var progress = 1.0 - impact.life / 0.22

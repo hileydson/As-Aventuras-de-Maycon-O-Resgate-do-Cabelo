@@ -11,14 +11,14 @@ func _draw() -> void:
 	var palette = get_palette()
 	draw_circle(Vector2(350, 75), 82, Color(palette.light, 0.08))
 	draw_circle(Vector2(350, 75), 48, Color(palette.light, 0.14))
-	draw_rect(Rect2(-400, 160, arena_width + 800, 220), Color(palette.back, 0.11))
+	draw_rect(Rect2(-400, 190, arena_width + 800, 200), Color(palette.back, 0.11))
 	for x in range(-400, int(arena_width) + 400, 220):
 		draw_silhouette(float(x), palette)
-	for lane in range(10):
-		var y = 205.0 + lane * 42.0
+	for lane in range(9):
+		var y = 250.0 + lane * 42.0
 		draw_line(Vector2(-400, y), Vector2(arena_width + 400, y + 28), Color(palette.line, 0.14), 2.0)
 	for x in range(-400, int(arena_width) + 400, 145):
-		draw_line(Vector2(x, 195), Vector2(x + 105, arena_height), Color(palette.line, 0.11), 2.0)
+		draw_line(Vector2(x, 240), Vector2(x + 105, arena_height), Color(palette.line, 0.11), 2.0)
 	draw_foreground_details(palette)
 
 func draw_silhouette(x:float, palette:Dictionary) -> void:
