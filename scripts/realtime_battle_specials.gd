@@ -32,6 +32,13 @@ var pentagram_spin_speed:float = 0.0
 var pentagram_peak_speed:float = 0.0
 var pentagram_spin_direction:float = 1.0
 var pentagram_is_near_end:bool = false
+var rush_active:bool = false
+var rush_speed:float = 0.0
+var rush_peak_speed:float = 0.0
+var rush_is_sustained:bool = false
+var rush_punch_flash:float = 0.0
+var rush_kick_flash:float = 0.0
+const RUSH_TOP_THRESHOLD:float = 0.82
 
 class SpecialOverlay:
 	extends Control
@@ -43,6 +50,11 @@ class SpecialOverlay:
 	var peak_spin_speed:float = 0.0
 	var spin_direction:float = 1.0
 	var is_near_end:bool = false
+	var rush_direction:float = -1.0
+	var rush_speed_ratio:float = 0.0
+	var rush_punch_flash:float = 0.0
+	var rush_kick_flash:float = 0.0
+	var rush_is_maxed:bool = false
 	var hit_count:int = 0
 	var portrait_texture:Texture2D
 	var effect_time:float = 0.0
@@ -115,12 +127,28 @@ class SpecialOverlay:
 		impact_flash = 1.0
 		queue_redraw()
 
-	func start_rush() -> void:
+	func start_rush(direction:float = -1.0) -> void:
 		mode = "rush"
 		energy = 0.0
 		hit_count = 0
 		effect_time = 0.0
+		rush_direction = direction
+		rush_speed_ratio = 0.0
+		rush_punch_flash = 0.0
+		rush_kick_flash = 0.0
+		rush_is_maxed = false
 		visible = true
+		queue_redraw()
+
+	func register_rush_mash(speed_ratio:float, button:String) -> void:
+		rush_speed_ratio = speed_ratio
+		if button == "punch":
+			rush_punch_flash = 1.0
+		elif button == "kick":
+			rush_kick_flash = 1.0
+		else:
+			rush_punch_flash = 0.7
+			rush_kick_flash = 0.7
 		queue_redraw()
 
 	func finish() -> void:
@@ -132,6 +160,11 @@ class SpecialOverlay:
 		peak_spin_speed = 0.0
 		spin_direction = 1.0
 		is_near_end = false
+		rush_direction = -1.0
+		rush_speed_ratio = 0.0
+		rush_punch_flash = 0.0
+		rush_kick_flash = 0.0
+		rush_is_maxed = false
 		pentagram_reveal = 0.0
 		rotation_progress = 0.0
 		blood_level = 0.0
@@ -159,6 +192,9 @@ class SpecialOverlay:
 				spin_speed = maxf(PENTAGRAM_BASE_SPEED, spin_speed - unscaled_delta * 0.55)
 			peak_spin_speed = maxf(peak_spin_speed, spin_speed)
 			spin += spin_direction * spin_speed * unscaled_delta
+		elif mode == "rush":
+			rush_punch_flash = maxf(0.0, rush_punch_flash - unscaled_delta * 4.5)
+			rush_kick_flash = maxf(0.0, rush_kick_flash - unscaled_delta * 4.5)
 		queue_redraw()
 
 	func _draw() -> void:
@@ -272,18 +308,63 @@ class SpecialOverlay:
 	func draw_rush_motion_blur() -> void:
 		var font = ThemeDB.fallback_font
 		draw_rect(Rect2(Vector2.ZERO, size), Color(0.01, 0.02, 0.06, 0.16 + energy * 0.18))
+		
+		# Listas direcionadas: se inimigo na esquerda -> esquerda pra direita; se na direita -> direita pra esquerda
+		var line_speed = 680.0 + rush_speed_ratio * 1250.0
+		var total_span = 1152.0 + 360.0
 		for line_index in 24:
-			var line_phase = fposmod(float(line_index) * 47.0 + effect_time * (620.0 + energy * 1100.0), 780.0)
+			var base_offset = float(line_index) * 49.0
 			var y = 72.0 + fposmod(float(line_index) * 61.0, 520.0)
-			var line_length = 90.0 + energy * 310.0 + sin(line_index * 1.7) * 38.0
-			var x = 1152.0 - line_phase
-			var line_color = Color(0.2, 0.82, 1.0, 0.08 + energy * 0.24)
-			draw_line(Vector2(x, y), Vector2(x - line_length, y), line_color, 2.0 + energy * 5.0)
-			draw_line(Vector2(1152.0 - x, y + 8.0), Vector2(1152.0 - x + line_length * 0.65, y + 8.0), Color(1.0, 0.12, 0.38, line_color.a * 0.8), 2.0 + energy * 3.0)
+			var line_length = 90.0 + (rush_speed_ratio * 0.7 + energy * 0.3) * 320.0 + sin(line_index * 1.7) * 38.0
+			var line_color = Color(0.2, 0.82, 1.0, 0.09 + rush_speed_ratio * 0.22)
+			
+			if rush_direction > 0.0:
+				# Inimigo na esquerda: linhas passam da esquerda para a direita (+X)
+				var travel = fposmod(base_offset + effect_time * line_speed, total_span)
+				var x = travel - 180.0
+				draw_line(Vector2(x - line_length, y), Vector2(x, y), line_color, 2.0 + rush_speed_ratio * 4.5)
+				draw_line(Vector2(x - line_length * 0.7, y + 8.0), Vector2(x, y + 8.0), Color(1.0, 0.14, 0.38, line_color.a * 0.85), 2.0 + rush_speed_ratio * 2.8)
+			else:
+				# Inimigo na direita: linhas passam da direita para a esquerda (-X)
+				var travel = fposmod(base_offset + effect_time * line_speed, total_span)
+				var x = 1152.0 + 180.0 - travel
+				draw_line(Vector2(x + line_length, y), Vector2(x, y), line_color, 2.0 + rush_speed_ratio * 4.5)
+				draw_line(Vector2(x + line_length * 0.7, y + 8.0), Vector2(x, y + 8.0), Color(1.0, 0.14, 0.38, line_color.a * 0.85), 2.0 + rush_speed_ratio * 2.8)
+
 		var title_scale = 1.0 + sin(effect_time * 14.0) * 0.035
-		draw_string(font, Vector2(246, 112), "MAYCON RUSH", HORIZONTAL_ALIGNMENT_CENTER, 660, int(42.0 * title_scale), Color(1.0, 0.88, 0.32, 0.98))
-		draw_string(font, Vector2(326, 164), "%02d / 50 HITS" % hit_count, HORIZONTAL_ALIGNMENT_CENTER, 500, 30, Color(0.35, 0.9, 1.0, 1.0))
-		draw_line(Vector2(320, 180), Vector2(832, 180), Color(1.0, 0.12, 0.4, 0.65 + energy * 0.3), 5.0)
+		draw_string(font, Vector2(246, 96), "MAYCON RUSH", HORIZONTAL_ALIGNMENT_CENTER, 660, int(42.0 * title_scale), Color(1.0, 0.88, 0.32, 0.98))
+		draw_string(font, Vector2(326, 142), "%02d / 50 HITS" % hit_count, HORIZONTAL_ALIGNMENT_CENTER, 500, 28, Color(0.35, 0.9, 1.0, 1.0))
+		draw_line(Vector2(320, 156), Vector2(832, 156), Color(1.0, 0.12, 0.4, 0.65 + energy * 0.3), 4.0)
+
+		# Banner visual: Instrução para apertar Soco e Chute + Medidor de Aceleração
+		var prompt_rect = Rect2(356, 520, 440, 96)
+		draw_rect(prompt_rect, Color(0.015, 0.02, 0.05, 0.85), true)
+		draw_rect(prompt_rect, Color(0.35, 0.85, 1.0, 0.82), false, 2.0)
+		
+		var prompt_pulse = 0.8 + sin(effect_time * 10.0) * 0.2
+		var prompt_color = Color(1.0, 0.9, 0.35, prompt_pulse if !rush_is_maxed else 1.0)
+		var prompt_text = "VELOCIDADE MÁXIMA ALCANÇADA!" if rush_is_maxed else "APERTE 👊 SOCO E 🦶 CHUTE PARA ACELERAR!"
+		draw_string(font, Vector2(356, 538), prompt_text, HORIZONTAL_ALIGNMENT_CENTER, 440, 14, prompt_color)
+		
+		# Botao Soco [Q/Y]
+		var punch_color = Color(0.2, 0.85, 1.0, 0.9).lerp(Color(1.0, 1.0, 1.0, 1.0), rush_punch_flash)
+		draw_rect(Rect2(376, 548, 96, 24), Color(0.08, 0.12, 0.22, 0.9), true)
+		draw_rect(Rect2(376, 548, 96, 24), punch_color, false, 2.0 + rush_punch_flash * 2.0)
+		draw_string(font, Vector2(376, 565), "👊 SOCO [Q/Y]", HORIZONTAL_ALIGNMENT_CENTER, 96, 12, punch_color)
+		
+		# Botao Chute [W/B]
+		var kick_color = Color(1.0, 0.2, 0.6, 0.9).lerp(Color(1.0, 1.0, 1.0, 1.0), rush_kick_flash)
+		draw_rect(Rect2(488, 548, 96, 24), Color(0.22, 0.08, 0.16, 0.9), true)
+		draw_rect(Rect2(488, 548, 96, 24), kick_color, false, 2.0 + rush_kick_flash * 2.0)
+		draw_string(font, Vector2(488, 565), "🦶 CHUTE [W/B]", HORIZONTAL_ALIGNMENT_CENTER, 96, 12, kick_color)
+		
+		# Barra do medidor de aceleracao
+		var gauge_bg = Rect2(600, 552, 176, 16)
+		draw_rect(gauge_bg, Color(0.02, 0.03, 0.07, 0.95), true)
+		draw_rect(Rect2(602, 554, 172.0 * rush_speed_ratio, 12), Color("00e5ff").lerp(Color("ff1744"), rush_speed_ratio), true)
+		draw_rect(gauge_bg, Color(0.4, 0.85, 1.0, 0.85), false, 1.5)
+		draw_string(font, Vector2(600, 582), "VELOCIDADE: %d%%" % int(round(rush_speed_ratio * 100.0)), HORIZONTAL_ALIGNMENT_CENTER, 176, 12, Color(0.85, 0.95, 1.0, 0.92))
+
 		if energy > 0.82:
 			draw_circle(Vector2(576, 324), 54.0 + energy * 90.0, Color(1.0, 1.0, 1.0, (energy - 0.82) * 1.8))
 
@@ -311,6 +392,7 @@ func _ready() -> void:
 func _process(delta:float) -> void:
 	if special_active:
 		update_pentagram_rotation_input(delta)
+		update_rush_mashing_input(delta)
 		update_effects(delta)
 		update_shake(delta)
 		update_special_meter_hud()
@@ -326,6 +408,56 @@ func _process(delta:float) -> void:
 		return
 	super._process(delta)
 	update_special_meter_hud()
+
+func _unhandled_input(event:InputEvent) -> void:
+	if special_active && rush_active:
+		if event.is_action_pressed("key_q"):
+			register_rush_mash("punch")
+		elif event.is_action_pressed("key_w"):
+			register_rush_mash("kick")
+
+func update_rush_mashing_input(delta:float) -> void:
+	if !rush_active:
+		return
+	var unscaled_delta = delta / maxf(Engine.time_scale, 0.001)
+	if Input.is_action_just_pressed("key_q"):
+		register_rush_mash("punch")
+	elif Input.is_action_just_pressed("key_w"):
+		register_rush_mash("kick")
+	
+	if rush_is_sustained:
+		rush_speed = maxf(rush_speed, rush_peak_speed)
+	else:
+		rush_speed = maxf(0.0, rush_speed - unscaled_delta * 0.38)
+	
+	rush_punch_flash = maxf(0.0, rush_punch_flash - unscaled_delta * 4.5)
+	rush_kick_flash = maxf(0.0, rush_kick_flash - unscaled_delta * 4.5)
+	if special_overlay:
+		special_overlay.set("rush_speed_ratio", rush_speed)
+		special_overlay.set("rush_punch_flash", rush_punch_flash)
+		special_overlay.set("rush_kick_flash", rush_kick_flash)
+		special_overlay.set("rush_is_maxed", rush_is_sustained || rush_speed >= RUSH_TOP_THRESHOLD)
+
+func register_rush_mash(button:String = "") -> void:
+	if !rush_active:
+		return
+	if button == "punch":
+		rush_punch_flash = 1.0
+	elif button == "kick":
+		rush_kick_flash = 1.0
+	else:
+		rush_punch_flash = 0.7
+		rush_kick_flash = 0.7
+	
+	var current_ratio = rush_speed
+	var resistance = 1.0 - pow(current_ratio, 1.4) * 0.58
+	var accel = 0.082 * resistance
+	rush_speed = clampf(rush_speed + accel, 0.0, 1.0)
+	rush_peak_speed = maxf(rush_peak_speed, rush_speed)
+	if rush_speed >= RUSH_TOP_THRESHOLD:
+		rush_is_sustained = true
+	if special_overlay:
+		special_overlay.call("register_rush_mash", rush_speed, button)
 
 func update_pentagram_rotation_input(delta:float) -> void:
 	var unscaled_delta = delta / maxf(Engine.time_scale, 0.001)
@@ -700,21 +832,35 @@ func start_maycon_rush(target:Dictionary) -> void:
 	if special_active || special_hits < SPECIAL_RUSH_THRESHOLD || !is_rush_target_valid(target):
 		return
 	prepare_player_special()
+	rush_active = true
+	rush_speed = 0.0
+	rush_peak_speed = 0.0
+	rush_is_sustained = false
+	rush_punch_flash = 0.0
+	rush_kick_flash = 0.0
+	
 	var previous_status = status_label.text
 	var previous_zoom = camera.zoom
 	var previous_camera_position = camera.position
 	status_label.text = tr_text("FÚRIA DE 50 GOLPES", "50-HIT MAYCON RUSH")
 	combo_label.text = ""
-	if special_rush_sound:
-		special_rush_sound.pitch_scale = 1.0
-		special_rush_sound.play()
-	special_overlay.call("start_rush")
-
+	
 	var target_position = get_rush_target_position(target)
 	player_facing = signf(target_position.x - player_position.x)
 	if player_facing == 0.0:
 		player_facing = 1.0
 	player.flip_h = player_facing < 0.0
+	
+	# Direcao das listas de velocidade:
+	# Inimigo na esquerda: linhas da esquerda para a direita (+1.0)
+	# Inimigo na direita: linhas da direita para a esquerda (-1.0)
+	var lines_direction = 1.0 if target_position.x < player_position.x else -1.0
+	special_overlay.call("start_rush", lines_direction)
+	
+	if special_rush_sound:
+		special_rush_sound.pitch_scale = 1.0
+		special_rush_sound.play()
+
 	var approach_start = player_position
 	var approach_finish = Vector2(target_position.x - player_facing * 92.0, target_position.y)
 	for approach_step in 6:
@@ -732,20 +878,28 @@ func start_maycon_rush(target:Dictionary) -> void:
 		target_position = get_rush_target_position(target)
 		player_position = Vector2(target_position.x - player_facing * (84.0 + sin(hit_index * 2.2) * 12.0), target_position.y + sin(hit_index * 1.7) * 5.0)
 		player.play("attack_punch" if hit_index % 2 == 0 else "attack_kick")
+		
 		special_overlay.set("hit_count", hit_index + 1)
 		special_overlay.set("energy", progress)
+		special_overlay.set("rush_speed_ratio", rush_speed)
+		special_overlay.set("rush_is_maxed", rush_is_sustained || rush_speed >= RUSH_TOP_THRESHOLD)
+		
 		spawn_impact(target_position + Vector2(randf_range(-18.0, 18.0), randf_range(-70.0, -18.0)), Color("ffd166" if hit_index % 2 == 0 else "ff2a8b"), player_facing)
 		spawn_blood(target_position + Vector2(0, -38), 3 if hit_index < 36 else 5, player_facing)
 		if hit_index % 3 == 0:
 			spawn_player_ghost()
-		if hit_index % 2 == 0 && hit_sound:
-			hit_sound.pitch_scale = lerpf(0.9, 1.52, progress)
-			hit_sound.play()
+		if hit_sound:
+			hit_sound.pitch_scale = lerpf(0.85, 1.55, rush_speed * 0.7 + progress * 0.3)
+			if hit_index % 2 == 0 || rush_speed > 0.5:
+				hit_sound.play()
 		if hit_index % 5 == 0:
-			shake(lerpf(4.0, 12.0, progress), 0.12)
-		var hit_delay = lerpf(0.078, 0.018, pow(progress, 0.72))
+			shake(lerpf(4.0, 13.0, rush_speed), 0.12)
+		
+		# Atraso entre golpes escala dinamicamente com os botoes apertados (0.082s ate 0.019s)
+		var hit_delay = lerpf(0.082, 0.019, rush_speed)
 		await get_tree().create_timer(hit_delay, true, false, true).timeout
 
+	rush_active = false
 	if is_inside_tree() && is_rush_target_valid(target):
 		apply_maycon_rush_damage(target)
 		special_overlay.set("energy", 1.0)
@@ -783,6 +937,12 @@ func finish_player_special(previous_status:String, previous_zoom:Vector2, previo
 	pentagram_is_near_end = false
 	pentagram_accumulated_rotation = 0.0
 	pentagram_charge = 0.0
+	rush_active = false
+	rush_speed = 0.0
+	rush_peak_speed = 0.0
+	rush_is_sustained = false
+	rush_punch_flash = 0.0
+	rush_kick_flash = 0.0
 	Engine.time_scale = 1.0
 	player_invulnerability = 0.45
 	player_attack_time = 0.0
@@ -817,6 +977,10 @@ func _exit_tree() -> void:
 	pentagram_spin_speed = 0.0
 	pentagram_peak_speed = 0.0
 	pentagram_is_near_end = false
+	rush_active = false
+	rush_speed = 0.0
+	rush_peak_speed = 0.0
+	rush_is_sustained = false
 	Engine.time_scale = 1.0
 	if victory_sound:
 		victory_sound.pitch_scale = 1.0
