@@ -56,7 +56,7 @@ func _on_new_game_pressed() -> void:
 	
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout
-	get_tree().change_scene_to_file("res://scenes/intro_game.tscn")
+	get_tree().change_scene_to_file("res://scenes/battle_mode_selection.tscn")
 
 
 func _on_exit_pressed() -> void:

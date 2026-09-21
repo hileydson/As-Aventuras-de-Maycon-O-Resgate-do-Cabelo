@@ -2,6 +2,8 @@ extends Node
 
 const language_pt_br = "PT-BR"
 const language_en = "EN"
+const battle_mode_realtime = "realtime"
+const battle_mode_strategic = "strategic"
 
 var load_from_castle_1:bool = false
 var load_from_outside_1:bool = false
@@ -17,6 +19,10 @@ var battle_background:String = "1" # default o cenario de fogo fora do castelo
 var battle_next_enemy:String = "0"
 var battle_next_boss:int = 0
 var battle_started:bool = false
+var battle_mode:String = battle_mode_realtime
+var realtime_enemy_id:String = "1"
+var realtime_return_scene:String = ""
+var realtime_arena_theme:String = "forest_road"
 var last_fase = "fase_1"
 var block_pause_before_prologo = false
 #var before_prologo:bool = false #TESTE - correto eh TRUE
@@ -58,6 +64,10 @@ func reset_default_values()->void:
 	battle_next_enemy = "0"
 	battle_next_boss = 0
 	battle_started = false
+	battle_mode = battle_mode_realtime
+	realtime_enemy_id = "1"
+	realtime_return_scene = ""
+	realtime_arena_theme = "forest_road"
 	last_fase = "fase_1"
 	block_pause_before_prologo = false
 
@@ -118,6 +128,7 @@ func reset_died_stage1()->void:
 func save_progress(fase:String)->void:
 	save_array = {}
 	save_array["maycon_hp_count"] = maycon_hp_count
+	save_array["battle_mode"] = battle_mode
 	save_array["default_language"] = default_language
 	save_array["maycon_itens"] = maycon_itens
 	save_array["game_events"] = game_events
@@ -167,6 +178,7 @@ func load_progress()->void:
 			inimigos_mortos = save_array["inimigos_mortos"]
 			last_fase = save_array["last_fase"]
 			maycon_hp_count = save_array["maycon_hp_count"]
+			battle_mode = save_array.get("battle_mode", battle_mode_realtime)
 			if last_fase == "fase_1":
 				GameSongs.play_song(1)
 				get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_1.tscn")

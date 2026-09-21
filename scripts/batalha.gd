@@ -79,6 +79,7 @@ var first_battle_explain_shown:bool = false
 var died:bool = false
 
 var boss_song:bool = false
+var realtime_transitioning:bool = false
 
 var mapas_backgrounds = {
 	"1" = preload("res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_in_fire.png"),
@@ -254,6 +255,13 @@ func _ready() -> void:
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if Global.battle_mode == Global.battle_mode_realtime && !realtime_transitioning:
+		if Global.battle_next_enemy != "0":
+			start_realtime_battle(Global.battle_next_enemy)
+			return
+		elif Global.battle_next_boss != 0:
+			start_realtime_battle(str(Global.battle_next_boss))
+			return
 		
 	if Input.is_action_just_pressed("ui_accept"):
 		emit_signal("player_clicou")
@@ -371,3 +379,30 @@ func control_attack_power() -> void:
 		attack_power_1.visible = false
 		attack_power_2.visible = false
 		attack_power_3.visible = false		
+
+func start_realtime_battle(enemy_id:String) -> void:
+	realtime_transitioning = true
+	Global.battle_started = true
+	Global.realtime_enemy_id = enemy_id
+	Global.realtime_return_scene = get_tree().current_scene.scene_file_path
+	Global.realtime_arena_theme = choose_realtime_theme(Global.realtime_return_scene, enemy_id)
+	Global.battle_next_enemy = "0"
+	Global.battle_next_boss = 0
+	GameSongs.process_mode = Node.PROCESS_MODE_DISABLED
+	BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").start_effect(2)
+	await get_tree().create_timer(0.75).timeout
+	BattleShatteredScreenEffect.get_node("canvas_layer_frozen_effect").get_node("intro_batalha_frozen_effect").stop_effect()
+	get_tree().change_scene_to_file("res://scenes/realtime_battle.tscn")
+
+func choose_realtime_theme(scene_path:String, enemy_id:String) -> String:
+	if enemy_id == "1001":
+		return "throne_ruins"
+	if scene_path.contains("before_castle"):
+		return "forest_road"
+	if scene_path.contains("castle_no_fire"):
+		return "abandoned_dungeon"
+	if scene_path.contains("outside_castle_again"):
+		return "ash_wasteland"
+	if scene_path.contains("castle"):
+		return "inferno_castle"
+	return "moon_courtyard"
