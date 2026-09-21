@@ -9,35 +9,32 @@ func _ready() -> void:
 
 func _draw() -> void:
 	var palette = get_palette()
-	draw_rect(Rect2(0, 0, arena_width, arena_height), palette.sky)
-	draw_circle(Vector2(350, 105), 68, Color(palette.light, 0.18))
-	draw_circle(Vector2(350, 105), 42, Color(palette.light, 0.28))
-	draw_rect(Rect2(0, 265, arena_width, 160), palette.back)
+	draw_circle(Vector2(350, 105), 82, Color(palette.light, 0.08))
+	draw_circle(Vector2(350, 105), 48, Color(palette.light, 0.14))
+	draw_rect(Rect2(0, 255, arena_width, 150), Color(palette.back, 0.11))
 	for x in range(-100, int(arena_width) + 200, 220):
 		draw_silhouette(float(x), palette)
-	draw_colored_polygon(PackedVector2Array([
-		Vector2(0, 375), Vector2(arena_width, 375), Vector2(arena_width, arena_height), Vector2(0, arena_height)
-	]), palette.floor)
-	for lane in range(6):
-		var y = 405.0 + lane * 42.0
-		draw_line(Vector2(0, y), Vector2(arena_width, y + 26), Color(palette.line, 0.42), 2.0)
+	for lane in range(7):
+		var y = 325.0 + lane * 42.0
+		draw_line(Vector2(0, y), Vector2(arena_width, y + 28), Color(palette.line, 0.14), 2.0)
 	for x in range(0, int(arena_width), 145):
-		draw_line(Vector2(x, 380), Vector2(x + 105, arena_height), Color(palette.line, 0.3), 2.0)
+		draw_line(Vector2(x, 310), Vector2(x + 105, arena_height), Color(palette.line, 0.11), 2.0)
 	draw_foreground_details(palette)
 
 func draw_silhouette(x:float, palette:Dictionary) -> void:
+	var shadow = Color(palette.silhouette, 0.16)
 	if theme_id == "forest_road":
-		draw_rect(Rect2(x + 75, 160, 22, 210), palette.silhouette)
-		draw_circle(Vector2(x + 85, 145), 72, palette.silhouette)
-		draw_circle(Vector2(x + 35, 190), 54, palette.silhouette)
+		draw_rect(Rect2(x + 75, 160, 22, 210), shadow)
+		draw_circle(Vector2(x + 85, 145), 72, shadow)
+		draw_circle(Vector2(x + 35, 190), 54, shadow)
 	elif theme_id == "ash_wasteland":
-		draw_colored_polygon(PackedVector2Array([Vector2(x, 375), Vector2(x + 75, 210), Vector2(x + 145, 375)]), palette.silhouette)
-		draw_line(Vector2(x + 100, 230), Vector2(x + 150, 135), palette.silhouette, 13)
+		draw_colored_polygon(PackedVector2Array([Vector2(x, 375), Vector2(x + 75, 210), Vector2(x + 145, 375)]), shadow)
+		draw_line(Vector2(x + 100, 230), Vector2(x + 150, 135), shadow, 13)
 	else:
-		draw_rect(Rect2(x + 18, 125, 58, 250), palette.silhouette)
-		draw_rect(Rect2(x, 110, 95, 30), palette.silhouette)
+		draw_rect(Rect2(x + 18, 125, 58, 250), shadow)
+		draw_rect(Rect2(x, 110, 95, 30), shadow)
 		if theme_id == "throne_ruins":
-			draw_colored_polygon(PackedVector2Array([Vector2(x, 110), Vector2(x + 48, 42), Vector2(x + 96, 110)]), palette.silhouette)
+			draw_colored_polygon(PackedVector2Array([Vector2(x, 110), Vector2(x + 48, 42), Vector2(x + 96, 110)]), shadow)
 
 func draw_foreground_details(palette:Dictionary) -> void:
 	for x in range(180, int(arena_width), 480):

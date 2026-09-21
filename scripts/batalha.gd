@@ -385,6 +385,7 @@ func start_realtime_battle(enemy_id:String) -> void:
 	Global.battle_started = true
 	Global.realtime_enemy_id = enemy_id
 	Global.realtime_return_scene = get_tree().current_scene.scene_file_path
+	Global.capture_realtime_return_state(get_tree().current_scene)
 	Global.realtime_arena_theme = choose_realtime_theme(Global.realtime_return_scene, enemy_id)
 	Global.battle_next_enemy = "0"
 	Global.battle_next_boss = 0

@@ -1,8 +1,8 @@
 extends Node2D
 
 const ARENA_WIDTH:float = 2600.0
-const MIN_Y:float = 405.0
-const MAX_Y:float = 570.0
+const MIN_Y:float = 315.0
+const MAX_Y:float = 585.0
 const PLAYER_SPEED:float = 285.0
 
 const ENEMY_SCENES = {
@@ -26,6 +26,7 @@ const ENEMY_STATS = {
 var player:AnimatedSprite2D
 var enemy:AnimatedSprite2D
 var camera:Camera2D
+var stage_3d:CanvasLayer
 var player_bar:ProgressBar
 var enemy_bar:ProgressBar
 var enemy_name_label:Label
@@ -69,10 +70,28 @@ var shake_time:float = 0.0
 var droplets:Array[Dictionary] = []
 var stains:Array[Dictionary] = []
 var impacts:Array[Dictionary] = []
+var intro_time:float = 1.45
+var enemy_behavior:String = "approach"
+var enemy_behavior_time:float = 0.0
+var enemy_decision_cooldown:float = 1.0
+var enemy_teleport_cooldown:float = 2.8
+var enemy_pressure:int = 0
+var enemy_strafe_direction := Vector2(0.0, 1.0)
+var enemy_cover_target := Vector2.ZERO
+var teleport_moved:bool = false
+var enemy_dissolve_time:float = 0.0
+var enemy_dissolve_factor:float = 1.0
+var dissolve_blood_timer:float = 0.0
+var transition_top:ColorRect
+var transition_bottom:ColorRect
+var transition_flash:ColorRect
+var intro_label:Label
 
 func _ready() -> void:
 	randomize()
 	enemy_id = Global.realtime_enemy_id if ENEMY_SCENES.has(Global.realtime_enemy_id) else "1"
+	player_max_hp = Global.realtime_hp_max
+	player_hp = clampf(Global.realtime_hp, 1.0, player_max_hp)
 	build_background()
 	build_fighters()
 	build_world_bars()
@@ -91,9 +110,14 @@ func _ready() -> void:
 	Global.battle_started = true
 	status_label.text = tr_text("DERROTE %s E AVANCE", "DEFEAT %s AND MOVE FORWARD") % enemy_name.to_upper()
 	battle_song.play()
+	start_entry_sequence()
 	queue_redraw()
 
 func build_background() -> void:
+	stage_3d = preload("res://scripts/realtime_battle_3d.gd").new()
+	stage_3d.theme_id = Global.realtime_arena_theme
+	stage_3d.arena_width = ARENA_WIDTH
+	add_child(stage_3d)
 	var background = preload("res://scripts/realtime_battle_background.gd").new()
 	background.theme_id = Global.realtime_arena_theme
 	background.arena_width = ARENA_WIDTH
@@ -213,6 +237,48 @@ func build_hud() -> void:
 	exit_label.visible = false
 	canvas.add_child(exit_label)
 
+	transition_top = ColorRect.new()
+	transition_top.position = Vector2(0, 0)
+	transition_top.size = Vector2(1152, 324)
+	transition_top.color = Color("07070d")
+	transition_top.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas.add_child(transition_top)
+	transition_bottom = ColorRect.new()
+	transition_bottom.position = Vector2(0, 324)
+	transition_bottom.size = Vector2(1152, 324)
+	transition_bottom.color = Color("07070d")
+	transition_bottom.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas.add_child(transition_bottom)
+	transition_flash = ColorRect.new()
+	transition_flash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	transition_flash.color = Color(0.8, 0.05, 0.12, 0.0)
+	transition_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas.add_child(transition_flash)
+	intro_label = Label.new()
+	intro_label.set_anchors_preset(Control.PRESET_CENTER)
+	intro_label.position = Vector2(-360, -35)
+	intro_label.size = Vector2(720, 70)
+	intro_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	intro_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	intro_label.text = tr_text("ENTRANDO NA ARENA", "ENTERING THE ARENA")
+	intro_label.add_theme_font_size_override("font_size", 34)
+	intro_label.add_theme_color_override("font_color", Color("ffd166"))
+	canvas.add_child(intro_label)
+
+func start_entry_sequence() -> void:
+	player.modulate = Color(1, 1, 1, 0)
+	enemy.modulate = Color(1, 1, 1, 0)
+	camera.zoom = Vector2(1.12, 1.12)
+	var tween = create_tween().set_parallel(true)
+	tween.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tween.tween_property(transition_top, "position:y", -324.0, 1.1).set_delay(0.25)
+	tween.tween_property(transition_bottom, "position:y", 648.0, 1.1).set_delay(0.25)
+	tween.tween_property(transition_flash, "color:a", 0.0, 0.8).from(0.72)
+	tween.tween_property(intro_label, "modulate:a", 0.0, 0.55).set_delay(0.42)
+	tween.tween_property(player, "modulate:a", 1.0, 0.55).set_delay(0.55)
+	tween.tween_property(enemy, "modulate:a", 1.0, 0.55).set_delay(0.65)
+	tween.tween_property(camera, "zoom", Vector2.ONE, 1.25)
+
 func build_audio() -> void:
 	battle_song = create_audio("res://assets/novos_audios/battle.mp3", -8.0)
 	hit_sound = create_audio("res://assets/novos_audios/punch_3.mp3", -4.0)
@@ -229,15 +295,25 @@ func create_audio(path:String, volume:float) -> AudioStreamPlayer:
 func _process(delta:float) -> void:
 	update_effects(delta)
 	update_shake(delta)
+	if stage_3d:
+		stage_3d.update_camera(player_position.x)
 	if leaving:
 		return
 	if player_dead:
 		return
+	if intro_time > 0.0:
+		intro_time = maxf(0.0, intro_time - delta)
+		update_fighter_transforms()
+		update_bars()
+		queue_redraw()
+		return
 	update_player(delta)
 	if !enemy_dead:
 		update_enemy(delta)
-	elif exit_open && player_position.x >= ARENA_WIDTH - 150.0:
-		finish_battle()
+	else:
+		update_enemy_dissolve(delta)
+		if exit_open && player_position.x >= ARENA_WIDTH - 150.0:
+			finish_battle()
 	update_fighter_transforms()
 	update_bars()
 	camera.position.x = clamp(player_position.x + 260.0, 576.0, ARENA_WIDTH - 576.0)
@@ -307,6 +383,7 @@ func resolve_player_hit(kick:bool) -> void:
 		enemy_hp = maxf(0.0, enemy_hp - damage)
 		enemy_position.x += (-1.0 if player.flip_h else 1.0) * (42.0 if kick else 25.0)
 		enemy.play("pain")
+		enemy_pressure += 2 if kick else 1
 		hit_sound.pitch_scale = randf_range(0.9, 1.13)
 		hit_sound.play()
 		spawn_blood(enemy_position + Vector2(0, -45), 13 if kick else 8, (-1.0 if player.flip_h else 1.0))
@@ -314,9 +391,15 @@ func resolve_player_hit(kick:bool) -> void:
 		combo_label.text = "%d HIT\nCOMBO" % combo if combo > 1 else ""
 		if enemy_hp <= 0.0:
 			defeat_enemy()
+		elif enemy_pressure >= 3 && enemy_teleport_cooldown <= 0.0:
+			begin_enemy_teleport()
+		elif combo % 2 == 0:
+			begin_enemy_retreat()
 
 func update_enemy(delta:float) -> void:
 	enemy_cooldown = maxf(0.0, enemy_cooldown - delta)
+	enemy_decision_cooldown = maxf(0.0, enemy_decision_cooldown - delta)
+	enemy_teleport_cooldown = maxf(0.0, enemy_teleport_cooldown - delta)
 	if enemy_attack_time > 0.0:
 		var previous = enemy_attack_time
 		enemy_attack_time = maxf(0.0, enemy_attack_time - delta)
@@ -326,8 +409,51 @@ func update_enemy(delta:float) -> void:
 		if enemy_attack_time <= 0.0:
 			play_if_changed(enemy, "idle")
 		return
+	if enemy_behavior == "teleport":
+		update_enemy_teleport(delta)
+		return
 
 	var offset = player_position - enemy_position
+	if enemy_behavior == "retreat":
+		enemy_behavior_time -= delta
+		var retreat_direction = Vector2(-signf(offset.x), enemy_strafe_direction.y * 0.55).normalized()
+		move_enemy(retreat_direction, enemy_speed * 1.35, delta)
+		if enemy_behavior_time <= 0.0:
+			begin_enemy_strafe()
+		return
+	if enemy_behavior == "strafe":
+		enemy_behavior_time -= delta
+		var strafe = Vector2(enemy_strafe_direction.x, enemy_strafe_direction.y * 1.15)
+		if absf(offset.x) > 230.0:
+			strafe.x += signf(offset.x) * 0.8
+		move_enemy(strafe.normalized(), enemy_speed * 1.05, delta)
+		if enemy_behavior_time <= 0.0:
+			enemy_behavior = "approach"
+			enemy_decision_cooldown = randf_range(0.7, 1.4)
+		return
+	if enemy_behavior == "cover":
+		enemy_behavior_time -= delta
+		var cover_offset = enemy_cover_target - enemy_position
+		if cover_offset.length() > 34.0 && enemy_behavior_time > 0.0:
+			move_enemy(cover_offset.normalized(), enemy_speed * 1.3, delta)
+		else:
+			enemy_behavior = "approach"
+			enemy_cooldown = minf(enemy_cooldown, 0.2)
+		return
+
+	if enemy_decision_cooldown <= 0.0 && offset.length() > 145.0:
+		var decision = randf()
+		if decision < 0.28:
+			begin_enemy_strafe()
+			return
+		elif decision < 0.46:
+			begin_enemy_retreat()
+			return
+		elif decision < 0.62:
+			begin_enemy_cover()
+			return
+		enemy_decision_cooldown = randf_range(0.8, 1.5)
+
 	var close_enough = absf(offset.x) < 105.0 && absf(offset.y) < 48.0
 	if close_enough && enemy_cooldown <= 0.0:
 		start_enemy_attack()
@@ -339,9 +465,7 @@ func update_enemy(delta:float) -> void:
 	if absf(offset.y) > 30.0:
 		movement.y = signf(offset.y) * 0.75
 	if movement.length() > 0.0:
-		enemy_position += movement.normalized() * enemy_speed * delta
-		enemy.flip_h = offset.x < 0.0
-		play_if_changed(enemy, "run" if enemy.sprite_frames.has_animation("run") else "idle")
+		move_enemy(movement.normalized(), enemy_speed, delta)
 	if absf(enemy_position.x - player_position.x) < 58.0 && absf(enemy_position.y - player_position.y) < 42.0:
 		var separation_side = signf(enemy_position.x - player_position.x)
 		if separation_side == 0.0:
@@ -349,6 +473,63 @@ func update_enemy(delta:float) -> void:
 		enemy_position.x = player_position.x + separation_side * 58.0
 	enemy_position.x = clampf(enemy_position.x, 120.0, ARENA_WIDTH - 180.0)
 	enemy_position.y = clampf(enemy_position.y, MIN_Y, MAX_Y)
+
+func move_enemy(direction:Vector2, speed:float, delta:float) -> void:
+	enemy_position += direction * speed * delta
+	if absf(direction.x) > 0.05:
+		enemy.flip_h = direction.x < 0.0
+	play_if_changed(enemy, "run" if enemy.sprite_frames.has_animation("run") else "idle")
+	enemy_position.x = clampf(enemy_position.x, 120.0, ARENA_WIDTH - 180.0)
+	enemy_position.y = clampf(enemy_position.y, MIN_Y, MAX_Y)
+
+func begin_enemy_retreat() -> void:
+	if enemy_dead || enemy_behavior == "teleport":
+		return
+	enemy_behavior = "retreat"
+	enemy_behavior_time = randf_range(0.45, 0.8)
+	enemy_strafe_direction = Vector2(-signf(player_position.x - enemy_position.x), -1.0 if randf() < 0.5 else 1.0)
+	enemy_decision_cooldown = 1.2
+
+func begin_enemy_strafe() -> void:
+	enemy_behavior = "strafe"
+	enemy_behavior_time = randf_range(0.7, 1.25)
+	enemy_strafe_direction = Vector2(randf_range(-0.35, 0.35), -1.0 if randf() < 0.5 else 1.0)
+
+func begin_enemy_cover() -> void:
+	var cover_points = [Vector2(620, 350), Vector2(1280, 560), Vector2(1880, 340), Vector2(2200, 550)]
+	enemy_cover_target = cover_points.pick_random()
+	enemy_behavior = "cover"
+	enemy_behavior_time = 1.8
+	enemy_decision_cooldown = 1.5
+
+func begin_enemy_teleport() -> void:
+	enemy_pressure = 0
+	enemy_behavior = "teleport"
+	enemy_behavior_time = 0.82
+	enemy_teleport_cooldown = randf_range(4.0, 6.5)
+	teleport_moved = false
+	enemy_hit_pending = false
+	spawn_impact(enemy_position + Vector2(0, -45), Color("d45cff"))
+
+func update_enemy_teleport(delta:float) -> void:
+	enemy_behavior_time -= delta
+	if enemy_behavior_time > 0.42:
+		enemy.modulate.a = clampf(remap(enemy_behavior_time, 0.82, 0.42, 1.0, 0.03), 0.03, 1.0)
+	elif !teleport_moved:
+		teleport_moved = true
+		var side = -1.0 if player.flip_h else 1.0
+		if randf() < 0.42:
+			side *= -1.0
+		enemy_position = Vector2(clampf(player_position.x + side * randf_range(125.0, 175.0), 120.0, ARENA_WIDTH - 180.0), clampf(player_position.y + randf_range(-60.0, 60.0), MIN_Y, MAX_Y))
+		spawn_impact(enemy_position + Vector2(0, -45), Color("d45cff"))
+	else:
+		enemy.modulate.a = clampf(remap(enemy_behavior_time, 0.42, 0.0, 0.03, 1.0), 0.03, 1.0)
+	if enemy_behavior_time <= 0.0:
+		enemy.modulate.a = 1.0
+		enemy_behavior = "approach"
+		enemy_cooldown = 0.0
+		if absf(player_position.x - enemy_position.x) < 190.0:
+			start_enemy_attack()
 
 func start_enemy_attack() -> void:
 	enemy_attack_time = 0.68
@@ -364,6 +545,7 @@ func resolve_enemy_hit() -> void:
 	var distance = player_position - enemy_position
 	if absf(distance.x) <= 125.0 && absf(distance.y) <= 58.0:
 		player_hp = maxf(0.0, player_hp - enemy_damage)
+		Global.realtime_hp = player_hp
 		player_invulnerability = 0.82
 		player_position.x += signf(distance.x) * 54.0
 		player.play("damage")
@@ -380,11 +562,35 @@ func defeat_enemy() -> void:
 	enemy.play("pain")
 	spawn_blood(enemy_position + Vector2(0, -35), 28, signf(enemy_position.x - player_position.x))
 	shake(14.0, 0.55)
-	exit_open = true
-	exit_label.visible = true
-	exit_label.text = tr_text("VITÓRIA!  AVANCE PARA A SAÍDA  →", "VICTORY!  MOVE TO THE EXIT  →")
-	status_label.text = tr_text("CAMINHO LIBERADO", "PATH CLEARED")
-	victory_sound.play()
+	enemy_dissolve_time = 1.85
+	enemy_dissolve_factor = 1.0
+	dissolve_blood_timer = 0.0
+	status_label.text = tr_text("O INIMIGO ESTÁ SE DISSOLVENDO...", "THE ENEMY IS DISSOLVING...")
+
+func update_enemy_dissolve(delta:float) -> void:
+	if enemy_dissolve_time <= 0.0:
+		return
+	enemy_dissolve_time = maxf(0.0, enemy_dissolve_time - delta)
+	dissolve_blood_timer -= delta
+	var progress = 1.0 - enemy_dissolve_time / 1.85
+	enemy_dissolve_factor = maxf(0.04, 1.0 - progress * 0.96)
+	enemy.modulate = Color(0.72, 0.08 + progress * 0.05, 0.09, 1.0 - progress * 0.72)
+	enemy_position.y += 24.0 * delta
+	if dissolve_blood_timer <= 0.0:
+		dissolve_blood_timer = 0.12
+		spawn_blood(enemy_position + Vector2(randf_range(-28, 28), randf_range(-70, 10)), 4, randf_range(-0.4, 0.4))
+		stains.append({"position":enemy_position + Vector2(randf_range(-36, 36), randf_range(25, 55)), "radius":randf_range(13.0, 28.0), "alpha":randf_range(0.62, 0.88)})
+	if enemy_dissolve_time <= 0.0:
+		enemy.visible = false
+		enemy_bar.visible = false
+		enemy_name_label.visible = false
+		for index in range(12):
+			stains.append({"position":enemy_position + Vector2(randf_range(-72, 72), randf_range(22, 52)), "radius":randf_range(18.0, 38.0), "alpha":randf_range(0.68, 0.92)})
+		exit_open = true
+		exit_label.visible = true
+		exit_label.text = tr_text("VITÓRIA!  AVANCE PARA A SAÍDA  →", "VICTORY!  MOVE TO THE EXIT  →")
+		status_label.text = tr_text("CAMINHO LIBERADO", "PATH CLEARED")
+		victory_sound.play()
 
 func lose_battle() -> void:
 	player_dead = true
@@ -403,16 +609,18 @@ func finish_battle() -> void:
 	battle_song.stop()
 	Global.battle_started = false
 	Global.back_to_main_camera = true
+	Global.realtime_hp = player_hp
+	Global.request_realtime_position_restore()
 	GameSongs.process_mode = Node.PROCESS_MODE_INHERIT
-	var fade = ColorRect.new()
-	fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	fade.color = Color(0, 0, 0, 0)
-	var canvas = CanvasLayer.new()
-	canvas.layer = 100
-	add_child(canvas)
-	canvas.add_child(fade)
-	var tween = create_tween()
-	tween.tween_property(fade, "color", Color.BLACK, 0.65)
+	intro_label.text = tr_text("RETORNANDO À JORNADA", "RETURNING TO THE JOURNEY")
+	intro_label.modulate.a = 0.0
+	var tween = create_tween().set_parallel(true)
+	tween.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+	tween.tween_property(transition_top, "position:y", 0.0, 0.72)
+	tween.tween_property(transition_bottom, "position:y", 324.0, 0.72)
+	tween.tween_property(transition_flash, "color", Color(0.55, 0.02, 0.08, 0.58), 0.45)
+	tween.tween_property(intro_label, "modulate:a", 1.0, 0.4).set_delay(0.35)
+	tween.tween_property(camera, "zoom", Vector2(1.14, 1.14), 0.72)
 	await tween.finished
 	var destination = Global.realtime_return_scene
 	if destination.is_empty():
@@ -427,7 +635,7 @@ func update_fighter_transforms() -> void:
 	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.9, 1.18)
 	var enemy_depth_scale = remap(enemy_position.y, MIN_Y, MAX_Y, 0.88, 1.15)
 	player.scale = Vector2(player_depth_scale * player_base_scale, player_depth_scale * player_base_scale)
-	enemy.scale = Vector2(enemy_depth_scale * enemy_base_scale, enemy_depth_scale * enemy_base_scale)
+	enemy.scale = Vector2(enemy_depth_scale * enemy_base_scale * (0.82 + enemy_dissolve_factor * 0.18), enemy_depth_scale * enemy_base_scale * enemy_dissolve_factor)
 
 func update_bars() -> void:
 	player_bar.value = player_hp
@@ -440,7 +648,7 @@ func update_bars() -> void:
 	enemy_name_label.z_index = int(enemy_position.y) + 1
 
 func play_if_changed(sprite:AnimatedSprite2D, animation_name:String) -> void:
-	if sprite.animation != animation_name:
+	if sprite.animation != animation_name || !sprite.is_playing():
 		sprite.play(animation_name)
 
 func spawn_blood(origin:Vector2, amount:int, direction:float) -> void:

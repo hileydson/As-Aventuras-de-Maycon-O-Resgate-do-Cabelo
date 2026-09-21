@@ -6,14 +6,18 @@ extends Control
 @onready var quit: Button = $black_screen/VBoxContainer/quit
 @onready var run_label: Label = $black_screen/run_label
 @onready var down_label: Label = $black_screen/down_label
-@onready var space_keys: Label = $black_screen/space_keys
+@onready var space_keys: Label = get_node_or_null("black_screen/space_keys")
 @onready var powers: Label = $black_screen/powers
 @onready var v_box_container: VBoxContainer = $black_screen/VBoxContainer
 @onready var pause: Label = $black_screen/pause
 @onready var maycon_hp: Node2D = $maycon_hp
+var realtime_hp_bar:ProgressBar
+var realtime_hp_label:Label
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	build_realtime_hp_display()
+	update_hp_display()
 	if Global.game_events["before_prologo"]==false:
 		v_box_container.visible = true
 		maycon_hp.visible = true
@@ -22,7 +26,7 @@ func _ready() -> void:
 		maycon_hp.visible = false
 	
 	if Global.default_language == Global.language_pt_br:
-		powers.text = " SOCO \n CHUTE \n\n PULO"
+		powers.text = " SOCO \n CHUTE \n\n DASH" if Global.battle_mode == Global.battle_mode_realtime else " SOCO \n CHUTE \n\n PULO"
 		close.text = "Fechar"
 		
 		if Global.game_events["before_prologo"]:
@@ -37,7 +41,7 @@ func _ready() -> void:
 			pause.text = "CONTROLE"
 		
 	else:
-		powers.text = " PUNCH \n KICK \n\n JUMP"
+		powers.text = " PUNCH \n KICK \n\n DASH" if Global.battle_mode == Global.battle_mode_realtime else " PUNCH \n KICK \n\n JUMP"
 		close.text = "Close"
 		
 		if Global.game_events["before_prologo"]:
@@ -53,6 +57,7 @@ func _ready() -> void:
 		
 
 func processa_pause_unpause()->void:
+	update_hp_display()
 	if Global.game_events["before_prologo"]==false:
 		v_box_container.visible = true
 		maycon_hp.visible = true
@@ -74,9 +79,7 @@ func processa_pause_unpause()->void:
 			$"../maycon_itens".get_node("canvas").visible = false
 		
 		if Global.game_events["before_prologo"]==false:
-			$maycon_hp/hp_1.visible = Global.maycon_hp_count<=2
-			$maycon_hp/hp_2.visible = Global.maycon_hp_count<=1
-			$maycon_hp/hp_3.visible = Global.maycon_hp_count<=0
+			update_hp_display()
 			
 		
 		close.grab_focus()
@@ -106,3 +109,40 @@ func _on_quit_pressed() -> void:
 	Global.back_to_main_camera = true
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+
+func build_realtime_hp_display() -> void:
+	realtime_hp_bar = ProgressBar.new()
+	realtime_hp_bar.position = Vector2(42, 603)
+	realtime_hp_bar.size = Vector2(205, 24)
+	realtime_hp_bar.show_percentage = false
+	realtime_hp_bar.max_value = Global.realtime_hp_max
+	var background = StyleBoxFlat.new()
+	background.bg_color = Color(0.025, 0.025, 0.035, 0.94)
+	background.border_color = Color(0.95, 0.95, 1.0, 0.7)
+	background.set_border_width_all(2)
+	background.set_corner_radius_all(7)
+	var fill = StyleBoxFlat.new()
+	fill.bg_color = Color("b3132b")
+	fill.set_corner_radius_all(6)
+	realtime_hp_bar.add_theme_stylebox_override("background", background)
+	realtime_hp_bar.add_theme_stylebox_override("fill", fill)
+	maycon_hp.add_child(realtime_hp_bar)
+	realtime_hp_label = Label.new()
+	realtime_hp_label.position = Vector2(42, 574)
+	realtime_hp_label.size = Vector2(205, 28)
+	realtime_hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	realtime_hp_label.add_theme_font_size_override("font_size", 18)
+	realtime_hp_label.add_theme_color_override("font_color", Color("ffd6dc"))
+	maycon_hp.add_child(realtime_hp_label)
+
+func update_hp_display() -> void:
+	var realtime = Global.battle_mode == Global.battle_mode_realtime
+	$maycon_hp/hp_1.visible = !realtime && Global.maycon_hp_count<=2
+	$maycon_hp/hp_2.visible = !realtime && Global.maycon_hp_count<=1
+	$maycon_hp/hp_3.visible = !realtime && Global.maycon_hp_count<=0
+	if realtime_hp_bar:
+		realtime_hp_bar.visible = realtime
+		realtime_hp_bar.max_value = Global.realtime_hp_max
+		realtime_hp_bar.value = Global.realtime_hp
+		realtime_hp_label.visible = realtime
+		realtime_hp_label.text = "VIDA  %d / %d" % [roundi(Global.realtime_hp), roundi(Global.realtime_hp_max)] if Global.default_language == Global.language_pt_br else "HEALTH  %d / %d" % [roundi(Global.realtime_hp), roundi(Global.realtime_hp_max)]

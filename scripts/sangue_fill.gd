@@ -14,6 +14,8 @@ func _process(delta: float) -> void:
 			played = true
 			buttons.visible = false
 			Global.maycon_hp_count = 0
+			Global.realtime_hp = Global.realtime_hp_max
+			Global.save_progress(get_tree().current_scene.name)
 			$SangueFillEffect.play()
 			sangue_sprite.play("fill")
 			await get_tree().create_timer(3.0).timeout
