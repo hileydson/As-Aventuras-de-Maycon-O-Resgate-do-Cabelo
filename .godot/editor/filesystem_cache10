@@ -3636,9 +3636,9 @@ maycon_fase.gd::GDScript::2636479185831734840::1770311722::0::1::::<>CharacterBo
 maycon_itens.gd::GDScript::3608571195747589650::1789998374::0::1::::<>Node2D<><>0<>0<><>::
 menu.gd::GDScript::6562768689195605607::1770984867::0::1::::<>Control<><>0<>0<><>::
 pause.gd::GDScript::7449233017950370426::1789998374::0::1::::<>Control<><>0<>0<><>::
-realtime_battle.gd::GDScript::7867064034200866415::1790005835::0::1::::<>Node2D<><>0<>0<><>::
-realtime_battle_3d.gd::GDScript::2141243869699419406::1790001021::0::1::::<>CanvasLayer<><>0<>0<><>::
-realtime_battle_background.gd::GDScript::3540749457985720226::1790000226::0::1::::<>Node2D<><>0<>0<><>::
+realtime_battle.gd::GDScript::7867064034200866415::1790007024::0::1::::<>Node2D<><>0<>0<><>::
+realtime_battle_3d.gd::GDScript::2141243869699419406::1790006817::0::1::::<>CanvasLayer<><>0<>0<><>::
+realtime_battle_background.gd::GDScript::3540749457985720226::1790006831::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_foreground.gd::GDScript::2882700291306978348::1790000216::0::1::::<>Node2D<><>0<>0<><>::
 sangue_fill.gd::GDScript::6760165581029737568::1789961722::0::1::::<>Area2D<><>0<>0<><>::
 seco.gd::GDScript::1005395561379310119::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::

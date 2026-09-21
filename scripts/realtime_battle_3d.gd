@@ -85,12 +85,12 @@ func build_world() -> void:
 		palette.floor_tint,
 		FOREST_DIFF if use_forest_floor else COBBLE_DIFF,
 		FOREST_NORMAL if use_forest_floor else COBBLE_NORMAL,
-		10.0
+		Vector3(35.0, 6.2, 1.0)
 	)
-	add_plane(Vector3(0, -0.08, 0), Vector2(48, 13), floor_material)
-	var back_wall_material = create_material(palette.wall_tint, WALL_DIFF, WALL_NORMAL, 7.0)
+	add_plane(Vector3(0, -0.08, 0), Vector2(160, 28), floor_material)
+	var back_wall_material = create_material(palette.wall_tint, WALL_DIFF, WALL_NORMAL, Vector3(32.0, 1.0, 1.0))
 	if theme_id != "forest_road" && theme_id != "ash_wasteland":
-		add_box(Vector3(0, 2.5, -5.2), Vector3(49, 5.0, 0.55), back_wall_material)
+		add_box(Vector3(0, 2.5, -5.2), Vector3(160, 5.0, 0.55), back_wall_material)
 	build_theme_details(palette, back_wall_material)
 	build_depth_props(palette)
 
@@ -105,41 +105,41 @@ func update_camera(camera_2d_x:float) -> void:
 func build_theme_details(palette:Dictionary, wall_material:StandardMaterial3D) -> void:
 	match theme_id:
 		"forest_road":
-			for x in range(-22, 25, 4):
+			for x in range(-54, 56, 4):
 				add_tree(Vector3(x, 0, -4.3 + randf_range(-0.7, 0.45)), palette, 1.1 + randf_range(-0.15, 0.35))
-			for x in [-15.0, -4.0, 8.0, 18.0]:
+			for x in [-44.0, -32.0, -22.0, -15.0, -4.0, 8.0, 18.0, 28.0, 38.0, 48.0]:
 				add_rock(Vector3(x, 0.2, -1.8), palette.rock, 0.8)
 		"ash_wasteland":
-			for x in range(-22, 24, 5):
+			for x in range(-52, 54, 5):
 				add_rock(Vector3(x, 0.3, -3.0 + randf_range(-1.0, 1.0)), palette.rock, randf_range(0.8, 1.65))
 				add_dead_tree(Vector3(x + 1.8, 0, -4.5), palette)
-			for x in [-18.0, -7.0, 4.0, 15.0]:
+			for x in [-45.0, -32.0, -18.0, -7.0, 4.0, 15.0, 28.0, 42.0]:
 				add_fire_light(Vector3(x, 0.7, -2.8), palette.fire)
 		"throne_ruins":
 			build_castle_columns(palette, wall_material, true)
 			add_throne(Vector3(18, 0, -3.9), palette)
-			for x in [-17.0, -8.0, 2.0, 11.0, 20.0]:
+			for x in [-46.0, -32.0, -17.0, -8.0, 2.0, 11.0, 20.0, 32.0, 46.0]:
 				add_fire_light(Vector3(x, 1.35, -4.65), palette.fire)
 		"moon_courtyard":
 			build_castle_columns(palette, wall_material, false)
 			add_fountain(Vector3(0, 0, -2.0), palette)
-			for x in [-18.0, -9.0, 9.0, 18.0]:
+			for x in [-46.0, -32.0, -18.0, -9.0, 9.0, 18.0, 32.0, 46.0]:
 				add_magic_light(Vector3(x, 1.8, -4.3), palette.fire)
 		_:
 			build_castle_columns(palette, wall_material, false)
-			for x in [-18.0, -10.0, -2.0, 6.0, 14.0, 22.0]:
+			for x in [-46.0, -32.0, -18.0, -10.0, -2.0, 6.0, 14.0, 22.0, 34.0, 46.0]:
 				add_fire_light(Vector3(x, 1.35, -4.65), palette.fire)
 			if theme_id == "abandoned_dungeon":
-				for x in [-13.0, 0.0, 13.0]:
+				for x in [-38.0, -25.0, -13.0, 0.0, 13.0, 25.0, 38.0]:
 					add_rubble(Vector3(x, 0.12, -2.4), palette)
 
 func build_depth_props(palette:Dictionary) -> void:
-	for x in [-20.0, -11.0, -2.0, 7.0, 16.0, 23.0]:
+	for x in [-46.0, -37.0, -28.0, -20.0, -11.0, -2.0, 7.0, 16.0, 23.0, 32.0, 41.0, 50.0]:
 		var shadow_material = create_material(Color(palette.rock, 0.88), "", "", 1.0)
 		add_box(Vector3(x, 0.28, 4.9), Vector3(randf_range(0.8, 1.7), 0.55, randf_range(0.6, 1.2)), shadow_material, Vector3(0, randf_range(-35, 35), 0))
 
 func build_castle_columns(palette:Dictionary, wall_material:StandardMaterial3D, ruined:bool) -> void:
-	for x in range(-21, 24, 6):
+	for x in range(-54, 56, 6):
 		var height = randf_range(2.8, 5.2) if ruined else 5.2
 		add_cylinder(Vector3(x, height * 0.5, -4.55), 0.52, height, wall_material)
 		add_box(Vector3(x, height + 0.18, -4.55), Vector3(1.35, 0.35, 1.1), wall_material)
@@ -242,12 +242,16 @@ func add_mesh(mesh:Mesh, position_value:Vector3, scale_value:Vector3 = Vector3.O
 	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	stage_root.add_child(instance)
 
-func create_material(color:Color, texture_path:String, normal_path:String, uv_scale:float, emission:Color = Color.BLACK) -> StandardMaterial3D:
+func create_material(color:Color, texture_path:String, normal_path:String, uv_scale:Variant, emission:Color = Color.BLACK) -> StandardMaterial3D:
 	var material = StandardMaterial3D.new()
 	material.albedo_color = color
 	material.roughness = 0.86
 	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
-	material.uv1_scale = Vector3(uv_scale, uv_scale, uv_scale)
+	if uv_scale is Vector3:
+		material.uv1_scale = uv_scale
+	else:
+		var s = float(uv_scale)
+		material.uv1_scale = Vector3(s, s, s)
 	if !texture_path.is_empty() && ResourceLoader.exists(texture_path):
 		material.albedo_texture = load(texture_path)
 	if !normal_path.is_empty() && ResourceLoader.exists(normal_path):
