@@ -94,13 +94,13 @@ func build_world() -> void:
 	build_theme_details(palette, back_wall_material)
 	build_depth_props(palette)
 
-func update_camera(player_x:float) -> void:
+func update_camera(camera_2d_x:float) -> void:
 	if camera_3d == null:
 		return
-	var ratio = clampf(player_x / arena_width, 0.0, 1.0)
+	var ratio = clampf((camera_2d_x - 576.0) / maxf(1.0, arena_width - 1152.0), 0.0, 1.0)
 	var target_x = lerpf(-17.5, 17.5, ratio)
-	camera_3d.position.x = lerpf(camera_3d.position.x, target_x, 0.09)
-	camera_3d.look_at(Vector3(camera_3d.position.x, 1.15, -1.8))
+	camera_3d.position.x = target_x
+	camera_3d.look_at(Vector3(target_x, 1.15, -1.8))
 
 func build_theme_details(palette:Dictionary, wall_material:StandardMaterial3D) -> void:
 	match theme_id:

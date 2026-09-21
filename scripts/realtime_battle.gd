@@ -138,6 +138,8 @@ func _ready() -> void:
 	camera.limit_bottom = 648
 	add_child(camera)
 	camera.make_current()
+	if stage_3d:
+		stage_3d.update_camera(camera.position.x)
 	Global.battle_started = true
 	status_label.text = tr_text("DERROTE %s E AVANCE", "DEFEAT %s AND MOVE FORWARD") % enemy_name.to_upper()
 	set_world_audio_paused(true)
@@ -418,8 +420,6 @@ func _process(delta:float) -> void:
 		return
 	update_effects(delta)
 	update_shake(delta)
-	if stage_3d:
-		stage_3d.update_camera(player_position.x)
 	if leaving:
 		return
 	if player_dead:
@@ -428,6 +428,8 @@ func _process(delta:float) -> void:
 		intro_time = maxf(0.0, intro_time - delta)
 		update_fighter_transforms()
 		update_bars()
+		if stage_3d:
+			stage_3d.update_camera(camera.get_screen_center_position().x)
 		queue_redraw()
 		return
 	update_player(delta)
@@ -440,9 +442,11 @@ func _process(delta:float) -> void:
 	update_fighter_transforms()
 	update_bars()
 	camera.position.x = clamp(player_position.x + 260.0, 576.0, ARENA_WIDTH - 576.0)
+	var visible_camera_center = camera.get_screen_center_position().x
+	if stage_3d:
+		stage_3d.update_camera(visible_camera_center)
 	if background_layer:
-		var visible_camera_center = camera.get_screen_center_position().x
-		background_layer.position.x = (visible_camera_center - 576.0) * 0.08
+		background_layer.position = Vector2.ZERO
 	queue_redraw()
 
 func toggle_battle_pause() -> void:
@@ -501,7 +505,8 @@ func start_dodge() -> void:
 	player_invulnerability = 0.34
 	dash_sound.pitch_scale = randf_range(0.94, 1.04)
 	dash_sound.play()
-	spawn_impact(player_position + Vector2(0, 25), Color("7bdff2"), dodge_direction)
+	var fart_origin = player_position + Vector2(-32.0 * player_facing, 18.0)
+	spawn_impact(fart_origin, Color("7bdff2"), -dodge_direction)
 
 func start_player_attack(kick:bool) -> void:
 	var attack_name = "attack_kick" if kick else "attack_punch"
