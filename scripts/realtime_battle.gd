@@ -237,6 +237,7 @@ var sword_waves:Array[Dictionary] = []
 var sword_wave_sound:AudioStreamPlayer
 var blood_drops:Array[Node2D] = []
 var blood_pickup_sound:AudioStreamPlayer
+var hit_stop_token:int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -1222,6 +1223,12 @@ func resolve_player_hit(kick:bool) -> void:
 	combo_timeout = 2.4
 	var is_special = (combo % 5 == 0)
 
+	# Slow motion na fração de segundo do impacto para dar a sensação de impacto ao acertar o golpe
+	var slow_duration = 0.12 if is_special else 0.075
+	var slow_intensity = 0.08 if is_special else 0.15
+	apply_hit_stop(slow_duration, slow_intensity)
+	Input.start_joy_vibration(0, 0.65 if is_special else 0.4, 0.85 if is_special else 0.6, slow_duration)
+
 	if hit_enemy:
 		var enemy_was_attacking = enemy_attack_time > 0.0
 		var damage = (19.0 if kick else 13.0) + minf(combo * 1.5, 10.0)
@@ -1256,10 +1263,27 @@ func resolve_player_hit(kick:bool) -> void:
 	combo_label.text = ("%d HITS!\n%s" % [combo, tr_text("ESPECIAL!", "SPECIAL!")]) if is_special else ("%d HIT\nCOMBO" % combo)
 	combo_label.add_theme_color_override("font_color", Color("ff2a5f") if is_special else Color("ff9f1c"))
 
-	# Pop-up flutuante numerico na frente do golpe do Maycon
+	# Pop-up flutuante numerico na frente do golpe do Maycon surge em seguida ("dai entao aparece escrito o hit com o numero...")
 	var hit_popup_x = player_position.x + player_facing * (85.0 if kick else 65.0)
 	var hit_popup_pos = Vector2(hit_popup_x, player_position.y - 42.0)
-	spawn_hit_counter_popup(hit_popup_pos, combo, is_special)
+	delayed_spawn_hit_counter_popup(hit_popup_pos, combo, is_special, slow_duration)
+
+func apply_hit_stop(duration_sec:float = 0.075, slow_scale:float = 0.15) -> void:
+	if bool(get("special_active")) || enemy_dead || player_dead || leaving:
+		return
+	hit_stop_token += 1
+	var active_token = hit_stop_token
+	Engine.time_scale = slow_scale
+	await get_tree().create_timer(duration_sec, true, false, true).timeout
+	if active_token == hit_stop_token:
+		if !bool(get("special_active")) && !enemy_dead && !player_dead && !leaving:
+			Engine.time_scale = 1.0
+
+func delayed_spawn_hit_counter_popup(world_pos:Vector2, count:int, is_special:bool, delay_sec:float) -> void:
+	if delay_sec > 0.0:
+		await get_tree().create_timer(delay_sec, true, false, true).timeout
+	if is_inside_tree() && !leaving:
+		spawn_hit_counter_popup(world_pos, count, is_special)
 
 func update_enemy(delta:float) -> void:
 	enemy_cooldown = maxf(0.0, enemy_cooldown - delta)

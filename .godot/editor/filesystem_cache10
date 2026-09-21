@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1790011452
+::res://::1790027246
 AGENTS.md::TextFile::-1::1789958757::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1789958757::0::1::::<><><>0<>0<><>::
 export_presets.cfg::TextFile::-1::1771524570::0::1::::<><><>0<>0<><>::
@@ -3383,7 +3383,7 @@ Objects.png::CompressedTexture2D::2603308936418570908::1767636737::1767636737::1
 Rotating_blades.png::CompressedTexture2D::6149366124704441297::1767636737::1767636737::1::::<><><>0<>0<>2fca820f122e19df28bb2db13d324fce<>res://.godot/imported/Rotating_blades.png-778390e24f5b94daf7df31c4f7d64871.ctex::
 scull.png::CompressedTexture2D::924674051756614918::1767636737::1767636737::1::::<><><>0<>0<>88eb904c1d7beb8167d968b4d6b1cae2<>res://.godot/imported/scull.png-4bd9b4129b919690a5980b9d4505cce9.ctex::
 web.png::CompressedTexture2D::1665521307035554969::1767636737::1767636737::1::::<><><>0<>0<>2c41fd68a1281a64f1d37785b533eed3<>res://.godot/imported/web.png-555c1399ada65fb9f4e6bf50c2102997.ctex::
-::res://assets/novos_audios/::1790018977
+::res://assets/novos_audios/::1790019522
 3d_first_battle_seco.mp3::AudioStreamMP3::9112742089382917435::1769799971::1769800042::1::::<><><>0<>0<>58169ca5379430dc1b6d26419f4d403f<>res://.godot/imported/3d_first_battle_seco.mp3-e99bf30f277278144a0a538012a2b91d.mp3str::
 balao_conversa.mp3::AudioStreamMP3::7050655661624707243::1770925133::1770925139::1::::<><><>0<>0<>a117f8ff1f77e4f280e68d2751a017bb<>res://.godot/imported/balao_conversa.mp3-67afbdd3f08c480ed2a2a7a0d42c9703.mp3str::
 barulho_gilhotina.mp3::AudioStreamMP3::8054641206314790354::1768242746::1768242795::1::::<><><>0<>0<>3bb2122a6b5ff28702a9719956e80f60<>res://.godot/imported/barulho_gilhotina.mp3-e1cb096fd5e9330e98b66e2f8bd0d47b.mp3str::
@@ -3595,7 +3595,7 @@ inimigo_xuruzika.tscn::PackedScene::6737765857473348084::1770237486::0::1::::<><
 maycon_itens.tscn::PackedScene::6963755944896746500::1769775609::0::1::::<><><>0<>0<><>::uid://broav1jkk1nk1::::res://scripts/maycon_itens.gd<>uid://30tsd1l3hqfw::::res://assets/novas_imagens/objects/Items.png<>uid://b8xm3n05un7xf::::res://assets/novas_imagens/effects/Explosion/1.png<>uid://dlowt45jrflns::::res://assets/novas_imagens/effects/Explosion/3.png
 ::res://scripts/::1790019441
 balao_conversa.gd::GDScript::-1::1770925133::0::1::::<>CanvasLayer<><>0<>0<><>::
-batalha.gd::GDScript::7248754106168415276::1789961247::0::1::::<>AnimationPlayer<><>0<>0<><>::
+batalha.gd::GDScript::7248754106168415276::1790020894::0::1::::<>AnimationPlayer<><>0<>0<><>::
 battle_3d.gd::GDScript::5694209551412885657::1767636737::0::1::::<>Camera3D<><>0<>0<><>::
 battle_mode_selection.gd::GDScript::1174737547514756521::1789959270::0::1::::<>Control<><>0<>0<><>::
 caixa.gd::GDScript::7282922310310176152::1770228608::0::1::::<>Sprite2D<><>0<>0<><>::
@@ -3618,11 +3618,11 @@ fase_1_castle_3.gd::GDScript::285430353212092801::1770986867::0::1::::<>Sprite2D
 fase_1_castle_no_fire_1.gd::GDScript::5670764743540065835::1770227375::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_castle_no_fire_2.gd::GDScript::4824505999164797345::1768258449::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_outside_castle_again_no_fire_1.gd::GDScript::1469744552889768490::1770925133::0::1::::<>Sprite2D<><>0<>0<><>::
-fase_1_outside_castle_again_no_fire_2.gd::GDScript::6243358031740958106::1770925133::0::1::::<>Sprite2D<><>0<>0<><>::
+fase_1_outside_castle_again_no_fire_2.gd::GDScript::6243358031740958106::1790020860::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_outside_castle_again_no_fire_3.gd::GDScript::1824109410800073102::1770925133::0::1::::<>Sprite2D<><>0<>0<><>::
 game.gd::GDScript::676883979450412678::1789995246::0::1::::<>Node2D<><>0<>0<><>::
 game_songs.gd::GDScript::614287363896591786::1767636737::0::1::::<>Node2D<><>0<>0<><>::
-Global.gd::GDScript::2969336717215221737::1789996333::0::1::::<>Node<><>0<>0<><>::
+Global.gd::GDScript::2969336717215221737::1790020838::0::1::::<>Node<><>0<>0<><>::
 hp.gd::GDScript::5708940543160946882::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 intro_batalha_frozen_effect.gd::GDScript::6657063382709979058::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 intro_game.gd::GDScript::1191826035399765642::1767636737::0::1::::<>VideoStreamPlayer<><>0<>0<><>::
@@ -3637,12 +3637,12 @@ maycon_fase.gd::GDScript::2636479185831734840::1770311722::0::1::::<>CharacterBo
 maycon_itens.gd::GDScript::3608571195747589650::1789998374::0::1::::<>Node2D<><>0<>0<><>::
 menu.gd::GDScript::6562768689195605607::1770984867::0::1::::<>Control<><>0<>0<><>::
 pause.gd::GDScript::7449233017950370426::1789998374::0::1::::<>Control<><>0<>0<><>::
-realtime_battle.gd::GDScript::7867064034200866415::1790016126::0::1::::<>Node2D<><>0<>0<><>::
+realtime_battle.gd::GDScript::7867064034200866415::1790021672::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_3d.gd::GDScript::2141243869699419406::1790009870::0::1::::<>CanvasLayer<><>0<>0<><>::
 realtime_battle_background.gd::GDScript::3540749457985720226::1790009889::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_blood_drop.gd::GDScript::4138522092762905264::1790014119::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_foreground.gd::GDScript::2882700291306978348::1790000216::0::1::::<>Node2D<><>0<>0<><>::
-realtime_battle_specials.gd::GDScript::594959556313240947::1790019390::0::1::::<>Node2D<><>0<>0<><>::
+realtime_battle_specials.gd::GDScript::594959556313240947::1790020947::0::1::::<>Node2D<><>0<>0<><>::
 sangue_fill.gd::GDScript::6760165581029737568::1789961722::0::1::::<>Area2D<><>0<>0<><>::
 seco.gd::GDScript::1005395561379310119::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 two_layers_fps_mode.gd::GDScript::-1::1770925133::0::1::::<>Node3D<><>0<>0<><>::
@@ -3672,7 +3672,7 @@ world_3d.gd::GDScript::390495286410503036::1771524503::0::1::::<>Node3D<><>0<>0<
 enemy_data.gd::GDScript::5291297442027347434::1768420697::0::1::::<>Node2D<><>0<>0<><>::
 inimigo_1.gd::GDScript::9091500814300405403::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 inimigo_bomba_pretti.gd::GDScript::4437398683527321362::1789994034::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-inimigo_boss_seco.gd::GDScript::1067754854763735143::1789994034::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
+inimigo_boss_seco.gd::GDScript::1067754854763735143::1790020849::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 inimigo_camilita.gd::GDScript::723427351081780412::1789994034::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 inimigo_fofo.gd::GDScript::1646365888988713657::1789994034::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 inimigo_manga.gd::GDScript::2159721504695700621::1789994034::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
