@@ -1,8 +1,8 @@
 extends "res://scripts/realtime_battle.gd"
 
 const SPECIAL_PENTAGRAM_THRESHOLD:int = 15
-const SPECIAL_RUSH_THRESHOLD:int = 25
-const SPECIAL_METER_MAX:int = 25
+const SPECIAL_RUSH_THRESHOLD:int = 20
+const SPECIAL_METER_MAX:int = 20
 const COMBO_MUSIC_STING_DURATION:float = 0.55
 const PENTAGRAM_PULSE_COUNT:int = 18
 const PENTAGRAM_CHARGE_DURATION:float = 7.0
@@ -473,7 +473,7 @@ func update_special_meter_hud() -> void:
 		special_prompt_label.add_theme_color_override("font_color", Color("ff80bf"))
 	else:
 		fill.bg_color = Color("8f2cff")
-		special_prompt_label.text = tr_text("15 HITS: 👊 + 🦶   •   25 HITS: 🦶 + 💨", "15 HITS: 👊 + 🦶   •   25 HITS: 🦶 + 💨")
+		special_prompt_label.text = tr_text("15 HITS: 👊 + 🦶   •   20 HITS: 🦶 + 💨", "15 HITS: 👊 + 🦶   •   20 HITS: 🦶 + 💨")
 		special_prompt_label.add_theme_color_override("font_color", Color(0.65, 0.82, 1.0, 0.82))
 	special_meter.add_theme_stylebox_override("fill", fill)
 	if special_hits >= SPECIAL_PENTAGRAM_THRESHOLD:
