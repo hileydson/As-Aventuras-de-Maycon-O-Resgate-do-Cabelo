@@ -1,7 +1,7 @@
 extends Node2D
 
 const ARENA_WIDTH:float = 2600.0
-const MIN_Y:float = 315.0
+const MIN_Y:float = 215.0
 const MAX_Y:float = 585.0
 const PLAYER_SPEED:float = 285.0
 
@@ -432,6 +432,8 @@ func spawn_minions() -> void:
 			"base_modulate":variant.modulate,
 			"hit_streak":0,
 			"hit_streak_timer":0.0,
+			"pending_retreat":false,
+			"retreat_delay":0.0,
 			"is_ranged":is_ranged_minion,
 			"sword_wave_cooldown":randf_range(1.8, 3.2),
 			"is_casting_wave":false,
@@ -478,6 +480,17 @@ func update_single_minion(minion:Dictionary, can_melee:bool, delta:float) -> voi
 		minion.hit_streak_timer = maxf(0.0, minion.hit_streak_timer - delta)
 		if minion.hit_streak_timer <= 0.0:
 			minion.hit_streak = 0
+
+	# Recuo em 2 hits acontece somente caso o Maycon pare e nao continue com o combo
+	if minion.get("pending_retreat", false):
+		minion.retreat_delay = maxf(0.0, minion.retreat_delay - delta)
+		if minion.retreat_delay <= 0.0 && minion.attack_time <= 0.0:
+			minion.pending_retreat = false
+			minion.behavior = "retreat"
+			minion.behavior_time = randf_range(0.7, 1.2)
+			minion.strafe_dir = Vector2(-minion.facing, -1.0 if randf() < 0.5 else 1.0)
+			minion.position.x += -minion.facing * 42.0
+			minion.cooldown = maxf(minion.cooldown, 1.5)
 
 	if minion.get("is_ranged", false):
 		minion.sword_wave_cooldown = maxf(0.0, minion.sword_wave_cooldown - delta)
@@ -748,7 +761,7 @@ func resolve_single_minion_hit(minion:Dictionary) -> void:
 	if absf(distance.x) <= 135.0 && absf(distance.y) <= 60.0:
 		damage_player(minion.damage, signf(distance.x))
 
-func resolve_player_hit_minions(kick:bool) -> bool:
+func resolve_player_hit_minions(kick:bool, is_special:bool = false) -> bool:
 	var hit_any = false
 	for minion_index in minions.size():
 		var minion = minions[minion_index]
@@ -758,43 +771,54 @@ func resolve_player_hit_minions(kick:bool) -> bool:
 		var facing_ok = distance.x * player_facing >= 0.0
 		if absf(distance.x) <= (155.0 if kick else 125.0) && absf(distance.y) <= 65.0 && facing_ok:
 			hit_any = true
-			var damage = 18.0 if kick else 12.0
-			damage += minf(combo * 1.0, 8.0)
+			var damage = (18.0 if kick else 12.0) + minf(combo * 1.2, 8.0)
+			if is_special:
+				damage += 35.0
 			minion.hp = maxf(0.0, minion.hp - damage)
 
 			if minion.get("hit_streak_timer", 0.0) > 0.0:
 				minion.hit_streak += 1
 			else:
 				minion.hit_streak = 1
-			minion.hit_streak_timer = 1.3
+			minion.hit_streak_timer = 1.4
 
-			var base_push = (38.0 if kick else 24.0)
-			if minion.hit_streak >= 2:
-				base_push += (52.0 if kick else 38.0)
+			var base_push = (24.0 if kick else 16.0)
+			if is_special:
+				# 5 Hits: Golpe Especial explosivo com super empurrao
+				base_push = 180.0
 				minion.hit_pending = false
 				minion.attack_time = 0.0
 				minion.is_casting_wave = false
+				minion.pending_retreat = false
 				minion.behavior = "retreat"
-				minion.behavior_time = randf_range(0.6, 1.0)
+				minion.behavior_time = 1.35
 				minion.strafe_dir = Vector2(-player_facing, -1.0 if randf() < 0.5 else 1.0)
-				minion.cooldown = maxf(minion.cooldown, randf_range(1.1, 1.9))
-				spawn_blood(minion.position + Vector2(0, -25), 12, player_facing)
-				spawn_impact(minion.position + Vector2(0, -20), Color("d90429"), player_facing)
-				shake(5.0 if kick else 3.5, 0.16)
+				minion.cooldown = maxf(minion.cooldown, 2.5)
+				spawn_blood(minion.position + Vector2(0, -25), 24, player_facing)
+				spawn_special_finisher_effect(minion.position + Vector2(0, -25), player_facing)
+				shake(14.0, 0.42)
+				minion.hit_streak = 0
+			elif minion.hit_streak >= 2:
+				# 2 Hits: prepara recuo SE o Maycon parar o combo; enquanto o Maycon continuar, o combo conecta!
+				base_push = 28.0 if kick else 18.0
+				minion.hit_pending = false
+				minion.attack_time = 0.0
+				minion.is_casting_wave = false
+				minion.pending_retreat = true
+				minion.retreat_delay = 0.48
+				spawn_blood(minion.position + Vector2(0, -25), 10, player_facing)
+				spawn_impact(minion.position + Vector2(0, -20), Color("ff5400"), player_facing)
+				shake(4.0 if kick else 2.6, 0.14)
 			else:
 				spawn_blood(minion.position + Vector2(0, -25), 8 if kick else 5, player_facing)
 				spawn_impact(minion.position + Vector2(0, -20), Color("ffb74d" if kick else "ffa726"), player_facing)
 				shake(3.0 if kick else 2.0, 0.12)
-				if minion.attack_time <= 0.0 && minion.behavior != "wait_attack":
-					minion.behavior = "retreat"
-					minion.behavior_time = randf_range(0.3, 0.5)
-					minion.strafe_dir = Vector2(-player_facing, -1.0 if randf() < 0.5 else 1.0)
 
 			minion.position.x += player_facing * base_push
 			minion.position.x = clampf(minion.position.x, 150.0, ARENA_WIDTH - 100.0)
 			minion.sprite.play("pain")
 			if minion_hit_sound:
-				minion_hit_sound.pitch_scale = randf_range(0.85, 1.15)
+				minion_hit_sound.pitch_scale = 0.7 if is_special else randf_range(0.85, 1.15)
 				minion_hit_sound.play()
 			if minion.hp <= 0.0:
 				defeat_minion(minion_index)
@@ -832,7 +856,7 @@ func update_minion_transforms() -> void:
 			continue
 		minion.sprite.position = minion.position
 		minion.sprite.z_index = int(minion.position.y)
-		var depth_scale = remap(minion.position.y, MIN_Y, MAX_Y, 0.88, 1.15)
+		var depth_scale = remap(minion.position.y, MIN_Y, MAX_Y, 0.80, 1.15)
 		minion.sprite.scale = Vector2(depth_scale * minion.base_scale, depth_scale * minion.base_scale)
 		var base_mod:Color = minion.get("base_modulate", Color.WHITE)
 		if minion.dead:
@@ -1095,6 +1119,12 @@ func update_player(delta:float) -> void:
 		combo = 0
 		combo_label.text = ""
 
+	# CANCELAMENTO IMEDIATO: Apertar Dash (ui_accept) interrompe QUALQUER acao atual (soco, chute, etc)
+	if Input.is_action_just_pressed("ui_accept") && dodge_cooldown <= 0.0:
+		player_attack_time = 0.0
+		start_dodge()
+		return
+
 	if dodge_time > 0.0:
 		player_position += dodge_direction * 610.0 * delta
 		player_invulnerability = maxf(player_invulnerability, 0.12)
@@ -1104,9 +1134,6 @@ func update_player(delta:float) -> void:
 			dodge_ghost_timer = 0.04
 			spawn_player_ghost()
 	elif player_attack_time <= 0.0:
-		if Input.is_action_just_pressed("ui_accept") && dodge_cooldown <= 0.0:
-			start_dodge()
-			return
 		if Input.is_action_just_pressed("key_q"):
 			start_player_attack(false)
 		elif Input.is_action_just_pressed("key_w"):
@@ -1125,6 +1152,7 @@ func update_player(delta:float) -> void:
 	player_position.y = clampf(player_position.y, MIN_Y, MAX_Y)
 
 func start_dodge() -> void:
+	player_attack_time = 0.0
 	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if input_direction.length() < 0.1:
 		input_direction = Vector2(player_facing, 0.0)
@@ -1135,7 +1163,7 @@ func start_dodge() -> void:
 	dodge_time = 0.24
 	dodge_cooldown = 0.72
 	player_invulnerability = 0.34
-	play_if_changed(player, "double_jump")
+	player.play("double_jump")
 	dash_sound.pitch_scale = randf_range(0.94, 1.04)
 	dash_sound.play()
 	var fart_origin = player_position + Vector2(-32.0 * player_facing, 18.0)
@@ -1164,33 +1192,60 @@ func resolve_player_hit(kick:bool) -> void:
 		var facing_ok = distance.x * player_facing >= 0.0
 		if absf(distance.x) <= (145.0 if kick else 115.0) && absf(distance.y) <= 64.0 && facing_ok:
 			hit_enemy = true
-			var enemy_was_attacking = enemy_attack_time > 0.0
-			var damage = 19.0 if kick else 13.0
-			combo += 1
-			combo_timeout = 2.2
-			damage += minf(combo * 1.5, 10.0)
-			enemy_hp = maxf(0.0, enemy_hp - damage)
-			enemy_position.x += player_facing * (42.0 if kick else 25.0)
-			if !enemy_was_attacking:
-				enemy.play("pain")
-			enemy_pressure += 2 if kick else 1
-			hit_sound.pitch_scale = randf_range(0.9, 1.13)
-			hit_sound.play()
+
+	var has_minion_in_range = false
+	for minion in minions:
+		if !minion.dead:
+			var m_dist = minion.position - player_position
+			if absf(m_dist.x) <= (155.0 if kick else 125.0) && absf(m_dist.y) <= 65.0 && (m_dist.x * player_facing >= 0.0):
+				has_minion_in_range = true
+				break
+
+	if !hit_enemy && !has_minion_in_range:
+		return
+
+	combo += 1
+	combo_timeout = 2.4
+	var is_special = (combo % 5 == 0)
+
+	if hit_enemy:
+		var enemy_was_attacking = enemy_attack_time > 0.0
+		var damage = (19.0 if kick else 13.0) + minf(combo * 1.5, 10.0)
+		var base_push = (28.0 if kick else 18.0)
+		if is_special:
+			damage += 32.0
+			base_push = 165.0
+			spawn_blood(enemy_position + Vector2(0, -45), 24, player_facing)
+			spawn_special_finisher_effect(enemy_position + Vector2(0, -42), player_facing)
+			shake(14.0, 0.42)
+			begin_enemy_retreat()
+		else:
 			spawn_blood(enemy_position + Vector2(0, -45), 13 if kick else 8, player_facing)
 			spawn_impact(enemy_position + Vector2(0, -42), Color("fff176" if kick else "ffd166"), player_facing)
 			shake(5.0 if kick else 3.0, 0.18)
-			combo_label.text = "%d HIT\nCOMBO" % combo if combo > 1 else ""
-			if enemy_hp <= 0.0:
-				defeat_enemy()
-			elif !enemy_was_attacking && (enemy_pressure >= 2 || combo >= 3) && enemy_teleport_cooldown <= 0.0:
+			if !enemy_was_attacking && combo >= 4 && enemy_teleport_cooldown <= 0.0:
 				begin_enemy_teleport()
-			elif !enemy_was_attacking && combo % 2 == 0:
-				begin_enemy_retreat()
-	var hit_minions = resolve_player_hit_minions(kick)
-	if hit_minions && !hit_enemy:
-		combo += 1
-		combo_timeout = 2.2
-		combo_label.text = "%d HIT\nCOMBO" % combo if combo > 1 else ""
+
+		enemy_hp = maxf(0.0, enemy_hp - damage)
+		enemy_position.x += player_facing * base_push
+		if !enemy_was_attacking:
+			enemy.play("pain")
+		enemy_pressure += 2 if kick else 1
+		hit_sound.pitch_scale = 0.72 if is_special else randf_range(0.9, 1.13)
+		hit_sound.play()
+		if enemy_hp <= 0.0:
+			defeat_enemy()
+
+	var hit_minions = resolve_player_hit_minions(kick, is_special)
+
+	# Atualizacao do texto de combo no HUD superior
+	combo_label.text = ("%d HITS!\n%s" if is_special else "%d HIT\nCOMBO") % [combo, tr_text("ESPECIAL!", "SPECIAL!")]
+	combo_label.add_theme_color_override("font_color", Color("ff2a5f") if is_special else Color("ff9f1c"))
+
+	# Pop-up flutuante numerico na frente do golpe do Maycon
+	var hit_popup_x = player_position.x + player_facing * (85.0 if kick else 65.0)
+	var hit_popup_pos = Vector2(hit_popup_x, player_position.y - 42.0)
+	spawn_hit_counter_popup(hit_popup_pos, combo, is_special)
 
 func update_enemy(delta:float) -> void:
 	enemy_cooldown = maxf(0.0, enemy_cooldown - delta)
@@ -1581,8 +1636,8 @@ func update_fighter_transforms() -> void:
 	enemy.position = enemy_position
 	player.z_index = int(player_position.y)
 	enemy.z_index = int(enemy_position.y)
-	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.9, 1.18)
-	var enemy_depth_scale = remap(enemy_position.y, MIN_Y, MAX_Y, 0.88, 1.15)
+	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.82, 1.18)
+	var enemy_depth_scale = remap(enemy_position.y, MIN_Y, MAX_Y, 0.80, 1.15)
 	player.scale = Vector2(player_depth_scale * player_base_scale, player_depth_scale * player_base_scale)
 	enemy.scale = Vector2(enemy_depth_scale * enemy_base_scale, enemy_depth_scale * enemy_base_scale)
 
@@ -1623,6 +1678,55 @@ func spawn_impact(position_value:Vector2, color:Color, direction_value:Variant =
 	var angle = get_impact_angle(direction_value)
 	impacts.append({"position":position_value, "life":0.22, "color":color, "angle":angle})
 
+func spawn_hit_counter_popup(world_pos:Vector2, count:int, is_special:bool = false) -> void:
+	var label = Label.new()
+	label.z_index = 850
+	label.position = world_pos + Vector2(-70.0, -32.0)
+	label.size = Vector2(140.0, 48.0)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	if is_special:
+		label.text = "%d HITS!\n%s" % [count, tr_text("ESPECIAL!", "SPECIAL!")]
+		label.add_theme_font_size_override("font_size", 24)
+		label.add_theme_color_override("font_color", Color("ff0055"))
+		label.add_theme_color_override("font_outline_color", Color.WHITE)
+		label.add_theme_constant_override("outline_size", 6)
+	else:
+		label.text = "%d HITS!" % count if count > 1 else "1 HIT!"
+		label.add_theme_font_size_override("font_size", 20 if count < 3 else 23)
+		var col = Color("ffd166") if count < 3 else (Color("ff9f1c") if count < 5 else Color("ff3838"))
+		label.add_theme_color_override("font_color", col)
+		label.add_theme_color_override("font_outline_color", Color("1a0a00"))
+		label.add_theme_constant_override("outline_size", 4)
+	add_child(label)
+	var tween = create_tween().set_parallel(true)
+	label.scale = Vector2(1.6, 1.6)
+	label.pivot_offset = Vector2(70, 24)
+	tween.tween_property(label, "scale", Vector2.ONE, 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "position:y", world_pos.y - 70.0, 0.62).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 0.28).set_delay(0.38)
+	tween.chain().tween_callback(label.queue_free)
+
+func spawn_special_finisher_effect(center_pos:Vector2, facing:float) -> void:
+	spawn_impact(center_pos, Color("ff0055"), facing)
+	spawn_impact(center_pos + Vector2(28.0 * facing, 0), Color("ffd166"), facing)
+	spawn_impact(center_pos + Vector2(-22.0 * facing, -12), Color("00f5d4"), -facing)
+	for i in range(8):
+		var dust_life = randf_range(0.45, 0.7)
+		dust_particles.append({
+			"position":center_pos + Vector2(randf_range(-22, 22), randf_range(-14, 14)),
+			"velocity":Vector2(facing * randf_range(90, 280), randf_range(-130, -30)),
+			"life":dust_life,
+			"max_life":dust_life,
+			"radius":randf_range(10, 22)
+		})
+	if punch_sound:
+		punch_sound.pitch_scale = 0.75
+		punch_sound.play()
+	if victory_sound:
+		victory_sound.pitch_scale = 1.45
+		victory_sound.play()
+
 func spawn_player_ghost() -> void:
 	if !player or !player.sprite_frames:
 		return
@@ -1643,7 +1747,7 @@ func spawn_player_ghost() -> void:
 	ghost.offset = player.offset
 	ghost.flip_h = player.flip_h
 	ghost.position = player_position
-	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.9, 1.18)
+	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.82, 1.18)
 	ghost.scale = Vector2(player_depth_scale * player_base_scale, player_depth_scale * player_base_scale)
 	ghost.z_index = max(1, int(player_position.y) - 1)
 	ghost.modulate = Color(0.82, 0.92, 1.0, 0.72)

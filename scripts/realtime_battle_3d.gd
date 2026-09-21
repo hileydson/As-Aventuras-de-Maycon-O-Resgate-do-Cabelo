@@ -74,10 +74,10 @@ func build_world() -> void:
 	stage_root.add_child(sun)
 
 	camera_3d = Camera3D.new()
-	camera_3d.position = Vector3(-17.5, 5.2, 11.8)
-	camera_3d.fov = 54.0
+	camera_3d.position = Vector3(-17.5, 6.4, 13.2)
+	camera_3d.fov = 55.0
 	stage_root.add_child(camera_3d)
-	camera_3d.look_at(Vector3(-17.5, 1.2, -1.5))
+	camera_3d.look_at(Vector3(-17.5, 0.6, -4.0))
 	camera_3d.current = true
 
 	var use_forest_floor = theme_id == "forest_road"
@@ -85,12 +85,12 @@ func build_world() -> void:
 		palette.floor_tint,
 		FOREST_DIFF if use_forest_floor else COBBLE_DIFF,
 		FOREST_NORMAL if use_forest_floor else COBBLE_NORMAL,
-		Vector3(35.0, 6.2, 1.0)
+		Vector3(35.0, 9.2, 1.0)
 	)
-	add_plane(Vector3(0, -0.08, 0), Vector2(160, 28), floor_material)
-	var back_wall_material = create_material(palette.wall_tint, WALL_DIFF, WALL_NORMAL, Vector3(32.0, 1.0, 1.0))
+	add_plane(Vector3(0, -0.08, -3.0), Vector2(160, 42), floor_material)
+	var back_wall_material = create_material(palette.wall_tint, WALL_DIFF, WALL_NORMAL, Vector3(32.0, 1.5, 1.0))
 	if theme_id != "forest_road" && theme_id != "ash_wasteland":
-		add_box(Vector3(0, 2.5, -5.2), Vector3(160, 5.0, 0.55), back_wall_material)
+		add_box(Vector3(0, 3.8, -12.5), Vector3(160, 7.6, 0.55), back_wall_material)
 	build_theme_details(palette, back_wall_material)
 	build_depth_props(palette)
 
@@ -100,38 +100,40 @@ func update_camera(camera_2d_x:float) -> void:
 	var ratio = clampf((camera_2d_x - 576.0) / maxf(1.0, arena_width - 1152.0), 0.0, 1.0)
 	var target_x = lerpf(-17.5, 17.5, ratio)
 	camera_3d.position.x = target_x
-	camera_3d.look_at(Vector3(target_x, 1.15, -1.8))
+	camera_3d.look_at(Vector3(target_x, 0.6, -4.0))
 
 func build_theme_details(palette:Dictionary, wall_material:StandardMaterial3D) -> void:
 	match theme_id:
 		"forest_road":
-			for x in range(-54, 56, 4):
-				add_tree(Vector3(x, 0, -4.3 + randf_range(-0.7, 0.45)), palette, 1.1 + randf_range(-0.15, 0.35))
+			for x in range(-56, 58, 3):
+				add_tree(Vector3(x, 0, -11.0 + randf_range(-1.0, 0.8)), palette, 1.45 + randf_range(-0.15, 0.35))
+			for x in range(-54, 56, 5):
+				add_tree(Vector3(x, 0, -8.2 + randf_range(-0.6, 0.6)), palette, 1.2 + randf_range(-0.15, 0.25))
 			for x in [-44.0, -32.0, -22.0, -15.0, -4.0, 8.0, 18.0, 28.0, 38.0, 48.0]:
-				add_rock(Vector3(x, 0.2, -1.8), palette.rock, 0.8)
+				add_rock(Vector3(x, 0.2, randf_range(-5.5, -2.5)), palette.rock, 0.85)
 		"ash_wasteland":
 			for x in range(-52, 54, 5):
-				add_rock(Vector3(x, 0.3, -3.0 + randf_range(-1.0, 1.0)), palette.rock, randf_range(0.8, 1.65))
-				add_dead_tree(Vector3(x + 1.8, 0, -4.5), palette)
+				add_rock(Vector3(x, 0.3, -7.5 + randf_range(-1.5, 1.5)), palette.rock, randf_range(0.9, 1.8))
+				add_dead_tree(Vector3(x + 1.8, 0, -10.5), palette)
 			for x in [-45.0, -32.0, -18.0, -7.0, 4.0, 15.0, 28.0, 42.0]:
-				add_fire_light(Vector3(x, 0.7, -2.8), palette.fire)
+				add_fire_light(Vector3(x, 0.7, -6.5), palette.fire)
 		"throne_ruins":
 			build_castle_columns(palette, wall_material, true)
-			add_throne(Vector3(18, 0, -3.9), palette)
+			add_throne(Vector3(18, 0, -10.0), palette)
 			for x in [-46.0, -32.0, -17.0, -8.0, 2.0, 11.0, 20.0, 32.0, 46.0]:
-				add_fire_light(Vector3(x, 1.35, -4.65), palette.fire)
+				add_fire_light(Vector3(x, 1.6, -11.5), palette.fire)
 		"moon_courtyard":
 			build_castle_columns(palette, wall_material, false)
-			add_fountain(Vector3(0, 0, -2.0), palette)
+			add_fountain(Vector3(0, 0, -6.0), palette)
 			for x in [-46.0, -32.0, -18.0, -9.0, 9.0, 18.0, 32.0, 46.0]:
-				add_magic_light(Vector3(x, 1.8, -4.3), palette.fire)
+				add_magic_light(Vector3(x, 2.0, -11.2), palette.fire)
 		_:
 			build_castle_columns(palette, wall_material, false)
 			for x in [-46.0, -32.0, -18.0, -10.0, -2.0, 6.0, 14.0, 22.0, 34.0, 46.0]:
-				add_fire_light(Vector3(x, 1.35, -4.65), palette.fire)
+				add_fire_light(Vector3(x, 1.6, -11.5), palette.fire)
 			if theme_id == "abandoned_dungeon":
 				for x in [-38.0, -25.0, -13.0, 0.0, 13.0, 25.0, 38.0]:
-					add_rubble(Vector3(x, 0.12, -2.4), palette)
+					add_rubble(Vector3(x, 0.12, -5.5), palette)
 
 func build_depth_props(palette:Dictionary) -> void:
 	for x in [-46.0, -37.0, -28.0, -20.0, -11.0, -2.0, 7.0, 16.0, 23.0, 32.0, 41.0, 50.0]:
@@ -140,11 +142,11 @@ func build_depth_props(palette:Dictionary) -> void:
 
 func build_castle_columns(palette:Dictionary, wall_material:StandardMaterial3D, ruined:bool) -> void:
 	for x in range(-54, 56, 6):
-		var height = randf_range(2.8, 5.2) if ruined else 5.2
-		add_cylinder(Vector3(x, height * 0.5, -4.55), 0.52, height, wall_material)
-		add_box(Vector3(x, height + 0.18, -4.55), Vector3(1.35, 0.35, 1.1), wall_material)
+		var height = randf_range(3.8, 6.5) if ruined else 6.5
+		add_cylinder(Vector3(x, height * 0.5, -11.8), 0.65, height, wall_material)
+		add_box(Vector3(x, height + 0.18, -11.8), Vector3(1.6, 0.45, 1.3), wall_material)
 		if !ruined:
-			add_box(Vector3(x + 3.0, 4.7, -4.8), Vector3(4.8, 0.45, 0.75), wall_material)
+			add_box(Vector3(x + 3.0, 5.8, -12.0), Vector3(4.8, 0.55, 0.85), wall_material)
 
 func add_tree(position_value:Vector3, palette:Dictionary, size_value:float) -> void:
 	var trunk_material = create_material(Color("3b2418"), "", "", 1.0)
