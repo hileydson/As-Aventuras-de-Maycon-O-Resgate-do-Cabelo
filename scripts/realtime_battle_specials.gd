@@ -15,6 +15,13 @@ var special_active:bool = false
 var special_meter:ProgressBar
 var special_meter_label:Label
 var special_prompt_label:Label
+var special_hits_label:Label
+var symbol_pentagram_ctrl:PanelContainer
+var symbol_pentagram_label:Label
+var symbol_rush_ctrl:PanelContainer
+var symbol_rush_label:Label
+var special_freeze_sound:AudioStreamPlayer
+var special_freeze_active:bool = false
 var special_overlay:Control
 var special_charge_sound:AudioStreamPlayer
 var special_rush_sound:AudioStreamPlayer
@@ -66,6 +73,12 @@ class SpecialOverlay:
 	var analog_input_activity:float = 0.0
 	var pentagram_exploding:bool = false
 	var explosion_progress:float = 0.0
+	var freeze_active:bool = false
+	var freeze_time:float = 0.0
+	var freeze_title:String = ""
+	var freeze_show_fire_maycon:bool = false
+	var fire_textures_red:Array[Texture2D] = []
+	var fire_textures_yellow:Array[Texture2D] = []
 
 	func _ready() -> void:
 		position = Vector2.ZERO
@@ -73,6 +86,34 @@ class SpecialOverlay:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
 		process_mode = Node.PROCESS_MODE_ALWAYS
 		visible = false
+		load_fire_assets()
+
+	func load_fire_assets() -> void:
+		if !fire_textures_red.is_empty():
+			return
+		for frame_i in range(1, 9):
+			var p_red = "res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1_%d.png" % frame_i
+			if ResourceLoader.exists(p_red):
+				fire_textures_red.append(load(p_red) as Texture2D)
+			var p_yel = "res://assets/novas_imagens/effects/Pixel fire/fire asset yellow floored/Group 4 - 1/Group 4 - 1_%d.png" % frame_i
+			if ResourceLoader.exists(p_yel):
+				fire_textures_yellow.append(load(p_yel) as Texture2D)
+
+	func start_freeze_intro(title:String, show_fire_maycon:bool, portrait:Texture2D = null) -> void:
+		load_fire_assets()
+		freeze_active = true
+		freeze_time = 0.0
+		freeze_title = title
+		freeze_show_fire_maycon = show_fire_maycon
+		if portrait:
+			portrait_texture = portrait
+		visible = true
+		queue_redraw()
+
+	func stop_freeze_intro() -> void:
+		freeze_active = false
+		freeze_time = 0.0
+		queue_redraw()
 
 	func start_pentagram(texture:Texture2D, instruction_text:String = "GIRE O ANALÓGICO") -> void:
 		mode = "pentagram"
@@ -154,6 +195,10 @@ class SpecialOverlay:
 	func finish() -> void:
 		visible = false
 		mode = ""
+		freeze_active = false
+		freeze_time = 0.0
+		freeze_title = ""
+		freeze_show_fire_maycon = false
 		energy = 0.0
 		hit_count = 0
 		spin_speed = 0.0
@@ -178,6 +223,10 @@ class SpecialOverlay:
 		if !visible:
 			return
 		var unscaled_delta = delta / maxf(Engine.time_scale, 0.001)
+		if freeze_active:
+			freeze_time += unscaled_delta
+			queue_redraw()
+			return
 		effect_time += unscaled_delta
 		if mode == "pentagram":
 			pentagram_reveal = clampf((effect_time - 0.3) / 0.82, 0.0, 1.0)
@@ -198,10 +247,113 @@ class SpecialOverlay:
 		queue_redraw()
 
 	func _draw() -> void:
+		if freeze_active:
+			draw_special_freeze_intro()
+			return
 		if mode == "pentagram":
 			draw_pentagram_force()
 		elif mode == "rush":
 			draw_rush_motion_blur()
+
+	func draw_special_freeze_intro() -> void:
+		var font = ThemeDB.fallback_font
+		
+		# 1. Dark translucent screen overlay
+		draw_rect(Rect2(Vector2.ZERO, size), Color(0.015, 0.01, 0.03, 0.72))
+		
+		# Top and bottom cinematic dark borders
+		draw_rect(Rect2(0, 0, 1152, 48), Color(0.0, 0.0, 0.0, 0.6))
+		draw_rect(Rect2(0, 600, 1152, 48), Color(0.0, 0.0, 0.0, 0.6))
+
+		if freeze_show_fire_maycon:
+			# === SESSÃO SOQUÊTA / PUNCH N ROLL: MAYCON ON FIRE BEHIND ===
+			var center_x = 576.0
+			var maycon_w = 380.0
+			var maycon_h = 430.0
+			var maycon_rect = Rect2(center_x - maycon_w * 0.5, 75.0, maycon_w, maycon_h)
+			
+			# Radial fiery glow behind Maycon
+			var pulse = sin(freeze_time * 16.0) * 14.0
+			draw_circle(Vector2(center_x, 260.0), 240.0 + pulse, Color(1.0, 0.22, 0.02, 0.35))
+			draw_circle(Vector2(center_x, 240.0), 170.0 + pulse * 0.7, Color(1.0, 0.60, 0.05, 0.42))
+			draw_circle(Vector2(center_x, 220.0), 110.0 + pulse * 0.4, Color(1.0, 0.90, 0.20, 0.50))
+			
+			# Arc of large animated fire sprites behind Maycon's head and shoulders
+			var f_idx = int(fmod(freeze_time * 16.0, 8.0))
+			var fire_x_offsets = [-180.0, -120.0, -60.0, 0.0, 60.0, 120.0, 180.0]
+			for i in fire_x_offsets.size():
+				var fx = center_x + fire_x_offsets[i]
+				var fy = 95.0 + sin(freeze_time * 12.0 + i * 1.3) * 12.0
+				var f_frame = (f_idx + i * 2) % 8
+				var tex = fire_textures_red[f_frame] if (i % 2 == 0 && f_frame < fire_textures_red.size()) else (fire_textures_yellow[f_frame] if f_frame < fire_textures_yellow.size() else null)
+				if tex:
+					draw_texture_rect(tex, Rect2(fx - 75.0, fy - 105.0, 150.0, 210.0), false, Color(1.0, 0.95, 0.85, 0.95))
+			
+			# Rising embers and sparks
+			for s_idx in 32:
+				var s_phase = fmod(freeze_time * 1.9 + float(s_idx) * 0.11, 1.0)
+				var s_x = center_x + sin(float(s_idx) * 4.3 + freeze_time * 5.0) * (200.0 + s_phase * 70.0)
+				var s_y = 470.0 - s_phase * 420.0
+				var s_rad = 2.0 + fmod(float(s_idx) * 1.7, 4.0) * (1.0 - s_phase * 0.5)
+				var s_col = Color("ffe600").lerp(Color("ff1744"), s_phase)
+				s_col.a = (1.0 - s_phase) * 0.9
+				draw_circle(Vector2(s_x, s_y), s_rad, s_col)
+			
+			# Maycon head/bust sprite (large, focusing on head)
+			if portrait_texture:
+				draw_texture_rect_region(portrait_texture, maycon_rect, Rect2(104, 20, 292, 330), Color(1.0, 0.92, 0.88, 1.0))
+				draw_rect(maycon_rect, Color(1.0, 0.4, 0.05, 0.12), true)
+			
+			# Licking flames across lower shoulders in front
+			for i in 5:
+				var fx = center_x - 150.0 + i * 75.0
+				var fy = 410.0 + sin(freeze_time * 14.0 + i * 2.1) * 8.0
+				var f_frame = (f_idx + i * 3) % 8
+				if f_frame < fire_textures_yellow.size():
+					draw_texture_rect(fire_textures_yellow[f_frame], Rect2(fx - 50.0, fy - 70.0, 100.0, 140.0), false, Color(1.0, 1.0, 1.0, 0.75))
+		else:
+			# === PODER DO PENTAGRAMA / PENTAGRAM POWER ===
+			var center = Vector2(576, 324)
+			var p_pulse = sin(freeze_time * 10.0) * 12.0
+			draw_circle(center, 210.0 + p_pulse, Color(0.65, 0.0, 0.25, 0.24))
+			draw_circle(center, 140.0 + p_pulse * 0.6, Color(0.2, 0.8, 1.0, 0.18))
+			draw_arc(center, 200.0 + p_pulse, 0.0, TAU, 72, Color(1.0, 0.08, 0.38, 0.7), 5.0)
+			draw_arc(center, 218.0 + p_pulse, 0.0, TAU, 72, Color(0.2, 0.85, 1.0, 0.6), 2.5)
+			var p_pts:PackedVector2Array = []
+			for pi in 5:
+				p_pts.append(center + Vector2.from_angle(-PI * 0.5 + float(pi) * TAU / 5.0) * (195.0 + p_pulse))
+			var p_order = [0, 2, 4, 1, 3, 0]
+			var p_star_pts:PackedVector2Array = []
+			for idx in p_order:
+				p_star_pts.append(p_pts[idx])
+			draw_polyline(p_star_pts, Color(1.0, 0.08, 0.32, 0.8), 6.0, true)
+			draw_polyline(p_star_pts, Color(1.0, 0.88, 0.32, 0.9), 2.0, true)
+
+		# 3. Dynamic Title Banner & HUGE Centered Name
+		var banner_y = 282.0
+		var banner_h = 92.0
+		draw_rect(Rect2(0, banner_y, 1152, banner_h), Color(0.015, 0.01, 0.03, 0.88), true)
+
+		var line_color_1 = Color("ff1744") if freeze_show_fire_maycon else Color("ff2a8b")
+		var line_color_2 = Color("ffd166") if freeze_show_fire_maycon else Color("00e5ff")
+		draw_line(Vector2(0, banner_y), Vector2(1152, banner_y), line_color_1, 4.0)
+		draw_line(Vector2(0, banner_y + banner_h), Vector2(1152, banner_y + banner_h), line_color_1, 4.0)
+		draw_line(Vector2(0, banner_y - 3), Vector2(1152, banner_y - 3), line_color_2, 1.5)
+		draw_line(Vector2(0, banner_y + banner_h + 3), Vector2(1152, banner_y + banner_h + 3), line_color_2, 1.5)
+
+		var slam = clampf(freeze_time / 0.16, 0.0, 1.0)
+		var text_pulse = 1.0 + sin(freeze_time * 8.0) * 0.035
+		var font_scale = lerpf(1.35, 1.0, ease(slam, 0.25)) * text_pulse
+		var font_size = int(62.0 * font_scale)
+
+		# Drop shadow
+		var shadow_col = Color(0.0, 0.0, 0.0, 0.95)
+		draw_string(font, Vector2(0, 350.0 + font_size * 0.32), freeze_title, HORIZONTAL_ALIGNMENT_CENTER, 1152, font_size, shadow_col)
+		draw_string(font, Vector2(4, 354.0 + font_size * 0.32), freeze_title, HORIZONTAL_ALIGNMENT_CENTER, 1152, font_size, shadow_col)
+
+		# Main title text
+		var text_color = Color("fff3b0") if freeze_show_fire_maycon else Color("ffe66d")
+		draw_string(font, Vector2(0, 347.0 + font_size * 0.32), freeze_title, HORIZONTAL_ALIGNMENT_CENTER, 1152, font_size, text_color)
 
 	func draw_pentagram_force() -> void:
 		var trace_progress = clampf(effect_time / 0.24, 0.0, 1.0)
@@ -383,14 +535,40 @@ class SpecialOverlay:
 		draw_polyline(points, Color.WHITE, 1.5, true)
 
 func _ready() -> void:
-	super._ready()
+	super()
 	build_special_hud()
 	special_charge_sound = create_audio("res://assets/novos_audios/seco_3d_power.mp3", -2.0)
 	special_rush_sound = create_audio("res://assets/novos_audios/modo_acelerando.mp3", -3.0)
+	special_freeze_sound = create_audio("res://assets/novos_audios/special_freeze_distorted.mp3", 0.0)
 	combo_music_sting_volume_db = victory_sound.volume_db
+
+func freeze_arena(freeze:bool) -> void:
+	special_freeze_active = freeze
+	if freeze:
+		if is_instance_valid(player):
+			player.pause()
+		if is_instance_valid(enemy):
+			enemy.pause()
+		for minion in minions:
+			if is_instance_valid(minion.sprite):
+				minion.sprite.pause()
+	else:
+		if is_instance_valid(player):
+			player.play()
+		if is_instance_valid(enemy) && !enemy_dead:
+			enemy.play()
+		for minion in minions:
+			if is_instance_valid(minion.sprite) && !minion.dead:
+				minion.sprite.play()
 
 func _process(delta:float) -> void:
 	if special_active:
+		if special_freeze_active:
+			update_special_meter_hud()
+			if special_overlay:
+				special_overlay.queue_redraw()
+			queue_redraw()
+			return
 		update_pentagram_rotation_input(delta)
 		update_rush_mashing_input(delta)
 		update_effects(delta)
@@ -406,7 +584,7 @@ func _process(delta:float) -> void:
 	update_special_input_buffers(delta)
 	if !battle_paused && intro_time <= 0.0 && !leaving && !player_dead && try_start_player_special():
 		return
-	super._process(delta)
+	super(delta)
 	update_special_meter_hud()
 
 func _unhandled_input(event:InputEvent) -> void:
@@ -508,7 +686,7 @@ func update_pentagram_rotation_input(delta:float) -> void:
 
 func resolve_player_hit(kick:bool) -> void:
 	var previous_combo = combo
-	super.resolve_player_hit(kick)
+	super(kick)
 	if combo > previous_combo:
 		special_hits = mini(SPECIAL_METER_MAX, special_hits + 1)
 		if combo % 5 == 0:
@@ -561,28 +739,63 @@ func build_special_hud() -> void:
 	special_meter.add_theme_stylebox_override("fill", meter_fill)
 	hud_canvas.add_child(special_meter)
 
-	special_meter_label = Label.new()
-	special_meter_label.position = Vector2(381, 586)
-	special_meter_label.size = Vector2(390, 28)
-	special_meter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	special_meter_label.add_theme_font_size_override("font_size", 18)
-	special_meter_label.add_theme_color_override("font_color", Color("d8f3ff"))
-	special_meter_label.add_theme_color_override("font_outline_color", Color("090014"))
-	special_meter_label.add_theme_constant_override("outline_size", 5)
-	special_meter_label.z_index = 121
-	hud_canvas.add_child(special_meter_label)
+	special_hits_label = Label.new()
+	special_hits_label.position = Vector2(778, 613)
+	special_hits_label.size = Vector2(48, 22)
+	special_hits_label.text = "HITS"
+	special_hits_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	special_hits_label.add_theme_font_size_override("font_size", 14)
+	special_hits_label.add_theme_color_override("font_color", Color("d8f3ff"))
+	special_hits_label.add_theme_color_override("font_outline_color", Color("090014"))
+	special_hits_label.add_theme_constant_override("outline_size", 4)
+	special_hits_label.z_index = 121
+	hud_canvas.add_child(special_hits_label)
 
-	special_prompt_label = Label.new()
-	special_prompt_label.position = Vector2(76, 548)
-	special_prompt_label.size = Vector2(1000, 38)
-	special_prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	special_prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	special_prompt_label.add_theme_font_size_override("font_size", 19)
-	special_prompt_label.add_theme_color_override("font_color", Color("ffe66d"))
-	special_prompt_label.add_theme_color_override("font_outline_color", Color("15001f"))
-	special_prompt_label.add_theme_constant_override("outline_size", 6)
-	special_prompt_label.z_index = 121
-	hud_canvas.add_child(special_prompt_label)
+	symbol_pentagram_ctrl = PanelContainer.new()
+	symbol_pentagram_ctrl.position = Vector2(834, 608)
+	symbol_pentagram_ctrl.size = Vector2(80, 28)
+	symbol_pentagram_ctrl.pivot_offset = Vector2(40, 14)
+	symbol_pentagram_ctrl.visible = false
+	symbol_pentagram_ctrl.z_index = 122
+	var pentagram_box = StyleBoxFlat.new()
+	pentagram_box.bg_color = Color(0.08, 0.02, 0.12, 0.92)
+	pentagram_box.border_color = Color("ff2a8b")
+	pentagram_box.set_border_width_all(2)
+	pentagram_box.set_corner_radius_all(6)
+	symbol_pentagram_ctrl.add_theme_stylebox_override("panel", pentagram_box)
+	symbol_pentagram_label = Label.new()
+	symbol_pentagram_label.text = "👊 + 🦶"
+	symbol_pentagram_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	symbol_pentagram_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	symbol_pentagram_label.add_theme_font_size_override("font_size", 14)
+	symbol_pentagram_label.add_theme_color_override("font_color", Color("ffd1dc"))
+	symbol_pentagram_label.add_theme_color_override("font_outline_color", Color("33001a"))
+	symbol_pentagram_label.add_theme_constant_override("outline_size", 4)
+	symbol_pentagram_ctrl.add_child(symbol_pentagram_label)
+	hud_canvas.add_child(symbol_pentagram_ctrl)
+
+	symbol_rush_ctrl = PanelContainer.new()
+	symbol_rush_ctrl.position = Vector2(924, 608)
+	symbol_rush_ctrl.size = Vector2(80, 28)
+	symbol_rush_ctrl.pivot_offset = Vector2(40, 14)
+	symbol_rush_ctrl.visible = false
+	symbol_rush_ctrl.z_index = 122
+	var rush_box = StyleBoxFlat.new()
+	rush_box.bg_color = Color(0.12, 0.05, 0.02, 0.92)
+	rush_box.border_color = Color("ff9e00")
+	rush_box.set_border_width_all(2)
+	rush_box.set_corner_radius_all(6)
+	symbol_rush_ctrl.add_theme_stylebox_override("panel", rush_box)
+	symbol_rush_label = Label.new()
+	symbol_rush_label.text = "🦶 + 💨"
+	symbol_rush_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	symbol_rush_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	symbol_rush_label.add_theme_font_size_override("font_size", 14)
+	symbol_rush_label.add_theme_color_override("font_color", Color("fff3b0"))
+	symbol_rush_label.add_theme_color_override("font_outline_color", Color("2a0f00"))
+	symbol_rush_label.add_theme_constant_override("outline_size", 4)
+	symbol_rush_ctrl.add_child(symbol_rush_label)
+	hud_canvas.add_child(symbol_rush_ctrl)
 
 	special_overlay = SpecialOverlay.new()
 	special_overlay.z_index = 3500
@@ -593,26 +806,28 @@ func update_special_meter_hud() -> void:
 	if !special_meter:
 		return
 	special_meter.value = special_hits
-	special_meter_label.text = tr_text("MEDIDOR DE HITS  %02d / %d", "HIT METER  %02d / %d") % [special_hits, SPECIAL_METER_MAX]
 	var fill:StyleBoxFlat = special_meter.get_theme_stylebox("fill").duplicate() as StyleBoxFlat
 	if special_hits >= SPECIAL_RUSH_THRESHOLD:
 		fill.bg_color = Color("ff1744")
-		special_prompt_label.text = tr_text("👊 Q/Y + 🦶 W/B: PENTAGRAM FORCE   |   🦶 W/B + 💨 ESPAÇO/A: MAYCON RUSH", "👊 Q/Y + 🦶 W/B: PENTAGRAM FORCE   |   🦶 W/B + 💨 SPACE/A: MAYCON RUSH")
-		special_prompt_label.add_theme_color_override("font_color", Color("fff176"))
 	elif special_hits >= SPECIAL_PENTAGRAM_THRESHOLD:
 		fill.bg_color = Color("ff2a8b")
-		special_prompt_label.text = tr_text("ESPECIAL PRONTO:  👊 Q/Y + 🦶 W/B  —  PENTAGRAM FORCE", "SPECIAL READY:  👊 Q/Y + 🦶 W/B  —  PENTAGRAM FORCE")
-		special_prompt_label.add_theme_color_override("font_color", Color("ff80bf"))
 	else:
 		fill.bg_color = Color("8f2cff")
-		special_prompt_label.text = tr_text("15 HITS: 👊 + 🦶   •   20 HITS: 🦶 + 💨", "15 HITS: 👊 + 🦶   •   20 HITS: 🦶 + 💨")
-		special_prompt_label.add_theme_color_override("font_color", Color(0.65, 0.82, 1.0, 0.82))
 	special_meter.add_theme_stylebox_override("fill", fill)
-	if special_hits >= SPECIAL_PENTAGRAM_THRESHOLD:
-		var pulse = 0.72 + sin(Time.get_ticks_msec() * 0.009) * 0.28
-		special_prompt_label.modulate = Color(1.0, 1.0, 1.0, pulse)
-	else:
-		special_prompt_label.modulate = Color.WHITE
+
+	var pulse_time = Time.get_ticks_msec() * 0.007
+	var pulse_scale = 1.0 + sin(pulse_time) * 0.14
+	if symbol_pentagram_ctrl:
+		var can_pentagram = special_hits >= SPECIAL_PENTAGRAM_THRESHOLD
+		symbol_pentagram_ctrl.visible = can_pentagram
+		if can_pentagram:
+			symbol_pentagram_ctrl.scale = Vector2(pulse_scale, pulse_scale)
+	if symbol_rush_ctrl:
+		var can_rush = special_hits >= SPECIAL_RUSH_THRESHOLD
+		symbol_rush_ctrl.visible = can_rush
+		if can_rush:
+			var rush_pulse = 1.0 + sin(pulse_time + 1.2) * 0.14
+			symbol_rush_ctrl.scale = Vector2(rush_pulse, rush_pulse)
 
 func try_start_player_special() -> bool:
 	var punch_kick_requested = special_punch_buffer > 0.0 && special_kick_buffer > 0.0
@@ -685,6 +900,27 @@ func start_pentagram_force() -> void:
 	var previous_status = status_label.text
 	var previous_zoom = camera.zoom
 	var previous_camera_position = camera.position
+
+	# === 1.2s SUPER FREEZE INTRO ===
+	freeze_arena(true)
+	var freeze_title = tr_text("PODER DO PENTAGRAMA", "PENTAGRAM POWER")
+	if special_freeze_sound:
+		special_freeze_sound.pitch_scale = 1.0
+		special_freeze_sound.play()
+	if special_overlay:
+		special_overlay.call("start_freeze_intro", freeze_title, false)
+
+	await get_tree().create_timer(1.2, true, false, true).timeout
+
+	if !is_inside_tree():
+		return
+
+	freeze_arena(false)
+	if special_freeze_sound && special_freeze_sound.playing:
+		special_freeze_sound.stop()
+	if special_overlay:
+		special_overlay.call("stop_freeze_intro")
+
 	status_label.text = "PENTAGRAM FORCE"
 	combo_label.text = ""
 	Engine.time_scale = 0.28
@@ -842,14 +1078,36 @@ func start_maycon_rush(target:Dictionary) -> void:
 	var previous_status = status_label.text
 	var previous_zoom = camera.zoom
 	var previous_camera_position = camera.position
-	status_label.text = tr_text("FÚRIA DE 50 GOLPES", "50-HIT MAYCON RUSH")
-	combo_label.text = ""
-	
+
 	var target_position = get_rush_target_position(target)
 	player_facing = signf(target_position.x - player_position.x)
 	if player_facing == 0.0:
 		player_facing = 1.0
 	player.flip_h = player_facing < 0.0
+
+	# === 1.2s SUPER FREEZE INTRO ===
+	freeze_arena(true)
+	var freeze_title = tr_text("SESSÃO SOQUÊTA", "PUNCH N ROLL")
+	var portrait = load("res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_icon.png") as Texture2D
+	if special_freeze_sound:
+		special_freeze_sound.pitch_scale = 1.0
+		special_freeze_sound.play()
+	if special_overlay:
+		special_overlay.call("start_freeze_intro", freeze_title, true, portrait)
+
+	await get_tree().create_timer(1.2, true, false, true).timeout
+
+	if !is_inside_tree():
+		return
+
+	freeze_arena(false)
+	if special_freeze_sound && special_freeze_sound.playing:
+		special_freeze_sound.stop()
+	if special_overlay:
+		special_overlay.call("stop_freeze_intro")
+
+	status_label.text = tr_text("FÚRIA DE 50 GOLPES", "50-HIT MAYCON RUSH")
+	combo_label.text = ""
 	
 	# Direcao das listas de velocidade:
 	# Inimigo na esquerda: linhas da esquerda para a direita (+1.0)
@@ -929,6 +1187,9 @@ func apply_maycon_rush_damage(target:Dictionary) -> void:
 		defeat_minion(minion_index)
 
 func finish_player_special(previous_status:String, previous_zoom:Vector2, previous_camera_position:Vector2) -> void:
+	freeze_arena(false)
+	if special_freeze_sound && special_freeze_sound.playing:
+		special_freeze_sound.stop()
 	pentagram_rotation_enabled = false
 	pentagram_last_stick = Vector2.ZERO
 	pentagram_spin_speed = 0.0
@@ -972,6 +1233,9 @@ func flash_no_rush_target() -> void:
 
 func _exit_tree() -> void:
 	combo_music_sting_token += 1
+	freeze_arena(false)
+	if special_freeze_sound && special_freeze_sound.playing:
+		special_freeze_sound.stop()
 	pentagram_rotation_enabled = false
 	pentagram_last_stick = Vector2.ZERO
 	pentagram_spin_speed = 0.0
@@ -987,4 +1251,4 @@ func _exit_tree() -> void:
 		victory_sound.volume_db = combo_music_sting_volume_db
 	if special_overlay:
 		special_overlay.call("finish")
-	super._exit_tree()
+	super()

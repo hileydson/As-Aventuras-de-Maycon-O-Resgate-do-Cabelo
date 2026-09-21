@@ -3383,7 +3383,7 @@ Objects.png::CompressedTexture2D::2603308936418570908::1767636737::1767636737::1
 Rotating_blades.png::CompressedTexture2D::6149366124704441297::1767636737::1767636737::1::::<><><>0<>0<>2fca820f122e19df28bb2db13d324fce<>res://.godot/imported/Rotating_blades.png-778390e24f5b94daf7df31c4f7d64871.ctex::
 scull.png::CompressedTexture2D::924674051756614918::1767636737::1767636737::1::::<><><>0<>0<>88eb904c1d7beb8167d968b4d6b1cae2<>res://.godot/imported/scull.png-4bd9b4129b919690a5980b9d4505cce9.ctex::
 web.png::CompressedTexture2D::1665521307035554969::1767636737::1767636737::1::::<><><>0<>0<>2c41fd68a1281a64f1d37785b533eed3<>res://.godot/imported/web.png-555c1399ada65fb9f4e6bf50c2102997.ctex::
-::res://assets/novos_audios/::1770925139
+::res://assets/novos_audios/::1790018977
 3d_first_battle_seco.mp3::AudioStreamMP3::9112742089382917435::1769799971::1769800042::1::::<><><>0<>0<>58169ca5379430dc1b6d26419f4d403f<>res://.godot/imported/3d_first_battle_seco.mp3-e99bf30f277278144a0a538012a2b91d.mp3str::
 balao_conversa.mp3::AudioStreamMP3::7050655661624707243::1770925133::1770925139::1::::<><><>0<>0<>a117f8ff1f77e4f280e68d2751a017bb<>res://.godot/imported/balao_conversa.mp3-67afbdd3f08c480ed2a2a7a0d42c9703.mp3str::
 barulho_gilhotina.mp3::AudioStreamMP3::8054641206314790354::1768242746::1768242795::1::::<><><>0<>0<>3bb2122a6b5ff28702a9719956e80f60<>res://.godot/imported/barulho_gilhotina.mp3-e1cb096fd5e9330e98b66e2f8bd0d47b.mp3str::
@@ -3433,6 +3433,7 @@ seco_welcome.mp3::AudioStreamMP3::4323211704199579977::1769871815::1769871829::1
 seco_zombie_sound.mp3::AudioStreamMP3::8946058504380438686::1768330225::1768330240::1::::<><><>0<>0<>e318c98b15c06fbafc2d06d178abec90<>res://.godot/imported/seco_zombie_sound.mp3-621560a1c078ce27839860bc9ceed460.mp3str::
 sliding.mp3::AudioStreamMP3::3744405435826552101::1767636737::1767636737::1::::<><><>0<>0<>8d9feb9e212f7ca71e11e64ebffb02c6<>res://.godot/imported/sliding.mp3-fb4931f268fb25a771037d22739be067.mp3str::
 song_fase_1.mp3::AudioStreamMP3::8403740438679386784::1767636737::1767636737::1::::<><><>0<>0<>396cadc3051bdbe4f154c75c42435165<>res://.godot/imported/song_fase_1.mp3-84b719deb6d3e2c75bcf69fe0cd9678c.mp3str::
+special_freeze_distorted.mp3::AudioStreamMP3::9118853194362104340::1790018855::1790019522::1::::<><><>0<>0<>bc8f40baf1d48e1088918554dcd3ca1a<>res://.godot/imported/special_freeze_distorted.mp3-ca207f65c412ad40609bb1a927c9d1c5.mp3str::
 stage_sound.mp3::AudioStreamMP3::8379548421744555254::1767636737::1767636737::1::::<><><>0<>0<>6c5d379fb56941b78102693aed96b2eb<>res://.godot/imported/stage_sound.mp3-24c0671062b86435ecbe7d9f3ee5136f.mp3str::
 subindo_escada.mp3::AudioStreamMP3::6547082021830589939::1770231697::1770231720::1::::<><><>0<>0<>9d56e2f47499219a8998a20e511672b9<>res://.godot/imported/subindo_escada.mp3-3428d554d760a7d460b913b4960319a1.mp3str::
 the_almost_end_song.mp3::AudioStreamMP3::8636036384067440816::1770925133::1770925139::1::::<><><>0<>0<>906c99583820bab3e81fad53cfb97c41<>res://.godot/imported/the_almost_end_song.mp3-9ba6221d7c65a6dcbad4b818f2ebd2a5.mp3str::
@@ -3592,7 +3593,7 @@ inimigo_seco.tscn::PackedScene::8657484778914218226::1767636737::0::1::::<><><>0
 inimigo_xuruzika.tscn::PackedScene::6737765857473348084::1770237486::0::1::::<><><>0<>0<><>::uid://b318wg3ert7ft::::res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_attack_1.png<>uid://cpxhy2sd1ru8b::::res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_attack_2.png<>uid://c7deic7gi33vq::::res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_idle.png<>uid://btfcmsgx47fq7::::res://scripts/inimigos/inimigo_xuruzika.gd<>uid://vf8pqgcv4yjn::::res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_boné.png<>uid://bw3esmny7cywp::::res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_coxinha.png<>uid://2meppcw1h507::::res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png<>uid://dasniorc2jiw6::::res://assets/novos_audios/inimigo_1_attack_magic.mp3<>uid://4dsrxbn0hoiw::::res://assets/novos_audios/inimigo_1_voice_attack.mp3<>uid://c2uew5w81laa::::res://assets/novos_audios/doom_pain.mp3
 ::res://scenes/menus/::1789953371
 maycon_itens.tscn::PackedScene::6963755944896746500::1769775609::0::1::::<><><>0<>0<><>::uid://broav1jkk1nk1::::res://scripts/maycon_itens.gd<>uid://30tsd1l3hqfw::::res://assets/novas_imagens/objects/Items.png<>uid://b8xm3n05un7xf::::res://assets/novas_imagens/effects/Explosion/1.png<>uid://dlowt45jrflns::::res://assets/novas_imagens/effects/Explosion/3.png
-::res://scripts/::1790011596
+::res://scripts/::1790019441
 balao_conversa.gd::GDScript::-1::1770925133::0::1::::<>CanvasLayer<><>0<>0<><>::
 batalha.gd::GDScript::7248754106168415276::1789961247::0::1::::<>AnimationPlayer<><>0<>0<><>::
 battle_3d.gd::GDScript::5694209551412885657::1767636737::0::1::::<>Camera3D<><>0<>0<><>::
@@ -3636,12 +3637,12 @@ maycon_fase.gd::GDScript::2636479185831734840::1770311722::0::1::::<>CharacterBo
 maycon_itens.gd::GDScript::3608571195747589650::1789998374::0::1::::<>Node2D<><>0<>0<><>::
 menu.gd::GDScript::6562768689195605607::1770984867::0::1::::<>Control<><>0<>0<><>::
 pause.gd::GDScript::7449233017950370426::1789998374::0::1::::<>Control<><>0<>0<><>::
-realtime_battle.gd::GDScript::7867064034200866415::1790011343::0::1::::<>Node2D<><>0<>0<><>::
+realtime_battle.gd::GDScript::7867064034200866415::1790016126::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_3d.gd::GDScript::2141243869699419406::1790009870::0::1::::<>CanvasLayer<><>0<>0<><>::
 realtime_battle_background.gd::GDScript::3540749457985720226::1790009889::0::1::::<>Node2D<><>0<>0<><>::
-realtime_battle_blood_drop.gd::GDScript::4138522092762905264::1790010790::0::1::::<>Node2D<><>0<>0<><>::
+realtime_battle_blood_drop.gd::GDScript::4138522092762905264::1790014119::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_foreground.gd::GDScript::2882700291306978348::1790000216::0::1::::<>Node2D<><>0<>0<><>::
-realtime_battle_specials.gd::GDScript::594959556313240947::1790011757::0::1::::<>Node2D<><>0<>0<><>::
+realtime_battle_specials.gd::GDScript::594959556313240947::1790019390::0::1::::<>Node2D<><>0<>0<><>::
 sangue_fill.gd::GDScript::6760165581029737568::1789961722::0::1::::<>Area2D<><>0<>0<><>::
 seco.gd::GDScript::1005395561379310119::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 two_layers_fps_mode.gd::GDScript::-1::1770925133::0::1::::<>Node3D<><>0<>0<><>::
