@@ -23,6 +23,15 @@ const ENEMY_STATS = {
 	"1001":{"name":"Seco", "hp":260.0, "speed":125.0, "damage":24.0, "scale":1.28}
 }
 
+const ENEMY_POWER_STATS = {
+	"1":{"speed":620.0, "size":118.0, "damage":11.0, "color":"ffd166", "spin":5.5},
+	"2":{"speed":550.0, "size":78.0, "damage":15.0, "color":"ff7b54", "spin":4.4},
+	"3":{"speed":455.0, "size":96.0, "damage":18.0, "color":"b388ff", "spin":3.2},
+	"4":{"speed":720.0, "size":74.0, "damage":13.0, "color":"ff70a6", "spin":7.0},
+	"5":{"speed":525.0, "size":112.0, "damage":17.0, "color":"80ed99", "spin":2.8},
+	"1001":{"speed":690.0, "size":120.0, "damage":23.0, "color":"ef233c", "spin":5.8}
+}
+
 var player:AnimatedSprite2D
 var enemy:AnimatedSprite2D
 var camera:Camera2D
@@ -44,6 +53,8 @@ var hurt_sound:AudioStreamPlayer
 var enemy_death_sound:AudioStreamPlayer
 var victory_sound:AudioStreamPlayer
 var dash_sound:AudioStreamPlayer
+var enemy_power_sound:AudioStreamPlayer
+var enemy_voice_sound:AudioStreamPlayer
 
 var player_position := Vector2(280, 500)
 var enemy_position := Vector2(1060, 475)
@@ -67,6 +78,7 @@ var dodge_direction := Vector2.RIGHT
 var enemy_attack_time:float = 0.0
 var enemy_attack_hit_time:float = 0.0
 var enemy_cooldown:float = 0.8
+var enemy_power_cooldown:float = 1.6
 var enemy_hit_pending:bool = false
 var enemy_dead:bool = false
 var player_dead:bool = false
@@ -97,6 +109,11 @@ var pause_overlay:ColorRect
 var battle_paused:bool = false
 var dust_particles:Array[Dictionary] = []
 var enemy_dust_distance:float = 0.0
+var power_projectiles:Array[Dictionary] = []
+var power_trails:Array[Dictionary] = []
+var enemy_power_frames:Dictionary = {}
+var enemy_power_sound_stream:AudioStream
+var enemy_voice_sound_stream:AudioStream
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -165,7 +182,26 @@ func build_fighters() -> void:
 	enemy.scale = Vector2(enemy_base_scale, enemy_base_scale)
 	enemy.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(enemy)
+	cache_enemy_power_frames()
 	update_fighter_transforms()
+
+func cache_enemy_power_frames() -> void:
+	var source = load(ENEMY_SCENES[enemy_id]).instantiate()
+	var power_paths = {
+		1:"attack_power/Area2D/AnimatedSprite2D",
+		2:"attack_2_block/attack_power2/Area2D/AnimatedSprite2D" if enemy_id == "1001" else "attack_power2/Area2D/AnimatedSprite2D"
+	}
+	for power_variant in power_paths:
+		var source_sprite = source.get_node_or_null(power_paths[power_variant])
+		if source_sprite is AnimatedSprite2D:
+			enemy_power_frames[power_variant] = source_sprite.sprite_frames
+	var source_power_sound = source.get_node_or_null("Inimigo1AttackMagic")
+	if source_power_sound is AudioStreamPlayer:
+		enemy_power_sound_stream = source_power_sound.stream
+	var source_voice_sound = source.get_node_or_null("Inimigo1VoiceAttack")
+	if source_voice_sound is AudioStreamPlayer:
+		enemy_voice_sound_stream = source_voice_sound.stream
+	source.free()
 
 func sprite_from_scene(path:String, nested_sprite:bool) -> AnimatedSprite2D:
 	var source = load(path).instantiate()
@@ -336,7 +372,9 @@ func build_audio() -> void:
 	hurt_sound = create_audio("res://assets/novos_audios/hurt_sound.mp3", -3.0)
 	enemy_death_sound = create_audio("res://assets/novos_audios/doom_pain.mp3", -2.0)
 	victory_sound = create_audio("res://assets/novos_audios/victory_sound.mp3", -3.0)
-	dash_sound = create_audio("res://assets/audio/peido.mp3", -18.0)
+	dash_sound = create_audio("res://assets/audio/peido.mp3", -4.0)
+	enemy_power_sound = create_audio_from_stream(enemy_power_sound_stream, -2.0)
+	enemy_voice_sound = create_audio_from_stream(enemy_voice_sound_stream, -1.0)
 
 func create_audio(path:String, volume:float, looping:bool = false) -> AudioStreamPlayer:
 	var audio = AudioStreamPlayer.new()
@@ -348,6 +386,13 @@ func create_audio(path:String, volume:float, looping:bool = false) -> AudioStrea
 	audio.stream = stream_resource
 	audio.volume_db = volume
 	audio.set("parameters/looping", looping)
+	add_child(audio)
+	return audio
+
+func create_audio_from_stream(stream_resource:AudioStream, volume:float) -> AudioStreamPlayer:
+	var audio = AudioStreamPlayer.new()
+	audio.stream = stream_resource
+	audio.volume_db = volume
 	add_child(audio)
 	return audio
 
@@ -388,7 +433,7 @@ func _process(delta:float) -> void:
 	camera.position.x = clamp(player_position.x + 260.0, 576.0, ARENA_WIDTH - 576.0)
 	if background_layer:
 		var visible_camera_center = camera.get_screen_center_position().x
-		background_layer.position.x = (visible_camera_center - 576.0) * 0.90
+		background_layer.position.x = (visible_camera_center - 576.0) * 0.08
 	queue_redraw()
 
 func toggle_battle_pause() -> void:
@@ -452,7 +497,9 @@ func start_dodge() -> void:
 func start_player_attack(kick:bool) -> void:
 	var attack_name = "attack_kick" if kick else "attack_punch"
 	player_attack_time = get_sprite_animation_duration(player, attack_name, 0.32, 0.75)
-	player_facing = -1.0 if enemy_position.x < player_position.x else 1.0
+	var input_facing = Input.get_axis("ui_left", "ui_right")
+	if absf(input_facing) > 0.05:
+		player_facing = signf(input_facing)
 	player.flip_h = player_facing < 0.0
 	player.play(attack_name)
 	var attack_sound = kick_sound if kick else punch_sound
@@ -491,6 +538,7 @@ func resolve_player_hit(kick:bool) -> void:
 
 func update_enemy(delta:float) -> void:
 	enemy_cooldown = maxf(0.0, enemy_cooldown - delta)
+	enemy_power_cooldown = maxf(0.0, enemy_power_cooldown - delta)
 	enemy_decision_cooldown = maxf(0.0, enemy_decision_cooldown - delta)
 	enemy_teleport_cooldown = maxf(0.0, enemy_teleport_cooldown - delta)
 	if enemy_attack_time > 0.0:
@@ -507,6 +555,10 @@ func update_enemy(delta:float) -> void:
 		return
 
 	var offset = player_position - enemy_position
+	var power_range = absf(offset.x) >= 175.0 && absf(offset.x) <= 860.0 && absf(offset.y) <= 145.0
+	if power_range && enemy_power_cooldown <= 0.0 && power_projectiles.size() < 4:
+		start_enemy_power_attack()
+		return
 	if enemy_behavior == "retreat":
 		enemy_behavior_time -= delta
 		var retreat_direction = Vector2(-signf(offset.x), enemy_strafe_direction.y * 0.55).normalized()
@@ -570,8 +622,8 @@ func update_enemy(delta:float) -> void:
 func move_enemy(direction:Vector2, speed:float, delta:float) -> void:
 	enemy_position += direction * speed * delta
 	enemy_dust_distance += speed * delta
-	while enemy_dust_distance >= 24.0:
-		enemy_dust_distance -= 24.0
+	while enemy_dust_distance >= 10.0:
+		enemy_dust_distance -= 10.0
 		spawn_enemy_dust(enemy_position + Vector2(randf_range(-18.0, 18.0), 35.0))
 	if absf(direction.x) > 0.05:
 		enemy.flip_h = direction.x < 0.0
@@ -638,6 +690,63 @@ func start_enemy_attack() -> void:
 	enemy.play(attack_name)
 	spawn_impact(enemy_position + Vector2((-48.0 if enemy.flip_h else 48.0), -42.0), Color("ff5d73"))
 
+func start_enemy_power_attack() -> void:
+	var power_variant = 2 if enemy_power_frames.has(2) && randf() > 0.48 else 1
+	var attack_name = "attack_2" if power_variant == 2 && enemy.sprite_frames.has_animation("attack_2") else "attack"
+	enemy.flip_h = player_position.x < enemy_position.x
+	enemy_attack_time = clampf(get_sprite_animation_duration(enemy, attack_name, 0.82, 4.8), 0.82, 1.35)
+	enemy_attack_hit_time = 0.0
+	enemy_hit_pending = false
+	enemy_power_cooldown = randf_range(3.4, 5.2) if enemy_id != "1001" else randf_range(2.1, 3.2)
+	enemy_cooldown = maxf(enemy_cooldown, 0.8)
+	enemy.play(attack_name)
+	if enemy_power_sound.stream:
+		enemy_power_sound.play()
+	if enemy_voice_sound.stream:
+		enemy_voice_sound.play()
+	var launch_delay = minf(0.58, enemy_attack_time * 0.46)
+	var volley_count = 4 if enemy_id == "1001" && power_variant == 2 else 1
+	for projectile_index in volley_count:
+		var spread = 0.0
+		if volley_count > 1:
+			spread = deg_to_rad(lerpf(-13.0, 13.0, float(projectile_index) / float(volley_count - 1)))
+		spawn_enemy_power_projectile(power_variant, launch_delay + projectile_index * 0.07, spread)
+	spawn_impact(enemy_position + Vector2(0, -58), Color(ENEMY_POWER_STATS[enemy_id].color))
+	shake(3.0, 0.2)
+
+func spawn_enemy_power_projectile(power_variant:int, delay:float, spread:float) -> void:
+	if !enemy_power_frames.has(power_variant):
+		return
+	var config:Dictionary = ENEMY_POWER_STATS[enemy_id]
+	var projectile_sprite = AnimatedSprite2D.new()
+	projectile_sprite.sprite_frames = enemy_power_frames[power_variant]
+	projectile_sprite.animation = "default" if projectile_sprite.sprite_frames.has_animation("default") else projectile_sprite.sprite_frames.get_animation_names()[0]
+	projectile_sprite.play()
+	projectile_sprite.visible = false
+	projectile_sprite.process_mode = Node.PROCESS_MODE_PAUSABLE
+	projectile_sprite.z_index = int(enemy_position.y) + 2
+	var frame_texture = projectile_sprite.sprite_frames.get_frame_texture(projectile_sprite.animation, 0)
+	if frame_texture:
+		var texture_size = frame_texture.get_size()
+		var scale_value = float(config.size) / maxf(texture_size.x, texture_size.y)
+		projectile_sprite.scale = Vector2(scale_value, scale_value)
+	add_child(projectile_sprite)
+	var origin = enemy_position + Vector2(-62.0 if enemy.flip_h else 62.0, -52.0)
+	var aim_point = player_position + Vector2(0.0, -36.0)
+	var direction = (aim_point - origin).normalized().rotated(spread)
+	power_projectiles.append({
+		"sprite":projectile_sprite,
+		"position":origin,
+		"velocity":direction * float(config.speed),
+		"delay":delay,
+		"life":3.2,
+		"damage":float(config.damage),
+		"radius":maxf(30.0, float(config.size) * 0.42),
+		"spin":float(config.spin) * (-1.0 if power_variant == 2 else 1.0),
+		"color":Color(config.color),
+		"trail_time":0.0
+	})
+
 func get_sprite_animation_duration(sprite:AnimatedSprite2D, animation_name:String, minimum:float, maximum:float) -> float:
 	var total_weight:float = 0.0
 	for frame_index in sprite.sprite_frames.get_frame_count(animation_name):
@@ -650,22 +759,30 @@ func resolve_enemy_hit() -> void:
 		return
 	var distance = player_position - enemy_position
 	if absf(distance.x) <= 125.0 && absf(distance.y) <= 58.0:
-		player_hp = maxf(0.0, player_hp - enemy_damage)
-		Global.realtime_hp = player_hp
-		player_invulnerability = 0.82
-		player_position.x += signf(distance.x) * 54.0
-		player.play("falling_down" if player.sprite_frames.has_animation("falling_down") else "damage")
-		hurt_sound.play()
-		spawn_blood(player_position + Vector2(0, -35), 16, signf(distance.x))
-		shake(10.0, 0.38)
-		spawn_impact(player_position + Vector2(0, -38), Color("ff304f"))
-		Input.start_joy_vibration(0, 0.65, 0.85, 0.28)
-		if player_hp <= 0.0:
-			lose_battle()
+		damage_player(enemy_damage, signf(distance.x))
+
+func damage_player(damage:float, hit_direction:float) -> void:
+	if player_dead || player_invulnerability > 0.0:
+		return
+	if hit_direction == 0.0:
+		hit_direction = 1.0
+	player_hp = maxf(0.0, player_hp - damage)
+	Global.realtime_hp = player_hp
+	player_invulnerability = 0.82
+	player_position.x += hit_direction * 54.0
+	player.play("falling_down" if player.sprite_frames.has_animation("falling_down") else "damage")
+	hurt_sound.play()
+	spawn_blood(player_position + Vector2(0, -35), 16, hit_direction)
+	shake(10.0, 0.38)
+	spawn_impact(player_position + Vector2(0, -38), Color("ff304f"))
+	Input.start_joy_vibration(0, 0.65, 0.85, 0.28)
+	if player_hp <= 0.0:
+		lose_battle()
 
 func defeat_enemy() -> void:
 	enemy_dead = true
 	enemy_hit_pending = false
+	clear_power_projectiles()
 	enemy.visible = false
 	enemy_bar.visible = false
 	enemy_name_label.visible = false
@@ -695,7 +812,7 @@ func update_enemy_explosion(delta:float) -> void:
 		status_label.text = tr_text("CAMINHO LIBERADO", "PATH CLEARED")
 
 func restore_normal_time_after_explosion() -> void:
-	await get_tree().create_timer(0.72, true, false, true).timeout
+	await get_tree().create_timer(1.15, true, false, true).timeout
 	Engine.time_scale = 1.0
 
 func lose_battle() -> void:
@@ -780,11 +897,12 @@ func spawn_impact(position_value:Vector2, color:Color) -> void:
 	impacts.append({"position":position_value, "life":0.22, "color":color})
 
 func spawn_enemy_dust(origin:Vector2) -> void:
-	for index in range(3):
-		var lifetime = randf_range(0.48, 0.82)
-		dust_particles.append({"position":origin + Vector2(randf_range(-12.0, 12.0), randf_range(-5.0, 5.0)), "velocity":Vector2(randf_range(-32.0, 32.0), randf_range(-58.0, -24.0)), "life":lifetime, "max_life":lifetime, "radius":randf_range(4.0, 9.0)})
+	for index in range(8):
+		var lifetime = randf_range(0.72, 1.28)
+		dust_particles.append({"position":origin + Vector2(randf_range(-24.0, 24.0), randf_range(-10.0, 8.0)), "velocity":Vector2(randf_range(-72.0, 72.0), randf_range(-125.0, -42.0)), "life":lifetime, "max_life":lifetime, "radius":randf_range(9.0, 21.0)})
 
 func update_effects(delta:float) -> void:
+	update_power_projectiles(delta)
 	for index in range(droplets.size() - 1, -1, -1):
 		var drop = droplets[index]
 		drop.velocity.y += 620.0 * delta
@@ -810,8 +928,60 @@ func update_effects(delta:float) -> void:
 		dust.velocity *= maxf(0.0, 1.0 - delta * 2.6)
 		dust.radius += delta * 8.0
 		dust_particles[index] = dust
-	while dust_particles.size() > 90:
+	while dust_particles.size() > 240:
 		dust_particles.pop_front()
+	for index in range(power_trails.size() - 1, -1, -1):
+		var trail = power_trails[index]
+		trail.life -= delta
+		if trail.life <= 0.0:
+			power_trails.remove_at(index)
+		else:
+			trail.radius += delta * 20.0
+			power_trails[index] = trail
+
+func update_power_projectiles(delta:float) -> void:
+	for index in range(power_projectiles.size() - 1, -1, -1):
+		var projectile = power_projectiles[index]
+		projectile.delay -= delta
+		if projectile.delay > 0.0:
+			power_projectiles[index] = projectile
+			continue
+		var projectile_sprite:AnimatedSprite2D = projectile.sprite
+		projectile_sprite.visible = true
+		projectile.life -= delta
+		projectile.position += projectile.velocity * delta
+		projectile_sprite.position = projectile.position
+		projectile_sprite.rotation += projectile.spin * delta
+		projectile_sprite.z_index = int(projectile.position.y) + 2
+		projectile.trail_time -= delta
+		if projectile.trail_time <= 0.0:
+			projectile.trail_time = 0.035
+			power_trails.append({"position":projectile.position, "life":0.24, "max_life":0.24, "radius":projectile.radius * 0.34, "color":projectile.color})
+		var hit_player = projectile.position.distance_to(player_position + Vector2(0, -34)) <= projectile.radius
+		var outside_arena = projectile.position.x < -120.0 || projectile.position.x > ARENA_WIDTH + 120.0 || projectile.position.y < 180.0 || projectile.position.y > 720.0
+		if hit_player:
+			if player_invulnerability <= 0.0:
+				damage_player(projectile.damage, signf(projectile.velocity.x))
+			spawn_impact(projectile.position, projectile.color)
+			remove_power_projectile(index)
+		elif projectile.life <= 0.0 || outside_arena:
+			remove_power_projectile(index)
+		else:
+			power_projectiles[index] = projectile
+
+func remove_power_projectile(index:int) -> void:
+	var projectile = power_projectiles[index]
+	var projectile_sprite = projectile.sprite
+	if is_instance_valid(projectile_sprite):
+		projectile_sprite.queue_free()
+	power_projectiles.remove_at(index)
+
+func clear_power_projectiles() -> void:
+	for projectile in power_projectiles:
+		var projectile_sprite = projectile.sprite
+		if is_instance_valid(projectile_sprite):
+			projectile_sprite.queue_free()
+	power_projectiles.clear()
 
 func shake(strength:float, duration:float) -> void:
 	shake_strength = maxf(shake_strength, strength)
@@ -838,10 +1008,13 @@ func _draw() -> void:
 		var progress = 1.0 - impact.life / 0.22
 		draw_arc(impact.position, 25.0 + progress * 38.0, -1.0, 1.0, 14, Color(impact.color, 1.0 - progress), 5.0)
 	for dust in dust_particles:
-		var dust_alpha = clampf(dust.life / dust.max_life, 0.0, 1.0) * 0.48
-		draw_set_transform(dust.position, 0.0, Vector2(1.45, 0.72))
+		var dust_alpha = clampf(dust.life / dust.max_life, 0.0, 1.0) * 0.76
+		draw_set_transform(dust.position, 0.0, Vector2(1.65, 0.78))
 		draw_circle(Vector2.ZERO, dust.radius, Color(0.56, 0.48, 0.36, dust_alpha))
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	for trail in power_trails:
+		var trail_alpha = clampf(trail.life / trail.max_life, 0.0, 1.0) * 0.58
+		draw_circle(trail.position, trail.radius, Color(trail.color, trail_alpha))
 	if exit_open:
 		draw_rect(Rect2(2470, 315, 90, 245), Color(0.18, 0.95, 0.45, 0.12))
 		draw_line(Vector2(2490, 340), Vector2(2490, 535), Color("80ed99"), 6)
