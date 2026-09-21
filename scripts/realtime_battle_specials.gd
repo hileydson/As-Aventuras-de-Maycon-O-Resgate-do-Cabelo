@@ -7,6 +7,8 @@ const COMBO_MUSIC_STING_DURATION:float = 0.55
 const PENTAGRAM_PULSE_COUNT:int = 18
 const PENTAGRAM_CHARGE_DURATION:float = 7.0
 const PENTAGRAM_REQUIRED_ROTATIONS:float = 5.0
+const PENTAGRAM_BASE_SPEED:float = 0.25
+const PENTAGRAM_MAX_SPEED:float = 3.6
 
 var special_hits:int = 0
 var special_active:bool = false
@@ -26,6 +28,10 @@ var pentagram_charge:float = 0.0
 var pentagram_accumulated_rotation:float = 0.0
 var pentagram_last_stick:Vector2 = Vector2.ZERO
 var pentagram_input_activity:float = 0.0
+var pentagram_spin_speed:float = 0.0
+var pentagram_peak_speed:float = 0.0
+var pentagram_spin_direction:float = 1.0
+var pentagram_is_near_end:bool = false
 
 class SpecialOverlay:
 	extends Control
@@ -33,6 +39,10 @@ class SpecialOverlay:
 	var mode:String = ""
 	var energy:float = 0.0
 	var spin:float = 0.0
+	var spin_speed:float = 0.0
+	var peak_spin_speed:float = 0.0
+	var spin_direction:float = 1.0
+	var is_near_end:bool = false
 	var hit_count:int = 0
 	var portrait_texture:Texture2D
 	var effect_time:float = 0.0
@@ -58,6 +68,10 @@ class SpecialOverlay:
 		analog_hint_text = instruction_text
 		energy = 0.0
 		spin = -PI * 0.5
+		spin_speed = PENTAGRAM_BASE_SPEED
+		peak_spin_speed = PENTAGRAM_BASE_SPEED
+		spin_direction = 1.0
+		is_near_end = false
 		effect_time = 0.0
 		pentagram_reveal = 0.0
 		rotation_progress = 0.0
@@ -69,17 +83,28 @@ class SpecialOverlay:
 		visible = true
 		queue_redraw()
 
-	func add_pentagram_rotation(angle_delta:float, charge:float, activity:float) -> void:
-		if pentagram_exploding:
+	func add_pentagram_rotation(angle_delta:float, charge:float, activity:float, current_speed:float = 0.0, direction:float = 1.0) -> void:
+		if pentagram_exploding && !is_near_end:
 			return
-		spin += angle_delta
+		if absf(direction) > 0.01:
+			spin_direction = 1.0 if direction > 0.0 else -1.0
+		if current_speed > 0.0:
+			spin_speed = maxf(spin_speed, current_speed)
+			peak_spin_speed = maxf(peak_spin_speed, spin_speed)
 		energy = clampf(charge, 0.0, 1.0)
 		rotation_progress = energy
 		analog_input_activity = clampf(activity, 0.0, 1.0)
 		queue_redraw()
 
+	func set_near_end(near_end:bool = true) -> void:
+		is_near_end = near_end
+		if is_near_end:
+			spin_speed = maxf(spin_speed, peak_spin_speed)
+
 	func start_pentagram_explosion() -> void:
 		pentagram_exploding = true
+		is_near_end = true
+		spin_speed = maxf(spin_speed, peak_spin_speed)
 		explosion_progress = 0.0
 		analog_input_activity = 0.0
 		impact_flash = 1.0
@@ -103,6 +128,10 @@ class SpecialOverlay:
 		mode = ""
 		energy = 0.0
 		hit_count = 0
+		spin_speed = 0.0
+		peak_spin_speed = 0.0
+		spin_direction = 1.0
+		is_near_end = false
 		pentagram_reveal = 0.0
 		rotation_progress = 0.0
 		blood_level = 0.0
@@ -124,6 +153,12 @@ class SpecialOverlay:
 			else:
 				analog_input_activity = maxf(0.0, analog_input_activity - unscaled_delta * 1.8)
 			impact_flash = maxf(0.0, impact_flash - unscaled_delta * 4.2)
+			if is_near_end || pentagram_exploding:
+				spin_speed = maxf(spin_speed, peak_spin_speed)
+			else:
+				spin_speed = maxf(PENTAGRAM_BASE_SPEED, spin_speed - unscaled_delta * 0.55)
+			peak_spin_speed = maxf(peak_spin_speed, spin_speed)
+			spin += spin_direction * spin_speed * unscaled_delta
 		queue_redraw()
 
 	func _draw() -> void:
@@ -225,7 +260,7 @@ class SpecialOverlay:
 			var travel = clampf((progress - delay) / maxf(0.01, 1.0 - delay), 0.0, 1.0)
 			if travel <= 0.0:
 				continue
-			var angle = float(drop_index) * 2.399963 + sin(float(drop_index) * 1.37) * 0.28
+			var angle = float(drop_index) * 2.399963 + sin(float(drop_index) * 1.37) * 0.28 + spin * 0.35
 			var direction = Vector2.from_angle(angle)
 			var drop_position = center + direction * (radius * 0.16 + travel * (235.0 + fmod(float(drop_index) * 17.0, 220.0)))
 			var drop_alpha = (1.0 - travel) * 0.92
@@ -293,27 +328,50 @@ func _process(delta:float) -> void:
 	update_special_meter_hud()
 
 func update_pentagram_rotation_input(delta:float) -> void:
+	var unscaled_delta = delta / maxf(Engine.time_scale, 0.001)
 	if !pentagram_rotation_enabled:
+		if pentagram_is_near_end:
+			pentagram_spin_speed = maxf(pentagram_spin_speed, pentagram_peak_speed)
+			if special_overlay:
+				special_overlay.call("add_pentagram_rotation", 0.0, pentagram_charge, 0.0, pentagram_spin_speed, pentagram_spin_direction)
 		return
 	var stick = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var right_stick = Vector2(Input.get_joy_axis(0, JOY_AXIS_RIGHT_X), Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y))
 	if right_stick.length() > stick.length():
 		stick = right_stick
-	var unscaled_delta = delta / maxf(Engine.time_scale, 0.001)
 	pentagram_input_activity = maxf(0.0, pentagram_input_activity - unscaled_delta * 1.8)
 	if stick.length() < 0.52:
 		pentagram_last_stick = Vector2.ZERO
+		if pentagram_is_near_end:
+			pentagram_spin_speed = maxf(pentagram_spin_speed, pentagram_peak_speed)
+		else:
+			pentagram_spin_speed = maxf(PENTAGRAM_BASE_SPEED, pentagram_spin_speed - unscaled_delta * 0.55)
+		var speed_ratio = clampf((pentagram_spin_speed - PENTAGRAM_BASE_SPEED) / (PENTAGRAM_MAX_SPEED - PENTAGRAM_BASE_SPEED), 0.0, 1.0)
+		pentagram_charge = maxf(pentagram_charge, speed_ratio) if pentagram_is_near_end else speed_ratio
+		if special_overlay:
+			special_overlay.call("add_pentagram_rotation", 0.0, pentagram_charge, pentagram_input_activity, pentagram_spin_speed, pentagram_spin_direction)
 		return
 	stick = stick.normalized()
 	if pentagram_last_stick.length() > 0.5:
 		var angle_delta = wrapf(stick.angle() - pentagram_last_stick.angle(), -PI, PI)
 		if absf(angle_delta) >= 0.012 && absf(angle_delta) <= 1.25:
 			var rotation_amount = absf(angle_delta)
-			pentagram_accumulated_rotation += rotation_amount
-			pentagram_charge = clampf(pentagram_accumulated_rotation / (TAU * PENTAGRAM_REQUIRED_ROTATIONS), 0.0, 1.0)
+			pentagram_spin_direction = 1.0 if angle_delta >= 0.0 else -1.0
+			var input_rate = rotation_amount / maxf(unscaled_delta, 0.001)
+			
+			var current_ratio = clampf((pentagram_spin_speed - PENTAGRAM_BASE_SPEED) / (PENTAGRAM_MAX_SPEED - PENTAGRAM_BASE_SPEED), 0.0, 1.0)
+			var resistance = 1.0 - pow(current_ratio, 1.6) * 0.62
+			var rate_factor = clampf(input_rate / 7.5, 0.4, 1.6)
+			var accel = rotation_amount * 0.14 * resistance * rate_factor
+			
+			pentagram_spin_speed = clampf(pentagram_spin_speed + accel, PENTAGRAM_BASE_SPEED, PENTAGRAM_MAX_SPEED)
+			pentagram_peak_speed = maxf(pentagram_peak_speed, pentagram_spin_speed)
+			
+			var speed_ratio = clampf((pentagram_spin_speed - PENTAGRAM_BASE_SPEED) / (PENTAGRAM_MAX_SPEED - PENTAGRAM_BASE_SPEED), 0.0, 1.0)
+			pentagram_charge = speed_ratio
 			pentagram_input_activity = 1.0
 			if special_overlay:
-				special_overlay.call("add_pentagram_rotation", angle_delta, pentagram_charge, pentagram_input_activity)
+				special_overlay.call("add_pentagram_rotation", angle_delta, pentagram_charge, pentagram_input_activity, pentagram_spin_speed, pentagram_spin_direction)
 	pentagram_last_stick = stick
 
 func resolve_player_hit(kick:bool) -> void:
@@ -502,6 +560,14 @@ func start_pentagram_force() -> void:
 	if special_charge_sound:
 		special_charge_sound.pitch_scale = 0.82
 		special_charge_sound.play()
+	pentagram_spin_speed = PENTAGRAM_BASE_SPEED
+	pentagram_peak_speed = PENTAGRAM_BASE_SPEED
+	pentagram_spin_direction = 1.0
+	pentagram_is_near_end = false
+	pentagram_accumulated_rotation = 0.0
+	pentagram_charge = 0.0
+	pentagram_last_stick = Vector2.ZERO
+	pentagram_input_activity = 0.0
 	var portrait = load("res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_icon.png") as Texture2D
 	special_overlay.call("start_pentagram", portrait, tr_text("GIRE O ANALÓGICO", "ROTATE THE ANALOG STICK"))
 	camera.zoom = Vector2(0.92, 0.92)
@@ -519,6 +585,10 @@ func start_pentagram_force() -> void:
 			return
 		await get_tree().create_timer(0.1, true, false, true).timeout
 		charge_elapsed += 0.1
+		if !pentagram_is_near_end && (charge_elapsed >= (PENTAGRAM_CHARGE_DURATION - 1.8) || pentagram_charge >= 0.96):
+			pentagram_is_near_end = true
+			if special_overlay:
+				special_overlay.call("set_near_end", true)
 		var target_pulses = int(floor(pentagram_charge * float(PENTAGRAM_PULSE_COUNT) + 0.001))
 		if applied_pulses < target_pulses:
 			var pulse_progress = float(applied_pulses + 1) / float(PENTAGRAM_PULSE_COUNT)
@@ -530,6 +600,9 @@ func start_pentagram_force() -> void:
 			applied_pulses += 1
 
 	pentagram_rotation_enabled = false
+	pentagram_is_near_end = true
+	if special_overlay:
+		special_overlay.call("set_near_end", true)
 	pentagram_last_stick = Vector2.ZERO
 	var final_target_pulses = int(floor(pentagram_charge * float(PENTAGRAM_PULSE_COUNT) + 0.001))
 	while applied_pulses < final_target_pulses:
@@ -704,6 +777,12 @@ func apply_maycon_rush_damage(target:Dictionary) -> void:
 func finish_player_special(previous_status:String, previous_zoom:Vector2, previous_camera_position:Vector2) -> void:
 	pentagram_rotation_enabled = false
 	pentagram_last_stick = Vector2.ZERO
+	pentagram_spin_speed = 0.0
+	pentagram_peak_speed = 0.0
+	pentagram_spin_direction = 1.0
+	pentagram_is_near_end = false
+	pentagram_accumulated_rotation = 0.0
+	pentagram_charge = 0.0
 	Engine.time_scale = 1.0
 	player_invulnerability = 0.45
 	player_attack_time = 0.0
@@ -735,6 +814,9 @@ func _exit_tree() -> void:
 	combo_music_sting_token += 1
 	pentagram_rotation_enabled = false
 	pentagram_last_stick = Vector2.ZERO
+	pentagram_spin_speed = 0.0
+	pentagram_peak_speed = 0.0
+	pentagram_is_near_end = false
 	Engine.time_scale = 1.0
 	if victory_sound:
 		victory_sound.pitch_scale = 1.0

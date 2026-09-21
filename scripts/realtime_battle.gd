@@ -32,6 +32,8 @@ const ENEMY_POWER_STATS = {
 	"1001":{"speed":690.0, "size":190.0, "radius":56.0, "damage":23.0, "color":"ef233c", "spin":5.8}
 }
 
+const MINION_MAX_SPEED:float = 130.0
+
 const MINION_VARIANTS = [
 	{
 		"id":"knight_shadow",
@@ -41,7 +43,7 @@ const MINION_VARIANTS = [
 		"modulate":Color(1.0, 1.0, 1.0, 1.0),
 		"scale":3.2,
 		"hp_min":45.0, "hp_max":62.0,
-		"speed_min":115.0, "speed_max":140.0,
+		"speed_min":86.0, "speed_max":108.0,
 		"damage_min":10.0, "damage_max":14.0,
 		"style":"balanced"
 	},
@@ -53,7 +55,7 @@ const MINION_VARIANTS = [
 		"modulate":Color(1.05, 1.05, 1.15, 1.0),
 		"scale":3.4,
 		"hp_min":60.0, "hp_max":82.0,
-		"speed_min":95.0, "speed_max":118.0,
+		"speed_min":70.0, "speed_max":88.0,
 		"damage_min":14.0, "damage_max":18.0,
 		"style":"heavy"
 	},
@@ -65,7 +67,7 @@ const MINION_VARIANTS = [
 		"modulate":Color(0.85, 0.78, 0.98, 1.0),
 		"scale":2.9,
 		"hp_min":35.0, "hp_max":50.0,
-		"speed_min":150.0, "speed_max":180.0,
+		"speed_min":108.0, "speed_max":128.0,
 		"damage_min":8.0, "damage_max":12.0,
 		"style":"agile"
 	},
@@ -77,7 +79,7 @@ const MINION_VARIANTS = [
 		"modulate":Color(0.72, 0.95, 1.25, 1.0),
 		"scale":3.2,
 		"hp_min":45.0, "hp_max":65.0,
-		"speed_min":125.0, "speed_max":148.0,
+		"speed_min":90.0, "speed_max":110.0,
 		"damage_min":11.0, "damage_max":15.0,
 		"style":"tactical"
 	},
@@ -89,7 +91,7 @@ const MINION_VARIANTS = [
 		"modulate":Color(1.35, 0.7, 0.7, 1.0),
 		"scale":3.3,
 		"hp_min":52.0, "hp_max":74.0,
-		"speed_min":135.0, "speed_max":160.0,
+		"speed_min":98.0, "speed_max":118.0,
 		"damage_min":15.0, "damage_max":20.0,
 		"style":"frenzy"
 	},
@@ -101,7 +103,7 @@ const MINION_VARIANTS = [
 		"modulate":Color(1.3, 1.2, 0.65, 1.0),
 		"scale":3.5,
 		"hp_min":70.0, "hp_max":92.0,
-		"speed_min":105.0, "speed_max":125.0,
+		"speed_min":78.0, "speed_max":95.0,
 		"damage_min":16.0, "damage_max":22.0,
 		"style":"elite"
 	},
@@ -113,7 +115,7 @@ const MINION_VARIANTS = [
 		"modulate":Color(0.75, 1.25, 0.78, 1.0),
 		"scale":3.1,
 		"hp_min":40.0, "hp_max":56.0,
-		"speed_min":140.0, "speed_max":165.0,
+		"speed_min":102.0, "speed_max":122.0,
 		"damage_min":12.0, "damage_max":16.0,
 		"style":"agile"
 	},
@@ -125,7 +127,7 @@ const MINION_VARIANTS = [
 		"modulate":Color(0.7, 0.72, 0.8, 1.0),
 		"scale":3.6,
 		"hp_min":80.0, "hp_max":115.0,
-		"speed_min":80.0, "speed_max":100.0,
+		"speed_min":60.0, "speed_max":76.0,
 		"damage_min":18.0, "damage_max":25.0,
 		"style":"heavy"
 	}
@@ -516,7 +518,7 @@ func update_single_minion(minion:Dictionary, can_melee:bool, delta:float) -> voi
 	if minion.behavior == "retreat":
 		minion.behavior_time -= delta
 		var retreat_dir = Vector2(-signf(offset.x), minion.strafe_dir.y * 0.5).normalized()
-		move_minion(minion, retreat_dir, minion.speed * 1.25, delta)
+		move_minion(minion, retreat_dir, minion.speed * 1.05, delta)
 		if minion.behavior_time <= 0.0:
 			minion.behavior = "strafe"
 			minion.behavior_time = randf_range(0.6, 1.2)
@@ -539,7 +541,7 @@ func update_ranged_minion(minion:Dictionary, offset:Vector2, delta:float) -> voi
 
 	if dist_x < 220.0:
 		var retreat_dir = Vector2(-signf(offset.x), (minion.position.y - player_position.y) * 0.02).normalized()
-		move_minion(minion, retreat_dir, minion.speed * 1.15, delta)
+		move_minion(minion, retreat_dir, minion.speed * 1.0, delta)
 		return
 
 	if dist_x <= 540.0:
@@ -658,7 +660,8 @@ func apply_minion_separation(minion:Dictionary, delta:float) -> void:
 	minion.position.y = clampf(minion.position.y, MIN_Y, MAX_Y)
 
 func move_minion(minion:Dictionary, direction:Vector2, speed:float, delta:float) -> void:
-	minion.position += direction * speed * delta
+	var move_speed = minf(speed, MINION_MAX_SPEED)
+	minion.position += direction * move_speed * delta
 	if absf(direction.x) > 0.05:
 		minion.facing = signf(direction.x)
 		minion.sprite.flip_h = minion.facing < 0.0
