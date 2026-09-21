@@ -45,10 +45,7 @@ func draw_foreground_details(palette:Dictionary) -> void:
 		draw_colored_polygon(PackedVector2Array([
 			Vector2(x, 560), Vector2(x + 24, 545), Vector2(x + 62, 552), Vector2(x + 74, 570), Vector2(x + 20, 578)
 		]), Color(palette.line, 0.7))
-	if theme_id == "forest_road":
-		draw_rect(Rect2(2120, 105, 360, 275), Color("141523"))
-		draw_colored_polygon(PackedVector2Array([Vector2(2070, 110), Vector2(2300, 20), Vector2(2530, 110)]), Color("141523"))
-	elif theme_id == "throne_ruins":
+	if theme_id == "throne_ruins":
 		draw_rect(Rect2(2200, 175, 220, 205), Color("241328"))
 		draw_colored_polygon(PackedVector2Array([Vector2(2200, 175), Vector2(2310, 75), Vector2(2420, 175)]), Color("3f1836"))
 

@@ -19,7 +19,7 @@ const ENEMY_STATS = {
 	"2":{"name":"Bomba Pretti", "hp":110.0, "speed":120.0, "damage":17.0, "scale":1.0},
 	"3":{"name":"Fofo", "hp":140.0, "speed":105.0, "damage":20.0, "scale":1.12},
 	"4":{"name":"Xuruzika", "hp":90.0, "speed":185.0, "damage":14.0, "scale":0.95},
-	"5":{"name":"Manga", "hp":120.0, "speed":155.0, "damage":18.0, "scale":1.0},
+	"5":{"name":"Manga", "hp":120.0, "speed":155.0, "damage":18.0, "scale":1.45},
 	"1001":{"name":"Seco", "hp":260.0, "speed":165.0, "damage":24.0, "scale":1.28}
 }
 
@@ -27,6 +27,7 @@ var player:AnimatedSprite2D
 var enemy:AnimatedSprite2D
 var camera:Camera2D
 var stage_3d:CanvasLayer
+var background_layer:Node2D
 var player_bar:ProgressBar
 var enemy_bar:ProgressBar
 var enemy_name_label:Label
@@ -79,9 +80,7 @@ var enemy_pressure:int = 0
 var enemy_strafe_direction := Vector2(0.0, 1.0)
 var enemy_cover_target := Vector2.ZERO
 var teleport_moved:bool = false
-var enemy_dissolve_time:float = 0.0
-var enemy_dissolve_factor:float = 1.0
-var dissolve_blood_timer:float = 0.0
+var enemy_explosion_time:float = 0.0
 var transition_top:ColorRect
 var transition_bottom:ColorRect
 var transition_flash:ColorRect
@@ -118,15 +117,18 @@ func build_background() -> void:
 	stage_3d.theme_id = Global.realtime_arena_theme
 	stage_3d.arena_width = ARENA_WIDTH
 	add_child(stage_3d)
-	var background = preload("res://scripts/realtime_battle_background.gd").new()
-	background.theme_id = Global.realtime_arena_theme
-	background.arena_width = ARENA_WIDTH
-	background.z_index = -100
-	add_child(background)
+	background_layer = preload("res://scripts/realtime_battle_background.gd").new()
+	background_layer.theme_id = Global.realtime_arena_theme
+	background_layer.arena_width = ARENA_WIDTH
+	background_layer.z_index = -100
+	add_child(background_layer)
 
 func build_fighters() -> void:
-	player = sprite_from_scene("res://scenes/maycon_batalha_default.tscn", true)
+	player = sprite_from_scene("res://scenes/maycon_fase.tscn", true)
 	player.name = "MayconRealtime"
+	var player_texture = player.sprite_frames.get_frame_texture("idle_right", 0)
+	if player_texture:
+		player_base_scale = 205.0 / maxf(1.0, player_texture.get_height())
 	player.scale = Vector2(player_base_scale, player_base_scale)
 	player.play("idle_right")
 	add_child(player)
@@ -311,12 +313,15 @@ func _process(delta:float) -> void:
 	if !enemy_dead:
 		update_enemy(delta)
 	else:
-		update_enemy_dissolve(delta)
+		update_enemy_explosion(delta)
 		if exit_open && player_position.x >= ARENA_WIDTH - 150.0:
 			finish_battle()
 	update_fighter_transforms()
 	update_bars()
 	camera.position.x = clamp(player_position.x + 260.0, 576.0, ARENA_WIDTH - 576.0)
+	if background_layer:
+		var visible_camera_center = camera.get_screen_center_position().x
+		background_layer.position.x = (visible_camera_center - 576.0) * 0.76
 	queue_redraw()
 
 func update_player(delta:float) -> void:
@@ -548,7 +553,7 @@ func resolve_enemy_hit() -> void:
 		Global.realtime_hp = player_hp
 		player_invulnerability = 0.82
 		player_position.x += signf(distance.x) * 54.0
-		player.play("damage")
+		player.play("falling_down" if player.sprite_frames.has_animation("falling_down") else "damage")
 		hurt_sound.play()
 		spawn_blood(player_position + Vector2(0, -35), 16, signf(distance.x))
 		shake(10.0, 0.38)
@@ -559,33 +564,23 @@ func resolve_enemy_hit() -> void:
 func defeat_enemy() -> void:
 	enemy_dead = true
 	enemy_hit_pending = false
-	enemy.play("pain")
-	spawn_blood(enemy_position + Vector2(0, -35), 28, signf(enemy_position.x - player_position.x))
-	shake(14.0, 0.55)
-	enemy_dissolve_time = 1.85
-	enemy_dissolve_factor = 1.0
-	dissolve_blood_timer = 0.0
-	status_label.text = tr_text("O INIMIGO ESTÁ SE DISSOLVENDO...", "THE ENEMY IS DISSOLVING...")
+	enemy.visible = false
+	enemy_bar.visible = false
+	enemy_name_label.visible = false
+	spawn_blood_explosion(enemy_position + Vector2(0, -45), 96)
+	for index in range(7):
+		spawn_impact(enemy_position + Vector2(randf_range(-55, 55), randf_range(-95, 15)), Color("d90429"))
+	for index in range(8):
+		stains.append({"position":enemy_position + Vector2(randf_range(-65, 65), randf_range(20, 58)), "radius":randf_range(16.0, 34.0), "alpha":randf_range(0.68, 0.94)})
+	shake(22.0, 0.72)
+	enemy_explosion_time = 0.92
+	status_label.text = tr_text("EXPLOSÃO DE SANGUE!", "BLOOD EXPLOSION!")
 
-func update_enemy_dissolve(delta:float) -> void:
-	if enemy_dissolve_time <= 0.0:
+func update_enemy_explosion(delta:float) -> void:
+	if exit_open:
 		return
-	enemy_dissolve_time = maxf(0.0, enemy_dissolve_time - delta)
-	dissolve_blood_timer -= delta
-	var progress = 1.0 - enemy_dissolve_time / 1.85
-	enemy_dissolve_factor = maxf(0.04, 1.0 - progress * 0.96)
-	enemy.modulate = Color(0.72, 0.08 + progress * 0.05, 0.09, 1.0 - progress * 0.72)
-	enemy_position.y += 24.0 * delta
-	if dissolve_blood_timer <= 0.0:
-		dissolve_blood_timer = 0.12
-		spawn_blood(enemy_position + Vector2(randf_range(-28, 28), randf_range(-70, 10)), 4, randf_range(-0.4, 0.4))
-		stains.append({"position":enemy_position + Vector2(randf_range(-36, 36), randf_range(25, 55)), "radius":randf_range(13.0, 28.0), "alpha":randf_range(0.62, 0.88)})
-	if enemy_dissolve_time <= 0.0:
-		enemy.visible = false
-		enemy_bar.visible = false
-		enemy_name_label.visible = false
-		for index in range(12):
-			stains.append({"position":enemy_position + Vector2(randf_range(-72, 72), randf_range(22, 52)), "radius":randf_range(18.0, 38.0), "alpha":randf_range(0.68, 0.92)})
+	enemy_explosion_time = maxf(0.0, enemy_explosion_time - delta)
+	if enemy_explosion_time <= 0.0:
 		exit_open = true
 		exit_label.visible = true
 		exit_label.text = tr_text("VITÓRIA!  AVANCE PARA A SAÍDA  →", "VICTORY!  MOVE TO THE EXIT  →")
@@ -594,7 +589,7 @@ func update_enemy_dissolve(delta:float) -> void:
 
 func lose_battle() -> void:
 	player_dead = true
-	player.play("damage")
+	player.play("falling_down" if player.sprite_frames.has_animation("falling_down") else "damage")
 	status_label.text = tr_text("VOCÊ CAIU", "YOU FELL")
 	exit_label.visible = true
 	exit_label.text = tr_text("Retornando ao último ponto salvo...", "Returning to the last save point...")
@@ -635,7 +630,7 @@ func update_fighter_transforms() -> void:
 	var player_depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.9, 1.18)
 	var enemy_depth_scale = remap(enemy_position.y, MIN_Y, MAX_Y, 0.88, 1.15)
 	player.scale = Vector2(player_depth_scale * player_base_scale, player_depth_scale * player_base_scale)
-	enemy.scale = Vector2(enemy_depth_scale * enemy_base_scale * (0.82 + enemy_dissolve_factor * 0.18), enemy_depth_scale * enemy_base_scale * enemy_dissolve_factor)
+	enemy.scale = Vector2(enemy_depth_scale * enemy_base_scale, enemy_depth_scale * enemy_base_scale)
 
 func update_bars() -> void:
 	player_bar.value = player_hp
@@ -655,6 +650,11 @@ func spawn_blood(origin:Vector2, amount:int, direction:float) -> void:
 	for index in amount:
 		var velocity = Vector2(randf_range(70.0, 220.0) * direction + randf_range(-80.0, 80.0), randf_range(-330.0, -120.0))
 		droplets.append({"position":origin + Vector2(randf_range(-12, 12), randf_range(-12, 10)), "velocity":velocity, "target_y":origin.y + randf_range(38, 88), "radius":randf_range(2.0, 5.5)})
+
+func spawn_blood_explosion(origin:Vector2, amount:int) -> void:
+	for index in amount:
+		var velocity = Vector2(randf_range(-430.0, 430.0), randf_range(-560.0, -90.0))
+		droplets.append({"position":origin + Vector2(randf_range(-24, 24), randf_range(-28, 24)), "velocity":velocity, "target_y":origin.y + randf_range(65, 145), "radius":randf_range(2.5, 9.5)})
 
 func spawn_impact(position_value:Vector2, color:Color) -> void:
 	impacts.append({"position":position_value, "life":0.22, "color":color})
