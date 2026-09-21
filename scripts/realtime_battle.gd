@@ -1972,7 +1972,7 @@ func collect_blood_drop(drop:Node2D) -> void:
 		blood_pickup_sound.play()
 		
 	# Feedback visual de cura
-	spawn_heal_popup(player_position + Vector2(0, -68), tr_text("+18% SANGUE!", "+18% BLOOD!"))
+	spawn_heal_popup(player_position + Vector2(0, -68), tr_text("SANGUE RECUPERADO!", "BLOOD RESTORED!"))
 	spawn_heal_effects(player_position)
 
 func spawn_heal_popup(world_pos:Vector2, text_to_show:String) -> void:

@@ -4,6 +4,7 @@ const SPECIAL_PENTAGRAM_THRESHOLD:int = 15
 const SPECIAL_RUSH_THRESHOLD:int = 25
 const SPECIAL_METER_MAX:int = 25
 const COMBO_MUSIC_STING_DURATION:float = 0.55
+const PENTAGRAM_PULSE_COUNT:int = 18
 
 var special_hits:int = 0
 var special_active:bool = false
@@ -28,6 +29,10 @@ class SpecialOverlay:
 	var hit_count:int = 0
 	var portrait_texture:Texture2D
 	var effect_time:float = 0.0
+	var pentagram_reveal:float = 0.0
+	var rotation_progress:float = 0.0
+	var blood_level:float = 0.0
+	var impact_flash:float = 0.0
 
 	func _ready() -> void:
 		position = Vector2.ZERO
@@ -39,10 +44,19 @@ class SpecialOverlay:
 	func start_pentagram(texture:Texture2D) -> void:
 		mode = "pentagram"
 		portrait_texture = texture
-		energy = 0.05
+		energy = 0.0
 		spin = -PI * 0.5
 		effect_time = 0.0
+		pentagram_reveal = 0.0
+		rotation_progress = 0.0
+		blood_level = 0.0
+		impact_flash = 0.0
 		visible = true
+		queue_redraw()
+
+	func register_pentagram_hit(blood_amount:float) -> void:
+		blood_level = clampf(blood_level + blood_amount, 0.0, 1.0)
+		impact_flash = 1.0
 		queue_redraw()
 
 	func start_rush() -> void:
@@ -58,6 +72,10 @@ class SpecialOverlay:
 		mode = ""
 		energy = 0.0
 		hit_count = 0
+		pentagram_reveal = 0.0
+		rotation_progress = 0.0
+		blood_level = 0.0
+		impact_flash = 0.0
 		queue_redraw()
 
 	func _process(delta:float) -> void:
@@ -66,7 +84,12 @@ class SpecialOverlay:
 		var unscaled_delta = delta / maxf(Engine.time_scale, 0.001)
 		effect_time += unscaled_delta
 		if mode == "pentagram":
-			spin += unscaled_delta * lerpf(1.4, 13.0, clampf(energy, 0.0, 1.0))
+			pentagram_reveal = clampf((effect_time - 0.3) / 0.82, 0.0, 1.0)
+			rotation_progress = clampf((effect_time - 1.12) / 4.5, 0.0, 1.0)
+			if rotation_progress > 0.0:
+				var spin_speed = lerpf(0.48, 3.15, pow(rotation_progress, 0.72))
+				spin += unscaled_delta * spin_speed
+			impact_flash = maxf(0.0, impact_flash - unscaled_delta * 4.2)
 		queue_redraw()
 
 	func _draw() -> void:
@@ -76,25 +99,34 @@ class SpecialOverlay:
 			draw_rush_motion_blur()
 
 	func draw_pentagram_force() -> void:
-		var pulse = 0.82 + sin(effect_time * 9.0) * 0.18
-		draw_rect(Rect2(Vector2.ZERO, size), Color(0.015, 0.0, 0.04, 0.46 + energy * 0.28))
-		var band = PackedVector2Array([Vector2(-30, 442), Vector2(1182, 238), Vector2(1182, 292), Vector2(-30, 496)])
-		draw_colored_polygon(band, Color(0.13, 0.0, 0.2, 0.88))
-		draw_line(Vector2(-20, 438), Vector2(1172, 236), Color(1.0, 0.1, 0.42, 0.95), 7.0)
-		draw_line(Vector2(-20, 500), Vector2(1172, 298), Color(0.35, 0.8, 1.0, 0.9), 3.0)
-		if portrait_texture:
-			draw_texture_rect_region(portrait_texture, Rect2(-18, 82, 330, 440), Rect2(148, 24, 216, 290))
-			draw_line(Vector2(286, 76), Vector2(286, 526), Color(1.0, 0.2, 0.48, 0.85), 5.0)
-		var font = ThemeDB.fallback_font
-		draw_string(font, Vector2(302, 170), "PENTAGRAM FORCE", HORIZONTAL_ALIGNMENT_CENTER, 820, 54, Color(1.0, 0.92, 0.68, 1.0))
-		draw_string(font, Vector2(392, 211), "15 HIT SUPER", HORIZONTAL_ALIGNMENT_CENTER, 570, 20, Color(0.45, 0.86, 1.0, 0.95))
-		var center = Vector2(716, 395)
-		var radius = lerpf(38.0, 226.0, clampf(energy * 1.35, 0.0, 1.0)) * pulse
+		var trace_progress = clampf(effect_time / 0.24, 0.0, 1.0)
+		var intro_alpha = 1.0 - clampf((effect_time - 0.96) / 0.28, 0.0, 1.0)
+		if intro_alpha > 0.0:
+			var trace_start = Vector2(-30, 454)
+			var trace_finish = Vector2(1182, 232)
+			var traced_to = trace_start.lerp(trace_finish, trace_progress)
+			draw_line(trace_start, traced_to, Color(0.12, 0.02, 0.18, 0.72 * intro_alpha), 30.0)
+			draw_line(trace_start, traced_to, Color(1.0, 0.08, 0.38, intro_alpha), 7.0)
+			draw_line(trace_start + Vector2(0, 15), traced_to + Vector2(0, 15), Color(0.28, 0.85, 1.0, 0.82 * intro_alpha), 2.0)
+			var portrait_alpha = clampf((effect_time - 0.06) / 0.2, 0.0, 1.0) * intro_alpha
+			if portrait_texture && portrait_alpha > 0.0:
+				draw_texture_rect_region(portrait_texture, Rect2(-24, 218, 350, 398), Rect2(104, 28, 292, 332), Color(1.0, 1.0, 1.0, portrait_alpha))
+				draw_line(Vector2(302, 214), Vector2(302, 616), Color(1.0, 0.16, 0.43, 0.8 * portrait_alpha), 5.0)
+			var font = ThemeDB.fallback_font
+			draw_string(font, Vector2(314, 174), "PENTAGRAM FORCE", HORIZONTAL_ALIGNMENT_CENTER, 770, 52, Color(1.0, 0.92, 0.68, intro_alpha))
+			draw_string(font, Vector2(416, 213), "15 HIT SUPER", HORIZONTAL_ALIGNMENT_CENTER, 500, 19, Color(0.45, 0.86, 1.0, 0.94 * intro_alpha))
+
+		if pentagram_reveal <= 0.0:
+			return
+		var reveal = smoothstep(0.0, 1.0, pentagram_reveal)
+		var pulse = 1.0 + sin(effect_time * 5.2) * 0.025
+		var center = Vector2(576, 326)
+		var radius = lerpf(24.0, 218.0, reveal) * pulse
 		for glow_index in range(4, 0, -1):
-			var glow_alpha = (0.055 + energy * 0.055) * float(5 - glow_index)
-			draw_arc(center, radius + glow_index * 8.0, 0.0, TAU, 96, Color(0.9, 0.05, 0.45, glow_alpha), glow_index * 5.0)
-		draw_arc(center, radius + 12.0, spin, spin + TAU * 0.78, 72, Color(0.3, 0.88, 1.0, 0.9), 4.0)
-		draw_arc(center, radius, 0.0, TAU, 96, Color(1.0, 0.14, 0.46, 0.95), 6.0)
+			var glow_alpha = (0.025 + energy * 0.025) * float(5 - glow_index) * reveal
+			draw_arc(center, radius + glow_index * 9.0, 0.0, TAU, 96, Color(0.95, 0.04, 0.34, glow_alpha), glow_index * 5.0)
+		draw_arc(center, radius + 13.0, spin, spin + TAU * 0.72, 72, Color(0.24, 0.82, 1.0, 0.82 * reveal), 4.0)
+		draw_arc(center, radius, 0.0, TAU, 96, Color(1.0, 0.12, 0.36, reveal), 7.0)
 		var outer_points:PackedVector2Array = []
 		for point_index in 5:
 			outer_points.append(center + Vector2.from_angle(spin + float(point_index) * TAU / 5.0) * radius)
@@ -102,18 +134,28 @@ class SpecialOverlay:
 		var star_points:PackedVector2Array = []
 		for point_index in star_order:
 			star_points.append(outer_points[point_index])
-		draw_polyline(star_points, Color(0.22, 0.02, 0.25, 0.75), 18.0, true)
-		draw_polyline(star_points, Color(1.0, 0.08, 0.37, 0.98), 7.0, true)
-		draw_polyline(star_points, Color(1.0, 0.82, 0.4, 0.92), 2.0, true)
+		draw_polyline(star_points, Color(0.18, 0.015, 0.08, 0.82 * reveal), 22.0, true)
+		draw_polyline(star_points, Color(1.0, 0.06, 0.28, reveal), 9.0, true)
+		var blood_stain_count = int(round(blood_level * 34.0))
+		for stain_index in blood_stain_count:
+			var local_angle = fmod(float(stain_index) * 2.399963 + 0.35, TAU)
+			var distance_factor = 0.14 + absf(sin(float(stain_index) * 1.731)) * 0.72
+			var stain_position = center + Vector2.from_angle(local_angle + spin) * radius * distance_factor
+			var stain_radius = 3.5 + fmod(float(stain_index) * 3.17, 8.5)
+			draw_circle(stain_position, stain_radius, Color(0.42, 0.0, 0.035, 0.82 * reveal))
+			draw_circle(stain_position + Vector2.from_angle(local_angle * 1.7) * stain_radius * 0.7, stain_radius * 0.48, Color(0.78, 0.015, 0.06, 0.76 * reveal))
+		draw_polyline(star_points, Color(1.0, 0.76, 0.34, 0.88 * reveal), 2.0, true)
 		for point in outer_points:
-			draw_circle(point, 8.0 + energy * 8.0, Color(0.4, 0.9, 1.0, 0.95))
-			draw_circle(point, 3.0 + energy * 4.0, Color.WHITE)
-		if energy > 0.35:
-			var lightning_count = 3 + int(energy * 8.0)
+			draw_circle(point, 8.0 + energy * 5.0, Color(0.4, 0.9, 1.0, 0.92 * reveal))
+			draw_circle(point, 3.0 + energy * 3.0, Color(1.0, 1.0, 1.0, reveal))
+		if impact_flash > 0.0:
+			draw_arc(center, radius + 22.0 + impact_flash * 18.0, 0.0, TAU, 96, Color(1.0, 0.82, 0.88, impact_flash * 0.72), 5.0)
+		if energy > 0.42:
+			var lightning_count = 2 + int(energy * 4.0)
 			for bolt_index in lightning_count:
-				var bolt_angle = spin * (1.0 + bolt_index * 0.025) + float(bolt_index) * TAU / float(lightning_count)
+				var bolt_angle = spin + float(bolt_index) * TAU / float(lightning_count)
 				var bolt_end = center + Vector2.from_angle(bolt_angle) * lerpf(radius * 0.65, 520.0, energy)
-				draw_lightning(center, bolt_end, bolt_index, energy)
+				draw_lightning(center, bolt_end, bolt_index, energy * reveal)
 
 	func draw_rush_motion_blur() -> void:
 		var font = ThemeDB.fallback_font
@@ -360,25 +402,27 @@ func start_pentagram_force() -> void:
 	player.play("attack_punch")
 	shake(8.0, 0.5)
 
-	await get_tree().create_timer(0.72, true, false, true).timeout
-	for pulse_index in 10:
+	await get_tree().create_timer(1.14, true, false, true).timeout
+	for pulse_index in PENTAGRAM_PULSE_COUNT:
 		if !is_inside_tree():
 			return
-		var progress = float(pulse_index + 1) / 10.0
+		var progress = float(pulse_index + 1) / float(PENTAGRAM_PULSE_COUNT)
 		special_overlay.set("energy", progress)
+		special_overlay.call("register_pentagram_hit", 0.034 + progress * 0.024)
 		apply_pentagram_damage_pulse(pulse_index, false)
 		if special_charge_sound:
-			special_charge_sound.pitch_scale = lerpf(0.9, 1.42, progress)
-		shake(lerpf(5.0, 14.0, progress), 0.18)
-		await get_tree().create_timer(lerpf(0.18, 0.075, progress), true, false, true).timeout
+			special_charge_sound.pitch_scale = lerpf(0.86, 1.18, progress)
+		shake(lerpf(4.0, 10.0, progress), 0.2)
+		await get_tree().create_timer(lerpf(0.27, 0.14, progress), true, false, true).timeout
 
 	if is_inside_tree():
 		special_overlay.set("energy", 1.0)
-		apply_pentagram_damage_pulse(10, true)
+		special_overlay.call("register_pentagram_hit", 0.22)
+		apply_pentagram_damage_pulse(PENTAGRAM_PULSE_COUNT, true)
 		spawn_blood_explosion(Vector2(camera.position.x, player_position.y - 40.0), 42)
 		shake(24.0, 0.7)
 		Input.start_joy_vibration(0, 0.85, 1.0, 0.55)
-		await get_tree().create_timer(0.58, true, false, true).timeout
+		await get_tree().create_timer(0.82, true, false, true).timeout
 	finish_player_special(previous_status, previous_zoom, previous_camera_position)
 
 func apply_pentagram_damage_pulse(pulse_index:int, finisher:bool) -> void:
@@ -387,27 +431,27 @@ func apply_pentagram_damage_pulse(pulse_index:int, finisher:bool) -> void:
 		var minion = minions[minion_index]
 		if minion.dead:
 			continue
-		var damage = maxf(7.0, minion.max_hp * (0.3 if finisher else 0.075))
+		var damage = maxf(1.0, minion.max_hp * (0.39 if finisher else 0.035))
 		minion.hp = maxf(0.0, minion.hp - damage)
 		minion.hit_pending = false
 		minion.attack_time = 0.0
 		minion.sprite.play("pain")
-		spawn_blood(minion.position + Vector2(0, -28), 18 if finisher else 7, hit_direction)
+		spawn_blood(minion.position + Vector2(0, -28), 24 if finisher else 5, hit_direction)
 		spawn_impact(minion.position + Vector2(0, -26), Color("70e7ff" if pulse_index % 2 == 0 else "ff2a8b"), hit_direction)
 		minions[minion_index] = minion
 		if minion.hp <= 0.0:
 			defeat_minion(minion_index)
 
 	if !enemy_dead:
-		var boss_damage = maxf(4.0, enemy_max_hp * (0.1 if finisher else 0.025))
+		var boss_damage = maxf(1.0, enemy_max_hp * (0.125 if finisher else 0.0125))
 		enemy_hp = maxf(0.0, enemy_hp - boss_damage)
 		enemy_hit_pending = false
 		enemy_attack_time = 0.0
 		enemy.play("pain")
-		spawn_blood(enemy_position + Vector2(0, -45), 28 if finisher else 10, hit_direction)
+		spawn_blood(enemy_position + Vector2(0, -45), 34 if finisher else 7, hit_direction)
 		spawn_impact(enemy_position + Vector2(0, -42), Color("fff176" if finisher else "b517ff"), hit_direction)
 		if hit_sound:
-			hit_sound.pitch_scale = lerpf(0.78, 1.35, float(pulse_index) / 10.0)
+			hit_sound.pitch_scale = lerpf(0.78, 1.25, float(pulse_index) / float(PENTAGRAM_PULSE_COUNT))
 			hit_sound.play()
 		if enemy_hp <= 0.0:
 			defeat_enemy()
