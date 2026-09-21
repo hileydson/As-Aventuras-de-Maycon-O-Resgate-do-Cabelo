@@ -15,12 +15,12 @@ const ENEMY_SCENES = {
 }
 
 const ENEMY_STATS = {
-	"1":{"name":"Camilita", "hp":70.0, "speed":145.0, "damage":12.0, "scale":1.05},
-	"2":{"name":"Bomba Pretti", "hp":110.0, "speed":120.0, "damage":17.0, "scale":1.0},
-	"3":{"name":"Fofo", "hp":140.0, "speed":105.0, "damage":20.0, "scale":1.12},
-	"4":{"name":"Xuruzika", "hp":90.0, "speed":185.0, "damage":14.0, "scale":0.95},
-	"5":{"name":"Manga", "hp":120.0, "speed":155.0, "damage":18.0, "scale":2.3},
-	"1001":{"name":"Seco", "hp":260.0, "speed":165.0, "damage":24.0, "scale":1.28}
+	"1":{"name":"Camilita", "hp":70.0, "speed":112.0, "damage":12.0, "scale":1.05},
+	"2":{"name":"Bomba Pretti", "hp":110.0, "speed":92.0, "damage":17.0, "scale":1.0},
+	"3":{"name":"Fofo", "hp":140.0, "speed":82.0, "damage":20.0, "scale":1.12},
+	"4":{"name":"Xuruzika", "hp":90.0, "speed":142.0, "damage":14.0, "scale":0.95},
+	"5":{"name":"Manga", "hp":120.0, "speed":118.0, "damage":18.0, "scale":2.3},
+	"1001":{"name":"Seco", "hp":260.0, "speed":125.0, "damage":24.0, "scale":1.28}
 }
 
 var player:AnimatedSprite2D
@@ -28,7 +28,9 @@ var enemy:AnimatedSprite2D
 var camera:Camera2D
 var stage_3d:CanvasLayer
 var background_layer:Node2D
+var hud_canvas:CanvasLayer
 var player_bar:ProgressBar
+var player_hp_label:Label
 var enemy_bar:ProgressBar
 var enemy_name_label:Label
 var status_label:Label
@@ -88,16 +90,21 @@ var transition_top:ColorRect
 var transition_bottom:ColorRect
 var transition_flash:ColorRect
 var intro_label:Label
+var pause_overlay:ColorRect
+var battle_paused:bool = false
+var dust_particles:Array[Dictionary] = []
+var enemy_dust_distance:float = 0.0
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	randomize()
 	enemy_id = Global.realtime_enemy_id if ENEMY_SCENES.has(Global.realtime_enemy_id) else "1"
 	player_max_hp = Global.realtime_hp_max
 	player_hp = clampf(Global.realtime_hp, 1.0, player_max_hp)
 	build_background()
 	build_fighters()
-	build_world_bars()
 	build_hud()
+	build_world_bars()
 	build_audio()
 	camera = Camera2D.new()
 	camera.position = Vector2(576, 324)
@@ -111,6 +118,7 @@ func _ready() -> void:
 	camera.make_current()
 	Global.battle_started = true
 	status_label.text = tr_text("DERROTE %s E AVANCE", "DEFEAT %s AND MOVE FORWARD") % enemy_name.to_upper()
+	set_world_audio_paused(true)
 	battle_song.play()
 	start_entry_sequence()
 	queue_redraw()
@@ -119,11 +127,13 @@ func build_background() -> void:
 	stage_3d = preload("res://scripts/realtime_battle_3d.gd").new()
 	stage_3d.theme_id = Global.realtime_arena_theme
 	stage_3d.arena_width = ARENA_WIDTH
+	stage_3d.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(stage_3d)
 	background_layer = preload("res://scripts/realtime_battle_background.gd").new()
 	background_layer.theme_id = Global.realtime_arena_theme
 	background_layer.arena_width = ARENA_WIDTH
 	background_layer.z_index = -100
+	background_layer.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(background_layer)
 
 func build_fighters() -> void:
@@ -134,6 +144,7 @@ func build_fighters() -> void:
 		player_base_scale = 205.0 / maxf(1.0, player_texture.get_height())
 	player.scale = Vector2(player_base_scale, player_base_scale)
 	player.play("idle_right")
+	player.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(player)
 
 	var stats:Dictionary = ENEMY_STATS[enemy_id]
@@ -149,6 +160,7 @@ func build_fighters() -> void:
 	if enemy_texture:
 		enemy_base_scale = (170.0 * float(stats.scale)) / maxf(1.0, enemy_texture.get_height())
 	enemy.scale = Vector2(enemy_base_scale, enemy_base_scale)
+	enemy.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(enemy)
 	update_fighter_transforms()
 
@@ -163,9 +175,10 @@ func sprite_from_scene(path:String, nested_sprite:bool) -> AnimatedSprite2D:
 	return sprite
 
 func build_world_bars() -> void:
-	player_bar = create_health_bar(Color("2dc653"), 118)
+	player_bar = create_health_bar(Color("b3132b"), 205)
+	player_bar.size = Vector2(205, 24)
 	enemy_bar = create_health_bar(Color("e63946"), 132)
-	add_child(player_bar)
+	hud_canvas.add_child(player_bar)
 	add_child(enemy_bar)
 	player_bar.max_value = player_max_hp
 	player_bar.value = player_hp
@@ -179,6 +192,14 @@ func build_world_bars() -> void:
 	enemy_name_label.add_theme_color_override("font_color", Color.WHITE)
 	enemy_name_label.z_index = 2000
 	add_child(enemy_name_label)
+	player_hp_label = Label.new()
+	player_hp_label.position = Vector2(42, 574)
+	player_hp_label.size = Vector2(205, 28)
+	player_hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	player_hp_label.add_theme_font_size_override("font_size", 18)
+	player_hp_label.add_theme_color_override("font_color", Color("ffd6dc"))
+	player_hp_label.z_index = 2000
+	hud_canvas.add_child(player_hp_label)
 
 func create_health_bar(color:Color, width:float) -> ProgressBar:
 	var bar = ProgressBar.new()
@@ -198,15 +219,15 @@ func create_health_bar(color:Color, width:float) -> ProgressBar:
 	return bar
 
 func build_hud() -> void:
-	var canvas = CanvasLayer.new()
-	canvas.layer = 20
-	add_child(canvas)
+	hud_canvas = CanvasLayer.new()
+	hud_canvas.layer = 20
+	add_child(hud_canvas)
 
 	var vignette = ColorRect.new()
 	vignette.anchor_right = 1.0
 	vignette.offset_bottom = 76.0
 	vignette.color = Color(0.02, 0.025, 0.04, 0.82)
-	canvas.add_child(vignette)
+	hud_canvas.add_child(vignette)
 
 	status_label = Label.new()
 	status_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
@@ -215,14 +236,7 @@ func build_hud() -> void:
 	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status_label.add_theme_font_size_override("font_size", 25)
 	status_label.add_theme_color_override("font_color", Color("ffd166"))
-	canvas.add_child(status_label)
-
-	var controls = Label.new()
-	controls.position = Vector2(20, 600)
-	controls.text = tr_text("SETAS/ANALÓGICO: mover  •  Q: soco  •  W: chute  •  ESPAÇO/A: esquiva", "ARROWS/STICK: move  •  Q: punch  •  W: kick  •  SPACE/A: dodge")
-	controls.add_theme_font_size_override("font_size", 16)
-	controls.add_theme_color_override("font_color", Color(0.85, 0.9, 1, 0.9))
-	canvas.add_child(controls)
+	hud_canvas.add_child(status_label)
 
 	combo_label = Label.new()
 	combo_label.position = Vector2(925, 92)
@@ -230,7 +244,7 @@ func build_hud() -> void:
 	combo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	combo_label.add_theme_font_size_override("font_size", 28)
 	combo_label.add_theme_color_override("font_color", Color("ff9f1c"))
-	canvas.add_child(combo_label)
+	hud_canvas.add_child(combo_label)
 
 	exit_label = Label.new()
 	exit_label.set_anchors_preset(Control.PRESET_CENTER)
@@ -240,25 +254,25 @@ func build_hud() -> void:
 	exit_label.add_theme_font_size_override("font_size", 30)
 	exit_label.add_theme_color_override("font_color", Color("80ed99"))
 	exit_label.visible = false
-	canvas.add_child(exit_label)
+	hud_canvas.add_child(exit_label)
 
 	transition_top = ColorRect.new()
 	transition_top.position = Vector2(0, 0)
 	transition_top.size = Vector2(1152, 324)
 	transition_top.color = Color("07070d")
 	transition_top.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	canvas.add_child(transition_top)
+	hud_canvas.add_child(transition_top)
 	transition_bottom = ColorRect.new()
 	transition_bottom.position = Vector2(0, 324)
 	transition_bottom.size = Vector2(1152, 324)
 	transition_bottom.color = Color("07070d")
 	transition_bottom.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	canvas.add_child(transition_bottom)
+	hud_canvas.add_child(transition_bottom)
 	transition_flash = ColorRect.new()
 	transition_flash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	transition_flash.color = Color(0.8, 0.05, 0.12, 0.0)
 	transition_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	canvas.add_child(transition_flash)
+	hud_canvas.add_child(transition_flash)
 	intro_label = Label.new()
 	intro_label.set_anchors_preset(Control.PRESET_CENTER)
 	intro_label.position = Vector2(-360, -35)
@@ -268,7 +282,34 @@ func build_hud() -> void:
 	intro_label.text = tr_text("ENTRANDO NA ARENA", "ENTERING THE ARENA")
 	intro_label.add_theme_font_size_override("font_size", 34)
 	intro_label.add_theme_color_override("font_color", Color("ffd166"))
-	canvas.add_child(intro_label)
+	hud_canvas.add_child(intro_label)
+	build_pause_overlay()
+
+func build_pause_overlay() -> void:
+	pause_overlay = ColorRect.new()
+	pause_overlay.position = Vector2.ZERO
+	pause_overlay.size = Vector2(1152, 648)
+	pause_overlay.color = Color(0.015, 0.02, 0.035, 0.88)
+	pause_overlay.z_index = 4000
+	pause_overlay.visible = false
+	pause_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	hud_canvas.add_child(pause_overlay)
+	var pause_title = Label.new()
+	pause_title.position = Vector2(276, 245)
+	pause_title.size = Vector2(600, 62)
+	pause_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	pause_title.text = tr_text("BATALHA PAUSADA", "BATTLE PAUSED")
+	pause_title.add_theme_font_size_override("font_size", 42)
+	pause_title.add_theme_color_override("font_color", Color("ffd166"))
+	pause_overlay.add_child(pause_title)
+	var pause_hint = Label.new()
+	pause_hint.position = Vector2(276, 320)
+	pause_hint.size = Vector2(600, 36)
+	pause_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	pause_hint.text = tr_text("ESC / START para continuar", "ESC / START to continue")
+	pause_hint.add_theme_font_size_override("font_size", 20)
+	pause_hint.add_theme_color_override("font_color", Color(0.88, 0.92, 1.0, 0.9))
+	pause_overlay.add_child(pause_hint)
 
 func start_entry_sequence() -> void:
 	player.modulate = Color(1, 1, 1, 0)
@@ -285,7 +326,7 @@ func start_entry_sequence() -> void:
 	tween.tween_property(camera, "zoom", Vector2.ONE, 1.25)
 
 func build_audio() -> void:
-	battle_song = create_audio("res://assets/novos_audios/battle.mp3", -8.0)
+	battle_song = create_audio("res://assets/novos_audios/battle.mp3", 1.8, true)
 	punch_sound = create_audio("res://assets/novos_audios/punch.mp3", -3.0)
 	kick_sound = create_audio("res://assets/novos_audios/kick.mp3", -3.0)
 	hit_sound = create_audio("res://assets/novos_audios/punch_3.mp3", -4.0)
@@ -293,14 +334,30 @@ func build_audio() -> void:
 	enemy_death_sound = create_audio("res://assets/novos_audios/doom_pain.mp3", -2.0)
 	victory_sound = create_audio("res://assets/novos_audios/victory_sound.mp3", -3.0)
 
-func create_audio(path:String, volume:float) -> AudioStreamPlayer:
+func create_audio(path:String, volume:float, looping:bool = false) -> AudioStreamPlayer:
 	var audio = AudioStreamPlayer.new()
-	audio.stream = load(path)
+	var stream_resource = load(path)
+	if looping:
+		stream_resource = stream_resource.duplicate()
+		if stream_resource is AudioStreamMP3:
+			stream_resource.loop = true
+	audio.stream = stream_resource
 	audio.volume_db = volume
+	audio.set("parameters/looping", looping)
 	add_child(audio)
 	return audio
 
+func set_world_audio_paused(paused:bool) -> void:
+	for audio_name in ["FireCracling", "SongFase1", "old_song_backup"]:
+		var world_audio = GameSongs.get_node_or_null(audio_name)
+		if world_audio is AudioStreamPlayer:
+			world_audio.stream_paused = paused
+
 func _process(delta:float) -> void:
+	if Input.is_action_just_pressed("ui_cancel") && intro_time <= 0.0 && !leaving && !player_dead:
+		toggle_battle_pause()
+	if battle_paused:
+		return
 	update_effects(delta)
 	update_shake(delta)
 	if stage_3d:
@@ -329,6 +386,14 @@ func _process(delta:float) -> void:
 		var visible_camera_center = camera.get_screen_center_position().x
 		background_layer.position.x = (visible_camera_center - 576.0) * 0.96
 	queue_redraw()
+
+func toggle_battle_pause() -> void:
+	battle_paused = !battle_paused
+	pause_overlay.visible = battle_paused
+	get_tree().paused = battle_paused
+	for child in get_children():
+		if child is AudioStreamPlayer:
+			child.stream_paused = battle_paused
 
 func update_player(delta:float) -> void:
 	player_attack_time = maxf(0.0, player_attack_time - delta)
@@ -490,6 +555,10 @@ func update_enemy(delta:float) -> void:
 
 func move_enemy(direction:Vector2, speed:float, delta:float) -> void:
 	enemy_position += direction * speed * delta
+	enemy_dust_distance += speed * delta
+	while enemy_dust_distance >= 24.0:
+		enemy_dust_distance -= 24.0
+		spawn_enemy_dust(enemy_position + Vector2(randf_range(-18.0, 18.0), 35.0))
 	if absf(direction.x) > 0.05:
 		enemy.flip_h = direction.x < 0.0
 	play_if_changed(enemy, "run" if enemy.sprite_frames.has_animation("run") else "idle")
@@ -620,6 +689,8 @@ func lose_battle() -> void:
 
 func finish_battle() -> void:
 	leaving = true
+	battle_paused = false
+	get_tree().paused = false
 	Engine.time_scale = 1.0
 	battle_song.stop()
 	Global.battle_started = false
@@ -643,7 +714,9 @@ func finish_battle() -> void:
 	get_tree().change_scene_to_file(destination)
 
 func _exit_tree() -> void:
+	get_tree().paused = false
 	Engine.time_scale = 1.0
+	set_world_audio_paused(false)
 
 func update_fighter_transforms() -> void:
 	player.position = player_position
@@ -658,10 +731,10 @@ func update_fighter_transforms() -> void:
 func update_bars() -> void:
 	player_bar.value = player_hp
 	enemy_bar.value = enemy_hp
-	player_bar.position = player_position + Vector2(-59, 58)
+	player_bar.position = Vector2(42, 603)
+	player_hp_label.text = tr_text("VIDA  %d / %d", "HEALTH  %d / %d") % [roundi(player_hp), roundi(player_max_hp)]
 	enemy_bar.position = enemy_position + Vector2(-66, -112)
 	enemy_name_label.position = enemy_position + Vector2(-80, -138)
-	player_bar.z_index = int(player_position.y) + 1
 	enemy_bar.z_index = int(enemy_position.y) + 1
 	enemy_name_label.z_index = int(enemy_position.y) + 1
 
@@ -682,6 +755,11 @@ func spawn_blood_explosion(origin:Vector2, amount:int) -> void:
 func spawn_impact(position_value:Vector2, color:Color) -> void:
 	impacts.append({"position":position_value, "life":0.22, "color":color})
 
+func spawn_enemy_dust(origin:Vector2) -> void:
+	for index in range(3):
+		var lifetime = randf_range(0.48, 0.82)
+		dust_particles.append({"position":origin + Vector2(randf_range(-12.0, 12.0), randf_range(-5.0, 5.0)), "velocity":Vector2(randf_range(-32.0, 32.0), randf_range(-58.0, -24.0)), "life":lifetime, "max_life":lifetime, "radius":randf_range(4.0, 9.0)})
+
 func update_effects(delta:float) -> void:
 	for index in range(droplets.size() - 1, -1, -1):
 		var drop = droplets[index]
@@ -698,6 +776,18 @@ func update_effects(delta:float) -> void:
 		impacts[index].life -= delta
 		if impacts[index].life <= 0.0:
 			impacts.remove_at(index)
+	for index in range(dust_particles.size() - 1, -1, -1):
+		var dust = dust_particles[index]
+		dust.life -= delta
+		if dust.life <= 0.0:
+			dust_particles.remove_at(index)
+			continue
+		dust.position += dust.velocity * delta
+		dust.velocity *= maxf(0.0, 1.0 - delta * 2.6)
+		dust.radius += delta * 8.0
+		dust_particles[index] = dust
+	while dust_particles.size() > 90:
+		dust_particles.pop_front()
 
 func shake(strength:float, duration:float) -> void:
 	shake_strength = maxf(shake_strength, strength)
@@ -723,6 +813,11 @@ func _draw() -> void:
 	for impact in impacts:
 		var progress = 1.0 - impact.life / 0.22
 		draw_arc(impact.position, 25.0 + progress * 38.0, -1.0, 1.0, 14, Color(impact.color, 1.0 - progress), 5.0)
+	for dust in dust_particles:
+		var dust_alpha = clampf(dust.life / dust.max_life, 0.0, 1.0) * 0.48
+		draw_set_transform(dust.position, 0.0, Vector2(1.45, 0.72))
+		draw_circle(Vector2.ZERO, dust.radius, Color(0.56, 0.48, 0.36, dust_alpha))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if exit_open:
 		draw_rect(Rect2(2470, 315, 90, 245), Color(0.18, 0.95, 0.45, 0.12))
 		draw_line(Vector2(2490, 340), Vector2(2490, 535), Color("80ed99"), 6)

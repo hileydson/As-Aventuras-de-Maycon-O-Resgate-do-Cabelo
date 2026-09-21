@@ -3482,13 +3482,13 @@ fase_1_castle_no_fire_2.gd::GDScript::4824505999164797345::1768258449::0::1::::<
 fase_1_outside_castle_again_no_fire_1.gd::GDScript::1469744552889768490::1770925133::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_outside_castle_again_no_fire_2.gd::GDScript::6243358031740958106::1770925133::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_outside_castle_again_no_fire_3.gd::GDScript::1824109410800073102::1770925133::0::1::::<>Sprite2D<><>0<>0<><>::
-game.gd::GDScript::676883979450412678::1770925133::0::1::::<>Node2D<><>0<>0<><>::
+game.gd::GDScript::676883979450412678::1789995246::0::1::::<>Node2D<><>0<>0<><>::
 game_songs.gd::GDScript::614287363896591786::1767636737::0::1::::<>Node2D<><>0<>0<><>::
 Global.gd::GDScript::2969336717215221737::1789994034::0::1::::<>Node<><>0<>0<><>::
 hp.gd::GDScript::5708940543160946882::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 intro_batalha_frozen_effect.gd::GDScript::6657063382709979058::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 intro_game.gd::GDScript::1191826035399765642::1767636737::0::1::::<>VideoStreamPlayer<><>0<>0<><>::
-intro_historia.gd::GDScript::126320934224770046::1767805402::0::1::::<>Control<><>0<>0<><>::
+intro_historia.gd::GDScript::126320934224770046::1789994986::0::1::::<>Control<><>0<>0<><>::
 intro_pacoca_producoes.gd::GDScript::605818693792145467::1769794257::0::1::::<>VideoStreamPlayer<><>0<>0<><>::
 intro_tunel.gd::GDScript::7450870303915689952::1767636737::0::1::::<>VideoStreamPlayer<><>0<>0<><>::
 language_selection.gd::GDScript::7109963240277074045::1789953371::0::1::::<>VBoxContainer<><>0<>0<><>::
@@ -3499,7 +3499,7 @@ maycon_fase.gd::GDScript::2636479185831734840::1770311722::0::1::::<>CharacterBo
 maycon_itens.gd::GDScript::3608571195747589650::1789961301::0::1::::<>Node2D<><>0<>0<><>::
 menu.gd::GDScript::6562768689195605607::1770984867::0::1::::<>Control<><>0<>0<><>::
 pause.gd::GDScript::7449233017950370426::1789961802::0::1::::<>Control<><>0<>0<><>::
-realtime_battle.gd::GDScript::7867064034200866415::1789994034::0::1::::<>Node2D<><>0<>0<><>::
+realtime_battle.gd::GDScript::7867064034200866415::1789994986::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_3d.gd::GDScript::2141243869699419406::1789961616::0::1::::<>CanvasLayer<><>0<>0<><>::
 realtime_battle_background.gd::GDScript::3540749457985720226::1789990764::0::1::::<>Node2D<><>0<>0<><>::
 sangue_fill.gd::GDScript::6760165581029737568::1789961722::0::1::::<>Area2D<><>0<>0<><>::
