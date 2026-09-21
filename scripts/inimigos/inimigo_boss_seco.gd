@@ -39,7 +39,8 @@ func _ready() -> void:
 	ref_inimigos = get_tree().root.find_child("inimigo_node", true, false)
 	
 	id_unico = get_tree().current_scene.name + "_" + str(get_path())
-	if Global.inimigos_mortos.has(id_unico):
+	if Global.inimigos_mortos.has(id_unico) or Global.game_events.get("seco_defeated", false):
+		visible = false
 		queue_free()
 		return
 	Global.prepare_realtime_enemy_respawn(self, id_unico)

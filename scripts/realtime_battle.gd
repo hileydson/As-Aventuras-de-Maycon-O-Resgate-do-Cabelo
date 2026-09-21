@@ -1526,6 +1526,14 @@ func defeat_enemy() -> void:
 	enemy_dead = true
 	enemy_hit_pending = false
 	clear_power_projectiles()
+	if enemy_id == "1001":
+		if !Global.realtime_enemy_spawn_id.is_empty():
+			Global.inimigos_mortos[Global.realtime_enemy_spawn_id] = true
+		if enemy_id == "1001":
+			Global.game_events["seco_defeated"] = true
+			Global.inimigos_mortos["Fase1BeforeCastle_/root/Fase1BeforeCastle/Inimigos/inimigo_boss_seco"] = true
+			Global.inimigos_mortos["fase_1_outside_castle_again_no_fire_2_/root/fase_1_outside_castle_again_no_fire_2/fase_1_before_castle/Inimigos/inimigo_boss_seco"] = true
+		Global.realtime_enemy_respawns.erase(Global.realtime_enemy_spawn_id)
 	enemy.visible = false
 	enemy_bar.visible = false
 	enemy_name_label.visible = false
@@ -1641,7 +1649,17 @@ func finish_battle() -> void:
 	var destination = Global.realtime_return_scene
 	if destination.is_empty():
 		destination = "res://scenes/menu.tscn"
-	Global.schedule_realtime_enemy_respawn()
+	if enemy_id == "1001":
+		if !Global.realtime_enemy_spawn_id.is_empty():
+			Global.inimigos_mortos[Global.realtime_enemy_spawn_id] = true
+		if enemy_id == "1001":
+			Global.game_events["seco_defeated"] = true
+			Global.inimigos_mortos["Fase1BeforeCastle_/root/Fase1BeforeCastle/Inimigos/inimigo_boss_seco"] = true
+			Global.inimigos_mortos["fase_1_outside_castle_again_no_fire_2_/root/fase_1_outside_castle_again_no_fire_2/fase_1_before_castle/Inimigos/inimigo_boss_seco"] = true
+		Global.realtime_enemy_respawns.erase(Global.realtime_enemy_spawn_id)
+		Global.realtime_enemy_spawn_id = ""
+	else:
+		Global.schedule_realtime_enemy_respawn()
 	get_tree().change_scene_to_file(destination)
 
 func _exit_tree() -> void:

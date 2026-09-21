@@ -5,10 +5,11 @@ const SPECIAL_RUSH_THRESHOLD:int = 20
 const SPECIAL_METER_MAX:int = 20
 const COMBO_MUSIC_STING_DURATION:float = 0.55
 const PENTAGRAM_PULSE_COUNT:int = 18
-const PENTAGRAM_CHARGE_DURATION:float = 7.0
+const PENTAGRAM_CHARGE_DURATION:float = 5.0
 const PENTAGRAM_REQUIRED_ROTATIONS:float = 5.0
 const PENTAGRAM_BASE_SPEED:float = 0.25
 const PENTAGRAM_MAX_SPEED:float = 3.6
+const PENTAGRAM_SLICE_INTERVAL:float = TAU / 5.0
 
 var special_hits:int = 0
 var special_active:bool = false
@@ -639,6 +640,15 @@ func register_rush_mash(button:String = "") -> void:
 
 func update_pentagram_rotation_input(delta:float) -> void:
 	var unscaled_delta = delta / maxf(Engine.time_scale, 0.001)
+
+	# Efeito visual de sangue e som de dano a cada volta/giro do pentagrama
+	if special_active && special_overlay && special_overlay.get("mode") == "pentagram" && !special_freeze_active:
+		var delta_rot = absf(pentagram_spin_speed) * unscaled_delta
+		pentagram_accumulated_rotation += delta_rot
+		while pentagram_accumulated_rotation >= PENTAGRAM_SLICE_INTERVAL:
+			pentagram_accumulated_rotation -= PENTAGRAM_SLICE_INTERVAL
+			trigger_pentagram_rotation_slice()
+
 	if !pentagram_rotation_enabled:
 		if pentagram_is_near_end:
 			pentagram_spin_speed = maxf(pentagram_spin_speed, pentagram_peak_speed)
@@ -670,9 +680,9 @@ func update_pentagram_rotation_input(delta:float) -> void:
 			var input_rate = rotation_amount / maxf(unscaled_delta, 0.001)
 			
 			var current_ratio = clampf((pentagram_spin_speed - PENTAGRAM_BASE_SPEED) / (PENTAGRAM_MAX_SPEED - PENTAGRAM_BASE_SPEED), 0.0, 1.0)
-			var resistance = 1.0 - pow(current_ratio, 1.6) * 0.62
-			var rate_factor = clampf(input_rate / 7.5, 0.4, 1.6)
-			var accel = rotation_amount * 0.14 * resistance * rate_factor
+			var resistance = 1.0 - pow(current_ratio, 1.25) * 0.72
+			var rate_factor = clampf(input_rate / 8.0, 0.35, 1.4)
+			var accel = rotation_amount * 0.062 * resistance * rate_factor
 			
 			pentagram_spin_speed = clampf(pentagram_spin_speed + accel, PENTAGRAM_BASE_SPEED, PENTAGRAM_MAX_SPEED)
 			pentagram_peak_speed = maxf(pentagram_peak_speed, pentagram_spin_speed)
@@ -683,6 +693,26 @@ func update_pentagram_rotation_input(delta:float) -> void:
 			if special_overlay:
 				special_overlay.call("add_pentagram_rotation", angle_delta, pentagram_charge, pentagram_input_activity, pentagram_spin_speed, pentagram_spin_direction)
 	pentagram_last_stick = stick
+
+func trigger_pentagram_rotation_slice() -> void:
+	var slice_dir = pentagram_spin_direction
+	if !enemy_dead:
+		spawn_blood(enemy_position + Vector2(0, -45), randi_range(6, 10), slice_dir)
+		spawn_impact(enemy_position + Vector2(randf_range(-16.0, 16.0), randf_range(-52.0, -32.0)), Color("fff176"), slice_dir)
+		enemy.play("pain")
+	for minion_index in minions.size():
+		var minion = minions[minion_index]
+		if !minion.dead:
+			spawn_blood(minion.position + Vector2(0, -28), randi_range(4, 7), slice_dir)
+			spawn_impact(minion.position + Vector2(randf_range(-12.0, 12.0), randf_range(-34.0, -20.0)), Color("ff2a8b"), slice_dir)
+			minion.sprite.play("pain")
+	if special_overlay:
+		special_overlay.call("register_pentagram_hit", 0.02)
+	if hit_sound:
+		hit_sound.pitch_scale = randf_range(0.92, 1.18)
+		hit_sound.play()
+	Input.start_joy_vibration(0, 0.22, 0.32, 0.08)
+	shake(2.0, 0.09)
 
 func resolve_player_hit(kick:bool) -> void:
 	var previous_combo = combo
@@ -953,7 +983,7 @@ func start_pentagram_force() -> void:
 			return
 		await get_tree().create_timer(0.1, true, false, true).timeout
 		charge_elapsed += 0.1
-		if !pentagram_is_near_end && (charge_elapsed >= (PENTAGRAM_CHARGE_DURATION - 1.8) || pentagram_charge >= 0.96):
+		if !pentagram_is_near_end && (charge_elapsed >= (PENTAGRAM_CHARGE_DURATION - 1.4) || pentagram_charge >= 0.96):
 			pentagram_is_near_end = true
 			if special_overlay:
 				special_overlay.call("set_near_end", true)

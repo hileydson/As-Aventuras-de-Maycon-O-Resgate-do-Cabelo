@@ -52,14 +52,14 @@ var default_language:String = language_pt_br
 var maycon_hp_count:int = 0
 var maycon_itens_default = {axe=false}
 var game_stage_1_events_died_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
-axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=true, first_battle=false, before_prologo=false}
+axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=true, first_battle=false, before_prologo=false}
 var game_stage_outside_1_events_died_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
-axe_taken=true, gilhotina_broken=true, seco_break_capsule=false, seco_first_scene_castle=true, first_battle=false, before_prologo=false}
+axe_taken=true, gilhotina_broken=true, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=true, first_battle=false, before_prologo=false}
 var maycon_itens = {axe=false}
 var game_events_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
-axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
+axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
 var game_events = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
-axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
+axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
 var inimigos_mortos = {}
 var realtime_enemy_respawns:Dictionary = {}
 
@@ -266,6 +266,9 @@ func register_enemy_encounter(enemy_spawn_id:String) -> void:
 
 func schedule_realtime_enemy_respawn() -> void:
 	if battle_mode != battle_mode_realtime || realtime_enemy_spawn_id.is_empty():
+		return
+	if realtime_enemy_id == "1001" || realtime_enemy_spawn_id.contains("inimigo_boss_seco") || realtime_enemy_spawn_id.contains("boss"):
+		realtime_enemy_spawn_id = ""
 		return
 	realtime_enemy_respawns[realtime_enemy_spawn_id] = Time.get_ticks_msec() + int(realtime_enemy_respawn_seconds * 1000.0)
 	realtime_enemy_spawn_id = ""

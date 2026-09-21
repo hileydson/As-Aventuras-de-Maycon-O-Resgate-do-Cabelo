@@ -128,6 +128,10 @@ func victory()->void:
 	
 	if !boss_song :
 		victory_sound.play()
+	if Global.battle_next_enemy == "1001" or Global.battle_next_boss == 1001:
+		Global.game_events["seco_defeated"] = true
+		Global.inimigos_mortos["Fase1BeforeCastle_/root/Fase1BeforeCastle/Inimigos/inimigo_boss_seco"] = true
+		Global.inimigos_mortos["fase_1_outside_castle_again_no_fire_2_/root/fase_1_outside_castle_again_no_fire_2/fase_1_before_castle/Inimigos/inimigo_boss_seco"] = true
 	
 	await self.player_clicou
 	fade.get_node("Transition").play("fade_out")
