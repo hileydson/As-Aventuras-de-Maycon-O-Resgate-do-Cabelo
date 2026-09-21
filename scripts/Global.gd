@@ -239,11 +239,20 @@ func capture_realtime_return_state(scene:Node) -> void:
 	realtime_return_player_path = NodePath("")
 	if scene == null:
 		return
-	var player_node = scene.find_child("maycon_fase", true, false)
+	var player_node = find_realtime_player(scene)
 	if player_node is Node2D:
 		realtime_return_player_path = scene.get_path_to(player_node)
 		realtime_return_player_position = player_node.global_position
 		realtime_return_position_valid = true
+
+func find_realtime_player(scene:Node) -> Node:
+	if scene == null:
+		return null
+	for player_name in ["maycon_fase", "Maycon"]:
+		var player_node = scene.find_child(player_name, true, false)
+		if player_node is Node2D:
+			return player_node
+	return null
 
 func request_realtime_position_restore() -> void:
 	if realtime_return_position_valid:
@@ -298,7 +307,7 @@ func restore_realtime_player_position() -> void:
 		return
 	var player_node = get_tree().current_scene.get_node_or_null(realtime_return_player_path)
 	if !(player_node is Node2D):
-		player_node = get_tree().current_scene.find_child("maycon_fase", true, false)
+		player_node = find_realtime_player(get_tree().current_scene)
 	if player_node is Node2D:
 		player_node.global_position = realtime_return_player_position
 		if player_node is CharacterBody2D:

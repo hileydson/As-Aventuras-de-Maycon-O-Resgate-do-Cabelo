@@ -43,6 +43,7 @@ var hit_sound:AudioStreamPlayer
 var hurt_sound:AudioStreamPlayer
 var enemy_death_sound:AudioStreamPlayer
 var victory_sound:AudioStreamPlayer
+var dash_sound:AudioStreamPlayer
 
 var player_position := Vector2(280, 500)
 var enemy_position := Vector2(1060, 475)
@@ -58,11 +59,13 @@ var player_base_scale:float = 2.6
 var enemy_base_scale:float = 1.0
 
 var player_attack_time:float = 0.0
+var player_facing:float = 1.0
 var player_invulnerability:float = 0.0
 var dodge_time:float = 0.0
 var dodge_cooldown:float = 0.0
 var dodge_direction := Vector2.RIGHT
 var enemy_attack_time:float = 0.0
+var enemy_attack_hit_time:float = 0.0
 var enemy_cooldown:float = 0.8
 var enemy_hit_pending:bool = false
 var enemy_dead:bool = false
@@ -333,6 +336,7 @@ func build_audio() -> void:
 	hurt_sound = create_audio("res://assets/novos_audios/hurt_sound.mp3", -3.0)
 	enemy_death_sound = create_audio("res://assets/novos_audios/doom_pain.mp3", -2.0)
 	victory_sound = create_audio("res://assets/novos_audios/victory_sound.mp3", -3.0)
+	dash_sound = create_audio("res://assets/audio/peido.mp3", -18.0)
 
 func create_audio(path:String, volume:float, looping:bool = false) -> AudioStreamPlayer:
 	var audio = AudioStreamPlayer.new()
@@ -384,7 +388,7 @@ func _process(delta:float) -> void:
 	camera.position.x = clamp(player_position.x + 260.0, 576.0, ARENA_WIDTH - 576.0)
 	if background_layer:
 		var visible_camera_center = camera.get_screen_center_position().x
-		background_layer.position.x = (visible_camera_center - 576.0) * 0.96
+		background_layer.position.x = (visible_camera_center - 576.0) * 0.90
 	queue_redraw()
 
 func toggle_battle_pause() -> void:
@@ -421,7 +425,9 @@ func update_player(delta:float) -> void:
 			var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 			if direction.length() > 0.1:
 				player_position += direction.normalized() * PLAYER_SPEED * delta
-				player.flip_h = direction.x < 0.0 if absf(direction.x) > 0.05 else player.flip_h
+				if absf(direction.x) > 0.05:
+					player_facing = signf(direction.x)
+					player.flip_h = player_facing < 0.0
 				play_if_changed(player, "right")
 			else:
 				play_if_changed(player, "idle_right")
@@ -431,48 +437,56 @@ func update_player(delta:float) -> void:
 func start_dodge() -> void:
 	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if input_direction.length() < 0.1:
-		input_direction = Vector2.LEFT if player.flip_h else Vector2.RIGHT
+		input_direction = Vector2(player_facing, 0.0)
 	dodge_direction = input_direction.normalized()
+	if absf(dodge_direction.x) > 0.05:
+		player_facing = signf(dodge_direction.x)
+		player.flip_h = player_facing < 0.0
 	dodge_time = 0.24
 	dodge_cooldown = 0.72
 	player_invulnerability = 0.34
+	dash_sound.pitch_scale = randf_range(0.94, 1.04)
+	dash_sound.play()
 	spawn_impact(player_position + Vector2(0, 25), Color("7bdff2"))
 
 func start_player_attack(kick:bool) -> void:
-	player_attack_time = 0.42 if kick else 0.32
-	player.flip_h = enemy_position.x < player_position.x
-	player.play("attack_kick" if kick else "attack_punch")
+	var attack_name = "attack_kick" if kick else "attack_punch"
+	player_attack_time = get_sprite_animation_duration(player, attack_name, 0.32, 0.75)
+	player_facing = -1.0 if enemy_position.x < player_position.x else 1.0
+	player.flip_h = player_facing < 0.0
+	player.play(attack_name)
 	var attack_sound = kick_sound if kick else punch_sound
 	attack_sound.pitch_scale = randf_range(0.94, 1.06)
 	attack_sound.play()
-	var facing = -1.0 if player.flip_h else 1.0
-	spawn_impact(player_position + Vector2(60.0 * facing, -35), Color("ffd166"))
+	spawn_impact(player_position + Vector2(60.0 * player_facing, -35), Color("ffd166"))
 	resolve_player_hit(kick)
 
 func resolve_player_hit(kick:bool) -> void:
 	if enemy_dead:
 		return
 	var distance = enemy_position - player_position
-	var facing_ok = signf(distance.x) == (-1.0 if player.flip_h else 1.0)
+	var facing_ok = distance.x * player_facing >= 0.0
 	if absf(distance.x) <= (145.0 if kick else 115.0) && absf(distance.y) <= 64.0 && facing_ok:
+		var enemy_was_attacking = enemy_attack_time > 0.0
 		var damage = 19.0 if kick else 13.0
 		combo += 1
 		combo_timeout = 2.2
 		damage += minf(combo * 1.5, 10.0)
 		enemy_hp = maxf(0.0, enemy_hp - damage)
-		enemy_position.x += (-1.0 if player.flip_h else 1.0) * (42.0 if kick else 25.0)
-		enemy.play("pain")
+		enemy_position.x += player_facing * (42.0 if kick else 25.0)
+		if !enemy_was_attacking:
+			enemy.play("pain")
 		enemy_pressure += 2 if kick else 1
 		hit_sound.pitch_scale = randf_range(0.9, 1.13)
 		hit_sound.play()
-		spawn_blood(enemy_position + Vector2(0, -45), 13 if kick else 8, (-1.0 if player.flip_h else 1.0))
+		spawn_blood(enemy_position + Vector2(0, -45), 13 if kick else 8, player_facing)
 		shake(5.0 if kick else 3.0, 0.18)
 		combo_label.text = "%d HIT\nCOMBO" % combo if combo > 1 else ""
 		if enemy_hp <= 0.0:
 			defeat_enemy()
-		elif enemy_pressure >= 3 && enemy_teleport_cooldown <= 0.0:
+		elif !enemy_was_attacking && enemy_pressure >= 3 && enemy_teleport_cooldown <= 0.0:
 			begin_enemy_teleport()
-		elif combo % 2 == 0:
+		elif !enemy_was_attacking && combo % 2 == 0:
 			begin_enemy_retreat()
 
 func update_enemy(delta:float) -> void:
@@ -482,7 +496,7 @@ func update_enemy(delta:float) -> void:
 	if enemy_attack_time > 0.0:
 		var previous = enemy_attack_time
 		enemy_attack_time = maxf(0.0, enemy_attack_time - delta)
-		if enemy_hit_pending && previous > 0.28 && enemy_attack_time <= 0.28:
+		if enemy_hit_pending && previous > enemy_attack_hit_time && enemy_attack_time <= enemy_attack_hit_time:
 			enemy_hit_pending = false
 			resolve_enemy_hit()
 		if enemy_attack_time <= 0.0:
@@ -615,12 +629,21 @@ func update_enemy_teleport(delta:float) -> void:
 			start_enemy_attack()
 
 func start_enemy_attack() -> void:
-	enemy_attack_time = 0.68
-	enemy_cooldown = randf_range(0.95, 1.55) if enemy_id != "1001" else randf_range(0.58, 1.0)
-	enemy_hit_pending = true
 	enemy.flip_h = player_position.x < enemy_position.x
 	var attack_name = "attack_2" if enemy.sprite_frames.has_animation("attack_2") && randf() > 0.5 else "attack"
+	enemy_attack_time = get_sprite_animation_duration(enemy, attack_name, 0.68, 4.8)
+	enemy_attack_hit_time = enemy_attack_time * 0.46
+	enemy_cooldown = randf_range(0.95, 1.55) if enemy_id != "1001" else randf_range(0.58, 1.0)
+	enemy_hit_pending = true
 	enemy.play(attack_name)
+	spawn_impact(enemy_position + Vector2((-48.0 if enemy.flip_h else 48.0), -42.0), Color("ff5d73"))
+
+func get_sprite_animation_duration(sprite:AnimatedSprite2D, animation_name:String, minimum:float, maximum:float) -> float:
+	var total_weight:float = 0.0
+	for frame_index in sprite.sprite_frames.get_frame_count(animation_name):
+		total_weight += sprite.sprite_frames.get_frame_duration(animation_name, frame_index)
+	var animation_speed = sprite.sprite_frames.get_animation_speed(animation_name)
+	return clampf(total_weight / maxf(animation_speed, 0.01), minimum, maximum)
 
 func resolve_enemy_hit() -> void:
 	if player_dead || player_invulnerability > 0.0:
@@ -635,6 +658,7 @@ func resolve_enemy_hit() -> void:
 		hurt_sound.play()
 		spawn_blood(player_position + Vector2(0, -35), 16, signf(distance.x))
 		shake(10.0, 0.38)
+		spawn_impact(player_position + Vector2(0, -38), Color("ff304f"))
 		Input.start_joy_vibration(0, 0.65, 0.85, 0.28)
 		if player_hp <= 0.0:
 			lose_battle()
@@ -642,7 +666,6 @@ func resolve_enemy_hit() -> void:
 func defeat_enemy() -> void:
 	enemy_dead = true
 	enemy_hit_pending = false
-	Global.schedule_realtime_enemy_respawn()
 	enemy.visible = false
 	enemy_bar.visible = false
 	enemy_name_label.visible = false
@@ -672,7 +695,7 @@ func update_enemy_explosion(delta:float) -> void:
 		status_label.text = tr_text("CAMINHO LIBERADO", "PATH CLEARED")
 
 func restore_normal_time_after_explosion() -> void:
-	await get_tree().create_timer(0.42, true, false, true).timeout
+	await get_tree().create_timer(0.72, true, false, true).timeout
 	Engine.time_scale = 1.0
 
 func lose_battle() -> void:
@@ -711,6 +734,7 @@ func finish_battle() -> void:
 	var destination = Global.realtime_return_scene
 	if destination.is_empty():
 		destination = "res://scenes/menu.tscn"
+	Global.schedule_realtime_enemy_respawn()
 	get_tree().change_scene_to_file(destination)
 
 func _exit_tree() -> void:
@@ -732,7 +756,7 @@ func update_bars() -> void:
 	player_bar.value = player_hp
 	enemy_bar.value = enemy_hp
 	player_bar.position = Vector2(42, 603)
-	player_hp_label.text = tr_text("VIDA  %d / %d", "HEALTH  %d / %d") % [roundi(player_hp), roundi(player_max_hp)]
+	player_hp_label.text = tr_text("VIDA", "HEALTH")
 	enemy_bar.position = enemy_position + Vector2(-66, -112)
 	enemy_name_label.position = enemy_position + Vector2(-80, -138)
 	enemy_bar.z_index = int(enemy_position.y) + 1
