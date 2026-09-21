@@ -24,12 +24,12 @@ const ENEMY_STATS = {
 }
 
 const ENEMY_POWER_STATS = {
-	"1":{"speed":620.0, "size":118.0, "damage":11.0, "color":"ffd166", "spin":5.5},
-	"2":{"speed":550.0, "size":78.0, "damage":15.0, "color":"ff7b54", "spin":4.4},
-	"3":{"speed":455.0, "size":96.0, "damage":18.0, "color":"b388ff", "spin":3.2},
-	"4":{"speed":720.0, "size":74.0, "damage":13.0, "color":"ff70a6", "spin":7.0},
-	"5":{"speed":525.0, "size":112.0, "damage":17.0, "color":"80ed99", "spin":2.8},
-	"1001":{"speed":690.0, "size":120.0, "damage":23.0, "color":"ef233c", "spin":5.8}
+	"1":{"speed":620.0, "size":180.0, "radius":34.0, "damage":11.0, "color":"ffd166", "spin":5.5},
+	"2":{"speed":550.0, "size":145.0, "radius":44.0, "damage":15.0, "color":"ff7b54", "spin":4.4},
+	"3":{"speed":455.0, "size":160.0, "radius":48.0, "damage":18.0, "color":"b388ff", "spin":3.2},
+	"4":{"speed":720.0, "size":135.0, "radius":38.0, "damage":13.0, "color":"ff70a6", "spin":7.0},
+	"5":{"speed":525.0, "size":175.0, "radius":52.0, "damage":17.0, "color":"80ed99", "spin":2.8},
+	"1001":{"speed":690.0, "size":190.0, "radius":56.0, "damage":23.0, "color":"ef233c", "spin":5.8}
 }
 
 var player:AnimatedSprite2D
@@ -622,8 +622,8 @@ func update_enemy(delta:float) -> void:
 func move_enemy(direction:Vector2, speed:float, delta:float) -> void:
 	enemy_position += direction * speed * delta
 	enemy_dust_distance += speed * delta
-	while enemy_dust_distance >= 10.0:
-		enemy_dust_distance -= 10.0
+	while enemy_dust_distance >= 16.0:
+		enemy_dust_distance -= 16.0
 		spawn_enemy_dust(enemy_position + Vector2(randf_range(-18.0, 18.0), 35.0))
 	if absf(direction.x) > 0.05:
 		enemy.flip_h = direction.x < 0.0
@@ -741,7 +741,7 @@ func spawn_enemy_power_projectile(power_variant:int, delay:float, spread:float) 
 		"delay":delay,
 		"life":3.2,
 		"damage":float(config.damage),
-		"radius":maxf(30.0, float(config.size) * 0.42),
+		"radius":float(config.radius),
 		"spin":float(config.spin) * (-1.0 if power_variant == 2 else 1.0),
 		"color":Color(config.color),
 		"trail_time":0.0
@@ -897,9 +897,9 @@ func spawn_impact(position_value:Vector2, color:Color) -> void:
 	impacts.append({"position":position_value, "life":0.22, "color":color})
 
 func spawn_enemy_dust(origin:Vector2) -> void:
-	for index in range(8):
-		var lifetime = randf_range(0.72, 1.28)
-		dust_particles.append({"position":origin + Vector2(randf_range(-24.0, 24.0), randf_range(-10.0, 8.0)), "velocity":Vector2(randf_range(-72.0, 72.0), randf_range(-125.0, -42.0)), "life":lifetime, "max_life":lifetime, "radius":randf_range(9.0, 21.0)})
+	for index in range(5):
+		var lifetime = randf_range(0.6, 1.0)
+		dust_particles.append({"position":origin + Vector2(randf_range(-18.0, 18.0), randf_range(-7.0, 6.0)), "velocity":Vector2(randf_range(-48.0, 48.0), randf_range(-85.0, -35.0)), "life":lifetime, "max_life":lifetime, "radius":randf_range(6.0, 14.0)})
 
 func update_effects(delta:float) -> void:
 	update_power_projectiles(delta)
@@ -928,7 +928,7 @@ func update_effects(delta:float) -> void:
 		dust.velocity *= maxf(0.0, 1.0 - delta * 2.6)
 		dust.radius += delta * 8.0
 		dust_particles[index] = dust
-	while dust_particles.size() > 240:
+	while dust_particles.size() > 140:
 		dust_particles.pop_front()
 	for index in range(power_trails.size() - 1, -1, -1):
 		var trail = power_trails[index]
@@ -1008,8 +1008,8 @@ func _draw() -> void:
 		var progress = 1.0 - impact.life / 0.22
 		draw_arc(impact.position, 25.0 + progress * 38.0, -1.0, 1.0, 14, Color(impact.color, 1.0 - progress), 5.0)
 	for dust in dust_particles:
-		var dust_alpha = clampf(dust.life / dust.max_life, 0.0, 1.0) * 0.76
-		draw_set_transform(dust.position, 0.0, Vector2(1.65, 0.78))
+		var dust_alpha = clampf(dust.life / dust.max_life, 0.0, 1.0) * 0.58
+		draw_set_transform(dust.position, 0.0, Vector2(1.5, 0.74))
 		draw_circle(Vector2.ZERO, dust.radius, Color(0.56, 0.48, 0.36, dust_alpha))
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	for trail in power_trails:

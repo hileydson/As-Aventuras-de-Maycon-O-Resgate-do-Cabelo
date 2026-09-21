@@ -21,7 +21,15 @@ func _ready() -> void:
 	Global.battle_next_enemy = "0"
 	Global.battle_background = "1"
 	
-	if Global.back_to_fase == true:
+	var returning_from_realtime = Global.realtime_restore_pending && Global.realtime_return_scene == get_tree().current_scene.scene_file_path
+	if returning_from_realtime:
+		animacoes.stop()
+		maycon_falling.visible = false
+		maycon_fase.visible = true
+		maycon_fase.global_position = Global.realtime_return_player_position
+		maycon_fase.velocity = Vector2.ZERO
+		camera.make_current()
+	elif Global.back_to_fase == true:
 		Global.back_to_fase = false
 		animacoes.play("maycon_back_to_fase")
 		await get_tree().create_timer(1.0).timeout

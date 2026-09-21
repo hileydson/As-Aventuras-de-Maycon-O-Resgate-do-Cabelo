@@ -145,4 +145,4 @@ func update_hp_display() -> void:
 		realtime_hp_bar.max_value = Global.realtime_hp_max
 		realtime_hp_bar.value = Global.realtime_hp
 		realtime_hp_label.visible = realtime
-		realtime_hp_label.text = "VIDA  %d / %d" % [roundi(Global.realtime_hp), roundi(Global.realtime_hp_max)] if Global.default_language == Global.language_pt_br else "HEALTH  %d / %d" % [roundi(Global.realtime_hp), roundi(Global.realtime_hp_max)]
+		realtime_hp_label.text = "VIDA" if Global.default_language == Global.language_pt_br else "HEALTH"
