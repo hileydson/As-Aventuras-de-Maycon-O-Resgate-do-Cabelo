@@ -233,6 +233,8 @@ var minion_sprite_frames_cache:Dictionary = {}
 var minion_hit_sound:AudioStreamPlayer
 var sword_waves:Array[Dictionary] = []
 var sword_wave_sound:AudioStreamPlayer
+var blood_drops:Array[Node2D] = []
+var blood_pickup_sound:AudioStreamPlayer
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -845,6 +847,11 @@ func defeat_minion(minion_index:int) -> void:
 	shake(6.0, 0.22)
 	minions[minion_index] = minion
 
+	# Capanga somente dropa item de sangue se o sangue do Maycon estiver abaixo de 80%
+	var hp_ratio = player_hp / maxf(1.0, player_max_hp)
+	if hp_ratio < 0.80:
+		spawn_blood_drop(minion.position)
+
 func defeat_all_minions() -> void:
 	for minion_index in minions.size():
 		var minion = minions[minion_index]
@@ -1037,6 +1044,7 @@ func build_audio() -> void:
 	enemy_teleport_sound = create_audio("res://assets/novos_audios/respaw.mp3", -4.0)
 	minion_hit_sound = create_audio("res://assets/novos_audios/punch_3.mp3", -5.0)
 	sword_wave_sound = create_audio("res://assets/novos_audios/inimigo_1_attack_magic.mp3", -3.5)
+	blood_pickup_sound = create_audio("res://assets/novos_audios/sangue_fill_effect.mp3", -1.5)
 
 func create_audio(path:String, volume:float, looping:bool = false) -> AudioStreamPlayer:
 	var audio = AudioStreamPlayer.new()
@@ -1086,6 +1094,7 @@ func _process(delta:float) -> void:
 	update_player(delta)
 	update_minions(delta)
 	update_sword_waves(delta)
+	update_blood_drops(delta)
 	if !enemy_dead:
 		update_enemy(delta)
 	else:
@@ -1241,7 +1250,7 @@ func resolve_player_hit(kick:bool) -> void:
 	var hit_minions = resolve_player_hit_minions(kick, is_special)
 
 	# Atualizacao do texto de combo no HUD superior
-	combo_label.text = ("%d HITS!\n%s" if is_special else "%d HIT\nCOMBO") % [combo, tr_text("ESPECIAL!", "SPECIAL!")]
+	combo_label.text = ("%d HITS!\n%s" % [combo, tr_text("ESPECIAL!", "SPECIAL!")]) if is_special else ("%d HIT\nCOMBO" % combo)
 	combo_label.add_theme_color_override("font_color", Color("ff2a5f") if is_special else Color("ff9f1c"))
 
 	# Pop-up flutuante numerico na frente do golpe do Maycon
@@ -1557,6 +1566,7 @@ func lose_battle() -> void:
 	status_label.text = tr_text("VOCÊ CAIU", "YOU FELL")
 	exit_label.visible = false
 	battle_song.stop()
+	clear_blood_drops()
 	
 	await get_tree().create_timer(1.1).timeout
 	
@@ -1605,6 +1615,7 @@ func lose_battle() -> void:
 
 func finish_battle() -> void:
 	leaving = true
+	clear_blood_drops()
 	battle_paused = false
 	get_tree().paused = false
 	Engine.time_scale = 1.0
@@ -1917,3 +1928,112 @@ func _draw() -> void:
 
 func tr_text(pt:String, en:String) -> String:
 	return en if Global.default_language == Global.language_en else pt
+
+func spawn_blood_drop(spawn_pos:Vector2) -> void:
+	var drop_x = clampf(spawn_pos.x, 150.0, ARENA_WIDTH - 150.0)
+	var drop_y = clampf(spawn_pos.y, MIN_Y + 12.0, MAX_Y + 15.0)
+	var safe_pos = Vector2(drop_x, drop_y)
+	
+	var drop_script = preload("res://scripts/realtime_battle_blood_drop.gd")
+	var drop_node = drop_script.new()
+	drop_node.setup(safe_pos)
+	add_child(drop_node)
+	blood_drops.append(drop_node)
+
+func update_blood_drops(_delta:float) -> void:
+	for i in range(blood_drops.size() - 1, -1, -1):
+		var drop = blood_drops[i]
+		if !is_instance_valid(drop):
+			blood_drops.remove_at(i)
+			continue
+		if drop.is_collected:
+			continue
+		# Colisão / sobreposição do Maycon com a gota de sangue
+		var dist = player_position.distance_to(drop.ground_position)
+		if dist <= 52.0:
+			collect_blood_drop(drop)
+			blood_drops.remove_at(i)
+
+func collect_blood_drop(drop:Node2D) -> void:
+	if !is_instance_valid(drop):
+		return
+	if drop.has_method("collect"):
+		drop.collect()
+		
+	# Recarrega 18% do sangue (vida máxima)
+	var heal_amount = player_max_hp * 0.18
+	player_hp = minf(player_max_hp, player_hp + heal_amount)
+	Global.realtime_hp = player_hp
+	update_bars()
+	
+	# Som característico de sangue / recarga
+	if blood_pickup_sound:
+		blood_pickup_sound.pitch_scale = randf_range(0.96, 1.05)
+		blood_pickup_sound.play()
+		
+	# Feedback visual de cura
+	spawn_heal_popup(player_position + Vector2(0, -68), tr_text("+18% SANGUE!", "+18% BLOOD!"))
+	spawn_heal_effects(player_position)
+
+func spawn_heal_popup(world_pos:Vector2, text_to_show:String) -> void:
+	var label = Label.new()
+	label.z_index = 860
+	label.position = world_pos + Vector2(-90.0, -32.0)
+	label.size = Vector2(180.0, 48.0)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.text = text_to_show
+	label.add_theme_font_size_override("font_size", 24)
+	label.add_theme_color_override("font_color", Color("57cc99"))
+	label.add_theme_color_override("font_outline_color", Color("132a13"))
+	label.add_theme_constant_override("outline_size", 6)
+	add_child(label)
+	var tween = create_tween().set_parallel(true)
+	label.scale = Vector2(1.7, 1.7)
+	label.pivot_offset = Vector2(90, 24)
+	tween.tween_property(label, "scale", Vector2.ONE, 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "position:y", world_pos.y - 65.0, 0.72).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 0.28).set_delay(0.44)
+	tween.chain().tween_callback(label.queue_free)
+
+func spawn_heal_effects(world_pos:Vector2) -> void:
+	# Flash suave e revigorante no sprite do Maycon
+	if player:
+		var tw = create_tween()
+		player.modulate = Color(1.8, 0.45, 0.6)
+		tw.tween_property(player, "modulate", Color.WHITE, 0.36).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		
+	# Pulso na barra de vida do HUD
+	if player_bar:
+		var bar_tw = create_tween()
+		player_bar.pivot_offset = player_bar.size * 0.5
+		player_bar.scale = Vector2(1.18, 1.18)
+		bar_tw.tween_property(player_bar, "scale", Vector2.ONE, 0.24).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		
+	# Anéis radiantes de energia (sangue e cura)
+	for i in range(3):
+		impacts.append({
+			"position": world_pos + Vector2(0, -30),
+			"life": 0.32 + i * 0.08,
+			"color": Color("ff2255") if i % 2 == 0 else Color("57cc99"),
+			"angle": randf_range(0.0, TAU)
+		})
+		
+	# Partículas flutuantes subindo ao redor do Maycon
+	for i in range(16):
+		var dust_life = randf_range(0.42, 0.7)
+		dust_particles.append({
+			"position": world_pos + Vector2(randf_range(-28, 28), randf_range(-55, 12)),
+			"velocity": Vector2(randf_range(-35, 35), randf_range(-190, -75)),
+			"life": dust_life,
+			"max_life": dust_life,
+			"radius": randf_range(5, 12)
+		})
+		
+	shake(3.0, 0.14)
+
+func clear_blood_drops() -> void:
+	for drop in blood_drops:
+		if is_instance_valid(drop):
+			drop.queue_free()
+	blood_drops.clear()
