@@ -19,7 +19,7 @@ const ENEMY_STATS = {
 	"2":{"name":"Bomba Pretti", "hp":110.0, "speed":120.0, "damage":17.0, "scale":1.0},
 	"3":{"name":"Fofo", "hp":140.0, "speed":105.0, "damage":20.0, "scale":1.12},
 	"4":{"name":"Xuruzika", "hp":90.0, "speed":185.0, "damage":14.0, "scale":0.95},
-	"5":{"name":"Manga", "hp":120.0, "speed":155.0, "damage":18.0, "scale":1.45},
+	"5":{"name":"Manga", "hp":120.0, "speed":155.0, "damage":18.0, "scale":2.3},
 	"1001":{"name":"Seco", "hp":260.0, "speed":165.0, "damage":24.0, "scale":1.28}
 }
 
@@ -35,8 +35,11 @@ var status_label:Label
 var combo_label:Label
 var exit_label:Label
 var battle_song:AudioStreamPlayer
+var punch_sound:AudioStreamPlayer
+var kick_sound:AudioStreamPlayer
 var hit_sound:AudioStreamPlayer
 var hurt_sound:AudioStreamPlayer
+var enemy_death_sound:AudioStreamPlayer
 var victory_sound:AudioStreamPlayer
 
 var player_position := Vector2(280, 500)
@@ -283,8 +286,11 @@ func start_entry_sequence() -> void:
 
 func build_audio() -> void:
 	battle_song = create_audio("res://assets/novos_audios/battle.mp3", -8.0)
+	punch_sound = create_audio("res://assets/novos_audios/punch.mp3", -3.0)
+	kick_sound = create_audio("res://assets/novos_audios/kick.mp3", -3.0)
 	hit_sound = create_audio("res://assets/novos_audios/punch_3.mp3", -4.0)
 	hurt_sound = create_audio("res://assets/novos_audios/hurt_sound.mp3", -3.0)
+	enemy_death_sound = create_audio("res://assets/novos_audios/doom_pain.mp3", -2.0)
 	victory_sound = create_audio("res://assets/novos_audios/victory_sound.mp3", -3.0)
 
 func create_audio(path:String, volume:float) -> AudioStreamPlayer:
@@ -321,7 +327,7 @@ func _process(delta:float) -> void:
 	camera.position.x = clamp(player_position.x + 260.0, 576.0, ARENA_WIDTH - 576.0)
 	if background_layer:
 		var visible_camera_center = camera.get_screen_center_position().x
-		background_layer.position.x = (visible_camera_center - 576.0) * 0.76
+		background_layer.position.x = (visible_camera_center - 576.0) * 0.96
 	queue_redraw()
 
 func update_player(delta:float) -> void:
@@ -371,6 +377,9 @@ func start_player_attack(kick:bool) -> void:
 	player_attack_time = 0.42 if kick else 0.32
 	player.flip_h = enemy_position.x < player_position.x
 	player.play("attack_kick" if kick else "attack_punch")
+	var attack_sound = kick_sound if kick else punch_sound
+	attack_sound.pitch_scale = randf_range(0.94, 1.06)
+	attack_sound.play()
 	var facing = -1.0 if player.flip_h else 1.0
 	spawn_impact(player_position + Vector2(60.0 * facing, -35), Color("ffd166"))
 	resolve_player_hit(kick)
@@ -564,9 +573,16 @@ func resolve_enemy_hit() -> void:
 func defeat_enemy() -> void:
 	enemy_dead = true
 	enemy_hit_pending = false
+	Global.schedule_realtime_enemy_respawn()
 	enemy.visible = false
 	enemy_bar.visible = false
 	enemy_name_label.visible = false
+	battle_song.stop()
+	enemy_death_sound.play()
+	if enemy_id != "1001":
+		victory_sound.play()
+	Engine.time_scale = 0.24
+	restore_normal_time_after_explosion()
 	spawn_blood_explosion(enemy_position + Vector2(0, -45), 96)
 	for index in range(7):
 		spawn_impact(enemy_position + Vector2(randf_range(-55, 55), randf_range(-95, 15)), Color("d90429"))
@@ -585,7 +601,10 @@ func update_enemy_explosion(delta:float) -> void:
 		exit_label.visible = true
 		exit_label.text = tr_text("VITÓRIA!  AVANCE PARA A SAÍDA  →", "VICTORY!  MOVE TO THE EXIT  →")
 		status_label.text = tr_text("CAMINHO LIBERADO", "PATH CLEARED")
-		victory_sound.play()
+
+func restore_normal_time_after_explosion() -> void:
+	await get_tree().create_timer(0.42, true, false, true).timeout
+	Engine.time_scale = 1.0
 
 func lose_battle() -> void:
 	player_dead = true
@@ -601,6 +620,7 @@ func lose_battle() -> void:
 
 func finish_battle() -> void:
 	leaving = true
+	Engine.time_scale = 1.0
 	battle_song.stop()
 	Global.battle_started = false
 	Global.back_to_main_camera = true
@@ -621,6 +641,9 @@ func finish_battle() -> void:
 	if destination.is_empty():
 		destination = "res://scenes/menu.tscn"
 	get_tree().change_scene_to_file(destination)
+
+func _exit_tree() -> void:
+	Engine.time_scale = 1.0
 
 func update_fighter_transforms() -> void:
 	player.position = player_position

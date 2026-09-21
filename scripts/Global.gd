@@ -4,6 +4,7 @@ const language_pt_br = "PT-BR"
 const language_en = "EN"
 const battle_mode_realtime = "realtime"
 const battle_mode_strategic = "strategic"
+const realtime_enemy_respawn_seconds:float = 75.0
 
 var load_from_castle_1:bool = false
 var load_from_outside_1:bool = false
@@ -21,6 +22,7 @@ var battle_next_boss:int = 0
 var battle_started:bool = false
 var battle_mode:String = battle_mode_realtime
 var realtime_enemy_id:String = "1"
+var realtime_enemy_spawn_id:String = ""
 var realtime_return_scene:String = ""
 var realtime_arena_theme:String = "forest_road"
 var realtime_hp_max:float = 210.0
@@ -59,6 +61,7 @@ axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_sc
 var game_events = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
 var inimigos_mortos = {}
+var realtime_enemy_respawns:Dictionary = {}
 
 func _process(_delta: float) -> void:
 	restore_realtime_player_position()
@@ -73,6 +76,7 @@ func reset_default_values()->void:
 	battle_started = false
 	battle_mode = battle_mode_realtime
 	realtime_enemy_id = "1"
+	realtime_enemy_spawn_id = ""
 	realtime_return_scene = ""
 	realtime_arena_theme = "forest_road"
 	realtime_hp = realtime_hp_max
@@ -97,6 +101,7 @@ func reset_default_values()->void:
 	maycon_itens = maycon_itens_default
 	game_events = game_events_default
 	inimigos_mortos = {}
+	realtime_enemy_respawns = {}
 
 func reset_save_to_castle_1()->void:
 	seco_danos_first_3d_battle = 0
@@ -244,6 +249,47 @@ func request_realtime_position_restore() -> void:
 	if realtime_return_position_valid:
 		realtime_restore_pending = true
 		realtime_restore_frames = 45
+
+func register_enemy_encounter(enemy_spawn_id:String) -> void:
+	realtime_enemy_spawn_id = enemy_spawn_id
+	if battle_mode == battle_mode_strategic:
+		inimigos_mortos[enemy_spawn_id] = true
+
+func schedule_realtime_enemy_respawn() -> void:
+	if battle_mode != battle_mode_realtime || realtime_enemy_spawn_id.is_empty():
+		return
+	realtime_enemy_respawns[realtime_enemy_spawn_id] = Time.get_ticks_msec() + int(realtime_enemy_respawn_seconds * 1000.0)
+	realtime_enemy_spawn_id = ""
+
+func prepare_realtime_enemy_respawn(enemy:CanvasItem, enemy_spawn_id:String) -> void:
+	if battle_mode != battle_mode_realtime || !realtime_enemy_respawns.has(enemy_spawn_id):
+		return
+	var remaining = get_realtime_enemy_respawn_remaining(enemy_spawn_id)
+	if remaining <= 0.0:
+		realtime_enemy_respawns.erase(enemy_spawn_id)
+		return
+	enemy.visible = false
+	enemy.process_mode = Node.PROCESS_MODE_DISABLED
+	get_tree().create_timer(remaining).timeout.connect(_finish_realtime_enemy_respawn.bind(weakref(enemy), enemy_spawn_id), CONNECT_ONE_SHOT)
+
+func get_realtime_enemy_respawn_remaining(enemy_spawn_id:String) -> float:
+	if !realtime_enemy_respawns.has(enemy_spawn_id):
+		return 0.0
+	return maxf(0.0, (int(realtime_enemy_respawns[enemy_spawn_id]) - Time.get_ticks_msec()) / 1000.0)
+
+func _finish_realtime_enemy_respawn(enemy_reference:WeakRef, enemy_spawn_id:String) -> void:
+	var remaining = get_realtime_enemy_respawn_remaining(enemy_spawn_id)
+	if remaining > 0.0:
+		get_tree().create_timer(remaining).timeout.connect(_finish_realtime_enemy_respawn.bind(enemy_reference, enemy_spawn_id), CONNECT_ONE_SHOT)
+		return
+	realtime_enemy_respawns.erase(enemy_spawn_id)
+	var enemy = enemy_reference.get_ref()
+	if !is_instance_valid(enemy):
+		return
+	enemy.visible = true
+	enemy.process_mode = Node.PROCESS_MODE_INHERIT
+	if enemy.has_method("resetEnemy"):
+		enemy.resetEnemy()
 
 func restore_realtime_player_position() -> void:
 	if !realtime_restore_pending || get_tree().current_scene == null:
