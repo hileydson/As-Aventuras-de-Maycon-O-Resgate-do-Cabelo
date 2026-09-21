@@ -145,6 +145,54 @@ const MINION_ANIMS = {
 	"roll":{"files":["_Roll.png"], "frames":12, "speed":12.0, "loop":false}
 }
 
+const DOG_VARIANTS = [
+	{
+		"id":"dog_shadow",
+		"name_pt":"Cão Sombrio",
+		"name_en":"Shadow Hound",
+		"path":"res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Black_Werewolf",
+		"modulate":Color(1.0, 1.0, 1.0, 1.0),
+		"trail_color":Color("b5179e"),
+		"scale":2.4,
+		"hp_min":55.0, "hp_max":72.0,
+		"speed_min":175.0, "speed_max":215.0,
+		"damage_min":13.0, "damage_max":17.0
+	},
+	{
+		"id":"dog_blood",
+		"name_pt":"Cão Carmesim",
+		"name_en":"Blood Hound",
+		"path":"res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf",
+		"modulate":Color(1.12, 0.95, 0.95, 1.0),
+		"trail_color":Color("ff3838"),
+		"scale":2.5,
+		"hp_min":65.0, "hp_max":85.0,
+		"speed_min":185.0, "speed_max":225.0,
+		"damage_min":15.0, "damage_max":20.0
+	},
+	{
+		"id":"dog_spectral",
+		"name_pt":"Cão Espectral",
+		"name_en":"Spectral Hound",
+		"path":"res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/White_Werewolf",
+		"modulate":Color(1.0, 1.05, 1.15, 1.0),
+		"trail_color":Color("4cc9f0"),
+		"scale":2.4,
+		"hp_min":50.0, "hp_max":68.0,
+		"speed_min":195.0, "speed_max":235.0,
+		"damage_min":12.0, "damage_max":16.0
+	}
+]
+
+const DOG_ANIMS = {
+	"idle":{"files":["Idle.png"], "frames":8, "speed":8.0, "loop":true},
+	"run":{"files":["Run.png"], "frames":9, "speed":12.0, "loop":true},
+	"hold":{"files":["Attack_2.png"], "frames":4, "speed":6.0, "loop":false},
+	"dash":{"files":["Run+Attack.png"], "frames":7, "speed":16.0, "loop":true},
+	"pain":{"files":["Hurt.png"], "frames":2, "speed":6.0, "loop":false},
+	"death":{"files":["Dead.png"], "frames":2, "speed":4.0, "loop":false}
+}
+
 var player:AnimatedSprite2D
 var enemy:AnimatedSprite2D
 var camera:Camera2D
@@ -239,6 +287,12 @@ var sword_wave_sound:AudioStreamPlayer
 var blood_drops:Array[Node2D] = []
 var blood_pickup_sound:AudioStreamPlayer
 var hit_stop_token:int = 0
+var dog_spawn_timer:float = 12.0
+var dog_dash_particles:Array[Dictionary] = []
+var dog_trail_segments:Array[Dictionary] = []
+var dog_sprite_frames_cache:Dictionary = {}
+var dog_growl_sound:AudioStreamPlayer
+var dog_dash_sound:AudioStreamPlayer
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -246,6 +300,7 @@ func _ready() -> void:
 	enemy_id = Global.realtime_enemy_id if ENEMY_SCENES.has(Global.realtime_enemy_id) else "1"
 	player_max_hp = Global.realtime_hp_max
 	player_hp = clampf(Global.realtime_hp, 1.0, player_max_hp)
+	dog_spawn_timer = randf_range(9.0, 13.0)
 	build_background()
 	build_fighters()
 	build_hud()
@@ -389,6 +444,33 @@ func build_minion_sprite_frames(variant_path:String) -> SpriteFrames:
 	minion_sprite_frames_cache[variant_path] = frames
 	return frames
 
+func build_dog_sprite_frames(variant_path:String) -> SpriteFrames:
+	if dog_sprite_frames_cache.has(variant_path):
+		return dog_sprite_frames_cache[variant_path]
+	var frames = SpriteFrames.new()
+	if frames.has_animation("default"):
+		frames.remove_animation("default")
+	for anim_name in DOG_ANIMS:
+		var anim_config:Dictionary = DOG_ANIMS[anim_name]
+		var sheet_texture:Texture2D = null
+		for file_name in anim_config.files:
+			var sheet_path = variant_path + "/" + file_name
+			sheet_texture = load_battle_texture(sheet_path)
+			if sheet_texture:
+				break
+		if !sheet_texture:
+			continue
+		frames.add_animation(anim_name)
+		frames.set_animation_speed(anim_name, anim_config.speed)
+		frames.set_animation_loop(anim_name, anim_config.loop)
+		for frame_index in anim_config.frames:
+			var atlas = AtlasTexture.new()
+			atlas.atlas = sheet_texture
+			atlas.region = Rect2(frame_index * 128, 0, 128, 128)
+			frames.add_frame(anim_name, atlas)
+	dog_sprite_frames_cache[variant_path] = frames
+	return frames
+
 func spawn_minions() -> void:
 	var minion_count = randi_range(3, 5) if enemy_id == "1001" else randi_range(2, 4)
 	var available_variants = MINION_VARIANTS.duplicate()
@@ -448,6 +530,328 @@ func spawn_minions() -> void:
 		}
 		minions.append(minion_data)
 
+func can_spawn_dogs() -> bool:
+	return enemy_id == "5" || enemy_id == "1001" || int(enemy_id) >= 5
+
+func spawn_hound_alert_popup(world_pos:Vector2, text_to_show:String) -> void:
+	var label = Label.new()
+	label.z_index = 860
+	label.position = world_pos + Vector2(-160.0, -28.0)
+	label.size = Vector2(320.0, 48.0)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.text = text_to_show
+	label.add_theme_font_size_override("font_size", 22)
+	label.add_theme_color_override("font_color", Color("ff5400"))
+	label.add_theme_color_override("font_outline_color", Color("2b0505"))
+	label.add_theme_constant_override("outline_size", 6)
+	add_child(label)
+	var tween = create_tween().set_parallel(true)
+	label.scale = Vector2(1.6, 1.6)
+	label.pivot_offset = Vector2(160, 24)
+	tween.tween_property(label, "scale", Vector2.ONE, 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "position:y", world_pos.y - 50.0, 0.75).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 0.28).set_delay(0.48)
+	tween.chain().tween_callback(label.queue_free)
+
+func update_dog_spawners(delta:float) -> void:
+	if !can_spawn_dogs() || enemy_dead || player_dead || intro_time > 0.0:
+		return
+	dog_spawn_timer -= delta
+	if dog_spawn_timer <= 0.0:
+		var active_dogs = 0
+		for m in minions:
+			if !m.dead && m.get("is_dog", false):
+				active_dogs += 1
+
+		var max_dogs = 2 if enemy_id == "5" else 3
+		if active_dogs < max_dogs:
+			var available_slots = max_dogs - active_dogs
+			var count_to_spawn = randi_range(1, 2) if enemy_id == "5" else randi_range(1, 3)
+			count_to_spawn = mini(count_to_spawn, available_slots)
+			spawn_battle_dogs(count_to_spawn)
+
+		dog_spawn_timer = randf_range(18.0, 26.0) if enemy_id == "5" else randf_range(14.0, 22.0)
+
+func spawn_battle_dogs(count:int) -> void:
+	if count <= 0:
+		return
+	if dog_growl_sound:
+		dog_growl_sound.pitch_scale = randf_range(0.85, 1.1)
+		dog_growl_sound.play()
+	shake(5.0, 0.25)
+
+	var alert_text = tr_text("CUIDADO! OS CÃES ESTÃO AVANÇANDO!", "WATCH OUT! THE HOUNDS ARE ADVANCING!")
+	if camera:
+		var cam_center = camera.get_screen_center_position()
+		spawn_hound_alert_popup(Vector2(cam_center.x, 210.0), alert_text)
+
+	for i in count:
+		var variant = DOG_VARIANTS[randi() % DOG_VARIANTS.size()]
+		var sprite_frames = build_dog_sprite_frames(variant.path)
+		var sprite = AnimatedSprite2D.new()
+		sprite.sprite_frames = sprite_frames
+		sprite.centered = true
+		sprite.offset = Vector2(0, -18)
+		sprite.modulate = variant.modulate
+		sprite.play("run")
+		sprite.process_mode = Node.PROCESS_MODE_PAUSABLE
+		add_child(sprite)
+
+		var side_sign = 1.0 if randf() < 0.5 else -1.0
+		var spawn_x = clampf(player_position.x + side_sign * randf_range(440.0, 680.0), 180.0, ARENA_WIDTH - 180.0)
+		var spawn_y = clampf(player_position.y + randf_range(-70.0, 70.0), MIN_Y + 15.0, MAX_Y - 15.0)
+
+		var dog_hp = randf_range(variant.hp_min, variant.hp_max)
+		var dog_data:Dictionary = {
+			"sprite":sprite,
+			"position":Vector2(spawn_x, spawn_y),
+			"hp":dog_hp,
+			"max_hp":dog_hp,
+			"speed":randf_range(variant.speed_min, variant.speed_max),
+			"damage":randf_range(variant.damage_min, variant.damage_max),
+			"dead":false,
+			"attack_time":0.0,
+			"attack_hit_time":0.0,
+			"hit_pending":false,
+			"cooldown":randf_range(1.4, 2.8),
+			"behavior":"approach",
+			"behavior_time":0.0,
+			"strafe_dir":Vector2.ZERO,
+			"variant":variant.id,
+			"style":"dog",
+			"name":tr_text(variant.name_pt, variant.name_en),
+			"facing":-side_sign,
+			"death_time":0.0,
+			"base_scale":variant.scale,
+			"base_modulate":variant.modulate,
+			"flash_modulate":null,
+			"hit_streak":0,
+			"hit_streak_timer":0.0,
+			"pending_retreat":false,
+			"retreat_delay":0.0,
+			"is_ranged":false,
+			"is_dog":true,
+			"dog_state":"approach",
+			"hold_time":0.0,
+			"hold_max_time":1.0,
+			"dash_duration":0.72,
+			"dash_time_left":0.0,
+			"dash_speed":880.0,
+			"dash_hit_done":false,
+			"dash_ghost_timer":0.0,
+			"last_dash_pos":Vector2.ZERO,
+			"dash_trail_points":[] as Array[Vector2],
+			"trail_color":variant.trail_color,
+			"recovery_time":0.0
+		}
+		minions.append(dog_data)
+		spawn_enemy_dust(Vector2(spawn_x, spawn_y))
+
+func update_dog_minion(minion:Dictionary, delta:float) -> void:
+	minion.cooldown = maxf(0.0, minion.cooldown - delta)
+	if minion.hit_streak_timer > 0.0:
+		minion.hit_streak_timer = maxf(0.0, minion.hit_streak_timer - delta)
+		if minion.hit_streak_timer <= 0.0:
+			minion.hit_streak = 0
+
+	var state = minion.get("dog_state", "approach")
+
+	if minion.attack_time > 0.0 && state != "dash" && state != "hold":
+		minion.attack_time = maxf(0.0, minion.attack_time - delta)
+		if minion.attack_time <= 0.0:
+			play_if_changed(minion.sprite, "run")
+		return
+
+	match state:
+		"approach":
+			update_dog_approach(minion, delta)
+		"hold":
+			update_dog_hold(minion, delta)
+		"dash":
+			update_dog_dash(minion, delta)
+		"recovery":
+			update_dog_recovery(minion, delta)
+
+func update_dog_approach(minion:Dictionary, delta:float) -> void:
+	var diff = player_position - minion.position
+	var dist_x = absf(diff.x)
+	var dist_y = absf(diff.y)
+
+	minion.sprite.flip_h = diff.x < 0.0
+	minion.facing = -1.0 if minion.sprite.flip_h else 1.0
+	play_if_changed(minion.sprite, "run")
+
+	var move_dir = Vector2(signf(diff.x), 0.0)
+	if dist_y > 16.0:
+		move_dir.y = signf(diff.y) * 0.75
+	move_dir = move_dir.normalized()
+
+	move_dog_minion(minion, move_dir, minion.speed, delta)
+
+	if dist_x >= 160.0 && dist_x <= 640.0 && dist_y <= 65.0 && minion.cooldown <= 0.0:
+		start_dog_hold(minion)
+	elif dist_x < 160.0 && minion.cooldown <= 0.0:
+		start_dog_hold(minion)
+
+func start_dog_hold(minion:Dictionary) -> void:
+	minion.dog_state = "hold"
+	minion.hold_time = randf_range(0.75, 1.05)
+	minion.hold_max_time = minion.hold_time
+	minion.sprite.flip_h = player_position.x < minion.position.x
+	minion.facing = -1.0 if minion.sprite.flip_h else 1.0
+	minion.dash_trail_points.clear()
+	play_if_changed(minion.sprite, "hold")
+	if dog_growl_sound:
+		dog_growl_sound.pitch_scale = randf_range(0.92, 1.18)
+		dog_growl_sound.play()
+	spawn_impact(minion.position + Vector2(24.0 * minion.facing, -18.0), minion.trail_color, minion.facing)
+
+func update_dog_hold(minion:Dictionary, delta:float) -> void:
+	minion.hold_time -= delta
+	var progress = 1.0 - (minion.hold_time / maxf(0.01, minion.hold_max_time))
+	var pulse = 1.0 + sin(progress * 28.0) * 0.45
+	var base_c = minion.base_modulate
+	minion.flash_modulate = Color(base_c.r * pulse, base_c.g * (0.6 + 0.4 * pulse), base_c.b * (0.6 + 0.4 * pulse), 1.0)
+
+	if randf() < 0.3:
+		spawn_enemy_dust(minion.position + Vector2(randf_range(-16, 16), randf_range(4, 12)))
+
+	if minion.hold_time <= 0.0:
+		minion.flash_modulate = null
+		start_dog_dash(minion)
+
+func start_dog_dash(minion:Dictionary) -> void:
+	minion.dog_state = "dash"
+	minion.dash_duration = 0.72
+	minion.dash_time_left = minion.dash_duration
+	minion.dash_speed = 880.0
+	minion.dash_hit_done = false
+	minion.dash_ghost_timer = 0.0
+	minion.last_dash_pos = minion.position
+	minion.dash_trail_points.clear()
+	minion.dash_trail_points.append(minion.position)
+	play_if_changed(minion.sprite, "dash")
+	if dog_dash_sound:
+		dog_dash_sound.pitch_scale = randf_range(1.05, 1.25)
+		dog_dash_sound.play()
+	shake(5.0, 0.2)
+	spawn_enemy_dust(minion.position)
+
+func update_dog_dash(minion:Dictionary, delta:float) -> void:
+	minion.dash_time_left -= delta
+	var prev_pos = minion.position
+	var step = minion.facing * minion.dash_speed * delta
+	minion.position.x += step
+	minion.position.x = clampf(minion.position.x, 140.0, ARENA_WIDTH - 140.0)
+
+	if prev_pos.distance_to(minion.position) > 6.0:
+		dog_trail_segments.append({
+			"p1":prev_pos + Vector2(0.0, -20.0),
+			"p2":minion.position + Vector2(0.0, -20.0),
+			"color":minion.trail_color,
+			"life":0.42,
+			"max_life":0.42,
+			"width":28.0
+		})
+
+	minion.dash_trail_points.append(minion.position)
+	if minion.dash_trail_points.size() > 12:
+		minion.dash_trail_points.remove_at(0)
+
+	minion.dash_ghost_timer -= delta
+	if minion.dash_ghost_timer <= 0.0:
+		minion.dash_ghost_timer = 0.04
+		spawn_dog_dash_ghost(minion)
+
+	if randf() < 0.65:
+		spawn_enemy_dust(minion.position + Vector2(-minion.facing * 30.0, randf_range(8, 14)))
+		dog_dash_particles.append({
+			"position":minion.position + Vector2(randf_range(-20, 20), randf_range(-36, 8)),
+			"velocity":Vector2(-minion.facing * randf_range(60, 180), randf_range(-35, 35)),
+			"color":minion.trail_color,
+			"radius":randf_range(8.0, 16.0),
+			"life":randf_range(0.24, 0.42),
+			"max_life":0.42
+		})
+
+	if !minion.dash_hit_done && !player_dead && player_invulnerability <= 0.0 && dodge_time <= 0.0:
+		var dist = minion.position.distance_to(player_position + Vector2(0, -28.0))
+		if dist <= 78.0 || (absf(minion.position.x - player_position.x) <= 85.0 && absf(minion.position.y - player_position.y) <= 45.0):
+			minion.dash_hit_done = true
+			damage_player(minion.damage, minion.facing)
+			spawn_blood(player_position + Vector2(0, -28), 16, minion.facing)
+			spawn_impact(minion.position + Vector2(minion.facing * 30, -18), minion.trail_color, minion.facing)
+			shake(8.5, 0.3)
+
+	if minion.dash_time_left <= 0.0 || minion.position.x <= 145.0 || minion.position.x >= ARENA_WIDTH - 145.0:
+		end_dog_dash(minion)
+
+func end_dog_dash(minion:Dictionary) -> void:
+	minion.dog_state = "recovery"
+	minion.recovery_time = randf_range(0.4, 0.6)
+	play_if_changed(minion.sprite, "idle")
+	spawn_enemy_dust(minion.position)
+	minion.cooldown = randf_range(3.4, 5.2)
+
+func update_dog_recovery(minion:Dictionary, delta:float) -> void:
+	minion.recovery_time -= delta
+	if minion.recovery_time <= 0.0:
+		minion.dog_state = "approach"
+
+func move_dog_minion(minion:Dictionary, direction:Vector2, speed:float, delta:float) -> void:
+	minion.position += direction * speed * delta
+	if absf(direction.x) > 0.05:
+		minion.facing = signf(direction.x)
+		minion.sprite.flip_h = minion.facing < 0.0
+	play_if_changed(minion.sprite, "run")
+	minion.position.x = clampf(minion.position.x, 150.0, ARENA_WIDTH - 100.0)
+	minion.position.y = clampf(minion.position.y, MIN_Y, MAX_Y)
+
+func spawn_dog_dash_ghost(minion:Dictionary) -> void:
+	if !is_instance_valid(minion.sprite) || !minion.sprite.sprite_frames:
+		return
+	var anim = minion.sprite.animation
+	var frame_idx = minion.sprite.frame
+	var frame_tex = minion.sprite.sprite_frames.get_frame_texture(anim, frame_idx)
+	if !frame_tex:
+		return
+
+	var ghost = Sprite2D.new()
+	ghost.texture = frame_tex
+	ghost.centered = minion.sprite.centered
+	ghost.offset = minion.sprite.offset
+	ghost.flip_h = minion.sprite.flip_h
+	ghost.position = minion.position
+	ghost.scale = minion.sprite.scale
+	ghost.z_index = max(1, int(minion.position.y) - 1)
+	ghost.modulate = Color(minion.trail_color.r * 1.3, minion.trail_color.g * 1.3, minion.trail_color.b * 1.3, 0.72)
+	ghost.process_mode = Node.PROCESS_MODE_PAUSABLE
+	add_child(ghost)
+
+	var tween = ghost.create_tween()
+	tween.tween_property(ghost, "modulate", Color(minion.trail_color.r, minion.trail_color.g, minion.trail_color.b, 0.0), 0.32).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_callback(ghost.queue_free)
+
+func update_dog_dash_effects(delta:float) -> void:
+	for i in range(dog_trail_segments.size() - 1, -1, -1):
+		var seg = dog_trail_segments[i]
+		seg.life -= delta
+		if seg.life <= 0.0:
+			dog_trail_segments.remove_at(i)
+		else:
+			dog_trail_segments[i] = seg
+
+	for i in range(dog_dash_particles.size() - 1, -1, -1):
+		var p = dog_dash_particles[i]
+		p.life -= delta
+		p.position += p.velocity * delta
+		p.velocity.x = move_toward(p.velocity.x, 0.0, 240.0 * delta)
+		if p.life <= 0.0:
+			dog_dash_particles.remove_at(i)
+		else:
+			dog_dash_particles[i] = p
+
 func update_minions(delta:float) -> void:
 	for minion_index in range(minions.size() - 1, -1, -1):
 		var minion = minions[minion_index]
@@ -462,7 +866,7 @@ func update_minions(delta:float) -> void:
 	var closest_melee_dist:float = 999999.0
 	for i in minions.size():
 		var m = minions[i]
-		if m.dead || m.get("is_ranged", false):
+		if m.dead || m.get("is_ranged", false) || m.get("is_dog", false):
 			continue
 		var dist = m.position.distance_to(player_position)
 		if (m.attack_time > 0.0 || m.behavior == "wait_attack") && dist < 180.0:
@@ -475,6 +879,10 @@ func update_minions(delta:float) -> void:
 	for minion_index in minions.size():
 		var minion = minions[minion_index]
 		if minion.dead:
+			continue
+		if minion.get("is_dog", false):
+			update_dog_minion(minion, delta)
+			minions[minion_index] = minion
 			continue
 		var can_melee = (active_melee_idx == -1 || active_melee_idx == minion_index)
 		update_single_minion(minion, can_melee, delta)
@@ -824,6 +1232,13 @@ func resolve_player_hit_minions(kick:bool, is_special:bool = false) -> bool:
 			minion.position.x += player_facing * base_push
 			minion.position.x = clampf(minion.position.x, 150.0, ARENA_WIDTH - 100.0)
 			minion.sprite.play("pain")
+			if minion.get("is_dog", false):
+				if is_special || minion.hit_streak >= 2:
+					if minion.dog_state == "hold":
+						minion.dog_state = "recovery"
+						minion.recovery_time = 0.45
+						minion.cooldown = randf_range(2.5, 4.0)
+						minion.flash_modulate = null
 			if minion_hit_sound:
 				minion_hit_sound.pitch_scale = 0.7 if is_special else randf_range(0.85, 1.15)
 				minion_hit_sound.play()
@@ -877,7 +1292,10 @@ func update_minion_transforms() -> void:
 			var death_alpha = clampf(minion.death_time / 0.8, 0.0, 1.0)
 			minion.sprite.modulate = Color(base_mod.r, base_mod.g, base_mod.b, death_alpha)
 		elif intro_time <= 0.0:
-			minion.sprite.modulate = base_mod
+			if minion.get("flash_modulate", null) != null:
+				minion.sprite.modulate = minion.flash_modulate
+			else:
+				minion.sprite.modulate = base_mod
 
 func build_world_bars() -> void:
 	player_bar = create_health_bar(Color("b3132b"), 205)
@@ -1050,6 +1468,8 @@ func build_audio() -> void:
 	minion_hit_sound = create_audio("res://assets/novos_audios/punch_3.mp3", -5.0)
 	sword_wave_sound = create_audio("res://assets/novos_audios/inimigo_1_attack_magic.mp3", -3.5)
 	blood_pickup_sound = create_audio("res://assets/novos_audios/sangue_fill_effect.mp3", -1.5)
+	dog_growl_sound = create_audio("res://assets/novos_audios/growl_1.mp3", -2.0)
+	dog_dash_sound = create_audio("res://assets/novos_audios/dog_running.mp3", -2.5)
 
 func create_audio(path:String, volume:float, looping:bool = false) -> AudioStreamPlayer:
 	var audio = AudioStreamPlayer.new()
@@ -1100,6 +1520,8 @@ func _process(delta:float) -> void:
 	update_minions(delta)
 	update_sword_waves(delta)
 	update_blood_drops(delta)
+	update_dog_spawners(delta)
+	update_dog_dash_effects(delta)
 	if !enemy_dead:
 		update_enemy(delta)
 	else:
@@ -1972,6 +2394,36 @@ func _draw() -> void:
 		draw_arc(wave.position, 28.0, angle - 0.75, angle + 0.75, 14, Color(1.0, 1.0, 1.0, 0.95), 2.5)
 		draw_circle(wave.position, 8.0, Color(wave.color.r, wave.color.g, wave.color.b, 0.6))
 		draw_circle(wave.position, 3.5, Color.WHITE)
+
+	# Telegraph & Dash trails for battle dogs
+	for minion in minions:
+		if minion.dead || !minion.get("is_dog", false):
+			continue
+		var state = minion.get("dog_state", "")
+		if state == "hold":
+			var lane_start = minion.position + Vector2(minion.facing * 32.0, -18.0)
+			var lane_end = minion.position + Vector2(minion.facing * 680.0, -18.0)
+			var t_alpha = 0.35 + 0.35 * sin(Time.get_ticks_msec() * 0.018)
+			var col = minion.trail_color
+			draw_line(lane_start, lane_end, Color(col.r, col.g, col.b, t_alpha * 0.28), 26.0)
+			draw_line(lane_start, lane_end, Color(col.r, col.g, col.b, t_alpha * 0.85), 4.0)
+			draw_line(lane_start, lane_end, Color(1.0, 1.0, 1.0, t_alpha * 0.95), 1.5)
+			for step_d in range(80, 650, 110):
+				var dot_pos = minion.position + Vector2(minion.facing * step_d, -18.0)
+				draw_circle(dot_pos, 4.5, Color(1.0, 1.0, 1.0, t_alpha * 0.85))
+
+	for seg in dog_trail_segments:
+		var progress = clampf(seg.life / seg.max_life, 0.0, 1.0)
+		var col = seg.color
+		var w = seg.width * progress
+		draw_line(seg.p1, seg.p2, Color(col.r, col.g, col.b, progress * 0.38), w * 1.5)
+		draw_line(seg.p1, seg.p2, Color(col.r, col.g, col.b, progress * 0.85), w * 0.75)
+		draw_line(seg.p1, seg.p2, Color(1.0, 1.0, 1.0, progress * 0.95), maxf(1.5, w * 0.22))
+
+	for p in dog_dash_particles:
+		var p_alpha = clampf(p.life / p.max_life, 0.0, 1.0)
+		draw_circle(p.position, p.radius * p_alpha, Color(p.color.r, p.color.g, p.color.b, p_alpha * 0.75))
+
 	for minion in minions:
 		if minion.dead || !is_instance_valid(minion.sprite):
 			continue

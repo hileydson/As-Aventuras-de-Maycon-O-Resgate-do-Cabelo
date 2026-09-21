@@ -139,6 +139,11 @@ func _on_respaw_timeout() -> void:
 	
 		add_child(novo_inimigo)
 
+		# Ajusta velocidade
+		var inimigo_script = novo_inimigo.get_node("CharacterBody3D")
+		if inimigo_script:
+			inimigo_script.velocidade = 1.7
+
 		# 1. Pegamos o tamanho da caixa (lava)
 		var largura = lava.size.x
 		var profundidade = lava.size.z

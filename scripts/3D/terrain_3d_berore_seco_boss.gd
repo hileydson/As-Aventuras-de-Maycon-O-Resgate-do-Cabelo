@@ -121,7 +121,7 @@ func _on_respaw_timeout() -> void:
 		# Ajusta velocidade (Note que usei o nó raiz, se o script estiver nele tire o get_node)
 		var inimigo_script = novo_inimigo.get_node("CharacterBody3D")
 		if inimigo_script:
-			inimigo_script.velocidade = 7.2
+			inimigo_script.velocidade = 5.8
 
 		# --- LÓGICA DE SPAWN AO REDOR DO JOGADOR ---
 
