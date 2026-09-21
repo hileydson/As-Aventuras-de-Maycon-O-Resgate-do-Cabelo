@@ -28,6 +28,7 @@ DefaultTransition="res://scenes/default_transition_fade_in.tscn"
 DefaultTransitionFadeOut="res://scenes/default_transition_fade_out.tscn"
 GameSongs="*res://scenes/game_songs.tscn"
 BattleShatteredScreenEffect="*res://scenes/battle_shattered_screen_effect.tscn"
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [display]
 
@@ -39,7 +40,7 @@ project/assembly_name="New Game Project"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/terrain_3d/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg", "res://addons/terrain_3d/plugin.cfg")
 
 [global_group]
 
@@ -171,5 +172,6 @@ run={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="mobile"
 textures/vram_compression/import_etc2_astc=true
 textures/default_filters/use_nearest_mipmap_filter=true
