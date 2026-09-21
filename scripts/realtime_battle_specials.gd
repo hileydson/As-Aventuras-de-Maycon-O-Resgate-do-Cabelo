@@ -566,6 +566,8 @@ func _process(delta:float) -> void:
 	if special_active:
 		if special_freeze_active:
 			update_special_meter_hud()
+			update_fighter_transforms()
+			update_minion_transforms()
 			if special_overlay:
 				special_overlay.queue_redraw()
 			queue_redraw()
@@ -696,16 +698,21 @@ func update_pentagram_rotation_input(delta:float) -> void:
 
 func trigger_pentagram_rotation_slice() -> void:
 	var slice_dir = pentagram_spin_direction
-	if !enemy_dead:
+	if !enemy_dead && is_instance_valid(enemy):
+		enemy.visible = true
+		enemy.modulate.a = 1.0
 		spawn_blood(enemy_position + Vector2(0, -45), randi_range(6, 10), slice_dir)
 		spawn_impact(enemy_position + Vector2(randf_range(-16.0, 16.0), randf_range(-52.0, -32.0)), Color("fff176"), slice_dir)
 		enemy.play("pain")
 	for minion_index in minions.size():
 		var minion = minions[minion_index]
 		if !minion.dead:
+			if is_instance_valid(minion.sprite):
+				minion.sprite.visible = true
+				minion.sprite.modulate.a = 1.0
+				minion.sprite.play("pain")
 			spawn_blood(minion.position + Vector2(0, -28), randi_range(4, 7), slice_dir)
 			spawn_impact(minion.position + Vector2(randf_range(-12.0, 12.0), randf_range(-34.0, -20.0)), Color("ff2a8b"), slice_dir)
-			minion.sprite.play("pain")
 	if special_overlay:
 		special_overlay.call("register_pentagram_hit", 0.02)
 	if hit_sound:
@@ -906,12 +913,20 @@ func prepare_player_special() -> void:
 	special_active = true
 	special_hits = 0
 	player_attack_time = 0.0
+	player_attack_move_dir = Vector2.ZERO
 	dodge_time = 0.0
 	dodge_cooldown = 0.0
 	player_invulnerability = 99.0
 	enemy_attack_time = 0.0
 	enemy_hit_pending = false
 	clear_power_projectiles()
+	if !enemy_dead:
+		enemy_behavior = "approach"
+		enemy_pressure = 0
+		if is_instance_valid(enemy):
+			enemy.visible = true
+			enemy.modulate = Color.WHITE
+			enemy.modulate.a = 1.0
 	for minion_index in minions.size():
 		var minion = minions[minion_index]
 		if minion.dead:
@@ -919,7 +934,13 @@ func prepare_player_special() -> void:
 		minion.attack_time = 0.0
 		minion.hit_pending = false
 		minion.is_casting_wave = false
-		play_if_changed(minion.sprite, "idle")
+		minion.behavior = "approach"
+		minion.pending_retreat = false
+		if is_instance_valid(minion.sprite):
+			minion.sprite.visible = true
+			minion.sprite.modulate = minion.base_modulate
+			minion.sprite.modulate.a = 1.0
+			play_if_changed(minion.sprite, "idle")
 		minions[minion_index] = minion
 	update_special_meter_hud()
 
@@ -930,6 +951,47 @@ func start_pentagram_force() -> void:
 	var previous_status = status_label.text
 	var previous_zoom = camera.zoom
 	var previous_camera_position = camera.position
+
+	# Centralizar a arena do pentagrama e garantir que todos os combatentes e inimigos fiquem perfeitamente na tela
+	var ritual_center_x = clampf((player_position.x + enemy_position.x) * 0.5, 576.0, ARENA_WIDTH - 576.0)
+	camera.zoom = Vector2(0.90, 0.90)
+	camera.position = Vector2(ritual_center_x, 324.0)
+
+	var max_span = 480.0
+	var min_ritual_x = camera.position.x - max_span
+	var max_ritual_x = camera.position.x + max_span
+
+	if !enemy_dead:
+		enemy_position.x = clampf(enemy_position.x, min_ritual_x + 80.0, max_ritual_x - 80.0)
+		enemy_position.y = clampf(enemy_position.y, MIN_Y + 15.0, MAX_Y - 15.0)
+		if is_instance_valid(enemy):
+			enemy.position = enemy_position
+			enemy.visible = true
+			enemy.modulate = Color.WHITE
+			enemy.modulate.a = 1.0
+
+	for minion_index in minions.size():
+		var minion = minions[minion_index]
+		if !minion.dead:
+			minion.position.x = clampf(minion.position.x, min_ritual_x + 60.0, max_ritual_x - 60.0)
+			minion.position.y = clampf(minion.position.y, MIN_Y + 12.0, MAX_Y - 12.0)
+			minion.facing = -1.0 if minion.position.x > player_position.x else 1.0
+			minion.behavior = "approach"
+			minion.pending_retreat = false
+			minion.attack_time = 0.0
+			minion.hit_pending = false
+			minion.is_casting_wave = false
+			if is_instance_valid(minion.sprite):
+				minion.sprite.position = minion.position
+				minion.sprite.visible = true
+				minion.sprite.modulate = minion.base_modulate
+				minion.sprite.modulate.a = 1.0
+				play_if_changed(minion.sprite, "idle")
+			minions[minion_index] = minion
+
+	update_fighter_transforms()
+	update_minion_transforms()
+	update_bars()
 
 	# === 1.2s SUPER FREEZE INTRO ===
 	freeze_arena(true)
@@ -968,8 +1030,6 @@ func start_pentagram_force() -> void:
 	pentagram_input_activity = 0.0
 	var portrait = load("res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_icon.png") as Texture2D
 	special_overlay.call("start_pentagram", portrait, tr_text("GIRE O ANALÓGICO", "ROTATE THE ANALOG STICK"))
-	camera.zoom = Vector2(0.92, 0.92)
-	camera.position = Vector2(clampf((player_position.x + enemy_position.x) * 0.5, 576.0, ARENA_WIDTH - 576.0), 324.0)
 	player.play("attack_punch")
 	shake(8.0, 0.5)
 
@@ -1035,12 +1095,17 @@ func apply_pentagram_damage_pulse(pulse_index:int, finisher:bool, strength:float
 		minion.hp = maxf(0.0, minion.hp - damage)
 		minion.hit_pending = false
 		minion.attack_time = 0.0
-		minion.sprite.play("pain")
+		if is_instance_valid(minion.sprite):
+			minion.sprite.visible = true
+			minion.sprite.modulate.a = 1.0
+			minion.sprite.play("pain")
 		spawn_blood(minion.position + Vector2(0, -28), 24 if finisher else 5, hit_direction)
 		spawn_impact(minion.position + Vector2(0, -26), Color("70e7ff" if pulse_index % 2 == 0 else "ff2a8b"), hit_direction)
 		minions[minion_index] = minion
 
-	if !enemy_dead:
+	if !enemy_dead && is_instance_valid(enemy):
+		enemy.visible = true
+		enemy.modulate.a = 1.0
 		var boss_damage = maxf(1.0, enemy_max_hp * ((0.125 * strength) if finisher else 0.0125))
 		enemy_hp = maxf(0.0, enemy_hp - boss_damage)
 		enemy_hit_pending = false
@@ -1055,7 +1120,6 @@ func apply_pentagram_damage_pulse(pulse_index:int, finisher:bool, strength:float
 func resolve_pentagram_deaths() -> void:
 	if enemy_hp <= 0.0 && !enemy_dead:
 		defeat_enemy()
-		return
 	for minion_index in minions.size():
 		var minion = minions[minion_index]
 		if !minion.dead && minion.hp <= 0.0:

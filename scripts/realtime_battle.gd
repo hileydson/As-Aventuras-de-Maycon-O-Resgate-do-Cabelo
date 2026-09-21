@@ -185,6 +185,7 @@ var player_base_scale:float = 2.6
 var enemy_base_scale:float = 1.0
 
 var player_attack_time:float = 0.0
+var player_attack_move_dir := Vector2.ZERO
 var player_facing:float = 1.0
 var player_invulnerability:float = 0.0
 var dodge_time:float = 0.0
@@ -1163,11 +1164,19 @@ func update_player(delta:float) -> void:
 				play_if_changed(player, "right")
 			else:
 				play_if_changed(player, "idle_right")
+	else:
+		# Durante soco ou chute, Maycon nao para totalmente: continua se deslocando levemente na direcao em que estava indo
+		var attack_input = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		var target_move_dir = attack_input.normalized() if attack_input.length() > 0.1 else player_attack_move_dir
+		if target_move_dir.length() > 0.05:
+			var attack_move_speed = PLAYER_SPEED * 0.52
+			player_position += target_move_dir * attack_move_speed * delta
 	player_position.x = clampf(player_position.x, 150.0, ARENA_WIDTH - 80.0 if exit_open else 2130.0)
 	player_position.y = clampf(player_position.y, MIN_Y, MAX_Y)
 
 func start_dodge() -> void:
 	player_attack_time = 0.0
+	player_attack_move_dir = Vector2.ZERO
 	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if input_direction.length() < 0.1:
 		input_direction = Vector2(player_facing, 0.0)
@@ -1193,6 +1202,11 @@ func start_player_attack(kick:bool) -> void:
 	if absf(input_facing) > 0.05:
 		player_facing = signf(input_facing)
 	player.flip_h = player_facing < 0.0
+	var move_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	if move_vector.length() > 0.1:
+		player_attack_move_dir = move_vector.normalized()
+	else:
+		player_attack_move_dir = Vector2(player_facing, 0.0) * 0.45
 	player.play(attack_name)
 	var attack_sound = kick_sound if kick else punch_sound
 	attack_sound.pitch_scale = randf_range(0.94, 1.06)
@@ -1223,11 +1237,11 @@ func resolve_player_hit(kick:bool) -> void:
 	combo_timeout = 2.4
 	var is_special = (combo % 5 == 0)
 
-	# Slow motion na fração de segundo do impacto para dar a sensação de impacto ao acertar o golpe
-	var slow_duration = 0.12 if is_special else 0.075
-	var slow_intensity = 0.08 if is_special else 0.15
+	# Slow motion na fração de segundo do impacto para dar a sensação de impacto ao acertar o golpe (ligeiramente aumentado)
+	var slow_duration = 0.165 if is_special else 0.115
+	var slow_intensity = 0.05 if is_special else 0.10
 	apply_hit_stop(slow_duration, slow_intensity)
-	Input.start_joy_vibration(0, 0.65 if is_special else 0.4, 0.85 if is_special else 0.6, slow_duration)
+	Input.start_joy_vibration(0, 0.7 if is_special else 0.45, 0.85 if is_special else 0.65, slow_duration)
 
 	if hit_enemy:
 		var enemy_was_attacking = enemy_attack_time > 0.0
@@ -1268,7 +1282,7 @@ func resolve_player_hit(kick:bool) -> void:
 	var hit_popup_pos = Vector2(hit_popup_x, player_position.y - 42.0)
 	delayed_spawn_hit_counter_popup(hit_popup_pos, combo, is_special, slow_duration)
 
-func apply_hit_stop(duration_sec:float = 0.075, slow_scale:float = 0.15) -> void:
+func apply_hit_stop(duration_sec:float = 0.115, slow_scale:float = 0.10) -> void:
 	if bool(get("special_active")) || enemy_dead || player_dead || leaving:
 		return
 	hit_stop_token += 1
@@ -1535,6 +1549,8 @@ func damage_player(damage:float, hit_direction:float) -> void:
 	player_hp = maxf(0.0, player_hp - damage)
 	Global.realtime_hp = player_hp
 	player_invulnerability = 0.82
+	player_attack_time = 0.0
+	player_attack_move_dir = Vector2.ZERO
 	player_position.x += hit_direction * 54.0
 	player_position.x = clampf(player_position.x, 150.0, ARENA_WIDTH - 80.0 if exit_open else 2130.0)
 	player.play("falling_down" if player.sprite_frames.has_animation("falling_down") else "damage")
