@@ -58,6 +58,7 @@ var device_id : int = 0
 var gatilho_pressionado = false
 
 var on_moto = false
+var final_game_camera_offset_applied:bool = false
 
 
 @export var SPRINT_SPEED = 9.0  # Velocidade ao correr
@@ -74,8 +75,23 @@ func set_final_game()->void:
 	control_moto.visible = true
 	farol_moto_cigarro.visible = true
 	maycon_hp.visible = false
-	camera.position.y += 2.1
+	camera.position.y = 2.514444
+	final_game_camera_offset_applied = true
 	moto_parada.play()
+
+func dismount_final_game()->void:
+	on_moto = false
+	control_moto.visible = false
+	farol_moto_cigarro.visible = false
+	moto_parada.stop()
+	moto_acelerando.stop()
+	moto_re.stop()
+	# Altura dos olhos para o confronto em primeira pessoa nesta cena final.
+	camera.position.y = 2.65
+	final_game_camera_offset_applied = false
+
+func mount_final_game()->void:
+	set_final_game()
 	
 
 func set_cigarro_3d_model()->void:
@@ -385,13 +401,6 @@ func _physics_process(delta):
 			# get_vector mapeia automaticamente 4 direções para um Vector2
 			# Certifique-se de que essas ações (W,A,S,D) estão no seu Input Map
 			input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-			
-			# Caso você não tenha configurado o WASD no Input Map (ui_left etc), 
-			# você pode usar esta alternativa manual abaixo:
-			if input_dir.length() == 0:
-				var k_x = Input.get_action_strength("d") - Input.get_action_strength("a")
-				var k_y = Input.get_action_strength("s") - Input.get_action_strength("w")
-				input_dir = Vector2(k_x, k_y)
 
 		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		

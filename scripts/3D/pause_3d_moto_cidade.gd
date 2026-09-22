@@ -36,11 +36,10 @@ func processa_pause_unpause()->void:
 	
 	if get_tree().paused:
 		if player:
-			player.get_node("hud_canvas").get_node("control_moto").visible = true
+			player.get_node("hud_canvas").get_node("control_moto").visible = player.on_moto
 			$"../maycon_3d/CharacterBody3D/mapa_maycon".visible = false
-			$"../cabelo/mapa_cabelo".visible = false
-			$"../cigarro/mapa_cabelo".visible = false
-			$"../lipao/mapa_cabelo".visible = false
+			if get_parent().has_method("update_map_objectives"):
+				get_parent().update_map_objectives(false)
 		
 		if $camera_pause:
 			$camera_pause.current = false	
@@ -52,9 +51,8 @@ func processa_pause_unpause()->void:
 		if player:
 			player.get_node("hud_canvas").get_node("control_moto").visible = false
 			$"../maycon_3d/CharacterBody3D/mapa_maycon".visible = true
-			$"../cabelo/mapa_cabelo".visible = true
-			$"../cigarro/mapa_cabelo".visible = true
-			$"../lipao/mapa_cabelo".visible = true
+			if get_parent().has_method("update_map_objectives"):
+				get_parent().update_map_objectives(true)
 		
 		if $camera_pause:
 			$camera_pause.make_current()

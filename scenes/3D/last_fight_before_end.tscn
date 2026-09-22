@@ -661,18 +661,21 @@ frame_progress = 0.7407057
 
 [node name="iago" type="AnimatedSprite3D" parent="lipao"]
 transform = Transform3D(1, 0, 0, 0, 0.9999998, 0, 0, 0, 1, -2.4246826, 0.52647114, 0)
+billboard = 1
 sprite_frames = SubResource("SpriteFrames_dlbe0")
 autoplay = "default"
 frame_progress = 0.11418309
 
 [node name="luks" type="AnimatedSprite3D" parent="lipao"]
 transform = Transform3D(1, 0, 0, 0, 0.9999999, 0, 0, 0, 1, 2.525238, 0, 0)
+billboard = 1
 sprite_frames = SubResource("SpriteFrames_f2kov")
 autoplay = "default"
 frame_progress = 0.46954504
 
 [node name="tony" type="AnimatedSprite3D" parent="lipao"]
 transform = Transform3D(1, 0, 0, 0, 0.9999998, 0, 0, 0, 1, -4.535431, 0.287282, 0)
+billboard = 1
 sprite_frames = SubResource("SpriteFrames_g6uuy")
 autoplay = "default"
 frame_progress = 0.86922365
