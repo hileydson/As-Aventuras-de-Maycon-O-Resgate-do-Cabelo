@@ -86,8 +86,8 @@ func dismount_final_game()->void:
 	moto_parada.stop()
 	moto_acelerando.stop()
 	moto_re.stop()
-	# Altura dos olhos para o confronto em primeira pessoa nesta cena final.
-	camera.position.y = 2.65
+	# Volta para a altura original da câmera a pé.
+	camera.position.y = 0.414444
 	final_game_camera_offset_applied = false
 
 func mount_final_game()->void:

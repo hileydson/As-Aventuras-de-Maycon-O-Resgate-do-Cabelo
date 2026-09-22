@@ -207,7 +207,7 @@ func begin_pickup_cutscene() -> void:
 	player.process_mode = Node.PROCESS_MODE_DISABLED
 	loose_wood = create_wood_prop()
 	loose_wood.global_position = fellas.global_position + Vector3(10.0, 0.3, 5.0)
-	loose_wood.rotation_degrees.z = 90.0
+	loose_wood.rotation_degrees.z = -90.0
 	player_camera.make_current()
 	var wood_floor_position := Vector3(loose_wood.global_position.x, player.global_position.y, loose_wood.global_position.z)
 	var approach_direction := player.global_position - wood_floor_position
@@ -269,20 +269,24 @@ func build_first_person_weapon(player_camera:Camera3D) -> void:
 	weapon_root = Node3D.new()
 	weapon_root.name = "WoodWeapon"
 	weapon_root.position = Vector3(0.62, -0.55, -1.15)
-	weapon_root.rotation_degrees = Vector3(-18.0, 0.0, -25.0)
+	weapon_root.rotation_degrees = Vector3(-18.0, 0.0, 0.0)
 	player_camera.add_child(weapon_root)
 	var wood_container := create_wood_prop()
 	var wood := wood_container.get_child(0)
 	wood.reparent(weapon_root)
 	wood_container.queue_free()
 	wood.position = Vector3(-0.12, 0.36, -0.18)
-	wood.rotation_degrees.z = -28.0
+	wood.rotation_degrees.z = -45.0
 
 func setup_thugs() -> void:
 	thug_data.clear()
-	# Os sprites originais têm cerca de cinco metros de altura. A redução é
-	# aplicada somente durante o trecho em primeira pessoa.
-	fellas.scale = fellas_original_scale * 0.42
+	# Iguala a altura dos sprites à altura física do modelo 3D do Maycon.
+	# A alteração continua restrita ao trecho em primeira pessoa.
+	var player_shape:CapsuleShape3D = player.get_node("CollisionShape3D").shape
+	var player_height := player_shape.height * player.global_basis.get_scale().y
+	var fellas_height := fellas.get_aabb().size.y * fellas.global_basis.get_scale().y
+	var height_factor := clampf(player_height / maxf(fellas_height, 0.01), 0.2, 0.8)
+	fellas.scale = fellas_original_scale * height_factor
 	var thugs:Array[Node3D] = [$lipao/iago, $lipao/luks, $lipao/tony]
 	var spread := [Vector3(-10.0, 0.0, 4.0), Vector3(0.0, 0.0, 1.0), Vector3(10.0, 0.0, 4.0)]
 	for index in thugs.size():
