@@ -22,9 +22,13 @@
 [ext_resource type="Texture2D" uid="uid://xsiwteq7267x" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1_paralax_1.png" id="17_parallax_front"]
 [ext_resource type="Texture2D" uid="uid://cvqd5apvumh4a" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1_paralax_2.png" id="18_parallax_trees"]
 [ext_resource type="Shader" uid="uid://c6eelrgo3e7vy" path="res://scenes/fase_1_before_castle_1_dynamic_background.gdshader" id="19_dynamic_background"]
+[ext_resource type="Shader" path="res://scenes/fase_1_before_castle_1_clouds.gdshader" id="20_clouds"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dynamic_background"]
 shader = ExtResource("19_dynamic_background")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_clouds"]
+shader = ExtResource("20_clouds")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kvuau"]
 atlas = ExtResource("3_avl2m")
@@ -659,6 +663,17 @@ scroll_scale = Vector2(0.5, 1)
 
 [node name="FireSky" type="ColorRect" parent="DynamicFireBackground" unique_id=744922730]
 material = SubResource("ShaderMaterial_dynamic_background")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="DynamicClouds" type="Parallax2D" parent="."]
+z_index = -25
+scroll_scale = Vector2(0.62, 1)
+
+[node name="CloudField" type="ColorRect" parent="DynamicClouds"]
+material = SubResource("ShaderMaterial_clouds")
 offset_left = -572.0
 offset_right = 3168.0
 offset_bottom = 1344.0
