@@ -1,4 +1,4 @@
-[gd_scene load_steps=172 format=4 uid="uid://c5do17jvoskfm"]
+[gd_scene format=4 uid="uid://c5do17jvoskfm"]
 
 [ext_resource type="Script" uid="uid://d12tsbs23bhs0" path="res://scripts/3D/character_body_3d.gd" id="1_fvdyg"]
 [ext_resource type="PackedScene" uid="uid://qcsepxxx2pcd" path="res://assets/novas_imagens/3d_enemies/cigarro_perfect_animations.glb" id="2_7qlvo"]
@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://dl1flpd73rljh" path="res://assets/novas_imagens/3d_cenarios/lamp/lamp_na_mao.png" id="9_ievb8"]
 [ext_resource type="Texture2D" uid="uid://cy1x2n0ltysjh" path="res://assets/novas_imagens/3d_battle/bala.png" id="10_11d7m"]
 [ext_resource type="Texture2D" uid="uid://d20k0m5bseynp" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_1.png" id="10_fakjw"]
+[ext_resource type="Texture2D" uid="uid://v53vaixjwwai" path="res://assets/novas_imagens/maycon/metralhadora_moto.png" id="11_01a3d"]
 [ext_resource type="Texture2D" uid="uid://bgxxn46q4nutx" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_2.png" id="11_1she0"]
 [ext_resource type="Texture2D" uid="uid://b1nhpgedhfvw3" path="res://assets/novas_imagens/3d_battle/gun_load/gun_load_3.png" id="12_m47l0"]
 [ext_resource type="Texture2D" uid="uid://reyl5mf2bho2" path="res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_moto.png" id="12_owhm4"]
@@ -1535,37 +1536,37 @@ animations = [{
 [sub_resource type="AudioStreamMP3" id="AudioStreamMP3_csxxf"]
 data = PackedByteArray("//qTYG/YAAACEAlBSSkxIDvBCFwFIyVGCDkjhJhm6JgH5LAhjNw/5wAVTgcC4NAAAwhBMnkFycoEPd6YBAGBBMACZQbWBHNkwwT2BYB6Qw9YWOB9YWDAfIfJkM+jcuX6z7rlvfn3besARWJE6oUHyMAO8VkRhBAd4CR08DAik/+I5CxAwPgESL+M/7/MInwI+bzD5JP44d1p3/ngj//EDx/4R8w3ZG3HNKAGeWYX4GCNMZZJDGv6b6QOTB9zTI97/3tief/HR8Pn9KPgw+0htoP9+PoASSOSVSgD/OMxClBKIzNsq8dCPBwW5kSPH03HJDJ2NTWmxtTnEA23G231UgC3ZOaxGlGi4Suj8kuGVqFrI+SohRhiT7Dr3tgi1jCmFhDF62kXTbz1UzU7VJAC22ST+YAf0SQC0ZRRIPW1MsWPBc8Gp0+mdAQmWAXOO9KlWM1vtTa0NEw3G2m39UgETRmhM2XPhKHrAEb0hQnFqcYW9BkGyRI6JQFIqWWUKT1M8cQg0lsvTkEdBl+sia7DWyOJAAP6OHZOYBLf/gCHBeTBYv/6k2B3ZFQAAZ0SyGEoGbAqIWk8BMYlBoBFIYYMZsCyByV0Iwzco0idCJGvtqOl59Yo7r3qZQ6GsVIZGv8NuNpJVVAA7IQBYlMKEgiBRoULaiT9GSyiioMNyvoWUCvYux4b/GLLe6pxsGdYQr9m7y+vf5/////////////////////////////////////////////8AWSRyXSgB/hYBjEJdpglhl4ZK5r0MRf682QYmcccWTqqTUNVWTdAHYoJxttt9XIA5rfdgZVVjAYUGcYGzu6AypVazogcYkp+8qonfh5Va8Ng6dA4MuDcPUPE21L5PnFgC2SSSqUAf4cAUQJm66FFK8Joh6IELHSKMsgm80IZW0jadPrU7IWa1FAPL3q6qkAGFWrnjD1MEGATeneZ1Q4sMCayoOEhoNhBYq8Y55s6I0lCWERyjgPvHVh/7u9H////////////////////////////////////////////////////////////////////////////////////////////////////////////+pNg0m6ygAK+DcfhKRmyKULJLBRjOQbMdSGEjEkAqgbksFSM3P////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////gS60WWSSRgB+TJABxkKN/8PQrOzn6odPmYtK23PWxFyNup08JGsRSf1k9EuXG3G2/qkAMVpEqWE7ERJhekwUk8ZkbCM0wG+o02Sz6W4JQrrIJmc4nP7dZNhsug0ljGRF0P6q/JqAu6amYA/ikKO4ucv+lZf0XcdKCxskoW7zZUkbAz1F3d2GxOUpcprb+SWy//mpqAB2aObBAcChLpwDYOEDRoOqniJwi9o4PY9/dWeScc4WOrYl4PvUkLKAilUV////////////////////////////////////////////////////////////////////////////////////////////////////////////////qTYJPe/4AHZRDHyYMZsCwByU0ExjYHJE0hhhjHAKeII+QjDNj///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+AtKuoa8QXILrtWIrAZ1gvEIQEonQk0Z49gsgnFbNraXCUOMpDjbaSXVSALJoiFgRwdq47rGGpC+Kz5AHAgFR9Z9dAGiwVZx20WYpbDj3PahlwYygAJJJIrBTDs6MMYoXRhIQGO8VHNz733UXoHDpSS4ZCKmUta9EvqppqQARG2S4KR4IyYRXuijkBSiRY/9GKMHfEFeWvTytLFBgR9oc9AKcJdYBDNbqvlPjx/xr//dfjz//////////////////////////////////////////////////////////////////////////////////////////////////6k2Dipf+ACCEJR8kmGSAkIUjYAGYkBfQhIYSkRICQBqMQAYyY////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////G66qqoA3QdsFqGnBtA4ehJGGGlGNpRzcnTYaWsZfTuF+VIZNu/zCOXn35/29gNxtth9VIA70is11gZJre8GIZwzQc3AQ4EnvWipz0Jc/eB0OeXNWXi5uaD6gfVsrAAAJACQkBOC7SKSfz3QIbs2QmjBTR/8a4fmpr0yu/7Cf+M0og/96DjUaTXVSAJKDhCjEWqfRg+WKaJ4MILAgMEpMhD5wmqNlgw+xKMJC1whdMk21NEJN+fxv////////////////////////////////////////////////////////////////////////////////////////////////////////////+pNgvhr/gAfAEMdJgxmyLYD4+QBjFEXwJSGEpGSAnASi0ACYkf////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////gAEkkimGanAgt0dGUIHDgSF3HEKL2jReQsYPCGLtZWBDBQ9RvQFGk2k6qgA0WamA4FpabMrIIGEUc8ZGfOwYGRQQOFqfrh2eSRX+W9+jxP0Z5rBFesb747+Vf/2/vRv//ZQAN5CHVQXQikM4/Bk65cmaj64JRhBsARriOXt/x+STgC5Nn/5/TbfA5ZI23/0gH2K9kiQMMuOXLMo3XZm9j/u2OMnaHquNl+xsV1fH3AcGNRx36rjSPHmQdMnRCBBCj6MMhCYNWehEQY0zEINnvIyf6+cwAB4Sh44gus4szPqfS5+6Lf//////////////////////////////////////4cmtttjcSAATYo//qTYNL3/4AHlQfIYSlYoCVBiMQAYyYHFDsfhgxGyK4FpCQRjJVTEAAwJVGNUA2eUbpsrglXcp5LmW5+XM30GQDsBoF47el7GNZFVnW7W66SWQAA2aizS5/Pu183+gzCIIMJAZNho6fA8DkvkdM+uQrhbIBAp1ZHtseUQcQIQTDFTDpHsYwyxZJatp6PACEQMZ+YQRbRfmk5DCGMwwxgEfC/4FDMMUu3DzOIQwNAOBgAwBKU0ZTx5PnE4yyqQbTx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aJNmdPe9LIgQ5yuAus4BoAgTZUfU5i9G6XFsUVrW8FlbiDAmgBUHMqm5DnadLgEgbCUfVKwAwVPTi6+49Zc2JJNMXpmWly5curMzXt62LvETQaOiLISy/r////////////////////////////////////////////////////////////////////////////////////////////////////////////9AqRx2RogAABmgYVSpnOIaSHAOxKCyyl2dx9ljM6Z1ZxuWppW4AoN6gTwkpJU8rwTIBCFaVQCUGpIKQlwfPmJDo0F7X28KNXxoLCCXZBT8jvim/eE3/f////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////qTYI2WwQAFSCXHSw9iUFYDaR0/D0lAAAEuAAAAIAAAJcAAAAT///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/6k0Cggv+AC+AAS4AAAAgAAAlwAAABAAABLgAAACAAACXAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
 
-[node name="maycon_3d" type="Node3D"]
+[node name="maycon_3d" type="Node3D" unique_id=797317206]
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="." groups=["player"]]
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." unique_id=1660425329 groups=["player"]]
 collision_layer = 1033
 collision_mask = 1033
 safe_margin = 0.07
 script = ExtResource("1_fvdyg")
 
-[node name="chuva" type="GPUParticles3D" parent="CharacterBody3D"]
+[node name="chuva" type="GPUParticles3D" parent="CharacterBody3D" unique_id=1321806432]
 transform = Transform3D(1.3829904, 0, 0, 0, 1.4637669, 0, 0, 0, 1.4273663, 0.8960018, 7.610176, -18.819576)
 visible = false
 amount = 4000
 process_material = SubResource("ParticleProcessMaterial_nk7om")
 draw_pass_1 = SubResource("QuadMesh_elhv1")
 
-[node name="cigarro_perfect_animations" parent="CharacterBody3D" instance=ExtResource("2_7qlvo")]
+[node name="cigarro_perfect_animations" parent="CharacterBody3D" unique_id=616787198 instance=ExtResource("2_7qlvo")]
 transform = Transform3D(1, 0, 0, 0, 0.90608835, 0, 0, 0, 1, 0, -0.78967285, 0)
 visible = false
 
-[node name="AnimationTree" type="AnimationTree" parent="CharacterBody3D/cigarro_perfect_animations"]
+[node name="AnimationTree" type="AnimationTree" parent="CharacterBody3D/cigarro_perfect_animations" unique_id=1060297925]
 tree_root = SubResource("AnimationNodeStateMachine_0e2ag")
 anim_player = NodePath("../AnimationPlayer")
 
-[node name="maycon_3d_model_ia_animations" parent="CharacterBody3D" instance=ExtResource("2_str34")]
+[node name="maycon_3d_model_ia_animations" parent="CharacterBody3D" unique_id=1448196668 instance=ExtResource("2_str34")]
 transform = Transform3D(-0.98718643, 0, 0.110399276, 0, 0.99058217, 0, -0.15957099, 0, -0.6829855, -0.0010200542, -0.88397217, -0.048545733)
 
-[node name="AnimationTree" type="AnimationTree" parent="CharacterBody3D/maycon_3d_model_ia_animations"]
+[node name="AnimationTree" type="AnimationTree" parent="CharacterBody3D/maycon_3d_model_ia_animations" unique_id=108668815]
 tree_root = SubResource("AnimationNodeStateMachine_bet6o")
 anim_player = NodePath("../AnimationPlayer")
 
-[node name="farol_moto_cigarro" type="SpotLight3D" parent="CharacterBody3D"]
+[node name="farol_moto_cigarro" type="SpotLight3D" parent="CharacterBody3D" unique_id=1705283139]
 transform = Transform3D(1, 0, 0, 0, 0.91860515, 0.39517677, 0, -0.39517677, 0.91860515, 0, 0.36920166, -0.8621521)
 visible = false
 light_energy = 14.682
@@ -1576,51 +1577,51 @@ distance_fade_enabled = true
 spot_range = 98.446
 spot_angle = 66.17
 
-[node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D" unique_id=1453989516]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.41444397, -0.48493958)
 current = true
 
-[node name="RayCast3D" type="RayCast3D" parent="CharacterBody3D/Camera3D"]
+[node name="RayCast3D" type="RayCast3D" parent="CharacterBody3D/Camera3D" unique_id=2102364247]
 transform = Transform3D(0.067362815, 0, 0, 0, 0.30156854, 0, 0, 0, 0.9027699, -7.6293945e-05, 0.23455429, 0)
 target_position = Vector3(0, 0, -2000)
 collision_mask = 520
 collide_with_areas = true
 
-[node name="lamp_light" type="OmniLight3D" parent="CharacterBody3D/Camera3D"]
+[node name="lamp_light" type="OmniLight3D" parent="CharacterBody3D/Camera3D" unique_id=362237544]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.01940918, -0.0018920898, -0.4153595)
 visible = false
 light_color = Color(0.90727174, 0.55628204, 0.14874196, 1)
 light_energy = 1.5
 
-[node name="animacao" type="AnimatedSprite3D" parent="CharacterBody3D/Camera3D"]
+[node name="animacao" type="AnimatedSprite3D" parent="CharacterBody3D/Camera3D" unique_id=65400582]
 visible = false
 billboard = 1
 sprite_frames = SubResource("SpriteFrames_fbcau")
 animation = &"died"
 autoplay = "idle"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Camera3D/animacao"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Camera3D/animacao" unique_id=375441637]
 shape = SubResource("CapsuleShape3D_mwhgs")
 
-[node name="animacao_player_2" parent="CharacterBody3D/Camera3D" instance=ExtResource("4_5yci6")]
+[node name="animacao_player_2" parent="CharacterBody3D/Camera3D" unique_id=154113362 instance=ExtResource("4_5yci6")]
 transform = Transform3D(0.31844324, 0, 0, 0, 0.27231514, 0, 0, 0, 0.4143396, 0, -0.17779541, 0)
 visible = false
 billboard = 1
 sprite_frames = SubResource("SpriteFrames_01a3d")
 animation = &"died"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Camera3D/animacao_player_2"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Camera3D/animacao_player_2" unique_id=1481091785]
 shape = SubResource("CapsuleShape3D_mwhgs")
 
-[node name="two_player_died" type="Node2D" parent="CharacterBody3D/Camera3D"]
+[node name="two_player_died" type="Node2D" parent="CharacterBody3D/Camera3D" unique_id=1878352417]
 visible = false
 
-[node name="ColorRect" type="ColorRect" parent="CharacterBody3D/Camera3D/two_player_died"]
+[node name="ColorRect" type="ColorRect" parent="CharacterBody3D/Camera3D/two_player_died" unique_id=251063802]
 offset_right = 1167.0
 offset_bottom = 660.0
 color = Color(0, 0, 0, 0.49411765)
 
-[node name="Label" type="Label" parent="CharacterBody3D/Camera3D/two_player_died/ColorRect"]
+[node name="Label" type="Label" parent="CharacterBody3D/Camera3D/two_player_died/ColorRect" unique_id=2056319818]
 layout_mode = 0
 offset_left = 524.0
 offset_top = 124.00001
@@ -1630,19 +1631,19 @@ scale = Vector2(8.520001, 5.3200006)
 text = "X"
 label_settings = SubResource("LabelSettings_5yci6")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D" unique_id=788420590]
 shape = SubResource("CapsuleShape3D_ss8dx")
 
-[node name="hud_canvas" type="CanvasLayer" parent="CharacterBody3D"]
+[node name="hud_canvas" type="CanvasLayer" parent="CharacterBody3D" unique_id=913008290]
 
-[node name="ColorRect" type="ColorRect" parent="CharacterBody3D/hud_canvas"]
+[node name="ColorRect" type="ColorRect" parent="CharacterBody3D/hud_canvas" unique_id=1647421211]
 offset_left = -8.0
 offset_top = -7.0
 offset_right = 1162.0
 offset_bottom = 653.0
 color = Color(1, 0, 0, 0)
 
-[node name="control_lamp" type="Control" parent="CharacterBody3D/hud_canvas"]
+[node name="control_lamp" type="Control" parent="CharacterBody3D/hud_canvas" unique_id=591103348]
 visible = false
 layout_mode = 3
 anchors_preset = 7
@@ -1657,14 +1658,14 @@ offset_bottom = -670.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="lamp" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_lamp"]
+[node name="lamp" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_lamp" unique_id=559182953]
 position = Vector2(562.00006, 516)
 scale = Vector2(0.928, 0.886)
 sprite_frames = SubResource("SpriteFrames_5yci6")
 animation = &"walk"
 autoplay = "idle"
 
-[node name="control_moto" type="Control" parent="CharacterBody3D/hud_canvas"]
+[node name="control_moto" type="Control" parent="CharacterBody3D/hud_canvas" unique_id=403306554]
 visible = false
 layout_mode = 3
 anchors_preset = 7
@@ -1679,7 +1680,14 @@ offset_bottom = -670.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="moto" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_moto"]
+[node name="MetralhadoraMoto" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto" unique_id=1622760132]
+visible = false
+position = Vector2(491, 741.00006)
+rotation = 1.5715352
+scale = Vector2(0.5967689, 0.61008376)
+texture = ExtResource("11_01a3d")
+
+[node name="moto" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_moto" unique_id=375289448]
 position = Vector2(543.00006, 588.00006)
 scale = Vector2(0.928, 0.886)
 sprite_frames = SubResource("SpriteFrames_mtddw")
@@ -1687,59 +1695,59 @@ animation = &"moto"
 autoplay = "moto"
 frame_progress = 1.0
 
-[node name="ModoAcelerando" type="AudioStreamPlayer" parent="CharacterBody3D/hud_canvas/control_moto"]
+[node name="ModoAcelerando" type="AudioStreamPlayer" parent="CharacterBody3D/hud_canvas/control_moto" unique_id=1500539535]
 stream = ExtResource("26_yndem")
 volume_db = 1.072
 pitch_scale = 0.79
 
-[node name="ModoRe" type="AudioStreamPlayer" parent="CharacterBody3D/hud_canvas/control_moto"]
+[node name="ModoRe" type="AudioStreamPlayer" parent="CharacterBody3D/hud_canvas/control_moto" unique_id=1368337109]
 stream = SubResource("AudioStreamMP3_7qlvo")
 volume_db = -8.609
 pitch_scale = 1.85
 
-[node name="moto_parada" type="AudioStreamPlayer" parent="CharacterBody3D/hud_canvas/control_moto"]
+[node name="moto_parada" type="AudioStreamPlayer" parent="CharacterBody3D/hud_canvas/control_moto" unique_id=531782084]
 stream = ExtResource("25_pti3k")
 volume_db = -8.577
 pitch_scale = 0.84
 parameters/looping = true
 
-[node name="hud_moto_buttons" type="Node2D" parent="CharacterBody3D/hud_canvas/control_moto"]
+[node name="hud_moto_buttons" type="Node2D" parent="CharacterBody3D/hud_canvas/control_moto" unique_id=320125622]
 position = Vector2(-17, 15)
 
-[node name="ButtonTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons"]
+[node name="ButtonTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=1878963282]
 position = Vector2(1117.5, 528.6931)
 rotation = -0.16053383
 scale = Vector2(0.37234885, 0.39948073)
 texture = ExtResource("16_jvhfj")
 
-[node name="MouseTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons"]
+[node name="MouseTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=2027830176]
 position = Vector2(1086, 527.9584)
 scale = Vector2(0.31000003, 0.34530595)
 texture = ExtResource("17_xpqs8")
 
-[node name="PneuMoto" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons"]
+[node name="PneuMoto" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=220419637]
 modulate = Color(0.5167645, 0.5167645, 0.5167645, 1)
 position = Vector2(1105.5, 579)
 scale = Vector2(0.206, 0.15)
 texture = ExtResource("17_e4f44")
 
-[node name="DirectionalBack" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons"]
+[node name="DirectionalBack" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=85168919]
 position = Vector2(1102, 611)
 scale = Vector2(0.4420791, -0.23740187)
 texture = ExtResource("17_csxxf")
 
-[node name="MouseRightClick" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons"]
+[node name="MouseRightClick" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=1018388334]
 position = Vector2(1084, 637)
 scale = Vector2(0.33, 0.35)
 texture = ExtResource("18_fbcau")
 
-[node name="R2Re" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons"]
+[node name="R2Re" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=901762359]
 position = Vector2(1119.0001, 638)
 rotation = 0.18635033
 scale = Vector2(0.41499877, 0.39499992)
 texture = ExtResource("19_mwhgs")
 
-[node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas"]
+[node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas" unique_id=908181743]
 visible = false
 layout_mode = 3
 anchors_preset = 7
@@ -1754,14 +1762,14 @@ offset_bottom = -644.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="gun" type="Control" parent="CharacterBody3D/hud_canvas/control_gun"]
+[node name="gun" type="Control" parent="CharacterBody3D/hud_canvas/control_gun" unique_id=252303323]
 anchors_preset = 0
 offset_left = 323.0
 offset_top = 153.0
 offset_right = 981.0
 offset_bottom = 705.0
 
-[node name="shoot" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
+[node name="shoot" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun" unique_id=1138332680]
 position = Vector2(312, 222.00003)
 rotation = -0.88758624
 scale = Vector2(1.5917357, 2.0518117)
@@ -1770,14 +1778,14 @@ animation = &"shoot"
 frame = 8
 frame_progress = 1.0
 
-[node name="arma_sprite" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
+[node name="arma_sprite" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun" unique_id=827697006]
 position = Vector2(389, 330)
 scale = Vector2(0.81, 0.774)
 sprite_frames = SubResource("SpriteFrames_xqtj4")
 animation = &"walk"
 autoplay = "idle"
 
-[node name="arma_sprite_uma_mao" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
+[node name="arma_sprite_uma_mao" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/control_gun/gun" unique_id=1093993568]
 visible = false
 position = Vector2(389, 330)
 scale = Vector2(0.81, 0.774)
@@ -1785,7 +1793,7 @@ sprite_frames = SubResource("SpriteFrames_nxdkf")
 animation = &"walk"
 autoplay = "idle"
 
-[node name="ponto" type="Label" parent="CharacterBody3D/hud_canvas/control_gun/gun"]
+[node name="ponto" type="Label" parent="CharacterBody3D/hud_canvas/control_gun/gun" unique_id=23970532]
 layout_mode = 0
 offset_left = 215.0
 offset_top = 117.0
@@ -1794,12 +1802,12 @@ offset_bottom = 140.0
 scale = Vector2(2.2777793, 2.293334)
 text = "."
 
-[node name="Bala" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun"]
+[node name="Bala" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun" unique_id=1847806035]
 position = Vector2(1055.857, 595.12195)
 scale = Vector2(0.17142838, 0.18048783)
 texture = ExtResource("10_11d7m")
 
-[node name="balas_numero" type="Label" parent="CharacterBody3D/hud_canvas/control_gun"]
+[node name="balas_numero" type="Label" parent="CharacterBody3D/hud_canvas/control_gun" unique_id=626945688]
 layout_mode = 0
 offset_left = 1029.0
 offset_top = 603.0
@@ -1808,79 +1816,79 @@ offset_bottom = 626.0
 scale = Vector2(1.2799838, 1.3199955)
 text = "X 99"
 
-[node name="hud_gun_buttons" type="Node2D" parent="CharacterBody3D/hud_canvas/control_gun"]
+[node name="hud_gun_buttons" type="Node2D" parent="CharacterBody3D/hud_canvas/control_gun" unique_id=1440424985]
 position = Vector2(-18, -3)
 
-[node name="ButtonTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun/hud_gun_buttons"]
+[node name="ButtonTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun/hud_gun_buttons" unique_id=1523583109]
 position = Vector2(1085, 569)
 rotation = -0.16053383
 scale = Vector2(0.37234885, 0.39948073)
 texture = ExtResource("16_jvhfj")
 
-[node name="MouseTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun/hud_gun_buttons"]
+[node name="MouseTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun/hud_gun_buttons" unique_id=1578668518]
 position = Vector2(1053.5, 568.26526)
 scale = Vector2(0.31000003, 0.34530595)
 texture = ExtResource("17_xpqs8")
 
-[node name="maycon_hp" type="Node2D" parent="CharacterBody3D/hud_canvas"]
+[node name="maycon_hp" type="Node2D" parent="CharacterBody3D/hud_canvas" unique_id=2047809680]
 position = Vector2(-22, 151)
 scale = Vector2(0.72000015, 0.76000035)
 
-[node name="hp_1" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp"]
+[node name="hp_1" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp" unique_id=48995781]
 position = Vector2(65.00003, 619)
 scale = Vector2(0.3042036, 0.26972094)
 sprite_frames = SubResource("SpriteFrames_xpqs8")
 animation = &"semi_explotion"
 autoplay = "semi_explotion"
 
-[node name="hp_2" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp"]
+[node name="hp_2" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp" unique_id=1583309213]
 position = Vector2(128.00003, 618)
 scale = Vector2(0.3042036, 0.26972094)
 sprite_frames = SubResource("SpriteFrames_1ocj4")
 animation = &"semi_explotion"
 autoplay = "semi_explotion"
 
-[node name="hp_3" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp"]
+[node name="hp_3" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp" unique_id=879511539]
 position = Vector2(193.00003, 618)
 scale = Vector2(0.3042036, 0.26972094)
 sprite_frames = SubResource("SpriteFrames_ievb8")
 animation = &"semi_explotion"
 autoplay = "semi_explotion"
 
-[node name="hp_4" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp"]
+[node name="hp_4" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp" unique_id=1992519241]
 position = Vector2(259, 618.00006)
 scale = Vector2(0.3042036, 0.26972094)
 sprite_frames = SubResource("SpriteFrames_ievb8")
 animation = &"semi_explotion"
 autoplay = "semi_explotion"
 
-[node name="hp_5" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp"]
+[node name="hp_5" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp" unique_id=2103555468]
 position = Vector2(324.00003, 618)
 scale = Vector2(0.3042036, 0.26972094)
 sprite_frames = SubResource("SpriteFrames_ievb8")
 animation = &"semi_explotion"
 autoplay = "semi_explotion"
 
-[node name="RbXbox" type="Sprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp"]
+[node name="RbXbox" type="Sprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp" unique_id=597517412]
 self_modulate = Color(1, 1, 1, 0.84000003)
 position = Vector2(66.66665, 569.7366)
 rotation = 0.23999959
 scale = Vector2(0.5152658, 0.47644296)
 texture = ExtResource("31_mwhgs")
 
-[node name="ShiftDark" type="Sprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp"]
+[node name="ShiftDark" type="Sprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp" unique_id=514321162]
 self_modulate = Color(1, 1, 1, 0.60800004)
 position = Vector2(129.16667, 571.6289)
 scale = Vector2(0.62659717, 0.53784496)
 texture = ExtResource("32_01a3d")
 
-[node name="gun_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas"]
+[node name="gun_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas" unique_id=1943724276]
 position = Vector2(361, 22)
 
-[node name="hp_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas"]
+[node name="hp_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas" unique_id=1025278792]
 position = Vector2(-15, -180)
 
-[node name="two_player_icon" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas"]
+[node name="two_player_icon" type="AnimatedSprite2D" parent="CharacterBody3D/hud_canvas" unique_id=214006544]
 visible = false
 position = Vector2(1023, 267)
 scale = Vector2(0.25, 0.22)
@@ -1888,36 +1896,36 @@ sprite_frames = SubResource("SpriteFrames_csxxf")
 animation = &"maycon"
 autoplay = "maycon"
 
-[node name="Raining" type="AudioStreamPlayer" parent="CharacterBody3D"]
+[node name="Raining" type="AudioStreamPlayer" parent="CharacterBody3D" unique_id=101010190]
 stream = ExtResource("28_elhv1")
 volume_db = -5.361
 parameters/looping = true
 
-[node name="jump" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+[node name="jump" type="AudioStreamPlayer2D" parent="CharacterBody3D" unique_id=940032561]
 stream = ExtResource("2_bd24c")
 volume_db = 9.797
 
-[node name="walk" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+[node name="walk" type="AudioStreamPlayer2D" parent="CharacterBody3D" unique_id=837091570]
 stream = ExtResource("2_o46vj")
 volume_db = 10.474
 parameters/looping = false
 
-[node name="run" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+[node name="run" type="AudioStreamPlayer2D" parent="CharacterBody3D" unique_id=527743035]
 stream = SubResource("AudioStreamMP3_csxxf")
 volume_db = 10.474
 pitch_scale = 1.28
 parameters/looping = false
 
-[node name="GunLoad" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+[node name="GunLoad" type="AudioStreamPlayer2D" parent="CharacterBody3D" unique_id=847793941]
 stream = ExtResource("5_uh0k5")
 volume_db = 5.113
 parameters/looping = false
 
-[node name="GunShot" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+[node name="GunShot" type="AudioStreamPlayer2D" parent="CharacterBody3D" unique_id=1290236909]
 stream = ExtResource("6_y4gmr")
 parameters/looping = false
 
-[node name="HurtSound3d" type="AudioStreamPlayer2D" parent="CharacterBody3D"]
+[node name="HurtSound3d" type="AudioStreamPlayer2D" parent="CharacterBody3D" unique_id=1242428842]
 stream = ExtResource("22_ievb8")
 parameters/looping = false
 

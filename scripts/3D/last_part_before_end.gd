@@ -32,6 +32,7 @@ var objective_label:Label
 var weapon_root:Node3D
 var loose_wood:Node3D
 var attacking:bool = false
+var pickup_started:bool = false
 var fight_finishing:bool = false
 var fight_hit_count:int = 0
 var informant_dialog_available:bool = true
@@ -44,6 +45,7 @@ var motorcycle_rotation_before_dismount:Vector3
 var motorcycle_camera_rotation_before_dismount:Vector3
 var thug_pain_sounds:Array[AudioStream] = [THUG_PAIN_SOUND_1, THUG_PAIN_SOUND_2, THUG_PAIN_SOUND_3]
 var wood_debug_mode:bool = false
+var wood_debug_layer:CanvasLayer
 var wood_debug_status:Label
 var enemy_debug_status:Label
 
@@ -126,16 +128,16 @@ func build_objective_ui() -> void:
 
 func build_wood_debug_ui() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	var debug_layer := CanvasLayer.new()
-	debug_layer.layer = 120
-	add_child(debug_layer)
+	wood_debug_layer = CanvasLayer.new()
+	wood_debug_layer.layer = 120
+	add_child(wood_debug_layer)
 	var panel := PanelContainer.new()
 	panel.position = Vector2(10.0, 55.0)
 	panel.custom_minimum_size = Vector2(390.0, 0.0)
 	var debug_theme := Theme.new()
 	debug_theme.default_font_size = 12
 	panel.theme = debug_theme
-	debug_layer.add_child(panel)
+	wood_debug_layer.add_child(panel)
 	var content := VBoxContainer.new()
 	content.add_theme_constant_override("separation", 3)
 	panel.add_child(content)
@@ -386,12 +388,17 @@ func _on_area_3d_lips_body_exited(body:Node3D) -> void:
 		balao_.queue_free()
 
 func begin_pickup_cutscene() -> void:
-	if stage != STAGE_DISMOUNT:
+	if stage != STAGE_DISMOUNT || pickup_started:
 		return
+	pickup_started = true
 	objective_label.text = ""
 	var player_camera:Camera3D = player.get_node("Camera3D")
 	motorcycle_rotation_before_dismount = player.rotation
 	motorcycle_camera_rotation_before_dismount = player_camera.rotation
+	if is_instance_valid(wood_debug_layer):
+		wood_debug_layer.visible = false
+	fade.get_node("Transition").play("fade_out")
+	await get_tree().create_timer(2.0).timeout
 	player.dismount_final_game()
 	player.velocity = Vector3.ZERO
 	player.process_mode = Node.PROCESS_MODE_DISABLED
@@ -404,6 +411,8 @@ func begin_pickup_cutscene() -> void:
 	loose_wood.global_position = ground_position + Vector3(0.0, 0.18, 0.0)
 	loose_wood.rotation_degrees.z = -90.0
 	player_camera.make_current()
+	fade.get_node("Transition").play("fade_in")
+	await get_tree().create_timer(2.0).timeout
 	var standing_camera_position := player_camera.position
 	var standing_camera_rotation := player_camera.rotation
 	var crouched_camera_position := standing_camera_position + Vector3(0.0, -0.05, -0.18)
@@ -419,17 +428,21 @@ func begin_pickup_cutscene() -> void:
 	var pickup_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	pickup_tween.tween_property(loose_wood, "global_position", pickup_target, 0.85)
 	await pickup_tween.finished
+	await get_tree().create_timer(0.35).timeout
+	fade.get_node("Transition").play("fade_out")
+	await get_tree().create_timer(2.0).timeout
 	loose_wood.queue_free()
 	build_first_person_weapon(player_camera)
-	await get_tree().create_timer(0.65).timeout
-	var stand_tween := create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	stand_tween.tween_property(player_camera, "position", standing_camera_position, 1.7)
-	stand_tween.tween_property(player_camera, "rotation", standing_camera_rotation, 1.7)
-	await stand_tween.finished
+	player_camera.position = standing_camera_position
+	player_camera.rotation = standing_camera_rotation
 	setup_thugs()
+	set_story_stage(STAGE_FIGHT)
+	fade.get_node("Transition").play("fade_in")
+	await get_tree().create_timer(2.0).timeout
 	player.process_mode = Node.PROCESS_MODE_INHERIT
 	Global.in_cutscene = false
-	set_story_stage(STAGE_FIGHT)
+	if is_instance_valid(wood_debug_layer):
+		wood_debug_layer.visible = true
 
 func create_wood_prop() -> Node3D:
 	var root := Node3D.new()
@@ -450,6 +463,7 @@ func create_wood_prop() -> Node3D:
 func build_first_person_weapon(player_camera:Camera3D) -> void:
 	weapon_root = Node3D.new()
 	weapon_root.name = "WoodWeapon"
+	# Base usada quando o mesh foi anexado durante a calibração visual.
 	weapon_root.position = Vector3(0.07, -0.15, -0.4)
 	weapon_root.rotation_degrees = Vector3(-105.0, 85.0, 165.0)
 	weapon_root.scale = Vector3(0.193711, 0.193711, 0.193711)
@@ -460,6 +474,11 @@ func build_first_person_weapon(player_camera:Camera3D) -> void:
 	wood_container.queue_free()
 	wood.position = Vector3(-0.12, 0.36, -0.18)
 	wood.rotation_degrees.z = -45.0
+	# Offset final impresso pelo painel, aplicado depois do reparent para reproduzir
+	# exatamente a aparência vista durante o ajuste.
+	weapon_root.position = Vector3(0.17, -0.15, -0.4)
+	weapon_root.rotation_degrees = Vector3(-170.0, 85.0, 165.0)
+	weapon_root.scale = Vector3(0.064663, 0.064663, 0.064663)
 	update_wood_debug_status()
 
 func setup_thugs() -> void:
