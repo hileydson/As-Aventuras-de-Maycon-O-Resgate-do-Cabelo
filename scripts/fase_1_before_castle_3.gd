@@ -5,6 +5,7 @@ extends Sprite2D
 @onready var camera: Camera2D = $maycon_fase/Camera2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
 @onready var back_from_slum: Marker2D = $"../back_from_slum"
+var entering_well:bool = false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -48,7 +49,10 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 
 
 func _on_dead_line_body_entered(body: Node2D) -> void:
-	get_tree().reload_current_scene()
+	if body != maycon_fase || entering_well:
+		return
+	entering_well = true
+	get_tree().change_scene_to_file("res://scenes/3D/poco_infinito.tscn")
 
 
 func _on_back_stage_body_entered(body: Node2D) -> void:
@@ -59,5 +63,4 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 
 
 func _on_portal_slum_body_entered(body: Node2D) -> void:
-	if body is CharacterBody2D:
-		get_tree().change_scene_to_file("res://scenes/3D/cenario_3d_bofore_castle_1.tscn")
+	_on_dead_line_body_entered(body)

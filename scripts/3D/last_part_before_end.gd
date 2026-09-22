@@ -753,7 +753,7 @@ func finish_chase() -> void:
 	for member in fellas_member_original_positions:
 		member.position = fellas_member_original_positions[member]
 	var group_position := find_ground_position(final_position)
-	group_position.y += 1.2
+	group_position.y += 2.0
 	fellas.global_position = group_position
 	set_story_stage(STAGE_SURRENDER)
 	var away := player.global_position - fellas.global_position

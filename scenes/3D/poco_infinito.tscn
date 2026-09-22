@@ -1,0 +1,64 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/3D/poco_infinito.gd" id="1_well"]
+[ext_resource type="Script" path="res://scripts/3D/poco_infinito_hud.gd" id="2_hud"]
+[ext_resource type="Shader" path="res://scenes/3D/poco_infinito_dash_blur.gdshader" id="3_blur"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dash_blur"]
+shader = ExtResource("3_blur")
+
+[sub_resource type="Environment" id="Environment_well"]
+background_mode = 1
+background_color = Color(0.006, 0.009, 0.018, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.12, 0.21, 0.32, 1)
+ambient_light_energy = 0.45
+glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0.065, 0.015, 0.045, 1)
+fog_density = 0.008
+
+[node name="PocoInfinito" type="Node3D"]
+script = ExtResource("1_well")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_well")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15)
+current = true
+fov = 66.0
+
+[node name="MoonLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, 0, -0.707107, -0.35, 0.868, -0.35, 0.614, 0.496, 0.614, 0, 0, 0)
+light_color = Color(0.47, 0.72, 1, 1)
+light_energy = 0.8
+
+[node name="BloodLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -5, 1)
+light_color = Color(1, 0.08, 0.19, 1)
+light_energy = 2.5
+omni_range = 17.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="DashBlur" type="ColorRect" parent="CanvasLayer"]
+visible = false
+material = SubResource("ShaderMaterial_dash_blur")
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HUD" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_hud")

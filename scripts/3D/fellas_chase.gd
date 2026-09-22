@@ -95,8 +95,9 @@ func start_chase(chase_player:CharacterBody3D) -> void:
 		members.append({"sprite":sprite, "marker":marker, "engine":engine, "gun":gun, "pain":pain,
 			"textures":member_textures, "hp":MAX_HP, "active":false, "escaped":false,
 			"heading":Vector3(sin(angle), 0.0, cos(angle)), "target":Vector3.ZERO,
-			"turn_timer":0.0, "shot_timer":randf_range(1.0, 2.5), "shot_state":0,
-			"shot_delay":0.0, "lost_timer":0.0, "phase":randf() * TAU,
+			"turn_timer":0.0, "shot_timer":randf_range(0.8, 1.6), "shot_state":0,
+			"shot_delay":0.0, "burst_remaining":0, "aim_direction":Vector3.ZERO,
+			"lost_timer":0.0, "phase":randf() * TAU,
 			"bar":hud.get_node("Margin/HBox/Enemy%d/HP" % index),
 			"hp_text":hud.get_node("Margin/HBox/Enemy%d/HPText" % index),
 			"cross":hud.get_node("Margin/HBox/Enemy%d/Cross" % index),
@@ -447,33 +448,51 @@ func process_enemy_shot(member:Dictionary, delta:float, distance:float) -> void:
 		return
 	var sprite:Sprite3D = member["sprite"]
 	member["shot_timer"] -= delta
-	if member["shot_state"] == 0 and member["shot_timer"] <= 0.0 and distance < 50.0:
+	if member["shot_state"] == 0 and member["shot_timer"] <= 0.0 and distance < 55.0:
 		member["shot_state"] = 1
-		member["shot_delay"] = 0.7
+		member["shot_delay"] = 0.48
+		member["burst_remaining"] = randi_range(1, 4)
+		var aim:Vector3 = player.global_position - sprite.global_position
+		aim.y = 0.0
+		member["aim_direction"] = aim.normalized()
 		sprite.texture = member["textures"][1]
 	elif member["shot_state"] == 1:
 		member["shot_delay"] -= delta
 		if member["shot_delay"] <= 0.0:
 			member["shot_state"] = 2
-			member["shot_delay"] = 0.32
+			member["shot_delay"] = 0.16
 			sprite.texture = member["textures"][2]
 	elif member["shot_state"] == 2:
 		member["shot_delay"] -= delta
 		if member["shot_delay"] <= 0.0:
-			member["shot_state"] = 3
-			member["shot_delay"] = 0.22
 			(member["gun"] as AudioStreamPlayer3D).play()
 			var to_player := player.global_position - sprite.global_position
 			to_player.y = 0.0
-			var backward:Vector3 = -(member["heading"] as Vector3)
-			if distance < 45.0 and backward.dot(to_player.normalized()) > 0.84:
-				player.levou_dano(1)
-				update_player_health()
+			var aim_direction:Vector3 = member["aim_direction"]
+			if distance < 50.0 and to_player.length() > 0.1 and aim_direction.dot(to_player.normalized()) > 0.96:
+				var ray := PhysicsRayQueryParameters3D.create(sprite.global_position + Vector3.UP * 1.5, player.global_position + Vector3.UP)
+				ray.exclude = [player.get_rid()]
+				if get_world_3d().direct_space_state.intersect_ray(ray).is_empty():
+					player.levou_dano(1)
+					update_player_health()
+			if to_player.length() > 0.1:
+				member["aim_direction"] = aim_direction.lerp(to_player.normalized(), 0.4).normalized()
+			member["burst_remaining"] -= 1
+			member["shot_state"] = 3 if member["burst_remaining"] > 0 else 4
+			member["shot_delay"] = randf_range(0.14, 0.22)
+			if member["shot_state"] == 3:
+				sprite.texture = member["textures"][1]
 	elif member["shot_state"] == 3:
 		member["shot_delay"] -= delta
 		if member["shot_delay"] <= 0.0:
+			member["shot_state"] = 2
+			member["shot_delay"] = 0.12
+			sprite.texture = member["textures"][2]
+	elif member["shot_state"] == 4:
+		member["shot_delay"] -= delta
+		if member["shot_delay"] <= 0.0:
 			member["shot_state"] = 0
-			member["shot_timer"] = randf_range(2.2, 3.5)
+			member["shot_timer"] = randf_range(1.1, 1.8)
 			sprite.texture = member["textures"][0]
 
 func on_player_fire() -> void:
