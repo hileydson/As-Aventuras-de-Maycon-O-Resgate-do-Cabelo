@@ -10,6 +10,8 @@ const STAGE_DISMOUNT := 2
 const STAGE_FIGHT := 3
 const STAGE_SURRENDER := 4
 const STAGE_CABELO := 5
+const STAGE_CHASE := 6
+const FELLAS_CHASE_SCRIPT = preload("res://scripts/3D/fellas_chase.gd")
 
 @onready var maycon_3d: Node3D = $maycon_3d
 @onready var fade: Node2D = $fade
@@ -39,7 +41,6 @@ var informant_dialog_available:bool = true
 var informant_dialog_start_position:Vector3
 var thug_data:Array[Dictionary] = []
 var fellas_original_scale:Vector3
-var fellas_original_position:Vector3
 var fellas_member_original_positions:Dictionary = {}
 var motorcycle_rotation_before_dismount:Vector3
 var motorcycle_camera_rotation_before_dismount:Vector3
@@ -48,11 +49,11 @@ var wood_debug_mode:bool = false
 var wood_debug_layer:CanvasLayer
 var wood_debug_status:Label
 var enemy_debug_status:Label
+var fellas_chase
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
 	fellas_original_scale = fellas.scale
-	fellas_original_position = fellas.position
 	for member in [$lipao/iago, $lipao/luks, $lipao/tony]:
 		fellas_member_original_positions[member] = member.position
 	configure_fellas_billboards()
@@ -276,7 +277,7 @@ func print_enemy_debug_transform() -> void:
 func set_story_stage(new_stage:int) -> void:
 	stage = new_stage
 	informant.visible = true
-	fellas.visible = stage >= STAGE_FELLAS
+	fellas.visible = stage >= STAGE_FELLAS && stage != STAGE_CHASE
 	fellas_area.monitoring = stage == STAGE_FELLAS
 	cabelo.visible = stage == STAGE_CABELO
 	cabelo_area.monitoring = stage == STAGE_CABELO
@@ -294,6 +295,8 @@ func set_story_stage(new_stage:int) -> void:
 			objective_label.text = ""
 		STAGE_CABELO:
 			objective_label.text = tr("OBJECTIVE_CABELO_GAS_STATION")
+		STAGE_CHASE:
+			objective_label.text = tr("OBJECTIVE_CHASE_FELLAS")
 
 func configure_fellas_billboards() -> void:
 	for member in [fellas, $lipao/iago, $lipao/luks, $lipao/tony]:
@@ -304,6 +307,8 @@ func update_map_objectives(map_open:bool) -> void:
 	$cigarro/mapa_cabelo.visible = map_open && stage == STAGE_INFORMANT
 	$lipao/mapa_cabelo.visible = map_open && stage >= STAGE_FELLAS && stage < STAGE_CABELO
 	$cabelo/mapa_cabelo.visible = map_open && stage == STAGE_CABELO
+	if is_instance_valid(fellas_chase):
+		fellas_chase.set_map_visible(map_open)
 
 func _on_chao_body_entered(_body:Node3D) -> void:
 	get_tree().reload_current_scene()
@@ -640,10 +645,6 @@ func finish_fight() -> void:
 	await get_tree().create_timer(2.0).timeout
 	if is_instance_valid(weapon_root):
 		weapon_root.queue_free()
-	fellas.position = fellas_original_position
-	fellas.scale = fellas_original_scale
-	for member in fellas_member_original_positions:
-		member.position = fellas_member_original_positions[member]
 	player.mount_final_game()
 	player.global_position = fellas.global_position + Vector3(0.0, 0.0, 18.0)
 	player.rotation = motorcycle_rotation_before_dismount
@@ -652,10 +653,52 @@ func finish_fight() -> void:
 	player_camera.h_offset = 0.0
 	player_camera.v_offset = 0.0
 	player.velocity = Vector3.ZERO
+	set_story_stage(STAGE_CHASE)
+	fellas_chase = Node3D.new()
+	fellas_chase.set_script(FELLAS_CHASE_SCRIPT)
+	fellas_chase.name = "FellasChase"
+	add_child(fellas_chase)
+	fellas_chase.all_escaped.connect(finish_chase, CONNECT_ONE_SHOT)
+	fellas_chase.start_chase(player)
+	player.maycon_hp.visible = true
+	the_almost_end_song.stop()
+	fade.get_node("Transition").play("fade_in")
+	await get_tree().create_timer(2.0).timeout
+	player.process_mode = Node.PROCESS_MODE_INHERIT
+	Global.in_cutscene = false
+	fellas_chase.combat_enabled = true
+
+func finish_chase() -> void:
+	Global.in_cutscene = true
+	player.process_mode = Node.PROCESS_MODE_DISABLED
+	fade.get_node("Transition").play("fade_out")
+	await get_tree().create_timer(2.0).timeout
+	var final_position:Vector3 = fellas_chase.last_escape_position
+	if is_instance_valid(fellas_chase):
+		fellas_chase.queue_free()
+	fellas_chase = null
+	player.maycon_hp.visible = false
+	fellas.scale = fellas_original_scale
+	for member in fellas_member_original_positions:
+		member.position = fellas_member_original_positions[member]
+	var group_position := find_ground_position(final_position)
+	group_position.y += 1.2
+	fellas.global_position = group_position
+	set_story_stage(STAGE_SURRENDER)
+	var away := player.global_position - fellas.global_position
+	away.y = 0.0
+	if away.length() < 0.1:
+		away = Vector3.BACK
+	place_player_on_ground(fellas.global_position + away.normalized() * 18.0)
+	player.look_at(Vector3(fellas.global_position.x, player.global_position.y, fellas.global_position.z), Vector3.UP)
+	player.velocity = Vector3.ZERO
 	for data in thug_data:
 		var thug:Node3D = data["node"]
+		data["hp"] = 0
+		add_permanent_blood_stains(data)
 		thug.modulate = Color(0.62, 0.2, 0.2, 1.0)
 		(data["shout"] as Label3D).text = ""
+	the_almost_end_song.play()
 	fade.get_node("Transition").play("fade_in")
 	await get_tree().create_timer(1.2).timeout
 	show_surrender_dialog()

@@ -1,5 +1,7 @@
 extends CharacterBody3D
 
+signal motorcycle_fire
+
 @onready var hud_canvas: CanvasLayer = $hud_canvas
 @onready var arma_sprite: AnimatedSprite2D = $hud_canvas/control_gun/gun/arma_sprite
 @onready var shoot_fire: AnimatedSprite2D = $hud_canvas/control_gun/gun/shoot
@@ -26,6 +28,7 @@ extends CharacterBody3D
 @onready var maycon_3d_model_ia_animations: Node3D = $maycon_3d_model_ia_animations
 @onready var cigarro_perfect_animations: Node3D = $cigarro_perfect_animations
 @onready var control_moto: Control = $hud_canvas/control_moto
+@onready var metralhadora_moto: Sprite2D = $hud_canvas/control_moto/MetralhadoraMoto
 @onready var moto_parada: AudioStreamPlayer = $hud_canvas/control_moto/moto_parada
 @onready var moto_acelerando: AudioStreamPlayer = $hud_canvas/control_moto/ModoAcelerando
 @onready var farol_moto_cigarro: SpotLight3D = $farol_moto_cigarro
@@ -59,6 +62,10 @@ var gatilho_pressionado = false
 
 var on_moto = false
 var final_game_camera_offset_applied:bool = false
+var motorcycle_chase:bool = false
+var motorcycle_turn_speed:float = 0.0
+var motorcycle_fire_cooldown:float = 0.0
+var motorcycle_muzzle:GPUParticles3D
 
 
 @export var SPRINT_SPEED = 9.0  # Velocidade ao correr
@@ -78,8 +85,39 @@ func set_final_game()->void:
 	camera.position.y = 2.514444
 	final_game_camera_offset_applied = true
 	moto_parada.play()
+	set_motorcycle_chase(false)
+
+func set_motorcycle_chase(active:bool) -> void:
+	motorcycle_chase = active
+	metralhadora_moto.visible = active
+	if !active:
+		motorcycle_turn_speed = 0.0
+		if is_instance_valid(motorcycle_muzzle):
+			motorcycle_muzzle.emitting = false
+	elif !is_instance_valid(motorcycle_muzzle):
+		motorcycle_muzzle = GPUParticles3D.new()
+		motorcycle_muzzle.name = "MotorcycleMuzzle"
+		motorcycle_muzzle.position = Vector3(0.0, -0.35, -2.2)
+		motorcycle_muzzle.amount = 12
+		motorcycle_muzzle.lifetime = 0.17
+		motorcycle_muzzle.one_shot = true
+		motorcycle_muzzle.explosiveness = 1.0
+		var sparks := ParticleProcessMaterial.new()
+		sparks.direction = Vector3(0.0, 0.0, -1.0)
+		sparks.spread = 18.0
+		sparks.initial_velocity_min = 5.0
+		sparks.initial_velocity_max = 10.0
+		sparks.gravity = Vector3.ZERO
+		sparks.color = Color(1.0, 0.65, 0.12)
+		motorcycle_muzzle.process_material = sparks
+		var spark_mesh := SphereMesh.new()
+		spark_mesh.radius = 0.035
+		spark_mesh.height = 0.07
+		motorcycle_muzzle.draw_pass_1 = spark_mesh
+		camera_3d.add_child(motorcycle_muzzle)
 
 func dismount_final_game()->void:
+	set_motorcycle_chase(false)
 	on_moto = false
 	control_moto.visible = false
 	farol_moto_cigarro.visible = false
@@ -283,6 +321,17 @@ func levou_dano(dano:int)->void:
 
 
 func _physics_process(delta):
+	motorcycle_fire_cooldown = maxf(0.0, motorcycle_fire_cooldown - delta)
+	if motorcycle_chase and on_moto:
+		var firing := Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) or Input.is_key_pressed(KEY_SPACE)
+		if firing:
+			metralhadora_moto.rotation += delta * 31.0
+			if motorcycle_fire_cooldown <= 0.0:
+				motorcycle_fire_cooldown = 0.15
+				gun_shot.play()
+				motorcycle_muzzle.restart()
+				motorcycle_muzzle.emitting = true
+				motorcycle_fire.emit()
 	# --- 1. CONFIGURAÇÕES TÉCNICAS E HUD ---
 	if Global.is_two_player_active:
 		gun.global_position = $hud_canvas/gun_position_2_players.global_position
@@ -366,7 +415,14 @@ func _physics_process(delta):
 		joy_look = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X), Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_Y))
 
 	# Aumentamos de 0.1 para 0.2 para ignorar pequenos movimentos fantasmas do analógico
-	if joy_look.length() > 0.13: 
+	if on_moto:
+		var mouse_turn := 0.0
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			mouse_turn = clampf(Input.get_last_mouse_velocity().x * MOUSE_SENSITIVITY * 0.18, -0.9, 0.9)
+		var target_turn := clampf(-joy_look.x * 1.0 - mouse_turn, -0.9, 0.9)
+		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, 1.65 * delta)
+		rotate_y(motorcycle_turn_speed * delta)
+	elif joy_look.length() > 0.13:
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)
 		if camera_3d and not on_moto:
 			camera_3d.rotate_x(-joy_look.y * JOY_SENSITIVITY)
@@ -384,7 +440,8 @@ func _physics_process(delta):
 			# Rotação Horizontal (Maycon vira para os lados)
 			# Multiplicamos por delta para a velocidade ser consistente
 			var rotation_y = -mouse_velocity.x * MOUSE_SENSITIVITY * delta
-			rotate_y(rotation_y)
+			if not on_moto:
+				rotate_y(rotation_y)
 			
 			# Rotação Vertical (Câmera olha para cima e para baixo)
 			if camera_3d and not on_moto:
