@@ -1,0 +1,221 @@
+keys,pt,en,es,zh
+UI_SELECT_LANGUAGE,Selecione o Idioma,Select Language,Selecciona el Idioma,选择语言
+UI_LANG_PT,Português,Português,Português,Português
+UI_LANG_EN,English,English,English,English
+UI_LANG_ES,Español,Español,Español,Español
+UI_LANG_ZH,中文,中文,中文,中文
+GAME_TITLE,As Aventuras de Maycon,The Legend of Maycon,Las Aventuras de Maycon,麦肯大冒险
+GAME_SUBTITLE,O Resgate do Cabelo,The Cabelo's Rescue,El Rescate de Cabelo,拯救卡贝洛
+MENU_NEW_GAME,Novo Jogo,New Game,Nueva Partida,新游戏
+MENU_CONTINUE,Continuar,Continue,Continuar,继续游戏
+MENU_SETTINGS,Configurações,Settings,Configuración,设置
+MENU_EXIT,Sair,Exit,Salir,退出
+MENU_CLOSE,Fechar,Close,Cerrar,关闭
+MENU_SAVE_QUIT,Salvar & Sair,Save & Quit,Guardar y Salir,保存并退出
+MENU_PAUSE,PAUSE,PAUSE,PAUSA,暂停
+MENU_BATTLE_PAUSED,BATALHA PAUSADA,BATTLE PAUSED,BATALLA PAUSADA,战斗暂停
+MENU_PAUSE_HINT,ESC / START para continuar,ESC / START to continue,ESC / START para continuar,按 ESC / START 继续
+MENU_CONTROLLER,CONTROLE,CONTROLLER,CONTROLES,操作说明
+MENU_RUN,Correr,Run,Correr,奔跑
+MENU_CROUCH,Agachar,Crouch,Agacharse,下蹲
+MENU_MAP,MAPA,MAP,MAPA,地图
+MENU_OK,OK,OK,OK,确定
+SETTINGS_TITLE,Configurações,Settings,Configuración,设置
+SETTINGS_GAMEPLAY,Gameplay,Gameplay,Jugabilidad,游戏设置
+SETTINGS_DEBUG,Debug,Debug,Depuración,调试
+SETTINGS_AIM_ASSIST,Assistente de Mira,Aim Assist,Asistencia de Apuntado,瞄准辅助
+SETTINGS_AIM_DESC,Ajusta a intensidade da atração e assistência de mira no combate 3D.,Adjusts aim magnetism and shot assist strength in 3D combat.,Ajusta la intensidad de atracción y asistencia de disparo en combate 3D.,调整3D战斗中的瞄准吸附与射击辅助强度。
+SETTINGS_AIM_ASSIST_DESC,Ajusta a intensidade da atração e assistência de mira no combate 3D.,Adjusts aim magnetism and shot assist strength in 3D combat.,Ajusta la intensidad de atracción y asistencia de disparo en combate 3D.,调整3D战斗中的瞄准吸附与射击辅助强度。
+SETTINGS_OFF,Desativado,Off,Desactivado,关闭
+SETTINGS_AIM_OFF,Desativado,Off,Desactivado,关闭
+SETTINGS_EVENTS,Eventos do Jogo (game_events):,Game Events (game_events):,Eventos del Juego (game_events):,游戏事件 (game_events):
+SETTINGS_GAME_EVENTS,Eventos do Jogo (game_events):,Game Events (game_events):,Eventos del Juego (game_events):,游戏事件 (game_events):
+SETTINGS_CLOSE,Fechar,Close,Cerrar,关闭
+SETTINGS_LANGUAGE,Idioma,Language,Idioma,语言
+UI_HOLD_SKIP,SEGURE ESC / START PARA PULAR,HOLD ESC / START TO SKIP,MANTÉN ESC / START PARA SALTAR,按住 ESC / START 跳过
+STORY_SKIP_PROMPT,SEGURE ESC / START PARA PULAR,HOLD ESC / START TO SKIP,MANTÉN ESC / START PARA SALTAR,按住 ESC / START 跳过
+UI_HEALTH,VIDA,HEALTH,SALUD,生命
+BATTLE_HP_LABEL,VIDA,HEALTH,SALUD,生命值
+STORY_INTRO_1,Após Cabelo ser capturado,After Cabelo has been captured,Después de que Cabelo fuera capturado,卡贝洛被抓走后
+STORY_INTRO_2,Maycon o procurou por toda parte,Maycon searched for him everywhere,Maycon lo buscó por todas partes,麦肯到处寻找他的下落
+STORY_INTRO_3,Procurou por toda grande Bela Aurora,He searched all over the great Bela Aurora,Buscó por toda la gran Bela Aurora,寻遍了整个贝拉奥罗拉
+STORY_INTRO_4,Restando apenas a pracinha da Bela,With only Bela's little square remaining,Quedando solo la placita de Bela,只剩下贝拉小广场
+STORY_INTRO_5,Em um último suspiro Maycon foi lá...,"With his last breath, Maycon went there...","En un último suspiro, Maycon fue allí...",怀着最后的希望，麦肯赶往了那里……
+DIALOGUE_SECO_1,Maycon seu safado!,Maycon you asshole!,"¡Maycon, sinvergüenza!",麦肯你个混蛋！
+DIALOGUE_SECO_2,Esquece o cabelo!,Forget about Cabelo!,¡Olvídate de Cabelo!,忘了卡贝洛吧！
+DIALOGUE_SECO_3,Levarei ele para um outro lugar...,I'm gonna take him to another place!,¡Me lo llevaré a otro lugar...,我要把他带去另一个地方……
+DIALOGUE_SECO_4,fora do mundo real!,A not real one!,¡fuera del mundo real!,现实世界之外！
+DIALOGUE_SECO_5,Somente lá voce contrará ele!,Only there you can rescue him!,¡Solo allí podrás rescatarlo!,只有在那里你才能救他！
+DIALOGUE_SECO_6,Venha seu safado!,Come on! You asshole!,"¡Ven aquí, desgraciado!",过来啊，你个蠢货！
+DIALOGUE_SECO_7,Entre! entre no fogo!!,Enter! Touch the fire!!,¡Entra! ¡Entra al fuego!!,跳进来！跳进火海吧！！
+DIALOGUE_SECO_8,Entre no fogo que queima gostoso!!,Enter! Touch the fire that burns so good!!,¡Entra al fuego que quema sabroso!!,快跳进烈火中好好享受吧！！
+DIALOGUE_CIGARRO_1,Como seu melhor amigo do coração!,As your best friend in the world!,¡Como tu mejor amigo del alma!,作为你最交心的挚友！
+DIALOGUE_CIGARRO_2,Venho te ajudar!,I'm here to help you!,¡Vengo a ayudarte!,我来助你一臂之力！
+DIALOGUE_CIGARRO_3,Sei que está nessa busca pelo Cabelo!,I know you're on this quest for Cabelo!,¡Sé que estás buscando a Cabelo!,我知道你一直在寻找卡贝洛！
+DIALOGUE_CIGARRO_4,Confio em você Maycon!,"I trust you, Maycon!","¡Confío en ti, Maycon!",我相信你，麦肯！
+DIALOGUE_CIGARRO_5,O Olindão largou ele em algum lugar na cidade,Olindão left him somewhere in the city,Olindão lo dejó en algún lugar de la ciudad,奥林当把他扔在城里的某个角落了
+DIALOGUE_CIGARRO_6,Eu sabia que precisaria...,I knew you'd need it...,Sabía que lo necesitarías...,我就知道你一定会需要这个……
+DIALOGUE_CIGARRO_7,Pegue minha moto emprestada!,Take my motorcycle!,¡Toma prestada mi moto!,借用我的摩托车吧！
+DIALOGUE_CIGARRO_8,Estarei pela cidade...,I'll be around town...,Estaré por la ciudad...,我会在城里四处转转……
+DIALOGUE_CIGARRO_9,Se eu achar ele te informo!,If I spot him I'll let you know!,¡Si lo veo te aviso!,只要发现他我会立刻通知你！
+DIALOGUE_CIGARRO_10,Boa sorte amigo!!,"Good luck, my friend!!","¡¡Buena suerte, amigo!!",祝你好运，我的朋友！！
+DIALOGUE_INFORMANT_1,"Maycon, acho que vi quem levou o Cabelo.","Maycon, I think I saw who took Cabelo.","Maycon, creo que vi quién se llevó a Cabelo.",麦肯，我想我看到是谁带走卡贝洛了。
+DIALOGUE_INFORMANT_2,Tem um grupo de malandros aí pra cima.,There's a gang of troublemakers up the road.,Hay un grupo de maleantes ahí arriba.,前面路上有一群地痞流氓。
+DIALOGUE_INFORMANT_3,Acho que eles pegaram o Cabelo.,I think they took Cabelo.,Creo que ellos atraparon a Cabelo.,我觉得是他们绑架了卡贝洛。
+DIALOGUE_INFORMANT_4,Eles estavam muito estranhos.,They were acting very suspicious.,Se veían muy sospechosos.,他们的行踪非常诡异。
+DIALOGUE_INFORMANT_5,Principalmente um tal de Tony.,Especially a guy named Tony.,Especialmente un tal Tony.,特别是一个叫托尼的家伙。
+DIALOGUE_INFORMANT_6,Ele parece ser o mais malandro deles.,He looks like the shadiest one of them.,Parece ser el más peligroso de todos.,他看起来是那伙人里最阴险狡诈的。
+DIALOGUE_INFORMANT_7,Eles se chamam de Fellas.,They call themselves the Fellas.,Se hacen llamar los Fellas.,他们自称费拉斯帮。
+DIALOGUE_FELLAS_1,Olha só quem chegou... o heróizinho da cidade.,Look who showed up... the city's little hero.,Miren quién llegó... el herocito de la ciudad.,看看谁来了……这不是城里的小英雄吗。
+DIALOGUE_FELLAS_2,Nós somos os caras. Você não é nada!,We're the real deal. You're nothing!,Nosotros mandamos aquí. ¡Tú no eres nadie!,这儿归我们管。你算什么东西！
+DIALOGUE_FELLAS_3,"Estamos sendo pagos para ficar com o Cabelo, portanto mete o pé!","We're being paid to keep Cabelo, so get lost!","Nos pagan por retener a Cabelo, ¡así que lárgate!",有人出大钱让我们看守卡贝洛，识相的快滚！
+DIALOGUE_FELLAS_4,"Some daqui, mané, antes que o Tony perca a paciência!","Get out of here, loser, before Tony loses his patience!","¡Lárgate, perdedor, antes de que Tony pierda la paciencia!",滚远点，窝囊废，别等托尼失去耐心！
+DIALOGUE_FELLAS_5,"Você não assusta nem criança, seu otário!","You couldn't scare a child, you clown!","¡No asustas ni a un niño, payaso!",你连三岁小孩都吓不住，跳梁小丑！
+DIALOGUE_SURRENDER_1,"Tá bom, tá bom! Perdoa a gente, Maycon!","All right, all right! Forgive us, Maycon!","¡Está bien, está bien! ¡Perdónanos, Maycon!",好啦，好啦！饶了我们吧，麦肯！
+DIALOGUE_SURRENDER_2,Foi o Tony que fechou o acordo. A gente só queria a grana!,Tony made the deal. We just wanted the money!,Tony cerró el trato. ¡Nosotros solo queríamos el dinero!,是托尼达成的交易。我们只是图钱！
+DIALOGUE_SURRENDER_3,Deixamos o Cabelo perto do Posto Estrela da Serra.,We left Cabelo near the Serra Star Gas Station.,Dejamos a Cabelo cerca de la Gasolinera Estrella de la Sierra.,我们把卡贝洛留在了塞拉之星加油站附近。
+DIALOGUE_SURRENDER_4,"Fica no canto nordeste da cidade. Ele está bem, a gente jura!","It's in the northeast corner of the city. He's safe, we swear!","Está en la esquina noreste de la ciudad. ¡Está bien, lo juramos!",就在城市的东北角。他很好，我们发誓！
+OBJECTIVE_SEEK_CLUE,Procure uma pista no sul da cidade,Find a clue in the south of the city,Busca una pista al sur de la ciudad,在城市南部寻找线索
+OBJECTIVE_FIND_FELLAS,Encontre os Fellas ao norte,Find the Fellas up north,Encuentra a los Fellas al norte,去城北寻找费拉斯帮
+OBJECTIVE_DISMOUNT,Pressione E / START para descer da moto,Press E / START to get off the motorcycle,Pulsa E / START para bajar de la moto,按 E / START 下摩托车
+OBJECTIVE_FIGHT_FELLAS,BOTÃO ESQUERDO / RT: acerte os Fellas com a madeira,LEFT BUTTON / RT: hit the Fellas with the wood,BOTÓN IZQUIERDO / RT: golpea a los Fellas con la madera,鼠标左键 / RT：用木棍痛击费拉斯帮
+OBJECTIVE_CABELO_GAS_STATION,O Cabelo está no Posto Estrela da Serra!,Cabelo is at the Serra Star Gas Station!,¡Cabelo está en la Gasolinera Estrella de la Sierra!,卡贝洛在塞拉之星加油站！
+SHOUT_1,SAI VAZADO!,BACK OFF!,¡LÁRGATE!,快滚开！
+SHOUT_2,"SAI DAÍ, BUNDÃO!","GET AWAY, JERK!","¡QUÍTATE DE AHÍ, COBARDE!",闪开，胆小鬼！
+SHOUT_3,"SAI NO SAPATO, OTÁRIO!","GET LOST, LOSER!","¡PIÉRDETE, TONTO!",悄悄滚蛋吧，蠢货！
+SHOUT_4,"PARA COM ISSO, MALUCO!","STOP IT, MANIAC!","¡PARA CON ESO, LOCO!",住手，你个疯子！
+SHOUT_THUG_1,SAI VAZADO!,BACK OFF!,¡LÁRGATE!,快滚开！
+SHOUT_THUG_2,"SAI DAÍ, BUNDÃO!","GET AWAY, JERK!","¡QUÍTATE DE AHÍ, COBARDE!",闪开，胆小鬼！
+SHOUT_THUG_3,"SAI NO SAPATO, OTÁRIO!","GET LOST, LOSER!","¡PIÉRDETE, TONTO!",悄悄滚蛋吧，蠢货！
+SHOUT_THUG_4,"PARA COM ISSO, MALUCO!","STOP IT, MANIAC!","¡PARA CON ESO, LOCO!",住手，你个疯子！
+SECO_CASTLE_1,Volte aqui Olindão!,Come back here Olindão!,"¡Vuelve aquí, Olindão!",给我滚回来，奥林当！
+SECO_CASTLE_2,Estou te avisando!,I'm not gonna say it again!,¡Te lo estoy advirtiendo!,我最后警告你一次！
+SECO_CASTLE_3,Eu vou te pegar AGORA Tripa Maior!,I'm gonna catch you NOW Tripa Maior!,"¡Te voy a atrapar AHORA, Tripa Maior!",大肚汉，我现在就要逮住你！
+SECO_CASTLE_4,AGORA!,NOW!,¡AHORA!,就是现在！
+STAGE_BLOCKED_AXE,"Não consigo passar por aqui... 
+Preciso de algo para quebrar isso...","I can't get through here... 
+I need something to break it...","No puedo pasar por aquí... 
+Necesito algo para romper esto...","我过不去这里……
+我需要某种工具把它砸开……"
+LEVEL_BLOCK_GUILLOTINE,"Não consigo passar por aqui... 
+Preciso de algo para quebrar isso...","I can't get through here... 
+I need something to break it...","No puedo pasar por aquí... 
+Necesito algo para romper esto...","我过不去这里……
+我需要某种工具把它砸开……"
+PROMPT_CLIMB_STAIRS,subir as escadas?,climb the stairs?,¿subir las escaleras?,要爬楼梯吗？
+LABEL_YOU_SUCK,SEU IDIOTA!,YOU SUCK!,¡IDIOTA!,你个蠢蛋！
+LABEL_PESTILENT_PASSAGE,Passagem Pestilenta,Pestilent passage,Pasaje Pestilente,恶臭通道
+LEVEL_PESTILENT_PASSAGE,Passagem Pestilenta,Pestilent passage,Pasaje Pestilente,恶臭通道
+LABEL_ROCKS_PATH,Caminho das Pedras,Rocks Path,Camino de Piedras,碎石小径
+LEVEL_STONE_PATH,Caminho das Pedras,Rocks Path,Camino de Piedras,碎石小径
+LABEL_MUNDO_OLINDAO,Mundo do Olindão,Olindão's World,El Mundo de Olindão,奥林当的世界
+LEVEL_OLINDAO_WORLD,Mundo do Olindão,Olindão's World,El Mundo de Olindão,奥林当的世界
+LABEL_CIDADE,Cidade,City,Ciudad,城市
+LEVEL_CITY,Cidade,City,Ciudad,城市
+LABEL_LOST_CITY,Cidade Perdida,Lost City,Ciudad Perdida,失落之城
+LABEL_CASTLE_OLINDAO,Castelo do Olindão,Castle of Olindão,Castillo de Olindão,奥林当城堡
+LABEL_WELCOME_JUNGLE,Bem-vindo à Selva,Welcome to the Jungle,Bienvenido a la Selva,欢迎来到丛林
+LABEL_WELCOME_CASTLE,Bem-vindo ao Castelo do Olindão,Welcome to Olindão's Castle,Bienvenido al Castillo de Olindão,欢迎来到奥林当城堡
+LABEL_YOU_MISSED,VOCÊ ERROU!,YOU MISSED IT!,¡FALLASTE!,你打偏了！
+LABEL_SECO_DODGED,OLINDÃO DESVIOU!,OLINDÃO DODGED!,¡OLINDÃO LO ESQUIVÓ!,奥林当闪避了！
+BATTLE_OLINDAO_DODGED,OLINDÃO DESVIOU!,OLINDÃO DODGED!,¡OLINDÃO LO ESQUIVÓ!,奥林当闪避了！
+LABEL_SECO_ESCAPED,OLINDÃO FUGIU!,SECO RAN AWAY!,¡OLINDÃO HUYÓ!,奥林当逃跑了！
+BATTLE_OLINDAO_FLED,OLINDÃO FUGIU!,SECO RAN AWAY!,¡OLINDÃO HUYÓ!,奥林当逃跑了！
+LABEL_SAFADAMENTE,SAFADAMENTE... ,CRAFTILY... ,DESCARADAMENTE... ,狡猾地逃窜……
+BATTLE_SAFADAMENTE,SAFADAMENTE... ,CRAFTILY... ,DESCARADAMENTE... ,狡猾地逃窜……
+LABEL_TWO_PLAYER_SCREEN,Segunda tela ativada pelo Controle 2!,Second screen activated by Player 2!,¡Segunda pantalla activada por el Mando 2!,2号手柄已激活第二屏幕！
+BATTLE_MODE_TITLE,ESCOLHA O ESTILO DE BATALHA,CHOOSE YOUR BATTLE STYLE,ELIGE EL ESTILO DE BATALLA,选择战斗模式
+BATTLE_MODE_SUBTITLE,Você poderá iniciar uma nova jornada com um dos dois sistemas.,Start a new journey with one of the two battle systems.,Podrás iniciar una nueva aventura con uno de los dos sistemas.,你可以从这两种战斗系统中选择一种开始新冒险。
+BATTLE_MODE_REALTIME_TITLE,TEMPO REAL  •  PADRÃO,REAL TIME  •  DEFAULT,TIEMPO REAL  •  ESTÁNDAR,实时动作  •  默认
+BATTLE_MODE_REALTIME_DESC,"Beat 'em up com movimentação livre, combos, esquiva, inimigos ativos, sangue e arenas progressivas.","Beat 'em up with free movement, combos, dodging, active enemies, blood and progressive arenas.","Beat 'em up con movimiento libre, combos, esquiva, enemigos activos, sangre y arenas progresivas.",自由移动的清版动作格斗，包含连击、闪避、积极的敌人、鲜血飞溅与关卡竞技场。
+BATTLE_MODE_STRATEGIC_TITLE,ESTRATÉGICA,STRATEGIC,ESTRATÉGICA,策略回合
+BATTLE_MODE_STRATEGIC_DESC,"O sistema clássico atual: ataques limitados, defesa por salto e turnos de pressão.","The current classic system: limited attacks, jump defense and pressure turns.","El sistema clásico actual: ataques limitados, defensa por salto y turnos de presión.",经典回合制战斗：攻击次数限制、跳跃防守与压制回合。
+BATTLE_MODE_HINT,Setas/analógico para escolher  •  Enter/A para confirmar,Arrows/stick to choose  •  Enter/A to confirm,Flechas/palanca para elegir  •  Enter/A para confirmar,方向键/摇杆选择  •  Enter/A 确认
+POWER_PUNCH,SOCO,PUNCH,PUÑETAZO,出拳
+POWER_KICK,CHUTE,KICK,PATADA,飞踢
+POWER_JUMP,PULO,JUMP,SALTO,跳跃
+POWER_DASH,DASH,DASH,DASH,冲刺
+POWER_SUPER_PUNCH,SUPER SOCO DEVASTADOR,SUPER DEVASTATING PUNCH,SÚPER PUÑETAZO DEVASTADOR,毁灭性超级重拳
+POWER_SUPER_KICK,SUPER CHUTE DEVASTADOR,SUPER DEVASTATING KICK,SÚPER PATADA DEVASTADORA,毁灭性超级飞踢
+POWER_ALERT_SUPER_PUNCH,⚡ SUPER SOCO!,⚡ SUPER PUNCH!,⚡ ¡SÚPER PUÑETAZO!,⚡ 超级重拳！
+POWER_ALERT_SUPER_KICK,⚡ SUPER CHUTE!,⚡ SUPER KICK!,⚡ ¡SÚPER PATADA!,⚡ 超级飞踢！
+POWER_PENTAGRAM,PODER DO PENTAGRAMA,PENTAGRAM POWER,PODER DEL PENTAGRAMA,五芒星之力
+POWER_PENTAGRAM_FORCE,FORÇA DO PENTAGRAMA,PENTAGRAM FORCE,FUERZA DEL PENTAGRAMA,五芒星之力
+POWER_ROTATE_ANALOG,GIRE O ANALÓGICO,ROTATE THE ANALOG STICK,GIRA LA PALANCA,旋转摇杆
+POWER_ROTATE_ANALOG_EXCL,GIRE O ANALÓGICO!,ROTATE THE ANALOG STICK!,¡GIRA LA PALANCA!,旋转摇杆！
+POWER_15_HIT_SUPER,15 HIT SUPER,15 HIT SUPER,SÚPER DE 15 GOLPES,15连击大招
+POWER_SESSAO_SOQUETA,SESSÃO SOQUÊTA,PUNCH N ROLL,SESIÓN DE GOLPES,连环拳决战
+POWER_RUSH_50,FÚRIA DE 50 GOLPES,50-HIT MAYCON RUSH,FURIA DE 50 GOLPES,50连击狂怒暴打
+POWER_MAYCON_RUSH,MAYCON RUSH,MAYCON RUSH,MAYCON RUSH,麦肯狂热连击
+POWER_MAX_SPEED,VELOCIDADE MÁXIMA ALCANÇADA!,MAXIMUM SPEED REACHED!,¡VELOCIDAD MÁXIMA ALCANZADA!,已达到最高速度！
+POWER_SPEED_PROMPT,APERTE 👊 SOCO E 🦶 CHUTE PARA ACELERAR!,PRESS 👊 PUNCH AND 🦶 KICK TO SPEED UP!,¡PULSA 👊 PUÑETAZO Y 🦶 PATADA PARA ACELERAR!,按下 👊 出拳 和 🦶 飞踢 来提速！
+POWER_SPEED_VALUE,VELOCIDADE: %d%%,SPEED: %d%%,VELOCIDAD: %d%%,速度: %d%%
+POWER_SPEED_PERCENT,VELOCIDADE: %d%%,SPEED: %d%%,VELOCIDAD: %d%%,速度: %d%%
+POWER_HOLD_PROMPT,👊/🦶 [SEG],👊/🦶 [HOLD],👊/🦶 [MANT],👊/🦶 [长按]
+POWER_NO_ENEMY_AHEAD,NENHUM INIMIGO À FRENTE,NO ENEMY AHEAD,NINGÚN ENEMIGO AL FRENTE,前方没有敌人
+BATTLE_NO_ENEMY_AHEAD,NENHUM INIMIGO À FRENTE,NO ENEMY AHEAD,NINGÚN ENEMIGO AL FRENTE,前方没有敌人
+BATTLE_ENTERING_ARENA,ENTRANDO NA ARENA,ENTERING THE ARENA,ENTRANDO EN LA ARENA,进入竞技场
+BATTLE_DEFEAT_AND_ADVANCE,DERROTE %s E AVANCE,DEFEAT %s AND MOVE FORWARD,DERROTA A %s Y AVANZA,击败 %s 并继续前进
+BATTLE_DOGS_ADVANCING,CUIDADO! OS CÃES ESTÃO AVANÇANDO!,WATCH OUT! THE HOUNDS ARE ADVANCING!,¡CUIDADO! ¡LOS PERROS ESTÁN AVANZANDO!,小心！恶犬群正在逼近！
+ALERT_HOUNDS_ADVANCE,CUIDADO! OS CÃES ESTÃO AVANÇANDO!,WATCH OUT! THE HOUNDS ARE ADVANCING!,¡CUIDADO! ¡LOS PERROS ESTÁN AVANZANDO!,小心！恶犬群正在逼近！
+BATTLE_SPECIAL,ESPECIAL!,SPECIAL!,¡ESPECIAL!,必杀技！
+BATTLE_SPECIAL_HIT,ESPECIAL!,SPECIAL!,¡ESPECIAL!,必杀技！
+BATTLE_HITS,%d GOLPES!,%d HITS!,¡%d GOLPES!,%d连击！
+BATTLE_SINGLE_HIT,1 GOLPE!,1 HIT!,¡1 GOLPE!,1次连击！
+BATTLE_BLOOD_EXPLOSION,EXPLOSÃO DE SANGUE!,BLOOD EXPLOSION!,¡EXPLOSIÓN DE SANGRE!,鲜血爆发！
+BATTLE_VICTORY_EXIT,VITÓRIA!  AVANCE PARA A SAÍDA  →,VICTORY!  MOVE TO THE EXIT  →,¡VICTORIA!  AVANZA HACIA LA SALIDA  →,胜利！前往出口  →
+BATTLE_PATH_CLEARED,CAMINHO LIBERADO,PATH CLEARED,CAMINO DESPEJADO,通路已开启
+BATTLE_YOU_FELL,VOCÊ CAIU,YOU FELL,HAS CAÍDO,你倒下了
+BATTLE_YOU_DIED,Você morreu,You died,Has muerto,你死了
+BATTLE_YOU_DIED_TITLE,Você morreu,You died,Has muerto,你死了
+BATTLE_YOU_DIED_CAPS,VOCÊ MORREU!,YOU DIED!,¡HAS MUERTO!,你死了！
+BATTLE_DEATH_HINT,Retornando ao último ponto salvo...,Returning to the last save point...,Volviendo al último punto de guardado...,正在返回最后的存档点……
+BATTLE_RETURNING_SAVE,Retornando ao último ponto salvo...,Returning to the last save point...,Volviendo al último punto de guardado...,正在返回最后的存档点……
+BATTLE_RETURNING_JOURNEY,RETORNANDO À JORNADA,RETURNING TO THE JOURNEY,VOLVIENDO A LA AVENTURA,重返旅途
+BATTLE_BLOOD_RESTORED,SANGUE RECUPERADO!,BLOOD RESTORED!,¡SANGRE RECUPERADA!,气血恢复！
+MINION_KNIGHT_SHADOW,Guarda das Sombras,Shadow Guard,Guardia de las Sombras,暗影护卫
+MINION_KNIGHT_ROYAL_PALADIN,Paladino Real,Royal Paladin,Paladín Real,皇家圣骑士
+MINION_KNIGHT_ASSASSIN,Assassino Furtivo,Stealth Assassin,Asesino Furtivo,隐匿刺客
+MINION_KNIGHT_FROST_SENTINEL,Sentinela Glacial,Frost Sentinel,Centinela Glacial,冰霜哨兵
+MINION_KNIGHT_CRIMSON_BERSERKER,Berserker Carmesim,Crimson Berserker,Berserker Carmesí,深红狂战士
+MINION_KNIGHT_GOLDEN_COMMANDER,Comandante Áureo,Golden Commander,Comandante Dorado,黄金指挥官
+MINION_KNIGHT_TOXIC_DUELIST,Duelista Tóxico,Toxic Duelist,Duelista Tóxico,剧毒决斗家
+MINION_KNIGHT_IRON_COLOSSUS,Colosso de Ferro,Iron Colossus,Coloso de Hierro,钢铁巨神
+MINION_BANDIT_HEAVY_BRAWLER,Brutamontes Bandido,Bandit Bruiser,Bandido Forzudo,强盗恶霸
+MINION_BANDIT_BLOOD_BUTCHER,Açougueiro Sanguinário,Blood Butcher,Carnicero Sanguinario,嗜血屠夫
+MINION_BANDIT_IRON_MARAUDER,Saqueador de Aço,Steel Marauder,Saqueador de Acero,钢铁掠夺者
+MINION_BANDIT_TOXIC_ENFORCER,Capataz Peçonhento,Venom Enforcer,Capataz Venenoso,剧毒工头
+MINION_BANDIT_LIGHT_SCOUNDREL,Bandido Sorrateiro,Bandit Scoundrel,Bandido Furtivo,狡猾盗贼
+MINION_BANDIT_SHADOW_ROGUE,Ladino das Sombras,Shadow Rogue,Pícaro de las Sombras,暗影潜行者
+MINION_BANDIT_SAND_SKIRMISHER,Espadachim das Dunas,Dune Skirmisher,Espadachín de las Dunas,沙丘游击剑客
+MINION_BANDIT_NIGHTBLADE,Lâmina Noturna,Nightblade Assassin,Hoja Nocturna,夜幕之刃
+MINION_DOG_SHADOW,Cão Sombrio,Shadow Hound,Sabueso Sombrío,暗影猎犬
+MINION_DOG_BLOOD,Cão Carmesim,Blood Hound,Sabueso Carmesí,嗜血猎犬
+MINION_DOG_SPECTRAL,Cão Espectral,Spectral Hound,Sabueso Espectral,幽灵魔犬
+TITLE_WIND_BLADE,[Lâmina de Vento],[Wind Blade],[Hoja de Viento],[风之刃]
+TITLE_WIND_DAGGER,[Adaga de Vento],[Wind Dagger],[Daga de Viento],[风之匕首]
+TUTORIAL_STRATEGIC_BATTLE,"Você terá 3 ataques (soco ou chute) e 6 defesas (pulo).
+
+Após usar os 3 ataques terá que aguardar um instante até poder atacar novamente.
+
+Após usar as 6 defesas também terá que aguardar um instante.
+
+Você terá 3 vidas, caso morra, terá que voltar ao início do Stage.","You will have 3 attacks (punch or kick) and 6 defenses (jump).
+
+After using 3 attacks you will have to wait a moment before attacking again.
+
+After using 6 defenses you will also have to wait a moment.
+
+You will have 3 lives, if you die, you will have to return to the beginning of the Stage.","Tendrás 3 ataques (puñetazo o patada) y 6 defensas (salto).
+
+Tras usar los 3 ataques tendrás que esperar un momento para volver a atacar.
+
+Tras usar las 6 defensas también tendrás que esperar un momento.
+
+Tendrás 3 vidas, si mueres, tendrás que volver al inicio del Nivel.","你拥有3次攻击（出拳或飞踢）和6次防御（跳跃）机会。
+
+用完3次攻击后需要稍作等待方可再次攻击。
+
+用完6次防御后同样需要等待片刻。
+
+你共有3条生命，如果阵亡则必须重返关卡起点。"

@@ -126,10 +126,16 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	
 	#CHAMA BALAOZINHO
 	var balao_ = preload("res://scenes/balao_conversa.tscn").instantiate()
-	if Global.default_language == Global.language_pt_br:
-		balao_.falas = ["...", "Maycon seu safado!", "Esquece o cabelo!", "Levarei ele para um outro lugar...", "Somente lá voce encontrará ele!", "Venha seu safado!", "Entre!", "Entre no fogo que queima gostoso!!"]
-	else:
-		balao_.falas = ["...", "Maycon you asshole!", "Forget about cabelo!", "Im gonna take him to another place!", "A not real one!", "Only there you can rescue him!", "Come on! you asshole!", "Enter!", "Touch the fire!!"]
+	balao_.falas = [
+		"...",
+		"DIALOGUE_SECO_1",
+		"DIALOGUE_SECO_2",
+		"DIALOGUE_SECO_3",
+		"DIALOGUE_SECO_5",
+		"DIALOGUE_SECO_6",
+		"DIALOGUE_SECO_7",
+		"DIALOGUE_SECO_8"
+	]
 	
 	#PEGAR O SINAL FINAL DE CONVERSA E FADEOUT
 	balao_.conversa_terminou.connect(conversa_terminou)

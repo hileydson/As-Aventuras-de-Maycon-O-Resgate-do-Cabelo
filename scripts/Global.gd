@@ -1,7 +1,9 @@
 extends Node
 
-const language_pt_br = "PT-BR"
-const language_en = "EN"
+const language_pt_br = "pt"
+const language_en = "en"
+const language_es = "es"
+const language_zh = "zh"
 const battle_mode_realtime = "realtime"
 const battle_mode_strategic = "strategic"
 const realtime_enemy_respawn_seconds:float = 75.0
@@ -65,12 +67,30 @@ var realtime_enemy_respawns:Dictionary = {}
 var aim_assist_strength:float = 0.6
 var show_debug_tab:bool = false
 
+func normalize_language(lang: String) -> String:
+	var l = lang.to_lower().strip_edges()
+	if l.begins_with("pt"):
+		return language_pt_br
+	elif l.begins_with("es"):
+		return language_es
+	elif l.begins_with("zh"):
+		return language_zh
+	elif l.begins_with("en"):
+		return language_en
+	return language_pt_br
+
+func set_game_language(lang_code: String) -> void:
+	default_language = normalize_language(lang_code)
+	TranslationServer.set_locale(default_language)
+	save_settings()
+
 func _ready() -> void:
 	load_settings()
 
 func save_settings() -> void:
 	var config = ConfigFile.new()
 	config.set_value("gameplay", "aim_assist_strength", aim_assist_strength)
+	config.set_value("gameplay", "language", default_language)
 	config.save("user://settings.cfg")
 
 func load_settings() -> void:
@@ -78,6 +98,11 @@ func load_settings() -> void:
 	var err = config.load("user://settings.cfg")
 	if err == OK:
 		aim_assist_strength = float(config.get_value("gameplay", "aim_assist_strength", 0.6))
+		var saved_lang = str(config.get_value("gameplay", "language", default_language))
+		set_game_language(saved_lang)
+	else:
+		set_game_language(default_language)
+
 
 func _process(_delta: float) -> void:
 	restore_realtime_player_position()
@@ -211,7 +236,8 @@ func load_progress()->void:
 			var json_string = file.get_as_text() 
 			save_array = JSON.parse_string(json_string)
 			
-			default_language = save_array["default_language"]
+			if save_array.has("default_language"):
+				set_game_language(str(save_array["default_language"]))
 			maycon_itens = save_array["maycon_itens"]
 			game_events = save_array["game_events"]
 			inimigos_mortos = save_array["inimigos_mortos"]

@@ -26,10 +26,7 @@ func _on_ready() -> void:
 		
 		fade.get_node("Transition").play("fade_in")
 		msg_block.visible = true
-		if Global.default_language == Global.language_pt_br:
-			msg_block.text = "Volte aqui Olindão!"
-		else:
-			msg_block.text = "Come back here Olindão!"
+		msg_block.text = tr("SECO_CASTLE_1")
 		
 		await get_tree().create_timer(2.0).timeout		
 		fade.get_node("Transition").play("fade_out")
@@ -40,10 +37,7 @@ func _on_ready() -> void:
 		await get_tree().create_timer(2.0).timeout
 		fade.get_node("Transition").play("fade_in")
 		msg_block.visible = true
-		if Global.default_language == Global.language_pt_br:
-			msg_block.text = "Estou te avisando!"
-		else:
-			msg_block.text = "I'm not gonna say it again!"
+		msg_block.text = tr("SECO_CASTLE_2")
 		
 		await get_tree().create_timer(2.0).timeout		
 		fade.get_node("Transition").play("fade_out")
@@ -56,10 +50,7 @@ func _on_ready() -> void:
 		await get_tree().create_timer(2.0).timeout
 		fade.get_node("Transition").play("fade_in")
 		msg_block.visible = true
-		if Global.default_language == Global.language_pt_br:
-			msg_block.text = "Eu vou te pegar AGORA Tripa Maior!"
-		else:
-			msg_block.text = "I'm gonna catch you NOW Tripa Maior!"
+		msg_block.text = tr("SECO_CASTLE_3")
 		
 		await get_tree().create_timer(2.0).timeout		
 		fade.get_node("Transition").play("fade_out")
@@ -68,10 +59,7 @@ func _on_ready() -> void:
 		await get_tree().create_timer(2.0).timeout
 		fade.get_node("Transition").play("fade_in")
 		msg_block.visible = true
-		if Global.default_language == Global.language_pt_br:
-			msg_block.text = "                         AGORA!"
-		else:
-			msg_block.text = "                          NOW!"
+		msg_block.text = "                         " + tr("SECO_CASTLE_4")
 		
 		await get_tree().create_timer(2.0).timeout		
 		fade.get_node("Transition").play("fade_out")

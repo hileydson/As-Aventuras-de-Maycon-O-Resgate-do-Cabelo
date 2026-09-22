@@ -15,7 +15,7 @@ func build_skip_interface() -> void:
 	skip_label.position = Vector2(326, 552)
 	skip_label.size = Vector2(500, 32)
 	skip_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	skip_label.text = "SEGURE ESC / START PARA PULAR" if Global.default_language == Global.language_pt_br else "HOLD ESC / START TO SKIP"
+	skip_label.text = tr("STORY_SKIP_PROMPT")
 	skip_label.add_theme_font_size_override("font_size", 18)
 	skip_label.add_theme_color_override("font_color", Color(0.82, 0.85, 0.92, 0.88))
 	skip_label.z_index = 100
@@ -50,25 +50,24 @@ func fade_after_msg_replaced()->void:
 func _ready() -> void:
 	build_skip_interface()
 	var time:int = 7
-	var pt_br:bool = Global.default_language == Global.language_pt_br
 
-	texto.text = "Após Cabelo ser capturado" if pt_br else "After Cabelo has been captured"
+	texto.text = tr("STORY_INTRO_1")
 	fade_after_msg_replaced()
 	await get_tree().create_timer(time).timeout
 	
-	texto.text = "Maycon o procurou por toda parte" if pt_br else "Maycon searched for him everywhere"
+	texto.text = tr("STORY_INTRO_2")
 	fade_after_msg_replaced()
 	await get_tree().create_timer(time).timeout
 	
-	texto.text = "Procurou por toda grande Bela Aurora" if pt_br else "He searched all over the great Bela Aurora"
+	texto.text = tr("STORY_INTRO_3")
 	fade_after_msg_replaced()
 	await get_tree().create_timer(time).timeout
 	
-	texto.text = "Restando apenas a pracinha da Bela" if pt_br else "With only Bela's little square remaining"
+	texto.text = tr("STORY_INTRO_4")
 	fade_after_msg_replaced()
 	await get_tree().create_timer(time).timeout
 	
-	texto.text = "Em um último suspiro Maycon foi lá..." if pt_br else "With his last breath, Maycon went there..."
+	texto.text = tr("STORY_INTRO_5")
 	fade_after_msg_replaced()
 	await get_tree().create_timer(time).timeout
 

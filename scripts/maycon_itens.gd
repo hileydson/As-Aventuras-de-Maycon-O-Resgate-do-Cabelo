@@ -30,7 +30,7 @@ func _process(delta: float) -> void:
 		realtime_hp_bar.visible = realtime
 		realtime_hp_label.visible = realtime
 		realtime_hp_bar.value = Global.realtime_hp
-		realtime_hp_label.text = "VIDA" if Global.default_language == Global.language_pt_br else "HEALTH"
+		realtime_hp_label.text = tr("BATTLE_HP_LABEL")
 
 func build_realtime_hp_display() -> void:
 	realtime_hp_bar = ProgressBar.new()

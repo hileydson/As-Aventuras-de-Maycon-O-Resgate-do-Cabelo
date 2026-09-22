@@ -16,9 +16,8 @@ var fim_cenario_3d:bool = false
 func _ready() -> void:
 	GameSongs.stop(1)
 	
-	if Global.default_language == Global.language_pt_br:
-		label_3d.text = "SEU IDIOTA!"
-		msg_prompt.text = "subir as escadas?"
+	label_3d.text = tr("LABEL_YOU_SUCK")
+	msg_prompt.text = tr("PROMPT_CLIMB_STAIRS")
 	
 	var player = get_tree().get_first_node_in_group("player")
 	player.get_node("hud_canvas").get_node("maycon_hp").visible = false
@@ -31,8 +30,7 @@ func _ready() -> void:
 	Input.start_joy_vibration(0,0.5, 0.7, 0.3)
 	get_tree().get_first_node_in_group("player").aplicar_shake(0.9)
 	
-	if Global.default_language == Global.language_pt_br:
-		passagem_pestilenta.text = "Passagem Pestilenta"
+	passagem_pestilenta.text = tr("LEVEL_PESTILENT_PASSAGE")
 	
 	await get_tree().create_timer(2.0).timeout
 	passagem_pestilenta.visible = true

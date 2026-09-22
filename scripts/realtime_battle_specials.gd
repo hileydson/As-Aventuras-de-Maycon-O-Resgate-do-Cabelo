@@ -377,8 +377,8 @@ class SpecialOverlay:
 				draw_texture_rect_region(portrait_texture, Rect2(-24, 218, 350, 398), Rect2(104, 28, 292, 332), Color(1.0, 1.0, 1.0, portrait_alpha))
 				draw_line(Vector2(302, 214), Vector2(302, 616), Color(1.0, 0.16, 0.43, 0.8 * portrait_alpha), 5.0)
 			var font = ThemeDB.fallback_font
-			draw_string(font, Vector2(314, 174), "PENTAGRAM FORCE", HORIZONTAL_ALIGNMENT_CENTER, 770, 52, Color(1.0, 0.92, 0.68, intro_alpha))
-			draw_string(font, Vector2(416, 213), "15 HIT SUPER", HORIZONTAL_ALIGNMENT_CENTER, 500, 19, Color(0.45, 0.86, 1.0, 0.94 * intro_alpha))
+			draw_string(font, Vector2(314, 174), tr("POWER_PENTAGRAM_FORCE"), HORIZONTAL_ALIGNMENT_CENTER, 770, 52, Color(1.0, 0.92, 0.68, intro_alpha))
+			draw_string(font, Vector2(416, 213), tr("POWER_15_HIT_SUPER"), HORIZONTAL_ALIGNMENT_CENTER, 500, 19, Color(0.45, 0.86, 1.0, 0.94 * intro_alpha))
 
 		if pentagram_reveal <= 0.0:
 			return
@@ -443,7 +443,7 @@ class SpecialOverlay:
 		draw_circle(knob_position, 14.0, Color(0.16, 0.2, 0.3, 1.0))
 		draw_circle(knob_position, 8.0, hint_color)
 		draw_string(font, Vector2(615, 516), analog_hint_text, HORIZONTAL_ALIGNMENT_CENTER, 245, 24, hint_color)
-		draw_string(font, Vector2(615, 544), "FORÇA DO PENTAGRAMA", HORIZONTAL_ALIGNMENT_CENTER, 245, 15, Color(0.76, 0.9, 1.0, 0.92))
+		draw_string(font, Vector2(615, 544), tr("POWER_PENTAGRAM_FORCE"), HORIZONTAL_ALIGNMENT_CENTER, 245, 15, Color(0.76, 0.9, 1.0, 0.92))
 		draw_rect(Rect2(630, 556, 215, 13), Color(0.015, 0.02, 0.05, 0.9), true)
 		draw_rect(Rect2(633, 559, 209.0 * energy, 7), Color(1.0, 0.06, 0.3, 0.98), true)
 		draw_rect(Rect2(630, 556, 215, 13), Color(0.35, 0.88, 1.0, 0.88), false, 2.0)
@@ -491,8 +491,8 @@ class SpecialOverlay:
 				draw_line(Vector2(x + line_length * 0.7, y + 8.0), Vector2(x, y + 8.0), Color(1.0, 0.14, 0.38, line_color.a * 0.85), 2.0 + rush_speed_ratio * 2.8)
 
 		var title_scale = 1.0 + sin(effect_time * 14.0) * 0.035
-		draw_string(font, Vector2(246, 96), "MAYCON RUSH", HORIZONTAL_ALIGNMENT_CENTER, 660, int(42.0 * title_scale), Color(1.0, 0.88, 0.32, 0.98))
-		draw_string(font, Vector2(326, 142), "%02d / 50 HITS" % hit_count, HORIZONTAL_ALIGNMENT_CENTER, 500, 28, Color(0.35, 0.9, 1.0, 1.0))
+		draw_string(font, Vector2(246, 96), tr("POWER_MAYCON_RUSH"), HORIZONTAL_ALIGNMENT_CENTER, 660, int(42.0 * title_scale), Color(1.0, 0.88, 0.32, 0.98))
+		draw_string(font, Vector2(326, 142), "%02d / 50 " % hit_count + tr("BATTLE_HITS"), HORIZONTAL_ALIGNMENT_CENTER, 500, 28, Color(0.35, 0.9, 1.0, 1.0))
 		draw_line(Vector2(320, 156), Vector2(832, 156), Color(1.0, 0.12, 0.4, 0.65 + energy * 0.3), 4.0)
 
 		# Banner visual: Instrução para apertar Soco e Chute + Medidor de Aceleração
@@ -502,27 +502,27 @@ class SpecialOverlay:
 		
 		var prompt_pulse = 0.8 + sin(effect_time * 10.0) * 0.2
 		var prompt_color = Color(1.0, 0.9, 0.35, prompt_pulse if !rush_is_maxed else 1.0)
-		var prompt_text = "VELOCIDADE MÁXIMA ALCANÇADA!" if rush_is_maxed else "APERTE 👊 SOCO E 🦶 CHUTE PARA ACELERAR!"
+		var prompt_text = tr("POWER_MAX_SPEED") if rush_is_maxed else tr("POWER_SPEED_PROMPT")
 		draw_string(font, Vector2(356, 538), prompt_text, HORIZONTAL_ALIGNMENT_CENTER, 440, 14, prompt_color)
 		
 		# Botao Soco [Q/Y]
 		var punch_color = Color(0.2, 0.85, 1.0, 0.9).lerp(Color(1.0, 1.0, 1.0, 1.0), rush_punch_flash)
 		draw_rect(Rect2(376, 548, 96, 24), Color(0.08, 0.12, 0.22, 0.9), true)
 		draw_rect(Rect2(376, 548, 96, 24), punch_color, false, 2.0 + rush_punch_flash * 2.0)
-		draw_string(font, Vector2(376, 565), "👊 SOCO [Q/Y]", HORIZONTAL_ALIGNMENT_CENTER, 96, 12, punch_color)
+		draw_string(font, Vector2(376, 565), "👊 " + tr("POWER_PUNCH") + " [Q/Y]", HORIZONTAL_ALIGNMENT_CENTER, 96, 12, punch_color)
 		
 		# Botao Chute [W/B]
 		var kick_color = Color(1.0, 0.2, 0.6, 0.9).lerp(Color(1.0, 1.0, 1.0, 1.0), rush_kick_flash)
 		draw_rect(Rect2(488, 548, 96, 24), Color(0.22, 0.08, 0.16, 0.9), true)
 		draw_rect(Rect2(488, 548, 96, 24), kick_color, false, 2.0 + rush_kick_flash * 2.0)
-		draw_string(font, Vector2(488, 565), "🦶 CHUTE [W/B]", HORIZONTAL_ALIGNMENT_CENTER, 96, 12, kick_color)
+		draw_string(font, Vector2(488, 565), "🦶 " + tr("POWER_KICK") + " [W/B]", HORIZONTAL_ALIGNMENT_CENTER, 96, 12, kick_color)
 		
 		# Barra do medidor de aceleracao
 		var gauge_bg = Rect2(600, 552, 176, 16)
 		draw_rect(gauge_bg, Color(0.02, 0.03, 0.07, 0.95), true)
 		draw_rect(Rect2(602, 554, 172.0 * rush_speed_ratio, 12), Color("00e5ff").lerp(Color("ff1744"), rush_speed_ratio), true)
 		draw_rect(gauge_bg, Color(0.4, 0.85, 1.0, 0.85), false, 1.5)
-		draw_string(font, Vector2(600, 582), "VELOCIDADE: %d%%" % int(round(rush_speed_ratio * 100.0)), HORIZONTAL_ALIGNMENT_CENTER, 176, 12, Color(0.85, 0.95, 1.0, 0.92))
+		draw_string(font, Vector2(600, 582), tr("POWER_SPEED_PERCENT") % int(round(rush_speed_ratio * 100.0)), HORIZONTAL_ALIGNMENT_CENTER, 176, 12, Color(0.85, 0.95, 1.0, 0.92))
 
 		if energy > 0.82:
 			draw_circle(Vector2(576, 324), 54.0 + energy * 90.0, Color(1.0, 1.0, 1.0, (energy - 0.82) * 1.8))
@@ -789,7 +789,7 @@ func build_special_hud() -> void:
 	special_hits_label = Label.new()
 	special_hits_label.position = Vector2(778, 613)
 	special_hits_label.size = Vector2(48, 22)
-	special_hits_label.text = "HITS"
+	special_hits_label.text = tr("BATTLE_HITS")
 	special_hits_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	special_hits_label.add_theme_font_size_override("font_size", 14)
 	special_hits_label.add_theme_color_override("font_color", Color("d8f3ff"))
@@ -811,7 +811,7 @@ func build_special_hud() -> void:
 	dash_box.set_corner_radius_all(6)
 	symbol_dash_ctrl.add_theme_stylebox_override("panel", dash_box)
 	symbol_dash_label = Label.new()
-	symbol_dash_label.text = tr_text("👊/🦶 [SEG]", "👊/🦶 [HOLD]")
+	symbol_dash_label.text = tr("POWER_HOLD_PROMPT")
 	symbol_dash_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	symbol_dash_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	symbol_dash_label.add_theme_font_size_override("font_size", 12)
@@ -1029,7 +1029,7 @@ func start_power_dash_special(use_kick:bool) -> void:
 
 	# === 1.2s SUPER FREEZE INTRO (exatamente no mesmo padrao dos outros 2 poderes) ===
 	freeze_arena(true)
-	var freeze_title = tr_text("SUPER CHUTE DEVASTADOR", "SUPER DEVASTATING KICK") if use_kick else tr_text("SUPER SOCO DEVASTADOR", "SUPER DEVASTATING PUNCH")
+	var freeze_title = tr("POWER_SUPER_KICK") if use_kick else tr("POWER_SUPER_PUNCH")
 	var portrait = load("res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_icon.png") as Texture2D
 	if special_freeze_sound:
 		special_freeze_sound.pitch_scale = 1.0
@@ -1103,7 +1103,7 @@ func start_pentagram_force() -> void:
 
 	# === 1.2s SUPER FREEZE INTRO ===
 	freeze_arena(true)
-	var freeze_title = tr_text("PODER DO PENTAGRAMA", "PENTAGRAM POWER")
+	var freeze_title = tr("POWER_PENTAGRAM")
 	if special_freeze_sound:
 		special_freeze_sound.pitch_scale = 1.0
 		special_freeze_sound.play()
@@ -1121,7 +1121,7 @@ func start_pentagram_force() -> void:
 	if special_overlay:
 		special_overlay.call("stop_freeze_intro")
 
-	status_label.text = "PENTAGRAM FORCE"
+	status_label.text = tr("POWER_PENTAGRAM_FORCE")
 	combo_label.text = ""
 	Engine.time_scale = 0.28
 	battle_song.pitch_scale = 0.72
@@ -1137,13 +1137,13 @@ func start_pentagram_force() -> void:
 	pentagram_last_stick = Vector2.ZERO
 	pentagram_input_activity = 0.0
 	var portrait = load("res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_icon.png") as Texture2D
-	special_overlay.call("start_pentagram", portrait, tr_text("GIRE O ANALÓGICO", "ROTATE THE ANALOG STICK"))
+	special_overlay.call("start_pentagram", portrait, tr("POWER_ROTATE_ANALOG"))
 	player.play("attack_punch")
 	shake(8.0, 0.5)
 
 	await get_tree().create_timer(1.14, true, false, true).timeout
 	pentagram_rotation_enabled = true
-	status_label.text = tr_text("GIRE O ANALÓGICO!", "ROTATE THE ANALOG STICK!")
+	status_label.text = tr("POWER_ROTATE_ANALOG_EXCL")
 	var charge_elapsed = 0.0
 	var applied_pulses = 0
 	while charge_elapsed < PENTAGRAM_CHARGE_DURATION:
@@ -1290,7 +1290,7 @@ func start_maycon_rush(target:Dictionary) -> void:
 
 	# === 1.2s SUPER FREEZE INTRO ===
 	freeze_arena(true)
-	var freeze_title = tr_text("SESSÃO SOQUÊTA", "PUNCH N ROLL")
+	var freeze_title = tr("POWER_SESSAO_SOQUETA")
 	var portrait = load("res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_icon.png") as Texture2D
 	if special_freeze_sound:
 		special_freeze_sound.pitch_scale = 1.0
@@ -1309,7 +1309,7 @@ func start_maycon_rush(target:Dictionary) -> void:
 	if special_overlay:
 		special_overlay.call("stop_freeze_intro")
 
-	status_label.text = tr_text("FÚRIA DE 50 GOLPES", "50-HIT MAYCON RUSH")
+	status_label.text = tr("POWER_RUSH_50")
 	combo_label.text = ""
 	
 	# Direcao das listas de velocidade:
@@ -1427,7 +1427,7 @@ func finish_player_special(previous_status:String, previous_zoom:Vector2, previo
 
 func flash_no_rush_target() -> void:
 	var previous_status = status_label.text
-	status_label.text = tr_text("NENHUM INIMIGO À FRENTE", "NO ENEMY AHEAD")
+	status_label.text = tr("POWER_NO_ENEMY_AHEAD")
 	status_label.add_theme_color_override("font_color", Color("ff6b6b"))
 	await get_tree().create_timer(0.85, true, false, true).timeout
 	if !special_active && !enemy_dead:

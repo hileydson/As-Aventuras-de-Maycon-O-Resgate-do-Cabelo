@@ -19,9 +19,8 @@ extends VBoxContainer
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
-	if Global.default_language == Global.language_en:
-		as_aventuras_de_maycon.text = "The Legend of Maycon"
-		o_resgate_do_cabelo.text = "The Cabelo's Rescue"
+	as_aventuras_de_maycon.text = tr("GAME_TITLE")
+	o_resgate_do_cabelo.text = tr("GAME_SUBTITLE")
 	
 	continue_.disabled = !Global.check_load()
 	
@@ -29,15 +28,11 @@ func _ready() -> void:
 	new_game.grab_focus()
 	cabelo_sound.play()
 	
-	if Global.default_language == Global.language_en:
-		new_game.text = "New Game"
-		continue_.text = "Continue"
-		if settings_btn:
-			settings_btn.text = "Settings"
-		exit.text = "Exit"
-	else:
-		if settings_btn:
-			settings_btn.text = "Configurações"
+	new_game.text = tr("MENU_NEW_GAME")
+	continue_.text = tr("MENU_CONTINUE")
+	if settings_btn:
+		settings_btn.text = tr("MENU_SETTINGS")
+	exit.text = tr("MENU_EXIT")
 	
 	maycon_looking.play("idle")
 	

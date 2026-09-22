@@ -53,7 +53,7 @@ func handle_dialog_input():
 
 func exibir_fala():
 	if fala_atual < falas.size():
-		label.text = falas[fala_atual]
+		label.text = tr(falas[fala_atual])
 		label.visible_characters = 0 # Começa com zero letras aparecendo
 		timer.start(0.04) # Velocidade da digitação
 	else:

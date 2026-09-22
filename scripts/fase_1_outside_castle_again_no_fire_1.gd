@@ -85,10 +85,7 @@ func _on_block_gilhotina_body_entered(body: Node2D) -> void:
 		camera_temp.enabled = true
 		camera_temp.make_current()
 		
-		if Global.default_language == Global.language_pt_br:
-			msg_block.text = "Não consigo passar por aqui... \nPreciso de algo para quebrar isso..."
-		else:
-			msg_block.text = "I can't get throuhg here... \nI need something to break it..."
+		msg_block.text = tr("STAGE_BLOCKED_AXE")
 		
 		msg_block.visible = true
 		await get_tree().create_timer(5.0).timeout

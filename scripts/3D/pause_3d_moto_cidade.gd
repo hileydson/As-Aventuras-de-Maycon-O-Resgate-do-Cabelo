@@ -11,16 +11,10 @@ extends Node3D
 func _ready() -> void:
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)
 	
-	if Global.default_language == Global.language_pt_br:
-		quit.text = "Sair"
-		close.text = "Fechar"
-		if settings:
-			settings.text = "Configurações"
-	else:
-		quit.text = "Quit"
-		close.text = "Close"
-		if settings:
-			settings.text = "Settings"
+	quit.text = tr("MENU_EXIT")
+	close.text = tr("MENU_CLOSE")
+	if settings:
+		settings.text = tr("MENU_SETTINGS")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

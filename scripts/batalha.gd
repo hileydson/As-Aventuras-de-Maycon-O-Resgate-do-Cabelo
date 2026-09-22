@@ -203,30 +203,7 @@ func show_first_battle() -> void:
 	await get_tree().create_timer(4.0).timeout
 	#fade_interno_explicacao.get_node("Transition").play("fade_in")
 	
-	if Global.default_language == Global.language_pt_br:
-		text_about_itens.text = "Voçê terá 3 ataques(soco ou chute) e 
-									6 defesas(pulo).
-									
-									Após usar os 3 ataques terá que aguardar
-									um instante até poder atacar novamente.
-									
-									Após usar as 6 defesas também terá que 
-									aguardar um instante.
-									\n\n\n\n\n
-									Voçê terá 3 vidas, caso morra, terá que
-									voltar ao início do Stage"
-	else:
-		text_about_itens.text = "You will have 3 attacks (punch or kick) 
-									and 6 defenses (jump).
-
-									After using the 3 attacks you will have 
-									to wait a moment before you can attack again.
-
-									After using the 6 defenses you will also 
-									have to wait a moment.
-									\n\n\n\n\n
-									You will have 3 lives, if you die, you will 
-									have to return to the beginning of the Stage."
+	text_about_itens.text = tr("TUTORIAL_STRATEGIC_BATTLE")
 		
 	$"../explicacao_batalha".visible = true
 	maycon.process_mode = Node.PROCESS_MODE_DISABLED

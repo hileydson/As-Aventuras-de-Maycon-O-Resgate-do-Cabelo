@@ -204,40 +204,22 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	mk_dudun.play()
 	
 	
-	if(Global.default_language == Global.language_pt_br):
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Maycon seu safado!"
-		msg_box.visible = true
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Esquece o cabelo!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Levarei ele para um outro lugar..."
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "fora do mundo real!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Somente lá voce contrará ele!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Venha seu safado!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Entre! entre no fogo!!"
-		await get_tree().create_timer(3.0).timeout
-	else:
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Maycon you asshole!"
-		msg_box.visible = true
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Forget about cabelo!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Im gonna take him to another place!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "A not real one!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Only there you can rescue him!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Come on! you asshole!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Enter! touch the fire!!"
-		await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_1")
+	msg_box.visible = true
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_2")
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_3")
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_4")
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_5")
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_6")
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_7")
+	await get_tree().create_timer(3.0).timeout
 		
 	inimigo_seco.visible = false
 	msg_box.visible = false

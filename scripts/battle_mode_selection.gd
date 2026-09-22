@@ -30,14 +30,14 @@ func build_interface() -> void:
 	add_child(content)
 
 	var title = Label.new()
-	title.text = tr_text("ESCOLHA O ESTILO DE BATALHA", "CHOOSE YOUR BATTLE STYLE")
+	title.text = tr("BATTLE_MODE_TITLE")
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 36)
 	title.add_theme_color_override("font_color", Color("ffd166"))
 	content.add_child(title)
 
 	var subtitle = Label.new()
-	subtitle.text = tr_text("Você poderá iniciar uma nova jornada com um dos dois sistemas.", "Start a new journey with one of the two battle systems.")
+	subtitle.text = tr("BATTLE_MODE_SUBTITLE")
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	subtitle.add_theme_font_size_override("font_size", 18)
 	content.add_child(subtitle)
@@ -48,13 +48,13 @@ func build_interface() -> void:
 	content.add_child(cards)
 
 	realtime_button = create_mode_card(
-		tr_text("TEMPO REAL  •  PADRÃO", "REAL TIME  •  DEFAULT"),
-		tr_text("Beat 'em up com movimentação livre, combos, esquiva, inimigos ativos, sangue e arenas progressivas.", "Beat 'em up with free movement, combos, dodging, active enemies, blood and progressive arenas."),
+		tr("BATTLE_MODE_REALTIME_TITLE"),
+		tr("BATTLE_MODE_REALTIME_DESC"),
 		Color("d1495b")
 	)
 	strategic_button = create_mode_card(
-		tr_text("ESTRATÉGICA", "STRATEGIC"),
-		tr_text("O sistema clássico atual: ataques limitados, defesa por salto e turnos de pressão.", "The current classic system: limited attacks, jump defense and pressure turns."),
+		tr("BATTLE_MODE_STRATEGIC_TITLE"),
+		tr("BATTLE_MODE_STRATEGIC_DESC"),
 		Color("277da1")
 	)
 	cards.add_child(realtime_button)
@@ -63,7 +63,7 @@ func build_interface() -> void:
 	strategic_button.pressed.connect(select_mode.bind(Global.battle_mode_strategic))
 
 	var hint = Label.new()
-	hint.text = tr_text("Setas/analógico para escolher  •  Enter/A para confirmar", "Arrows/stick to choose  •  Enter/A to confirm")
+	hint.text = tr("BATTLE_MODE_HINT")
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.add_theme_color_override("font_color", Color("9fb3c8"))
 	content.add_child(hint)
@@ -109,6 +109,3 @@ func select_mode(mode:String) -> void:
 	tween.tween_property(overlay, "color", Color.BLACK, 0.55)
 	await tween.finished
 	get_tree().change_scene_to_file("res://scenes/intro_game.tscn")
-
-func tr_text(pt:String, en:String) -> String:
-	return en if Global.default_language == Global.language_en else pt

@@ -25,35 +25,18 @@ func _ready() -> void:
 		v_box_container.visible = false
 		maycon_hp.visible = false
 	
-	if Global.default_language == Global.language_pt_br:
-		powers.text = " SOCO \n CHUTE \n\n DASH" if Global.battle_mode == Global.battle_mode_realtime else " SOCO \n CHUTE \n\n PULO"
-		close.text = "Fechar"
-		
-		if Global.game_events["before_prologo"]:
-			quit.text = "Sair"
-		else:
-			quit.text = "Salvar & Sair"
-		
-		run_label.text = "Correr"
-		down_label.text = "Agachar"
-		
-		if Global.game_events["before_prologo"]:
-			pause.text = "CONTROLE"
-		
+	var p3 = tr("POWER_DASH") if Global.battle_mode == Global.battle_mode_realtime else tr("POWER_JUMP")
+	powers.text = " " + tr("POWER_PUNCH") + " \n " + tr("POWER_KICK") + " \n\n " + p3
+	close.text = tr("MENU_CLOSE")
+	
+	if Global.game_events["before_prologo"]:
+		quit.text = tr("MENU_EXIT")
+		pause.text = tr("MENU_CONTROLLER")
 	else:
-		powers.text = " PUNCH \n KICK \n\n DASH" if Global.battle_mode == Global.battle_mode_realtime else " PUNCH \n KICK \n\n JUMP"
-		close.text = "Close"
-		
-		if Global.game_events["before_prologo"]:
-			quit.text = "Quit"
-		else:
-			quit.text = "Save & Quit"
-
-		run_label.text = "Run"
-		down_label.text = "Croutch"
-		
-		if Global.game_events["before_prologo"]:
-			pause.text = "CONTROLLER"
+		quit.text = tr("MENU_SAVE_QUIT")
+	
+	run_label.text = tr("MENU_RUN")
+	down_label.text = tr("MENU_CROUCH")
 		
 
 func processa_pause_unpause()->void:
@@ -145,4 +128,4 @@ func update_hp_display() -> void:
 		realtime_hp_bar.max_value = Global.realtime_hp_max
 		realtime_hp_bar.value = Global.realtime_hp
 		realtime_hp_label.visible = realtime
-		realtime_hp_label.text = "VIDA" if Global.default_language == Global.language_pt_br else "HEALTH"
+		realtime_hp_label.text = tr("BATTLE_HP_LABEL")

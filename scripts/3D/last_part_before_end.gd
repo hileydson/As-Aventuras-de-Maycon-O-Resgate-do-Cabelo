@@ -92,20 +92,17 @@ func set_story_stage(new_stage:int) -> void:
 	update_map_objectives(false)
 	match stage:
 		STAGE_INFORMANT:
-			objective_label.text = localized("Procure uma pista no sul da cidade", "Find a clue in the south of the city")
+			objective_label.text = tr("OBJECTIVE_SEEK_CLUE")
 		STAGE_FELLAS:
-			objective_label.text = localized("Encontre os Fellas ao norte", "Find the Fellas up north")
+			objective_label.text = tr("OBJECTIVE_FIND_FELLAS")
 		STAGE_DISMOUNT:
-			objective_label.text = localized("Pressione E / START para descer da moto", "Press E / START to get off the motorcycle")
+			objective_label.text = tr("OBJECTIVE_DISMOUNT")
 		STAGE_FIGHT:
-			objective_label.text = localized("BOTÃO ESQUERDO / RT: acerte os Fellas com a madeira", "LEFT BUTTON / RT: hit the Fellas with the wood")
+			objective_label.text = tr("OBJECTIVE_FIGHT_FELLAS")
 		STAGE_SURRENDER:
 			objective_label.text = ""
 		STAGE_CABELO:
-			objective_label.text = localized("O Cabelo está no Posto Estrela da Serra!", "Cabelo is at the Serra Star Gas Station!")
-
-func localized(pt_br:String, english:String) -> String:
-	return pt_br if Global.default_language == Global.language_pt_br else english
+			objective_label.text = tr("OBJECTIVE_CABELO_GAS_STATION")
 
 func configure_fellas_billboards() -> void:
 	for member in [fellas, $lipao/iago, $lipao/luks, $lipao/tony]:
@@ -151,13 +148,13 @@ func _on_area_3d_cigarro_body_entered(body:Node3D) -> void:
 	balao_ = preload("res://scenes/balao_conversa.tscn").instantiate()
 	balao_.falas = [
 		"...",
-		localized("Maycon, acho que vi quem levou o Cabelo.", "Maycon, I think I saw who took Cabelo."),
-		localized("Tem um grupo de malandros aí pra cima.", "There's a gang of troublemakers up the road."),
-		localized("Acho que eles pegaram o Cabelo.", "I think they took Cabelo."),
-		localized("Eles estavam muito estranhos.", "They were acting very suspicious."),
-		localized("Principalmente um tal de Tony.", "Especially a guy named Tony."),
-		localized("Ele parece ser o mais malandro deles.", "He looks like the shadiest one of them."),
-		localized("Eles se chamam de Fellas.", "They call themselves the Fellas.")
+		"DIALOGUE_INFORMANT_1",
+		"DIALOGUE_INFORMANT_2",
+		"DIALOGUE_INFORMANT_3",
+		"DIALOGUE_INFORMANT_4",
+		"DIALOGUE_INFORMANT_5",
+		"DIALOGUE_INFORMANT_6",
+		"DIALOGUE_INFORMANT_7"
 	]
 	balao_.balao_sem_seta = true
 	balao_.conversa_terminou.connect(on_informant_dialog_finished, CONNECT_ONE_SHOT)
@@ -181,11 +178,11 @@ func _on_area_3d_lips_body_entered(body:Node3D) -> void:
 	balao_ = preload("res://scenes/balao_conversa.tscn").instantiate()
 	balao_.falas = [
 		"...",
-		localized("Olha só quem chegou... o heróizinho da cidade.", "Look who showed up... the city's little hero."),
-		localized("Nós somos os caras. Você não é nada!", "We're the real deal. You're nothing!"),
-		localized("Estamos sendo pagos para ficar com o Cabelo, portanto mete o pé!", "We're being paid to keep Cabelo, so get lost!"),
-		localized("Some daqui, mané, antes que o Tony perca a paciência!", "Get out of here, loser, before Tony loses his patience!"),
-		localized("Você não assusta nem criança, seu otário!", "You couldn't scare a child, you clown!")
+		"DIALOGUE_FELLAS_1",
+		"DIALOGUE_FELLAS_2",
+		"DIALOGUE_FELLAS_3",
+		"DIALOGUE_FELLAS_4",
+		"DIALOGUE_FELLAS_5"
 	]
 	balao_.balao_sem_seta = true
 	balao_.conversa_terminou.connect(on_fellas_dialog_finished, CONNECT_ONE_SHOT)
@@ -406,9 +403,8 @@ func play_thug_pain_scream(data:Dictionary) -> void:
 func make_thug_retreat(data:Dictionary) -> void:
 	var thug:Node3D = data["node"]
 	var shout:Label3D = data["shout"]
-	var shouts_pt := ["SAI VAZADO!", "SAI DAÍ, BUNDÃO!", "SAI NO SAPATO, OTÁRIO!", "PARA COM ISSO, MALUCO!"]
-	var shouts_en := ["BACK OFF!", "GET AWAY, JERK!", "GET LOST, LOSER!", "STOP IT, MANIAC!"]
-	shout.text = (shouts_pt if Global.default_language == Global.language_pt_br else shouts_en).pick_random()
+	var shouts := ["SHOUT_THUG_1", "SHOUT_THUG_2", "SHOUT_THUG_3", "SHOUT_THUG_4"]
+	shout.text = tr(shouts.pick_random())
 	var away := thug.global_position - player.global_position
 	away.y = 0.0
 	away = away.normalized()
@@ -460,10 +456,10 @@ func finish_fight() -> void:
 func show_surrender_dialog() -> void:
 	balao_ = preload("res://scenes/balao_conversa.tscn").instantiate()
 	balao_.falas = [
-		localized("Tá bom, tá bom! Perdoa a gente, Maycon!", "All right, all right! Forgive us, Maycon!"),
-		localized("Foi o Tony que fechou o acordo. A gente só queria a grana!", "Tony made the deal. We just wanted the money!"),
-		localized("Deixamos o Cabelo perto do Posto Estrela da Serra.", "We left Cabelo near the Serra Star Gas Station."),
-		localized("Fica no canto nordeste da cidade. Ele está bem, a gente jura!", "It's in the northeast corner of the city. He's safe, we swear!")
+		"DIALOGUE_SURRENDER_1",
+		"DIALOGUE_SURRENDER_2",
+		"DIALOGUE_SURRENDER_3",
+		"DIALOGUE_SURRENDER_4"
 	]
 	balao_.balao_sem_seta = true
 	balao_.conversa_terminou.connect(unlock_cabelo, CONNECT_ONE_SHOT)

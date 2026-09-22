@@ -463,7 +463,7 @@ func _ready() -> void:
 	if stage_3d:
 		stage_3d.update_camera(camera.position.x)
 	Global.battle_started = true
-	status_label.text = tr_text("DERROTE %s E AVANCE", "DEFEAT %s AND MOVE FORWARD") % enemy_name.to_upper()
+	status_label.text = tr("BATTLE_DEFEAT_AND_ADVANCE") % enemy_name.to_upper()
 	set_world_audio_paused(true)
 	battle_song.play()
 	start_entry_sequence()
@@ -722,12 +722,15 @@ func spawn_minions() -> void:
 			spawn_x = clampf(player_position.x + signf(enemy_position.x - player_position.x) * randf_range(280.0, 480.0), 220.0, ARENA_WIDTH - 220.0)
 		var spawn_y = clampf(randf_range(MIN_Y + 15.0, MAX_Y - 15.0), MIN_Y, MAX_Y)
 		var minion_hp = randf_range(variant.hp_min, variant.hp_max)
-		var minion_name = tr_text(variant.name_pt, variant.name_en)
+		var minion_key = "MINION_" + variant.id.to_upper()
+		var minion_name = tr(minion_key)
+		if minion_name == minion_key:
+			minion_name = tr_text(variant.name_pt, variant.name_en)
 		if is_ranged_minion:
 			if variant.get("kind", "") == "bandit":
-				minion_name += " " + tr_text("[Adaga de Vento]", "[Wind Dagger]")
+				minion_name += " " + tr("TITLE_WIND_DAGGER")
 			else:
-				minion_name += " " + tr_text("[Lâmina de Vento]", "[Wind Blade]")
+				minion_name += " " + tr("TITLE_WIND_BLADE")
 		var default_wave_color = Color("ff9e00") if variant.get("kind", "") == "bandit" else (Color("48cae4") if variant.id == "knight_frost_sentinel" else (Color("ffd166") if variant.id == "knight_golden_commander" else Color("00f5d4")))
 		var minion_data:Dictionary = {
 			"sprite":sprite,
@@ -820,7 +823,7 @@ func spawn_battle_dogs(count:int) -> void:
 		dog_growl_sound.play()
 	shake(4.0, 0.2)
 
-	var alert_text = tr_text("CUIDADO! OS CÃES ESTÃO AVANÇANDO!", "WATCH OUT! THE HOUNDS ARE ADVANCING!")
+	var alert_text = tr("ALERT_HOUNDS_ADVANCE")
 	var cam_center = camera.get_screen_center_position() if camera else Vector2(player_position.x, 324.0)
 	spawn_hound_alert_popup(Vector2(cam_center.x, 210.0), alert_text)
 
@@ -882,7 +885,7 @@ func spawn_battle_dogs(count:int) -> void:
 			"strafe_dir":Vector2(dog_facing, 0.0),
 			"variant":variant.id,
 			"style":"dog",
-			"name":tr_text(variant.name_pt, variant.name_en),
+			"name":tr("MINION_" + variant.id.to_upper()),
 			"facing":dog_facing,
 			"death_time":0.0,
 			"base_scale":variant.scale,
@@ -1857,7 +1860,7 @@ func build_hud() -> void:
 	intro_label.size = Vector2(720, 70)
 	intro_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	intro_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	intro_label.text = tr_text("ENTRANDO NA ARENA", "ENTERING THE ARENA")
+	intro_label.text = tr("BATTLE_ENTERING_ARENA")
 	intro_label.add_theme_font_size_override("font_size", 34)
 	intro_label.add_theme_color_override("font_color", Color("ffd166"))
 	hud_canvas.add_child(intro_label)
@@ -1876,7 +1879,7 @@ func build_pause_overlay() -> void:
 	pause_title.position = Vector2(276, 245)
 	pause_title.size = Vector2(600, 62)
 	pause_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pause_title.text = tr_text("BATALHA PAUSADA", "BATTLE PAUSED")
+	pause_title.text = tr("MENU_BATTLE_PAUSED")
 	pause_title.add_theme_font_size_override("font_size", 42)
 	pause_title.add_theme_color_override("font_color", Color("ffd166"))
 	pause_overlay.add_child(pause_title)
@@ -1884,7 +1887,7 @@ func build_pause_overlay() -> void:
 	pause_hint.position = Vector2(276, 320)
 	pause_hint.size = Vector2(600, 36)
 	pause_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pause_hint.text = tr_text("ESC / START para continuar", "ESC / START to continue")
+	pause_hint.text = tr("MENU_PAUSE_HINT")
 	pause_hint.add_theme_font_size_override("font_size", 20)
 	pause_hint.add_theme_color_override("font_color", Color(0.88, 0.92, 1.0, 0.9))
 	pause_overlay.add_child(pause_hint)
@@ -2114,7 +2117,7 @@ func start_player_power_dash(use_kick:bool = false) -> void:
 		player_dash_sound.play()
 
 	# Alert popup
-	var alert_text = tr_text("⚡ SUPER CHUTE!", "⚡ SUPER KICK!") if use_kick else tr_text("⚡ SUPER SOCO!", "⚡ SUPER PUNCH!")
+	var alert_text = tr("POWER_ALERT_SUPER_KICK") if use_kick else tr("POWER_ALERT_SUPER_PUNCH")
 	spawn_hound_alert_popup(player_position + Vector2(0, -95), alert_text)
 	print("PLAYER POWER DASH: use_kick=%s facing=%.0f" % [str(use_kick), player_dash_facing])
 
@@ -2383,7 +2386,7 @@ func resolve_player_hit(kick:bool) -> void:
 	var hit_minions = resolve_player_hit_minions(kick, is_special)
 
 	# Atualizacao do texto de combo no HUD superior
-	combo_label.text = ("%d HITS!\n%s" % [combo, tr_text("ESPECIAL!", "SPECIAL!")]) if is_special else ("%d HIT\nCOMBO" % combo)
+	combo_label.text = ("%d HITS!\n%s" % [combo, tr("BATTLE_SPECIAL")]) if is_special else ("%d HIT\nCOMBO" % combo)
 	combo_label.add_theme_color_override("font_color", Color("ff2a5f") if is_special else Color("ff9f1c"))
 
 	# Pop-up flutuante numerico na frente do golpe do Maycon surge em seguida ("dai entao aparece escrito o hit com o numero...")
@@ -2701,7 +2704,7 @@ func defeat_enemy() -> void:
 		stains.append({"position":s_pos, "radius":randf_range(16.0, 34.0), "alpha":randf_range(0.68, 0.94)})
 	shake(22.0, 0.72)
 	enemy_explosion_time = 0.92
-	status_label.text = tr_text("EXPLOSÃO DE SANGUE!", "BLOOD EXPLOSION!")
+	status_label.text = tr("BATTLE_BLOOD_EXPLOSION")
 	defeat_all_minions()
 
 func update_enemy_explosion(delta:float) -> void:
@@ -2711,8 +2714,8 @@ func update_enemy_explosion(delta:float) -> void:
 	if enemy_explosion_time <= 0.0:
 		exit_open = true
 		exit_label.visible = true
-		exit_label.text = tr_text("VITÓRIA!  AVANCE PARA A SAÍDA  →", "VICTORY!  MOVE TO THE EXIT  →")
-		status_label.text = tr_text("CAMINHO LIBERADO", "PATH CLEARED")
+		exit_label.text = tr("BATTLE_VICTORY_EXIT")
+		status_label.text = tr("BATTLE_PATH_CLEARED")
 
 func restore_normal_time_after_explosion() -> void:
 	await get_tree().create_timer(1.15, true, false, true).timeout
@@ -2723,7 +2726,7 @@ func lose_battle() -> void:
 		return
 	player_dead = true
 	player.play("falling_down" if player.sprite_frames.has_animation("falling_down") else "damage")
-	status_label.text = tr_text("VOCÊ CAIU", "YOU FELL")
+	status_label.text = tr("BATTLE_YOU_FELL")
 	exit_label.visible = false
 	battle_song.stop()
 	clear_blood_drops()
@@ -2745,7 +2748,7 @@ func lose_battle() -> void:
 	death_label.size = Vector2(720, 96)
 	death_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	death_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	death_label.text = tr_text("Você morreu", "You died")
+	death_label.text = tr("BATTLE_YOU_DIED")
 	death_label.add_theme_font_size_override("font_size", 56)
 	death_label.add_theme_color_override("font_color", Color("d90429"))
 	death_label.modulate.a = 0.0
@@ -2756,7 +2759,7 @@ func lose_battle() -> void:
 	death_hint.position = Vector2(-360, 48)
 	death_hint.size = Vector2(720, 40)
 	death_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	death_hint.text = tr_text("Retornando ao último ponto salvo...", "Returning to the last save point...")
+	death_hint.text = tr("BATTLE_DEATH_HINT")
 	death_hint.add_theme_font_size_override("font_size", 18)
 	death_hint.add_theme_color_override("font_color", Color(0.85, 0.85, 0.9, 0.8))
 	death_hint.modulate.a = 0.0
@@ -2785,7 +2788,7 @@ func finish_battle() -> void:
 	Global.realtime_hp = player_hp
 	Global.request_realtime_position_restore()
 	GameSongs.process_mode = Node.PROCESS_MODE_INHERIT
-	intro_label.text = tr_text("RETORNANDO À JORNADA", "RETURNING TO THE JOURNEY")
+	intro_label.text = tr("BATTLE_RETURNING_JOURNEY")
 	intro_label.modulate.a = 0.0
 	var tween = create_tween().set_parallel(true)
 	tween.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
@@ -2830,7 +2833,7 @@ func update_bars() -> void:
 	player_bar.value = player_hp
 	enemy_bar.value = enemy_hp
 	player_bar.position = Vector2(42, 603)
-	player_hp_label.text = tr_text("VIDA", "HEALTH")
+	player_hp_label.text = tr("BATTLE_HP_LABEL")
 	enemy_bar.position = enemy_position + Vector2(-66, -112)
 	enemy_name_label.position = enemy_position + Vector2(-80, -138)
 	enemy_bar.z_index = int(enemy_position.y) + 1
@@ -2880,13 +2883,14 @@ func spawn_hit_counter_popup(world_pos:Vector2, count:int, is_special:bool = fal
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	if is_special:
-		label.text = "%d HITS!\n%s" % [count, tr_text("ESPECIAL!", "SPECIAL!")]
+		var hit_str = tr("BATTLE_HITS") % count if count > 1 else tr("BATTLE_SINGLE_HIT")
+		label.text = "%s\n%s" % [hit_str, tr("BATTLE_SPECIAL")]
 		label.add_theme_font_size_override("font_size", 24)
 		label.add_theme_color_override("font_color", Color("ff0055"))
 		label.add_theme_color_override("font_outline_color", Color.WHITE)
 		label.add_theme_constant_override("outline_size", 6)
 	else:
-		label.text = "%d HITS!" % count if count > 1 else "1 HIT!"
+		label.text = tr("BATTLE_HITS") % count if count > 1 else tr("BATTLE_SINGLE_HIT")
 		label.add_theme_font_size_override("font_size", 20 if count < 3 else 23)
 		var col = Color("ffd166") if count < 3 else (Color("ff9f1c") if count < 5 else Color("ff3838"))
 		label.add_theme_color_override("font_color", col)
@@ -3158,8 +3162,13 @@ func _draw() -> void:
 		draw_line(Vector2(2490, 340), Vector2(2490, 535), Color("80ed99"), 6)
 		draw_line(Vector2(2535, 340), Vector2(2535, 535), Color("80ed99"), 6)
 
-func tr_text(pt:String, en:String) -> String:
-	return en if Global.default_language == Global.language_en else pt
+func tr_text(pt:String, en:String = "") -> String:
+	var t = tr(pt)
+	if t != pt:
+		return t
+	if TranslationServer.get_locale().begins_with("en") && !en.is_empty():
+		return en
+	return pt
 
 func spawn_blood_drop(spawn_pos:Vector2) -> void:
 	var drop_x = clampf(spawn_pos.x, 150.0, ARENA_WIDTH - 150.0)
@@ -3204,7 +3213,7 @@ func collect_blood_drop(drop:Node2D) -> void:
 		blood_pickup_sound.play()
 		
 	# Feedback visual de cura
-	spawn_heal_popup(player_position + Vector2(0, -68), tr_text("SANGUE RECUPERADO!", "BLOOD RESTORED!"))
+	spawn_heal_popup(player_position + Vector2(0, -68), tr("BATTLE_BLOOD_RESTORED"))
 	spawn_heal_effects(player_position)
 
 func spawn_heal_popup(world_pos:Vector2, text_to_show:String) -> void:

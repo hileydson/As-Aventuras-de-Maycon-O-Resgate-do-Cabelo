@@ -55,21 +55,19 @@ func setup_tabs() -> void:
 	tab_container.current_tab = 0
 
 func update_language() -> void:
-	var is_pt = (Global.default_language == Global.language_pt_br)
-	title_label.text = "Configurações" if is_pt else "Settings"
-	tab_container.set_tab_title(0, "Gameplay")
+	title_label.text = tr("SETTINGS_TITLE")
+	tab_container.set_tab_title(0, tr("SETTINGS_GAMEPLAY"))
 	if tab_container.get_tab_count() > 1:
-		tab_container.set_tab_title(1, "Debug")
-	aim_title.text = "Assistente de Mira" if is_pt else "Aim Assist"
-	aim_desc.text = "Ajusta a intensidade da atração e assistência de mira no combate 3D." if is_pt else "Adjusts aim magnetism and shot assist strength in 3D combat."
-	debug_title.text = "Eventos do Jogo (game_events):" if is_pt else "Game Events (game_events):"
-	btn_close.text = "Fechar" if is_pt else "Close"
+		tab_container.set_tab_title(1, tr("SETTINGS_DEBUG"))
+	aim_title.text = tr("SETTINGS_AIM_ASSIST")
+	aim_desc.text = tr("SETTINGS_AIM_ASSIST_DESC")
+	debug_title.text = tr("SETTINGS_GAME_EVENTS")
+	btn_close.text = tr("SETTINGS_CLOSE")
 	_update_aim_label(aim_slider.value)
 
 func _update_aim_label(value: float) -> void:
-	var is_pt = (Global.default_language == Global.language_pt_br)
 	if value <= 0.001:
-		aim_value_label.text = "Desativado" if is_pt else "Off"
+		aim_value_label.text = tr("SETTINGS_AIM_OFF")
 	else:
 		var pct = int(round(value * 100.0))
 		aim_value_label.text = str(pct) + "%"
