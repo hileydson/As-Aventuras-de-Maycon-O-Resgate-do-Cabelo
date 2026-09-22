@@ -1704,11 +1704,13 @@ func update_player(delta:float) -> void:
 		else:
 			var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 			if direction.length() > 0.1:
-				player_position += direction.normalized() * PLAYER_SPEED * delta
+				var is_running = Input.is_action_pressed("run")
+				var current_speed = PLAYER_SPEED * 1.45 if is_running else PLAYER_SPEED
+				player_position += direction.normalized() * current_speed * delta
 				if absf(direction.x) > 0.05:
 					player_facing = signf(direction.x)
 					player.flip_h = player_facing < 0.0
-				play_if_changed(player, "right")
+				play_if_changed(player, "run" if is_running else "right")
 			else:
 				play_if_changed(player, "idle_right")
 	else:

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3co1rwdx1gkd"
-path="res://.godot/imported/maycon_run.png-946b75e4b7080de304d4723ec8c562b8.ctex"
+uid="uid://x0i10akrgore"
+path="res://.godot/imported/maycon_run_backup_original.png-6f5b8951ab813a1db72a411a01b54b9f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/novas_imagens/maycon/maycon_run.png"
-dest_files=["res://.godot/imported/maycon_run.png-946b75e4b7080de304d4723ec8c562b8.ctex"]
+source_file="res://assets/novas_imagens/maycon/maycon_run_backup_original.png"
+dest_files=["res://.godot/imported/maycon_run_backup_original.png-6f5b8951ab813a1db72a411a01b54b9f.ctex"]
 
 [params]
 
