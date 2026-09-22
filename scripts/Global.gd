@@ -267,6 +267,11 @@ func register_enemy_encounter(enemy_spawn_id:String) -> void:
 func schedule_realtime_enemy_respawn() -> void:
 	if battle_mode != battle_mode_realtime || realtime_enemy_spawn_id.is_empty():
 		return
+	if realtime_enemy_id == "1" && realtime_return_scene.ends_with("fase_1_castle_2.tscn") && realtime_enemy_spawn_id.contains("inimigo_camilita"):
+		inimigos_mortos[realtime_enemy_spawn_id] = true
+		realtime_enemy_respawns.erase(realtime_enemy_spawn_id)
+		realtime_enemy_spawn_id = ""
+		return
 	if realtime_enemy_id == "1001" || realtime_enemy_spawn_id.contains("inimigo_boss_seco") || realtime_enemy_spawn_id.contains("boss"):
 		realtime_enemy_spawn_id = ""
 		return
