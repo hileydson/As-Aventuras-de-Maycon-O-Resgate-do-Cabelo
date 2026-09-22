@@ -219,4 +219,5 @@ Tendrás 3 vidas, si mueres, tendrás que volver al inicio del Nivel.","你拥�
 用完6次防御后同样需要等待片刻。
 
 你共有3条生命，如果阵亡则必须重返关卡起点。"
-OBJECTIVE_CHASE_FELLAS,Encontre os Fellas no mapa e atire neles com A / ESPAÇO,Find the Fellas on the map and shoot them with A / SPACE,Encuentra a los Fellas en el mapa y dispárales con A / ESPACIO,在地图上找到 Fellas 并按 A / 空格射击
+OBJECTIVE_CHASE_FELLAS,Encontre os Fellas no mapa. A / ESPAÇO acelera; B dá ré; GATILHO DIREITO / CLIQUE ESQUERDO atira.,Find the Fellas on the map. A / SPACE accelerates; B reverses; RIGHT TRIGGER / LEFT CLICK fires.,Encuentra a los Fellas en el mapa. A / ESPACIO acelera; B da marcha atrás; GATILLO DERECHO / CLIC IZQUIERDO dispara.,在地图上找到 Fellas。A / 空格加速；B 倒车；右扳机 / 鼠标左键射击。
+HUD_MAYCON_NAME,Maycon,Maycon,Maycon,Maycon

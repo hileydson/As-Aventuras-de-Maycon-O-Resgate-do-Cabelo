@@ -8,7 +8,7 @@ const ENGINE_SOUND = preload("res://assets/novos_audios/motorcycle_sound.mp3")
 const BATTLE_SONG = preload("res://assets/novos_audios/battle.mp3")
 const PAIN_SOUND = preload("res://assets/novos_audios/DS_pain.mp3")
 const MARKER_TEXTURE = preload("res://assets/novas_imagens/objects/interrogacao.png")
-const MAX_HP := 12
+const MAX_HP := 16
 const MINIMAP_SIZE := 220.0
 const MINIMAP_WORLD_SIZE := 360.0
 
@@ -16,6 +16,8 @@ var player:CharacterBody3D
 var members:Array[Dictionary] = []
 var hud:CanvasLayer
 var battle_music:AudioStreamPlayer
+var player_hp_bar:ProgressBar
+var player_hp_text:Label
 var speed_lines:Array[Line2D] = []
 var close_blurs:Array[Line2D] = []
 var minimap_root:Control
@@ -37,6 +39,7 @@ func start_chase(chase_player:CharacterBody3D) -> void:
 		["tony_moto", "tony_moto_looking", "tony_moto_shoot"]
 	]
 	build_hud()
+	update_player_health()
 	build_minimap(names)
 	for index in names.size():
 		var member_textures:Array[Texture2D] = []
@@ -126,6 +129,44 @@ func build_hud() -> void:
 	hud = CanvasLayer.new()
 	hud.layer = 92
 	add_child(hud)
+	var player_margin := MarginContainer.new()
+	player_margin.name = "PlayerHealth"
+	player_margin.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	player_margin.offset_left = -150.0
+	player_margin.offset_right = 150.0
+	player_margin.offset_top = -75.0
+	player_margin.offset_bottom = -75.0
+	hud.add_child(player_margin)
+	var player_column := VBoxContainer.new()
+	player_column.add_theme_constant_override("separation", 3)
+	player_margin.add_child(player_column)
+	var player_name := Label.new()
+	player_name.text = tr("HUD_MAYCON_NAME").to_upper()
+	player_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	player_name.add_theme_font_size_override("font_size", 16)
+	player_name.add_theme_color_override("font_color", Color("ffe6a7"))
+	player_column.add_child(player_name)
+	player_hp_bar = ProgressBar.new()
+	player_hp_bar.max_value = player.danos_count_limit
+	player_hp_bar.value = player.danos_count_limit
+	player_hp_bar.show_percentage = false
+	player_hp_bar.custom_minimum_size = Vector2(300.0, 14.0)
+	var player_fill := StyleBoxFlat.new()
+	player_fill.bg_color = Color("cf2633")
+	player_fill.corner_radius_top_left = 4
+	player_fill.corner_radius_top_right = 4
+	player_fill.corner_radius_bottom_left = 4
+	player_fill.corner_radius_bottom_right = 4
+	player_hp_bar.add_theme_stylebox_override("fill", player_fill)
+	var player_background := StyleBoxFlat.new()
+	player_background.bg_color = Color("3b1018")
+	player_hp_bar.add_theme_stylebox_override("background", player_background)
+	player_column.add_child(player_hp_bar)
+	player_hp_text = Label.new()
+	player_hp_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	player_hp_text.add_theme_font_size_override("font_size", 12)
+	player_hp_text.add_theme_color_override("font_color", Color("efb4b5"))
+	player_column.add_child(player_hp_text)
 	var margin := MarginContainer.new()
 	margin.name = "Margin"
 	margin.set_anchors_preset(Control.PRESET_CENTER_TOP)
@@ -214,7 +255,7 @@ func build_minimap(names:Array) -> void:
 	minimap_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud.add_child(minimap_root)
 	var background := ColorRect.new()
-	background.color = Color(0.025, 0.035, 0.055)
+	background.color = Color(0.1, 0.12, 0.15)
 	background.size = Vector2.ONE * MINIMAP_SIZE
 	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	minimap_root.add_child(background)
@@ -238,7 +279,10 @@ func build_minimap(names:Array) -> void:
 	minimap_viewport.add_child(minimap_camera)
 	minimap_camera.make_current()
 	var tint := ColorRect.new()
-	tint.color = Color(0.04, 0.08, 0.12, 0.18)
+	tint.color = Color(0.34, 0.3, 0.22, 0.22)
+	var tint_material := CanvasItemMaterial.new()
+	tint_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	tint.material = tint_material
 	tint.size = Vector2.ONE * MINIMAP_SIZE
 	tint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	minimap_root.add_child(tint)
@@ -308,6 +352,7 @@ func set_map_visible(open:bool) -> void:
 func _physics_process(delta:float) -> void:
 	if finished or !is_instance_valid(player):
 		return
+	update_player_health()
 	chase_clock += delta
 	var any_active := false
 	var close_encounter := false
@@ -344,6 +389,13 @@ func _physics_process(delta:float) -> void:
 		(member["engine"] as AudioStreamPlayer3D).pitch_scale = 0.86 + (0.17 if member["active"] else 0.0) + sin(chase_clock * 3.0 + member["phase"]) * 0.025
 	update_minimap()
 	update_speed_lines(any_active, close_encounter)
+
+func update_player_health() -> void:
+	if !is_instance_valid(player_hp_bar) or !is_instance_valid(player):
+		return
+	var remaining:int = maxi(0, player.danos_count_limit - player.danos_count)
+	player_hp_bar.value = remaining
+	player_hp_text.text = "%d/%d" % [remaining, player.danos_count_limit]
 
 func move_wandering(member:Dictionary, delta:float) -> void:
 	var sprite:Sprite3D = member["sprite"]
@@ -391,6 +443,8 @@ func move_member(member:Dictionary, delta:float, speed:float) -> void:
 		member["heading"] = heading.rotated(Vector3.UP, randf_range(0.8, 1.8))
 
 func process_enemy_shot(member:Dictionary, delta:float, distance:float) -> void:
+	if finished or !combat_enabled:
+		return
 	var sprite:Sprite3D = member["sprite"]
 	member["shot_timer"] -= delta
 	if member["shot_state"] == 0 and member["shot_timer"] <= 0.0 and distance < 50.0:
@@ -414,6 +468,7 @@ func process_enemy_shot(member:Dictionary, delta:float, distance:float) -> void:
 			var backward:Vector3 = -(member["heading"] as Vector3)
 			if distance < 45.0 and backward.dot(to_player.normalized()) > 0.84:
 				player.levou_dano(1)
+				update_player_health()
 	elif member["shot_state"] == 3:
 		member["shot_delay"] -= delta
 		if member["shot_delay"] <= 0.0:

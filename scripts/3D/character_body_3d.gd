@@ -1,6 +1,7 @@
 extends CharacterBody3D
 
 signal motorcycle_fire
+signal motorcycle_chase_died
 
 @onready var hud_canvas: CanvasLayer = $hud_canvas
 @onready var arma_sprite: AnimatedSprite2D = $hud_canvas/control_gun/gun/arma_sprite
@@ -29,6 +30,8 @@ signal motorcycle_fire
 @onready var cigarro_perfect_animations: Node3D = $cigarro_perfect_animations
 @onready var control_moto: Control = $hud_canvas/control_moto
 @onready var metralhadora_moto: Sprite2D = $hud_canvas/control_moto/MetralhadoraMoto
+@onready var motorcycle_sprite: AnimatedSprite2D = $hud_canvas/control_moto/moto
+@onready var motorcycle_shoot_buttons: Node2D = $hud_canvas/control_moto/hud_moto_buttons/ChaseShootButtons
 @onready var moto_parada: AudioStreamPlayer = $hud_canvas/control_moto/moto_parada
 @onready var moto_acelerando: AudioStreamPlayer = $hud_canvas/control_moto/ModoAcelerando
 @onready var farol_moto_cigarro: SpotLight3D = $farol_moto_cigarro
@@ -63,6 +66,7 @@ var gatilho_pressionado = false
 var on_moto = false
 var final_game_camera_offset_applied:bool = false
 var motorcycle_chase:bool = false
+var motorcycle_chase_death_emitted:bool = false
 var motorcycle_turn_speed:float = 0.0
 var motorcycle_fire_cooldown:float = 0.0
 var motorcycle_muzzle:GPUParticles3D
@@ -71,8 +75,12 @@ var motorcycle_effect_root:Node2D
 var motorcycle_sparks:CPUParticles2D
 var motorcycle_casings:CPUParticles2D
 var motorcycle_glow:Sprite2D
+var motorcycle_screen_flash:ColorRect
 var motorcycle_flash_time:float = 0.0
 var motorcycle_gun_rest_position:Vector2
+var motorcycle_bike_rest_position:Vector2
+var motorcycle_visual_lag:float = 0.0
+var motorcycle_gun_recoil:Vector2 = Vector2.ZERO
 
 
 @export var SPRINT_SPEED = 9.0  # Velocidade ao correr
@@ -97,16 +105,20 @@ func set_final_game()->void:
 func set_motorcycle_chase(active:bool) -> void:
 	motorcycle_chase = active
 	metralhadora_moto.visible = active
+	motorcycle_shoot_buttons.visible = active
 	if !active:
 		motorcycle_turn_speed = 0.0
 		motorcycle_flash_time = 0.0
 		metralhadora_moto.position = motorcycle_gun_rest_position
+		motorcycle_gun_recoil = Vector2.ZERO
 		if is_instance_valid(motorcycle_muzzle):
 			motorcycle_muzzle.emitting = false
 		if is_instance_valid(motorcycle_effect_root):
 			motorcycle_effect_root.visible = false
 		if is_instance_valid(motorcycle_muzzle_light):
 			motorcycle_muzzle_light.visible = false
+		if is_instance_valid(motorcycle_screen_flash):
+			motorcycle_screen_flash.visible = false
 	elif !is_instance_valid(motorcycle_muzzle):
 		motorcycle_muzzle = GPUParticles3D.new()
 		motorcycle_muzzle.name = "MotorcycleMuzzle"
@@ -147,6 +159,13 @@ func set_motorcycle_chase(active:bool) -> void:
 		motorcycle_effect_root.visible = true
 
 func build_motorcycle_muzzle_overlay() -> void:
+	motorcycle_screen_flash = ColorRect.new()
+	motorcycle_screen_flash.name = "MotorcycleScreenFlash"
+	motorcycle_screen_flash.color = Color(1.0, 0.65, 0.18, 0.075)
+	motorcycle_screen_flash.size = get_viewport().get_visible_rect().size
+	motorcycle_screen_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	motorcycle_screen_flash.visible = false
+	hud_canvas.add_child(motorcycle_screen_flash)
 	motorcycle_effect_root = Node2D.new()
 	motorcycle_effect_root.name = "MotorcycleShotEffects"
 	hud_canvas.add_child(motorcycle_effect_root)
@@ -154,8 +173,8 @@ func build_motorcycle_muzzle_overlay() -> void:
 	glow_gradient.set_color(0, Color(1.0, 0.89, 0.35, 0.9))
 	glow_gradient.set_color(1, Color(1.0, 0.16, 0.01, 0.0))
 	var glow_texture := GradientTexture2D.new()
-	glow_texture.width = 96
-	glow_texture.height = 96
+	glow_texture.width = 160
+	glow_texture.height = 160
 	glow_texture.fill = GradientTexture2D.FILL_RADIAL
 	glow_texture.fill_from = Vector2(0.5, 0.5)
 	glow_texture.fill_to = Vector2(1.0, 0.5)
@@ -208,6 +227,8 @@ func build_motorcycle_muzzle_overlay() -> void:
 func dismount_final_game()->void:
 	set_motorcycle_chase(false)
 	on_moto = false
+	motorcycle_visual_lag = 0.0
+	motorcycle_sprite.position = motorcycle_bike_rest_position
 	control_moto.visible = false
 	farol_moto_cigarro.visible = false
 	moto_parada.stop()
@@ -364,6 +385,7 @@ func change_sprite_two_player()->void:
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	motorcycle_gun_rest_position = metralhadora_moto.position
+	motorcycle_bike_rest_position = motorcycle_sprite.position
 	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)                                                                                               
 	
 	danos_count = 0
@@ -402,6 +424,17 @@ func aplicar_shake(valor: float):
 	
 
 func levou_dano(dano:int)->void:
+	if motorcycle_chase:
+		if danos_count >= danos_count_limit:
+			return
+		danos_count = mini(danos_count_limit, danos_count + dano)
+		Input.start_joy_vibration(device_id, 0.5, 0.7, 0.3)
+		aplicar_shake(0.4)
+		hurt_sound_3d.play()
+		if danos_count >= danos_count_limit and !motorcycle_chase_death_emitted:
+			motorcycle_chase_death_emitted = true
+			motorcycle_chase_died.emit()
+		return
 	# Acabou de levar um dano - Vibra apenas o controle do jogador atual
 	if (danos_count <= danos_count_limit):
 		danos_count += dano
@@ -413,26 +446,44 @@ func levou_dano(dano:int)->void:
 func _physics_process(delta):
 	motorcycle_fire_cooldown = maxf(0.0, motorcycle_fire_cooldown - delta)
 	motorcycle_flash_time = maxf(0.0, motorcycle_flash_time - delta)
+	if on_moto:
+		var target_lag := clampf(-motorcycle_turn_speed * 10.0, -14.0, 14.0)
+		motorcycle_visual_lag = lerpf(motorcycle_visual_lag, target_lag, minf(1.0, delta * 5.0))
+		motorcycle_sprite.position = motorcycle_bike_rest_position + Vector2(motorcycle_visual_lag, 0.0)
+		motorcycle_gun_recoil = motorcycle_gun_recoil.lerp(Vector2.ZERO, minf(1.0, delta * 15.0))
+		metralhadora_moto.position = motorcycle_gun_rest_position + Vector2(motorcycle_visual_lag * 1.15, 0.0) + motorcycle_gun_recoil
 	if motorcycle_chase and on_moto:
-		var firing := Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) or Input.is_key_pressed(KEY_SPACE)
-		metralhadora_moto.position = metralhadora_moto.position.lerp(motorcycle_gun_rest_position, minf(1.0, delta * 24.0))
+		var firing := Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_RIGHT) > 0.5 or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
 		if firing:
 			metralhadora_moto.position += Vector2(randf_range(-0.8, 0.8), randf_range(-0.8, 0.8))
-		var muzzle_screen := metralhadora_moto.to_global(Vector2(-478.0, -87.0))
+		var muzzle_screen := metralhadora_moto.to_global(Vector2(0.0, -metralhadora_moto.texture.get_height() * 0.44))
 		motorcycle_effect_root.position = muzzle_screen
 		var muzzle_world := camera_3d.project_position(muzzle_screen, 1.9)
 		motorcycle_muzzle.position = camera_3d.to_local(muzzle_world)
 		motorcycle_muzzle_light.position = motorcycle_muzzle.position
 		motorcycle_glow.visible = motorcycle_flash_time > 0.0
 		motorcycle_muzzle_light.visible = motorcycle_flash_time > 0.0
+		motorcycle_screen_flash.visible = motorcycle_flash_time > 0.0
 		if motorcycle_flash_time > 0.0:
-			motorcycle_glow.modulate.a = motorcycle_flash_time / 0.085
-			motorcycle_glow.scale = Vector2.ONE * (0.52 + randf_range(0.0, 0.18))
+			motorcycle_glow.modulate.a = motorcycle_flash_time / 0.11
+			motorcycle_glow.scale = Vector2.ONE * (0.75 + randf_range(0.0, 0.18))
+			motorcycle_screen_flash.modulate.a = motorcycle_flash_time / 0.11
+			motorcycle_screen_flash.size = get_viewport().get_visible_rect().size
 		if firing:
 			if motorcycle_fire_cooldown <= 0.0:
 				motorcycle_fire_cooldown = 0.15
-				motorcycle_flash_time = 0.085
-				metralhadora_moto.position += Vector2(randf_range(-2.5, 2.5), randf_range(4.0, 7.0))
+				motorcycle_flash_time = 0.11
+				motorcycle_gun_recoil = Vector2(randf_range(-2.5, 2.5), randf_range(4.0, 7.0))
+				metralhadora_moto.position += motorcycle_gun_recoil
+				motorcycle_effect_root.position = metralhadora_moto.to_global(Vector2(0.0, -metralhadora_moto.texture.get_height() * 0.44))
+				muzzle_world = camera_3d.project_position(motorcycle_effect_root.position, 1.9)
+				motorcycle_muzzle.position = camera_3d.to_local(muzzle_world)
+				motorcycle_muzzle_light.position = motorcycle_muzzle.position
+				motorcycle_glow.visible = true
+				motorcycle_glow.modulate.a = 1.0
+				motorcycle_muzzle_light.visible = true
+				motorcycle_screen_flash.visible = true
+				motorcycle_screen_flash.modulate.a = 1.0
 				gun_shot.play()
 				motorcycle_muzzle.restart()
 				motorcycle_muzzle.emitting = true
@@ -460,6 +511,8 @@ func _physics_process(delta):
 	$hud_canvas/maycon_hp/hp_4.visible = danos_count <= 1
 	$hud_canvas/maycon_hp/hp_5.visible = danos_count <= 0
 	
+	if motorcycle_chase and danos_count >= danos_count_limit:
+		return
 	if danos_count == danos_count_limit:
 		danos_count += 1 
 		Global.players_dead_count += 1
@@ -529,9 +582,9 @@ func _physics_process(delta):
 			joy_look.x = 0.0
 		var mouse_turn := 0.0
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			mouse_turn = clampf(Input.get_last_mouse_velocity().x * MOUSE_SENSITIVITY * 0.35, -1.8, 1.8)
-		var target_turn := clampf(-joy_look.x * 1.8 - mouse_turn, -1.8, 1.8)
-		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, 5.2 * delta)
+			mouse_turn = clampf(Input.get_last_mouse_velocity().x * MOUSE_SENSITIVITY * 0.28, -1.4, 1.4)
+		var target_turn := clampf(-joy_look.x * 1.4 - mouse_turn, -1.4, 1.4)
+		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, 3.2 * delta)
 		rotate_y(motorcycle_turn_speed * delta)
 	elif joy_look.length() > 0.13:
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)
@@ -577,19 +630,19 @@ func _physics_process(delta):
 
 	# --- 5. MOVIMENTO (MOTO VS A PÉ) ---
 	if on_moto:
-		var r2_acelerar = Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_RIGHT)
-		var l2_re = Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_LEFT)
+		var acelerar_moto = Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) or Input.is_key_pressed(KEY_SPACE)
+		var re_moto = Input.is_joy_button_pressed(device_id, JOY_BUTTON_B) or Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 		
 		var forward_dir = -transform.basis.z 
 		
-		if (r2_acelerar > 0.1) or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		if acelerar_moto:
 			# ACELERAÇÃO PARA FRENTE (Até 20)
 			var target_vel = forward_dir * 20.0
-			velocity.x = move_toward(velocity.x, target_vel.x, 15.0 * delta)
-			velocity.z = move_toward(velocity.z, target_vel.z, 15.0 * delta)
+			velocity.x = move_toward(velocity.x, target_vel.x, 13.0 * delta)
+			velocity.z = move_toward(velocity.z, target_vel.z, 13.0 * delta)
 			if !moto_acelerando.is_playing():moto_acelerando.play()
 			Input.start_joy_vibration(device_id, 0.2, 0.1, 0.1)
-		elif (l2_re > 0.1) or Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+		elif re_moto:
 			# RÉ (Mais devagar, até 10)
 			var target_vel = -forward_dir * 10.0
 			velocity.x = move_toward(velocity.x, target_vel.x, 6.0 * delta)

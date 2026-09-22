@@ -31,7 +31,9 @@
 [ext_resource type="Texture2D" uid="uid://cgkeliuxxfu5p" path="res://assets/novas_imagens/objects/pneu_moto.png" id="17_e4f44"]
 [ext_resource type="Texture2D" uid="uid://cn553mn1ycaas" path="res://assets/novas_imagens/buttons/mouse_trigger.png" id="17_xpqs8"]
 [ext_resource type="Texture2D" uid="uid://dug7qpxj2ic5g" path="res://assets/novas_imagens/buttons/mouse_right_click.png" id="18_fbcau"]
-[ext_resource type="Texture2D" uid="uid://bmnu8l73leoyp" path="res://assets/novas_imagens/buttons/r2_re.png" id="19_mwhgs"]
+[ext_resource type="Texture2D" uid="uid://b4nuieuqfk5wl" path="res://assets/novas_imagens/buttons/360_A.png" id="19_moto_a"]
+[ext_resource type="Texture2D" uid="uid://b0cv160eigo1w" path="res://assets/novas_imagens/buttons/360_B.png" id="19_moto_b"]
+[ext_resource type="Texture2D" uid="uid://bu87adwoqopfd" path="res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png" id="19_moto_space"]
 [ext_resource type="Texture2D" uid="uid://b1fgp6ussyeji" path="res://assets/novas_imagens/3d_battle/segurando_arma_3d_uma_mao.png" id="21_yndem"]
 [ext_resource type="AudioStream" uid="uid://clwe6bwguowon" path="res://assets/novos_audios/hurt_sound_3d.mp3" id="22_ievb8"]
 [ext_resource type="AudioStream" uid="uid://b0mccquxgce6d" path="res://assets/novos_audios/motorcycle_sound.mp3" id="25_pti3k"]
@@ -1718,12 +1720,12 @@ position = Vector2(-17, 15)
 position = Vector2(1117.5, 528.6931)
 rotation = -0.16053383
 scale = Vector2(0.37234885, 0.39948073)
-texture = ExtResource("16_jvhfj")
+texture = ExtResource("19_moto_a")
 
 [node name="MouseTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=2027830176]
 position = Vector2(1086, 527.9584)
 scale = Vector2(0.31000003, 0.34530595)
-texture = ExtResource("17_xpqs8")
+texture = ExtResource("19_moto_space")
 
 [node name="PneuMoto" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=220419637]
 modulate = Color(0.5167645, 0.5167645, 0.5167645, 1)
@@ -1745,7 +1747,20 @@ texture = ExtResource("18_fbcau")
 position = Vector2(1119.0001, 638)
 rotation = 0.18635033
 scale = Vector2(0.41499877, 0.39499992)
-texture = ExtResource("19_mwhgs")
+texture = ExtResource("19_moto_b")
+
+[node name="ChaseShootButtons" type="Node2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=439923038]
+visible = false
+
+[node name="ControllerTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons/ChaseShootButtons" unique_id=971743597]
+position = Vector2(1117.5, 468)
+scale = Vector2(0.37234885, 0.39948073)
+texture = ExtResource("16_jvhfj")
+
+[node name="MouseClick" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons/ChaseShootButtons" unique_id=370855284]
+position = Vector2(1086, 468)
+scale = Vector2(0.31000003, 0.34530595)
+texture = ExtResource("17_xpqs8")
 
 [node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas" unique_id=908181743]
 visible = false

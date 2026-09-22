@@ -50,9 +50,14 @@ var wood_debug_layer:CanvasLayer
 var wood_debug_status:Label
 var enemy_debug_status:Label
 var fellas_chase
+var chase_start_position:Vector3
+var chase_start_rotation:Vector3
+var chase_start_camera_rotation:Vector3
+var chase_restart_in_progress:bool = false
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
+	player.motorcycle_chase_died.connect(restart_chase_after_death)
 	player.get_node("chuva").process_mode = Node.PROCESS_MODE_PAUSABLE
 	player.set_rain(true)
 	fellas_original_scale = fellas.scale
@@ -655,20 +660,82 @@ func finish_fight() -> void:
 	player_camera.h_offset = 0.0
 	player_camera.v_offset = 0.0
 	player.velocity = Vector3.ZERO
+	chase_start_position = player.global_position
+	chase_start_rotation = player.rotation
+	chase_start_camera_rotation = player_camera.rotation
 	set_story_stage(STAGE_CHASE)
-	fellas_chase = Node3D.new()
-	fellas_chase.set_script(FELLAS_CHASE_SCRIPT)
-	fellas_chase.name = "FellasChase"
-	add_child(fellas_chase)
-	fellas_chase.all_escaped.connect(finish_chase, CONNECT_ONE_SHOT)
-	fellas_chase.start_chase(player)
-	player.maycon_hp.visible = true
+	start_chase_round()
 	the_almost_end_song.stop()
 	fade.get_node("Transition").play("fade_in")
 	await get_tree().create_timer(2.0).timeout
 	player.process_mode = Node.PROCESS_MODE_INHERIT
 	Global.in_cutscene = false
 	fellas_chase.combat_enabled = true
+
+func start_chase_round() -> void:
+	player.danos_count = 0
+	player.danos_count_limit = 10
+	player.motorcycle_chase_death_emitted = false
+	player.motorcycle_fire_cooldown = 0.0
+	fellas_chase = Node3D.new()
+	fellas_chase.set_script(FELLAS_CHASE_SCRIPT)
+	fellas_chase.name = "FellasChase"
+	add_child(fellas_chase)
+	fellas_chase.all_escaped.connect(finish_chase, CONNECT_ONE_SHOT)
+	fellas_chase.start_chase(player)
+	player.maycon_hp.visible = false
+
+func restart_chase_after_death() -> void:
+	if stage != STAGE_CHASE or chase_restart_in_progress or !is_instance_valid(fellas_chase):
+		return
+	chase_restart_in_progress = true
+	Global.in_cutscene = true
+	objective_ui.visible = false
+	player.process_mode = Node.PROCESS_MODE_DISABLED
+	fellas_chase.combat_enabled = false
+	fellas_chase.finished = true
+	fellas_chase.hud.visible = false
+	fellas_chase.battle_music.stop()
+	player.set_motorcycle_chase(false)
+	var transition:AnimationPlayer = fade.get_node("Transition")
+	transition.play("fade_out")
+	await get_tree().create_timer(2.0).timeout
+	transition.pause()
+	var death_layer := CanvasLayer.new()
+	death_layer.layer = 120
+	add_child(death_layer)
+	var death_label := Label.new()
+	death_label.text = tr("BATTLE_YOU_DIED_CAPS")
+	death_label.size = get_viewport().get_visible_rect().size
+	death_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	death_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	death_label.add_theme_font_size_override("font_size", 52)
+	death_label.add_theme_color_override("font_color", Color("d72d38"))
+	death_label.add_theme_color_override("font_outline_color", Color.BLACK)
+	death_label.add_theme_constant_override("outline_size", 9)
+	death_layer.add_child(death_label)
+	await get_tree().create_timer(1.5).timeout
+	remove_child(fellas_chase)
+	fellas_chase.queue_free()
+	fellas_chase = null
+	player.mount_final_game()
+	player.global_position = chase_start_position
+	player.rotation = chase_start_rotation
+	var player_camera:Camera3D = player.get_node("Camera3D")
+	player_camera.rotation = chase_start_camera_rotation
+	player_camera.h_offset = 0.0
+	player_camera.v_offset = 0.0
+	player.velocity = Vector3.ZERO
+	set_story_stage(STAGE_CHASE)
+	objective_ui.visible = true
+	start_chase_round()
+	death_layer.queue_free()
+	transition.play("fade_in")
+	await get_tree().create_timer(2.0).timeout
+	player.process_mode = Node.PROCESS_MODE_INHERIT
+	Global.in_cutscene = false
+	fellas_chase.combat_enabled = true
+	chase_restart_in_progress = false
 
 func finish_chase() -> void:
 	Global.in_cutscene = true
@@ -679,6 +746,8 @@ func finish_chase() -> void:
 	if is_instance_valid(fellas_chase):
 		fellas_chase.queue_free()
 	fellas_chase = null
+	player.danos_count = 0
+	player.danos_count_limit = 5
 	player.maycon_hp.visible = false
 	fellas.scale = fellas_original_scale
 	for member in fellas_member_original_positions:
