@@ -24,6 +24,7 @@
 [ext_resource type="Shader" uid="uid://c6eelrgo3e7vy" path="res://scenes/fase_1_before_castle_1_dynamic_background.gdshader" id="19_dynamic_background"]
 [ext_resource type="Shader" path="res://scenes/fase_1_before_castle_1_clouds.gdshader" id="20_clouds"]
 [ext_resource type="Shader" path="res://scenes/fase_1_before_castle_1_lava_glow.gdshader" id="21_lava_glow"]
+[ext_resource type="Shader" path="res://scenes/fase_1_before_castle_1_mountains.gdshader" id="22_mountains"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dynamic_background"]
 shader = ExtResource("19_dynamic_background")
@@ -34,6 +35,26 @@ shader = ExtResource("20_clouds")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lava_glow"]
 shader = ExtResource("21_lava_glow")
 shader_parameter/foreground_texture = ExtResource("17_parallax_front")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_far_mountains"]
+shader = ExtResource("22_mountains")
+shader_parameter/mountain_color = Color(0.085, 0.025, 0.045, 1)
+shader_parameter/rim_color = Color(0.34, 0.04, 0.015, 1)
+shader_parameter/horizon = 0.48
+shader_parameter/mountain_height = 0.19
+shader_parameter/peak_count = 10.0
+shader_parameter/seed = 7.3
+shader_parameter/opacity = 0.68
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_near_mountains"]
+shader = ExtResource("22_mountains")
+shader_parameter/mountain_color = Color(0.035, 0.012, 0.024, 1)
+shader_parameter/rim_color = Color(0.48, 0.055, 0.012, 1)
+shader_parameter/horizon = 0.61
+shader_parameter/mountain_height = 0.27
+shader_parameter/peak_count = 7.0
+shader_parameter/seed = 19.6
+shader_parameter/opacity = 0.82
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kvuau"]
 atlas = ExtResource("3_avl2m")
@@ -668,6 +689,28 @@ scroll_scale = Vector2(0.5, 1)
 
 [node name="FireSky" type="ColorRect" parent="DynamicFireBackground" unique_id=744922730]
 material = SubResource("ShaderMaterial_dynamic_background")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="FarMountains" type="Parallax2D" parent="."]
+z_index = -29
+scroll_scale = Vector2(0.58, 1)
+
+[node name="MountainRange" type="ColorRect" parent="FarMountains"]
+material = SubResource("ShaderMaterial_far_mountains")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="NearMountains" type="Parallax2D" parent="."]
+z_index = -27
+scroll_scale = Vector2(0.68, 1)
+
+[node name="MountainRange" type="ColorRect" parent="NearMountains"]
+material = SubResource("ShaderMaterial_near_mountains")
 offset_left = -572.0
 offset_right = 3168.0
 offset_bottom = 1344.0

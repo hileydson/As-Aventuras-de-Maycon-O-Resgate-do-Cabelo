@@ -130,8 +130,139 @@ const MINION_VARIANTS = [
 		"speed_min":60.0, "speed_max":76.0,
 		"damage_min":18.0, "damage_max":25.0,
 		"style":"heavy"
+	},
+	{
+		"id":"bandit_heavy_brawler",
+		"name_pt":"Brutamontes Bandido",
+		"name_en":"Bandit Bruiser",
+		"kind":"bandit",
+		"bandit_type":"heavy",
+		"path":"res://assets/novas_imagens/inimigos/capangas/Bandits/Heavy Bandit",
+		"modulate":Color(1.0, 1.0, 1.0, 1.0),
+		"scale":3.3,
+		"offset_y":4.0,
+		"hp_min":65.0, "hp_max":85.0,
+		"speed_min":82.0, "speed_max":100.0,
+		"damage_min":13.0, "damage_max":17.0,
+		"style":"heavy"
+	},
+	{
+		"id":"bandit_blood_butcher",
+		"name_pt":"Açougueiro Sanguinário",
+		"name_en":"Blood Butcher",
+		"kind":"bandit",
+		"bandit_type":"heavy",
+		"path":"res://assets/novas_imagens/inimigos/capangas/Bandits/Heavy Bandit",
+		"modulate":Color(1.25, 0.72, 0.72, 1.0),
+		"scale":3.4,
+		"offset_y":4.0,
+		"hp_min":55.0, "hp_max":75.0,
+		"speed_min":92.0, "speed_max":112.0,
+		"damage_min":15.0, "damage_max":20.0,
+		"style":"frenzy"
+	},
+	{
+		"id":"bandit_iron_marauder",
+		"name_pt":"Saqueador de Aço",
+		"name_en":"Steel Marauder",
+		"kind":"bandit",
+		"bandit_type":"heavy",
+		"path":"res://assets/novas_imagens/inimigos/capangas/Bandits/Heavy Bandit",
+		"modulate":Color(0.82, 0.88, 1.08, 1.0),
+		"scale":3.5,
+		"offset_y":4.0,
+		"hp_min":75.0, "hp_max":100.0,
+		"speed_min":72.0, "speed_max":88.0,
+		"damage_min":16.0, "damage_max":22.0,
+		"style":"heavy"
+	},
+	{
+		"id":"bandit_toxic_enforcer",
+		"name_pt":"Capataz Peçonhento",
+		"name_en":"Venom Enforcer",
+		"kind":"bandit",
+		"bandit_type":"heavy",
+		"path":"res://assets/novas_imagens/inimigos/capangas/Bandits/Heavy Bandit",
+		"modulate":Color(0.78, 1.25, 0.8, 1.0),
+		"scale":3.3,
+		"offset_y":4.0,
+		"hp_min":60.0, "hp_max":80.0,
+		"speed_min":85.0, "speed_max":104.0,
+		"damage_min":14.0, "damage_max":18.0,
+		"style":"tactical"
+	},
+	{
+		"id":"bandit_light_scoundrel",
+		"name_pt":"Bandido Sorrateiro",
+		"name_en":"Bandit Scoundrel",
+		"kind":"bandit",
+		"bandit_type":"light",
+		"path":"res://assets/novas_imagens/inimigos/capangas/Bandits/Light Bandit",
+		"modulate":Color(1.0, 1.0, 1.0, 1.0),
+		"scale":3.2,
+		"offset_y":4.0,
+		"hp_min":38.0, "hp_max":54.0,
+		"speed_min":105.0, "speed_max":125.0,
+		"damage_min":9.0, "damage_max":13.0,
+		"style":"agile"
+	},
+	{
+		"id":"bandit_shadow_rogue",
+		"name_pt":"Ladino das Sombras",
+		"name_en":"Shadow Rogue",
+		"kind":"bandit",
+		"bandit_type":"light",
+		"path":"res://assets/novas_imagens/inimigos/capangas/Bandits/Light Bandit",
+		"modulate":Color(0.85, 0.72, 0.98, 1.0),
+		"scale":3.1,
+		"offset_y":4.0,
+		"hp_min":35.0, "hp_max":48.0,
+		"speed_min":115.0, "speed_max":132.0,
+		"damage_min":10.0, "damage_max":14.0,
+		"style":"agile"
+	},
+	{
+		"id":"bandit_sand_skirmisher",
+		"name_pt":"Espadachim das Dunas",
+		"name_en":"Dune Skirmisher",
+		"kind":"bandit",
+		"bandit_type":"light",
+		"path":"res://assets/novas_imagens/inimigos/capangas/Bandits/Light Bandit",
+		"modulate":Color(1.25, 1.15, 0.75, 1.0),
+		"scale":3.2,
+		"offset_y":4.0,
+		"hp_min":42.0, "hp_max":58.0,
+		"speed_min":100.0, "speed_max":120.0,
+		"damage_min":11.0, "damage_max":15.0,
+		"style":"frenzy"
+	},
+	{
+		"id":"bandit_nightblade",
+		"name_pt":"Lâmina Noturna",
+		"name_en":"Nightblade Assassin",
+		"kind":"bandit",
+		"bandit_type":"light",
+		"path":"res://assets/novas_imagens/inimigos/capangas/Bandits/Light Bandit",
+		"modulate":Color(0.68, 0.85, 1.1, 1.0),
+		"scale":3.1,
+		"offset_y":4.0,
+		"hp_min":36.0, "hp_max":52.0,
+		"speed_min":110.0, "speed_max":130.0,
+		"damage_min":12.0, "damage_max":16.0,
+		"style":"elite"
 	}
 ]
+
+const BANDIT_ANIMS = {
+	"idle": {"folder":"Idle", "prefixes":["Idle"], "speed":7.0, "loop":true},
+	"combat_idle": {"folder":"Combat Idle", "prefixes":["Combat Idle", "CombatIdle"], "speed":8.0, "loop":true},
+	"run": {"folder":"Run", "prefixes":["Run"], "speed":11.0, "loop":true},
+	"attack": {"folder":"Attack", "prefixes":["Attack"], "speed":10.0, "loop":false},
+	"jump": {"folder":"Jump", "prefixes":["Jump"], "speed":6.0, "loop":false},
+	"pain": {"folder":"Hurt", "prefixes":["Hurt"], "speed":8.0, "loop":false},
+	"death": {"folder":"Death", "prefixes":["Death"], "speed":5.0, "loop":false},
+	"recover": {"folder":"Recover", "prefixes":["Recover"], "speed":10.0, "loop":false}
+}
 
 const MINION_ANIMS = {
 	"idle":{"files":["_Idle.png"], "frames":10, "speed":8.0, "loop":true},
@@ -430,9 +561,68 @@ func load_battle_texture(res_path:String) -> Texture2D:
 			return ImageTexture.create_from_image(img)
 	return null
 
+func build_bandit_sprite_frames(variant_path:String) -> SpriteFrames:
+	if minion_sprite_frames_cache.has(variant_path):
+		return minion_sprite_frames_cache[variant_path]
+	var frames = SpriteFrames.new()
+	if frames.has_animation("default"):
+		frames.remove_animation("default")
+
+	var is_heavy = ("Heavy Bandit" in variant_path)
+	var prefix = "HeavyBandit" if is_heavy else "LightBandit"
+
+	for anim_name in BANDIT_ANIMS:
+		var cfg:Dictionary = BANDIT_ANIMS[anim_name]
+		var folder:String = cfg.folder
+		var speed:float = cfg.speed
+		var loop:bool = cfg.loop
+		var prefixes:Array = cfg.prefixes
+
+		frames.add_animation(anim_name)
+		frames.set_animation_speed(anim_name, speed)
+		frames.set_animation_loop(anim_name, loop)
+
+		var frame_index:int = 0
+		while true:
+			var found_texture:Texture2D = null
+			for p_sub in prefixes:
+				var path1 = "%s/%s/%s_%s_%d.png" % [variant_path, folder, prefix, p_sub, frame_index]
+				found_texture = load_battle_texture(path1)
+				if found_texture:
+					break
+			if !found_texture:
+				var path2 = "%s/%s/%s_%d.png" % [variant_path, folder, prefix, frame_index]
+				found_texture = load_battle_texture(path2)
+			if found_texture:
+				frames.add_frame(anim_name, found_texture)
+				frame_index += 1
+			else:
+				break
+
+	# Fallbacks e variações para compatibilidade com IA de ataque
+	if frames.has_animation("attack"):
+		if !frames.has_animation("attack_2"):
+			frames.add_animation("attack_2")
+			frames.set_animation_speed("attack_2", 11.0)
+			frames.set_animation_loop("attack_2", false)
+			var max_f = mini(5, frames.get_frame_count("attack"))
+			for i in range(max_f):
+				frames.add_frame("attack_2", frames.get_frame_texture("attack", i))
+		if !frames.has_animation("attack_combo"):
+			frames.add_animation("attack_combo")
+			frames.set_animation_speed("attack_combo", 13.0)
+			frames.set_animation_loop("attack_combo", false)
+			for i in frames.get_frame_count("attack"):
+				frames.add_frame("attack_combo", frames.get_frame_texture("attack", i))
+
+	minion_sprite_frames_cache[variant_path] = frames
+	return frames
+
 func build_minion_sprite_frames(variant_path:String) -> SpriteFrames:
 	if minion_sprite_frames_cache.has(variant_path):
 		return minion_sprite_frames_cache[variant_path]
+	if "Bandits" in variant_path:
+		return build_bandit_sprite_frames(variant_path)
 	var frames = SpriteFrames.new()
 	if frames.has_animation("default"):
 		frames.remove_animation("default")
@@ -492,11 +682,13 @@ func spawn_minions() -> void:
 	for minion_index in minion_count:
 		var variant = available_variants[minion_index % available_variants.size()]
 		var is_ranged_minion = (minion_index == ranged_index)
+		var default_offset_y = 4.0 if variant.get("kind", "") == "bandit" else -14.0
+		var base_offset_y = variant.get("offset_y", default_offset_y)
 		var sprite_frames = build_minion_sprite_frames(variant.path)
 		var sprite = AnimatedSprite2D.new()
 		sprite.sprite_frames = sprite_frames
 		sprite.centered = true
-		sprite.offset = Vector2(0, -14)
+		sprite.offset = Vector2(0, base_offset_y)
 		sprite.modulate = variant.modulate
 		sprite.play("idle")
 		sprite.process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -508,7 +700,11 @@ func spawn_minions() -> void:
 		var minion_hp = randf_range(variant.hp_min, variant.hp_max)
 		var minion_name = tr_text(variant.name_pt, variant.name_en)
 		if is_ranged_minion:
-			minion_name += " " + tr_text("[Lâmina de Vento]", "[Wind Blade]")
+			if variant.get("kind", "") == "bandit":
+				minion_name += " " + tr_text("[Adaga de Vento]", "[Wind Dagger]")
+			else:
+				minion_name += " " + tr_text("[Lâmina de Vento]", "[Wind Blade]")
+		var default_wave_color = Color("ff9e00") if variant.get("kind", "") == "bandit" else (Color("48cae4") if variant.id == "knight_frost_sentinel" else (Color("ffd166") if variant.id == "knight_golden_commander" else Color("00f5d4")))
 		var minion_data:Dictionary = {
 			"sprite":sprite,
 			"position":Vector2(spawn_x, spawn_y),
@@ -525,12 +721,17 @@ func spawn_minions() -> void:
 			"behavior_time":0.0,
 			"strafe_dir":Vector2(0.0, 1.0),
 			"variant":variant.id,
+			"kind":variant.get("kind", "knight"),
 			"style":variant.style,
 			"name":minion_name,
 			"facing":1.0,
 			"death_time":0.0,
 			"base_scale":variant.scale,
 			"base_modulate":variant.modulate,
+			"base_offset_y":base_offset_y,
+			"jump_start_pos":Vector2.ZERO,
+			"jump_target_x":0.0,
+			"jump_target_y":0.0,
 			"hit_streak":0,
 			"hit_streak_timer":0.0,
 			"pending_retreat":false,
@@ -539,7 +740,7 @@ func spawn_minions() -> void:
 			"sword_wave_cooldown":randf_range(1.8, 3.2),
 			"is_casting_wave":false,
 			"wave_spawn_delay":0.0,
-			"wave_color":Color("48cae4") if variant.id == "knight_frost_sentinel" else (Color("ffd166") if variant.id == "knight_golden_commander" else Color("00f5d4"))
+			"wave_color":default_wave_color
 		}
 		minions.append(minion_data)
 
@@ -660,6 +861,7 @@ func spawn_battle_dogs(count:int) -> void:
 			"death_time":0.0,
 			"base_scale":variant.scale,
 			"base_modulate":variant.modulate,
+			"base_offset_y":-18.0,
 			"flash_modulate":null,
 			"hit_streak":0,
 			"hit_streak_timer":0.0,
@@ -1039,7 +1241,14 @@ func update_single_minion(minion:Dictionary, can_melee:bool, delta:float) -> voi
 			minion.hit_pending = false
 			resolve_single_minion_hit(minion)
 		if minion.attack_time <= 0.0:
-			play_if_changed(minion.sprite, "idle")
+			if minion.sprite.sprite_frames.has_animation("combat_idle"):
+				play_if_changed(minion.sprite, "combat_idle")
+			else:
+				play_if_changed(minion.sprite, "idle")
+		return
+
+	if minion.behavior == "jump_attack":
+		update_bandit_jump_attack(minion, delta)
 		return
 
 	var offset = player_position - minion.position
@@ -1047,6 +1256,8 @@ func update_single_minion(minion:Dictionary, can_melee:bool, delta:float) -> voi
 		minion.behavior_time -= delta
 		var retreat_dir = Vector2(-signf(offset.x), minion.strafe_dir.y * 0.5).normalized()
 		move_minion(minion, retreat_dir, minion.speed * 1.05, delta)
+		if minion.sprite.sprite_frames.has_animation("recover"):
+			play_if_changed(minion.sprite, "recover")
 		if minion.behavior_time <= 0.0:
 			minion.behavior = "strafe"
 			minion.behavior_time = randf_range(0.6, 1.2)
@@ -1135,13 +1346,26 @@ func update_melee_minion(minion:Dictionary, offset:Vector2, delta:float) -> void
 		if absf(minion.strafe_dir.y) > 0.2:
 			move_minion(minion, Vector2(0.0, minion.strafe_dir.y).normalized(), minion.speed * 0.3, delta)
 		else:
-			play_if_changed(minion.sprite, "idle")
+			if minion.sprite.sprite_frames.has_animation("combat_idle"):
+				play_if_changed(minion.sprite, "combat_idle")
+			else:
+				play_if_changed(minion.sprite, "idle")
 		if minion.behavior_time <= 0.0:
 			if close_enough && minion.cooldown <= 0.0:
 				start_minion_attack(minion)
 			else:
 				minion.behavior = "approach"
 		return
+
+	# Bandit Jump Attack se estiver a média distância
+	var dist_x = absf(offset.x)
+	var dist_y = absf(offset.y)
+	if minion.cooldown <= 0.0 && minion.sprite.sprite_frames.has_animation("jump"):
+		if dist_x >= 135.0 && dist_x <= 270.0 && dist_y <= 65.0:
+			var jump_chance = 0.45 if minion.get("style", "") in ["agile", "frenzy"] else 0.30
+			if randf() < jump_chance:
+				start_bandit_jump_attack(minion)
+				return
 
 	if close_enough && minion.cooldown <= 0.0:
 		var attack_now = randf() < (0.28 if minion.get("style", "") == "frenzy" else 0.12)
@@ -1155,7 +1379,10 @@ func update_melee_minion(minion:Dictionary, offset:Vector2, delta:float) -> void
 			if absf(offset.x) > 10.0:
 				minion.facing = signf(offset.x)
 				minion.sprite.flip_h = minion.facing < 0.0
-			play_if_changed(minion.sprite, "idle")
+			if minion.sprite.sprite_frames.has_animation("combat_idle"):
+				play_if_changed(minion.sprite, "combat_idle")
+			else:
+				play_if_changed(minion.sprite, "idle")
 		return
 
 	var movement := Vector2.ZERO
@@ -1166,7 +1393,10 @@ func update_melee_minion(minion:Dictionary, offset:Vector2, delta:float) -> void
 	if movement.length() > 0.0:
 		move_minion(minion, movement.normalized(), minion.speed, delta)
 	else:
-		play_if_changed(minion.sprite, "idle")
+		if minion.sprite.sprite_frames.has_animation("combat_idle"):
+			play_if_changed(minion.sprite, "combat_idle")
+		else:
+			play_if_changed(minion.sprite, "idle")
 
 	apply_minion_separation(minion, delta)
 
@@ -1258,6 +1488,46 @@ func update_sword_waves(delta:float) -> void:
 		else:
 			sword_waves[index] = wave
 
+func start_bandit_jump_attack(minion:Dictionary) -> void:
+	minion.behavior = "jump_attack"
+	minion.behavior_time = 0.46
+	minion.jump_start_pos = minion.position
+	var leap_dir = signf(player_position.x - minion.position.x)
+	if leap_dir == 0.0:
+		leap_dir = minion.facing
+	minion.facing = leap_dir
+	minion.sprite.flip_h = minion.facing < 0.0
+	var landing_gap = minion.facing * randf_range(52.0, 75.0)
+	var target_x = clampf(player_position.x - landing_gap, 160.0, ARENA_WIDTH - 110.0)
+	var target_y = clampf(player_position.y + randf_range(-18.0, 18.0), MIN_Y + 5.0, MAX_Y - 5.0)
+	minion.jump_target_x = target_x
+	minion.jump_target_y = target_y
+	minion.cooldown = randf_range(2.4, 3.8)
+	minion.hit_pending = false
+	if minion.sprite.sprite_frames.has_animation("jump"):
+		minion.sprite.play("jump")
+	spawn_impact(minion.position + Vector2(0.0, 10.0), Color(0.85, 0.85, 0.85, 0.6), minion.facing)
+
+func update_bandit_jump_attack(minion:Dictionary, delta:float) -> void:
+	minion.behavior_time -= delta
+	var total_jump_time = 0.46
+	var progress = clampf(1.0 - (minion.behavior_time / total_jump_time), 0.0, 1.0)
+	var target_pos = Vector2(minion.jump_target_x, minion.jump_target_y)
+	minion.position = minion.jump_start_pos.lerp(target_pos, progress)
+
+	var jump_height = 56.0 if minion.get("bandit_type", "") == "heavy" else 66.0
+	var arc = sin(progress * PI) * jump_height
+	var base_off_y = minion.get("base_offset_y", 4.0)
+	minion.sprite.offset.y = base_off_y - arc
+
+	if minion.behavior_time <= 0.0:
+		minion.sprite.offset.y = base_off_y
+		minion.position = target_pos
+		minion.behavior = "approach"
+		spawn_impact(minion.position + Vector2(minion.facing * 20.0, 6.0), Color("ffd166"), minion.facing)
+		shake(3.2, 0.15)
+		start_minion_attack(minion)
+
 func start_minion_attack(minion:Dictionary) -> void:
 	minion.sprite.flip_h = player_position.x < minion.position.x
 	minion.facing = -1.0 if minion.sprite.flip_h else 1.0
@@ -1315,6 +1585,10 @@ func resolve_player_hit_minions(kick:bool, is_special:bool = false) -> bool:
 				minion.hit_streak = 1
 			minion.hit_streak_timer = 1.4
 
+			if minion.behavior == "jump_attack":
+				minion.sprite.offset.y = minion.get("base_offset_y", 4.0)
+				minion.behavior = "approach"
+
 			var base_push = (24.0 if kick else 16.0)
 			if is_special:
 				# 5 Hits: Golpe Especial explosivo com super empurrao
@@ -1371,6 +1645,7 @@ func defeat_minion(minion_index:int) -> void:
 	minion.death_time = 2.0
 	minion.hit_pending = false
 	minion.is_casting_wave = false
+	minion.sprite.offset.y = minion.get("base_offset_y", -14.0)
 	if minion.sprite.sprite_frames.has_animation("death"):
 		minion.sprite.play("death")
 	else:
@@ -1405,6 +1680,8 @@ func update_minion_transforms() -> void:
 		minion.sprite.z_index = int(minion.position.y)
 		var depth_scale = remap(minion.position.y, MIN_Y, MAX_Y, 0.85, 1.15)
 		minion.sprite.scale = Vector2(depth_scale * minion.base_scale, depth_scale * minion.base_scale)
+		if minion.behavior != "jump_attack":
+			minion.sprite.offset.y = minion.get("base_offset_y", -14.0)
 		var base_mod:Color = minion.get("base_modulate", Color.WHITE)
 		if minion.dead:
 			var death_alpha = clampf(minion.death_time / 0.8, 0.0, 1.0)
@@ -2503,6 +2780,10 @@ func on_hit_connected() -> void:
 	pass
 
 func play_if_changed(sprite:AnimatedSprite2D, animation_name:String) -> void:
+	if !is_instance_valid(sprite) || !sprite.sprite_frames:
+		return
+	if !sprite.sprite_frames.has_animation(animation_name):
+		return
 	if sprite.animation != animation_name || !sprite.is_playing():
 		sprite.play(animation_name)
 

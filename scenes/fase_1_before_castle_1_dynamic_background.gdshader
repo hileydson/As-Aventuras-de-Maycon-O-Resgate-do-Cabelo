@@ -83,7 +83,7 @@ vec3 fire_bird(vec2 uv, float phase, float period, vec2 start, vec2 end, float s
 	vec2 side = vec2(-direction.y, direction.x);
 	vec2 difference = uv - bird_position;
 	vec2 local = vec2(dot(difference, direction), dot(difference, side)) / size;
-	float wing_flap = 0.92 + sin(TIME * 1.65 + phase * 31.0) * 0.22;
+	float wing_flap = 0.92 + sin(TIME * 5.2 + phase * 31.0) * 0.22;
 	float body = length((local - vec2(0.02, 0.0)) / vec2(0.70, 0.24)) - 1.0;
 	float head = length(local - vec2(0.68, 0.0)) - 0.24;
 	float wing_1 = segment_distance(local, vec2(0.10, 0.05), vec2(-0.38, 1.62 * wing_flap));
@@ -121,13 +121,6 @@ void fragment() {
 	float haze = fbm(vec2(uv.x * 3.0, uv.y * 6.0 + TIME * 0.012));
 	color += vec3(0.055, 0.012, 0.008) * smoothstep(0.24, 0.78, haze) * (1.0 - uv.y) * 0.55;
 
-	float far_mountains = 0.48 + sin(uv.x * 9.0) * 0.045 + sin(uv.x * 21.0 + 1.8) * 0.025;
-	float near_mountains = 0.59 + sin(uv.x * 5.3 + 0.8) * 0.075 + sin(uv.x * 15.0) * 0.035;
-	float far_mask = smoothstep(far_mountains - 0.012, far_mountains + 0.012, uv.y);
-	float near_mask = smoothstep(near_mountains - 0.012, near_mountains + 0.012, uv.y);
-	color = mix(color, vec3(0.07, 0.02, 0.035), far_mask);
-	color = mix(color, vec3(0.035, 0.012, 0.02), near_mask);
-
 	float flame_noise = fbm(vec2(uv.x * 6.0, uv.y * 5.0 + TIME * 0.14));
 	float flame_height = 0.60 + flame_noise * 0.30 + sin(uv.x * 28.0 + TIME * 0.32) * 0.055;
 	float flame = smoothstep(flame_height + 0.08, flame_height - 0.08, uv.y);
@@ -141,8 +134,8 @@ void fragment() {
 
 	color += fire_comet(uv, 0.82, 38.0, 0.18, 1.0);
 	color += fire_comet(uv, 0.36, 61.0, 0.34, -1.0);
-	color += fire_bird(uv, 0.16, 21.0, vec2(-0.08, 0.40), vec2(1.08, 0.27), 0.020);
-	color += fire_bird(uv, 0.48, 27.0, vec2(0.72, 1.08), vec2(0.56, -0.08), 0.018);
-	color += fire_bird(uv, 0.79, 31.0, vec2(1.08, 0.24), vec2(-0.08, 0.42), 0.016);
+	color += fire_bird(uv, 0.16, 21.0, vec2(-0.08, 0.40), vec2(1.08, 0.27), 0.0085);
+	color += fire_bird(uv, 0.48, 27.0, vec2(0.72, 1.08), vec2(0.56, -0.08), 0.0078);
+	color += fire_bird(uv, 0.79, 31.0, vec2(1.08, 0.24), vec2(-0.08, 0.42), 0.0072);
 	COLOR = vec4(color, 1.0);
 }
