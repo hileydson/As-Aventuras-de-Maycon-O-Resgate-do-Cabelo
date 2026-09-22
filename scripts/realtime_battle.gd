@@ -153,10 +153,10 @@ const DOG_VARIANTS = [
 		"path":"res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Black_Werewolf",
 		"modulate":Color(1.0, 1.0, 1.0, 1.0),
 		"trail_color":Color("b5179e"),
-		"scale":2.4,
-		"hp_min":55.0, "hp_max":72.0,
-		"speed_min":175.0, "speed_max":215.0,
-		"damage_min":13.0, "damage_max":17.0
+		"scale":1.5,
+		"hp_min":45.0, "hp_max":60.0,
+		"speed_min":80.0, "speed_max":100.0,
+		"damage_min":10.0, "damage_max":13.0
 	},
 	{
 		"id":"dog_blood",
@@ -165,10 +165,10 @@ const DOG_VARIANTS = [
 		"path":"res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/Red_Werewolf",
 		"modulate":Color(1.12, 0.95, 0.95, 1.0),
 		"trail_color":Color("ff3838"),
-		"scale":2.5,
-		"hp_min":65.0, "hp_max":85.0,
-		"speed_min":185.0, "speed_max":225.0,
-		"damage_min":15.0, "damage_max":20.0
+		"scale":1.55,
+		"hp_min":50.0, "hp_max":68.0,
+		"speed_min":85.0, "speed_max":105.0,
+		"damage_min":11.0, "damage_max":15.0
 	},
 	{
 		"id":"dog_spectral",
@@ -177,10 +177,10 @@ const DOG_VARIANTS = [
 		"path":"res://assets/novas_imagens/3d_battle/packs/free-werewolf-sprite-sheets-pixel-art/White_Werewolf",
 		"modulate":Color(1.0, 1.05, 1.15, 1.0),
 		"trail_color":Color("4cc9f0"),
-		"scale":2.4,
-		"hp_min":50.0, "hp_max":68.0,
-		"speed_min":195.0, "speed_max":235.0,
-		"damage_min":12.0, "damage_max":16.0
+		"scale":1.45,
+		"hp_min":40.0, "hp_max":55.0,
+		"speed_min":90.0, "speed_max":110.0,
+		"damage_min":9.0, "damage_max":12.0
 	}
 ]
 
@@ -287,12 +287,24 @@ var sword_wave_sound:AudioStreamPlayer
 var blood_drops:Array[Node2D] = []
 var blood_pickup_sound:AudioStreamPlayer
 var hit_stop_token:int = 0
-var dog_spawn_timer:float = 12.0
+var dogs_wave_spawned:bool = false
 var dog_dash_particles:Array[Dictionary] = []
 var dog_trail_segments:Array[Dictionary] = []
 var dog_sprite_frames_cache:Dictionary = {}
 var dog_growl_sound:AudioStreamPlayer
 var dog_dash_sound:AudioStreamPlayer
+var battle_elapsed_time:float = 0.0
+var player_dash_active:bool = false
+var player_dash_state:String = "none"
+var player_dash_hold_time:float = 0.0
+var player_dash_time:float = 0.0
+var player_dash_recovery:float = 0.0
+var player_dash_facing:float = 1.0
+var player_dash_hit_targets:Array = []
+var player_dash_trail_segments:Array[Dictionary] = []
+var player_dash_particles:Array[Dictionary] = []
+var player_dash_ghost_timer:float = 0.0
+var player_dash_sound:AudioStreamPlayer
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -300,7 +312,8 @@ func _ready() -> void:
 	enemy_id = Global.realtime_enemy_id if ENEMY_SCENES.has(Global.realtime_enemy_id) else "1"
 	player_max_hp = Global.realtime_hp_max
 	player_hp = clampf(Global.realtime_hp, 1.0, player_max_hp)
-	dog_spawn_timer = randf_range(9.0, 13.0)
+	dogs_wave_spawned = false
+	battle_elapsed_time = 0.0
 	build_background()
 	build_fighters()
 	build_hud()
@@ -531,7 +544,7 @@ func spawn_minions() -> void:
 		minions.append(minion_data)
 
 func can_spawn_dogs() -> bool:
-	return enemy_id == "5" || enemy_id == "1001" || int(enemy_id) >= 5
+	return enemy_id != "1" && enemy_id != "4"
 
 func spawn_hound_alert_popup(world_pos:Vector2, text_to_show:String) -> void:
 	var label = Label.new()
@@ -557,21 +570,20 @@ func spawn_hound_alert_popup(world_pos:Vector2, text_to_show:String) -> void:
 func update_dog_spawners(delta:float) -> void:
 	if !can_spawn_dogs() || enemy_dead || player_dead || intro_time > 0.0:
 		return
-	dog_spawn_timer -= delta
-	if dog_spawn_timer <= 0.0:
-		var active_dogs = 0
-		for m in minions:
-			if !m.dead && m.get("is_dog", false):
-				active_dogs += 1
+	if dogs_wave_spawned:
+		return
+	battle_elapsed_time += delta
 
-		var max_dogs = 2 if enemy_id == "5" else 3
-		if active_dogs < max_dogs:
-			var available_slots = max_dogs - active_dogs
-			var count_to_spawn = randi_range(1, 2) if enemy_id == "5" else randi_range(1, 3)
-			count_to_spawn = mini(count_to_spawn, available_slots)
-			spawn_battle_dogs(count_to_spawn)
+	var alive_non_dogs = 0
+	for m in minions:
+		if !m.dead && !m.get("is_dog", false):
+			alive_non_dogs += 1
 
-		dog_spawn_timer = randf_range(18.0, 26.0) if enemy_id == "5" else randf_range(14.0, 22.0)
+	if alive_non_dogs <= 2 || battle_elapsed_time >= 20.0 || (enemy_hp <= enemy_max_hp * 0.75):
+		dogs_wave_spawned = true
+		var count_to_spawn = randi_range(1, 3)
+		spawn_battle_dogs(count_to_spawn)
+		print("DOG WAVE SPAWNED: %d dogs (alive_non_dogs=%d, battle_time=%.1f)" % [count_to_spawn, alive_non_dogs, battle_elapsed_time])
 
 func spawn_battle_dogs(count:int) -> void:
 	if count <= 0:
@@ -579,12 +591,14 @@ func spawn_battle_dogs(count:int) -> void:
 	if dog_growl_sound:
 		dog_growl_sound.pitch_scale = randf_range(0.85, 1.1)
 		dog_growl_sound.play()
-	shake(5.0, 0.25)
+	shake(4.0, 0.2)
 
 	var alert_text = tr_text("CUIDADO! OS CÃES ESTÃO AVANÇANDO!", "WATCH OUT! THE HOUNDS ARE ADVANCING!")
-	if camera:
-		var cam_center = camera.get_screen_center_position()
-		spawn_hound_alert_popup(Vector2(cam_center.x, 210.0), alert_text)
+	var cam_center = camera.get_screen_center_position() if camera else Vector2(player_position.x, 324.0)
+	spawn_hound_alert_popup(Vector2(cam_center.x, 210.0), alert_text)
+
+	var screen_left = cam_center.x - 576.0
+	var screen_right = cam_center.x + 576.0
 
 	for i in count:
 		var variant = DOG_VARIANTS[randi() % DOG_VARIANTS.size()]
@@ -598,9 +612,30 @@ func spawn_battle_dogs(count:int) -> void:
 		sprite.process_mode = Node.PROCESS_MODE_PAUSABLE
 		add_child(sprite)
 
-		var side_sign = 1.0 if randf() < 0.5 else -1.0
-		var spawn_x = clampf(player_position.x + side_sign * randf_range(440.0, 680.0), 180.0, ARENA_WIDTH - 180.0)
-		var spawn_y = clampf(player_position.y + randf_range(-70.0, 70.0), MIN_Y + 15.0, MAX_Y - 15.0)
+		# Nascer FORA da tela pelos lados e vir correndo para dentro
+		var can_spawn_left = screen_left > 120.0
+		var can_spawn_right = screen_right < (ARENA_WIDTH - 120.0)
+
+		var spawn_from_right = true
+		if can_spawn_left && can_spawn_right:
+			spawn_from_right = (i % 2 == 0) if randf() < 0.7 else (randf() < 0.5)
+		elif can_spawn_left:
+			spawn_from_right = false
+		else:
+			spawn_from_right = true
+
+		var spawn_x:float
+		var dog_facing:float
+		if spawn_from_right:
+			spawn_x = clampf(screen_right + randf_range(70.0, 160.0), 100.0, ARENA_WIDTH - 60.0)
+			dog_facing = -1.0
+		else:
+			spawn_x = clampf(screen_left - randf_range(70.0, 160.0), 60.0, ARENA_WIDTH - 100.0)
+			dog_facing = 1.0
+
+		var spawn_y = clampf(player_position.y + randf_range(-60.0, 60.0) + (i - 1) * 32.0, MIN_Y + 15.0, MAX_Y - 15.0)
+
+		sprite.flip_h = dog_facing < 0.0
 
 		var dog_hp = randf_range(variant.hp_min, variant.hp_max)
 		var dog_data:Dictionary = {
@@ -614,14 +649,14 @@ func spawn_battle_dogs(count:int) -> void:
 			"attack_time":0.0,
 			"attack_hit_time":0.0,
 			"hit_pending":false,
-			"cooldown":randf_range(1.4, 2.8),
+			"cooldown":randf_range(0.8, 1.8) if i == 0 else randf_range(3.0, 5.0),
 			"behavior":"approach",
-			"behavior_time":0.0,
-			"strafe_dir":Vector2.ZERO,
+			"behavior_time":randf_range(1.0, 2.5),
+			"strafe_dir":Vector2(dog_facing, 0.0),
 			"variant":variant.id,
 			"style":"dog",
 			"name":tr_text(variant.name_pt, variant.name_en),
-			"facing":-side_sign,
+			"facing":dog_facing,
 			"death_time":0.0,
 			"base_scale":variant.scale,
 			"base_modulate":variant.modulate,
@@ -635,9 +670,9 @@ func spawn_battle_dogs(count:int) -> void:
 			"dog_state":"approach",
 			"hold_time":0.0,
 			"hold_max_time":1.0,
-			"dash_duration":0.72,
+			"dash_duration":0.65,
 			"dash_time_left":0.0,
-			"dash_speed":880.0,
+			"dash_speed":600.0,
 			"dash_hit_done":false,
 			"dash_ghost_timer":0.0,
 			"last_dash_pos":Vector2.ZERO,
@@ -646,9 +681,8 @@ func spawn_battle_dogs(count:int) -> void:
 			"recovery_time":0.0
 		}
 		minions.append(dog_data)
-		spawn_enemy_dust(Vector2(spawn_x, spawn_y))
 
-func update_dog_minion(minion:Dictionary, delta:float) -> void:
+func update_dog_minion(minion:Dictionary, can_attack:bool, delta:float) -> void:
 	minion.cooldown = maxf(0.0, minion.cooldown - delta)
 	if minion.hit_streak_timer > 0.0:
 		minion.hit_streak_timer = maxf(0.0, minion.hit_streak_timer - delta)
@@ -665,7 +699,18 @@ func update_dog_minion(minion:Dictionary, delta:float) -> void:
 
 	match state:
 		"approach":
-			update_dog_approach(minion, delta)
+			if can_attack:
+				update_dog_approach(minion, delta)
+			else:
+				minion.dog_state = "wander"
+				minion.behavior_time = randf_range(1.0, 2.2)
+				update_dog_wander(minion, delta)
+		"wander":
+			if can_attack && minion.cooldown <= 0.0:
+				minion.dog_state = "approach"
+				update_dog_approach(minion, delta)
+			else:
+				update_dog_wander(minion, delta)
 		"hold":
 			update_dog_hold(minion, delta)
 		"dash":
@@ -683,16 +728,49 @@ func update_dog_approach(minion:Dictionary, delta:float) -> void:
 	play_if_changed(minion.sprite, "run")
 
 	var move_dir = Vector2(signf(diff.x), 0.0)
-	if dist_y > 16.0:
+	if dist_y > 14.0:
 		move_dir.y = signf(diff.y) * 0.75
 	move_dir = move_dir.normalized()
 
 	move_dog_minion(minion, move_dir, minion.speed, delta)
 
-	if dist_x >= 160.0 && dist_x <= 640.0 && dist_y <= 65.0 && minion.cooldown <= 0.0:
+	if dist_x >= 140.0 && dist_x <= 480.0 && dist_y <= 50.0 && minion.cooldown <= 0.0:
 		start_dog_hold(minion)
-	elif dist_x < 160.0 && minion.cooldown <= 0.0:
+	elif dist_x < 140.0 && dist_y <= 50.0 && minion.cooldown <= 0.0:
 		start_dog_hold(minion)
+
+func update_dog_wander(minion:Dictionary, delta:float) -> void:
+	minion.behavior_time -= delta
+
+	var diff_to_player = minion.position - player_position
+	var dist_to_player = diff_to_player.length()
+
+	if minion.behavior_time <= 0.0:
+		minion.behavior_time = randf_range(1.2, 2.5)
+		# Se estiver muito perto do jogador (< 240.0), afasta-se para não empilhar
+		if dist_to_player < 240.0:
+			var away = diff_to_player.normalized()
+			minion.strafe_dir = Vector2(away.x + randf_range(-0.3, 0.3), away.y + randf_range(-0.4, 0.4)).normalized()
+		# Se estiver muito longe (> 550.0), aproxima-se levemente do perímetro
+		elif dist_to_player > 550.0:
+			var towards = (-diff_to_player).normalized()
+			minion.strafe_dir = Vector2(towards.x + randf_range(-0.4, 0.4), towards.y + randf_range(-0.4, 0.4)).normalized()
+		else:
+			# Vagando aleatoriamente pelo cenário
+			var rx = randf_range(-1.0, 1.0)
+			var ry = randf_range(-0.7, 0.7)
+			minion.strafe_dir = Vector2(rx, ry).normalized()
+
+	# Às vezes para brevemente para farejar / observar o combate
+	if fmod(absf(minion.behavior_time), 2.2) < 0.45:
+		play_if_changed(minion.sprite, "idle")
+		if absf(player_position.x - minion.position.x) > 10.0:
+			minion.facing = signf(player_position.x - minion.position.x)
+			minion.sprite.flip_h = minion.facing < 0.0
+		return
+
+	var wander_speed = minion.speed * 0.65
+	move_dog_minion(minion, minion.strafe_dir, wander_speed, delta)
 
 func start_dog_hold(minion:Dictionary) -> void:
 	minion.dog_state = "hold"
@@ -723,9 +801,9 @@ func update_dog_hold(minion:Dictionary, delta:float) -> void:
 
 func start_dog_dash(minion:Dictionary) -> void:
 	minion.dog_state = "dash"
-	minion.dash_duration = 0.72
+	minion.dash_duration = 0.65
 	minion.dash_time_left = minion.dash_duration
-	minion.dash_speed = 880.0
+	minion.dash_speed = 600.0
 	minion.dash_hit_done = false
 	minion.dash_ghost_timer = 0.0
 	minion.last_dash_pos = minion.position
@@ -735,7 +813,7 @@ func start_dog_dash(minion:Dictionary) -> void:
 	if dog_dash_sound:
 		dog_dash_sound.pitch_scale = randf_range(1.05, 1.25)
 		dog_dash_sound.play()
-	shake(5.0, 0.2)
+	shake(4.5, 0.2)
 	spawn_enemy_dust(minion.position)
 
 func update_dog_dash(minion:Dictionary, delta:float) -> void:
@@ -747,12 +825,12 @@ func update_dog_dash(minion:Dictionary, delta:float) -> void:
 
 	if prev_pos.distance_to(minion.position) > 6.0:
 		dog_trail_segments.append({
-			"p1":prev_pos + Vector2(0.0, -20.0),
-			"p2":minion.position + Vector2(0.0, -20.0),
+			"p1":prev_pos + Vector2(0.0, -16.0),
+			"p2":minion.position + Vector2(0.0, -16.0),
 			"color":minion.trail_color,
-			"life":0.42,
-			"max_life":0.42,
-			"width":28.0
+			"life":0.40,
+			"max_life":0.40,
+			"width":22.0
 		})
 
 	minion.dash_trail_points.append(minion.position)
@@ -765,24 +843,24 @@ func update_dog_dash(minion:Dictionary, delta:float) -> void:
 		spawn_dog_dash_ghost(minion)
 
 	if randf() < 0.65:
-		spawn_enemy_dust(minion.position + Vector2(-minion.facing * 30.0, randf_range(8, 14)))
+		spawn_enemy_dust(minion.position + Vector2(-minion.facing * 24.0, randf_range(6, 12)))
 		dog_dash_particles.append({
-			"position":minion.position + Vector2(randf_range(-20, 20), randf_range(-36, 8)),
-			"velocity":Vector2(-minion.facing * randf_range(60, 180), randf_range(-35, 35)),
+			"position":minion.position + Vector2(randf_range(-16, 16), randf_range(-28, 6)),
+			"velocity":Vector2(-minion.facing * randf_range(50, 150), randf_range(-28, 28)),
 			"color":minion.trail_color,
-			"radius":randf_range(8.0, 16.0),
-			"life":randf_range(0.24, 0.42),
-			"max_life":0.42
+			"radius":randf_range(6.0, 12.0),
+			"life":randf_range(0.24, 0.40),
+			"max_life":0.40
 		})
 
 	if !minion.dash_hit_done && !player_dead && player_invulnerability <= 0.0 && dodge_time <= 0.0:
 		var dist = minion.position.distance_to(player_position + Vector2(0, -28.0))
-		if dist <= 78.0 || (absf(minion.position.x - player_position.x) <= 85.0 && absf(minion.position.y - player_position.y) <= 45.0):
+		if dist <= 65.0 || (absf(minion.position.x - player_position.x) <= 72.0 && absf(minion.position.y - player_position.y) <= 38.0):
 			minion.dash_hit_done = true
 			damage_player(minion.damage, minion.facing)
 			spawn_blood(player_position + Vector2(0, -28), 16, minion.facing)
-			spawn_impact(minion.position + Vector2(minion.facing * 30, -18), minion.trail_color, minion.facing)
-			shake(8.5, 0.3)
+			spawn_impact(minion.position + Vector2(minion.facing * 24, -16), minion.trail_color, minion.facing)
+			shake(7.5, 0.28)
 
 	if minion.dash_time_left <= 0.0 || minion.position.x <= 145.0 || minion.position.x >= ARENA_WIDTH - 145.0:
 		end_dog_dash(minion)
@@ -792,12 +870,13 @@ func end_dog_dash(minion:Dictionary) -> void:
 	minion.recovery_time = randf_range(0.4, 0.6)
 	play_if_changed(minion.sprite, "idle")
 	spawn_enemy_dust(minion.position)
-	minion.cooldown = randf_range(3.4, 5.2)
+	minion.cooldown = randf_range(3.5, 5.5)
 
 func update_dog_recovery(minion:Dictionary, delta:float) -> void:
 	minion.recovery_time -= delta
 	if minion.recovery_time <= 0.0:
-		minion.dog_state = "approach"
+		minion.dog_state = "wander"
+		minion.behavior_time = randf_range(1.5, 3.0)
 
 func move_dog_minion(minion:Dictionary, direction:Vector2, speed:float, delta:float) -> void:
 	minion.position += direction * speed * delta
@@ -805,8 +884,19 @@ func move_dog_minion(minion:Dictionary, direction:Vector2, speed:float, delta:fl
 		minion.facing = signf(direction.x)
 		minion.sprite.flip_h = minion.facing < 0.0
 	play_if_changed(minion.sprite, "run")
-	minion.position.x = clampf(minion.position.x, 150.0, ARENA_WIDTH - 100.0)
+	minion.position.x = clampf(minion.position.x, 80.0, ARENA_WIDTH - 80.0)
 	minion.position.y = clampf(minion.position.y, MIN_Y, MAX_Y)
+	apply_dog_separation(minion, delta)
+
+func apply_dog_separation(minion:Dictionary, delta:float) -> void:
+	for other in minions:
+		if other == minion || other.dead:
+			continue
+		var diff = minion.position - other.position
+		var dist = diff.length()
+		if dist < 65.0:
+			var push = diff.normalized() if dist > 1.0 else Vector2(randf_range(-1.0, 1.0), 0.0).normalized()
+			minion.position += push * 60.0 * delta
 
 func spawn_dog_dash_ghost(minion:Dictionary) -> void:
 	if !is_instance_valid(minion.sprite) || !minion.sprite.sprite_frames:
@@ -876,12 +966,40 @@ func update_minions(delta:float) -> void:
 			closest_melee_dist = dist
 			active_melee_idx = i
 
+	# CACHORROS: Apenas 1 cachorro persegue/ataca o jogador por vez!
+	# Os demais ficam vagando aleatoriamente pelo cenário.
+	var active_dog_idx:int = -1
+	var closest_dog_dist:float = 999999.0
+	for i in minions.size():
+		var m = minions[i]
+		if m.dead || !m.get("is_dog", false):
+			continue
+		var d_state = m.get("dog_state", "approach")
+		var dist = m.position.distance_to(player_position)
+		if d_state == "hold" || d_state == "dash":
+			active_dog_idx = i
+			break
+		if m.cooldown <= 0.0 && dist < closest_dog_dist:
+			closest_dog_dist = dist
+			active_dog_idx = i
+
+	if active_dog_idx == -1:
+		for i in minions.size():
+			var m = minions[i]
+			if m.dead || !m.get("is_dog", false):
+				continue
+			var dist = m.position.distance_to(player_position)
+			if dist < closest_dog_dist:
+				closest_dog_dist = dist
+				active_dog_idx = i
+
 	for minion_index in minions.size():
 		var minion = minions[minion_index]
 		if minion.dead:
 			continue
 		if minion.get("is_dog", false):
-			update_dog_minion(minion, delta)
+			var can_dog_attack = (active_dog_idx == -1 || active_dog_idx == minion_index)
+			update_dog_minion(minion, can_dog_attack, delta)
 			minions[minion_index] = minion
 			continue
 		var can_melee = (active_melee_idx == -1 || active_melee_idx == minion_index)
@@ -1470,6 +1588,7 @@ func build_audio() -> void:
 	blood_pickup_sound = create_audio("res://assets/novos_audios/sangue_fill_effect.mp3", -1.5)
 	dog_growl_sound = create_audio("res://assets/novos_audios/growl_1.mp3", -2.0)
 	dog_dash_sound = create_audio("res://assets/novos_audios/dog_running.mp3", -2.5)
+	player_dash_sound = create_audio("res://assets/novos_audios/punch.mp3", -1.5)
 
 func create_audio(path:String, volume:float, looping:bool = false) -> AudioStreamPlayer:
 	var audio = AudioStreamPlayer.new()
@@ -1522,6 +1641,8 @@ func _process(delta:float) -> void:
 	update_blood_drops(delta)
 	update_dog_spawners(delta)
 	update_dog_dash_effects(delta)
+	update_player_dash(delta)
+	update_player_dash_effects(delta)
 	if !enemy_dead:
 		update_enemy(delta)
 	else:
@@ -1548,6 +1669,10 @@ func toggle_battle_pause() -> void:
 			child.stream_paused = battle_paused
 
 func update_player(delta:float) -> void:
+	# Se o dash do player estiver ativo, bloqueia o resto do update
+	if player_dash_active:
+		return
+
 	player_attack_time = maxf(0.0, player_attack_time - delta)
 	player_invulnerability = maxf(0.0, player_invulnerability - delta)
 	dodge_time = maxf(0.0, dodge_time - delta)
@@ -1616,6 +1741,231 @@ func start_dodge() -> void:
 	spawn_impact(fart_origin, Color("7bdff2"), -dodge_direction)
 	dodge_ghost_timer = 0.04
 	spawn_player_ghost()
+
+func start_player_power_dash(use_kick:bool = false) -> void:
+	player_dash_active = true
+	player_dash_state = "hold"
+	player_dash_hold_time = 0.35
+	player_dash_time = 0.0
+	player_dash_recovery = 0.0
+	player_dash_hit_targets.clear()
+	player_dash_trail_segments.clear()
+	player_dash_ghost_timer = 0.0
+	player_attack_time = 0.0
+	player_attack_move_dir = Vector2.ZERO
+	dodge_time = 0.0
+
+	var input_facing = Input.get_axis("ui_left", "ui_right")
+	if absf(input_facing) > 0.05:
+		player_facing = signf(input_facing)
+	player_dash_facing = player_facing
+	player.flip_h = player_dash_facing < 0.0
+
+	var freeze_anim = "attack_kick" if use_kick else "attack_punch"
+	player.play(freeze_anim)
+	# Congela no último frame (golpe estendido)
+	player.pause()
+	var frame_count = player.sprite_frames.get_frame_count(freeze_anim)
+	player.frame = frame_count - 1
+
+	player_invulnerability = 1.5
+	shake(4.0, 0.2)
+	spawn_impact(player_position + Vector2(40.0 * player_dash_facing, -35), Color("ffd166"), player_dash_facing)
+
+	if player_dash_sound:
+		player_dash_sound.pitch_scale = 0.78
+		player_dash_sound.play()
+
+	# Alert popup
+	var alert_text = tr_text("⚡ SUPER CHUTE!", "⚡ SUPER KICK!") if use_kick else tr_text("⚡ SUPER SOCO!", "⚡ SUPER PUNCH!")
+	spawn_hound_alert_popup(player_position + Vector2(0, -95), alert_text)
+	print("PLAYER POWER DASH: use_kick=%s facing=%.0f" % [str(use_kick), player_dash_facing])
+
+func update_player_dash(delta:float) -> void:
+	if !player_dash_active:
+		return
+
+	match player_dash_state:
+		"hold":
+			player_dash_hold_time -= delta
+			# Vibração do sprite durante o hold
+			var shake_offset = Vector2(randf_range(-2.5, 2.5), randf_range(-1.5, 1.5))
+			player.position = player_position + shake_offset
+			# Aura pulsante
+			var pulse = 1.0 + sin(Time.get_ticks_msec() * 0.025) * 0.45
+			player.modulate = Color(1.0 * pulse, 0.85 * pulse, 0.4 * pulse, 1.0)
+			# Partículas de carga
+			if randf() < 0.5:
+				spawn_enemy_dust(player_position + Vector2(randf_range(-24, 24), randf_range(4, 16)))
+			if player_dash_hold_time <= 0.0:
+				player_dash_state = "dash"
+				player_dash_time = 0.55
+				player_dash_ghost_timer = 0.0
+				player.modulate = Color.WHITE
+				if dash_sound:
+					dash_sound.pitch_scale = 0.82
+					dash_sound.play()
+				shake(7.0, 0.35)
+				spawn_impact(player_position + Vector2(0, -30), Color("ffd166"), player_dash_facing)
+				spawn_impact(player_position + Vector2(30 * player_dash_facing, -30), Color("ff9f1c"), player_dash_facing)
+
+		"dash":
+			player_dash_time -= delta
+			var dash_speed = 920.0
+			var prev_pos = player_position
+			player_position.x += player_dash_facing * dash_speed * delta
+			player_position.x = clampf(player_position.x, 150.0, ARENA_WIDTH - 80.0)
+			player_invulnerability = maxf(player_invulnerability, 0.2)
+			player.position = player_position
+
+			# Trail segments
+			if prev_pos.distance_to(player_position) > 5.0:
+				player_dash_trail_segments.append({
+					"p1":prev_pos + Vector2(0.0, -28.0),
+					"p2":player_position + Vector2(0.0, -28.0),
+					"color":Color("ffd166"),
+					"life":0.48,
+					"max_life":0.48,
+					"width":32.0
+				})
+
+			# Ghosts
+			player_dash_ghost_timer -= delta
+			if player_dash_ghost_timer <= 0.0:
+				player_dash_ghost_timer = 0.04
+				spawn_player_dash_ghost()
+
+			# Partículas de velocidade
+			if randf() < 0.7:
+				spawn_enemy_dust(player_position + Vector2(-player_dash_facing * 35.0, randf_range(8, 16)))
+				player_dash_particles.append({
+					"position":player_position + Vector2(randf_range(-24, 24), randf_range(-42, 8)),
+					"velocity":Vector2(-player_dash_facing * randf_range(80, 200), randf_range(-40, 40)),
+					"color":Color("ffd166"),
+					"radius":randf_range(7.0, 15.0),
+					"life":randf_range(0.22, 0.4),
+					"max_life":0.4
+				})
+
+			# Detecta e aplica dano
+			resolve_player_dash_hits()
+
+			if player_dash_time <= 0.0 || player_position.x <= 155.0 || player_position.x >= ARENA_WIDTH - 85.0:
+				player_dash_state = "recovery"
+				player_dash_recovery = 0.25
+				player.play("idle_right")
+				player.modulate = Color.WHITE
+				spawn_enemy_dust(player_position)
+
+		"recovery":
+			player_dash_recovery -= delta
+			player.position = player_position
+			if player_dash_recovery <= 0.0:
+				player_dash_active = false
+				player_dash_state = "none"
+				player.modulate = Color.WHITE
+
+func resolve_player_dash_hits() -> void:
+	var dash_damage = randf_range(30.0, 38.0)
+
+	# Hit do inimigo principal
+	if !enemy_dead && player_dash_hit_targets.find("enemy") == -1:
+		var dist_x = absf(player_position.x - enemy_position.x)
+		var dist_y = absf(player_position.y - enemy_position.y)
+		var facing_ok = (enemy_position.x - player_position.x) * player_dash_facing >= -30.0
+		if dist_x <= 110.0 && dist_y <= 60.0 && facing_ok:
+			player_dash_hit_targets.append("enemy")
+			enemy_hp = maxf(0.0, enemy_hp - dash_damage)
+			enemy_position.x += player_dash_facing * 85.0
+			enemy_position.x = clampf(enemy_position.x, 160.0, ARENA_WIDTH - 180.0)
+			enemy.play("pain")
+			spawn_blood(enemy_position + Vector2(0, -45), 20, player_dash_facing)
+			spawn_impact(enemy_position + Vector2(0, -42), Color("ffd166"), player_dash_facing)
+			shake(10.0, 0.3)
+			hit_sound.pitch_scale = 0.72
+			hit_sound.play()
+			combo += 1
+			on_hit_connected()
+			combo_timeout = 2.4
+			if enemy_hp <= 0.0:
+				defeat_enemy()
+
+	# Hit dos minions
+	for i in minions.size():
+		var minion = minions[i]
+		if minion.dead:
+			continue
+		var target_key = "minion_%d" % i
+		if player_dash_hit_targets.find(target_key) != -1:
+			continue
+		var m_dist_x = absf(player_position.x - minion.position.x)
+		var m_dist_y = absf(player_position.y - minion.position.y)
+		var m_facing_ok = (minion.position.x - player_position.x) * player_dash_facing >= -30.0
+		if m_dist_x <= 120.0 && m_dist_y <= 65.0 && m_facing_ok:
+			player_dash_hit_targets.append(target_key)
+			minion.hp = maxf(0.0, minion.hp - dash_damage)
+			minion.position.x += player_dash_facing * 70.0
+			minion.position.x = clampf(minion.position.x, 150.0, ARENA_WIDTH - 100.0)
+			minion.sprite.play("pain")
+			spawn_blood(minion.position + Vector2(0, -25), 14, player_dash_facing)
+			spawn_impact(minion.position + Vector2(0, -20), Color("ffd166"), player_dash_facing)
+			shake(5.0, 0.18)
+			if minion_hit_sound:
+				minion_hit_sound.pitch_scale = 0.75
+				minion_hit_sound.play()
+			combo += 1
+			on_hit_connected()
+			combo_timeout = 2.4
+			if minion.hp <= 0.0:
+				defeat_minion(i)
+			minions[i] = minion
+
+func spawn_player_dash_ghost() -> void:
+	if !player or !player.sprite_frames:
+		return
+	var anim_name = player.animation
+	if !player.sprite_frames.has_animation(anim_name):
+		anim_name = "idle_right"
+	var frame_idx = player.frame
+	var current_texture = player.sprite_frames.get_frame_texture(anim_name, frame_idx)
+	if !current_texture:
+		return
+
+	var ghost = Sprite2D.new()
+	ghost.texture = current_texture
+	ghost.centered = player.centered
+	ghost.offset = player.offset
+	ghost.flip_h = player.flip_h
+	ghost.position = player_position
+	var depth_scale = remap(player_position.y, MIN_Y, MAX_Y, 0.86, 1.18)
+	ghost.scale = Vector2(depth_scale * player_base_scale, depth_scale * player_base_scale)
+	ghost.z_index = max(1, int(player_position.y) - 1)
+	ghost.modulate = Color(1.0, 0.85, 0.3, 0.78)
+	ghost.process_mode = Node.PROCESS_MODE_PAUSABLE
+	add_child(ghost)
+
+	var tween = ghost.create_tween()
+	tween.tween_property(ghost, "modulate", Color(1.0, 0.65, 0.1, 0.0), 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_callback(ghost.queue_free)
+
+func update_player_dash_effects(delta:float) -> void:
+	for i in range(player_dash_trail_segments.size() - 1, -1, -1):
+		var seg = player_dash_trail_segments[i]
+		seg.life -= delta
+		if seg.life <= 0.0:
+			player_dash_trail_segments.remove_at(i)
+		else:
+			player_dash_trail_segments[i] = seg
+
+	for i in range(player_dash_particles.size() - 1, -1, -1):
+		var p = player_dash_particles[i]
+		p.life -= delta
+		p.position += p.velocity * delta
+		p.velocity.x = move_toward(p.velocity.x, 0.0, 280.0 * delta)
+		if p.life <= 0.0:
+			player_dash_particles.remove_at(i)
+		else:
+			player_dash_particles[i] = p
 
 func start_player_attack(kick:bool) -> void:
 	var attack_name = "attack_kick" if kick else "attack_punch"
@@ -2149,6 +2499,9 @@ func update_bars() -> void:
 	enemy_bar.z_index = int(enemy_position.y) + 1
 	enemy_name_label.z_index = int(enemy_position.y) + 1
 
+func on_hit_connected() -> void:
+	pass
+
 func play_if_changed(sprite:AnimatedSprite2D, animation_name:String) -> void:
 	if sprite.animation != animation_name || !sprite.is_playing():
 		sprite.play(animation_name)
@@ -2423,6 +2776,31 @@ func _draw() -> void:
 	for p in dog_dash_particles:
 		var p_alpha = clampf(p.life / p.max_life, 0.0, 1.0)
 		draw_circle(p.position, p.radius * p_alpha, Color(p.color.r, p.color.g, p.color.b, p_alpha * 0.75))
+
+	# Player Dash Devastador trails
+	for seg in player_dash_trail_segments:
+		var progress = clampf(seg.life / seg.max_life, 0.0, 1.0)
+		var col = seg.color
+		var w = seg.width * progress
+		draw_line(seg.p1, seg.p2, Color(col.r, col.g, col.b, progress * 0.42), w * 1.6)
+		draw_line(seg.p1, seg.p2, Color(col.r, col.g, col.b, progress * 0.88), w * 0.8)
+		draw_line(seg.p1, seg.p2, Color(1.0, 1.0, 1.0, progress * 0.95), maxf(2.0, w * 0.25))
+
+	for p in player_dash_particles:
+		var p_alpha = clampf(p.life / p.max_life, 0.0, 1.0)
+		draw_circle(p.position, p.radius * p_alpha, Color(p.color.r, p.color.g, p.color.b, p_alpha * 0.8))
+
+	# Telegraph line do dash do player durante hold
+	if player_dash_active && player_dash_state == "hold":
+		var lane_start = player_position + Vector2(player_dash_facing * 40.0, -28.0)
+		var lane_end = player_position + Vector2(player_dash_facing * 580.0, -28.0)
+		var t_alpha = 0.4 + 0.4 * sin(Time.get_ticks_msec() * 0.02)
+		draw_line(lane_start, lane_end, Color(1.0, 0.85, 0.3, t_alpha * 0.25), 28.0)
+		draw_line(lane_start, lane_end, Color(1.0, 0.85, 0.3, t_alpha * 0.8), 4.0)
+		draw_line(lane_start, lane_end, Color(1.0, 1.0, 1.0, t_alpha * 0.9), 1.5)
+		for step_d in range(60, 560, 100):
+			var dot_pos = player_position + Vector2(player_dash_facing * step_d, -28.0)
+			draw_circle(dot_pos, 4.0, Color(1.0, 1.0, 1.0, t_alpha * 0.85))
 
 	for minion in minions:
 		if minion.dead || !is_instance_valid(minion.sprite):

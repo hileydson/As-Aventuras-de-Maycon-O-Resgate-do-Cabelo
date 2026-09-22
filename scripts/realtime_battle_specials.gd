@@ -1,8 +1,10 @@
 extends "res://scripts/realtime_battle.gd"
 
+const SPECIAL_DASH_THRESHOLD:int = 10
 const SPECIAL_PENTAGRAM_THRESHOLD:int = 15
 const SPECIAL_RUSH_THRESHOLD:int = 20
 const SPECIAL_METER_MAX:int = 20
+const SPECIAL_HOLD_TRIGGER_TIME:float = 0.35
 const COMBO_MUSIC_STING_DURATION:float = 0.55
 const PENTAGRAM_PULSE_COUNT:int = 18
 const PENTAGRAM_CHARGE_DURATION:float = 5.0
@@ -17,6 +19,8 @@ var special_meter:ProgressBar
 var special_meter_label:Label
 var special_prompt_label:Label
 var special_hits_label:Label
+var symbol_dash_ctrl:PanelContainer
+var symbol_dash_label:Label
 var symbol_pentagram_ctrl:PanelContainer
 var symbol_pentagram_label:Label
 var symbol_rush_ctrl:PanelContainer
@@ -29,6 +33,8 @@ var special_rush_sound:AudioStreamPlayer
 var special_punch_buffer:float = 0.0
 var special_kick_buffer:float = 0.0
 var special_dash_buffer:float = 0.0
+var punch_hold_time:float = 0.0
+var kick_hold_time:float = 0.0
 var combo_music_sting_token:int = 0
 var combo_music_sting_volume_db:float = -3.0
 var pentagram_rotation_enabled:bool = false
@@ -730,6 +736,10 @@ func resolve_player_hit(kick:bool) -> void:
 			limit_combo_music_sting()
 		update_special_meter_hud()
 
+func on_hit_connected() -> void:
+	special_hits = mini(SPECIAL_METER_MAX, special_hits + 1)
+	update_special_meter_hud()
+
 func limit_combo_music_sting() -> void:
 	combo_music_sting_token += 1
 	var active_token = combo_music_sting_token
@@ -788,8 +798,31 @@ func build_special_hud() -> void:
 	special_hits_label.z_index = 121
 	hud_canvas.add_child(special_hits_label)
 
+	symbol_dash_ctrl = PanelContainer.new()
+	symbol_dash_ctrl.position = Vector2(830, 608)
+	symbol_dash_ctrl.size = Vector2(86, 28)
+	symbol_dash_ctrl.pivot_offset = Vector2(43, 14)
+	symbol_dash_ctrl.visible = false
+	symbol_dash_ctrl.z_index = 122
+	var dash_box = StyleBoxFlat.new()
+	dash_box.bg_color = Color(0.12, 0.10, 0.02, 0.92)
+	dash_box.border_color = Color("ffd166")
+	dash_box.set_border_width_all(2)
+	dash_box.set_corner_radius_all(6)
+	symbol_dash_ctrl.add_theme_stylebox_override("panel", dash_box)
+	symbol_dash_label = Label.new()
+	symbol_dash_label.text = tr_text("👊/🦶 [SEG]", "👊/🦶 [HOLD]")
+	symbol_dash_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	symbol_dash_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	symbol_dash_label.add_theme_font_size_override("font_size", 12)
+	symbol_dash_label.add_theme_color_override("font_color", Color("fff3b0"))
+	symbol_dash_label.add_theme_color_override("font_outline_color", Color("2a1a00"))
+	symbol_dash_label.add_theme_constant_override("outline_size", 4)
+	symbol_dash_ctrl.add_child(symbol_dash_label)
+	hud_canvas.add_child(symbol_dash_ctrl)
+
 	symbol_pentagram_ctrl = PanelContainer.new()
-	symbol_pentagram_ctrl.position = Vector2(834, 608)
+	symbol_pentagram_ctrl.position = Vector2(924, 608)
 	symbol_pentagram_ctrl.size = Vector2(80, 28)
 	symbol_pentagram_ctrl.pivot_offset = Vector2(40, 14)
 	symbol_pentagram_ctrl.visible = false
@@ -812,7 +845,7 @@ func build_special_hud() -> void:
 	hud_canvas.add_child(symbol_pentagram_ctrl)
 
 	symbol_rush_ctrl = PanelContainer.new()
-	symbol_rush_ctrl.position = Vector2(924, 608)
+	symbol_rush_ctrl.position = Vector2(1012, 608)
 	symbol_rush_ctrl.size = Vector2(80, 28)
 	symbol_rush_ctrl.pivot_offset = Vector2(40, 14)
 	symbol_rush_ctrl.visible = false
@@ -848,27 +881,40 @@ func update_special_meter_hud() -> void:
 		fill.bg_color = Color("ff1744")
 	elif special_hits >= SPECIAL_PENTAGRAM_THRESHOLD:
 		fill.bg_color = Color("ff2a8b")
+	elif special_hits >= SPECIAL_DASH_THRESHOLD:
+		fill.bg_color = Color("ffd166")
 	else:
 		fill.bg_color = Color("8f2cff")
 	special_meter.add_theme_stylebox_override("fill", fill)
 
 	var pulse_time = Time.get_ticks_msec() * 0.007
-	var pulse_scale = 1.0 + sin(pulse_time) * 0.14
+	if symbol_dash_ctrl:
+		var can_dash = special_hits >= SPECIAL_DASH_THRESHOLD
+		symbol_dash_ctrl.visible = can_dash
+		if can_dash:
+			var dash_pulse = 1.0 + sin(pulse_time) * 0.14
+			symbol_dash_ctrl.scale = Vector2(dash_pulse, dash_pulse)
 	if symbol_pentagram_ctrl:
 		var can_pentagram = special_hits >= SPECIAL_PENTAGRAM_THRESHOLD
 		symbol_pentagram_ctrl.visible = can_pentagram
 		if can_pentagram:
-			symbol_pentagram_ctrl.scale = Vector2(pulse_scale, pulse_scale)
+			var penta_pulse = 1.0 + sin(pulse_time + 0.8) * 0.14
+			symbol_pentagram_ctrl.scale = Vector2(penta_pulse, penta_pulse)
 	if symbol_rush_ctrl:
 		var can_rush = special_hits >= SPECIAL_RUSH_THRESHOLD
 		symbol_rush_ctrl.visible = can_rush
 		if can_rush:
-			var rush_pulse = 1.0 + sin(pulse_time + 1.2) * 0.14
+			var rush_pulse = 1.0 + sin(pulse_time + 1.6) * 0.14
 			symbol_rush_ctrl.scale = Vector2(rush_pulse, rush_pulse)
 
 func try_start_player_special() -> bool:
+	if special_active || player_dash_active:
+		return false
+
 	var punch_kick_requested = special_punch_buffer > 0.0 && special_kick_buffer > 0.0
 	var kick_dash_requested = special_kick_buffer > 0.0 && special_dash_buffer > 0.0
+
+	# 1. Combo / Rush (20 hits): Chute + Dash
 	if special_hits >= SPECIAL_RUSH_THRESHOLD && kick_dash_requested:
 		clear_special_input_buffers()
 		var rush_target = find_rush_target()
@@ -877,10 +923,24 @@ func try_start_player_special() -> bool:
 			return true
 		start_maycon_rush(rush_target)
 		return true
+
+	# 2. Pentagrama (15 hits): Soco + Chute
 	if special_hits >= SPECIAL_PENTAGRAM_THRESHOLD && punch_kick_requested:
 		clear_special_input_buffers()
 		start_pentagram_force()
 		return true
+
+	# 3. Super Golpe Devastador (10 hits): Segurar Soco ou Chute
+	if special_hits >= SPECIAL_DASH_THRESHOLD:
+		if punch_hold_time >= SPECIAL_HOLD_TRIGGER_TIME:
+			clear_special_input_buffers()
+			start_power_dash_special(false)
+			return true
+		elif kick_hold_time >= SPECIAL_HOLD_TRIGGER_TIME:
+			clear_special_input_buffers()
+			start_power_dash_special(true)
+			return true
+
 	return false
 
 func update_special_input_buffers(delta:float) -> void:
@@ -894,10 +954,28 @@ func update_special_input_buffers(delta:float) -> void:
 	if Input.is_action_pressed("ui_accept"):
 		special_dash_buffer = 0.18
 
+	if !special_active && !player_dash_active && !player_dead && intro_time <= 0.0 && special_hits >= SPECIAL_DASH_THRESHOLD:
+		var punch_pressed = Input.is_action_pressed("key_q")
+		var kick_pressed = Input.is_action_pressed("key_w")
+		if punch_pressed && !kick_pressed:
+			punch_hold_time += delta
+			kick_hold_time = 0.0
+		elif kick_pressed && !punch_pressed:
+			kick_hold_time += delta
+			punch_hold_time = 0.0
+		else:
+			punch_hold_time = 0.0
+			kick_hold_time = 0.0
+	else:
+		punch_hold_time = 0.0
+		kick_hold_time = 0.0
+
 func clear_special_input_buffers() -> void:
 	special_punch_buffer = 0.0
 	special_kick_buffer = 0.0
 	special_dash_buffer = 0.0
+	punch_hold_time = 0.0
+	kick_hold_time = 0.0
 
 func prepare_player_special() -> void:
 	combo_music_sting_token += 1
@@ -911,7 +989,6 @@ func prepare_player_special() -> void:
 		victory_sound.pitch_scale = 1.0
 		victory_sound.volume_db = combo_music_sting_volume_db
 	special_active = true
-	special_hits = 0
 	player_attack_time = 0.0
 	player_attack_move_dir = Vector2.ZERO
 	dodge_time = 0.0
@@ -944,9 +1021,40 @@ func prepare_player_special() -> void:
 		minions[minion_index] = minion
 	update_special_meter_hud()
 
+func start_power_dash_special(use_kick:bool) -> void:
+	if special_active || player_dash_active || special_hits < SPECIAL_DASH_THRESHOLD:
+		return
+	special_hits = maxi(0, special_hits - SPECIAL_DASH_THRESHOLD)
+	prepare_player_special()
+
+	# === 1.2s SUPER FREEZE INTRO (exatamente no mesmo padrao dos outros 2 poderes) ===
+	freeze_arena(true)
+	var freeze_title = tr_text("SUPER CHUTE DEVASTADOR", "SUPER DEVASTATING KICK") if use_kick else tr_text("SUPER SOCO DEVASTADOR", "SUPER DEVASTATING PUNCH")
+	var portrait = load("res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_icon.png") as Texture2D
+	if special_freeze_sound:
+		special_freeze_sound.pitch_scale = 1.0
+		special_freeze_sound.play()
+	if special_overlay:
+		special_overlay.call("start_freeze_intro", freeze_title, true, portrait)
+
+	await get_tree().create_timer(1.2, true, false, true).timeout
+
+	if !is_inside_tree():
+		return
+
+	freeze_arena(false)
+	if special_freeze_sound && special_freeze_sound.playing:
+		special_freeze_sound.stop()
+	if special_overlay:
+		special_overlay.call("stop_freeze_intro")
+
+	special_active = false
+	start_player_power_dash(use_kick)
+
 func start_pentagram_force() -> void:
 	if special_active || special_hits < SPECIAL_PENTAGRAM_THRESHOLD:
 		return
+	special_hits = maxi(0, special_hits - SPECIAL_PENTAGRAM_THRESHOLD)
 	prepare_player_special()
 	var previous_status = status_label.text
 	var previous_zoom = camera.zoom
@@ -1161,6 +1269,7 @@ func is_rush_target_valid(target:Dictionary) -> bool:
 func start_maycon_rush(target:Dictionary) -> void:
 	if special_active || special_hits < SPECIAL_RUSH_THRESHOLD || !is_rush_target_valid(target):
 		return
+	special_hits = 0
 	prepare_player_special()
 	rush_active = true
 	rush_speed = 0.0
