@@ -62,6 +62,22 @@ var game_events = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_h
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true}
 var inimigos_mortos = {}
 var realtime_enemy_respawns:Dictionary = {}
+var aim_assist_strength:float = 0.6
+var show_debug_tab:bool = false
+
+func _ready() -> void:
+	load_settings()
+
+func save_settings() -> void:
+	var config = ConfigFile.new()
+	config.set_value("gameplay", "aim_assist_strength", aim_assist_strength)
+	config.save("user://settings.cfg")
+
+func load_settings() -> void:
+	var config = ConfigFile.new()
+	var err = config.load("user://settings.cfg")
+	if err == OK:
+		aim_assist_strength = float(config.get_value("gameplay", "aim_assist_strength", 0.6))
 
 func _process(_delta: float) -> void:
 	restore_realtime_player_position()
@@ -155,6 +171,7 @@ func save_progress(fase:String)->void:
 	save_array["maycon_itens"] = maycon_itens
 	save_array["game_events"] = game_events
 	save_array["inimigos_mortos"] = inimigos_mortos
+	save_array["aim_assist_strength"] = aim_assist_strength
 	save_array["last_fase"] = fase
 	
 	var file = FileAccess.open("user://savegame.save", FileAccess.WRITE) 
@@ -198,6 +215,8 @@ func load_progress()->void:
 			maycon_itens = save_array["maycon_itens"]
 			game_events = save_array["game_events"]
 			inimigos_mortos = save_array["inimigos_mortos"]
+			if save_array.has("aim_assist_strength"):
+				aim_assist_strength = float(save_array["aim_assist_strength"])
 			last_fase = save_array["last_fase"]
 			maycon_hp_count = save_array["maycon_hp_count"]
 			battle_mode = save_array.get("battle_mode", battle_mode_realtime)

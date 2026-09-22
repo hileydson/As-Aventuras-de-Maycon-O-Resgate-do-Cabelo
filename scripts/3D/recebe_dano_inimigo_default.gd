@@ -31,6 +31,7 @@ func receber_dano(dano:int)->void:
 		morrer()
 
 func morrer():
+	remove_from_group("enemy_hitbox")
 	inimigo_body3d.process_mode = Node.PROCESS_MODE_DISABLED
 	var world_3d = get_tree().get_first_node_in_group("world_3d")
 	world_3d.remove_enemies_count()
@@ -58,7 +59,7 @@ func drop_municao():
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass 
+	add_to_group("enemy_hitbox")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

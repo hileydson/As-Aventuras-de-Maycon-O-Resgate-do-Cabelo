@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://d3cev6uiwwro4"]
 
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="1_2rkwj"]
-[ext_resource type="Texture2D" uid="uid://c7l21bjighy7e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1.png" id="1_l74ae"]
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_t3aas"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="2_7je0d"]
 [ext_resource type="Script" uid="uid://c1spheypet4fo" path="res://scripts/fase_1_before_castle_1.gd" id="2_rh75j"]
@@ -20,6 +19,12 @@
 [ext_resource type="AudioStream" uid="uid://drnd65usjc7l7" path="res://assets/novos_audios/stage_sound.mp3" id="15_avl2m"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="15_avwlo"]
 [ext_resource type="PackedScene" uid="uid://d35e0jeya7iev" path="res://scenes/caixa.tscn" id="16_cm2i2"]
+[ext_resource type="Texture2D" uid="uid://xsiwteq7267x" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1_paralax_1.png" id="17_parallax_front"]
+[ext_resource type="Texture2D" uid="uid://cvqd5apvumh4a" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1_paralax_2.png" id="18_parallax_trees"]
+[ext_resource type="Shader" uid="uid://c6eelrgo3e7vy" path="res://scenes/fase_1_before_castle_1_dynamic_background.gdshader" id="19_dynamic_background"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dynamic_background"]
+shader = ExtResource("19_dynamic_background")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kvuau"]
 atlas = ExtResource("3_avl2m")
@@ -648,12 +653,39 @@ animations = [{
 [node name="fase_1" type="Node2D" unique_id=1223359348]
 process_mode = 1
 
+[node name="DynamicFireBackground" type="Parallax2D" parent="." unique_id=1096939621]
+z_index = -30
+scroll_scale = Vector2(0.5, 1)
+
+[node name="FireSky" type="ColorRect" parent="DynamicFireBackground" unique_id=744922730]
+material = SubResource("ShaderMaterial_dynamic_background")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="DistantBurntTrees" type="Parallax2D" parent="." unique_id=770510985]
+z_index = -20
+scroll_scale = Vector2(0.75, 1)
+
+[node name="Trees" type="Sprite2D" parent="DistantBurntTrees" unique_id=1662196680]
+position = Vector2(1593, 774.5)
+scale = Vector2(1.3566667, 1.574656)
+texture = ExtResource("18_parallax_trees")
+
+[node name="BurntForestForeground" type="Parallax2D" parent="." unique_id=1574633366]
+z_index = -10
+
+[node name="Foreground" type="Sprite2D" parent="BurntForestForeground" unique_id=873675528]
+position = Vector2(1586, 683)
+scale = Vector2(1.32, 1.3189402)
+texture = ExtResource("17_parallax_front")
+
 [node name="maycon_itens" parent="." unique_id=1107588794 instance=ExtResource("1_t3aas")]
 
 [node name="Fase1BeforeCastle1" type="Sprite2D" parent="." unique_id=218487434]
 process_mode = 1
 position = Vector2(1586, 683)
-texture = ExtResource("1_l74ae")
 script = ExtResource("2_rh75j")
 
 [node name="rotate_blade" type="AnimatedSprite2D" parent="Fase1BeforeCastle1" unique_id=2033012823]

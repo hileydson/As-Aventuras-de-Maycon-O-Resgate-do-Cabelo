@@ -11,6 +11,8 @@ extends VBoxContainer
 @onready var v_box_container: VBoxContainer = $"."
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
 @onready var continue_: Button = $Continue_
+@onready var settings_btn: Button = $Settings
+@onready var configuracoes_dialog = $"../../ConfiguracoesDialog"
 @onready var as_aventuras_de_maycon: Label = $"../as_aventuras_de_maycon"
 @onready var o_resgate_do_cabelo: Label = $"../o_resgate_do_cabelo"
 
@@ -30,7 +32,12 @@ func _ready() -> void:
 	if Global.default_language == Global.language_en:
 		new_game.text = "New Game"
 		continue_.text = "Continue"
+		if settings_btn:
+			settings_btn.text = "Settings"
 		exit.text = "Exit"
+	else:
+		if settings_btn:
+			settings_btn.text = "Configurações"
 	
 	maycon_looking.play("idle")
 	
@@ -65,3 +72,8 @@ func _on_exit_pressed() -> void:
 
 func _on_continue__pressed() -> void:
 	Global.load_progress()
+
+
+func _on_settings_pressed() -> void:
+	if configuracoes_dialog:
+		configuracoes_dialog.abrir()

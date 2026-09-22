@@ -116,28 +116,118 @@ func remove_bullets_from_gun()->void:
 
 @onready var raycast = $Camera3D/RayCast3D
 
-func atirar():
-	# Verifica se o raio está encostando em algo
-	if raycast.is_colliding():
-		var alvo = raycast.get_collider() # Pega o objeto atingido
+func get_aim_assist_target(max_angle_deg: float = 16.0) -> Dictionary:
+	if not Global.maycon_pegou_arma_first_3d_battle or on_moto or estou_morto:
+		return {}
+	if Global.aim_assist_strength <= 0.001 or not camera_3d:
+		return {}
+	
+	var cam_pos = camera_3d.global_position
+	var cam_forward = -camera_3d.global_transform.basis.z.normalized()
+	var space_state = get_world_3d().direct_space_state
+	
+	var group_nodes = get_tree().get_nodes_in_group("enemy_hitbox")
+	var best_candidate: Dictionary = {}
+	var best_score: float = 999999.0
+	
+	for candidate in group_nodes:
+		if not is_instance_valid(candidate) or not candidate.is_inside_tree():
+			continue
+		if candidate.get("hp") != null and candidate.hp <= 0:
+			continue
 		
-		# Verifica se o alvo tem a função de receber dano
-		if alvo.has_method("receber_dano"):
-			alvo.receber_dano(3)
+		var target_pos = candidate.global_position
+		target_pos.y += 0.3
+		
+		var to_target = target_pos - cam_pos
+		var dist = to_target.length()
+		if dist < 0.5 or dist > 55.0:
+			continue
+		
+		var dir = to_target / dist
+		var dot = clampf(cam_forward.dot(dir), -1.0, 1.0)
+		var angle_deg = rad_to_deg(acos(dot))
+		if angle_deg > max_angle_deg:
+			continue
+		
+		# Teste de linha de visão com o cenário
+		var ray_query = PhysicsRayQueryParameters3D.create(cam_pos, target_pos)
+		ray_query.collision_mask = 1
+		ray_query.exclude = [self.get_rid()]
+		var hit = space_state.intersect_ray(ray_query)
+		if hit and hit.collider != candidate and hit.collider != candidate.get_parent():
+			continue
+		
+		var score = angle_deg * 2.0 + dist * 0.2
+		if score < best_score:
+			best_score = score
+			best_candidate = {
+				"target": candidate,
+				"position": target_pos,
+				"angle": angle_deg,
+				"distance": dist
+			}
 			
-			# Opcional: Criar uma marca de impacto ou faísca no local exato
-			var ponto_impacto = raycast.get_collision_point()
-			#criar_impacto_visual(ponto_impacto)
-			
-			# --- LÓGICA DO SANGUE ---
-			var sangue = SANGUE_SCENE.instantiate()
-			get_tree().current_scene.add_child(sangue)
-			
-			# Coloca o sangue no PONTO EXATO onde o tiro bateu
-			sangue.global_position = raycast.get_collision_point()
-			
-			# Opcional: Faz o sangue espirrar na direção oposta ao tiro
-			# sangue.look_at(raycast.get_collision_point() + raycast.get_collision_normal())
+	return best_candidate
+
+func _aplicar_assistente_mira(delta: float, joy_look: Vector2) -> void:
+	if not Global.maycon_pegou_arma_first_3d_battle or on_moto or estou_morto:
+		return
+	if Global.aim_assist_strength <= 0.001 or not camera_3d:
+		return
+	
+	var assist_cone = 18.0 * Global.aim_assist_strength
+	var target_data = get_aim_assist_target(assist_cone)
+	if target_data.is_empty():
+		return
+	
+	var target_pos = target_data["position"]
+	var cam_pos = camera_3d.global_position
+	var to_target = (target_pos - cam_pos).normalized()
+	
+	var local_dir = global_transform.basis.inverse() * to_target
+	var yaw_diff = atan2(-local_dir.x, -local_dir.z)
+	
+	var cam_local_dir = camera_3d.global_transform.basis.inverse() * to_target
+	var pitch_diff = atan2(cam_local_dir.y, -cam_local_dir.z)
+	
+	var mouse_vel_len = 0.0
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		mouse_vel_len = Input.get_last_mouse_velocity().length()
+	
+	var is_actively_aiming = (joy_look.length() > 0.13) or (mouse_vel_len > 0.1)
+	var pull_mult = 3.2 if is_actively_aiming else 1.0
+	var pull_speed = Global.aim_assist_strength * pull_mult * delta
+	
+	rotate_y(clampf(yaw_diff * pull_speed, -0.04, 0.04))
+	camera_3d.rotate_x(clampf(pitch_diff * pull_speed, -0.04, 0.04))
+	camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-80), deg_to_rad(80))
+
+func atirar():
+	var alvo = null
+	var ponto_impacto = Vector3.ZERO
+	
+	# 1. Verifica se o raio direto atingiu algo com receber_dano
+	if raycast.is_colliding():
+		var col = raycast.get_collider()
+		if col and col.has_method("receber_dano"):
+			alvo = col
+			ponto_impacto = raycast.get_collision_point()
+	
+	# 2. Se a mira direta falhou mas o assistente está ativo, tenta magnetismo no tiro
+	if alvo == null and Global.aim_assist_strength > 0.0:
+		var assist_data = get_aim_assist_target(10.0 * Global.aim_assist_strength)
+		if not assist_data.is_empty():
+			alvo = assist_data["target"]
+			ponto_impacto = assist_data["position"]
+	
+	# 3. Aplica dano e efeito de sangue no alvo atingido
+	if alvo and alvo.has_method("receber_dano"):
+		alvo.receber_dano(3)
+		var sangue = SANGUE_SCENE.instantiate()
+		get_tree().current_scene.add_child(sangue)
+		sangue.global_position = ponto_impacto
+
 
 func change_sprite_two_player()->void:
 	animacao_player_2.visible = false
@@ -303,7 +393,9 @@ func _physics_process(delta):
 				
 				# Trava a visão para não girar 360 graus verticalmente
 				camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-80), deg_to_rad(80))
-				
+
+	# Assistente de mira (atração suave da retícula)
+	_aplicar_assistente_mira(delta, joy_look)
 
 	# --- 4. FÍSICA GLOBAL ---
 	if not is_on_floor():

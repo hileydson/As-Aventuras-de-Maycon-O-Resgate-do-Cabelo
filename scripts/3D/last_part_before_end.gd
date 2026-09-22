@@ -1,6 +1,9 @@
 extends Node3D
 
 const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
+const THUG_PAIN_SOUND_1 = preload("res://assets/novos_audios/DS_pain.mp3")
+const THUG_PAIN_SOUND_2 = preload("res://assets/novos_audios/doom_pain.mp3")
+const THUG_PAIN_SOUND_3 = preload("res://assets/novos_audios/seco_scream.mp3")
 const STAGE_INFORMANT := 0
 const STAGE_FELLAS := 1
 const STAGE_DISMOUNT := 2
@@ -38,6 +41,7 @@ var fellas_original_position:Vector3
 var fellas_member_original_positions:Dictionary = {}
 var motorcycle_rotation_before_dismount:Vector3
 var motorcycle_camera_rotation_before_dismount:Vector3
+var thug_pain_sounds:Array[AudioStream] = [THUG_PAIN_SOUND_1, THUG_PAIN_SOUND_2, THUG_PAIN_SOUND_3]
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
@@ -304,7 +308,13 @@ func add_thug_to_fight(thug:Node3D) -> void:
 	shout.modulate = Color("fff1a8")
 	shout.text = ""
 	thug.add_child(shout)
-	thug_data.append({"node":thug, "hp":3, "shout":shout})
+	var pain_audio := AudioStreamPlayer3D.new()
+	pain_audio.name = "PainScream"
+	pain_audio.volume_db = -1.0
+	pain_audio.unit_size = 7.0
+	pain_audio.max_distance = 55.0
+	thug.add_child(pain_audio)
+	thug_data.append({"node":thug, "hp":3, "shout":shout, "pain_audio":pain_audio})
 
 func attack_with_wood() -> void:
 	if attacking || fight_finishing || !is_instance_valid(weapon_root):
@@ -340,6 +350,8 @@ func resolve_wood_hit() -> void:
 		return
 	closest["hp"] = int(closest["hp"]) - 1
 	spawn_hit_blood(closest["node"])
+	add_permanent_blood_stains(closest)
+	play_thug_pain_scream(closest)
 	Input.start_joy_vibration(0, 0.7, 0.85, 0.22)
 	player.aplicar_shake(0.32)
 	make_thug_retreat(closest)
@@ -351,6 +363,45 @@ func spawn_hit_blood(thug:Node3D) -> void:
 		var blood := BLOOD_SCENE.instantiate()
 		add_child(blood)
 		blood.global_position = thug.global_position + Vector3(randf_range(-0.8, 0.8), randf_range(1.0, 2.6), randf_range(-0.5, 0.5))
+
+func add_permanent_blood_stains(data:Dictionary) -> void:
+	var thug:AnimatedSprite3D = data["node"]
+	var hits_taken := 3 - int(data["hp"])
+	var blood_tones := [
+		Color(0.92, 0.68, 0.68, 1.0),
+		Color(0.78, 0.39, 0.39, 1.0),
+		Color(0.62, 0.2, 0.2, 1.0)
+	]
+	thug.modulate = blood_tones[clampi(hits_taken - 1, 0, blood_tones.size() - 1)]
+	var bounds := thug.get_aabb()
+	var stain_radius := clampf(minf(bounds.size.x, bounds.size.y) * 0.055, 0.13, 0.3)
+	for _index in 3:
+		var stain := MeshInstance3D.new()
+		stain.name = "BloodStain_%d_%d" % [hits_taken, _index]
+		var stain_mesh := SphereMesh.new()
+		stain_mesh.radius = stain_radius * randf_range(0.7, 1.15)
+		stain_mesh.height = stain_mesh.radius * 2.0
+		stain_mesh.radial_segments = 10
+		stain_mesh.rings = 5
+		var stain_material := StandardMaterial3D.new()
+		stain_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		stain_material.albedo_color = Color(randf_range(0.28, 0.48), 0.015, 0.015, 1.0)
+		stain_mesh.material = stain_material
+		stain.mesh = stain_mesh
+		stain.position = Vector3(
+			randf_range(bounds.position.x + bounds.size.x * 0.25, bounds.position.x + bounds.size.x * 0.75),
+			randf_range(bounds.position.y + bounds.size.y * 0.2, bounds.position.y + bounds.size.y * 0.82),
+			0.0
+		)
+		stain.scale = Vector3(randf_range(0.8, 1.35), randf_range(0.65, 1.2), 0.22)
+		thug.add_child(stain)
+
+func play_thug_pain_scream(data:Dictionary) -> void:
+	var pain_audio:AudioStreamPlayer3D = data["pain_audio"]
+	pain_audio.stop()
+	pain_audio.stream = thug_pain_sounds.pick_random()
+	pain_audio.pitch_scale = randf_range(0.88, 1.12)
+	pain_audio.play()
 
 func make_thug_retreat(data:Dictionary) -> void:
 	var thug:Node3D = data["node"]

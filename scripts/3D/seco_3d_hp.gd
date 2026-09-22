@@ -40,7 +40,7 @@ func efeito_camera_lenta(intensidade: float, duracao: float):
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	add_to_group("enemy_hitbox")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -55,6 +55,7 @@ func atualizar_barra():
 	tween.tween_property(barra_vida, "value", hp, 0.2)
 
 func morrer():
+	remove_from_group("enemy_hitbox")
 	
 	if Global.is_two_player_active:
 		for p in get_tree().get_nodes_in_group("player"):

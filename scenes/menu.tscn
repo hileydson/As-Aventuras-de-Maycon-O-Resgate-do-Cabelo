@@ -20,6 +20,7 @@
 [ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="16_mxgkd"]
 [ext_resource type="Texture2D" uid="uid://5x3arlktkuq8" path="res://assets/novas_imagens/effects/smoke_sheet.png" id="19_81l6r"]
 [ext_resource type="Texture2D" uid="uid://jpruwl1kxn8m" path="res://assets/novas_imagens/cabelo/cabelo_idle.png" id="19_rsfmq"]
+[ext_resource type="PackedScene" uid="uid://b23iyms3w1v1h" path="res://scenes/menus/configuracoes_dialog.tscn" id="23_cfg"]
 
 [sub_resource type="Animation" id="Animation_rsfmq"]
 length = 0.001
@@ -679,6 +680,10 @@ icon = SubResource("ImageTexture_oi1it")
 layout_mode = 2
 text = "Continuar"
 
+[node name="Settings" type="Button" parent="Camera2D/VBoxContainer"]
+layout_mode = 2
+text = "Configurações"
+
 [node name="Exit" type="Button" parent="Camera2D/VBoxContainer"]
 layout_mode = 2
 text = "Sair"
@@ -701,7 +706,10 @@ frame_progress = 0.49333024
 
 [node name="auto_fade_in" parent="." instance=ExtResource("1_3dmrc")]
 
+[node name="ConfiguracoesDialog" parent="." instance=ExtResource("23_cfg")]
+
 [connection signal="ready" from="." to="Camera2D/VBoxContainer" method="_on_menu_ready"]
 [connection signal="pressed" from="Camera2D/VBoxContainer/New Game" to="Camera2D/VBoxContainer" method="_on_new_game_pressed"]
 [connection signal="pressed" from="Camera2D/VBoxContainer/Continue_" to="Camera2D/VBoxContainer" method="_on_continue__pressed"]
+[connection signal="pressed" from="Camera2D/VBoxContainer/Settings" to="Camera2D/VBoxContainer" method="_on_settings_pressed"]
 [connection signal="pressed" from="Camera2D/VBoxContainer/Exit" to="Camera2D/VBoxContainer" method="_on_exit_pressed"]
