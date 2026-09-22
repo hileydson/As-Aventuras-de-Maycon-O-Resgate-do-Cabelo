@@ -33,6 +33,7 @@ var weapon_root:Node3D
 var loose_wood:Node3D
 var attacking:bool = false
 var fight_finishing:bool = false
+var fight_hit_count:int = 0
 var informant_dialog_available:bool = true
 var informant_dialog_start_position:Vector3
 var thug_data:Array[Dictionary] = []
@@ -42,6 +43,9 @@ var fellas_member_original_positions:Dictionary = {}
 var motorcycle_rotation_before_dismount:Vector3
 var motorcycle_camera_rotation_before_dismount:Vector3
 var thug_pain_sounds:Array[AudioStream] = [THUG_PAIN_SOUND_1, THUG_PAIN_SOUND_2, THUG_PAIN_SOUND_3]
+var wood_debug_mode:bool = false
+var wood_debug_status:Label
+var enemy_debug_status:Label
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
@@ -58,6 +62,44 @@ func _ready() -> void:
 	luz_mapa.visible = true
 	maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
 	cutscene_inicio.play("intro_mapa")
+	if OS.get_cmdline_user_args().has("--test-wood-pickup"):
+		wood_debug_mode = true
+		call_deferred("start_wood_pickup_test")
+
+func start_wood_pickup_test() -> void:
+	cutscene_inicio.stop()
+	maycon_3d.process_mode = Node.PROCESS_MODE_INHERIT
+	luz_mapa.visible = false
+	player.set_final_game()
+	player.get_node("hud_canvas/maycon_hp").visible = false
+	player.set_rain(true)
+	var test_position := fellas.global_position + Vector3(0.0, 0.0, 15.0)
+	place_player_on_ground(test_position)
+	player.look_at(Vector3(fellas.global_position.x, player.global_position.y, fellas.global_position.z), Vector3.UP)
+	player.velocity = Vector3.ZERO
+	objective_ui.visible = true
+	the_almost_end_song.play()
+	Global.in_cutscene = true
+	set_story_stage(STAGE_DISMOUNT)
+	build_wood_debug_ui()
+
+func find_ground_position(position:Vector3) -> Vector3:
+	var query := PhysicsRayQueryParameters3D.create(
+		Vector3(position.x, position.y + 40.0, position.z),
+		Vector3(position.x, position.y - 80.0, position.z)
+	)
+	query.exclude = [player.get_rid()]
+	var result := get_world_3d().direct_space_state.intersect_ray(query)
+	return result.get("position", position)
+
+func place_player_on_ground(position:Vector3) -> void:
+	var ground_position := find_ground_position(position)
+	var collision:CollisionShape3D = player.get_node("CollisionShape3D")
+	var capsule:CapsuleShape3D = collision.shape
+	var player_scale_y := player.global_basis.get_scale().y
+	var bottom_offset := collision.position.y * player_scale_y - capsule.height * 0.5 * player_scale_y
+	position.y = ground_position.y - bottom_offset + 0.04
+	player.global_position = position
 
 func _unhandled_input(event:InputEvent) -> void:
 	if stage == STAGE_DISMOUNT && event.is_action_pressed("key_e"):
@@ -81,6 +123,153 @@ func build_objective_ui() -> void:
 	objective_label.add_theme_color_override("font_outline_color", Color(0.05, 0.02, 0.01, 0.95))
 	objective_label.add_theme_constant_override("outline_size", 7)
 	objective_ui.add_child(objective_label)
+
+func build_wood_debug_ui() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	var debug_layer := CanvasLayer.new()
+	debug_layer.layer = 120
+	add_child(debug_layer)
+	var panel := PanelContainer.new()
+	panel.position = Vector2(10.0, 55.0)
+	panel.custom_minimum_size = Vector2(390.0, 0.0)
+	var debug_theme := Theme.new()
+	debug_theme.default_font_size = 12
+	panel.theme = debug_theme
+	debug_layer.add_child(panel)
+	var content := VBoxContainer.new()
+	content.add_theme_constant_override("separation", 3)
+	panel.add_child(content)
+	var title := Label.new()
+	title.text = "AJUSTE TEMPORÁRIO DA MADEIRA"
+	title.add_theme_font_size_override("font_size", 14)
+	content.add_child(title)
+	wood_debug_status = Label.new()
+	wood_debug_status.text = "Aperte Start ou clique em PEGAR MADEIRA."
+	wood_debug_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	content.add_child(wood_debug_status)
+	var pickup_button := Button.new()
+	pickup_button.text = "PEGAR MADEIRA"
+	pickup_button.custom_minimum_size.y = 28.0
+	pickup_button.pressed.connect(begin_pickup_cutscene)
+	content.add_child(pickup_button)
+	var grid := GridContainer.new()
+	grid.columns = 3
+	content.add_child(grid)
+	add_wood_debug_button(grid, "X -", Vector3(-0.05, 0.0, 0.0), Vector3.ZERO)
+	add_wood_debug_button(grid, "X +", Vector3(0.05, 0.0, 0.0), Vector3.ZERO)
+	add_wood_debug_button(grid, "Y -", Vector3(0.0, -0.05, 0.0), Vector3.ZERO)
+	add_wood_debug_button(grid, "Y +", Vector3(0.0, 0.05, 0.0), Vector3.ZERO)
+	add_wood_debug_button(grid, "Z -", Vector3(0.0, 0.0, -0.05), Vector3.ZERO)
+	add_wood_debug_button(grid, "Z +", Vector3(0.0, 0.0, 0.05), Vector3.ZERO)
+	add_wood_debug_button(grid, "GIRAR X -", Vector3.ZERO, Vector3(-5.0, 0.0, 0.0))
+	add_wood_debug_button(grid, "GIRAR X +", Vector3.ZERO, Vector3(5.0, 0.0, 0.0))
+	add_wood_debug_button(grid, "GIRAR Y -", Vector3.ZERO, Vector3(0.0, -5.0, 0.0))
+	add_wood_debug_button(grid, "GIRAR Y +", Vector3.ZERO, Vector3(0.0, 5.0, 0.0))
+	add_wood_debug_button(grid, "GIRAR Z -", Vector3.ZERO, Vector3(0.0, 0.0, -5.0))
+	add_wood_debug_button(grid, "GIRAR Z +", Vector3.ZERO, Vector3(0.0, 0.0, 5.0))
+	var scale_down_button := Button.new()
+	scale_down_button.text = "TAMANHO -"
+	scale_down_button.custom_minimum_size = Vector2(120.0, 28.0)
+	scale_down_button.pressed.connect(adjust_wood_debug_scale.bind(0.95))
+	grid.add_child(scale_down_button)
+	var scale_up_button := Button.new()
+	scale_up_button.text = "TAMANHO +"
+	scale_up_button.custom_minimum_size = Vector2(120.0, 28.0)
+	scale_up_button.pressed.connect(adjust_wood_debug_scale.bind(1.05))
+	grid.add_child(scale_up_button)
+	var print_button := Button.new()
+	print_button.text = "PRINTAR OFFSET NO LOG"
+	print_button.custom_minimum_size.y = 28.0
+	print_button.pressed.connect(print_wood_debug_transform)
+	content.add_child(print_button)
+	var separator := HSeparator.new()
+	content.add_child(separator)
+	var enemy_title := Label.new()
+	enemy_title.text = "AJUSTE DOS INIMIGOS"
+	enemy_title.add_theme_font_size_override("font_size", 14)
+	content.add_child(enemy_title)
+	enemy_debug_status = Label.new()
+	enemy_debug_status.text = "Pegue a madeira para liberar os ajustes."
+	content.add_child(enemy_debug_status)
+	var enemy_grid := GridContainer.new()
+	enemy_grid.columns = 2
+	content.add_child(enemy_grid)
+	add_enemy_debug_button(enemy_grid, "TAMANHO -", 0.95, 0.0)
+	add_enemy_debug_button(enemy_grid, "TAMANHO +", 1.05, 0.0)
+	add_enemy_debug_button(enemy_grid, "EIXO Y -", 1.0, -0.1)
+	add_enemy_debug_button(enemy_grid, "EIXO Y +", 1.0, 0.1)
+	var enemy_print_button := Button.new()
+	enemy_print_button.text = "PRINTAR INIMIGOS NO LOG"
+	enemy_print_button.custom_minimum_size.y = 28.0
+	enemy_print_button.pressed.connect(print_enemy_debug_transform)
+	content.add_child(enemy_print_button)
+
+func add_wood_debug_button(parent:Control, text:String, position_delta:Vector3, rotation_delta:Vector3) -> void:
+	var button := Button.new()
+	button.text = text
+	button.custom_minimum_size = Vector2(120.0, 28.0)
+	button.pressed.connect(adjust_wood_debug.bind(position_delta, rotation_delta))
+	parent.add_child(button)
+
+func adjust_wood_debug(position_delta:Vector3, rotation_delta:Vector3) -> void:
+	if !is_instance_valid(weapon_root):
+		wood_debug_status.text = "Pegue a madeira antes de ajustar."
+		return
+	weapon_root.position += position_delta
+	weapon_root.rotation_degrees += rotation_delta
+	update_wood_debug_status()
+
+func adjust_wood_debug_scale(multiplier:float) -> void:
+	if !is_instance_valid(weapon_root):
+		wood_debug_status.text = "Pegue a madeira antes de ajustar."
+		return
+	weapon_root.scale *= multiplier
+	update_wood_debug_status()
+
+func update_wood_debug_status() -> void:
+	if !wood_debug_mode || !is_instance_valid(wood_debug_status) || !is_instance_valid(weapon_root):
+		return
+	wood_debug_status.text = "Posição: %s\nRotação: %s\nTamanho: %s" % [weapon_root.position, weapon_root.rotation_degrees, weapon_root.scale]
+
+func print_wood_debug_transform() -> void:
+	if !is_instance_valid(weapon_root):
+		wood_debug_status.text = "Pegue a madeira antes de imprimir."
+		return
+	print("WOOD_DEBUG_OFFSET position=", weapon_root.position, " rotation_degrees=", weapon_root.rotation_degrees, " scale=", weapon_root.scale)
+	wood_debug_status.text = "Offset impresso no log.\nPosição: %s\nRotação: %s\nTamanho: %s" % [weapon_root.position, weapon_root.rotation_degrees, weapon_root.scale]
+
+func add_enemy_debug_button(parent:Control, text:String, scale_multiplier:float, y_delta:float) -> void:
+	var button := Button.new()
+	button.text = text
+	button.custom_minimum_size = Vector2(185.0, 28.0)
+	button.pressed.connect(adjust_enemy_debug.bind(scale_multiplier, y_delta))
+	parent.add_child(button)
+
+func adjust_enemy_debug(scale_multiplier:float, y_delta:float) -> void:
+	if thug_data.is_empty():
+		enemy_debug_status.text = "Pegue a madeira para liberar os ajustes."
+		return
+	fellas.scale *= scale_multiplier
+	fellas.global_position.y += y_delta
+	update_enemy_debug_status()
+
+func update_enemy_debug_status() -> void:
+	if !wood_debug_mode || !is_instance_valid(enemy_debug_status) || thug_data.is_empty():
+		return
+	enemy_debug_status.text = "Tamanho: %s\nY do grupo: %.4f" % [fellas.scale, fellas.global_position.y]
+
+func print_enemy_debug_transform() -> void:
+	if thug_data.is_empty():
+		enemy_debug_status.text = "Pegue a madeira antes de imprimir."
+		return
+	var member_y := {
+		"lipao": fellas.global_position.y,
+		"iago": $lipao/iago.global_position.y,
+		"luks": $lipao/luks.global_position.y,
+		"tony": $lipao/tony.global_position.y
+	}
+	print("ENEMY_DEBUG scale=", fellas.scale, " root_global_y=", fellas.global_position.y, " member_global_y=", member_y)
+	enemy_debug_status.text = "Valores dos inimigos impressos.\nTamanho: %s\nY do grupo: %.4f" % [fellas.scale, fellas.global_position.y]
 
 func set_story_stage(new_stage:int) -> void:
 	stage = new_stage
@@ -207,37 +396,29 @@ func begin_pickup_cutscene() -> void:
 	player.velocity = Vector3.ZERO
 	player.process_mode = Node.PROCESS_MODE_DISABLED
 	loose_wood = create_wood_prop()
-	loose_wood.global_position = fellas.global_position + Vector3(10.0, 0.3, 5.0)
+	var pickup_direction := -player.global_basis.z
+	pickup_direction.y = 0.0
+	pickup_direction = pickup_direction.normalized()
+	var wood_position := player.global_position + pickup_direction * 1.85
+	var ground_position := find_ground_position(wood_position)
+	loose_wood.global_position = ground_position + Vector3(0.0, 0.18, 0.0)
 	loose_wood.rotation_degrees.z = -90.0
 	player_camera.make_current()
-	var wood_floor_position := Vector3(loose_wood.global_position.x, player.global_position.y, loose_wood.global_position.z)
-	var approach_direction := player.global_position - wood_floor_position
-	approach_direction.y = 0.0
-	approach_direction = approach_direction.normalized()
-	var walk_target := wood_floor_position + approach_direction * 2.2
-	var walk_transform := player.global_transform
-	walk_transform.origin = walk_target
-	walk_transform = walk_transform.looking_at(wood_floor_position, Vector3.UP)
-	if player.walk:
-		player.walk.play()
-	if player.animation_tree_playback:
-		player.animation_tree_playback.travel("run")
-	var walk_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	walk_tween.tween_property(player, "global_transform", walk_transform, 3.8)
-	await walk_tween.finished
-	player.walk.stop()
-	if player.animation_tree_playback:
-		player.animation_tree_playback.travel("idle")
 	var standing_camera_position := player_camera.position
 	var standing_camera_rotation := player_camera.rotation
-	var crouched_camera_position := standing_camera_position + Vector3(0.0, -1.15, 0.18)
+	var crouched_camera_position := standing_camera_position + Vector3(0.0, -0.05, -0.18)
 	var crouched_camera_rotation := standing_camera_rotation
-	crouched_camera_rotation.x = deg_to_rad(-52.0)
+	crouched_camera_rotation.x = deg_to_rad(-45.0)
 	var crouch_tween := create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	crouch_tween.tween_property(player_camera, "position", crouched_camera_position, 1.7)
-	crouch_tween.tween_property(player_camera, "rotation", crouched_camera_rotation, 1.7)
+	crouch_tween.tween_property(player_camera, "position", crouched_camera_position, 2.1)
+	crouch_tween.tween_property(player_camera, "rotation", crouched_camera_rotation, 2.1)
 	await crouch_tween.finished
-	await get_tree().create_timer(0.65).timeout
+	await get_tree().create_timer(0.8).timeout
+	var pickup_target := player_camera.global_position - player_camera.global_basis.z * 1.05
+	pickup_target += player_camera.global_basis.x * 0.52 - player_camera.global_basis.y * 0.3
+	var pickup_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	pickup_tween.tween_property(loose_wood, "global_position", pickup_target, 0.85)
+	await pickup_tween.finished
 	loose_wood.queue_free()
 	build_first_person_weapon(player_camera)
 	await get_tree().create_timer(0.65).timeout
@@ -269,8 +450,9 @@ func create_wood_prop() -> Node3D:
 func build_first_person_weapon(player_camera:Camera3D) -> void:
 	weapon_root = Node3D.new()
 	weapon_root.name = "WoodWeapon"
-	weapon_root.position = Vector3(0.62, -0.55, -1.15)
-	weapon_root.rotation_degrees = Vector3(-18.0, 0.0, 0.0)
+	weapon_root.position = Vector3(0.07, -0.15, -0.4)
+	weapon_root.rotation_degrees = Vector3(-105.0, 85.0, 165.0)
+	weapon_root.scale = Vector3(0.193711, 0.193711, 0.193711)
 	player_camera.add_child(weapon_root)
 	var wood_container := create_wood_prop()
 	var wood := wood_container.get_child(0)
@@ -278,23 +460,28 @@ func build_first_person_weapon(player_camera:Camera3D) -> void:
 	wood_container.queue_free()
 	wood.position = Vector3(-0.12, 0.36, -0.18)
 	wood.rotation_degrees.z = -45.0
+	update_wood_debug_status()
 
 func setup_thugs() -> void:
 	thug_data.clear()
-	# Iguala a altura dos sprites à altura física do modelo 3D do Maycon.
-	# A alteração continua restrita ao trecho em primeira pessoa.
-	var player_shape:CapsuleShape3D = player.get_node("CollisionShape3D").shape
-	var player_height := player_shape.height * player.global_basis.get_scale().y
-	var fellas_height := fellas.get_aabb().size.y * fellas.global_basis.get_scale().y
-	var height_factor := clampf(player_height / maxf(fellas_height, 0.01), 0.2, 0.8)
-	fellas.scale = fellas_original_scale * height_factor
+	fight_hit_count = 0
+	# Valores calibrados visualmente no modo temporário de ajuste.
+	fellas.scale = Vector3(0.279458, 0.236062, 0.286799)
+	var fellas_position := fellas.global_position
+	fellas_position.y = -6.49914455413818
+	fellas.global_position = fellas_position
 	var thugs:Array[Node3D] = [$lipao/iago, $lipao/luks, $lipao/tony]
 	var spread := [Vector3(-10.0, 0.0, 4.0), Vector3(0.0, 0.0, 1.0), Vector3(10.0, 0.0, 4.0)]
+	var calibrated_y := [-6.42242431640625, -6.48970222473145, -6.47394227981567]
 	for index in thugs.size():
-		var thug := thugs[index]
+		var thug:AnimatedSprite3D = thugs[index]
 		thug.position = spread[index]
+		var thug_position := thug.global_position
+		thug_position.y = calibrated_y[index]
+		thug.global_position = thug_position
 		add_thug_to_fight(thug)
 	add_thug_to_fight(fellas)
+	update_enemy_debug_status()
 
 func add_thug_to_fight(thug:Node3D) -> void:
 	var shout := Label3D.new()
@@ -346,13 +533,14 @@ func resolve_wood_hit() -> void:
 	if closest.is_empty():
 		return
 	closest["hp"] = int(closest["hp"]) - 1
+	fight_hit_count += 1
 	spawn_hit_blood(closest["node"])
 	add_permanent_blood_stains(closest)
 	play_thug_pain_scream(closest)
 	Input.start_joy_vibration(0, 0.7, 0.85, 0.22)
 	player.aplicar_shake(0.32)
 	make_thug_retreat(closest)
-	if all_thugs_injured():
+	if fight_hit_count >= 3:
 		finish_fight()
 
 func spawn_hit_blood(thug:Node3D) -> void:

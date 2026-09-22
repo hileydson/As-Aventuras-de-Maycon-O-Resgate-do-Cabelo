@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1790093797
+::res://::1790098006
 AGENTS.md::TextFile::-1::1789958757::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1789958757::0::1::::<><><>0<>0<><>::
 export_presets.cfg::TextFile::-1::1790036186::0::1::::<><><>0<>0<><>::
@@ -3454,11 +3454,23 @@ CyberpunkCraftpixPixel.otf::FontFile::876793195499763391::1767636737::1767636737
 1_62.png::CompressedTexture2D::6691461008917459889::1767636737::1767636737::1::::<><><>0<>0<>4d9b3ade345ce6543351c2066d628ff0<>res://.godot/imported/1_62.png-bba4c8b39c7fabcd15769b2bad0af07e.ctex::
 1_63.png::CompressedTexture2D::3862122540503739353::1767636737::1767636737::1::::<><><>0<>0<>940e61eaa61863142c0e2a054eb018b3<>res://.godot/imported/1_63.png-e153879d6e3d625d6f1b65a710954a27.ctex::
 ::res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/PSD/::1767636737
-::res://assets/novas_imagens/npcs/::1770925133
+::res://assets/novas_imagens/npcs/::1790105427
 iago.png::CompressedTexture2D::1776335974958546663::1770925133::1770925133::1::::<><><>0<>0<>834531ffdb742b472ee89cf7be60588a<>res://.godot/imported/iago.png-1eecc97b9c204e9aac35bc3b9e78a091.s3tc.ctex<*>res://.godot/imported/iago.png-1eecc97b9c204e9aac35bc3b9e78a091.etc2.ctex::
+iago_moto.png::CompressedTexture2D::17199448975078089::1790101363::1790105433::1::::<><><>0<>0<>a989a7733bf5876b5a48ae3cdd557398<>res://.godot/imported/iago_moto.png-808da8f8540165c2014dd02841a686c5.ctex::
+iago_moto_looking.png::CompressedTexture2D::2834557359909303951::1790101347::1790105433::1::::<><><>0<>0<>07f9315e2da2b34005e4b73b27882423<>res://.godot/imported/iago_moto_looking.png-8253ef21cacf6f98ee6c3b4a66490b64.ctex::
+iago_moto_shoot.png::CompressedTexture2D::3258033949131770560::1790101714::1790105433::1::::<><><>0<>0<>c7e9cc9982708fadeeab3f3da4df7e8c<>res://.godot/imported/iago_moto_shoot.png-930dfa7eec169693263653149ba99a0e.ctex::
 lips.png::CompressedTexture2D::929878568701634784::1770925133::1770925133::1::::<><><>0<>0<>a8585eb32030bcbcd2b47bc796610494<>res://.godot/imported/lips.png-397c6ba0cc0904e8103c1946644d9da7.s3tc.ctex<*>res://.godot/imported/lips.png-397c6ba0cc0904e8103c1946644d9da7.etc2.ctex::
+lips_moto.png::CompressedTexture2D::680081043069215571::1790102666::1790105433::1::::<><><>0<>0<>6ff85a79bc6db810bad8f28c98c85d2c<>res://.godot/imported/lips_moto.png-b0f9f07b3edff9b3dea07e4872edc7f9.ctex::
+lips_moto_looking.png::CompressedTexture2D::3193520847548008604::1790102598::1790105433::1::::<><><>0<>0<>37ea7d3495ab0c79f457a50f791e49f7<>res://.godot/imported/lips_moto_looking.png-c12a7a55a5da5d1437e7fcfeff40eee8.ctex::
+lips_moto_shoot.png::CompressedTexture2D::2505019738626066818::1790102467::1790105433::1::::<><><>0<>0<>f2d2f9e61251cfc53f030b6ad08d3ca9<>res://.godot/imported/lips_moto_shoot.png-731c63b3a931172a99f662d0e386ec71.ctex::
 luks.png::CompressedTexture2D::7436933055232805903::1770925133::1770925133::1::::<><><>0<>0<>aafae374a2420c5fe8f5d17e20c5b5a5<>res://.godot/imported/luks.png-c35992a76748a36555840ce9804e5e92.s3tc.ctex<*>res://.godot/imported/luks.png-c35992a76748a36555840ce9804e5e92.etc2.ctex::
+luqs_moto.png::CompressedTexture2D::1513861573799971350::1790102832::1790105433::1::::<><><>0<>0<>5d9eb8412d33b5c12415b22917d356ca<>res://.godot/imported/luqs_moto.png-377c42f6acb533909aee709b562476fa.ctex::
+luqs_moto_looking.png::CompressedTexture2D::6715834995606254769::1790104035::1790105433::1::::<><><>0<>0<>da071997364adcb880617496908915ec<>res://.godot/imported/luqs_moto_looking.png-ce2108752ae016306372b9d962c28cd0.ctex::
+luqs_moto_shoot.png::CompressedTexture2D::2360433447657109840::1790103953::1790105433::1::::<><><>0<>0<>62a1765b662764adefe91a94f722ddf0<>res://.godot/imported/luqs_moto_shoot.png-e4031801642fef24cfb14208268e423c.ctex::
 tony.png::CompressedTexture2D::4414216407023965074::1770925133::1770925133::1::::<><><>0<>0<>b7c91a3f4d579a8680456ed2711ec9d6<>res://.godot/imported/tony.png-98286804adcac4481f73a8cbe815d78e.s3tc.ctex<*>res://.godot/imported/tony.png-98286804adcac4481f73a8cbe815d78e.etc2.ctex::
+tony_moto.png::CompressedTexture2D::6200697125512558527::1790105096::1790105433::1::::<><><>0<>0<>fbf62e999c604a303a282a7d76417b0b<>res://.godot/imported/tony_moto.png-9b6924910fa576f9d6554a598b3e11b1.ctex::
+tony_moto_looking.png::CompressedTexture2D::4510985336724041571::1790105141::1790105433::1::::<><><>0<>0<>050c09ef6864061d74ebe5203f9c3bc5<>res://.godot/imported/tony_moto_looking.png-e343cfd541b8a52cd90aaacbc759d889.ctex::
+tony_moto_shoot.png::CompressedTexture2D::3758375161327767198::1790105384::1790105433::1::::<><><>0<>0<>bebaaef7943aae00421425fad31d4837<>res://.godot/imported/tony_moto_shoot.png-015ce952cd156577b2825bdfce773c15.ctex::
 ::res://assets/novas_imagens/objects/::1770925139
 barras_logo_pacoca_producoes.png::CompressedTexture2D::6772210815394501165::1769630548::1769630548::1::::<><><>0<>0<>114e170bad9df4b6c2d3cf947a721d72<>res://.godot/imported/barras_logo_pacoca_producoes.png-c6fa583830acb0b32967619161b344fc.ctex::
 block_hide_gemini.png::CompressedTexture2D::8375754252810962448::1769693259::1769693259::1::::<><><>0<>0<>cda6ee60ee29c6b00d0002a678440d8a<>res://.godot/imported/block_hide_gemini.png-b101a57fa88bef53d4af3a0fb9d3a7d6.ctex::
@@ -3623,7 +3635,7 @@ default_transition_fade_out.tscn::PackedScene::6280258267491241261::1767636737::
 demo_controls.tscn::PackedScene::8616220783690199793::1769794754::0::1::::<><><>0<>0<><>::uid://l37du8uog6o3::::res://scripts/demo_controls.gd
 demo_end.tscn::PackedScene::4363729298985417055::1770925133::0::1::::<><><>0<>0<><>::uid://dv3kbnmk80bhh::::res://assets/novas_imagens/cenarios/in_use/the_end/the_end_cenario.png<>uid://croc726dc3hga::::res://scripts/demo_final.gd<>uid://jpruwl1kxn8m::::res://assets/novas_imagens/cabelo/cabelo_idle.png<>uid://c7ap4akws6abl::::res://assets/novos_audios/the_end.mp3<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn<>uid://dbicvg8ismuhi::::res://assets/novas_imagens/maycon/jamelao_float_1.png<>uid://bntwoiej8ke2w::::res://assets/novas_imagens/end/hug_1.png<>uid://bipvqda2dqlnq::::res://assets/novas_imagens/end/hug_2.png<>uid://5x3arlktkuq8::::res://assets/novas_imagens/effects/smoke_sheet.png<>uid://dafvtcjaw2w5m::::res://assets/novas_imagens/3d_cenarios/cigarro_on_3d/cigarro_moto.png
 explosao.tscn::PackedScene::6741279037497645113::1767837142::0::1::::<><><>0<>0<><>::uid://cvd8ka40gblwa::::res://scripts/explosao.gd
-fase_1_before_castle_1.tscn::PackedScene::9128960457609108557::1790091925::0::1::::<><><>0<>0<><>::uid://bxrvb1ninxb77::::res://scenes/pause.tscn<>uid://c6hkbpx4y28ce::::res://scenes/menus/maycon_itens.tscn<>uid://dvs2lwybcbwt2::::res://scenes/maycon_fase.tscn<>uid://c1spheypet4fo::::res://scripts/fase_1_before_castle_1.gd<>uid://ctu2fq4dxgban::::res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Rotating_blades.png<>uid://bs67ndmklpp1b::::res://assets/novas_imagens/maycon/maycon_falling.png<>uid://kg00ua8r8lwq::::res://assets/novos_audios/maycon_falling_fase_1.mp3<>uid://bgar7p5o5l876::::res://scenes/batalha_2d.tscn<>uid://brgahg4b0gy80::::res://scenes/inimigos/inimigo_camilita.tscn<>uid://drf85jfsrrmkk::::res://assets/novas_imagens/effects/smoke_animation.png<>uid://bwclf236t6sen::::res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_6.png<>uid://b3xewfakdijcn::::res://scenes/fase_1_before_castle_4.gdshader<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn<>uid://j0vbl5413yex::::res://scripts/effect_stage_show.gd<>uid://drljpi330bnf1::::res://assets/novas_imagens/objects/block_hide_gemini.png<>uid://dxieyw0cpujpk::::res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png<>uid://drnd65usjc7l7::::res://assets/novos_audios/stage_sound.mp3<>uid://b1jw8ciiqgjbw::::res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png<>uid://d35e0jeya7iev::::res://scenes/caixa.tscn<>uid://xsiwteq7267x::::res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1_paralax_1.png<>uid://cvqd5apvumh4a::::res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1_paralax_2.png<>uid://c6eelrgo3e7vy::::res://scenes/fase_1_before_castle_1_dynamic_background.gdshader
+fase_1_before_castle_1.tscn::PackedScene::9128960457609108557::1790091925::0::1::::<><><>0<>0<><>::uid://bxrvb1ninxb77::::res://scenes/pause.tscn<>uid://c6hkbpx4y28ce::::res://scenes/menus/maycon_itens.tscn<>uid://dvs2lwybcbwt2::::res://scenes/maycon_fase.tscn<>uid://c1spheypet4fo::::res://scripts/fase_1_before_castle_1.gd<>uid://ctu2fq4dxgban::::res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Rotating_blades.png<>uid://bs67ndmklpp1b::::res://assets/novas_imagens/maycon/maycon_falling.png<>uid://kg00ua8r8lwq::::res://assets/novos_audios/maycon_falling_fase_1.mp3<>uid://bgar7p5o5l876::::res://scenes/batalha_2d.tscn<>uid://brgahg4b0gy80::::res://scenes/inimigos/inimigo_camilita.tscn<>uid://drf85jfsrrmkk::::res://assets/novas_imagens/effects/smoke_animation.png<>uid://bwclf236t6sen::::res://assets/novas_imagens/effects/Frozen Screen Effect/Effect_6.png<>uid://b3xewfakdijcn::::res://scenes/fase_1_before_castle_4.gdshader<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn<>uid://j0vbl5413yex::::res://scripts/effect_stage_show.gd<>uid://drljpi330bnf1::::res://assets/novas_imagens/objects/block_hide_gemini.png<>uid://dxieyw0cpujpk::::res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png<>uid://drnd65usjc7l7::::res://assets/novos_audios/stage_sound.mp3<>uid://b1jw8ciiqgjbw::::res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png<>uid://d35e0jeya7iev::::res://scenes/caixa.tscn<>uid://xsiwteq7267x::::res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1_paralax_1.png<>uid://cvqd5apvumh4a::::res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_1_paralax_2.png<>uid://c6eelrgo3e7vy::::res://scenes/fase_1_before_castle_1_dynamic_background.gdshader<>res://scenes/fase_1_before_castle_1_clouds.gdshader<>res://scenes/fase_1_before_castle_1_lava_glow.gdshader<>res://scenes/fase_1_before_castle_1_mountains.gdshader
 fase_1_before_castle_1_clouds.gdshader::Shader::419427383270313216::1790090655::0::1::::<><><>0<>0<><>::
 fase_1_before_castle_1_dynamic_background.gdshader::Shader::6957216445724952066::1790091925::0::1::::<><><>0<>0<><>::
 fase_1_before_castle_1_lava_glow.gdshader::Shader::5833901228945952623::1790091134::0::1::::<><><>0<>0<><>::
@@ -3739,7 +3751,7 @@ maycon_fase.gd::GDScript::2636479185831734840::1790094737::0::1::::<>CharacterBo
 maycon_itens.gd::GDScript::3608571195747589650::1790094841::0::1::::<>Node2D<><>0<>0<><>::
 menu.gd::GDScript::6562768689195605607::1790087434::0::1::::<>Control<><>0<>0<><>::
 pause.gd::GDScript::7449233017950370426::1790094635::0::1::::<>Control<><>0<>0<><>::
-realtime_battle.gd::GDScript::7867064034200866415::1790095221::0::1::::<>Node2D<><>0<>0<><>::
+realtime_battle.gd::GDScript::7867064034200866415::1790095375::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_3d.gd::GDScript::2141243869699419406::1790009870::0::1::::<>CanvasLayer<><>0<>0<><>::
 realtime_battle_background.gd::GDScript::3540749457985720226::1790009889::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_blood_drop.gd::GDScript::4138522092762905264::1790014119::0::1::::<>Node2D<><>0<>0<><>::
@@ -3759,7 +3771,7 @@ import_collision_gen.gd::GDScript::-1::1770925133::0::1::::<>EditorScenePostImpo
 inimigo_3d_default.gd::GDScript::8339874909618318337::1790032513::0::1::::<>CharacterBody3D<><>0<>0<><>::
 inimigo_bomba_pretti_3d.gd::GDScript::1560456019525848244::1769970166::0::1::::<>CharacterBody3D<><>0<>0<><>::
 lamp.gd::GDScript::7790728560667219145::1770063258::0::1::::<>Area3D<><>0<>0<><>::
-last_part_before_end.gd::GDScript::5006405053871241004::1790095208::0::1::::<>Node3D<><>0<>0<><>::
+last_part_before_end.gd::GDScript::5006405053871241004::1790100158::0::1::::<>Node3D<><>0<>0<><>::
 object_3d.gd::GDScript::9078826269963351129::1769912058::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d.gd::GDScript::7171831727451377016::1790094648::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d_moto_cidade.gd::GDScript::6726714682699407671::1790094662::0::1::::<>Node3D<><>0<>0<><>::
@@ -3789,7 +3801,7 @@ terrain3d_00-01.res::Terrain3DRegion::5019486532651089028::1770136386::0::1::::<
 terrain3d_00-02.res::Terrain3DRegion::3854885546111145601::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00_00.res::Terrain3DRegion::4948174298051947078::1770136386::0::1::::<><><>0<>0<><>::
 ::res://tests/::1790091737
-::res://translations/::1790094481
+::res://translations/::1790095366
 game_text.csv::Translation::1292654866392114924::1790095360::1790095366::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
 game_text.en.translation::OptimizedTranslation::1712006235640866847::1790095366::0::1::::<><><>0<>0<><>::
 game_text.es.translation::OptimizedTranslation::9151324834628544493::1790095366::0::1::::<><><>0<>0<><>::
