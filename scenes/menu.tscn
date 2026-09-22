@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=4 uid="uid://bbvbfgsytow76"]
+[gd_scene format=4 uid="uid://bbvbfgsytow76"]
 
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="1_3dmrc"]
 [ext_resource type="Texture2D" uid="uid://1dll27f2uadm" path="res://assets/images/TELA-intro-03 _0.png" id="1_mhnvy"]
@@ -20,7 +20,7 @@
 [ext_resource type="AudioStream" uid="uid://bad5mehwn52vv" path="res://assets/audio/sound1.mp3" id="16_mxgkd"]
 [ext_resource type="Texture2D" uid="uid://5x3arlktkuq8" path="res://assets/novas_imagens/effects/smoke_sheet.png" id="19_81l6r"]
 [ext_resource type="Texture2D" uid="uid://jpruwl1kxn8m" path="res://assets/novas_imagens/cabelo/cabelo_idle.png" id="19_rsfmq"]
-[ext_resource type="PackedScene" uid="uid://b23iyms3w1v1h" path="res://scenes/menus/configuracoes_dialog.tscn" id="23_cfg"]
+[ext_resource type="PackedScene" path="res://scenes/menus/configuracoes_dialog.tscn" id="23_cfg"]
 
 [sub_resource type="Animation" id="Animation_rsfmq"]
 length = 0.001
@@ -209,6 +209,15 @@ data = PackedByteArray("AAEAAAAPAEAABADAT1MvMoKvPCsAAAD8AAAATlBDTFT3xSQnAAABTAAA
 font_name = "City Contrasts"
 style_name = "Regular"
 msdf_pixel_range = 8
+cache/0/variation_coordinates = {}
+cache/0/face_index = 0
+cache/0/embolden = 0.0
+cache/0/transform = Transform2D(1, 0, 0, 1, 0, 0)
+cache/0/spacing_top = 0
+cache/0/spacing_bottom = 0
+cache/0/spacing_space = 0
+cache/0/spacing_glyph = 0
+cache/0/baseline_offset = 0.0
 cache/0/16/0/ascent = 14.0
 cache/0/16/0/descent = 5.0
 cache/0/16/0/underline_position = 1.765625
@@ -582,7 +591,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Menu" type="Control"]
+[node name="Menu" type="Control" unique_id=1208782864]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -590,21 +599,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rsfmq")
+enable_debug_tab = true
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=621761977]
 position = Vector2(577, 324)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Camera2D"]
-libraries = {
-&"": SubResource("AnimationLibrary_oi1it")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Camera2D" unique_id=349504891]
+libraries/ = SubResource("AnimationLibrary_oi1it")
 
-[node name="TelaIntro030" type="Sprite2D" parent="Camera2D"]
+[node name="TelaIntro030" type="Sprite2D" parent="Camera2D" unique_id=90040978]
 position = Vector2(-2.000061, 2.0000305)
 scale = Vector2(1.836939, 1.4006524)
 texture = ExtResource("1_mhnvy")
 
-[node name="cabelo_sprite_idle" type="AnimatedSprite2D" parent="Camera2D"]
+[node name="cabelo_sprite_idle" type="AnimatedSprite2D" parent="Camera2D" unique_id=1127375473]
 visible = false
 self_modulate = Color(1, 1, 1, 0.49411765)
 texture_filter = 1
@@ -615,7 +623,7 @@ sprite_frames = SubResource("SpriteFrames_g54pe")
 autoplay = "default"
 frame_progress = 0.7341344
 
-[node name="as_aventuras_de_maycon" type="Label" parent="Camera2D"]
+[node name="as_aventuras_de_maycon" type="Label" parent="Camera2D" unique_id=599412441]
 offset_left = -373.0
 offset_top = -449.00003
 offset_right = 106.0
@@ -626,7 +634,7 @@ text = "As Aventuras de Maycon"
 label_settings = SubResource("LabelSettings_48ryc")
 language = "pt"
 
-[node name="o_resgate_do_cabelo" type="Label" parent="Camera2D"]
+[node name="o_resgate_do_cabelo" type="Label" parent="Camera2D" unique_id=87843518]
 self_modulate = Color(1, 1, 1, 0.997143)
 offset_left = -245.0
 offset_top = -209.0
@@ -638,12 +646,12 @@ text = "O resgate do Cabelo"
 label_settings = SubResource("LabelSettings_vhsb5")
 language = "pt"
 
-[node name="cabelo_sound" type="AudioStreamPlayer2D" parent="Camera2D"]
+[node name="cabelo_sound" type="AudioStreamPlayer2D" parent="Camera2D" unique_id=1733906323]
 position = Vector2(-577, -324)
 stream = ExtResource("5_4ytvr")
 volume_db = 3.741
 
-[node name="mayconLooking" type="AnimatedSprite2D" parent="Camera2D"]
+[node name="mayconLooking" type="AnimatedSprite2D" parent="Camera2D" unique_id=220343694]
 position = Vector2(1, 177)
 scale = Vector2(2.3282413, 1.9032443)
 sprite_frames = SubResource("SpriteFrames_ffqrc")
@@ -651,44 +659,44 @@ animation = &"idle"
 frame = 9
 frame_progress = 1.0
 
-[node name="JamelaoSong" type="AudioStreamPlayer" parent="Camera2D"]
+[node name="JamelaoSong" type="AudioStreamPlayer" parent="Camera2D" unique_id=476045704]
 stream = ExtResource("16_g6gyw")
 volume_db = -3.649
 
-[node name="menu_song" type="AudioStreamPlayer2D" parent="Camera2D"]
+[node name="menu_song" type="AudioStreamPlayer2D" parent="Camera2D" unique_id=1757701081]
 position = Vector2(-577, -324)
 stream = ExtResource("16_mxgkd")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D" unique_id=1980266890]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = -549.0
 offset_top = 124.0
-offset_right = -435.2619
-offset_bottom = 247.45471
+offset_right = -430.0
+offset_bottom = 260.0
 grow_vertical = 0
 scale = Vector2(1.2456733, 1.2632499)
 script = ExtResource("1_yqeox")
 
-[node name="New Game" type="Button" parent="Camera2D/VBoxContainer"]
+[node name="New Game" type="Button" parent="Camera2D/VBoxContainer" unique_id=1497314570]
 layout_mode = 2
 text = "Novo Jogo"
 icon = SubResource("ImageTexture_oi1it")
 
-[node name="Continue_" type="Button" parent="Camera2D/VBoxContainer"]
+[node name="Continue_" type="Button" parent="Camera2D/VBoxContainer" unique_id=1746965715]
 layout_mode = 2
 text = "Continuar"
 
-[node name="Settings" type="Button" parent="Camera2D/VBoxContainer"]
+[node name="Settings" type="Button" parent="Camera2D/VBoxContainer" unique_id=991327707]
 layout_mode = 2
 text = "Configurações"
 
-[node name="Exit" type="Button" parent="Camera2D/VBoxContainer"]
+[node name="Exit" type="Button" parent="Camera2D/VBoxContainer" unique_id=1521352834]
 layout_mode = 2
 text = "Sair"
 
-[node name="version" type="Label" parent="Camera2D"]
+[node name="version" type="Label" parent="Camera2D" unique_id=395537340]
 offset_left = 555.0
 offset_top = 312.0
 offset_right = 595.0
@@ -697,16 +705,16 @@ scale = Vector2(0.62459505, 0.5314849)
 text = "X.X"
 label_settings = SubResource("LabelSettings_rsfmq")
 
-[node name="effect_cabelo" type="AnimatedSprite2D" parent="."]
+[node name="effect_cabelo" type="AnimatedSprite2D" parent="." unique_id=1078373521]
 position = Vector2(931, 274.00006)
 scale = Vector2(1.8945313, 1.8710938)
 sprite_frames = SubResource("SpriteFrames_x16fv")
 autoplay = "default"
 frame_progress = 0.49333024
 
-[node name="auto_fade_in" parent="." instance=ExtResource("1_3dmrc")]
+[node name="auto_fade_in" parent="." unique_id=348865637 instance=ExtResource("1_3dmrc")]
 
-[node name="ConfiguracoesDialog" parent="." instance=ExtResource("23_cfg")]
+[node name="ConfiguracoesDialog" parent="." unique_id=932742176 instance=ExtResource("23_cfg")]
 
 [connection signal="ready" from="." to="Camera2D/VBoxContainer" method="_on_menu_ready"]
 [connection signal="pressed" from="Camera2D/VBoxContainer/New Game" to="Camera2D/VBoxContainer" method="_on_new_game_pressed"]
