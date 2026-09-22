@@ -495,7 +495,7 @@ tracks/10/keys = {
 "times": PackedFloat32Array(0.03333334, 21.466667),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [true, false]
+"values": [true, true]
 }
 tracks/11/type = "value"
 tracks/11/imported = false

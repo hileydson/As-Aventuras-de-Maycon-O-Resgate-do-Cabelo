@@ -1682,8 +1682,8 @@ grow_vertical = 0
 
 [node name="MetralhadoraMoto" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto" unique_id=1622760132]
 visible = false
-position = Vector2(491, 741.00006)
-rotation = 1.5715352
+position = Vector2(545, 714)
+rotation = 0.000868788
 scale = Vector2(0.5967689, 0.61008376)
 texture = ExtResource("11_01a3d")
 

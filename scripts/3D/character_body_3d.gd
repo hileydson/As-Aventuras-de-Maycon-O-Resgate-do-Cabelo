@@ -516,20 +516,22 @@ func _physics_process(delta):
 		hud_gun_buttons.visible = false
 
 	
-# --- 3. LÓGICA DE OLHAR (Analógico Direito) ---
+# --- 3. LÓGICA DE OLHAR (Moto: analógico esquerdo; a pé: direito) ---
 	var joy_look = Vector2.ZERO
 	if on_moto:
-		joy_look = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X), 0)
+		joy_look = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X), 0)
 	else:
 		joy_look = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X), Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_Y))
 
-	# Aumentamos de 0.1 para 0.2 para ignorar pequenos movimentos fantasmas do analógico
+	# Ignora pequenos movimentos involuntários do analógico da moto.
 	if on_moto:
+		if absf(joy_look.x) < 0.13:
+			joy_look.x = 0.0
 		var mouse_turn := 0.0
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			mouse_turn = clampf(Input.get_last_mouse_velocity().x * MOUSE_SENSITIVITY * 0.18, -0.9, 0.9)
-		var target_turn := clampf(-joy_look.x * 1.0 - mouse_turn, -0.9, 0.9)
-		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, 1.65 * delta)
+			mouse_turn = clampf(Input.get_last_mouse_velocity().x * MOUSE_SENSITIVITY * 0.35, -1.8, 1.8)
+		var target_turn := clampf(-joy_look.x * 1.8 - mouse_turn, -1.8, 1.8)
+		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, 5.2 * delta)
 		rotate_y(motorcycle_turn_speed * delta)
 	elif joy_look.length() > 0.13:
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)

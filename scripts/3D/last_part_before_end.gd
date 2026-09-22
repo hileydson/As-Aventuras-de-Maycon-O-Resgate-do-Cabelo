@@ -53,6 +53,8 @@ var fellas_chase
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
+	player.get_node("chuva").process_mode = Node.PROCESS_MODE_PAUSABLE
+	player.set_rain(true)
 	fellas_original_scale = fellas.scale
 	for member in [$lipao/iago, $lipao/luks, $lipao/tony]:
 		fellas_member_original_positions[member] = member.position
