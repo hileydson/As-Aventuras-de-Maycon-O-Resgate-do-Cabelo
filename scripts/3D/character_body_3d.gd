@@ -66,6 +66,13 @@ var motorcycle_chase:bool = false
 var motorcycle_turn_speed:float = 0.0
 var motorcycle_fire_cooldown:float = 0.0
 var motorcycle_muzzle:GPUParticles3D
+var motorcycle_muzzle_light:OmniLight3D
+var motorcycle_effect_root:Node2D
+var motorcycle_sparks:CPUParticles2D
+var motorcycle_casings:CPUParticles2D
+var motorcycle_glow:Sprite2D
+var motorcycle_flash_time:float = 0.0
+var motorcycle_gun_rest_position:Vector2
 
 
 @export var SPRINT_SPEED = 9.0  # Velocidade ao correr
@@ -92,29 +99,111 @@ func set_motorcycle_chase(active:bool) -> void:
 	metralhadora_moto.visible = active
 	if !active:
 		motorcycle_turn_speed = 0.0
+		motorcycle_flash_time = 0.0
+		metralhadora_moto.position = motorcycle_gun_rest_position
 		if is_instance_valid(motorcycle_muzzle):
 			motorcycle_muzzle.emitting = false
+		if is_instance_valid(motorcycle_effect_root):
+			motorcycle_effect_root.visible = false
+		if is_instance_valid(motorcycle_muzzle_light):
+			motorcycle_muzzle_light.visible = false
 	elif !is_instance_valid(motorcycle_muzzle):
 		motorcycle_muzzle = GPUParticles3D.new()
 		motorcycle_muzzle.name = "MotorcycleMuzzle"
-		motorcycle_muzzle.position = Vector3(0.0, -0.35, -2.2)
-		motorcycle_muzzle.amount = 12
-		motorcycle_muzzle.lifetime = 0.17
+		motorcycle_muzzle.amount = 10
+		motorcycle_muzzle.lifetime = 0.13
 		motorcycle_muzzle.one_shot = true
 		motorcycle_muzzle.explosiveness = 1.0
 		var sparks := ParticleProcessMaterial.new()
 		sparks.direction = Vector3(0.0, 0.0, -1.0)
-		sparks.spread = 18.0
-		sparks.initial_velocity_min = 5.0
-		sparks.initial_velocity_max = 10.0
+		sparks.spread = 24.0
+		sparks.initial_velocity_min = 2.5
+		sparks.initial_velocity_max = 5.0
 		sparks.gravity = Vector3.ZERO
-		sparks.color = Color(1.0, 0.65, 0.12)
+		var fire_colors := Gradient.new()
+		fire_colors.set_color(0, Color(1.0, 0.92, 0.23))
+		fire_colors.set_color(1, Color(1.0, 0.12, 0.01, 0.0))
+		var fire_ramp := GradientTexture1D.new()
+		fire_ramp.gradient = fire_colors
+		sparks.color_ramp = fire_ramp
 		motorcycle_muzzle.process_material = sparks
 		var spark_mesh := SphereMesh.new()
-		spark_mesh.radius = 0.035
-		spark_mesh.height = 0.07
+		spark_mesh.radius = 0.025
+		spark_mesh.height = 0.05
+		var spark_material := StandardMaterial3D.new()
+		spark_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		spark_material.vertex_color_use_as_albedo = true
+		spark_mesh.material = spark_material
 		motorcycle_muzzle.draw_pass_1 = spark_mesh
 		camera_3d.add_child(motorcycle_muzzle)
+		motorcycle_muzzle_light = OmniLight3D.new()
+		motorcycle_muzzle_light.light_color = Color(1.0, 0.65, 0.16)
+		motorcycle_muzzle_light.light_energy = 7.0
+		motorcycle_muzzle_light.omni_range = 4.0
+		motorcycle_muzzle_light.visible = false
+		camera_3d.add_child(motorcycle_muzzle_light)
+		build_motorcycle_muzzle_overlay()
+	if active and is_instance_valid(motorcycle_effect_root):
+		motorcycle_effect_root.visible = true
+
+func build_motorcycle_muzzle_overlay() -> void:
+	motorcycle_effect_root = Node2D.new()
+	motorcycle_effect_root.name = "MotorcycleShotEffects"
+	hud_canvas.add_child(motorcycle_effect_root)
+	var glow_gradient := Gradient.new()
+	glow_gradient.set_color(0, Color(1.0, 0.89, 0.35, 0.9))
+	glow_gradient.set_color(1, Color(1.0, 0.16, 0.01, 0.0))
+	var glow_texture := GradientTexture2D.new()
+	glow_texture.width = 96
+	glow_texture.height = 96
+	glow_texture.fill = GradientTexture2D.FILL_RADIAL
+	glow_texture.fill_from = Vector2(0.5, 0.5)
+	glow_texture.fill_to = Vector2(1.0, 0.5)
+	glow_texture.gradient = glow_gradient
+	motorcycle_glow = Sprite2D.new()
+	motorcycle_glow.texture = glow_texture
+	motorcycle_glow.visible = false
+	var glow_material := CanvasItemMaterial.new()
+	glow_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	motorcycle_glow.material = glow_material
+	motorcycle_effect_root.add_child(motorcycle_glow)
+	var spark_image := Image.create(4, 4, false, Image.FORMAT_RGBA8)
+	spark_image.fill(Color.WHITE)
+	motorcycle_sparks = CPUParticles2D.new()
+	motorcycle_sparks.amount = 10
+	motorcycle_sparks.lifetime = 0.17
+	motorcycle_sparks.one_shot = true
+	motorcycle_sparks.explosiveness = 1.0
+	motorcycle_sparks.emitting = false
+	motorcycle_sparks.direction = Vector2(0.0, -1.0)
+	motorcycle_sparks.spread = 30.0
+	motorcycle_sparks.initial_velocity_min = 90.0
+	motorcycle_sparks.initial_velocity_max = 180.0
+	motorcycle_sparks.gravity = Vector2(0.0, 35.0)
+	motorcycle_sparks.texture = ImageTexture.create_from_image(spark_image)
+	var spark_colors := Gradient.new()
+	spark_colors.set_color(0, Color(1.0, 0.97, 0.38))
+	spark_colors.set_color(1, Color(1.0, 0.15, 0.02, 0.0))
+	motorcycle_sparks.color_ramp = spark_colors
+	motorcycle_effect_root.add_child(motorcycle_sparks)
+	var casing_image := Image.create(11, 4, false, Image.FORMAT_RGBA8)
+	casing_image.fill(Color(0.88, 0.52, 0.13))
+	for x in 11:
+		casing_image.set_pixel(x, 0, Color(1.0, 0.83, 0.35))
+	motorcycle_casings = CPUParticles2D.new()
+	motorcycle_casings.amount = 2
+	motorcycle_casings.lifetime = 0.45
+	motorcycle_casings.one_shot = true
+	motorcycle_casings.explosiveness = 1.0
+	motorcycle_casings.emitting = false
+	motorcycle_casings.position = Vector2(15.0, 8.0)
+	motorcycle_casings.direction = Vector2(1.0, -0.25)
+	motorcycle_casings.spread = 20.0
+	motorcycle_casings.initial_velocity_min = 85.0
+	motorcycle_casings.initial_velocity_max = 140.0
+	motorcycle_casings.gravity = Vector2(0.0, 260.0)
+	motorcycle_casings.texture = ImageTexture.create_from_image(casing_image)
+	motorcycle_effect_root.add_child(motorcycle_casings)
 
 func dismount_final_game()->void:
 	set_motorcycle_chase(false)
@@ -274,6 +363,7 @@ func change_sprite_two_player()->void:
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	motorcycle_gun_rest_position = metralhadora_moto.position
 	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)                                                                                               
 	
 	danos_count = 0
@@ -322,15 +412,34 @@ func levou_dano(dano:int)->void:
 
 func _physics_process(delta):
 	motorcycle_fire_cooldown = maxf(0.0, motorcycle_fire_cooldown - delta)
+	motorcycle_flash_time = maxf(0.0, motorcycle_flash_time - delta)
 	if motorcycle_chase and on_moto:
 		var firing := Input.is_joy_button_pressed(device_id, JOY_BUTTON_A) or Input.is_key_pressed(KEY_SPACE)
+		metralhadora_moto.position = metralhadora_moto.position.lerp(motorcycle_gun_rest_position, minf(1.0, delta * 24.0))
 		if firing:
-			metralhadora_moto.rotation += delta * 31.0
+			metralhadora_moto.position += Vector2(randf_range(-0.8, 0.8), randf_range(-0.8, 0.8))
+		var muzzle_screen := metralhadora_moto.to_global(Vector2(-478.0, -87.0))
+		motorcycle_effect_root.position = muzzle_screen
+		var muzzle_world := camera_3d.project_position(muzzle_screen, 1.9)
+		motorcycle_muzzle.position = camera_3d.to_local(muzzle_world)
+		motorcycle_muzzle_light.position = motorcycle_muzzle.position
+		motorcycle_glow.visible = motorcycle_flash_time > 0.0
+		motorcycle_muzzle_light.visible = motorcycle_flash_time > 0.0
+		if motorcycle_flash_time > 0.0:
+			motorcycle_glow.modulate.a = motorcycle_flash_time / 0.085
+			motorcycle_glow.scale = Vector2.ONE * (0.52 + randf_range(0.0, 0.18))
+		if firing:
 			if motorcycle_fire_cooldown <= 0.0:
 				motorcycle_fire_cooldown = 0.15
+				motorcycle_flash_time = 0.085
+				metralhadora_moto.position += Vector2(randf_range(-2.5, 2.5), randf_range(4.0, 7.0))
 				gun_shot.play()
 				motorcycle_muzzle.restart()
 				motorcycle_muzzle.emitting = true
+				motorcycle_sparks.restart()
+				motorcycle_sparks.emitting = true
+				motorcycle_casings.restart()
+				motorcycle_casings.emitting = true
 				motorcycle_fire.emit()
 	# --- 1. CONFIGURAÇÕES TÉCNICAS E HUD ---
 	if Global.is_two_player_active:
@@ -474,8 +583,8 @@ func _physics_process(delta):
 		if (r2_acelerar > 0.1) or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			# ACELERAÇÃO PARA FRENTE (Até 20)
 			var target_vel = forward_dir * 20.0
-			velocity.x = move_toward(velocity.x, target_vel.x, 12.0 * delta)
-			velocity.z = move_toward(velocity.z, target_vel.z, 12.0 * delta)
+			velocity.x = move_toward(velocity.x, target_vel.x, 15.0 * delta)
+			velocity.z = move_toward(velocity.z, target_vel.z, 15.0 * delta)
 			if !moto_acelerando.is_playing():moto_acelerando.play()
 			Input.start_joy_vibration(device_id, 0.2, 0.1, 0.1)
 		elif (l2_re > 0.1) or Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):

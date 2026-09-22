@@ -9,12 +9,19 @@ const BATTLE_SONG = preload("res://assets/novos_audios/battle.mp3")
 const PAIN_SOUND = preload("res://assets/novos_audios/DS_pain.mp3")
 const MARKER_TEXTURE = preload("res://assets/novas_imagens/objects/interrogacao.png")
 const MAX_HP := 12
+const MINIMAP_SIZE := 220.0
+const MINIMAP_WORLD_SIZE := 360.0
 
 var player:CharacterBody3D
 var members:Array[Dictionary] = []
 var hud:CanvasLayer
 var battle_music:AudioStreamPlayer
 var speed_lines:Array[Line2D] = []
+var close_blurs:Array[Line2D] = []
+var minimap_root:Control
+var minimap_viewport:SubViewport
+var minimap_camera:Camera3D
+var minimap_markers:Array[Label] = []
 var chase_clock:float = 0.0
 var finished:bool = false
 var combat_enabled:bool = false
@@ -30,6 +37,7 @@ func start_chase(chase_player:CharacterBody3D) -> void:
 		["tony_moto", "tony_moto_looking", "tony_moto_shoot"]
 	]
 	build_hud()
+	build_minimap(names)
 	for index in names.size():
 		var member_textures:Array[Texture2D] = []
 		for texture_name in textures[index]:
@@ -37,6 +45,7 @@ func start_chase(chase_player:CharacterBody3D) -> void:
 		var sprite := Sprite3D.new()
 		sprite.name = names[index] + "Moto"
 		sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		sprite.layers = 2
 		sprite.pixel_size = 0.006
 		sprite.no_depth_test = false
 		sprite.texture = member_textures[0]
@@ -87,7 +96,9 @@ func start_chase(chase_player:CharacterBody3D) -> void:
 			"shot_delay":0.0, "lost_timer":0.0, "phase":randf() * TAU,
 			"bar":hud.get_node("Margin/HBox/Enemy%d/HP" % index),
 			"hp_text":hud.get_node("Margin/HBox/Enemy%d/HPText" % index),
-			"cross":hud.get_node("Margin/HBox/Enemy%d/Cross" % index)})
+			"cross":hud.get_node("Margin/HBox/Enemy%d/Cross" % index),
+			"minimap_label":minimap_markers[index]})
+	update_minimap()
 	battle_music = AudioStreamPlayer.new()
 	battle_music.stream = BATTLE_SONG.duplicate()
 	(battle_music.stream as AudioStreamMP3).loop = true
@@ -117,14 +128,15 @@ func build_hud() -> void:
 	add_child(hud)
 	var margin := MarginContainer.new()
 	margin.name = "Margin"
-	margin.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	margin.add_theme_constant_override("margin_left", 18)
-	margin.add_theme_constant_override("margin_right", 18)
-	margin.add_theme_constant_override("margin_top", 82)
+	margin.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	margin.offset_left = -280.0
+	margin.offset_right = 280.0
+	margin.offset_top = 92.0
+	margin.offset_bottom = 92.0
 	hud.add_child(margin)
 	var row := HBoxContainer.new()
 	row.name = "HBox"
-	row.add_theme_constant_override("separation", 12)
+	row.add_theme_constant_override("separation", 8)
 	margin.add_child(row)
 	for index in 4:
 		var box := VBoxContainer.new()
@@ -134,6 +146,7 @@ func build_hud() -> void:
 		var name_label := Label.new()
 		name_label.text = ["LIPS", "IAGO", "LUQS", "TONY"][index]
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_label.add_theme_font_size_override("font_size", 13)
 		name_label.add_theme_color_override("font_color", Color("ffe6a7"))
 		box.add_child(name_label)
 		var hp := ProgressBar.new()
@@ -141,19 +154,35 @@ func build_hud() -> void:
 		hp.max_value = MAX_HP
 		hp.value = MAX_HP
 		hp.show_percentage = false
-		hp.custom_minimum_size.y = 15.0
+		hp.custom_minimum_size.y = 8.0
+		var fill := StyleBoxFlat.new()
+		fill.bg_color = Color("c51d2b")
+		fill.corner_radius_top_left = 3
+		fill.corner_radius_top_right = 3
+		fill.corner_radius_bottom_left = 3
+		fill.corner_radius_bottom_right = 3
+		hp.add_theme_stylebox_override("fill", fill)
+		var background := StyleBoxFlat.new()
+		background.bg_color = Color("3b1018")
+		background.corner_radius_top_left = 3
+		background.corner_radius_top_right = 3
+		background.corner_radius_bottom_left = 3
+		background.corner_radius_bottom_right = 3
+		hp.add_theme_stylebox_override("background", background)
 		box.add_child(hp)
 		var hp_text := Label.new()
 		hp_text.name = "HPText"
 		hp_text.text = "%d/%d" % [MAX_HP, MAX_HP]
 		hp_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		hp_text.add_theme_font_size_override("font_size", 11)
+		hp_text.add_theme_color_override("font_color", Color("efb4b5"))
 		box.add_child(hp_text)
 		var cross := Label.new()
 		cross.name = "Cross"
 		cross.text = "✕"
 		cross.visible = false
 		cross.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		cross.add_theme_font_size_override("font_size", 28)
+		cross.add_theme_font_size_override("font_size", 20)
 		cross.add_theme_color_override("font_color", Color.RED)
 		box.add_child(cross)
 	for index in 14:
@@ -165,8 +194,113 @@ func build_hud() -> void:
 		line.add_point(Vector2.ZERO)
 		hud.add_child(line)
 		speed_lines.append(line)
+	for index in 8:
+		var blur := Line2D.new()
+		blur.width = 12.0 + index % 3 * 9.0
+		blur.default_color = Color(0.7, 0.78, 0.9, 0.2) if index % 2 == 0 else Color(0.04, 0.07, 0.12, 0.28)
+		blur.visible = false
+		blur.add_point(Vector2.ZERO)
+		blur.add_point(Vector2.ZERO)
+		hud.add_child(blur)
+		close_blurs.append(blur)
+
+func build_minimap(names:Array) -> void:
+	minimap_root = Control.new()
+	minimap_root.name = "ChaseMinimap"
+	minimap_root.position = Vector2(16.0, 16.0)
+	minimap_root.custom_minimum_size = Vector2.ONE * MINIMAP_SIZE
+	minimap_root.size = Vector2.ONE * MINIMAP_SIZE
+	minimap_root.clip_contents = true
+	minimap_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud.add_child(minimap_root)
+	var background := ColorRect.new()
+	background.color = Color(0.025, 0.035, 0.055)
+	background.size = Vector2.ONE * MINIMAP_SIZE
+	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	minimap_root.add_child(background)
+	var container := SubViewportContainer.new()
+	container.position = Vector2(3.0, 3.0)
+	container.size = Vector2.ONE * (MINIMAP_SIZE - 6.0)
+	container.stretch = true
+	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	minimap_root.add_child(container)
+	minimap_viewport = SubViewport.new()
+	minimap_viewport.size = Vector2i(214, 214)
+	minimap_viewport.world_3d = get_world_3d()
+	minimap_viewport.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
+	container.add_child(minimap_viewport)
+	minimap_camera = Camera3D.new()
+	minimap_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	minimap_camera.cull_mask = 1
+	minimap_camera.size = MINIMAP_WORLD_SIZE
+	minimap_camera.near = 0.5
+	minimap_camera.far = 260.0
+	minimap_viewport.add_child(minimap_camera)
+	minimap_camera.make_current()
+	var tint := ColorRect.new()
+	tint.color = Color(0.04, 0.08, 0.12, 0.18)
+	tint.size = Vector2.ONE * MINIMAP_SIZE
+	tint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	minimap_root.add_child(tint)
+	var frame := Panel.new()
+	frame.size = Vector2.ONE * MINIMAP_SIZE
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var border := StyleBoxFlat.new()
+	border.bg_color = Color.TRANSPARENT
+	border.border_color = Color("e3b065")
+	border.border_width_left = 2
+	border.border_width_top = 2
+	border.border_width_right = 2
+	border.border_width_bottom = 2
+	frame.add_theme_stylebox_override("panel", border)
+	minimap_root.add_child(frame)
+	for name in names:
+		var label := Label.new()
+		label.text = String(name).to_upper()
+		label.size = Vector2(48.0, 18.0)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		label.add_theme_font_size_override("font_size", 10)
+		label.add_theme_color_override("font_color", Color("ff5750"))
+		label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.02))
+		label.add_theme_constant_override("outline_size", 4)
+		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		minimap_root.add_child(label)
+		minimap_markers.append(label)
+	var player_marker := Polygon2D.new()
+	player_marker.polygon = PackedVector2Array([Vector2(0.0, -10.0), Vector2(-7.0, 8.0), Vector2(7.0, 8.0)])
+	player_marker.color = Color("54e6ff")
+	player_marker.position = Vector2.ONE * MINIMAP_SIZE * 0.5
+	minimap_root.add_child(player_marker)
+	update_minimap()
+
+func update_minimap() -> void:
+	if !is_instance_valid(player) or !is_instance_valid(minimap_camera):
+		return
+	minimap_camera.global_position = player.global_position + Vector3(0.0, 105.0, 0.0)
+	minimap_camera.global_basis = Basis(Vector3.UP, player.rotation.y) * Basis(Vector3.RIGHT, -PI * 0.5)
+	var center := Vector2.ONE * MINIMAP_SIZE * 0.5
+	var pixels_per_meter := (MINIMAP_SIZE - 6.0) / MINIMAP_WORLD_SIZE
+	var edge := MINIMAP_SIZE * 0.5 - 28.0
+	for index in members.size():
+		var member := members[index]
+		var label := minimap_markers[index]
+		label.visible = !member["escaped"]
+		if member["escaped"]:
+			continue
+		var sprite:Sprite3D = member["sprite"]
+		var relative:Vector3 = player.global_basis.inverse() * (sprite.global_position - player.global_position)
+		var offset := Vector2(relative.x, relative.z) * pixels_per_meter
+		var reach := maxf(absf(offset.x), absf(offset.y))
+		var outside := reach > edge
+		if outside:
+			offset *= edge / reach
+		label.position = center + offset - label.size * 0.5
+		label.add_theme_color_override("font_color", Color("ffb65f") if outside else Color("ff5750"))
 
 func set_map_visible(open:bool) -> void:
+	if is_instance_valid(minimap_root):
+		minimap_root.visible = !open and !finished
 	for member in members:
 		var marker:Sprite3D = member["marker"]
 		marker.visible = open and !member["escaped"]
@@ -176,6 +310,7 @@ func _physics_process(delta:float) -> void:
 		return
 	chase_clock += delta
 	var any_active := false
+	var close_encounter := false
 	for member in members:
 		if member["escaped"]:
 			continue
@@ -198,6 +333,7 @@ func _physics_process(delta:float) -> void:
 				member["lost_timer"] = 0.0
 		if member["active"]:
 			any_active = true
+			close_encounter = close_encounter or (distance < 33.0 and sight > 0.4)
 			move_chasing(member, delta, distance)
 			process_enemy_shot(member, delta, distance)
 		else:
@@ -206,7 +342,8 @@ func _physics_process(delta:float) -> void:
 		sprite.position.y += sin(chase_clock * 18.0 + member["phase"]) * 0.002
 		marker.global_position = sprite.global_position + Vector3(0.0, 67.0, 0.0)
 		(member["engine"] as AudioStreamPlayer3D).pitch_scale = 0.86 + (0.17 if member["active"] else 0.0) + sin(chase_clock * 3.0 + member["phase"]) * 0.025
-	update_speed_lines(any_active)
+	update_minimap()
+	update_speed_lines(any_active, close_encounter)
 
 func move_wandering(member:Dictionary, delta:float) -> void:
 	var sprite:Sprite3D = member["sprite"]
@@ -238,7 +375,8 @@ func move_chasing(member:Dictionary, delta:float, distance:float) -> void:
 		heading -= forward * 10.0
 	if heading.length() > 0.1:
 		member["heading"] = (member["heading"] as Vector3).lerp(heading.normalized(), minf(1.0, delta * 1.5)).normalized()
-	move_member(member, delta, clampf(distance * 0.3, 7.0, 16.0))
+	var player_speed := Vector2(player.velocity.x, player.velocity.z).length()
+	move_member(member, delta, maxf(10.0, player_speed + 2.0))
 
 func move_member(member:Dictionary, delta:float, speed:float) -> void:
 	var sprite:Sprite3D = member["sprite"]
@@ -320,6 +458,7 @@ func on_player_fire() -> void:
 func eliminate_member(member:Dictionary) -> void:
 	member["escaped"] = true
 	member["active"] = false
+	(member["minimap_label"] as Label).visible = false
 	(member["cross"] as Label).visible = true
 	(member["marker"] as Sprite3D).visible = false
 	(member["engine"] as AudioStreamPlayer3D).pitch_scale = 1.5
@@ -333,11 +472,12 @@ func eliminate_member(member:Dictionary) -> void:
 		if !other["escaped"]:
 			return
 	finished = true
+	minimap_root.visible = false
 	player.set_motorcycle_chase(false)
 	battle_music.stop()
 	all_escaped.emit()
 
-func update_speed_lines(active:bool) -> void:
+func update_speed_lines(active:bool, close:bool) -> void:
 	var size := get_viewport().get_visible_rect().size
 	for index in speed_lines.size():
 		var line := speed_lines[index]
@@ -347,3 +487,12 @@ func update_speed_lines(active:bool) -> void:
 			var x := size.x * (0.04 + 0.92 * float(index) / speed_lines.size())
 			line.set_point_position(0, Vector2(x, phase - 115.0))
 			line.set_point_position(1, Vector2(x + (x - size.x * 0.5) * 0.05, phase))
+	for index in close_blurs.size():
+		var blur := close_blurs[index]
+		blur.visible = close
+		if close:
+			var phase := fposmod(chase_clock * (540.0 + index * 27.0) + index * 170.0, size.y + 250.0) - 125.0
+			var side := -1.0 if index % 2 == 0 else 1.0
+			var x := size.x * (0.1 if side < 0.0 else 0.9)
+			blur.set_point_position(0, Vector2(x + side * 95.0, phase - 95.0))
+			blur.set_point_position(1, Vector2(x - side * 90.0, phase + 120.0))
