@@ -676,11 +676,35 @@ func build_dog_sprite_frames(variant_path:String) -> SpriteFrames:
 
 func spawn_minions() -> void:
 	var minion_count = randi_range(3, 5) if enemy_id == "1001" else randi_range(2, 4)
-	var available_variants = MINION_VARIANTS.duplicate()
-	available_variants.shuffle()
+	# Separar em pools de cavaleiros e bandidos para garantir mesclagem balanceada
+	var knights:Array = []
+	var bandits:Array = []
+	for v in MINION_VARIANTS:
+		if v.get("kind", "") == "bandit":
+			bandits.append(v)
+		else:
+			knights.append(v)
+	knights.shuffle()
+	bandits.shuffle()
+
+	# Intercalar entre as duas facções garantindo que SEMPRE haja mistura de inimigos
+	var selected_variants:Array = []
+	var start_with_bandit = (randf() < 0.5)
+	var k_idx = 0
+	var b_idx = 0
+	for i in minion_count:
+		var use_bandit = (i % 2 == 0) if start_with_bandit else (i % 2 != 0)
+		if use_bandit:
+			selected_variants.append(bandits[b_idx % bandits.size()])
+			b_idx += 1
+		else:
+			selected_variants.append(knights[k_idx % knights.size()])
+			k_idx += 1
+	selected_variants.shuffle()
+
 	var ranged_index = randi() % minion_count
 	for minion_index in minion_count:
-		var variant = available_variants[minion_index % available_variants.size()]
+		var variant = selected_variants[minion_index]
 		var is_ranged_minion = (minion_index == ranged_index)
 		var default_offset_y = 4.0 if variant.get("kind", "") == "bandit" else -14.0
 		var base_offset_y = variant.get("offset_y", default_offset_y)
@@ -732,6 +756,8 @@ func spawn_minions() -> void:
 			"jump_start_pos":Vector2.ZERO,
 			"jump_target_x":0.0,
 			"jump_target_y":0.0,
+			"jump_total_time":0.0,
+			"jump_slashed":false,
 			"hit_streak":0,
 			"hit_streak_timer":0.0,
 			"pending_retreat":false,
@@ -1490,19 +1516,23 @@ func update_sword_waves(delta:float) -> void:
 
 func start_bandit_jump_attack(minion:Dictionary) -> void:
 	minion.behavior = "jump_attack"
-	minion.behavior_time = 0.46
+	var is_heavy = (minion.get("bandit_type", "") == "heavy")
+	var jump_duration = 0.92 if is_heavy else 0.82
+	minion.jump_total_time = jump_duration
+	minion.behavior_time = jump_duration
+	minion.jump_slashed = false
 	minion.jump_start_pos = minion.position
 	var leap_dir = signf(player_position.x - minion.position.x)
 	if leap_dir == 0.0:
 		leap_dir = minion.facing
 	minion.facing = leap_dir
 	minion.sprite.flip_h = minion.facing < 0.0
-	var landing_gap = minion.facing * randf_range(52.0, 75.0)
+	var landing_gap = minion.facing * randf_range(48.0, 72.0)
 	var target_x = clampf(player_position.x - landing_gap, 160.0, ARENA_WIDTH - 110.0)
 	var target_y = clampf(player_position.y + randf_range(-18.0, 18.0), MIN_Y + 5.0, MAX_Y - 5.0)
 	minion.jump_target_x = target_x
 	minion.jump_target_y = target_y
-	minion.cooldown = randf_range(2.4, 3.8)
+	minion.cooldown = randf_range(2.6, 4.2)
 	minion.hit_pending = false
 	if minion.sprite.sprite_frames.has_animation("jump"):
 		minion.sprite.play("jump")
@@ -1510,23 +1540,53 @@ func start_bandit_jump_attack(minion:Dictionary) -> void:
 
 func update_bandit_jump_attack(minion:Dictionary, delta:float) -> void:
 	minion.behavior_time -= delta
-	var total_jump_time = 0.46
+	var total_jump_time = minion.get("jump_total_time", 0.85)
 	var progress = clampf(1.0 - (minion.behavior_time / total_jump_time), 0.0, 1.0)
 	var target_pos = Vector2(minion.jump_target_x, minion.jump_target_y)
 	minion.position = minion.jump_start_pos.lerp(target_pos, progress)
 
-	var jump_height = 56.0 if minion.get("bandit_type", "") == "heavy" else 66.0
+	var is_heavy = (minion.get("bandit_type", "") == "heavy")
+	var jump_height = 78.0 if is_heavy else 94.0
 	var arc = sin(progress * PI) * jump_height
 	var base_off_y = minion.get("base_offset_y", 4.0)
 	minion.sprite.offset.y = base_off_y - arc
 
+	if randf() < 0.28:
+		droplets.append({
+			"position": minion.position + Vector2(randf_range(-10, 10), -arc + randf_range(-5, 5)),
+			"velocity": Vector2(-minion.facing * randf_range(25.0, 65.0), randf_range(-12.0, 12.0)),
+			"target_y": minion.position.y + randf_range(10.0, 28.0),
+			"radius": randf_range(1.5, 3.2)
+		})
+
+	# Ao se aproximar do chão na descida: desfere a espadada no ar!
+	if progress >= 0.68 && !minion.get("jump_slashed", false):
+		minion.jump_slashed = true
+		minion.hit_pending = true
+		var attack_anim = "attack"
+		if minion.sprite.sprite_frames.has_animation(attack_anim):
+			minion.sprite.play(attack_anim)
+		spawn_impact(minion.position + Vector2(minion.facing * 38.0, -arc - 8.0), Color("ff8c42"), minion.facing)
+
+	# Conexão do golpe de espada durante a descida ao alcançar o jogador
+	if minion.get("hit_pending", false):
+		var dist_to_player = player_position - minion.position
+		if absf(dist_to_player.x) <= 125.0 && absf(dist_to_player.y) <= 55.0 && arc <= 36.0:
+			minion.hit_pending = false
+			resolve_single_minion_hit(minion)
+			shake(4.0, 0.18)
+
+	# Aterrissagem no chão
 	if minion.behavior_time <= 0.0:
 		minion.sprite.offset.y = base_off_y
 		minion.position = target_pos
 		minion.behavior = "approach"
-		spawn_impact(minion.position + Vector2(minion.facing * 20.0, 6.0), Color("ffd166"), minion.facing)
-		shake(3.2, 0.15)
-		start_minion_attack(minion)
+		if minion.get("hit_pending", false):
+			minion.hit_pending = false
+			resolve_single_minion_hit(minion)
+		spawn_impact(minion.position + Vector2(minion.facing * 22.0, 6.0), Color("ffd166"), minion.facing)
+		shake(4.5, 0.2)
+		minion.attack_time = 0.30
 
 func start_minion_attack(minion:Dictionary) -> void:
 	minion.sprite.flip_h = player_position.x < minion.position.x
