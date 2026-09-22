@@ -11,7 +11,7 @@ res://scenes/battle_3d_2.tscn::0ae6ab72c2481c395bcc501c39a6a279::1767636737::res
 res://scenes/default_transition_fade_in.tscn::1e2cc3b9e3773afef060f56b79881b7f::1767636737::res://.godot/exported/133200997/export-582dfca663db44d5385c5127622f10bf-default_transition_fade_in.scn
 res://scenes/default_transition_fade_out.tscn::a5d85d26e2d022cabe8e92deaffec250::1767636737::res://.godot/exported/133200997/export-bcca1eee2255e3085867988dc651b9f1-default_transition_fade_out.scn
 res://scenes/demo_controls.tscn::1df77c8b520b8b4cb06b28f1e19ef99f::1769794754::res://.godot/exported/133200997/export-6e554b0ef8a343cf98aec480fda68513-demo_controls.scn
-res://scenes/fase_1_before_castle_1.tscn::0d7c4ff1af33dca67a74d66c2731858a::1770925133::res://.godot/exported/133200997/export-a97dd30ac264c0cde9dc45d02084db1d-fase_1_before_castle_1.scn
+res://scenes/fase_1_before_castle_1.tscn::706822a47b7a634ccf6278029e9780d8::1789959913::res://.godot/exported/133200997/export-a97dd30ac264c0cde9dc45d02084db1d-fase_1_before_castle_1.scn
 res://scenes/hp.tscn::cea2748778095890d63c1134e5bedbba::1767636737::res://.godot/exported/133200997/export-dd4672c1f3176dd6e99003b5c472dff2-hp.scn
 res://scenes/language.tscn::f81eeb8668a2e3484981ac81d3752801::1767636737::res://.godot/exported/133200997/export-f45afe5ad3f1b91df43b0463d042cec5-language.scn
 res://scenes/maycon_batalha_default.tscn::1fe51cb59ec1447b8de98c0427caa7c4::1769708898::res://.godot/exported/133200997/export-676c308b57c7b42b9ad067c3fdec16ab-maycon_batalha_default.scn
@@ -26,7 +26,7 @@ res://scenes/fase_1_castle_1.tscn::eec2fea45e8ee8a716430cb935ccbcb5::1770925133:
 res://scenes/fase_1_castle_2.tscn::f3b741a12e64be30afb876752c47eeb4::1770925133::res://.godot/exported/133200997/export-2070f565f96cfa89119283545773bcfe-fase_1_castle_2.scn
 res://scenes/fase_1_castle_3.tscn::8d1fae0429fa8517cfca774358119b16::1770986680::res://.godot/exported/133200997/export-bddc68913584e5c4c915262f10300e6f-fase_1_castle_3.scn
 res://scenes/fase_1_castle_no_fire_1.tscn::a7bf97687cc518b417203dee935fb47c::1770925133::res://.godot/exported/133200997/export-eedef7cf678d8de0491a98f5b5780f69-fase_1_castle_no_fire_1.scn
-res://scenes/fase_1_castle_no_fire_2.tscn::10c699e746d85d081a726231219ca387::1770925133::res://.godot/exported/133200997/export-3c3d05877c4ec37330306e2cbf80fb0f-fase_1_castle_no_fire_2.scn
+res://scenes/fase_1_castle_no_fire_2.tscn::75d09538522ca5184ced016cf8ff4fe8::1790035097::res://.godot/exported/133200997/export-3c3d05877c4ec37330306e2cbf80fb0f-fase_1_castle_no_fire_2.scn
 res://scenes/fase_1_outside_castle_again_no_fire_1.tscn::82b82d8285bbb4a71aa4699fba0928a7::1770925133::res://.godot/exported/133200997/export-a3356e83dceedc6e829193948cb5a5ed-fase_1_outside_castle_again_no_fire_1.scn
 res://scenes/fase_1_outside_castle_again_no_fire_2.tscn::893c4c7aa7aba5fbd804ff624f35451a::1770925133::res://.godot/exported/133200997/export-f9ee804e357dbf4c135524117a0d99ba-fase_1_outside_castle_again_no_fire_2.scn
 res://scenes/fase_1_outside_castle_again_no_fire_3.tscn::5e3f45f1e4874ea842a37692573a2f51::1770925133::res://.godot/exported/133200997/export-dff55fe45b2be0f5a440454f8287699b-fase_1_outside_castle_again_no_fire_3.scn
@@ -128,3 +128,5 @@ res://scenes/two_layers_fps_mode.tscn::c0c475d43aba17ce43e5c6d7685bfb94::1770925
 res://scenes/3D/last_fight_before_end.tscn::6461d55f9801258c207a2884897c683a::1771523663::res://.godot/exported/133200997/export-cb794d516c9838b7cc3af477b130788d-last_fight_before_end.scn
 res://scenes/3D/pause_3d_moto_cidade.tscn::a12335078b7e41f6dd3549329d31ec8e::1770925139::res://.godot/exported/133200997/export-6f80c7ecac2befb8a871025b8bc3745c-pause_3d_moto_cidade.scn
 res://scenes/balao_conversa.tscn::216330b291f5f2934e17a91348f94074::1770925139::res://.godot/exported/133200997/export-547ee34ca1e5e2a6d8d63f8ab5eb2217-balao_conversa.scn
+res://scenes/battle_mode_selection.tscn::5c0957ff0ad353a6a8d71ddb3d747944::1789959270::res://.godot/exported/133200997/export-3eaab2c20bdd7fe9ea7d668a468567ef-battle_mode_selection.scn
+res://scenes/realtime_battle.tscn::a23b08f3aeed7ba460b5909f0c971d80::1790011603::res://.godot/exported/133200997/export-1680169fc454e54432364c90ead9855e-realtime_battle.scn
