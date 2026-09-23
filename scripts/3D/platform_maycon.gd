@@ -26,11 +26,14 @@ var jump_buffer:float = 0.0
 var hurt_time:float = 0.0
 var control_enabled:bool = true
 var dying:bool = false
+var death_hazard:String = ""
+var death_hazard_node:Node3D = null
 var camera_shake:float = 0.0
 var jump_windup:float = 0.0
 var preparing_jump:bool = false
 var takeoff_stretch:float = 0.0
 var latched_count:int = 0
+var current_camera_distance:float = 11.0
 
 func _ready() -> void:
 	visual = MODEL.instantiate()
@@ -126,7 +129,7 @@ func _physics_process(delta:float) -> void:
 	var right := Vector3(cos(camera_yaw), 0.0, -sin(camera_yaw))
 	var direction := (right * input.x - forward * input.y).normalized()
 	var is_running := Input.is_action_pressed("run")
-	var speed := 7.8 if is_running else 3.2
+	var speed := 7.8 if is_running else 4.8
 	if latched_count > 0:
 		speed *= 0.52
 	var acceleration:float
@@ -160,7 +163,8 @@ func _physics_process(delta:float) -> void:
 	if animation_player and preparing_jump:
 		animation_player.speed_scale = 0.0
 	elif animation_player:
-		animation_player.speed_scale = 1.0
+		var is_walking := is_on_floor() and direction.length_squared() > 0.01 and speed <= 6.0
+		animation_player.speed_scale = 1.6 if is_walking else 1.0
 
 func _update_footsteps(delta:float, direction:Vector3, speed:float) -> void:
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
@@ -171,9 +175,9 @@ func _update_footsteps(delta:float, direction:Vector3, speed:float) -> void:
 		return
 	step_timer -= delta
 	if step_timer <= 0.0:
-		step_audio.pitch_scale = randf_range(0.98, 1.05) if speed > 6.0 else randf_range(0.84, 0.92)
+		step_audio.pitch_scale = randf_range(1.02, 1.12) if speed > 6.0 else randf_range(0.94, 1.04)
 		step_audio.play()
-		step_timer = 0.49 if speed > 6.0 else 0.84
+		step_timer = 0.38 if speed > 6.0 else 0.46
 
 func _step_over_small_lip(delta:float) -> void:
 	if not is_on_floor():
@@ -245,14 +249,49 @@ func _process(delta:float) -> void:
 			var auto_speed := 2.4 if horiz_vel.length() > 6.0 else 1.6
 			camera_yaw = lerp_angle(camera_yaw, target_yaw, auto_speed * alignment_factor * delta)
 
-	var focus := global_position + Vector3(0.0, 1.35, 0.0)
-	var offset := Vector3(sin(camera_yaw) * 11.0, 3.1 - camera_pitch * 5.0, cos(camera_yaw) * 11.0)
+	# Proximity zoom when near jumping enemies (Mini Seco) or hazard death (Navalha / Mão)
+	var target_cam_distance := 11.0
+	var focus_y := 1.35
+	var focus: Vector3
+	if dying and (death_hazard == "blade" or death_hazard == "hand"):
+		target_cam_distance = 4.2
+		if is_instance_valid(death_hazard_node):
+			if death_hazard == "blade":
+				focus = death_hazard_node.global_position + Vector3(0.0, 1.05, 0.0)
+			else:
+				focus = death_hazard_node.global_position + Vector3(0.0, 0.55, -0.35)
+		else:
+			focus = global_position + Vector3(0.0, 0.6, 0.0)
+	elif latched_count > 0:
+		target_cam_distance = 5.2
+		focus_y = 1.48
+		focus = global_position + Vector3(0.0, focus_y, 0.0)
+	else:
+		var parent_node := get_parent()
+		if parent_node and parent_node.has_node("Inimigos"):
+			var nearest_dist := 999.0
+			for enemy in parent_node.get_node("Inimigos").get_children():
+				if is_instance_valid(enemy) and enemy.get("active") == true and enemy.get("MIN_LATCH_TIME") != null:
+					var d:float = global_position.distance_to(enemy.global_position)
+					if d < nearest_dist:
+						nearest_dist = d
+			if nearest_dist < 9.5:
+				var factor := clampf((nearest_dist - 2.5) / 7.0, 0.0, 1.0)
+				target_cam_distance = lerpf(5.8, 11.0, factor)
+				focus_y = lerpf(1.15, 1.35, factor)
+		focus = global_position + Vector3(0.0, focus_y, 0.0)
+
+	var zoom_lerp := 8.0 if (dying and (death_hazard == "blade" or death_hazard == "hand")) else 4.5
+	current_camera_distance = lerpf(current_camera_distance, target_cam_distance, minf(delta * zoom_lerp, 1.0))
+	var dist_ratio := current_camera_distance / 11.0
+	var offset := Vector3(sin(camera_yaw) * current_camera_distance, (3.1 - camera_pitch * 5.0) * dist_ratio, cos(camera_yaw) * current_camera_distance)
 	var desired := focus + offset
 	var query := PhysicsRayQueryParameters3D.create(focus, desired, 1)
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
 	if not hit.is_empty():
 		desired = focus + (hit.position - focus).normalized() * maxf(focus.distance_to(hit.position) - 0.4, 1.2)
-	camera.global_position = camera.global_position.lerp(desired, minf(delta * 6.0, 1.0))
+	var cam_lerp_speed := 9.0 if (dying and (death_hazard == "blade" or death_hazard == "hand")) else 6.0
+	camera.global_position = camera.global_position.lerp(desired, minf(delta * cam_lerp_speed, 1.0))
 	camera.look_at(focus, Vector3.UP)
 	camera_shake = maxf(camera_shake - delta * 1.8, 0.0)
 	camera.h_offset = randf_range(-camera_shake, camera_shake)
@@ -282,6 +321,9 @@ func set_latched(active_val:bool) -> void:
 		latched_count += 1
 	else:
 		latched_count = maxi(latched_count - 1, 0)
+
+func is_immune_to_latch() -> bool:
+	return is_invincible or (jumps == 2 and not is_on_floor())
 
 func receive_damage(amount:float, source:Vector3) -> void:
 	if is_invincible or hurt_time > 0.0 or dying or not is_on_floor():

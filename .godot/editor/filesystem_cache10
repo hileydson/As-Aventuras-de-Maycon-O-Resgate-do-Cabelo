@@ -530,7 +530,7 @@ tree.glb::PackedScene::7266976074415712992::1790177691::1790182591::1::::<><><>0
 ::res://assets/kenney/platformer_3d/Textures/::1790182584
 colormap.png::CompressedTexture2D::3123184169772400333::1790177923::1790182584::1::::<><><>0<>0<>28375368cf80f04dbeb3bb2231da807a<>res://.godot/imported/colormap.png-149f50090d53551f5673ef7aaa4b2c01.s3tc.ctex<*>res://.godot/imported/colormap.png-149f50090d53551f5673ef7aaa4b2c01.etc2.ctex::
 ::res://assets/modelo_3d/::1790192743
-::res://assets/modelo_3d/mario_3d_models/::1790194156
+::res://assets/modelo_3d/mario_3d_models/::1790196768
 mini_seco_blue.glb::PackedScene::6183607987415097326::1790192311::1790192844::1::::<><><>0<>0<>78a2149ef6ba822f073639d8484e216c<>res://.godot/imported/mini_seco_blue.glb-1e67479f7df1672bd580c5e9e033bbd5.scn::uid://cbaibfb4c27b::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_Image_0.jpg<>uid://diy0onk6bfm2t::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_Image_1.jpg<>uid://c0semf0kee7fl::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_normal.png
 mini_seco_blue_rigged.glb::PackedScene::4679054567631219624::1790194124::1790196766::1::::<><><>0<>0<>4a15f6d696c31853aecf2b34405ad9e6<>res://.godot/imported/mini_seco_blue_rigged.glb-529f53a2f20da8b7617cbd6cc9db5b9f.scn::uid://cbrb82jmgexhu::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_rigged_Image_0.jpg<>uid://ciftkm14a4g5m::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_rigged_Image_1.jpg<>uid://bcssrtb4lg2d7::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_rigged_normal.png
 mini_seco_blue_rigged_Image_0.jpg::CompressedTexture2D::4878245713621999518::1790194148::1790196768::1::::<><><>0<>0<>fd76db2163d580ccd65a758b24e758e5<>res://.godot/imported/mini_seco_blue_rigged_Image_0.jpg-36af5712a7641561974857b57a786fa7.s3tc.ctex<*>res://.godot/imported/mini_seco_blue_rigged_Image_0.jpg-36af5712a7641561974857b57a786fa7.etc2.ctex::
@@ -3555,7 +3555,7 @@ Objects.png::CompressedTexture2D::2603308936418570908::1767636737::1767636737::1
 Rotating_blades.png::CompressedTexture2D::6149366124704441297::1767636737::1767636737::1::::<><><>0<>0<>2fca820f122e19df28bb2db13d324fce<>res://.godot/imported/Rotating_blades.png-778390e24f5b94daf7df31c4f7d64871.ctex::
 scull.png::CompressedTexture2D::924674051756614918::1767636737::1767636737::1::::<><><>0<>0<>88eb904c1d7beb8167d968b4d6b1cae2<>res://.godot/imported/scull.png-4bd9b4129b919690a5980b9d4505cce9.ctex::
 web.png::CompressedTexture2D::1665521307035554969::1767636737::1767636737::1::::<><><>0<>0<>2c41fd68a1281a64f1d37785b533eed3<>res://.godot/imported/web.png-555c1399ada65fb9f4e6bf50c2102997.ctex::
-::res://assets/novos_audios/::1790193768
+::res://assets/novos_audios/::1790196765
 3d_first_battle_seco.mp3::AudioStreamMP3::9112742089382917435::1769799971::1769800042::1::::<><><>0<>0<>58169ca5379430dc1b6d26419f4d403f<>res://.godot/imported/3d_first_battle_seco.mp3-e99bf30f277278144a0a538012a2b91d.mp3str::
 balao_conversa.mp3::AudioStreamMP3::7050655661624707243::1770925133::1770925139::1::::<><><>0<>0<>a117f8ff1f77e4f280e68d2751a017bb<>res://.godot/imported/balao_conversa.mp3-67afbdd3f08c480ed2a2a7a0d42c9703.mp3str::
 barulho_gilhotina.mp3::AudioStreamMP3::8054641206314790354::1768242746::1768242795::1::::<><><>0<>0<>3bb2122a6b5ff28702a9719956e80f60<>res://.godot/imported/barulho_gilhotina.mp3-e1cb096fd5e9330e98b66e2f8bd0d47b.mp3str::
@@ -3867,7 +3867,7 @@ realtime_battle_specials.gd::GDScript::594959556313240947::1790095167::0::1::::<
 sangue_fill.gd::GDScript::6760165581029737568::1789961722::0::1::::<>Area2D<><>0<>0<><>::
 seco.gd::GDScript::1005395561379310119::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 two_layers_fps_mode.gd::GDScript::-1::1770925133::0::1::::<>Node3D<><>0<>0<><>::
-::res://scripts/3D/::1790194291
+::res://scripts/3D/::1790196764
 blood.gd::GDScript::4609897442003693346::1770040791::0::1::::<>GPUParticles3D<><>0<>0<><>::
 bounce_item.gd::GDScript::3979189295797057439::1769874542::0::1::::<>Node3D<><>0<>0<><>::
 bullets.gd::GDScript::809167085934815576::1770925133::0::1::::<>Area3D<><>0<>0<><>::
@@ -3880,7 +3880,7 @@ inimigo_3d_default.gd::GDScript::8339874909618318337::1790032513::0::1::::<>Char
 inimigo_bomba_pretti_3d.gd::GDScript::1560456019525848244::1769970166::0::1::::<>CharacterBody3D<><>0<>0<><>::
 lamp.gd::GDScript::7790728560667219145::1770063258::0::1::::<>Area3D<><>0<>0<><>::
 last_part_before_end.gd::GDScript::5006405053871241004::1790129985::0::1::::<>Node3D<><>0<>0<><>::
-maycon_platform_3d.gd::GDScript::1218032320144234282::1790194469::0::1::::<>Node3D<><>0<>0<><>::
+maycon_platform_3d.gd::GDScript::1218032320144234282::1790197308::0::1::::<>Node3D<><>0<>0<><>::
 object_3d.gd::GDScript::9078826269963351129::1769912058::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d.gd::GDScript::7171831727451377016::1790094648::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d_moto_cidade.gd::GDScript::6726714682699407671::1790129014::0::1::::<>Node3D<><>0<>0<><>::
@@ -3890,7 +3890,7 @@ platform_blood_overlay.gd::GDScript::1182374853542614286::1790184292::0::1::::<>
 platform_enemy.gd::GDScript::2915243231989042537::1790190896::0::1::::<>Area3D<><>0<>0<><>::
 platform_hand.gd::GDScript::2572360204659618281::1790190933::0::1::::<>Node3D<><>0<>0<><>::
 platform_invincible_overlay.gd::GDScript::1112360718554808273::1790191444::0::1::::<>CanvasLayer<><>0<>0<><>::
-platform_maycon.gd::GDScript::5880638116692557718::1790194382::0::1::::<>CharacterBody3D<><>0<>0<><>::
+platform_maycon.gd::GDScript::5880638116692557718::1790197294::0::1::::<>CharacterBody3D<><>0<>0<><>::
 platform_mini_seco.gd::GDScript::8925901066986625574::1790194446::0::1::::<>Area3D<><>0<>0<><>::
 platform_pause.gd::GDScript::189551020903616664::1790193744::0::1::::<>CanvasLayer<><>0<>0<><>::
 poco_infinito.gd::GDScript::6682402298837709200::1790132681::0::1::::<>Node3D<><>0<>0<><>::
@@ -3922,9 +3922,9 @@ terrain3d_00-01.res::Terrain3DRegion::5019486532651089028::1770136386::0::1::::<
 terrain3d_00-02.res::Terrain3DRegion::3854885546111145601::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00_00.res::Terrain3DRegion::4948174298051947078::1770136386::0::1::::<><><>0<>0<><>::
 ::res://tests/::1790091737
-::res://translations/::1790192162
-game_text.csv::Translation::1292654866392114924::1790194372::1790196764::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
-game_text.en.translation::OptimizedTranslation::1712006235640866847::1790196764::0::1::::<><><>0<>0<><>::
-game_text.es.translation::OptimizedTranslation::9151324834628544493::1790196764::0::1::::<><><>0<>0<><>::
-game_text.pt.translation::OptimizedTranslation::8740695643655975537::1790196764::0::1::::<><><>0<>0<><>::
-game_text.zh.translation::OptimizedTranslation::3741015231047276320::1790196764::0::1::::<><><>0<>0<><>::
+::res://translations/::1790196764
+game_text.csv::Translation::1292654866392114924::1790197251::1790197347::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
+game_text.en.translation::OptimizedTranslation::1712006235640866847::1790197347::0::1::::<><><>0<>0<><>::
+game_text.es.translation::OptimizedTranslation::9151324834628544493::1790197347::0::1::::<><><>0<>0<><>::
+game_text.pt.translation::OptimizedTranslation::8740695643655975537::1790197347::0::1::::<><><>0<>0<><>::
+game_text.zh.translation::OptimizedTranslation::3741015231047276320::1790197347::0::1::::<><><>0<>0<><>::

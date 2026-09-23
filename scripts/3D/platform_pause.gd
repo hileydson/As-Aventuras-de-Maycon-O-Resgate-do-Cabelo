@@ -29,7 +29,7 @@ func _ready() -> void:
 	pause_audio = AudioStreamPlayer.new()
 	pause_audio.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_audio.stream = PAUSE_SOUND
-	pause_audio.volume_db = 0.0
+	pause_audio.volume_db = -8.0
 	add_child(pause_audio)
 	_build_panel()
 	panel.visible = false

@@ -703,21 +703,53 @@ func spawn_enemy_trail(at:Vector3, archetype:int) -> void:
 
 func _spawn_blood(at:Vector3, leave_stain:bool) -> void:
 	var blood := BLOOD_SCENE.instantiate()
-	blood.position = at + Vector3.UP * 0.5
+	blood.position = at
 	effects.add_child(blood)
-	get_tree().create_timer(2.5).timeout.connect(blood.queue_free)
+	get_tree().create_timer(2.0).timeout.connect(blood.queue_free)
 	if not leave_stain:
 		return
-	for i in range(14):
+	var space := get_world_3d().direct_space_state
+	var ground_query := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 0.5, at - Vector3.UP * 12.0, 1)
+	var ground_hit := space.intersect_ray(ground_query)
+	if ground_hit.is_empty():
+		return
+	var ground_y:float = ground_hit.position.y
+	for i in range(12):
 		var angle := float(i) * 2.39996
-		var distance := 0.25 + float(i % 4) * 0.42
+		var distance := 0.2 + float(i % 4) * 0.35
 		var stain := MeshInstance3D.new()
 		var mesh := SphereMesh.new()
-		mesh.radius = 0.2 + float(i % 3) * 0.12
-		mesh.height = 0.025
+		mesh.radius = 0.18 + float(i % 3) * 0.1
+		mesh.height = 0.02
 		stain.mesh = mesh
 		stain.material_override = materials["blood"]
-		stain.position = Vector3(at.x + cos(angle) * distance, at.y + 0.02 + float(i) * 0.0005, at.z + sin(angle) * distance)
+		stain.position = Vector3(at.x + cos(angle) * distance, ground_y + 0.02 + float(i) * 0.0005, at.z + sin(angle) * distance)
+		effects.add_child(stain)
+		blood_stains.append(stain)
+		if blood_stains.size() > 260:
+			blood_stains.pop_front().queue_free()
+
+func spawn_latched_blood(at:Vector3) -> void:
+	var blood := BLOOD_SCENE.instantiate()
+	blood.position = at
+	effects.add_child(blood)
+	get_tree().create_timer(1.8).timeout.connect(blood.queue_free)
+	var space := get_world_3d().direct_space_state
+	var ground_query := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 0.5, at - Vector3.UP * 12.0, 1)
+	var ground_hit := space.intersect_ray(ground_query)
+	if ground_hit.is_empty():
+		return
+	var ground_y:float = ground_hit.position.y
+	for i in range(2):
+		var angle := randf() * TAU
+		var distance := randf_range(0.08, 0.55)
+		var stain := MeshInstance3D.new()
+		var mesh := SphereMesh.new()
+		mesh.radius = randf_range(0.12, 0.22)
+		mesh.height = 0.02
+		stain.mesh = mesh
+		stain.material_override = materials["blood"]
+		stain.position = Vector3(at.x + cos(angle) * distance, ground_y + 0.02 + float(randi() % 6) * 0.0008, at.z + sin(angle) * distance)
 		effects.add_child(stain)
 		blood_stains.append(stain)
 		if blood_stains.size() > 260:
@@ -789,6 +821,9 @@ func respawn(reset_health:bool) -> void:
 	maycon.visual.position.y = 0.0
 	maycon.hurt_time = 2.0
 	maycon.camera.global_position = Vector3(0.0, 7.0, 43.0)
+	maycon.current_camera_distance = 11.0
+	maycon.death_hazard = ""
+	maycon.death_hazard_node = null
 	if reset_health:
 		set_stage_hp(stage_hp_max)
 	else:
@@ -809,14 +844,17 @@ func start_player_death(kind:String, hazard:Node3D = null) -> void:
 	maycon.control_enabled = false
 	var old_collision_layer := maycon.collision_layer
 	var old_collision_mask := maycon.collision_mask
-	if kind == "blade" or kind == "hand":
+	var is_hazard_death := (kind == "blade" or kind == "hand")
+	if is_hazard_death:
 		maycon.dying = true
+		maycon.death_hazard = kind
+		maycon.death_hazard_node = hazard
 		maycon.velocity = Vector3.ZERO
 		maycon.collision_layer = 0
 		maycon.collision_mask = 0
 		set_stage_hp(0.0)
 		update_hud()
-		maycon.camera_shake = 0.3
+		maycon.camera_shake = 0.35
 		if kind == "blade":
 			var rotor:Node3D = hazard.get("rotor")
 			maycon.reparent(rotor, true)
@@ -831,21 +869,25 @@ func start_player_death(kind:String, hazard:Node3D = null) -> void:
 			maycon.visual.scale = Vector3(1.32, 0.48, 1.32)
 	scream_audio.volume_db = -2.0
 	scream_audio.play()
+	var fade_delay := 2.6 if is_hazard_death else 0.55
+	var fade_duration := 2.0 if is_hazard_death else 2.65
 	var fade := create_tween().bind_node(fade_rect)
-	fade.tween_interval(0.55)
-	fade.tween_property(fade_rect, "modulate:a", 1.0, 2.65).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	fade.tween_interval(fade_delay)
+	fade.tween_property(fade_rect, "modulate:a", 1.0, fade_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 	var scream_fade := create_tween().bind_node(scream_audio)
-	scream_fade.tween_interval(0.55)
-	scream_fade.tween_property(scream_audio, "volume_db", -48.0, 2.65)
-	if kind == "blade" or kind == "hand":
-		for i in range(16):
+	scream_fade.tween_interval(fade_delay)
+	scream_fade.tween_property(scream_audio, "volume_db", -48.0, fade_duration)
+	if is_hazard_death:
+		for i in range(24):
 			var at := maycon.global_position + Vector3(randf_range(-0.5, 0.5), randf_range(0.0, 0.7), randf_range(-0.5, 0.5))
 			if kind == "hand" and i % 2 == 0:
 				_spawn_blood(hazard.global_position + Vector3(randf_range(-0.8, 0.8), 0.18, randf_range(-0.8, 0.8)), true)
 			else:
 				_spawn_blood(at, false)
 			if kind == "hand" and i % 2 == 0:
-				maycon.camera_shake = 0.16
+				maycon.camera_shake = 0.20
+			elif kind == "blade":
+				maycon.camera_shake = 0.14
 			if i % 3 == 0:
 				blood_overlay.call("flash")
 			await get_tree().create_timer(0.2).timeout
@@ -862,6 +904,8 @@ func start_player_death(kind:String, hazard:Node3D = null) -> void:
 		hazard.call("reset_after_death")
 	respawn(kind != "fall")
 	maycon.dying = false
+	maycon.death_hazard = ""
+	maycon.death_hazard_node = null
 	maycon.call("_play_animation", "Walking")
 	scream_audio.stop()
 	var fade_in := create_tween().bind_node(fade_rect)
