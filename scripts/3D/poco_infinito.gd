@@ -1,11 +1,11 @@
 extends Node3D
 
-const DODGES_TO_ESCAPE:int = 20
+const SURVIVAL_TIME:float = 90.0
 const WELL_RADIUS:float = 8.4
 const PLAYER_LIMIT:float = 5.0
-const DASH_WINDOW_START:float = -8.0
-const DASH_WINDOW_END:float = -1.3
-const SHAFT_SPEED:float = 21.0
+const SHAFT_SPEED:float = 24.5
+const MAYCON_DEPTH:float = 7.0
+const DASH_SMOKE_TEXTURE:Texture2D = preload("res://assets/novas_imagens/effects/smoke_animation.png")
 const OBSTACLE_SCENES:Array[String] = [
 	"res://assets/polyhaven/endless_well/wooden_crate_01/wooden_crate_01_1k.gltf",
 	"res://assets/polyhaven/endless_well/barrel_03/barrel_03_1k.gltf",
@@ -21,6 +21,11 @@ const OBSTACLE_SCALE:Array[float] = [2.7, 2.5, 2.6, 2.7]
 
 var maycon:Node3D
 var maycon_animation:AnimationPlayer
+var maycon_skeleton:Skeleton3D
+var maycon_rim_light:OmniLight3D
+var body_trails:Array[Dictionary] = []
+var body_streaks:Array[Dictionary] = []
+var power_aura:MeshInstance3D
 var obstacles:Array[Dictionary] = []
 var shaft_sections:Array[Node3D] = []
 var speed_lines:Array[Dictionary] = []
@@ -32,14 +37,16 @@ var music:AudioStreamPlayer
 var wind:AudioStreamPlayer
 var dash_sound:AudioStreamPlayer
 var hit_sound:AudioStreamPlayer
-var evade_sound:AudioStreamPlayer
 var scream_sound:AudioStreamPlayer
 var explosion_sound:AudioStreamPlayer
 var health:float = 100.0
-var dodges:int = 0
+var pentagram_charge:float = 0.0
+var pentagram_invulnerability:float = 0.0
 var hit_combo:int = 0
 var last_hit_at:float = -100.0
 var elapsed:float = 0.0
+var speed_factor:float = 0.0
+var locally_paused:bool = false
 var spawn_timer:float = 1.2
 var next_kind:int = 0
 var next_obstacle_fast:bool = false
@@ -54,6 +61,7 @@ var hurt_invulnerability:float = 0.0
 var finishing:bool = false
 var ending_time:float = 0.0
 var ending_success:bool = false
+var ending_start_rotation:float = 0.0
 var ending_scream_started:bool = false
 var transition_sent:bool = false
 
@@ -66,16 +74,15 @@ func _ready() -> void:
 	create_shaft()
 	create_maycon()
 	create_speed_lines()
-	music = make_audio("res://assets/novos_audios/battle.mp3", -11.0, 1.5, true)
-	wind = make_audio("res://assets/novos_audios/cidade_intro_wind.mp3", -10.0, 1.35, true)
+	music = make_audio("res://assets/novos_audios/battle.mp3", -11.0, 1.58, true)
+	wind = make_audio("res://assets/novos_audios/cidade_intro_wind.mp3", -10.0, 1.45, true)
 	dash_sound = make_audio("res://assets/audio/peido.mp3", -3.0)
 	hit_sound = make_audio("res://assets/novos_audios/hurt_sound_3d.mp3", -4.0)
-	evade_sound = make_audio("res://assets/novos_audios/punch_1.mp3", -6.0)
 	scream_sound = make_audio("res://assets/novos_audios/maycon_falling_fase_1.mp3", -2.0)
 	explosion_sound = make_audio("res://assets/novos_audios/explosao.mp3", -5.0)
 	music.play()
 	wind.play()
-	hud.call("set_state", health, dodges, DODGES_TO_ESCAPE, 0.0, -1.0, 0.0)
+	hud.call("set_state", health, 0.0, 0.0, 0.0, 0.0)
 
 func make_audio(path:String, volume:float, pitch:float = 1.0, looped:bool = false) -> AudioStreamPlayer:
 	var player := AudioStreamPlayer.new()
@@ -156,22 +163,87 @@ func create_maycon() -> void:
 	var scene:PackedScene = load("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
 	maycon = scene.instantiate()
 	maycon.name = "MayconFalling"
-	maycon.scale = Vector3.ONE * 2.8
+	maycon.scale = Vector3.ONE * 3.25
 	maycon.rotation = Vector3(1.1, PI + 0.35, 0.1)
 	add_child(maycon)
 	maycon_animation = maycon.get_node_or_null("AnimationPlayer") as AnimationPlayer
 	if maycon_animation:
-		if maycon_animation.has_animation("BeHit_FlyUp"):
-			maycon_animation.play("BeHit_FlyUp")
-		elif maycon_animation.get_animation_list().size() > 0:
-			maycon_animation.play(maycon_animation.get_animation_list()[0])
+		maycon_animation.stop()
+	maycon_skeleton = maycon.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+	pose_falling_body(maycon_skeleton)
+	create_body_effects()
+
+func pose_falling_body(skeleton:Skeleton3D) -> void:
+	# Turn the shoulders together with the arms so the skin does not stretch from wrist to torso.
+	var left_shoulder:int = skeleton.find_bone("LeftShoulder")
+	var right_shoulder:int = skeleton.find_bone("RightShoulder")
+	if left_shoulder >= 0:
+		skeleton.set_bone_pose_rotation(left_shoulder, Quaternion(Vector3.FORWARD, -0.36))
+	if right_shoulder >= 0:
+		skeleton.set_bone_pose_rotation(right_shoulder, Quaternion(Vector3.FORWARD, 0.36))
+
+func create_body_effects() -> void:
+	maycon_rim_light = OmniLight3D.new()
+	maycon_rim_light.light_color = Color(0.2, 0.8, 1.0)
+	maycon_rim_light.light_energy = 1.2
+	maycon_rim_light.omni_range = 5.0
+	add_child(maycon_rim_light)
+	for i in 7:
+		var shadow := MeshInstance3D.new()
+		shadow.name = "FallingShadowTrail%d" % i
+		var ribbon := CylinderMesh.new()
+		ribbon.top_radius = 0.02
+		ribbon.bottom_radius = 0.24 + float(i % 3) * 0.08
+		ribbon.height = 2.0 + float(i % 3) * 0.65
+		ribbon.radial_segments = 6
+		shadow.mesh = ribbon
+		var material := StandardMaterial3D.new()
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		material.albedo_color = Color(0.02, 0.08, 0.16, 0.08 + float(i % 3) * 0.018)
+		material.cull_mode = BaseMaterial3D.CULL_DISABLED
+		shadow.material_override = material
+		add_child(shadow)
+		body_trails.append({"node":shadow, "side":(-1.0 if i % 2 else 1.0) * (0.35 + float(i % 4) * 0.28), "lag":float(i % 3) * 0.3})
+	power_aura = MeshInstance3D.new()
+	var aura_mesh := TorusMesh.new()
+	aura_mesh.inner_radius = 1.55
+	aura_mesh.outer_radius = 1.68
+	aura_mesh.rings = 8
+	aura_mesh.ring_segments = 48
+	power_aura.mesh = aura_mesh
+	power_aura.rotation.x = PI * 0.5
+	var aura_material := StandardMaterial3D.new()
+	aura_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	aura_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	aura_material.albedo_color = Color(0.19, 0.87, 1.0, 0.68)
+	aura_material.emission_enabled = true
+	aura_material.emission = Color(0.1, 0.68, 1.0)
+	aura_material.emission_energy_multiplier = 3.0
+	power_aura.material_override = aura_material
+	power_aura.visible = false
+	add_child(power_aura)
+	var streak_material := StandardMaterial3D.new()
+	streak_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	streak_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	streak_material.albedo_color = Color(0.53, 0.9, 1.0, 0.5)
+	streak_material.emission_enabled = true
+	streak_material.emission = Color(0.19, 0.68, 1.0)
+	for i in 16:
+		var streak := MeshInstance3D.new()
+		var mesh := BoxMesh.new()
+		mesh.size = Vector3(0.026, 0.026, randf_range(0.5, 1.8))
+		streak.mesh = mesh
+		streak.material_override = streak_material
+		add_child(streak)
+		body_streaks.append({"node":streak, "phase":randf(), "offset":Vector2(randf_range(-0.62, 0.62), randf_range(-0.85, 0.85))})
 
 func create_speed_lines() -> void:
 	var streak_material := StandardMaterial3D.new()
 	streak_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	streak_material.albedo_color = Color(0.24, 0.72, 1.0, 0.5)
 	streak_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	for i in 64:
+	for i in 80:
 		var streak := MeshInstance3D.new()
 		var mesh := BoxMesh.new()
 		mesh.size = Vector3(0.035, 0.035, randf_range(1.6, 4.8))
@@ -179,10 +251,15 @@ func create_speed_lines() -> void:
 		streak.material_override = streak_material
 		streak.position = Vector3(randf_range(-7.4, 7.4), randf_range(-7.4, 7.4), randf_range(-30.0, 7.0))
 		add_child(streak)
-		speed_lines.append({"node":streak, "speed":randf_range(42.0, 82.0)})
+		speed_lines.append({"node":streak, "speed":randf_range(50.0, 96.0)})
 
 func _process(delta:float) -> void:
+	if Input.is_action_just_pressed("ui_cancel") && !finishing:
+		toggle_pause()
+	if locally_paused:
+		return
 	elapsed += delta
+	speed_factor = clampf(elapsed / SURVIVAL_TIME, 0.0, 1.0)
 	animate_environment(delta)
 	update_dash_puffs(delta)
 	camera_shake = maxf(0.0, camera_shake - delta * 1.25)
@@ -191,13 +268,19 @@ func _process(delta:float) -> void:
 	if finishing:
 		dash_blur.visible = false
 		update_ending(delta)
-		hud.call("set_state", health, dodges, DODGES_TO_ESCAPE, dash_cooldown, -1.0, ending_time)
+		hud.call("set_state", health, 1.0, pentagram_charge, 0.0, ending_time, Vector2.ZERO, speed_factor, 0.0)
 		return
-	if maycon_animation && maycon_animation.has_animation("BeHit_FlyUp") && !maycon_animation.is_playing():
-		maycon_animation.play("BeHit_FlyUp")
+	if elapsed >= SURVIVAL_TIME:
+		start_ending(true)
+		return
 	dash_time = maxf(0.0, dash_time - delta)
 	dash_cooldown = maxf(0.0, dash_cooldown - delta)
 	hurt_invulnerability = maxf(0.0, hurt_invulnerability - delta)
+	pentagram_invulnerability = maxf(0.0, pentagram_invulnerability - delta)
+	if pentagram_invulnerability <= 0.0:
+		pentagram_charge = minf(1.0, pentagram_charge + delta * (0.023 + speed_factor * 0.025))
+	if Input.is_action_just_pressed("key_q") && pentagram_charge >= 1.0 && pentagram_invulnerability <= 0.0:
+		activate_pentagram()
 	var input_direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	input_direction.y = -input_direction.y
 	if input_direction.length() > 0.15:
@@ -205,109 +288,149 @@ func _process(delta:float) -> void:
 	if Input.is_action_just_pressed("ui_accept") && dash_cooldown <= 0.0:
 		start_dash(input_direction)
 	if dash_time > 0.0:
-		player_pos += dash_direction * 15.5 * delta
+		player_pos += dash_direction * (17.5 + speed_factor * 3.0) * delta
 		puff_timer -= delta
 		if puff_timer <= 0.0:
-			puff_timer = 0.055
-			spawn_dash_puff()
+			puff_timer = 0.06
+			spawn_dash_trail()
 	else:
-		player_pos += input_direction * 6.2 * delta
+		player_pos += input_direction * (6.8 + speed_factor * 1.2) * delta
 	player_pos.x = clampf(player_pos.x, -PLAYER_LIMIT, PLAYER_LIMIT)
 	player_pos.y = clampf(player_pos.y, -PLAYER_LIMIT, PLAYER_LIMIT)
-	maycon.position = Vector3(player_pos.x, player_pos.y, 0.0)
+	maycon.position = Vector3(player_pos.x, player_pos.y, MAYCON_DEPTH)
 	maycon.rotation.z = sin(elapsed * 3.2) * 0.08 - player_pos.x * 0.035
 	maycon.rotation.x = 1.1 + sin(elapsed * 2.1) * 0.045
+	update_body_effects(delta)
 	update_dash_blur()
 	spawn_timer -= delta
-	if spawn_timer <= 0.0 && obstacles.size() == 0:
+	if spawn_timer <= 0.0 && obstacles.is_empty():
 		spawn_obstacle()
 	update_obstacles(delta)
-	var threat_z:float = -1.0
-	var threat_screen:Vector2 = Vector2.ZERO
-	if obstacles.size() > 0:
-		threat_z = float(obstacles[0]["position"].z)
-		threat_screen = camera.unproject_position(obstacles[0]["position"])
-	if dash_time > 0.0:
-		threat_z = -1.0
-	hud.call("set_state", health, dodges, DODGES_TO_ESCAPE, dash_cooldown, threat_z, 0.0, threat_screen)
+	hud.call("set_state", health, speed_factor, pentagram_charge, dash_cooldown, 0.0, camera.unproject_position(maycon.position), speed_factor, pentagram_invulnerability)
+
+func toggle_pause() -> void:
+	locally_paused = !locally_paused
+	music.stream_paused = locally_paused
+	wind.stream_paused = locally_paused
+	hud.call("set_pause", locally_paused)
+	hud.set_process(!locally_paused)
+	dash_blur.visible = false if locally_paused else dash_time > 0.0
+
+func activate_pentagram() -> void:
+	pentagram_charge = 0.0
+	pentagram_invulnerability = 4.0
+	hurt_invulnerability = maxf(hurt_invulnerability, 4.0)
+	camera_shake = maxf(camera_shake, 0.42)
+	explosion_sound.pitch_scale = 1.18
+	explosion_sound.play()
+	hud.call("activate_power")
 
 func animate_environment(delta:float) -> void:
+	var speed_multiplier:float = 1.0 + speed_factor * 1.65
 	for section in shaft_sections:
-		section.position.z += SHAFT_SPEED * delta
+		section.position.z += SHAFT_SPEED * speed_multiplier * delta
 		if section.position.z > 36.0:
 			section.position.z -= 90.0
 	for streak_data in speed_lines:
 		var streak:MeshInstance3D = streak_data.node
-		streak.position.z += float(streak_data.speed) * delta
+		streak.position.z += float(streak_data.speed) * speed_multiplier * delta
 		if streak.position.z > 10.0:
 			streak.position.z = -30.0
 			streak.position.x = randf_range(-7.4, 7.4)
 			streak.position.y = randf_range(-7.4, 7.4)
-	$BloodLight.light_energy = 2.3 + sin(elapsed * 3.0) * 0.45 + float(dodges) * 0.035
+	$BloodLight.light_energy = 2.3 + sin(elapsed * (3.0 + speed_factor * 5.0)) * 0.45 + speed_factor * 1.2
+	music.pitch_scale = 1.58 + speed_factor * 0.23
+	wind.pitch_scale = 1.45 + speed_factor * 0.38
+
+func update_body_effects(delta:float) -> void:
+	maycon_rim_light.position = maycon.position + Vector3(0.9, 0.8, 1.4)
+	maycon_rim_light.light_energy = 3.2 if pentagram_invulnerability > 0.0 else (2.4 if dash_time > 0.0 else 1.2)
+	for trail_data in body_trails:
+		var ghost:MeshInstance3D = trail_data.node
+		var lag:float = trail_data.lag
+		ghost.position = ghost.position.lerp(maycon.position + Vector3(trail_data.side, 0.7 + lag, -0.6 - lag), minf(1.0, delta * (5.5 - lag)))
+		ghost.rotation.z = sin(elapsed * 3.0 + lag * 5.0) * 0.17
+		ghost.visible = !finishing
+		var shadow_material:StandardMaterial3D = ghost.material_override
+		shadow_material.albedo_color.a = (0.08 + speed_factor * 0.045) * (1.5 if dash_time > 0.0 else 1.0)
+	for streak_data in body_streaks:
+		var streak:MeshInstance3D = streak_data.node
+		var phase:float = fposmod(float(streak_data.phase) + elapsed * (2.4 if dash_time > 0.0 else 1.5), 1.0)
+		var offset:Vector2 = streak_data.offset
+		streak.position = maycon.position + Vector3(offset.x, offset.y, -1.9 + phase * 3.8)
+		streak.scale.z = 1.8 if dash_time > 0.0 else 1.0
+		streak.visible = !finishing
+	power_aura.visible = pentagram_invulnerability > 0.0 && !finishing
+	if power_aura.visible:
+		power_aura.position = maycon.position + Vector3(0.0, 0.0, 0.1)
+		power_aura.scale = Vector3.ONE * (1.0 + sin(elapsed * 17.0) * 0.13)
 
 func update_dash_blur() -> void:
 	dash_blur.visible = dash_time > 0.0
 	if !dash_blur.visible:
 		return
-	var from_screen:Vector2 = camera.unproject_position(Vector3(player_pos.x, player_pos.y, 0.0))
-	var to_screen:Vector2 = camera.unproject_position(Vector3(player_pos.x + dash_direction.x, player_pos.y + dash_direction.y, 0.0))
+	var from_screen:Vector2 = camera.unproject_position(maycon.position)
+	var to_screen:Vector2 = camera.unproject_position(maycon.position + Vector3(dash_direction.x, dash_direction.y, 0.0))
 	var screen_direction:Vector2 = (to_screen - from_screen).normalized()
 	var material:ShaderMaterial = dash_blur.material
 	material.set_shader_parameter("blur_direction", screen_direction)
+	material.set_shader_parameter("blur_center", from_screen / get_viewport().get_visible_rect().size)
 	material.set_shader_parameter("blur_strength", clampf(dash_time / 0.22, 0.0, 1.0))
 
-func spawn_dash_puff() -> void:
-	var puff := MeshInstance3D.new()
-	var sphere := SphereMesh.new()
-	sphere.radius = randf_range(0.16, 0.3)
-	sphere.height = sphere.radius * 2.0
-	puff.mesh = sphere
-	var material := StandardMaterial3D.new()
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	material.albedo_color = Color(0.26, 0.95, 0.72, 0.68)
-	material.emission_enabled = true
-	material.emission = Color(0.15, 0.7, 0.65)
-	puff.material_override = material
-	puff.position = Vector3(player_pos.x - dash_direction.x * 0.65, player_pos.y - dash_direction.y * 0.65, 0.3)
-	add_child(puff)
-	dash_puffs.append({"node":puff, "life":0.52, "drift":Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0))})
+func spawn_dash_burst() -> void:
+	for i in 7:
+		spawn_smoke_cloud(true)
+
+func spawn_dash_trail() -> void:
+	for i in 2:
+		spawn_smoke_cloud(false)
+
+func spawn_smoke_cloud(initial:bool) -> void:
+	var cloud := Sprite3D.new()
+	cloud.texture = DASH_SMOKE_TEXTURE
+	cloud.hframes = 3
+	cloud.vframes = 2
+	cloud.frame = randi_range(0, 1)
+	cloud.pixel_size = randf_range(0.009, 0.014) if initial else randf_range(0.007, 0.011)
+	cloud.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	cloud.shaded = false
+	cloud.transparent = true
+	cloud.double_sided = true
+	cloud.position = maycon.position - Vector3(dash_direction.x * 0.8, dash_direction.y * 0.8, 0.45)
+	cloud.position += Vector3(randf_range(-0.48, 0.48), randf_range(-0.4, 0.4), randf_range(-0.55, 0.12))
+	cloud.rotation.z = randf_range(-0.48, 0.48)
+	var alpha:float = randf_range(0.36, 0.56) if initial else randf_range(0.23, 0.4)
+	cloud.modulate = Color(randf_range(0.48, 0.62), randf_range(0.79, 0.92), randf_range(0.55, 0.71), alpha)
+	add_child(cloud)
+	var side:Vector2 = Vector2(-dash_direction.y, dash_direction.x) * randf_range(-2.1, 2.1)
+	var velocity:Vector3 = Vector3(-dash_direction.x * 2.7 + side.x, -dash_direction.y * 2.7 + side.y + 0.65, randf_range(1.1, 2.4))
+	var duration:float = randf_range(0.42, 0.64) if initial else randf_range(0.35, 0.5)
+	dash_puffs.append({"node":cloud, "life":duration, "duration":duration, "velocity":velocity, "alpha":alpha, "start_frame":cloud.frame})
 
 func update_dash_puffs(delta:float) -> void:
 	for i in range(dash_puffs.size() - 1, -1, -1):
 		var data:Dictionary = dash_puffs[i]
-		var puff:MeshInstance3D = data.node
+		var puff:Sprite3D = data.node
 		data["life"] = float(data.life) - delta
-		puff.position.x += data.drift.x * delta
-		puff.position.y += data.drift.y * delta
-		puff.position.z += 2.0 * delta
-		puff.scale += Vector3.ONE * delta * 1.8
-		var material:StandardMaterial3D = puff.material_override
-		material.albedo_color.a = clampf(float(data.life) / 0.52, 0.0, 1.0) * 0.68
+		puff.position += data.velocity * delta
+		puff.scale += Vector3.ONE * delta * 0.55
+		var progress:float = 1.0 - clampf(float(data.life) / float(data.duration), 0.0, 1.0)
+		puff.frame = mini(5, int(data.start_frame) + int(progress * 5.0))
+		puff.modulate.a = (1.0 - smoothstep(0.2, 1.0, progress)) * float(data.alpha)
 		if data.life <= 0.0:
 			puff.queue_free()
 			dash_puffs.remove_at(i)
 
 func start_dash(direction:Vector2) -> void:
-	var target:Dictionary = {}
-	for obstacle in obstacles:
-		var position:Vector3 = obstacle.position
-		var time_to_impact:float = -position.z / float(obstacle.get("speed", 10.0))
-		var predicted := Vector2(position.x, position.y) + (obstacle.get("drift", Vector2.ZERO) as Vector2) * time_to_impact
-		var distance:float = player_pos.distance_to(predicted)
-		if position.z >= DASH_WINDOW_START && position.z <= DASH_WINDOW_END && distance <= float(obstacle.radius) + 0.87:
-			target = obstacle
-			break
-	if target.is_empty():
-		return
-	target["dash_primed"] = true
 	dash_direction = direction.normalized() if direction.length() > 0.15 else last_direction
 	dash_time = 0.22
 	dash_cooldown = 0.6
 	puff_timer = 0.0
 	camera_shake = maxf(camera_shake, 0.12)
-	dash_sound.pitch_scale = randf_range(0.95, 1.12)
+	dash_sound.pitch_scale = randf_range(0.85, 1.04)
+	dash_sound.volume_db = -3.0
 	dash_sound.play()
+	spawn_dash_burst()
 	hud.call("dash_flash")
 
 func spawn_obstacle() -> void:
@@ -343,12 +466,18 @@ func spawn_obstacle() -> void:
 	trail_material.albedo_color = Color(1.0, 0.16, 0.055, 0.3) if kind % 2 == 0 else Color(0.3, 0.8, 1.0, 0.32)
 	trail.material_override = trail_material
 	object.add_child(trail)
+	var object_light := OmniLight3D.new()
+	object_light.light_color = Color(1.0, 0.66, 0.48) if kind % 2 == 0 else Color(0.48, 0.84, 1.0)
+	object_light.light_energy = 4.2
+	object_light.omni_range = 8.0
+	object_light.position.z = 2.4
+	object.add_child(object_light)
 	add_child(object)
 	var drift := Vector2(randf_range(-0.35, 0.35), randf_range(-0.26, 0.26))
-	var speed:float = randf_range(19.0, 22.5) if next_obstacle_fast else randf_range(13.0, 16.0)
+	var speed:float = (randf_range(21.5, 26.0) if next_obstacle_fast else randf_range(15.0, 18.5)) * (1.0 + speed_factor * 1.6)
 	next_obstacle_fast = !next_obstacle_fast
-	obstacles.append({"node":object, "position":object.position, "speed":speed, "drift":drift, "radius":radius, "kind":kind, "spin":randf_range(-3.2, 3.2), "dash_primed":false, "resolved":false})
-	spawn_timer = 0.55
+	obstacles.append({"node":object, "position":object.position, "speed":speed, "drift":drift, "radius":radius, "kind":kind, "spin":randf_range(-3.2, 3.2), "resolved":false})
+	spawn_timer = lerpf(0.6, 0.24, speed_factor)
 
 func update_obstacles(delta:float) -> void:
 	for i in range(obstacles.size() - 1, -1, -1):
@@ -362,23 +491,21 @@ func update_obstacles(delta:float) -> void:
 		var node:Node3D = obstacle.node
 		node.position = pos
 		node.rotation += Vector3(float(obstacle.spin) * delta * 0.55, float(obstacle.spin) * delta, float(obstacle.spin) * delta * 0.35)
-		if previous_z < 0.0 && pos.z >= 0.0 && !obstacle.resolved:
+		if previous_z < MAYCON_DEPTH && pos.z >= MAYCON_DEPTH && !obstacle.resolved:
 			resolve_obstacle(obstacle)
 			obstacle["resolved"] = true
-		if pos.z > 9.0:
+		if pos.z > MAYCON_DEPTH + 4.0:
 			node.queue_free()
 			obstacles.remove_at(i)
-			spawn_timer = maxf(spawn_timer, randf_range(0.42, 0.85))
+			spawn_timer = maxf(spawn_timer, randf_range(0.34, 0.6) * (1.0 - speed_factor * 0.48))
 
 func resolve_obstacle(obstacle:Dictionary) -> void:
 	var pos:Vector3 = obstacle.position
 	var distance:float = player_pos.distance_to(Vector2(pos.x, pos.y))
 	var collision_radius:float = float(obstacle.radius) + 0.75
 	if distance < collision_radius:
-		if hurt_invulnerability <= 0.0:
+		if hurt_invulnerability <= 0.0 && pentagram_invulnerability <= 0.0:
 			apply_hit(obstacle)
-	elif obstacle.dash_primed && distance >= collision_radius:
-		award_dodge()
 
 func apply_hit(obstacle:Dictionary) -> void:
 	var combo_window:bool = elapsed - last_hit_at <= 5.0
@@ -397,18 +524,16 @@ func apply_hit(obstacle:Dictionary) -> void:
 	if health <= 0.0:
 		start_ending(false)
 
-func award_dodge() -> void:
-	dodges += 1
-	camera_shake = maxf(camera_shake, 0.16)
-	evade_sound.pitch_scale = lerpf(0.9, 1.35, float(dodges) / float(DODGES_TO_ESCAPE))
-	evade_sound.play()
-	hud.call("show_dodge", dodges, DODGES_TO_ESCAPE)
-	if dodges >= DODGES_TO_ESCAPE:
-		start_ending(true)
-
 func start_ending(success:bool) -> void:
 	finishing = true
+	for trail_data in body_trails:
+		(trail_data.node as Node3D).visible = false
+	for streak_data in body_streaks:
+		(streak_data.node as MeshInstance3D).visible = false
+	maycon_rim_light.light_energy = 0.0
+	power_aura.visible = false
 	ending_success = success
+	ending_start_rotation = maycon.rotation.z
 	ending_time = 0.0
 	ending_scream_started = false
 	transition_sent = false
@@ -425,10 +550,12 @@ func start_ending(success:bool) -> void:
 func update_ending(delta:float) -> void:
 	ending_time += delta
 	if ending_success:
+		var turn_progress:float = clampf((ending_time - 0.18) / 1.0, 0.0, 1.0)
+		maycon.rotation.z = ending_start_rotation + smoothstep(0.0, 1.0, turn_progress) * PI
 		if ending_time > 0.75 && !ending_scream_started:
 			ending_scream_started = true
 			scream_sound.play()
-		if ending_time > 1.0:
+		if ending_time > 1.2:
 			maycon.position.y -= 13.0 * delta
 			maycon.position.z -= 9.0 * delta
 		if ending_time > 2.5 && !transition_sent:
