@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+signal special_activated
+
 var active:bool = false
 var time_left:float = 0.0
 var total_time:float = 10.0
@@ -10,6 +12,12 @@ var title_label:Label
 var time_label:Label
 var particles:Array[Dictionary] = []
 var badge_style:StyleBoxFlat
+
+var special_prompt_panel:PanelContainer
+var special_prompt_style:StyleBoxFlat
+var special_icon:TextureRect
+var special_prompt_label:Label
+var special_ready:bool = false
 
 const COLORS := [
 	Color("ffd700"), # Gold
@@ -32,6 +40,7 @@ func _build_ui() -> void:
 	overlay_control.draw.connect(_on_overlay_draw)
 	add_child(overlay_control)
 
+	# 10-Second Countdown Badge (Top Center)
 	badge_panel = PanelContainer.new()
 	badge_panel.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	badge_panel.position = Vector2(-110.0, 18.0)
@@ -70,7 +79,70 @@ func _build_ui() -> void:
 
 	badge_panel.visible = false
 
+	# Pulsing Button Y Special Prompt (Bottom Center)
+	special_prompt_panel = PanelContainer.new()
+	special_prompt_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	special_prompt_panel.position = Vector2(-130.0, -82.0)
+	special_prompt_panel.custom_minimum_size = Vector2(260.0, 56.0)
+	special_prompt_panel.pivot_offset = Vector2(130.0, 28.0)
+	special_prompt_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+
+	special_prompt_style = StyleBoxFlat.new()
+	special_prompt_style.bg_color = Color(0.08, 0.12, 0.22, 0.94)
+	special_prompt_style.border_color = Color("ffd700")
+	special_prompt_style.set_border_width_all(3)
+	special_prompt_style.set_corner_radius_all(20)
+	special_prompt_style.shadow_color = Color(0.9, 0.65, 0.1, 0.5)
+	special_prompt_style.shadow_size = 16
+	special_prompt_style.set_content_margin_all(8)
+	special_prompt_panel.add_theme_stylebox_override("panel", special_prompt_style)
+	special_prompt_panel.gui_input.connect(_on_special_prompt_gui_input)
+	add_child(special_prompt_panel)
+
+	var prompt_row := HBoxContainer.new()
+	prompt_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	prompt_row.add_theme_constant_override("separation", 10)
+	prompt_row.mouse_filter = Control.MOUSE_FILTER_PASS
+	special_prompt_panel.add_child(prompt_row)
+
+	special_icon = TextureRect.new()
+	special_icon.texture = load("res://assets/novas_imagens/buttons/360_Y.png")
+	special_icon.custom_minimum_size = Vector2(36.0, 36.0)
+	special_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	special_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	special_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	prompt_row.add_child(special_icon)
+
+	special_prompt_label = Label.new()
+	special_prompt_label.text = tr("PLATFORM_SPECIAL_PROMPT")
+	special_prompt_label.add_theme_font_size_override("font_size", 14)
+	special_prompt_label.add_theme_color_override("font_color", Color("fff6d0"))
+	special_prompt_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	prompt_row.add_child(special_prompt_label)
+
+	special_prompt_panel.visible = false
+
+func _on_special_prompt_gui_input(event:InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		special_activated.emit()
+
+func set_special_prompt_visible(visible_val:bool) -> void:
+	special_ready = visible_val
+	if not is_instance_valid(special_prompt_panel):
+		return
+	if visible_val:
+		special_prompt_panel.visible = true
+		special_prompt_panel.scale = Vector2(0.3, 0.3)
+		var tween := create_tween().bind_node(special_prompt_panel)
+		tween.tween_property(special_prompt_panel, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	else:
+		if special_prompt_panel.visible:
+			var tween := create_tween().bind_node(special_prompt_panel)
+			tween.tween_property(special_prompt_panel, "scale", Vector2(0.3, 0.3), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			tween.tween_callback(func(): special_prompt_panel.visible = false)
+
 func start_invincibility(duration:float = 10.0) -> void:
+	set_special_prompt_visible(false)
 	active = true
 	time_left = duration
 	total_time = duration
@@ -90,6 +162,13 @@ func stop_invincibility() -> void:
 	tween.tween_callback(func(): badge_panel.visible = false)
 
 func _process(delta:float) -> void:
+	if special_prompt_panel.visible:
+		var pulse := 1.0 + sin(Time.get_ticks_msec() * 0.007) * 0.08
+		special_prompt_panel.scale = Vector2(pulse, pulse)
+		var glow := absf(sin(Time.get_ticks_msec() * 0.005))
+		special_prompt_style.border_color = Color("ffd700").lerp(Color("00f0ff"), glow)
+		special_prompt_style.shadow_color = Color(0.9, 0.7, 0.1, 0.3 + glow * 0.35)
+
 	if active:
 		time_left = maxf(time_left - delta, 0.0)
 		time_label.text = "%.1f s" % time_left

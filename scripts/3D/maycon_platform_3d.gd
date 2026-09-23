@@ -66,6 +66,7 @@ var is_slow_motion:bool = false
 var invincibility_time_left:float = 0.0
 var last_invincible_milestone:int = 0
 var pentagrams_collected_session:int = 0
+var special_ready:bool = false
 var invincible_overlay:CanvasLayer
 
 func _ready() -> void:
@@ -111,7 +112,11 @@ func _ready() -> void:
 	_build_fade()
 	invincible_overlay = CanvasLayer.new()
 	invincible_overlay.set_script(INVINCIBLE_OVERLAY_SCRIPT)
+	invincible_overlay.special_activated.connect(activate_special)
 	add_child(invincible_overlay)
+	if Global.platform_pentagrams >= 10:
+		last_invincible_milestone = Global.platform_pentagrams / 10
+		set_special_ready(true)
 	update_hud()
 
 func _physics_process(delta:float) -> void:
@@ -545,12 +550,43 @@ func enemy_stomped(enemy:Area3D) -> void:
 	enemy_defeated(enemy)
 	total_stomps += 1
 
+func _unhandled_input(event:InputEvent) -> void:
+	if special_ready and not is_invincible and not death_in_progress and not exit_started:
+		var pressed_y := false
+		if event is InputEventJoypadButton and event.button_index == JOY_BUTTON_Y and event.pressed:
+			pressed_y = true
+		elif event is InputEventKey and event.pressed and not event.echo and (event.physical_keycode == KEY_Y or event.keycode == KEY_Y or event.physical_keycode == KEY_Q or event.keycode == KEY_Q):
+			pressed_y = true
+		elif event.is_action_pressed("key_q"):
+			pressed_y = true
+		if pressed_y:
+			activate_special()
+			get_viewport().set_input_as_handled()
+
 func _check_invincibility_milestone() -> void:
 	var total := Global.platform_pentagrams
 	var milestone := total / 10
 	if (total >= 10 and milestone > last_invincible_milestone) or (pentagrams_collected_session > 0 and pentagrams_collected_session % 10 == 0):
 		last_invincible_milestone = maxi(last_invincible_milestone, milestone)
-		start_invincibility(10.0)
+		set_special_ready(true)
+
+func set_special_ready(ready_val:bool) -> void:
+	special_ready = ready_val
+	if is_instance_valid(invincible_overlay) and invincible_overlay.has_method("set_special_prompt_visible"):
+		invincible_overlay.set_special_prompt_visible(ready_val)
+	if ready_val:
+		var ready_sfx := AudioStreamPlayer.new()
+		ready_sfx.stream = FREEZE_SOUND
+		ready_sfx.volume_db = -3.0
+		add_child(ready_sfx)
+		ready_sfx.finished.connect(ready_sfx.queue_free)
+		ready_sfx.play()
+
+func activate_special() -> void:
+	if not special_ready or is_invincible or death_in_progress or exit_started:
+		return
+	set_special_ready(false)
+	start_invincibility(10.0)
 
 func start_invincibility(duration:float = 10.0) -> void:
 	is_invincible = true
@@ -896,6 +932,11 @@ func _build_hud() -> void:
 	run_label.text = tr("PLATFORM_RUN_HINT")
 	run_label.add_theme_font_size_override("font_size", 13)
 	control_panel.add_child(run_label)
+	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_Y.png"), Vector2(26.0, 26.0)))
+	var special_label := Label.new()
+	special_label.text = tr("PLATFORM_SPECIAL_HINT")
+	special_label.add_theme_font_size_override("font_size", 13)
+	control_panel.add_child(special_label)
 	blood_overlay = Control.new()
 	blood_overlay.set_script(BLOOD_OVERLAY_SCRIPT)
 	canvas.add_child(blood_overlay)

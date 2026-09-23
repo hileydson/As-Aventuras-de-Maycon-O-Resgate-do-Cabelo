@@ -240,3 +240,5 @@ PLATFORM_BACK_MENU,Voltar ao menu,Back to menu,Volver al menú,返回菜单
 PLATFORM_JUMP_HINT,Pulo / Espaço,Jump / Space,Salto / Espacio,跳跃 / 空格
 PLATFORM_RUN_HINT,Correr / Shift,Run / Shift,Correr / Shift,奔跑 / Shift
 PLATFORM_INVINCIBLE_TITLE,INVENCÍVEL,INVINCIBLE,INVENCIBLE,无敌
+PLATFORM_SPECIAL_PROMPT,ESPECIAL PRONTO [Y],SPECIAL READY [Y],ESPECIAL LISTO [Y],特殊技能就绪 [Y]
+PLATFORM_SPECIAL_HINT,Ativar Especial / Y,Activate Special / Y,Activar Especial / Y,激活特技 / Y

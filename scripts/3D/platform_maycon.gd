@@ -124,8 +124,18 @@ func _physics_process(delta:float) -> void:
 	var forward := Vector3(-sin(camera_yaw), 0.0, -cos(camera_yaw))
 	var right := Vector3(cos(camera_yaw), 0.0, -sin(camera_yaw))
 	var direction := (right * input.x - forward * input.y).normalized()
-	var speed := 9.0 if Input.is_action_pressed("run") else 3.2
-	var acceleration := 25.0 if is_on_floor() else 11.0
+	var is_running := Input.is_action_pressed("run")
+	var speed := 7.8 if is_running else 3.2
+	var acceleration:float
+	if is_on_floor():
+		if direction.length_squared() < 0.01:
+			acceleration = 58.0
+		elif direction.dot(Vector3(velocity.x, 0.0, velocity.z)) < -0.2:
+			acceleration = 48.0
+		else:
+			acceleration = 22.0 if is_running else 28.0
+	else:
+		acceleration = 11.0
 	velocity.x = move_toward(velocity.x, direction.x * speed, acceleration * delta)
 	velocity.z = move_toward(velocity.z, direction.z * speed, acceleration * delta)
 	_step_over_small_lip(delta)
@@ -141,7 +151,7 @@ func _physics_process(delta:float) -> void:
 	if preparing_jump:
 		_play_animation("Walking")
 	elif is_on_floor():
-		_play_animation("Arise" if direction.length_squared() > 0.01 and speed > 7.0 else "Skill_03" if direction.length_squared() > 0.01 else "Walking")
+		_play_animation("Arise" if direction.length_squared() > 0.01 and speed > 6.0 else "Skill_03" if direction.length_squared() > 0.01 else "Walking")
 	else:
 		_play_animation("Arise")
 	if animation_player and preparing_jump:
@@ -158,9 +168,9 @@ func _update_footsteps(delta:float, direction:Vector3, speed:float) -> void:
 		return
 	step_timer -= delta
 	if step_timer <= 0.0:
-		step_audio.pitch_scale = randf_range(1.15, 1.28) if speed > 7.0 else randf_range(0.95, 1.05)
+		step_audio.pitch_scale = randf_range(1.02, 1.10) if speed > 6.0 else randf_range(0.88, 0.96)
 		step_audio.play()
-		step_timer = 0.28 if speed > 7.0 else 0.44
+		step_timer = 0.42 if speed > 6.0 else 0.58
 
 func _step_over_small_lip(delta:float) -> void:
 	if not is_on_floor():
