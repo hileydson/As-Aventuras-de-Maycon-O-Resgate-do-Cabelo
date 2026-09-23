@@ -70,7 +70,7 @@ func _on_ready() -> void:
 		GameSongs.stop(1)
 		#get_tree().change_scene_to_file("res://scenes/3D/world_3d.tscn")
 		Global.cena_caminho_das_pedras = false
-		get_tree().change_scene_to_file("res://scenes/two_layers_fps_mode.tscn")
+		get_tree().change_scene_to_file("res://scenes/3D/seco_boss_intro.tscn")
 		
 		
 		#TODO: GANHANDO A BATALHA SALVA AS PARADA ABAIXO

@@ -10,6 +10,7 @@ extends Node3D
 @onready var respaw: Timer = $respaw
 @onready var respaw_sound: AudioStreamPlayer = $respaw_sound
 @onready var nav_region: NavigationRegion3D = $NavigationRegion3D
+@onready var arena_fire: GPUParticles3D = $GPUParticles3D
 
 # Arraste o arquivo .tscn do seu inimigo para cá no Inspetor
 @export var inimigo_scene: PackedScene 
@@ -28,11 +29,53 @@ func remove_enemies_count()->void:
 	enemies_count -=1
 
 func setup_materials():
-	# Configura a cor da lava com emissão (brilho)
-	lava_material.albedo_color = Color(1, 0.2, 0)
-	lava_material.emission_enabled = true
-	lava_material.emission = Color(1, 0.3, 0)
-	lava_material.emission_energy_multiplier = 2.0
+	lava_material.albedo_color = Color(0.13, 0.11, 0.14)
+	lava_material.shading_mode = StandardMaterial3D.SHADING_MODE_UNSHADED
+	lava_material.roughness = 0.96
+	lava_material.metallic = 0.08
+
+func create_outer_embers() -> void:
+	var gradient := Gradient.new()
+	gradient.set_color(0, Color(1.0, 0.65, 0.22, 1.0))
+	gradient.set_color(1, Color(0.65, 0.08, 0.04, 0.0))
+	var ramp := GradientTexture1D.new()
+	ramp.gradient = gradient
+
+	var process_material := ParticleProcessMaterial.new()
+	process_material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	process_material.emission_box_extents = Vector3(1.8, 0.1, 1.8)
+	process_material.direction = Vector3.UP
+	process_material.spread = 22.0
+	process_material.initial_velocity_min = 2.0
+	process_material.initial_velocity_max = 6.0
+	process_material.gravity = Vector3(0, 0.7, 0)
+	process_material.color_ramp = ramp
+
+	var ember_material := StandardMaterial3D.new()
+	ember_material.shading_mode = StandardMaterial3D.SHADING_MODE_UNSHADED
+	ember_material.vertex_color_use_as_albedo = true
+	ember_material.billboard_mode = StandardMaterial3D.BILLBOARD_PARTICLES
+	ember_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ember_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	var ember_mesh := QuadMesh.new()
+	ember_mesh.size = Vector2(0.16, 0.16)
+	ember_mesh.material = ember_material
+
+	for side in range(4):
+		for index in range(5):
+			var along := -20.0 + index * 10.0
+			var embers := GPUParticles3D.new()
+			embers.amount = 80
+			embers.lifetime = 4.0
+			embers.preprocess = 4.0
+			embers.visibility_aabb = AABB(Vector3(-3, -1, -3), Vector3(6, 15, 6))
+			embers.process_material = process_material
+			embers.draw_pass_1 = ember_mesh
+			add_child(embers)
+			if side < 2:
+				embers.position = Vector3(28.0 if side == 0 else -28.0, 0.0, along)
+			else:
+				embers.position = Vector3(along, 0.0, 28.0 if side == 2 else -28.0)
 	
 func create_dungeon_floor():
 	# 1. Configuração básica da lava
@@ -68,6 +111,7 @@ func _ready() -> void:
 	GameSongs.stop(1)
 	
 	setup_materials()
+	create_outer_embers()
 	create_dungeon_floor()
 	
 	Global.maycon_pegou_lamp_3d_world = false
@@ -117,8 +161,11 @@ func _process(delta: float) -> void:
 	
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
-	if (body is CharacterBody3D and Global.is_two_player_active and body.name in ["Maycon", "Cigarro"]) or (body is CharacterBody3D and !Global.is_two_player_active and body.name == "CharacterBody3D"):
+	if (body is CharacterBody3D and Global.is_two_player_active and body.name in ["Maycon", "Cigarro"]) or (body is CharacterBody3D and !Global.is_two_player_active and body.is_in_group("player") and body.name == "CharacterBody3D"):
 		Global.maycon_pegou_arma_first_3d_battle = true
+		if is_instance_valid(arena_fire) and not arena_fire.is_queued_for_deletion():
+			arena_fire.hide()
+			arena_fire.queue_free()
 		gun_load.play()
 		body.add_bullets_to_gun(5)
 	

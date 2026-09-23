@@ -1,8 +1,16 @@
-[gd_scene load_steps=6 format=3 uid="uid://dbylb1bjbstk2"]
+[gd_scene load_steps=7 format=3 uid="uid://dbylb1bjbstk2"]
 
 [ext_resource type="Script" uid="uid://dkny6wmmn76sa" path="res://scripts/3D/seco_power_3d_1.gd" id="1_k7mrl"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fire_ring"]
+albedo_color = Color(1, 0.32, 0.06, 1)
+shading_mode = 0
+emission_enabled = true
+emission = Color(1, 0.23, 0.025, 1)
+emission_energy_multiplier = 2.5
+
 [sub_resource type="TorusMesh" id="TorusMesh_k7mrl"]
+material = SubResource("StandardMaterial3D_fire_ring")
 inner_radius = 1.088
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_k7mrl"]
@@ -15,7 +23,7 @@ emission_ring_height = 9.55
 emission_ring_radius = 0.0
 emission_ring_inner_radius = 0.45
 emission_ring_cone_angle = 65.5
-color = Color(0.6002802, 0.009701619, 0.3149172, 1)
+color = Color(1, 0.35, 0.06, 1)
 
 [sub_resource type="QuadMesh" id="QuadMesh_xak17"]
 size = Vector2(0.3, 0.3)

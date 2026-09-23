@@ -47,5 +47,9 @@ Qualquer texto novo do jogo deve ser incluído nos arquivos CSV de localização
 ## 6. Ferramentas disponíveis
 
 - **MCP do Godot:** sempre considere seu uso no desenvolvimento e na validação.
+- **MCPs em geral:** use qualquer MCP disponível quando ele for a melhor ferramenta para a tarefa e puder gerar um resultado superior. Caso um MCP necessário não esteja acessível ou falhe, informe o usuário e peça que reinicie ou configure o respectivo servidor MCP antes de prosseguir.
+- **MCP do GIMP:** pode ser usado a qualquer momento para tarefas de imagem quando for a ferramenta mais adequada.
 - **Blender:** use quando necessário; se a integração não estiver disponível, peça ao usuário para abrir ou configurar o Blender.
 - **Poly Haven:** downloads de modelos e texturas estão liberados em <https://polyhaven.com/models> e <https://polyhaven.com/textures>.
+- **Kenney:** texturas estão disponíveis em <https://kenney.nl/assets/category:Textures>.
+- **Sketchfab:** quando necessário, é permitido pesquisar e baixar modelos gratuitos em <https://sketchfab.com/features/free-3d-models>, desde que a licença específica do modelo seja compatível com o uso no jogo e sejam cumpridos os requisitos de atribuição.
