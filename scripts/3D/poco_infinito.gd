@@ -183,14 +183,16 @@ func pose_falling_body() -> void:
 	for bone_name in ["LeftArm", "RightArm", "LeftUpLeg", "RightUpLeg"]:
 		var bone_index:int = maycon_skeleton.find_bone(bone_name)
 		if bone_index >= 0:
-			falling_limb_poses.append({"name":bone_name, "index":bone_index, "rotation":maycon_skeleton.get_bone_pose_rotation(bone_index)})
+			falling_limb_poses.append({"name":bone_name, "index":bone_index, "rotation":maycon_skeleton.get_bone_pose_rotation(bone_index), "phase":float(falling_limb_poses.size()) * 1.7})
 
 func animate_falling_limbs() -> void:
 	for limb in falling_limb_poses:
-		var motion:float = sin(elapsed * 2.4 + (PI if limb.name == "RightArm" or limb.name == "RightUpLeg" else 0.0))
 		var is_arm:bool = "Arm" in limb.name
 		var axis:Vector3 = Vector3.FORWARD if is_arm else Vector3.RIGHT
-		var angle:float = motion * (0.055 if is_arm else 0.08)
+		var phase:float = limb.phase
+		var sway:float = sin(elapsed * 2.2 + phase) * (0.038 if is_arm else 0.055)
+		var flutter:float = sin(elapsed * 5.6 + phase * 1.3) * (0.022 + speed_factor * 0.012)
+		var angle:float = sway + flutter
 		maycon_skeleton.set_bone_pose_rotation(limb.index, limb.rotation * Quaternion(axis, angle))
 
 func create_body_effects() -> void:
@@ -239,7 +241,7 @@ func create_body_effects() -> void:
 	streak_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	streak_material.albedo_color = Color(0.53, 0.56, 0.6, 0.38)
 	streak_material.cull_mode = BaseMaterial3D.CULL_DISABLED
-	for i in 32:
+	for i in 52:
 		var streak := MeshInstance3D.new()
 		var mesh := QuadMesh.new()
 		mesh.size = Vector2(0.014, randf_range(0.22, 0.58))
@@ -247,7 +249,7 @@ func create_body_effects() -> void:
 		streak.material_override = streak_material
 		streak.rotation.z = randf_range(-0.15, 0.15)
 		add_child(streak)
-		body_streaks.append({"node":streak, "phase":randf(), "offset":Vector2(randf_range(-0.45, 0.45), randf_range(-0.55, 0.55))})
+		body_streaks.append({"node":streak, "phase":randf(), "offset":Vector2(randf_range(-0.55, 0.55), randf_range(-0.9, 1.0))})
 
 func create_speed_lines() -> void:
 	var streak_material := StandardMaterial3D.new()
@@ -369,7 +371,7 @@ func update_body_effects(delta:float) -> void:
 		var streak:MeshInstance3D = streak_data.node
 		var phase:float = fposmod(float(streak_data.phase) + elapsed * (3.5 if dash_time > 0.0 else 2.1 + speed_factor * 0.9), 1.0)
 		var offset:Vector2 = streak_data.offset
-		streak.position = maycon.position + Vector3(offset.x + 0.35, offset.y + 0.5, 0.2 + phase * 0.9)
+		streak.position = maycon.position + Vector3(offset.x + 0.35, offset.y + 0.65, 0.2 + phase * 0.9)
 		streak.scale.y = 1.55 if dash_time > 0.0 else 1.0
 		streak.transparency = 0.28 + absf(phase - 0.5) * 0.75
 		streak.visible = !finishing
@@ -495,12 +497,7 @@ func spawn_obstacle() -> void:
 	var radius:float = OBSTACLE_RADIUS[kind] * randf_range(0.88, 1.22)
 	object.scale = Vector3.ONE * (radius / OBSTACLE_RADIUS[kind])
 	object.rotation = Vector3.ZERO
-	var offset := Vector2(randf_range(-1.35, 1.35), randf_range(-1.35, 1.35))
-	if offset.length() < 0.7:
-		offset = Vector2.from_angle(randf() * TAU) * 0.9
-	var origin := player_pos + offset
-	origin.x = clampf(origin.x, -4.3, 4.3)
-	origin.y = clampf(origin.y, -4.3, 4.3)
+	var origin := Vector2.from_angle(randf() * TAU) * sqrt(randf()) * 4.3
 	object.position = Vector3(origin.x, origin.y, -36.0)
 	set_obstacle_fade(pool_item, 0.0)
 	(pool_item.light as OmniLight3D).light_energy = 0.0
