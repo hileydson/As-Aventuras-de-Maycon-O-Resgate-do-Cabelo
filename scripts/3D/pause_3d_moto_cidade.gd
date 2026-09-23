@@ -33,8 +33,18 @@ func processa_pause_unpause()->void:
 		return
 	
 	var player = get_tree().get_first_node_in_group("player")
-	player.get_node("hud_canvas").get_node("control_gun").visible = false
-	player.get_node("hud_canvas").get_node("control_lamp").visible = false
+	if player:
+		var hud_canvas = player.get_node_or_null("hud_canvas")
+		if is_instance_valid(hud_canvas):
+			var control_gun = hud_canvas.get_node_or_null("control_gun")
+			if is_instance_valid(control_gun):
+				control_gun.visible = false
+			var control_lamp = hud_canvas.get_node_or_null("control_lamp")
+			if is_instance_valid(control_lamp):
+				control_lamp.visible = false
+			var maycon_hp = hud_canvas.get_node_or_null("maycon_hp")
+			if is_instance_valid(maycon_hp):
+				maycon_hp.visible = false
 	
 	if get_tree().paused:
 		if configuracoes_dialog and configuracoes_dialog.visible:

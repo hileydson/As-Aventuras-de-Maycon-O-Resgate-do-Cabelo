@@ -22,6 +22,7 @@ const OBSTACLE_SCALE:Array[float] = [2.7, 2.5, 2.6, 2.7]
 var maycon:Node3D
 var maycon_animation:AnimationPlayer
 var maycon_skeleton:Skeleton3D
+var falling_limb_poses:Array[Dictionary] = []
 var maycon_rim_light:OmniLight3D
 var body_trails:Array[Dictionary] = []
 var body_streaks:Array[Dictionary] = []
@@ -32,7 +33,7 @@ var speed_lines:Array[Dictionary] = []
 var dash_puffs:Array[Dictionary] = []
 var rock_material:StandardMaterial3D
 var trim_material:StandardMaterial3D
-var red_material:StandardMaterial3D
+var shaft_line_material:StandardMaterial3D
 var music:AudioStreamPlayer
 var wind:AudioStreamPlayer
 var dash_sound:AudioStreamPlayer
@@ -61,7 +62,7 @@ var hurt_invulnerability:float = 0.0
 var finishing:bool = false
 var ending_time:float = 0.0
 var ending_success:bool = false
-var ending_start_rotation:float = 0.0
+var ending_start_pitch:float = 0.0
 var ending_scream_started:bool = false
 var transition_sent:bool = false
 
@@ -109,12 +110,12 @@ func create_materials() -> void:
 	trim_material.metallic = 0.65
 	trim_material.roughness = 0.38
 	trim_material.cull_mode = BaseMaterial3D.CULL_DISABLED
-	red_material = StandardMaterial3D.new()
-	red_material.albedo_color = Color(0.58, 0.025, 0.07)
-	red_material.emission_enabled = true
-	red_material.emission = Color(0.8, 0.025, 0.055)
-	red_material.emission_energy_multiplier = 2.0
-	red_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	shaft_line_material = StandardMaterial3D.new()
+	shaft_line_material.albedo_color = Color(0.12, 0.14, 0.16)
+	shaft_line_material.emission_enabled = true
+	shaft_line_material.emission = Color(0.055, 0.065, 0.075)
+	shaft_line_material.emission_energy_multiplier = 0.7
+	shaft_line_material.cull_mode = BaseMaterial3D.CULL_DISABLED
 
 func create_shaft() -> void:
 	for index in 5:
@@ -143,7 +144,7 @@ func create_shaft() -> void:
 			torus.rings = 8
 			torus.ring_segments = 48
 			ring.mesh = torus
-			ring.material_override = trim_material if ring_index != 1 else red_material
+			ring.material_override = trim_material if ring_index != 1 else shaft_line_material
 			ring.rotation.x = PI * 0.5
 			ring.position.z = -8.8 + float(ring_index) * 8.8
 			section.add_child(ring)
@@ -167,20 +168,28 @@ func create_maycon() -> void:
 	maycon.rotation = Vector3(1.1, PI + 0.35, 0.1)
 	add_child(maycon)
 	maycon_animation = maycon.get_node_or_null("AnimationPlayer") as AnimationPlayer
-	if maycon_animation:
-		maycon_animation.stop()
 	maycon_skeleton = maycon.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
-	pose_falling_body(maycon_skeleton)
+	pose_falling_body()
 	create_body_effects()
 
-func pose_falling_body(skeleton:Skeleton3D) -> void:
-	# Turn the shoulders together with the arms so the skin does not stretch from wrist to torso.
-	var left_shoulder:int = skeleton.find_bone("LeftShoulder")
-	var right_shoulder:int = skeleton.find_bone("RightShoulder")
-	if left_shoulder >= 0:
-		skeleton.set_bone_pose_rotation(left_shoulder, Quaternion(Vector3.FORWARD, -0.36))
-	if right_shoulder >= 0:
-		skeleton.set_bone_pose_rotation(right_shoulder, Quaternion(Vector3.FORWARD, 0.36))
+func pose_falling_body() -> void:
+	# Hold the model's natural A pose and move only the limbs during the fall.
+	if maycon_animation && maycon_animation.has_animation("Idle"):
+		maycon_animation.play("Idle")
+		maycon_animation.seek(0.0, true)
+		maycon_animation.pause()
+	for bone_name in ["LeftArm", "RightArm", "LeftUpLeg", "RightUpLeg"]:
+		var bone_index:int = maycon_skeleton.find_bone(bone_name)
+		if bone_index >= 0:
+			falling_limb_poses.append({"name":bone_name, "index":bone_index, "rotation":maycon_skeleton.get_bone_pose_rotation(bone_index)})
+
+func animate_falling_limbs() -> void:
+	for limb in falling_limb_poses:
+		var motion:float = sin(elapsed * 2.4 + (PI if limb.name == "RightArm" or limb.name == "RightUpLeg" else 0.0))
+		var is_arm:bool = "Arm" in limb.name
+		var axis:Vector3 = Vector3.FORWARD if is_arm else Vector3.RIGHT
+		var angle:float = motion * (0.055 if is_arm else 0.08)
+		maycon_skeleton.set_bone_pose_rotation(limb.index, limb.rotation * Quaternion(axis, angle))
 
 func create_body_effects() -> void:
 	maycon_rim_light = OmniLight3D.new()
@@ -300,6 +309,7 @@ func _process(delta:float) -> void:
 	maycon.position = Vector3(player_pos.x, player_pos.y, MAYCON_DEPTH)
 	maycon.rotation.z = sin(elapsed * 3.2) * 0.08 - player_pos.x * 0.035
 	maycon.rotation.x = 1.1 + sin(elapsed * 2.1) * 0.045
+	animate_falling_limbs()
 	update_body_effects(delta)
 	update_dash_blur()
 	spawn_timer -= delta
@@ -533,7 +543,7 @@ func start_ending(success:bool) -> void:
 	maycon_rim_light.light_energy = 0.0
 	power_aura.visible = false
 	ending_success = success
-	ending_start_rotation = maycon.rotation.z
+	ending_start_pitch = maycon.rotation.x
 	ending_time = 0.0
 	ending_scream_started = false
 	transition_sent = false
@@ -550,8 +560,9 @@ func start_ending(success:bool) -> void:
 func update_ending(delta:float) -> void:
 	ending_time += delta
 	if ending_success:
+		animate_falling_limbs()
 		var turn_progress:float = clampf((ending_time - 0.18) / 1.0, 0.0, 1.0)
-		maycon.rotation.z = ending_start_rotation + smoothstep(0.0, 1.0, turn_progress) * PI
+		maycon.rotation.x = ending_start_pitch + smoothstep(0.0, 1.0, turn_progress) * PI
 		if ending_time > 0.75 && !ending_scream_started:
 			ending_scream_started = true
 			scream_sound.play()

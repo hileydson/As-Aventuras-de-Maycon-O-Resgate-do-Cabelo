@@ -73,7 +73,7 @@ var motorcycle_muzzle:GPUParticles3D
 var motorcycle_muzzle_light:OmniLight3D
 var motorcycle_effect_root:Node2D
 var motorcycle_sparks:CPUParticles2D
-var motorcycle_casings:CPUParticles2D
+var motorcycle_casings_3d:CPUParticles3D
 var motorcycle_glow:Sprite2D
 var motorcycle_screen_flash:ColorRect
 var motorcycle_flash_time:float = 0.0
@@ -141,6 +141,8 @@ func set_motorcycle_chase(active:bool) -> void:
 			motorcycle_muzzle_light.visible = false
 		if is_instance_valid(motorcycle_screen_flash):
 			motorcycle_screen_flash.visible = false
+		if is_instance_valid(motorcycle_casings_3d):
+			motorcycle_casings_3d.emitting = false
 	elif !is_instance_valid(motorcycle_muzzle):
 		motorcycle_muzzle = GPUParticles3D.new()
 		motorcycle_muzzle.name = "MotorcycleMuzzle"
@@ -176,6 +178,43 @@ func set_motorcycle_chase(active:bool) -> void:
 		motorcycle_muzzle_light.omni_range = 4.0
 		motorcycle_muzzle_light.visible = false
 		camera_3d.add_child(motorcycle_muzzle_light)
+
+		motorcycle_casings_3d = CPUParticles3D.new()
+		motorcycle_casings_3d.name = "MotorcycleCasings3D"
+		motorcycle_casings_3d.amount = 16
+		motorcycle_casings_3d.lifetime = 0.85
+		motorcycle_casings_3d.one_shot = false
+		motorcycle_casings_3d.explosiveness = 0.05
+		motorcycle_casings_3d.local_coords = true
+		motorcycle_casings_3d.position = Vector3(0.24, -0.16, -0.55)
+		motorcycle_casings_3d.direction = Vector3(1.35, 0.85, -2.6).normalized()
+		motorcycle_casings_3d.spread = 15.0
+		motorcycle_casings_3d.initial_velocity_min = 2.8
+		motorcycle_casings_3d.initial_velocity_max = 4.2
+		motorcycle_casings_3d.gravity = Vector3(0.0, -10.5, 0.0)
+		motorcycle_casings_3d.angular_velocity_min = 360.0
+		motorcycle_casings_3d.angular_velocity_max = 720.0
+		motorcycle_casings_3d.angle_min = 0.0
+		motorcycle_casings_3d.angle_max = 360.0
+		motorcycle_casings_3d.emitting = false
+
+		var casing_mesh := CylinderMesh.new()
+		casing_mesh.top_radius = 0.018
+		casing_mesh.bottom_radius = 0.018
+		casing_mesh.height = 0.065
+
+		var casing_mat := StandardMaterial3D.new()
+		casing_mat.albedo_color = Color(1.0, 0.83, 0.28)
+		casing_mat.metallic = 0.95
+		casing_mat.roughness = 0.18
+		casing_mat.emission_enabled = true
+		casing_mat.emission = Color(1.0, 0.82, 0.25)
+		casing_mat.emission_energy_multiplier = 0.5
+		casing_mesh.material = casing_mat
+
+		motorcycle_casings_3d.mesh = casing_mesh
+		camera_3d.add_child(motorcycle_casings_3d)
+
 		build_motorcycle_muzzle_overlay()
 	if active and is_instance_valid(motorcycle_effect_root):
 		motorcycle_effect_root.visible = true
@@ -227,24 +266,6 @@ func build_motorcycle_muzzle_overlay() -> void:
 	spark_colors.set_color(1, Color(1.0, 0.15, 0.02, 0.0))
 	motorcycle_sparks.color_ramp = spark_colors
 	motorcycle_effect_root.add_child(motorcycle_sparks)
-	var casing_image := Image.create(11, 4, false, Image.FORMAT_RGBA8)
-	casing_image.fill(Color(0.88, 0.52, 0.13))
-	for x in 11:
-		casing_image.set_pixel(x, 0, Color(1.0, 0.83, 0.35))
-	motorcycle_casings = CPUParticles2D.new()
-	motorcycle_casings.amount = 2
-	motorcycle_casings.lifetime = 0.45
-	motorcycle_casings.one_shot = true
-	motorcycle_casings.explosiveness = 1.0
-	motorcycle_casings.emitting = false
-	motorcycle_casings.position = Vector2(15.0, 8.0)
-	motorcycle_casings.direction = Vector2(1.0, -0.25)
-	motorcycle_casings.spread = 20.0
-	motorcycle_casings.initial_velocity_min = 85.0
-	motorcycle_casings.initial_velocity_max = 140.0
-	motorcycle_casings.gravity = Vector2(0.0, 260.0)
-	motorcycle_casings.texture = ImageTexture.create_from_image(casing_image)
-	motorcycle_effect_root.add_child(motorcycle_casings)
 
 func build_blood_damage_overlay() -> void:
 	if is_instance_valid(blood_damage_overlay):
@@ -511,9 +532,9 @@ func _physics_process(delta):
 	motorcycle_fire_cooldown = maxf(0.0, motorcycle_fire_cooldown - delta)
 	motorcycle_flash_time = maxf(0.0, motorcycle_flash_time - delta)
 	if on_moto:
-		var is_curving: bool = motorcycle_steer_dir != 0.0
-		var target_lag := motorcycle_lean * 95.0
-		var lag_rate: float = 2.8 if is_curving else 1.4
+		var is_curving: bool = absf(motorcycle_lean) > 0.01
+		var target_lag := motorcycle_lean * 50.0
+		var lag_rate: float = 1.4 if is_curving else 0.8
 		motorcycle_visual_lag = lerpf(motorcycle_visual_lag, target_lag, minf(1.0, delta * lag_rate))
 		
 		if motorcycle_bike_rest_scale != Vector2.ZERO:
@@ -543,6 +564,14 @@ func _physics_process(delta):
 			motorcycle_glow.scale = Vector2.ONE * (0.75 + randf_range(0.0, 0.18))
 			motorcycle_screen_flash.modulate.a = motorcycle_flash_time / 0.11
 			motorcycle_screen_flash.size = get_viewport().get_visible_rect().size
+
+		# Atualiza a câmara de ejeção no lado direito da arma e emite cápsulas para frente e para a direita
+		if is_instance_valid(motorcycle_casings_3d):
+			var chamber_screen := metralhadora_moto.to_global(Vector2(metralhadora_moto.texture.get_width() * 0.16, -metralhadora_moto.texture.get_height() * 0.12))
+			var chamber_world := camera_3d.project_position(chamber_screen, 0.85)
+			motorcycle_casings_3d.position = camera_3d.to_local(chamber_world)
+			motorcycle_casings_3d.emitting = (firing or motorcycle_flash_time > 0.0)
+
 		if firing:
 			if motorcycle_fire_cooldown <= 0.0:
 				motorcycle_fire_cooldown = 0.15
@@ -563,8 +592,6 @@ func _physics_process(delta):
 				motorcycle_muzzle.emitting = true
 				motorcycle_sparks.restart()
 				motorcycle_sparks.emitting = true
-				motorcycle_casings.restart()
-				motorcycle_casings.emitting = true
 				motorcycle_fire.emit()
 	# --- 1. CONFIGURAÇÕES TÉCNICAS E HUD ---
 	if Global.is_two_player_active:
@@ -661,43 +688,21 @@ func _physics_process(delta):
 		var turn_input: float = float(joy_look.x)
 		var mouse_turn: float = 0.0
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			mouse_turn = clampf(Input.get_last_mouse_velocity().x * MOUSE_SENSITIVITY * 0.16, -0.65, 0.65)
+			mouse_turn = clampf(Input.get_last_mouse_velocity().x * MOUSE_SENSITIVITY * 0.18, -0.80, 0.80)
 
-		# ACELERAÇÃO PROGRESSIVA DA INCLINAÇÃO E DO GIRO (MAIS LENTO E GRADATIVO)
-		if absf(turn_input) > 0.05:
-			var current_dir: float = signf(turn_input)
-			if motorcycle_steer_dir != 0.0 and current_dir != motorcycle_steer_dir:
-				motorcycle_lean_accel = 0.03
-				motorcycle_turn_accel = 0.03
-			motorcycle_steer_dir = current_dir
-			# Aumenta suavemente com aceleração progressiva
-			motorcycle_lean_accel = move_toward(motorcycle_lean_accel, 1.0, delta * 0.55)
-			motorcycle_turn_accel = move_toward(motorcycle_turn_accel, 1.0, delta * 0.48)
-		else:
-			# Soltou o analógico: vai voltando mais devagar e gradativo para o centro
-			motorcycle_steer_dir = 0.0
-			motorcycle_lean_accel = move_toward(motorcycle_lean_accel, 0.0, delta * 0.60)
-			motorcycle_turn_accel = move_toward(motorcycle_turn_accel, 0.0, delta * 0.60)
-
-		# 1. Inclinação da moto (começa sutil e inclina com aceleração suave)
-		var max_lean_angle: float = 0.18 # ~10.3 graus
-		var lean_factor: float = lerpf(0.12, 1.0, motorcycle_lean_accel * motorcycle_lean_accel)
-		var target_lean: float = turn_input * max_lean_angle * lean_factor
-		var lean_rate: float = (0.75 + 1.25 * motorcycle_lean_accel) if absf(turn_input) > 0.05 else 0.70
-		motorcycle_lean = move_toward(motorcycle_lean, target_lean, lean_rate * delta)
-
-		# 2. Giro da tela (começa bem lento e ganha aceleração progressiva, com velocidade máxima controlada)
-		var turn_factor: float = lerpf(0.10, 1.0, motorcycle_turn_accel * motorcycle_turn_accel)
-		var target_turn: float = -turn_input * 0.95 * turn_factor - mouse_turn
-		var turn_accel_rate: float = (0.65 + 1.15 * motorcycle_turn_accel) if absf(turn_input) > 0.05 else 0.75
-		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, turn_accel_rate * delta)
+		# Giro suave e mais lento da moto/câmera
+		var target_turn := clampf(-turn_input * 0.78 - mouse_turn, -0.80, 0.80)
+		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, 2.2 * delta)
 		rotate_y(motorcycle_turn_speed * delta)
 
-		# 3. Roll da Câmera 3D (a tela inclina suavemente acompanhando a curva da moto)
+		# Inclinação mais lenta e suave do sprite da moto e roll da câmera
+		var max_lean_angle: float = 0.14
+		var target_lean: float = turn_input * max_lean_angle
+		motorcycle_lean = move_toward(motorcycle_lean, target_lean, 0.85 * delta)
+
 		if camera_3d:
-			var target_camera_roll := -motorcycle_lean * 0.35
-			var roll_rate: float = (0.70 + 1.10 * motorcycle_turn_accel) if absf(turn_input) > 0.05 else 0.70
-			camera_3d.rotation.z = move_toward(camera_3d.rotation.z, target_camera_roll, roll_rate * delta)
+			var target_camera_roll := -motorcycle_lean * 0.32
+			camera_3d.rotation.z = move_toward(camera_3d.rotation.z, target_camera_roll, 0.85 * delta)
 	elif joy_look.length() > 0.13:
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)
 		if camera_3d and not on_moto:

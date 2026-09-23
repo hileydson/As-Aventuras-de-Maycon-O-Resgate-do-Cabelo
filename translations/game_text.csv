@@ -80,6 +80,7 @@ OBJECTIVE_FIND_FELLAS,Encontre os Fellas ao norte,Find the Fellas up north,Encue
 OBJECTIVE_DISMOUNT,Pressione E / START para descer da moto,Press E / START to get off the motorcycle,Pulsa E / START para bajar de la moto,按 E / START 下摩托车
 OBJECTIVE_FIGHT_FELLAS,BOTÃO ESQUERDO / RT: acerte os Fellas com a madeira,LEFT BUTTON / RT: hit the Fellas with the wood,BOTÓN IZQUIERDO / RT: golpea a los Fellas con la madera,鼠标左键 / RT：用木棍痛击费拉斯帮
 OBJECTIVE_CABELO_GAS_STATION,O Cabelo está no Posto Estrela da Serra!,Cabelo is at the Serra Star Gas Station!,¡Cabelo está en la Gasolinera Estrella de la Sierra!,卡贝洛在塞拉之星加油站！
+OBJECTIVE_CHASE_FELLAS,Procure os Fellas no mapa.,Find the Fellas on the map.,Encuentra a los Fellas en el mapa.,在地图上寻找 Fellas。
 SHOUT_1,SAI VAZADO!,BACK OFF!,¡LÁRGATE!,快滚开！
 SHOUT_2,"SAI DAÍ, BUNDÃO!","GET AWAY, JERK!","¡QUÍTATE DE AHÍ, COBARDE!",闪开，胆小鬼！
 SHOUT_3,"SAI NO SAPATO, OTÁRIO!","GET LOST, LOSER!","¡PIÉRDETE, TONTO!",悄悄滚蛋吧，蠢货！
@@ -219,10 +220,3 @@ Tendrás 3 vidas, si mueres, tendrás que volver al inicio del Nivel.","你拥�
 用完6次防御后同样需要等待片刻。
 
 你共有3条生命，如果阵亡则必须重返关卡起点。"
-OBJECTIVE_CHASE_FELLAS,Encontre os Fellas no mapa. A / ESPAÇO acelera; B dá ré; GATILHO DIREITO / CLIQUE ESQUERDO atira.,Find the Fellas on the map. A / SPACE accelerates; B reverses; RIGHT TRIGGER / LEFT CLICK fires.,Encuentra a los Fellas en el mapa. A / ESPACIO acelera; B da marcha atrás; GATILLO DERECHO / CLIC IZQUIERDO dispara.,在地图上找到 Fellas。A / 空格加速；B 倒车；右扳机 / 鼠标左键射击。
-HUD_MAYCON_NAME,Maycon,Maycon,Maycon,Maycon
-WELL_HEALTH,VIDA,HEALTH,VIDA,生命
-WELL_CONTROLS,WASD / SETAS: MOVER   ESPAÇO / A: DASH DE PEIDO   Q / Y: PENTAGRAMA,WASD / ARROWS: MOVE   SPACE / A: FART DASH   Q / Y: PENTAGRAM,WASD / FLECHAS: MOVER   ESPACIO / A: DASH DE PEDO   Q / Y: PENTAGRAMA,WASD / 方向键：移动   空格 / A：放屁冲刺   Q / Y：五芒星
-WELL_HIT,HIT,HIT,GOLPE,击中
-WELL_POWER_READY,Q / Y: ATIVAR!,Q / Y: ACTIVATE!,Q / Y: ¡ACTIVAR!,Q / Y：发动！
-WELL_INVULNERABLE,IMUNE,INVULNERABLE,INVULNERABLE,无敌

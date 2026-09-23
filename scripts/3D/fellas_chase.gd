@@ -349,6 +349,13 @@ func update_minimap() -> void:
 func set_map_visible(open:bool) -> void:
 	if is_instance_valid(minimap_root):
 		minimap_root.visible = !open and !finished
+	if is_instance_valid(hud):
+		var player_health = hud.get_node_or_null("PlayerHealth")
+		if is_instance_valid(player_health):
+			player_health.visible = !open and !finished
+		var enemies_margin = hud.get_node_or_null("Margin")
+		if is_instance_valid(enemies_margin):
+			enemies_margin.visible = !open and !finished
 	for member in members:
 		var marker:Sprite3D = member["marker"]
 		marker.visible = open and !member["escaped"]

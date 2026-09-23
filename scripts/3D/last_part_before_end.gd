@@ -15,28 +15,14 @@ const FELLAS_CHASE_SCRIPT = preload("res://scripts/3D/fellas_chase.gd")
 const PENTAGRAM_ITEM_SCRIPT = preload("res://scripts/3D/pentagram_item_3d.gd")
 
 const PENTAGRAM_SPOTS: Array[Vector3] = [
-	Vector3(500.0, -4.06, 220.0),   # Ponte leste - entrada
-	Vector3(420.0, -4.38, 220.0),   # Reta da ponte
-	Vector3(300.0, -5.74, 220.0),   # Início da cidade leste
-	Vector3(120.0, -7.08, 560.0),   # Cruzamento sudeste
-	Vector3(-50.0, -7.08, 560.0),   # Rua do informante / sul
-	Vector3(-150.0, -7.03, 680.0),  # Avenida sul
-	Vector3(-250.0, -7.03, 680.0),  # Rotatória / curva sudoeste
-	Vector3(-320.0, -7.03, 750.0),  # Perto da curva inicial dos fellas
-	Vector3(-460.0, -7.08, 860.0),  # Extremo sudoeste da cidade
-	Vector3(-480.0, -7.03, 650.0),  # Rodovia oeste sul
-	Vector3(-480.0, -7.03, 420.0),  # Rodovia oeste centro-sul
-	Vector3(-480.0, -7.08, 200.0),  # Rodovia oeste centro
-	Vector3(-250.0, -7.08, 180.0),  # Conector central oeste
-	Vector3(100.0, -7.08, 180.0),   # Avenida central leste
-	Vector3(-250.0, -7.08, -50.0),  # Travessa central norte
-	Vector3(-420.0, -7.03, -120.0), # Reta noroeste
-	Vector3(-500.0, -7.03, -160.0), # Extremo noroeste
-	Vector3(-180.0, -7.08, -220.0), # Avenida norte oeste
-	Vector3(0.0, -7.08, -220.0),    # Avenida norte centro
-	Vector3(150.0, -7.08, -220.0),  # Avenida norte leste
-	Vector3(260.0, -7.08, -80.0),   # Setor nordeste
-	Vector3(60.0, -7.03, -180.0),   # Travessa norte-centro
+	Vector3(-410.0, -7.08, 730.0),  # 1. Reta de largada da perseguição (direto à frente na visão)
+	Vector3(-330.0, -7.08, 710.0),  # 2. Primeiro cruzamento principal da perseguição
+	Vector3(-250.0, -7.08, 650.0),  # 3. Avenida Leste do setor sul
+	Vector3(-480.0, -7.03, 420.0),  # 4. Rodovia Oeste (meio da cidade)
+	Vector3(-250.0, -7.08, 420.0),  # 5. Avenida Central
+	Vector3(120.0, -7.08, 560.0),   # 6. Esquina Sudeste
+	Vector3(-480.0, -7.08, 200.0),  # 7. Rodovia Oeste Norte
+	Vector3(-250.0, -7.08, -50.0),  # 8. Avenida Norte Central
 ]
 
 @onready var maycon_3d: Node3D = $maycon_3d
@@ -99,7 +85,6 @@ func _ready() -> void:
 	luz_mapa.visible = true
 	maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
 	cutscene_inicio.play("intro_mapa")
-	spawn_city_pentagrams()
 	if OS.get_cmdline_user_args().has("--test-wood-pickup"):
 		wood_debug_mode = true
 		call_deferred("start_wood_pickup_test")
@@ -317,6 +302,10 @@ func set_story_stage(new_stage:int) -> void:
 	cabelo.visible = stage == STAGE_CABELO
 	cabelo_area.monitoring = stage == STAGE_CABELO
 	update_map_objectives(false)
+	if stage == STAGE_CHASE:
+		spawn_city_pentagrams()
+	else:
+		despawn_city_pentagrams()
 	match stage:
 		STAGE_INFORMANT:
 			objective_label.text = tr("OBJECTIVE_SEEK_CLUE")
@@ -342,6 +331,8 @@ func update_map_objectives(map_open:bool) -> void:
 	$cigarro/mapa_cabelo.visible = map_open && stage == STAGE_INFORMANT
 	$lipao/mapa_cabelo.visible = map_open && stage >= STAGE_FELLAS && stage < STAGE_CABELO
 	$cabelo/mapa_cabelo.visible = map_open && stage == STAGE_CABELO
+	if is_instance_valid(objective_ui):
+		objective_ui.visible = !map_open and stage != STAGE_INFORMANT and stage != STAGE_SURRENDER
 	if is_instance_valid(fellas_chase):
 		fellas_chase.set_map_visible(map_open)
 
@@ -453,9 +444,9 @@ func begin_pickup_cutscene() -> void:
 	var wood_light := OmniLight3D.new()
 	wood_light.name = "WoodCutsceneLight"
 	wood_light.light_color = Color(1.0, 0.94, 0.78)
-	wood_light.light_energy = 5.5
-	wood_light.omni_range = 9.5
-	wood_light.omni_attenuation = 0.8
+	wood_light.light_energy = 2.4
+	wood_light.omni_range = 7.0
+	wood_light.omni_attenuation = 1.0
 	loose_wood.add_child(wood_light)
 	player_camera.make_current()
 	fade.get_node("Transition").play("fade_in")
@@ -831,14 +822,25 @@ func unlock_cabelo() -> void:
 
 func spawn_city_pentagrams() -> void:
 	if !city_pentagrams.is_empty():
+		for item in city_pentagrams:
+			if is_instance_valid(item) and item.has_method("respawn"):
+				item.respawn()
 		return
 	var pentagrams_node := Node3D.new()
 	pentagrams_node.name = "CityPentagrams"
 	add_child(pentagrams_node)
 	for spot in PENTAGRAM_SPOTS:
 		var ground_pos := find_ground_position(spot)
+		if ground_pos.y > -4.0:
+			ground_pos.y = spot.y
 		var item: Node3D = PENTAGRAM_ITEM_SCRIPT.new()
 		pentagrams_node.add_child(item)
 		if item.has_method("set_ground_position"):
-			item.set_ground_position(ground_pos, 1.35)
+			item.set_ground_position(ground_pos, 2.0)
 		city_pentagrams.append(item)
+
+func despawn_city_pentagrams() -> void:
+	var pentagrams_node := get_node_or_null("CityPentagrams")
+	if is_instance_valid(pentagrams_node):
+		pentagrams_node.queue_free()
+	city_pentagrams.clear()
