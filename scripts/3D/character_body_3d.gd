@@ -79,8 +79,16 @@ var motorcycle_screen_flash:ColorRect
 var motorcycle_flash_time:float = 0.0
 var motorcycle_gun_rest_position:Vector2
 var motorcycle_bike_rest_position:Vector2
+var motorcycle_bike_rest_scale:Vector2
+var motorcycle_gun_rest_scale:Vector2
+var motorcycle_pullback:float = 0.0
 var motorcycle_visual_lag:float = 0.0
 var motorcycle_gun_recoil:Vector2 = Vector2.ZERO
+var motorcycle_lean:float = 0.0
+var motorcycle_lean_accel:float = 0.0
+var motorcycle_turn_accel:float = 0.0
+var motorcycle_steer_dir:float = 0.0
+var blood_damage_overlay:Control
 
 
 @export var SPRINT_SPEED = 9.0  # Velocidade ao correr
@@ -100,6 +108,20 @@ func set_final_game()->void:
 	camera.position.y = 2.514444
 	final_game_camera_offset_applied = true
 	moto_parada.play()
+	motorcycle_lean = 0.0
+	motorcycle_lean_accel = 0.0
+	motorcycle_turn_accel = 0.0
+	motorcycle_steer_dir = 0.0
+	motorcycle_turn_speed = 0.0
+	motorcycle_pullback = 0.0
+	motorcycle_sprite.rotation = 0.0
+	metralhadora_moto.rotation = 0.0
+	if motorcycle_bike_rest_scale != Vector2.ZERO:
+		motorcycle_sprite.scale = motorcycle_bike_rest_scale
+	if motorcycle_gun_rest_scale != Vector2.ZERO:
+		metralhadora_moto.scale = motorcycle_gun_rest_scale
+	if is_instance_valid(camera_3d):
+		camera_3d.rotation.z = 0.0
 	set_motorcycle_chase(false)
 
 func set_motorcycle_chase(active:bool) -> void:
@@ -224,11 +246,49 @@ func build_motorcycle_muzzle_overlay() -> void:
 	motorcycle_casings.texture = ImageTexture.create_from_image(casing_image)
 	motorcycle_effect_root.add_child(motorcycle_casings)
 
+func build_blood_damage_overlay() -> void:
+	if is_instance_valid(blood_damage_overlay):
+		return
+	blood_damage_overlay = BloodDamageOverlay.new()
+	$hud_canvas.add_child(blood_damage_overlay)
+
+func flash_blood_damage() -> void:
+	if is_instance_valid(blood_damage_overlay):
+		blood_damage_overlay.call("flash")
+
+func curar_sangue(percentual: float = 0.20) -> int:
+	var heal_points: int = maxi(1, int(round(float(danos_count_limit) * percentual)))
+	var previous_danos: int = danos_count
+	danos_count = maxi(0, danos_count - heal_points)
+	if danos_count < danos_count_limit:
+		motorcycle_chase_death_emitted = false
+	var healed: int = previous_danos - danos_count
+	flash_heal_effect()
+	return healed
+
+func flash_heal_effect() -> void:
+	if is_instance_valid(blood_damage_overlay):
+		blood_damage_overlay.call("flash_heal")
+	Input.start_joy_vibration(device_id, 0.2, 0.35, 0.25)
+
 func dismount_final_game()->void:
 	set_motorcycle_chase(false)
 	on_moto = false
 	motorcycle_visual_lag = 0.0
+	motorcycle_pullback = 0.0
+	motorcycle_lean = 0.0
+	motorcycle_lean_accel = 0.0
+	motorcycle_turn_accel = 0.0
+	motorcycle_steer_dir = 0.0
+	motorcycle_sprite.rotation = 0.0
+	metralhadora_moto.rotation = 0.0
+	if is_instance_valid(camera_3d):
+		camera_3d.rotation.z = 0.0
 	motorcycle_sprite.position = motorcycle_bike_rest_position
+	if motorcycle_bike_rest_scale != Vector2.ZERO:
+		motorcycle_sprite.scale = motorcycle_bike_rest_scale
+	if motorcycle_gun_rest_scale != Vector2.ZERO:
+		metralhadora_moto.scale = motorcycle_gun_rest_scale
 	control_moto.visible = false
 	farol_moto_cigarro.visible = false
 	moto_parada.stop()
@@ -386,6 +446,9 @@ func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	motorcycle_gun_rest_position = metralhadora_moto.position
 	motorcycle_bike_rest_position = motorcycle_sprite.position
+	motorcycle_bike_rest_scale = motorcycle_sprite.scale
+	motorcycle_gun_rest_scale = metralhadora_moto.scale
+	build_blood_damage_overlay()
 	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)                                                                                               
 	
 	danos_count = 0
@@ -424,6 +487,7 @@ func aplicar_shake(valor: float):
 	
 
 func levou_dano(dano:int)->void:
+	flash_blood_damage()
 	if motorcycle_chase:
 		if danos_count >= danos_count_limit:
 			return
@@ -447,11 +511,21 @@ func _physics_process(delta):
 	motorcycle_fire_cooldown = maxf(0.0, motorcycle_fire_cooldown - delta)
 	motorcycle_flash_time = maxf(0.0, motorcycle_flash_time - delta)
 	if on_moto:
-		var target_lag := clampf(-motorcycle_turn_speed * 10.0, -14.0, 14.0)
-		motorcycle_visual_lag = lerpf(motorcycle_visual_lag, target_lag, minf(1.0, delta * 5.0))
+		var is_curving: bool = motorcycle_steer_dir != 0.0
+		var target_lag := motorcycle_lean * 95.0
+		var lag_rate: float = 2.8 if is_curving else 1.4
+		motorcycle_visual_lag = lerpf(motorcycle_visual_lag, target_lag, minf(1.0, delta * lag_rate))
+		
+		if motorcycle_bike_rest_scale != Vector2.ZERO:
+			motorcycle_sprite.scale = motorcycle_bike_rest_scale
+		if motorcycle_gun_rest_scale != Vector2.ZERO:
+			metralhadora_moto.scale = motorcycle_gun_rest_scale
+		
 		motorcycle_sprite.position = motorcycle_bike_rest_position + Vector2(motorcycle_visual_lag, 0.0)
+		motorcycle_sprite.rotation = motorcycle_lean
 		motorcycle_gun_recoil = motorcycle_gun_recoil.lerp(Vector2.ZERO, minf(1.0, delta * 15.0))
 		metralhadora_moto.position = motorcycle_gun_rest_position + Vector2(motorcycle_visual_lag * 1.15, 0.0) + motorcycle_gun_recoil
+		metralhadora_moto.rotation = motorcycle_lean * 0.9
 	if motorcycle_chase and on_moto:
 		var firing := Input.get_joy_axis(device_id, JOY_AXIS_TRIGGER_RIGHT) > 0.5 or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
 		if firing:
@@ -572,23 +646,62 @@ func _physics_process(delta):
 # --- 3. LÓGICA DE OLHAR (Moto: analógico esquerdo; a pé: direito) ---
 	var joy_look = Vector2.ZERO
 	if on_moto:
-		joy_look = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X), 0)
+		var steer_x := Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X)
+		if absf(steer_x) < 0.12:
+			steer_x = 0.0
+		if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
+			steer_x -= 1.0
+		if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
+			steer_x += 1.0
+		joy_look = Vector2(clampf(steer_x, -1.0, 1.0), 0.0)
 	else:
 		joy_look = Vector2(Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_X), Input.get_joy_axis(device_id, JOY_AXIS_RIGHT_Y))
 
-	# Ignora pequenos movimentos involuntários do analógico da moto.
 	if on_moto:
-		if absf(joy_look.x) < 0.13:
-			joy_look.x = 0.0
-		var mouse_turn := 0.0
+		var turn_input: float = float(joy_look.x)
+		var mouse_turn: float = 0.0
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			mouse_turn = clampf(Input.get_last_mouse_velocity().x * MOUSE_SENSITIVITY * 0.28, -1.4, 1.4)
-		var target_turn := clampf(-joy_look.x * 1.4 - mouse_turn, -1.4, 1.4)
-		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, 3.2 * delta)
+			mouse_turn = clampf(Input.get_last_mouse_velocity().x * MOUSE_SENSITIVITY * 0.16, -0.65, 0.65)
+
+		# ACELERAÇÃO PROGRESSIVA DA INCLINAÇÃO E DO GIRO (MAIS LENTO E GRADATIVO)
+		if absf(turn_input) > 0.05:
+			var current_dir: float = signf(turn_input)
+			if motorcycle_steer_dir != 0.0 and current_dir != motorcycle_steer_dir:
+				motorcycle_lean_accel = 0.03
+				motorcycle_turn_accel = 0.03
+			motorcycle_steer_dir = current_dir
+			# Aumenta suavemente com aceleração progressiva
+			motorcycle_lean_accel = move_toward(motorcycle_lean_accel, 1.0, delta * 0.55)
+			motorcycle_turn_accel = move_toward(motorcycle_turn_accel, 1.0, delta * 0.48)
+		else:
+			# Soltou o analógico: vai voltando mais devagar e gradativo para o centro
+			motorcycle_steer_dir = 0.0
+			motorcycle_lean_accel = move_toward(motorcycle_lean_accel, 0.0, delta * 0.60)
+			motorcycle_turn_accel = move_toward(motorcycle_turn_accel, 0.0, delta * 0.60)
+
+		# 1. Inclinação da moto (começa sutil e inclina com aceleração suave)
+		var max_lean_angle: float = 0.18 # ~10.3 graus
+		var lean_factor: float = lerpf(0.12, 1.0, motorcycle_lean_accel * motorcycle_lean_accel)
+		var target_lean: float = turn_input * max_lean_angle * lean_factor
+		var lean_rate: float = (0.75 + 1.25 * motorcycle_lean_accel) if absf(turn_input) > 0.05 else 0.70
+		motorcycle_lean = move_toward(motorcycle_lean, target_lean, lean_rate * delta)
+
+		# 2. Giro da tela (começa bem lento e ganha aceleração progressiva, com velocidade máxima controlada)
+		var turn_factor: float = lerpf(0.10, 1.0, motorcycle_turn_accel * motorcycle_turn_accel)
+		var target_turn: float = -turn_input * 0.95 * turn_factor - mouse_turn
+		var turn_accel_rate: float = (0.65 + 1.15 * motorcycle_turn_accel) if absf(turn_input) > 0.05 else 0.75
+		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, turn_accel_rate * delta)
 		rotate_y(motorcycle_turn_speed * delta)
+
+		# 3. Roll da Câmera 3D (a tela inclina suavemente acompanhando a curva da moto)
+		if camera_3d:
+			var target_camera_roll := -motorcycle_lean * 0.35
+			var roll_rate: float = (0.70 + 1.10 * motorcycle_turn_accel) if absf(turn_input) > 0.05 else 0.70
+			camera_3d.rotation.z = move_toward(camera_3d.rotation.z, target_camera_roll, roll_rate * delta)
 	elif joy_look.length() > 0.13:
 		rotate_y(-joy_look.x * JOY_SENSITIVITY)
 		if camera_3d and not on_moto:
+			camera_3d.rotation.z = move_toward(camera_3d.rotation.z, 0.0, 6.0 * delta)
 			camera_3d.rotate_x(-joy_look.y * JOY_SENSITIVITY)
 			camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 
@@ -775,3 +888,103 @@ func _on_animation_tree_animation_finished(anim_name: StringName) -> void:
 		#if Global.players_dead_count == 1:
 		#	two_player_died.visible = true
 		#self.process_mode = Node.PROCESS_MODE_DISABLED
+
+class BloodDamageOverlay extends Control:
+	var blood_alpha: float = 0.0
+	var heal_alpha: float = 0.0
+	var splatters: Array[Dictionary] = []
+	var fade_tween: Tween
+	var heal_tween: Tween
+
+	func _init() -> void:
+		name = "BloodDamageOverlay"
+		set_anchors_preset(Control.PRESET_FULL_RECT)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		z_index = 105
+		generate_splatters()
+
+	func generate_splatters() -> void:
+		splatters.clear()
+		for i in 36:
+			var side := randi() % 4
+			var p := Vector2.ZERO
+			if side == 0:
+				p = Vector2(randf_range(0.0, 1152.0), randf_range(0.0, 150.0))
+			elif side == 1:
+				p = Vector2(randf_range(0.0, 1152.0), randf_range(498.0, 648.0))
+			elif side == 2:
+				p = Vector2(randf_range(0.0, 180.0), randf_range(0.0, 648.0))
+			else:
+				p = Vector2(randf_range(972.0, 1152.0), randf_range(0.0, 648.0))
+			if i % 3 == 0:
+				p = Vector2(randf_range(160.0, 992.0), randf_range(120.0, 528.0))
+			splatters.append({
+				"pos": p,
+				"radius": randf_range(9.0, 38.0),
+				"streak": Vector2(randf_range(-14.0, 14.0), randf_range(12.0, 42.0)),
+				"shade": randf_range(0.85, 1.0)
+			})
+
+	func flash() -> void:
+		generate_splatters()
+		blood_alpha = 0.92
+		visible = true
+		queue_redraw()
+		if fade_tween and fade_tween.is_valid():
+			fade_tween.kill()
+		fade_tween = create_tween()
+		fade_tween.tween_property(self, "blood_alpha", 0.0, 0.68).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		fade_tween.tween_callback(func(): queue_redraw())
+
+	func flash_heal() -> void:
+		heal_alpha = 0.85
+		visible = true
+		queue_redraw()
+		if heal_tween and heal_tween.is_valid():
+			heal_tween.kill()
+		heal_tween = create_tween()
+		heal_tween.tween_property(self, "heal_alpha", 0.0, 0.72).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		heal_tween.tween_callback(func(): queue_redraw())
+
+	func _process(_delta: float) -> void:
+		if blood_alpha > 0.0 or heal_alpha > 0.0:
+			queue_redraw()
+
+	func _draw() -> void:
+		var viewport_size := get_viewport_rect().size
+		var w := viewport_size.x
+		var h := viewport_size.y
+
+		# Flash de Cura / Restauração de Sangue
+		if heal_alpha > 0.005:
+			draw_rect(Rect2(Vector2.ZERO, viewport_size), Color(0.12, 0.95, 0.65, heal_alpha * 0.28), true)
+			var border_heal := Color(0.2, 0.88, 1.0, heal_alpha * 0.52)
+			draw_rect(Rect2(0, 0, w, 24), border_heal, true)
+			draw_rect(Rect2(0, h - 24, w, 24), border_heal, true)
+			draw_rect(Rect2(0, 0, 24, h), border_heal, true)
+			draw_rect(Rect2(w - 24, 0, 24, h), border_heal, true)
+
+		if blood_alpha <= 0.005:
+			return
+
+		# 1. Flash avermelhado em toda a tela (mancha geral de sangue)
+		draw_rect(Rect2(Vector2.ZERO, viewport_size), Color(0.72, 0.02, 0.05, blood_alpha * 0.38), true)
+
+		# 2. Vinheta e bordas escuras de sangue
+		var border_col := Color(0.48, 0.0, 0.02, blood_alpha * 0.72)
+		draw_rect(Rect2(0, 0, w, 44), border_col, true)
+		draw_rect(Rect2(0, h - 44, w, 44), border_col, true)
+		draw_rect(Rect2(0, 0, 44, h), border_col, true)
+		draw_rect(Rect2(w - 44, 0, 44, h), border_col, true)
+
+		# 3. Gotas e respingos de sangue espalhados
+		for drop in splatters:
+			var p: Vector2 = drop["pos"]
+			var r: float = drop["radius"]
+			var col := Color(0.78 * drop["shade"], 0.01, 0.03, blood_alpha * 0.88)
+			var dark := Color(0.35, 0.0, 0.01, blood_alpha * 0.94)
+			draw_circle(p, r, col)
+			draw_circle(p + Vector2(1, 1), r * 0.58, dark)
+			var streak: Vector2 = drop["streak"]
+			draw_line(p, p + streak, col, r * 0.42)
+			draw_circle(p + streak, r * 0.32, col)

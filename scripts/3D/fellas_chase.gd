@@ -98,6 +98,9 @@ func start_chase(chase_player:CharacterBody3D) -> void:
 			"turn_timer":0.0, "shot_timer":randf_range(0.8, 1.6), "shot_state":0,
 			"shot_delay":0.0, "burst_remaining":0, "aim_direction":Vector3.ZERO,
 			"lost_timer":0.0, "phase":randf() * TAU,
+			"recent_hits":0, "hit_streak_timer":0.0, "flee_timer":0.0,
+			"flee_cooldown":randf_range(2.0, 5.0), "flee_target":Vector3.ZERO,
+			"stuck_timer":0.0, "last_pos":sprite.global_position,
 			"bar":hud.get_node("Margin/HBox/Enemy%d/HP" % index),
 			"hp_text":hud.get_node("Margin/HBox/Enemy%d/HPText" % index),
 			"cross":hud.get_node("Margin/HBox/Enemy%d/Cross" % index),
@@ -360,6 +363,14 @@ func _physics_process(delta:float) -> void:
 	for member in members:
 		if member["escaped"]:
 			continue
+		if member["hit_streak_timer"] > 0.0:
+			member["hit_streak_timer"] -= delta
+			if member["hit_streak_timer"] <= 0.0:
+				member["recent_hits"] = 0
+		if member["flee_cooldown"] > 0.0:
+			member["flee_cooldown"] -= delta
+		if member["flee_timer"] > 0.0:
+			member["flee_timer"] -= delta
 		var sprite:Sprite3D = member["sprite"]
 		var marker:Sprite3D = member["marker"]
 		var to_player := player.global_position - sprite.global_position
@@ -413,35 +424,135 @@ func move_wandering(member:Dictionary, delta:float) -> void:
 
 func move_chasing(member:Dictionary, delta:float, distance:float) -> void:
 	var sprite:Sprite3D = member["sprite"]
-	var forward := -player.global_basis.z
-	forward.y = 0.0
-	forward = forward.normalized()
+	var player_forward := -player.global_basis.z
+	player_forward.y = 0.0
+	player_forward = player_forward.normalized()
+	var player_speed := Vector2(player.velocity.x, player.velocity.z).length()
+
+	# 1. MODO FUGA ACELERADA (quando levou muito dano):
+	# "se ver que esta levando muito dano corre pra frente e vai pra outro lugar do mapa, mas nao faça isso sempre, faça isso de sair mais rapido e ir para outro lugar do mapa eventualmente"
+	if member["flee_timer"] > 0.0:
+		var flee_dir:Vector3 = (member["flee_target"] as Vector3) - sprite.global_position
+		flee_dir.y = 0.0
+		if flee_dir.length() < 14.0 or member["flee_target"] == Vector3.ZERO:
+			var random_corner := randf_range(0.8, 1.4) * (-1.0 if randf() < 0.5 else 1.0)
+			var next_heading := (member["heading"] as Vector3).rotated(Vector3.UP, random_corner).normalized()
+			member["flee_target"] = road_position(sprite.global_position + next_heading * randf_range(80.0, 130.0))
+			flee_dir = (member["flee_target"] as Vector3) - sprite.global_position
+			flee_dir.y = 0.0
+		if flee_dir.length() > 0.1:
+			member["heading"] = (member["heading"] as Vector3).lerp(flee_dir.normalized(), minf(1.0, delta * 3.5)).normalized()
+		(member["engine"] as AudioStreamPlayer3D).pitch_scale = 1.35 + sin(chase_clock * 8.0) * 0.08
+		move_member(member, delta, 34.0)
+		return
+
+	# 2. NÃO DEIXAR O INIMIGO FICAR DEPOIS DO PLAYER (sempre na frente):
+	var to_member := sprite.global_position - player.global_position
+	to_member.y = 0.0
+	var forward_proj := player_forward.dot(to_member)
+
+	# Se estiver ficando para trás (menos de 18 metros na frente ou atrás do player):
+	if forward_proj < 18.0:
+		var overtake_point := player.global_position + player_forward * randf_range(32.0, 50.0) + player.global_basis.x * sin(chase_clock * 0.85 + member["phase"]) * 8.5
+		var overtake_dir := overtake_point - sprite.global_position
+		overtake_dir.y = 0.0
+		if overtake_dir.length() > 0.1:
+			member["heading"] = (member["heading"] as Vector3).lerp(overtake_dir.normalized(), minf(1.0, delta * 3.4)).normalized()
+		var overtake_speed := maxf(28.0, player_speed + 9.5)
+		move_member(member, delta, overtake_speed)
+		return
+
+	# 3. NAVEGAÇÃO NORMAL DE PERSEGUIÇÃO À FRENTE DO JOGADOR:
 	var side := player.global_basis.x
 	side.y = 0.0
-	var preferred_distance := 29.0 + sin(chase_clock * 0.8 + member["phase"]) * 6.0
-	var preferred := player.global_position + forward * preferred_distance + side * sin(chase_clock * 0.65 + member["phase"]) * 7.0
+	var preferred_distance := 30.0 + sin(chase_clock * 0.8 + member["phase"]) * 7.0
+	var preferred := player.global_position + player_forward * preferred_distance + side * sin(chase_clock * 0.65 + member["phase"]) * 8.0
 	var heading := preferred - sprite.global_position
 	heading.y = 0.0
-	if distance < 15.0:
-		heading += forward * 20.0
-	if distance > 55.0:
-		heading -= forward * 10.0
+	if distance < 18.0:
+		heading += player_forward * 25.0
 	if heading.length() > 0.1:
-		member["heading"] = (member["heading"] as Vector3).lerp(heading.normalized(), minf(1.0, delta * 1.5)).normalized()
-	var player_speed := Vector2(player.velocity.x, player.velocity.z).length()
-	move_member(member, delta, maxf(10.0, player_speed + 2.0))
+		member["heading"] = (member["heading"] as Vector3).lerp(heading.normalized(), minf(1.0, delta * 2.0)).normalized()
+	move_member(member, delta, maxf(16.0, player_speed + 2.5))
+
+func check_ray_clearance(from:Vector3, dir:Vector3, dist:float) -> Dictionary:
+	var ray_start := from + Vector3(0.0, 1.0, 0.0)
+	var ray_finish := ray_start + dir * dist
+	var ray := PhysicsRayQueryParameters3D.create(ray_start, ray_finish)
+	ray.exclude = [player.get_rid()]
+	return get_world_3d().direct_space_state.intersect_ray(ray)
+
+func find_best_clear_direction(origin:Vector3) -> Vector3:
+	var best_dir := Vector3.FORWARD
+	var best_dist := 0.0
+	for i in 8:
+		var angle := float(i) * TAU / 8.0
+		var test_dir := Vector3(sin(angle), 0.0, cos(angle)).normalized()
+		var hit := check_ray_clearance(origin, test_dir, 20.0)
+		var clear_dist := 20.0 if hit.is_empty() else origin.distance_to(hit["position"])
+		if clear_dist > best_dist:
+			best_dist = clear_dist
+			best_dir = test_dir
+	return best_dir
 
 func move_member(member:Dictionary, delta:float, speed:float) -> void:
 	var sprite:Sprite3D = member["sprite"]
 	var heading:Vector3 = member["heading"]
+	heading.y = 0.0
+	if heading.length() < 0.01:
+		heading = -player.global_basis.z
+		heading.y = 0.0
+	heading = heading.normalized()
+
+	# 1. VERIFICAÇÃO DE ENROSCO EM CANTO / PAREDE ("se entrar, logo sair")
+	var dist_moved := sprite.global_position.distance_to(member["last_pos"])
+	if dist_moved < maxf(0.05, speed * delta * 0.22):
+		member["stuck_timer"] += delta
+		if member["stuck_timer"] > 0.20:
+			# Enroscou num canto ou parede! Sair imediatamente:
+			var escape_dir := find_best_clear_direction(sprite.global_position)
+			member["heading"] = escape_dir
+			heading = escape_dir
+			member["stuck_timer"] = 0.0
+			sprite.global_position = road_position(sprite.global_position + escape_dir * 1.8)
+			member["last_pos"] = sprite.global_position
+			return
+	else:
+		member["stuck_timer"] = maxf(0.0, member["stuck_timer"] - delta * 2.0)
+	member["last_pos"] = sprite.global_position
+
+	# 2. SENSORES PROATIVOS (WHISKERS) PARA EVITAR PAREDES E MANTER-SE NA RUA
+	var check_dist := clampf(speed * 0.42, 4.0, 9.0)
+	var hit_center := check_ray_clearance(sprite.global_position, heading, check_dist)
+	if !hit_center.is_empty():
+		var right_dir := heading.rotated(Vector3.UP, deg_to_rad(-40.0)).normalized()
+		var left_dir := heading.rotated(Vector3.UP, deg_to_rad(40.0)).normalized()
+		var hit_right := check_ray_clearance(sprite.global_position, right_dir, check_dist * 0.85)
+		var hit_left := check_ray_clearance(sprite.global_position, left_dir, check_dist * 0.85)
+
+		var right_clear := check_dist if hit_right.is_empty() else sprite.global_position.distance_to(hit_right["position"])
+		var left_clear := check_dist if hit_left.is_empty() else sprite.global_position.distance_to(hit_left["position"])
+
+		if right_clear > left_clear + 0.5:
+			heading = heading.rotated(Vector3.UP, deg_to_rad(-65.0) * delta * 4.5).normalized()
+		elif left_clear > right_clear + 0.5:
+			heading = heading.rotated(Vector3.UP, deg_to_rad(65.0) * delta * 4.5).normalized()
+		else:
+			var best_escape := find_best_clear_direction(sprite.global_position)
+			heading = heading.lerp(best_escape, minf(1.0, delta * 8.0)).normalized()
+
+		member["heading"] = heading
+
+	# 3. AVANÇA COM DETECÇÃO SEGURA
 	var target := sprite.global_position + heading * speed * delta
-	var ray := PhysicsRayQueryParameters3D.create(sprite.global_position + Vector3.UP, target + Vector3.UP)
-	ray.exclude = [player.get_rid()]
-	if get_world_3d().direct_space_state.intersect_ray(ray).is_empty():
+	var immediate_ray := PhysicsRayQueryParameters3D.create(sprite.global_position + Vector3.UP, target + Vector3.UP)
+	immediate_ray.exclude = [player.get_rid()]
+	if get_world_3d().direct_space_state.intersect_ray(immediate_ray).is_empty():
 		sprite.global_position = road_position(target)
 	else:
-		member["turn_timer"] = 0.0
-		member["heading"] = heading.rotated(Vector3.UP, randf_range(0.8, 1.8))
+		member["stuck_timer"] += delta * 1.5
+		var best_escape := find_best_clear_direction(sprite.global_position)
+		member["heading"] = best_escape
 
 func process_enemy_shot(member:Dictionary, delta:float, distance:float) -> void:
 	if finished or !combat_enabled:
@@ -522,12 +633,46 @@ func on_player_fire() -> void:
 	if int(closest["hp"]) % 3 == 0:
 		(closest["pain"] as AudioStreamPlayer3D).play()
 	var sprite:Sprite3D = closest["sprite"]
-	var blood := BLOOD_SCENE.instantiate()
-	add_child(blood)
-	blood.global_position = sprite.global_position + Vector3(0.0, 1.2, 0.0)
-	sprite.modulate = Color(1.0, 0.72, 0.72)
+	var bullet_dir := forward.normalized()
+	spawn_enemy_blood_spray(sprite.global_position + Vector3(0.0, 1.2, 0.0), bullet_dir)
+	sprite.modulate = Color(2.8, 0.35, 0.35)
+	var hit_tween := create_tween()
+	hit_tween.tween_property(sprite, "modulate", Color.WHITE, 0.22)
+
+	# DANO ACUMULADO & FUGA EVENTUAL:
+	# "se ver que esta levando muito dano corre pra frente e vai pra outro lugar do mapa, mas nao faça isso sempre, faça isso de sair mais rapido e ir para outro lugar do mapa eventualmente"
+	closest["recent_hits"] += 1
+	closest["hit_streak_timer"] = 2.6
+	if closest["recent_hits"] >= 3 and closest["flee_cooldown"] <= 0.0:
+		if randf() < 0.75 or closest["recent_hits"] >= 4:
+			closest["flee_timer"] = randf_range(4.2, 5.8)
+			closest["flee_cooldown"] = randf_range(9.0, 15.0)
+			closest["recent_hits"] = 0
+			var turn_angle := deg_to_rad(randf_range(65.0, 85.0) * (-1.0 if randf() < 0.5 else 1.0))
+			var flee_heading := (closest["heading"] as Vector3).rotated(Vector3.UP, turn_angle).normalized()
+			closest["heading"] = flee_heading
+			closest["flee_target"] = road_position(sprite.global_position + flee_heading * randf_range(90.0, 140.0))
+			(closest["engine"] as AudioStreamPlayer3D).pitch_scale = 1.45
+
 	if closest["hp"] <= 0:
 		eliminate_member(closest)
+
+func spawn_enemy_blood_spray(impact_pos:Vector3, bullet_forward:Vector3) -> void:
+	# 1. Espirro principal no peito do inimigo
+	var blood1 := BLOOD_SCENE.instantiate()
+	add_child(blood1)
+	blood1.global_position = impact_pos
+	
+	# 2. Espirro secundário projetado para trás com a força do tiro
+	var blood2 := BLOOD_SCENE.instantiate()
+	add_child(blood2)
+	blood2.global_position = impact_pos + bullet_forward * 0.5 + Vector3(0.0, 0.3, 0.0)
+	
+	# 3. Espirro lateral de sangue
+	var blood3 := BLOOD_SCENE.instantiate()
+	add_child(blood3)
+	var side_offset := Vector3(randf_range(-0.5, 0.5), randf_range(-0.2, 0.4), randf_range(-0.5, 0.5))
+	blood3.global_position = impact_pos + side_offset
 
 func eliminate_member(member:Dictionary) -> void:
 	member["escaped"] = true

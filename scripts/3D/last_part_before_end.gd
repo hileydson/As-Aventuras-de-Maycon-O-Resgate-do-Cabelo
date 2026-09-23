@@ -12,6 +12,32 @@ const STAGE_SURRENDER := 4
 const STAGE_CABELO := 5
 const STAGE_CHASE := 6
 const FELLAS_CHASE_SCRIPT = preload("res://scripts/3D/fellas_chase.gd")
+const PENTAGRAM_ITEM_SCRIPT = preload("res://scripts/3D/pentagram_item_3d.gd")
+
+const PENTAGRAM_SPOTS: Array[Vector3] = [
+	Vector3(500.0, -4.06, 220.0),   # Ponte leste - entrada
+	Vector3(420.0, -4.38, 220.0),   # Reta da ponte
+	Vector3(300.0, -5.74, 220.0),   # Início da cidade leste
+	Vector3(120.0, -7.08, 560.0),   # Cruzamento sudeste
+	Vector3(-50.0, -7.08, 560.0),   # Rua do informante / sul
+	Vector3(-150.0, -7.03, 680.0),  # Avenida sul
+	Vector3(-250.0, -7.03, 680.0),  # Rotatória / curva sudoeste
+	Vector3(-320.0, -7.03, 750.0),  # Perto da curva inicial dos fellas
+	Vector3(-460.0, -7.08, 860.0),  # Extremo sudoeste da cidade
+	Vector3(-480.0, -7.03, 650.0),  # Rodovia oeste sul
+	Vector3(-480.0, -7.03, 420.0),  # Rodovia oeste centro-sul
+	Vector3(-480.0, -7.08, 200.0),  # Rodovia oeste centro
+	Vector3(-250.0, -7.08, 180.0),  # Conector central oeste
+	Vector3(100.0, -7.08, 180.0),   # Avenida central leste
+	Vector3(-250.0, -7.08, -50.0),  # Travessa central norte
+	Vector3(-420.0, -7.03, -120.0), # Reta noroeste
+	Vector3(-500.0, -7.03, -160.0), # Extremo noroeste
+	Vector3(-180.0, -7.08, -220.0), # Avenida norte oeste
+	Vector3(0.0, -7.08, -220.0),    # Avenida norte centro
+	Vector3(150.0, -7.08, -220.0),  # Avenida norte leste
+	Vector3(260.0, -7.08, -80.0),   # Setor nordeste
+	Vector3(60.0, -7.03, -180.0),   # Travessa norte-centro
+]
 
 @onready var maycon_3d: Node3D = $maycon_3d
 @onready var fade: Node2D = $fade
@@ -54,6 +80,7 @@ var chase_start_position:Vector3
 var chase_start_rotation:Vector3
 var chase_start_camera_rotation:Vector3
 var chase_restart_in_progress:bool = false
+var city_pentagrams: Array[Node3D] = []
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
@@ -72,6 +99,7 @@ func _ready() -> void:
 	luz_mapa.visible = true
 	maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
 	cutscene_inicio.play("intro_mapa")
+	spawn_city_pentagrams()
 	if OS.get_cmdline_user_args().has("--test-wood-pickup"):
 		wood_debug_mode = true
 		call_deferred("start_wood_pickup_test")
@@ -422,6 +450,13 @@ func begin_pickup_cutscene() -> void:
 	var ground_position := find_ground_position(wood_position)
 	loose_wood.global_position = ground_position + Vector3(0.0, 0.18, 0.0)
 	loose_wood.rotation_degrees.z = -90.0
+	var wood_light := OmniLight3D.new()
+	wood_light.name = "WoodCutsceneLight"
+	wood_light.light_color = Color(1.0, 0.94, 0.78)
+	wood_light.light_energy = 5.5
+	wood_light.omni_range = 9.5
+	wood_light.omni_attenuation = 0.8
+	loose_wood.add_child(wood_light)
 	player_camera.make_current()
 	fade.get_node("Transition").play("fade_in")
 	await get_tree().create_timer(2.0).timeout
@@ -466,8 +501,8 @@ func create_wood_prop() -> Node3D:
 	wood_mesh.height = 2.4
 	wood.mesh = wood_mesh
 	var wood_material := StandardMaterial3D.new()
-	wood_material.albedo_color = Color("6b351b")
-	wood_material.roughness = 0.92
+	wood_material.albedo_color = Color("93522b")
+	wood_material.roughness = 0.85
 	wood.material_override = wood_material
 	root.add_child(wood)
 	return root
@@ -729,6 +764,9 @@ func restart_chase_after_death() -> void:
 	set_story_stage(STAGE_CHASE)
 	objective_ui.visible = true
 	start_chase_round()
+	for item in city_pentagrams:
+		if is_instance_valid(item) and item.has_method("respawn"):
+			item.respawn()
 	death_layer.queue_free()
 	transition.play("fade_in")
 	await get_tree().create_timer(2.0).timeout
@@ -790,3 +828,17 @@ func unlock_cabelo() -> void:
 	set_story_stage(STAGE_CABELO)
 	player.process_mode = Node.PROCESS_MODE_INHERIT
 	Global.in_cutscene = false
+
+func spawn_city_pentagrams() -> void:
+	if !city_pentagrams.is_empty():
+		return
+	var pentagrams_node := Node3D.new()
+	pentagrams_node.name = "CityPentagrams"
+	add_child(pentagrams_node)
+	for spot in PENTAGRAM_SPOTS:
+		var ground_pos := find_ground_position(spot)
+		var item: Node3D = PENTAGRAM_ITEM_SCRIPT.new()
+		pentagrams_node.add_child(item)
+		if item.has_method("set_ground_position"):
+			item.set_ground_position(ground_pos, 1.35)
+		city_pentagrams.append(item)
