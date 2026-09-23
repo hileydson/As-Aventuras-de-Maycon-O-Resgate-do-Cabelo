@@ -1,6 +1,6 @@
 72322a848ab928aa5c89f0cb78209805
 ::res://::1790194495
-AGENTS.md::TextFile::-1::1790170946::0::1::::<><><>0<>0<><>::
+AGENTS.md::TextFile::-1::1790200506::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1789958757::0::1::::<><><>0<>0<><>::
 export_presets.cfg::TextFile::-1::1790036186::0::1::::<><><>0<>0<><>::
 godot-ai-LICENSE.txt::TextFile::-1::1789951369::0::1::::<><><>0<>0<><>::
@@ -530,7 +530,8 @@ tree.glb::PackedScene::7266976074415712992::1790177691::1790182591::1::::<><><>0
 ::res://assets/kenney/platformer_3d/Textures/::1790182584
 colormap.png::CompressedTexture2D::3123184169772400333::1790177923::1790182584::1::::<><><>0<>0<>28375368cf80f04dbeb3bb2231da807a<>res://.godot/imported/colormap.png-149f50090d53551f5673ef7aaa4b2c01.s3tc.ctex<*>res://.godot/imported/colormap.png-149f50090d53551f5673ef7aaa4b2c01.etc2.ctex::
 ::res://assets/modelo_3d/::1790192743
-::res://assets/modelo_3d/mario_3d_models/::1790196768
+::res://assets/modelo_3d/mario_3d_models/::1790200555
+lips_3d.glb::PackedScene::7450848626374866711::1790200511::1790200731::1::::<><><>0<>0<>02fb15db989f6d242778fb944eeeeb72<>res://.godot/imported/lips_3d.glb-155d5beb8bb1435671958f329d38ba1f.scn::uid://b50ntfp0v4irg::::res://assets/modelo_3d/mario_3d_models/lips_3d_0.jpg<>uid://ckxlus76vifa3::::res://assets/modelo_3d/mario_3d_models/lips_3d_1.jpg<>uid://cykjwqyk518vy::::res://assets/modelo_3d/mario_3d_models/lips_3d_2.jpg
 mini_seco_blue.glb::PackedScene::6183607987415097326::1790192311::1790192844::1::::<><><>0<>0<>78a2149ef6ba822f073639d8484e216c<>res://.godot/imported/mini_seco_blue.glb-1e67479f7df1672bd580c5e9e033bbd5.scn::uid://cbaibfb4c27b::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_Image_0.jpg<>uid://diy0onk6bfm2t::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_Image_1.jpg<>uid://c0semf0kee7fl::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_normal.png
 mini_seco_blue_rigged.glb::PackedScene::4679054567631219624::1790194124::1790196766::1::::<><><>0<>0<>4a15f6d696c31853aecf2b34405ad9e6<>res://.godot/imported/mini_seco_blue_rigged.glb-529f53a2f20da8b7617cbd6cc9db5b9f.scn::uid://cbrb82jmgexhu::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_rigged_Image_0.jpg<>uid://ciftkm14a4g5m::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_rigged_Image_1.jpg<>uid://bcssrtb4lg2d7::::res://assets/modelo_3d/mario_3d_models/mini_seco_blue_rigged_normal.png
 mini_seco_blue_rigged_Image_0.jpg::CompressedTexture2D::4878245713621999518::1790194148::1790196768::1::::<><><>0<>0<>fd76db2163d580ccd65a758b24e758e5<>res://.godot/imported/mini_seco_blue_rigged_Image_0.jpg-36af5712a7641561974857b57a786fa7.s3tc.ctex<*>res://.godot/imported/mini_seco_blue_rigged_Image_0.jpg-36af5712a7641561974857b57a786fa7.etc2.ctex::
@@ -555,6 +556,9 @@ mini_seco_red_rigged.glb::PackedScene::5650028820998587123::1790194125::17901967
 mini_seco_red_rigged_Image_0.jpg::CompressedTexture2D::8436022845615325721::1790194154::1790196768::1::::<><><>0<>0<>772d0ac4590533a41e06b31cf2d76a9c<>res://.godot/imported/mini_seco_red_rigged_Image_0.jpg-813f6f136f930424d1ec3841b3f34d17.s3tc.ctex<*>res://.godot/imported/mini_seco_red_rigged_Image_0.jpg-813f6f136f930424d1ec3841b3f34d17.etc2.ctex::
 mini_seco_red_rigged_Image_1.jpg::CompressedTexture2D::7663871909777515708::1790194156::1790196768::1::::<><><>0<>0<>ced6314609e746842ac4f4945b11569b<>res://.godot/imported/mini_seco_red_rigged_Image_1.jpg-9034f586442dd823672591bf8426d48b.s3tc.ctex<*>res://.godot/imported/mini_seco_red_rigged_Image_1.jpg-9034f586442dd823672591bf8426d48b.etc2.ctex::
 mini_seco_red_rigged_normal.png::CompressedTexture2D::7906603699752972886::1790194153::1790196768::1::::<><><>0<>0<>a091b529826589a3d38670cabd721235<>res://.godot/imported/mini_seco_red_rigged_normal.png-8094fd3974f6592c0c9933e5e25a0063.s3tc.ctex<*>res://.godot/imported/mini_seco_red_rigged_normal.png-8094fd3974f6592c0c9933e5e25a0063.etc2.ctex::
+lips_3d_0.jpg::CompressedTexture2D::4544518974629639296::1790200727::1790200731::1::::<><><>0<>0<>0f87cd66c303db7da3ba11964408076a<>res://.godot/imported/lips_3d_0.jpg-bf549a4704d3b12174748fde6b328f66.s3tc.ctex<*>res://.godot/imported/lips_3d_0.jpg-bf549a4704d3b12174748fde6b328f66.etc2.ctex::
+lips_3d_1.jpg::CompressedTexture2D::5522915091199355168::1790200729::1790200731::1::::<><><>0<>0<>6f9c78c88876f844b671e39633ed1d53<>res://.godot/imported/lips_3d_1.jpg-e317265626ef7b4f88addfc9c3979de4.s3tc.ctex<*>res://.godot/imported/lips_3d_1.jpg-e317265626ef7b4f88addfc9c3979de4.etc2.ctex::
+lips_3d_2.jpg::CompressedTexture2D::6478604010584796374::1790200730::1790200731::1::::<><><>0<>0<>91480c297fd73adb988ae5e038077731<>res://.godot/imported/lips_3d_2.jpg-1818b0b8f4d72bee820f0824cf8e0129.s3tc.ctex<*>res://.godot/imported/lips_3d_2.jpg-1818b0b8f4d72bee820f0824cf8e0129.etc2.ctex::
 ::res://assets/modelo_3d/maycon/::1770230688
 maycon_base_3d.obj::Mesh::6609890888767789327::1770149238::1770230688::1::::<><><>0<>0<>2202569c4ce98426344e50c376ec6233<>res://.godot/imported/maycon_base_3d.obj-d8bb83f82b190d43e40907fc9821649c.mesh<*>res://.godot/imported/maycon_base_3d.obj-d8bb83f82b190d43e40907fc9821649c.mesh::
 ::res://assets/modelo_3d/objects/::1770313527
@@ -3880,7 +3884,7 @@ inimigo_3d_default.gd::GDScript::8339874909618318337::1790032513::0::1::::<>Char
 inimigo_bomba_pretti_3d.gd::GDScript::1560456019525848244::1769970166::0::1::::<>CharacterBody3D<><>0<>0<><>::
 lamp.gd::GDScript::7790728560667219145::1770063258::0::1::::<>Area3D<><>0<>0<><>::
 last_part_before_end.gd::GDScript::5006405053871241004::1790129985::0::1::::<>Node3D<><>0<>0<><>::
-maycon_platform_3d.gd::GDScript::1218032320144234282::1790197308::0::1::::<>Node3D<><>0<>0<><>::
+maycon_platform_3d.gd::GDScript::1218032320144234282::1790200448::0::1::::<>Node3D<><>0<>0<><>::
 object_3d.gd::GDScript::9078826269963351129::1769912058::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d.gd::GDScript::7171831727451377016::1790094648::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d_moto_cidade.gd::GDScript::6726714682699407671::1790129014::0::1::::<>Node3D<><>0<>0<><>::
@@ -3890,9 +3894,9 @@ platform_blood_overlay.gd::GDScript::1182374853542614286::1790184292::0::1::::<>
 platform_enemy.gd::GDScript::2915243231989042537::1790190896::0::1::::<>Area3D<><>0<>0<><>::
 platform_hand.gd::GDScript::2572360204659618281::1790190933::0::1::::<>Node3D<><>0<>0<><>::
 platform_invincible_overlay.gd::GDScript::1112360718554808273::1790191444::0::1::::<>CanvasLayer<><>0<>0<><>::
-platform_maycon.gd::GDScript::5880638116692557718::1790197294::0::1::::<>CharacterBody3D<><>0<>0<><>::
-platform_mini_seco.gd::GDScript::8925901066986625574::1790194446::0::1::::<>Area3D<><>0<>0<><>::
-platform_pause.gd::GDScript::189551020903616664::1790193744::0::1::::<>CanvasLayer<><>0<>0<><>::
+platform_maycon.gd::GDScript::5880638116692557718::1790199468::0::1::::<>CharacterBody3D<><>0<>0<><>::
+platform_mini_seco.gd::GDScript::8925901066986625574::1790197921::0::1::::<>Area3D<><>0<>0<><>::
+platform_pause.gd::GDScript::189551020903616664::1790197488::0::1::::<>CanvasLayer<><>0<>0<><>::
 poco_infinito.gd::GDScript::6682402298837709200::1790132681::0::1::::<>Node3D<><>0<>0<><>::
 poco_infinito_hud.gd::GDScript::858845652044994715::1790132039::0::1::::<>Control<><>0<>0<><>::
 recebe_dano_inimigo_default.gd::GDScript::3095823013865271534::1790087618::0::1::::<>Area3D<><>0<>0<><>::
@@ -3922,7 +3926,7 @@ terrain3d_00-01.res::Terrain3DRegion::5019486532651089028::1770136386::0::1::::<
 terrain3d_00-02.res::Terrain3DRegion::3854885546111145601::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00_00.res::Terrain3DRegion::4948174298051947078::1770136386::0::1::::<><><>0<>0<><>::
 ::res://tests/::1790091737
-::res://translations/::1790196764
+::res://translations/::1790197347
 game_text.csv::Translation::1292654866392114924::1790197251::1790197347::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
 game_text.en.translation::OptimizedTranslation::1712006235640866847::1790197347::0::1::::<><><>0<>0<><>::
 game_text.es.translation::OptimizedTranslation::9151324834628544493::1790197347::0::1::::<><><>0<>0<><>::
