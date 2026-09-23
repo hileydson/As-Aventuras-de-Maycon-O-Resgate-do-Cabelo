@@ -237,18 +237,17 @@ func create_body_effects() -> void:
 	var streak_material := StandardMaterial3D.new()
 	streak_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	streak_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	streak_material.albedo_color = Color(0.64, 0.69, 0.72, 0.6)
-	streak_material.emission_enabled = true
-	streak_material.emission = Color(0.27, 0.3, 0.33)
-	for i in 42:
+	streak_material.albedo_color = Color(0.53, 0.56, 0.6, 0.38)
+	streak_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	for i in 32:
 		var streak := MeshInstance3D.new()
-		var mesh := BoxMesh.new()
-		mesh.size = Vector3(0.012, randf_range(0.28, 0.72), randf_range(0.6, 1.45))
+		var mesh := QuadMesh.new()
+		mesh.size = Vector2(0.014, randf_range(0.22, 0.58))
 		streak.mesh = mesh
 		streak.material_override = streak_material
 		streak.rotation.z = randf_range(-0.15, 0.15)
 		add_child(streak)
-		body_streaks.append({"node":streak, "phase":randf(), "offset":Vector2(randf_range(-0.58, 0.58), randf_range(-0.72, 0.72))})
+		body_streaks.append({"node":streak, "phase":randf(), "offset":Vector2(randf_range(-0.45, 0.45), randf_range(-0.55, 0.55))})
 
 func create_speed_lines() -> void:
 	var streak_material := StandardMaterial3D.new()
@@ -370,9 +369,9 @@ func update_body_effects(delta:float) -> void:
 		var streak:MeshInstance3D = streak_data.node
 		var phase:float = fposmod(float(streak_data.phase) + elapsed * (3.5 if dash_time > 0.0 else 2.1 + speed_factor * 0.9), 1.0)
 		var offset:Vector2 = streak_data.offset
-		streak.position = maycon.position + Vector3(offset.x, offset.y, 0.45 + phase * 1.9)
-		streak.scale.z = 1.55 if dash_time > 0.0 else 1.0
-		streak.transparency = 0.18 + absf(phase - 0.5) * 0.8
+		streak.position = maycon.position + Vector3(offset.x + 0.35, offset.y + 0.5, 0.2 + phase * 0.9)
+		streak.scale.y = 1.55 if dash_time > 0.0 else 1.0
+		streak.transparency = 0.28 + absf(phase - 0.5) * 0.75
 		streak.visible = !finishing
 	power_aura.visible = pentagram_invulnerability > 0.0 && !finishing
 	if power_aura.visible:
@@ -455,9 +454,14 @@ func create_obstacle_pool() -> void:
 		var mesh:Node3D = scene.instantiate()
 		mesh.scale = Vector3.ONE * OBSTACLE_SCALE[kind]
 		object.add_child(mesh)
-		var mesh_parts:Array[GeometryInstance3D] = []
+		var fade_materials:Array[StandardMaterial3D] = []
 		for child in mesh.find_children("*", "GeometryInstance3D", true, false):
-			mesh_parts.append(child as GeometryInstance3D)
+			var part:MeshInstance3D = child as MeshInstance3D
+			for surface in part.mesh.get_surface_count():
+				var material:StandardMaterial3D = part.get_active_material(surface).duplicate()
+				material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				part.set_surface_override_material(surface, material)
+				fade_materials.append(material)
 		var trail := MeshInstance3D.new()
 		var trail_mesh := CylinderMesh.new()
 		trail_mesh.top_radius = OBSTACLE_RADIUS[kind] * 0.16
@@ -481,7 +485,7 @@ func create_obstacle_pool() -> void:
 		object.add_child(object_light)
 		object.hide()
 		add_child(object)
-		obstacle_pool.append({"node":object, "mesh_parts":mesh_parts, "trail":trail, "light":object_light})
+		obstacle_pool.append({"node":object, "fade_materials":fade_materials, "trail":trail, "light":object_light})
 
 func spawn_obstacle() -> void:
 	var kind:int = next_kind
@@ -498,9 +502,7 @@ func spawn_obstacle() -> void:
 	origin.x = clampf(origin.x, -4.3, 4.3)
 	origin.y = clampf(origin.y, -4.3, 4.3)
 	object.position = Vector3(origin.x, origin.y, -36.0)
-	for part in pool_item.mesh_parts:
-		(part as GeometryInstance3D).transparency = 1.0
-	(pool_item.trail as MeshInstance3D).transparency = 1.0
+	set_obstacle_fade(pool_item, 0.0)
 	(pool_item.light as OmniLight3D).light_energy = 0.0
 	object.show()
 	var drift := Vector2(randf_range(-0.35, 0.35), randf_range(-0.26, 0.26))
@@ -508,6 +510,18 @@ func spawn_obstacle() -> void:
 	next_obstacle_fast = !next_obstacle_fast
 	obstacles.append({"node":object, "position":object.position, "speed":speed, "drift":drift, "radius":radius, "kind":kind, "spin":randf_range(-3.2, 3.2), "resolved":false})
 	spawn_timer = lerpf(0.6, 0.24, speed_factor)
+
+func set_obstacle_fade(pool_item:Dictionary, fade:float) -> void:
+	for material in pool_item.fade_materials:
+		var color:Color = (material as StandardMaterial3D).albedo_color
+		color.a = fade
+		(material as StandardMaterial3D).albedo_color = color
+	var trail:MeshInstance3D = pool_item.trail
+	var trail_material:StandardMaterial3D = trail.material_override
+	var trail_color:Color = trail_material.albedo_color
+	trail_color.a = (0.3 if trail_color.r > trail_color.b else 0.32) * fade
+	trail_material.albedo_color = trail_color
+	(pool_item.light as OmniLight3D).light_energy = 4.2 * fade
 
 func update_obstacles(delta:float) -> void:
 	for i in range(obstacles.size() - 1, -1, -1):
@@ -522,11 +536,8 @@ func update_obstacles(delta:float) -> void:
 		node.position = pos
 		node.rotation += Vector3(float(obstacle.spin) * delta * 0.55, float(obstacle.spin) * delta, float(obstacle.spin) * delta * 0.35)
 		var pool_item:Dictionary = obstacle_pool[int(obstacle.kind)]
-		var fade:float = smoothstep(-36.0, -27.0, pos.z)
-		for part in pool_item.mesh_parts:
-			(part as GeometryInstance3D).transparency = 1.0 - fade
-		(pool_item.trail as MeshInstance3D).transparency = 1.0 - fade
-		(pool_item.light as OmniLight3D).light_energy = 4.2 * fade
+		if previous_z <= -27.0:
+			set_obstacle_fade(pool_item, smoothstep(-36.0, -27.0, pos.z))
 		if previous_z < MAYCON_DEPTH && pos.z >= MAYCON_DEPTH && !obstacle.resolved:
 			resolve_obstacle(obstacle)
 			obstacle["resolved"] = true
