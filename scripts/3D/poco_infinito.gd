@@ -24,6 +24,7 @@ var maycon_animation:AnimationPlayer
 var maycon_skeleton:Skeleton3D
 var falling_limb_poses:Array[Dictionary] = []
 var maycon_rim_light:OmniLight3D
+var blood_spray:CPUParticles3D
 var body_trails:Array[Dictionary] = []
 var body_streaks:Array[Dictionary] = []
 var power_aura:MeshInstance3D
@@ -53,6 +54,9 @@ var spawn_timer:float = 1.2
 var next_kind:int = 0
 var next_obstacle_fast:bool = false
 var player_pos:Vector2 = Vector2.ZERO
+var falling_motion:Vector2 = Vector2.ZERO
+var hit_tumble_time:float = 0.0
+var hit_tumble_side:float = 1.0
 var last_direction:Vector2 = Vector2.RIGHT
 var dash_direction:Vector2 = Vector2.ZERO
 var dash_time:float = 0.0
@@ -75,6 +79,7 @@ func _ready() -> void:
 	create_materials()
 	create_shaft()
 	create_maycon()
+	create_blood_spray()
 	create_speed_lines()
 	create_obstacle_pool()
 	music = make_audio("res://assets/novos_audios/battle.mp3", -11.0, 1.58, true)
@@ -180,20 +185,64 @@ func pose_falling_body() -> void:
 		maycon_animation.play("Idle")
 		maycon_animation.seek(0.0, true)
 		maycon_animation.pause()
-	for bone_name in ["LeftArm", "RightArm", "LeftUpLeg", "RightUpLeg"]:
+	for bone_name in ["LeftArm", "RightArm", "LeftForeArm", "RightForeArm", "LeftHand", "RightHand", "LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg"]:
 		var bone_index:int = maycon_skeleton.find_bone(bone_name)
 		if bone_index >= 0:
-			falling_limb_poses.append({"name":bone_name, "index":bone_index, "rotation":maycon_skeleton.get_bone_pose_rotation(bone_index), "phase":float(falling_limb_poses.size()) * 1.7})
+			falling_limb_poses.append({"name":bone_name, "index":bone_index, "rotation":maycon_skeleton.get_bone_pose_rotation(bone_index), "phase":float(falling_limb_poses.size()) * 1.7, "angle":0.0, "velocity":0.0})
 
-func animate_falling_limbs() -> void:
+func animate_falling_limbs(delta:float) -> void:
 	for limb in falling_limb_poses:
-		var is_arm:bool = "Arm" in limb.name
+		var is_arm:bool = "Arm" in limb.name or "Hand" in limb.name
+		var is_hand:bool = "Hand" in limb.name
 		var axis:Vector3 = Vector3.FORWARD if is_arm else Vector3.RIGHT
 		var phase:float = limb.phase
-		var sway:float = sin(elapsed * 2.2 + phase) * (0.038 if is_arm else 0.055)
-		var flutter:float = sin(elapsed * 5.6 + phase * 1.3) * (0.022 + speed_factor * 0.012)
-		var angle:float = sway + flutter
-		maycon_skeleton.set_bone_pose_rotation(limb.index, limb.rotation * Quaternion(axis, angle))
+		var side:float = 1.0 if "Left" in limb.name else -1.0
+		var sway:float = sin(elapsed * 2.2 + phase) * (0.035 if is_arm else 0.05)
+		var flutter:float = sin(elapsed * 5.6 + phase * 1.3) * (0.02 + speed_factor * 0.012)
+		var drag:float = -falling_motion.x * side * (0.012 if is_hand else 0.007)
+		drag += falling_motion.y * (0.007 if is_arm else 0.009)
+		var target:float = clampf(sway + flutter + drag, -0.28, 0.28)
+		var spring:float = 15.0 if is_hand else 23.0
+		var damping:float = 6.0 if is_hand else 8.0
+		limb["velocity"] = float(limb.velocity) + ((target - float(limb.angle)) * spring - float(limb.velocity) * damping) * delta
+		limb["angle"] = clampf(float(limb.angle) + float(limb.velocity) * delta, -0.35, 0.35)
+		maycon_skeleton.set_bone_pose_rotation(limb.index, limb.rotation * Quaternion(axis, float(limb.angle)))
+
+func create_blood_spray() -> void:
+	blood_spray = CPUParticles3D.new()
+	blood_spray.name = "HitBloodSpray"
+	blood_spray.amount = 145
+	blood_spray.lifetime = 1.15
+	blood_spray.one_shot = true
+	blood_spray.explosiveness = 1.0
+	blood_spray.local_coords = false
+	blood_spray.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	blood_spray.emission_sphere_radius = 0.55
+	blood_spray.direction = Vector3(0.0, 0.0, 1.0)
+	blood_spray.spread = 98.0
+	blood_spray.gravity = Vector3(0.0, -1.5, 2.0)
+	blood_spray.initial_velocity_min = 7.0
+	blood_spray.initial_velocity_max = 16.0
+	blood_spray.scale_amount_min = 0.55
+	blood_spray.scale_amount_max = 1.5
+	var blood_fade := Gradient.new()
+	blood_fade.set_color(0, Color(1.0, 1.0, 1.0, 1.0))
+	blood_fade.add_point(0.55, Color(0.8, 0.45, 0.45, 0.85))
+	blood_fade.set_color(2, Color(0.5, 0.1, 0.1, 0.0))
+	blood_spray.color_ramp = blood_fade
+	var droplet_mesh := SphereMesh.new()
+	droplet_mesh.radius = 0.09
+	droplet_mesh.height = 0.18
+	droplet_mesh.radial_segments = 6
+	droplet_mesh.rings = 3
+	var blood_material := StandardMaterial3D.new()
+	blood_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	blood_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	blood_material.albedo_color = Color(0.82, 0.015, 0.025, 0.9)
+	droplet_mesh.material = blood_material
+	blood_spray.mesh = droplet_mesh
+	blood_spray.emitting = false
+	add_child(blood_spray)
 
 func create_body_effects() -> void:
 	maycon_rim_light = OmniLight3D.new()
@@ -300,6 +349,7 @@ func _process(delta:float) -> void:
 		last_direction = input_direction.normalized()
 	if Input.is_action_just_pressed("ui_accept") && dash_cooldown <= 0.0:
 		start_dash(input_direction)
+	var previous_player_pos:Vector2 = player_pos
 	if dash_time > 0.0:
 		player_pos += dash_direction * (17.5 + speed_factor * 3.0) * delta
 		puff_timer -= delta
@@ -310,10 +360,19 @@ func _process(delta:float) -> void:
 		player_pos += input_direction * (6.8 + speed_factor * 1.2) * delta
 	player_pos.x = clampf(player_pos.x, -PLAYER_LIMIT, PLAYER_LIMIT)
 	player_pos.y = clampf(player_pos.y, -PLAYER_LIMIT, PLAYER_LIMIT)
+	falling_motion = falling_motion.lerp((player_pos - previous_player_pos) / maxf(delta, 0.001), minf(1.0, delta * 8.0))
+	hit_tumble_time = maxf(0.0, hit_tumble_time - delta)
+	var tumble_progress:float = 1.0 - hit_tumble_time / 1.05
+	var tumble_angle:float = hit_tumble_side * TAU * (1.0 - pow(1.0 - tumble_progress, 2.2)) if hit_tumble_time > 0.0 else 0.0
 	maycon.position = Vector3(player_pos.x, player_pos.y, MAYCON_DEPTH)
-	maycon.rotation.z = sin(elapsed * 3.2) * 0.08 - player_pos.x * 0.035
-	maycon.rotation.x = 1.1 + sin(elapsed * 2.1) * 0.045
-	animate_falling_limbs()
+	maycon.rotation.z = sin(elapsed * 3.2) * 0.08 - player_pos.x * 0.035 - falling_motion.x * 0.012
+	maycon.rotation.x = 1.1 + sin(elapsed * 2.1) * 0.045 + falling_motion.y * 0.007
+	maycon.rotation.y = PI + 0.35 + falling_motion.x * 0.01
+	if hit_tumble_time > 0.0:
+		var tumble_transform:Transform3D = maycon.transform
+		tumble_transform.basis = Basis(Vector3.FORWARD, tumble_angle) * tumble_transform.basis
+		maycon.transform = tumble_transform
+	animate_falling_limbs(delta)
 	update_body_effects(delta)
 	update_dash_blur()
 	spawn_timer -= delta
@@ -328,6 +387,7 @@ func toggle_pause() -> void:
 	wind.stream_paused = locally_paused
 	hud.call("set_pause", locally_paused)
 	hud.set_process(!locally_paused)
+	blood_spray.speed_scale = 0.0 if locally_paused else 1.0
 	dash_blur.visible = false if locally_paused else dash_time > 0.0
 
 func activate_pentagram() -> void:
@@ -464,30 +524,15 @@ func create_obstacle_pool() -> void:
 				material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 				part.set_surface_override_material(surface, material)
 				fade_materials.append(material)
-		var trail := MeshInstance3D.new()
-		var trail_mesh := CylinderMesh.new()
-		trail_mesh.top_radius = OBSTACLE_RADIUS[kind] * 0.16
-		trail_mesh.bottom_radius = OBSTACLE_RADIUS[kind] * 0.04
-		trail_mesh.height = 2.9
-		trail_mesh.radial_segments = 8
-		trail.mesh = trail_mesh
-		trail.rotation.x = PI * 0.5
-		trail.position.z = -1.7
-		var trail_material := StandardMaterial3D.new()
-		trail_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		trail_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		trail_material.albedo_color = Color(1.0, 0.16, 0.055, 0.3) if kind % 2 == 0 else Color(0.3, 0.8, 1.0, 0.32)
-		trail.material_override = trail_material
-		object.add_child(trail)
 		var object_light := OmniLight3D.new()
-		object_light.light_color = Color(1.0, 0.66, 0.48) if kind % 2 == 0 else Color(0.48, 0.84, 1.0)
+		object_light.light_color = Color(1.0, 0.92, 0.82)
 		object_light.light_energy = 0.0
-		object_light.omni_range = 8.0
+		object_light.omni_range = 9.5
 		object_light.position.z = 2.4
 		object.add_child(object_light)
 		object.hide()
 		add_child(object)
-		obstacle_pool.append({"node":object, "fade_materials":fade_materials, "trail":trail, "light":object_light})
+		obstacle_pool.append({"node":object, "fade_materials":fade_materials, "light":object_light})
 
 func spawn_obstacle() -> void:
 	var kind:int = next_kind
@@ -498,6 +543,10 @@ func spawn_obstacle() -> void:
 	object.scale = Vector3.ONE * (radius / OBSTACLE_RADIUS[kind])
 	object.rotation = Vector3.ZERO
 	var origin := Vector2.from_angle(randf() * TAU) * sqrt(randf()) * 4.3
+	if randf() < 0.3:
+		origin = player_pos + Vector2.from_angle(randf() * TAU) * randf_range(0.0, 0.55)
+		origin.x = clampf(origin.x, -5.1, 5.1)
+		origin.y = clampf(origin.y, -5.1, 5.1)
 	object.position = Vector3(origin.x, origin.y, -36.0)
 	set_obstacle_fade(pool_item, 0.0)
 	(pool_item.light as OmniLight3D).light_energy = 0.0
@@ -513,12 +562,7 @@ func set_obstacle_fade(pool_item:Dictionary, fade:float) -> void:
 		var color:Color = (material as StandardMaterial3D).albedo_color
 		color.a = fade
 		(material as StandardMaterial3D).albedo_color = color
-	var trail:MeshInstance3D = pool_item.trail
-	var trail_material:StandardMaterial3D = trail.material_override
-	var trail_color:Color = trail_material.albedo_color
-	trail_color.a = (0.3 if trail_color.r > trail_color.b else 0.32) * fade
-	trail_material.albedo_color = trail_color
-	(pool_item.light as OmniLight3D).light_energy = 4.2 * fade
+	(pool_item.light as OmniLight3D).light_energy = 7.0 * fade
 
 func update_obstacles(delta:float) -> void:
 	for i in range(obstacles.size() - 1, -1, -1):
@@ -561,11 +605,17 @@ func apply_hit(obstacle:Dictionary) -> void:
 		damage *= 1.45
 	health = maxf(0.0, health - damage)
 	hurt_invulnerability = 0.9
-	camera_shake = maxf(camera_shake, 0.36)
+	camera_shake = maxf(camera_shake, 0.52)
+	hit_tumble_time = 1.05
+	hit_tumble_side = -1.0 if randf() < 0.5 else 1.0
+	falling_motion += Vector2(randf_range(-4.0, 4.0), randf_range(-3.0, 3.0))
 	hit_sound.pitch_scale = randf_range(0.88, 1.13)
 	hit_sound.play()
+	blood_spray.position = maycon.position
+	blood_spray.restart()
+	blood_spray.emitting = true
 	var screen_pos:Vector2 = camera.unproject_position(obstacle.position)
-	hud.call("show_hit", screen_pos, hit_combo, damage)
+	hud.call("show_hit", screen_pos, hit_combo, damage, camera.unproject_position(maycon.position))
 	if health <= 0.0:
 		start_ending(false)
 
@@ -578,6 +628,10 @@ func start_ending(success:bool) -> void:
 	maycon_rim_light.light_energy = 0.0
 	power_aura.visible = false
 	ending_success = success
+	if success:
+		hit_tumble_time = 0.0
+		falling_motion = Vector2.ZERO
+		maycon.rotation = Vector3(1.1, PI + 0.35, 0.1)
 	ending_start_pitch = maycon.rotation.x
 	ending_time = 0.0
 	ending_scream_started = false
@@ -595,7 +649,7 @@ func start_ending(success:bool) -> void:
 func update_ending(delta:float) -> void:
 	ending_time += delta
 	if ending_success:
-		animate_falling_limbs()
+		animate_falling_limbs(delta)
 		var turn_progress:float = clampf((ending_time - 0.18) / 1.0, 0.0, 1.0)
 		maycon.rotation.x = ending_start_pitch + smoothstep(0.0, 1.0, turn_progress) * PI
 		if ending_time > 0.75 && !ending_scream_started:
@@ -608,6 +662,11 @@ func update_ending(delta:float) -> void:
 			transition_sent = true
 			get_tree().change_scene_to_file("res://scenes/3D/cenario_3d_bofore_castle_1.tscn")
 	else:
+		if hit_tumble_time > 0.0:
+			hit_tumble_time = maxf(0.0, hit_tumble_time - delta)
+			var tumble_transform:Transform3D = maycon.transform
+			tumble_transform.basis = Basis(Vector3.FORWARD, hit_tumble_side * 12.0 * delta) * tumble_transform.basis
+			maycon.transform = tumble_transform
 		if ending_time > 1.6 && !transition_sent:
 			transition_sent = true
 			GameSongs.play_song(1)

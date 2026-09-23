@@ -44,13 +44,14 @@ func set_pause(paused:bool) -> void:
 	paused_local = paused
 	queue_redraw()
 
-func show_hit(where:Vector2, hits:int, damage:float) -> void:
+func show_hit(where:Vector2, hits:int, damage:float, player_position:Vector2) -> void:
 	combo = hits
 	combo_position = where
 	damage_value = int(round(damage))
 	combo_time = 1.35
 	hurt_flash = 1.0
-	spawn_droplets(where, 34)
+	spawn_droplets(where, 65 + int(damage))
+	spawn_droplets(player_position, 55)
 	queue_redraw()
 
 func explode_pentagram() -> void:
@@ -146,6 +147,7 @@ func _draw() -> void:
 	for drop in droplets:
 		var drop_pos:Vector2 = drop.position
 		var alpha:float = clampf(float(drop.life), 0.0, 1.0)
+		draw_line(drop_pos, drop_pos - (drop.velocity as Vector2) * 0.045, Color(0.53, 0.0, 0.025, alpha * 0.62), maxf(1.0, float(drop.radius) * 0.55))
 		draw_circle(drop_pos, float(drop.radius) * alpha, Color(0.72, 0.005, 0.045, alpha * 0.82))
 		draw_circle(drop_pos + Vector2(-1.5, -1.5), maxf(1.0, float(drop.radius) * 0.32 * alpha), Color(1.0, 0.09, 0.1, alpha))
 	if death:
