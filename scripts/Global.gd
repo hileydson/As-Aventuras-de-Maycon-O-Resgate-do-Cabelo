@@ -18,6 +18,9 @@ var is_two_player_active = false
 var back_to_main_camera = false
 var back_to_fase = false
 var from_slum = false
+var platform_arrival_pending:bool = false
+var platform_pentagrams:int = 0
+var platform_pentagram_collected:Dictionary = {}
 var battle_background:String = "1" # default o cenario de fogo fora do castelo
 var battle_next_enemy:String = "0"
 var battle_next_boss:int = 0
@@ -111,6 +114,9 @@ func reset_default_values()->void:
 	back_to_main_camera = false
 	back_to_fase = false
 	from_slum = false
+	platform_arrival_pending = false
+	platform_pentagrams = 0
+	platform_pentagram_collected = {}
 	battle_background = "1" # default o cenario de fogo fora do castelo
 	battle_next_enemy = "0"
 	battle_next_boss = 0
@@ -198,6 +204,8 @@ func save_progress(fase:String)->void:
 	save_array["inimigos_mortos"] = inimigos_mortos
 	save_array["aim_assist_strength"] = aim_assist_strength
 	save_array["last_fase"] = fase
+	save_array["platform_pentagrams"] = platform_pentagrams
+	save_array["platform_pentagram_collected"] = platform_pentagram_collected
 	
 	var file = FileAccess.open("user://savegame.save", FileAccess.WRITE) 
 	var json_string = JSON.stringify(save_array) 
@@ -244,6 +252,8 @@ func load_progress()->void:
 			if save_array.has("aim_assist_strength"):
 				aim_assist_strength = float(save_array["aim_assist_strength"])
 			last_fase = save_array["last_fase"]
+			platform_pentagrams = int(save_array.get("platform_pentagrams", 0))
+			platform_pentagram_collected = save_array.get("platform_pentagram_collected", {})
 			maycon_hp_count = save_array["maycon_hp_count"]
 			battle_mode = save_array.get("battle_mode", battle_mode_realtime)
 			realtime_hp = clampf(float(save_array.get("realtime_hp", realtime_hp_max)), 0.0, realtime_hp_max)
@@ -256,6 +266,8 @@ func load_progress()->void:
 			elif last_fase == "fase_3":
 				GameSongs.play_song(1)
 				get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
+			elif last_fase == "fase_3d_platform":
+				get_tree().change_scene_to_file("res://scenes/3D/maycon_platform_3d.tscn")
 			elif last_fase == "fase_4":
 				GameSongs.play_song(1)
 				get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn")

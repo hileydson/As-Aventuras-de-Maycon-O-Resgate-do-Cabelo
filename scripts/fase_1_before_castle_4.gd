@@ -13,6 +13,11 @@ extends Sprite2D
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
+	_block_return_to_previous_stage()
+	if Global.platform_arrival_pending:
+		Global.platform_arrival_pending = false
+		maycon_fase.position.y -= 185.0
+		maycon_fase.velocity = Vector2.ZERO
 	
 	GameSongs.play_song(1)
 	
@@ -74,7 +79,19 @@ func _on_dead_line_body_entered(body: Node2D) -> void:
 
 
 func _on_back_stage_body_entered(body: Node2D) -> void:
-	get_tree().paused = true
-	Global.back_to_fase = true
-	await get_tree().create_timer(0.3).timeout 
-	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
+	return
+
+
+func _block_return_to_previous_stage() -> void:
+	$"../back_stage".monitoring = false
+	var barrier := StaticBody2D.new()
+	barrier.name = "BloqueioRetorno"
+	barrier.position = Vector2(14.0, 850.0)
+	barrier.collision_layer = 1
+	barrier.collision_mask = 0
+	var shape := CollisionShape2D.new()
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = Vector2(32.0, 900.0)
+	shape.shape = rectangle
+	barrier.add_child(shape)
+	get_parent().add_child.call_deferred(barrier)

@@ -43,9 +43,10 @@ func _process(delta: float) -> void:
 
 
 func _on_next_scene_body_entered(body: Node2D) -> void:
-	get_tree().paused = true
-	await get_tree().create_timer(0.3).timeout 
-	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn")
+	if body != maycon_fase or entering_well:
+		return
+	entering_well = true
+	get_tree().change_scene_to_file.call_deferred("res://scenes/3D/maycon_platform_3d.tscn")
 
 
 func _on_dead_line_body_entered(body: Node2D) -> void:
