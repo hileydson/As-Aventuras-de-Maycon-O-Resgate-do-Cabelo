@@ -28,6 +28,7 @@ var body_trails:Array[Dictionary] = []
 var body_streaks:Array[Dictionary] = []
 var power_aura:MeshInstance3D
 var obstacles:Array[Dictionary] = []
+var obstacle_pool:Array[Dictionary] = []
 var shaft_sections:Array[Node3D] = []
 var speed_lines:Array[Dictionary] = []
 var dash_puffs:Array[Dictionary] = []
@@ -75,6 +76,7 @@ func _ready() -> void:
 	create_shaft()
 	create_maycon()
 	create_speed_lines()
+	create_obstacle_pool()
 	music = make_audio("res://assets/novos_audios/battle.mp3", -11.0, 1.58, true)
 	wind = make_audio("res://assets/novos_audios/cidade_intro_wind.mp3", -10.0, 1.45, true)
 	dash_sound = make_audio("res://assets/audio/peido.mp3", -3.0)
@@ -235,17 +237,18 @@ func create_body_effects() -> void:
 	var streak_material := StandardMaterial3D.new()
 	streak_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	streak_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	streak_material.albedo_color = Color(0.53, 0.9, 1.0, 0.5)
+	streak_material.albedo_color = Color(0.64, 0.69, 0.72, 0.6)
 	streak_material.emission_enabled = true
-	streak_material.emission = Color(0.19, 0.68, 1.0)
-	for i in 16:
+	streak_material.emission = Color(0.27, 0.3, 0.33)
+	for i in 42:
 		var streak := MeshInstance3D.new()
 		var mesh := BoxMesh.new()
-		mesh.size = Vector3(0.026, 0.026, randf_range(0.5, 1.8))
+		mesh.size = Vector3(0.012, randf_range(0.28, 0.72), randf_range(0.6, 1.45))
 		streak.mesh = mesh
 		streak.material_override = streak_material
+		streak.rotation.z = randf_range(-0.15, 0.15)
 		add_child(streak)
-		body_streaks.append({"node":streak, "phase":randf(), "offset":Vector2(randf_range(-0.62, 0.62), randf_range(-0.85, 0.85))})
+		body_streaks.append({"node":streak, "phase":randf(), "offset":Vector2(randf_range(-0.58, 0.58), randf_range(-0.72, 0.72))})
 
 func create_speed_lines() -> void:
 	var streak_material := StandardMaterial3D.new()
@@ -365,10 +368,11 @@ func update_body_effects(delta:float) -> void:
 		shadow_material.albedo_color.a = (0.08 + speed_factor * 0.045) * (1.5 if dash_time > 0.0 else 1.0)
 	for streak_data in body_streaks:
 		var streak:MeshInstance3D = streak_data.node
-		var phase:float = fposmod(float(streak_data.phase) + elapsed * (2.4 if dash_time > 0.0 else 1.5), 1.0)
+		var phase:float = fposmod(float(streak_data.phase) + elapsed * (3.5 if dash_time > 0.0 else 2.1 + speed_factor * 0.9), 1.0)
 		var offset:Vector2 = streak_data.offset
-		streak.position = maycon.position + Vector3(offset.x, offset.y, -1.9 + phase * 3.8)
-		streak.scale.z = 1.8 if dash_time > 0.0 else 1.0
+		streak.position = maycon.position + Vector3(offset.x, offset.y, 0.45 + phase * 1.9)
+		streak.scale.z = 1.55 if dash_time > 0.0 else 1.0
+		streak.transparency = 0.18 + absf(phase - 0.5) * 0.8
 		streak.visible = !finishing
 	power_aura.visible = pentagram_invulnerability > 0.0 && !finishing
 	if power_aura.visible:
@@ -437,52 +441,68 @@ func start_dash(direction:Vector2) -> void:
 	dash_cooldown = 0.6
 	puff_timer = 0.0
 	camera_shake = maxf(camera_shake, 0.12)
-	dash_sound.pitch_scale = randf_range(0.85, 1.04)
+	dash_sound.pitch_scale = randf_range(0.7, 0.8)
 	dash_sound.volume_db = -3.0
 	dash_sound.play()
 	spawn_dash_burst()
 	hud.call("dash_flash")
 
+func create_obstacle_pool() -> void:
+	for kind in OBSTACLE_SCENES.size():
+		var scene:PackedScene = load(OBSTACLE_SCENES[kind])
+		var object := Node3D.new()
+		object.name = "Debris_%d" % kind
+		var mesh:Node3D = scene.instantiate()
+		mesh.scale = Vector3.ONE * OBSTACLE_SCALE[kind]
+		object.add_child(mesh)
+		var mesh_parts:Array[GeometryInstance3D] = []
+		for child in mesh.find_children("*", "GeometryInstance3D", true, false):
+			mesh_parts.append(child as GeometryInstance3D)
+		var trail := MeshInstance3D.new()
+		var trail_mesh := CylinderMesh.new()
+		trail_mesh.top_radius = OBSTACLE_RADIUS[kind] * 0.16
+		trail_mesh.bottom_radius = OBSTACLE_RADIUS[kind] * 0.04
+		trail_mesh.height = 2.9
+		trail_mesh.radial_segments = 8
+		trail.mesh = trail_mesh
+		trail.rotation.x = PI * 0.5
+		trail.position.z = -1.7
+		var trail_material := StandardMaterial3D.new()
+		trail_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		trail_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		trail_material.albedo_color = Color(1.0, 0.16, 0.055, 0.3) if kind % 2 == 0 else Color(0.3, 0.8, 1.0, 0.32)
+		trail.material_override = trail_material
+		object.add_child(trail)
+		var object_light := OmniLight3D.new()
+		object_light.light_color = Color(1.0, 0.66, 0.48) if kind % 2 == 0 else Color(0.48, 0.84, 1.0)
+		object_light.light_energy = 0.0
+		object_light.omni_range = 8.0
+		object_light.position.z = 2.4
+		object.add_child(object_light)
+		object.hide()
+		add_child(object)
+		obstacle_pool.append({"node":object, "mesh_parts":mesh_parts, "trail":trail, "light":object_light})
+
 func spawn_obstacle() -> void:
 	var kind:int = next_kind
 	next_kind = (next_kind + randi_range(1, 3)) % OBSTACLE_SCENES.size()
-	var scene:PackedScene = load(OBSTACLE_SCENES[kind])
-	var object := Node3D.new()
-	object.name = "Debris_%d" % kind
-	var mesh:Node3D = scene.instantiate()
-	mesh.scale = Vector3.ONE * OBSTACLE_SCALE[kind]
-	object.add_child(mesh)
+	var pool_item:Dictionary = obstacle_pool[kind]
+	var object:Node3D = pool_item.node
 	var radius:float = OBSTACLE_RADIUS[kind] * randf_range(0.88, 1.22)
 	object.scale = Vector3.ONE * (radius / OBSTACLE_RADIUS[kind])
+	object.rotation = Vector3.ZERO
 	var offset := Vector2(randf_range(-1.35, 1.35), randf_range(-1.35, 1.35))
 	if offset.length() < 0.7:
 		offset = Vector2.from_angle(randf() * TAU) * 0.9
 	var origin := player_pos + offset
 	origin.x = clampf(origin.x, -4.3, 4.3)
 	origin.y = clampf(origin.y, -4.3, 4.3)
-	object.position = Vector3(origin.x, origin.y, -30.0)
-	var trail := MeshInstance3D.new()
-	var trail_mesh := CylinderMesh.new()
-	trail_mesh.top_radius = radius * 0.16
-	trail_mesh.bottom_radius = radius * 0.04
-	trail_mesh.height = 2.9
-	trail_mesh.radial_segments = 8
-	trail.mesh = trail_mesh
-	trail.rotation.x = PI * 0.5
-	trail.position.z = -1.7
-	var trail_material := StandardMaterial3D.new()
-	trail_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	trail_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	trail_material.albedo_color = Color(1.0, 0.16, 0.055, 0.3) if kind % 2 == 0 else Color(0.3, 0.8, 1.0, 0.32)
-	trail.material_override = trail_material
-	object.add_child(trail)
-	var object_light := OmniLight3D.new()
-	object_light.light_color = Color(1.0, 0.66, 0.48) if kind % 2 == 0 else Color(0.48, 0.84, 1.0)
-	object_light.light_energy = 4.2
-	object_light.omni_range = 8.0
-	object_light.position.z = 2.4
-	object.add_child(object_light)
-	add_child(object)
+	object.position = Vector3(origin.x, origin.y, -36.0)
+	for part in pool_item.mesh_parts:
+		(part as GeometryInstance3D).transparency = 1.0
+	(pool_item.trail as MeshInstance3D).transparency = 1.0
+	(pool_item.light as OmniLight3D).light_energy = 0.0
+	object.show()
 	var drift := Vector2(randf_range(-0.35, 0.35), randf_range(-0.26, 0.26))
 	var speed:float = (randf_range(21.5, 26.0) if next_obstacle_fast else randf_range(15.0, 18.5)) * (1.0 + speed_factor * 1.6)
 	next_obstacle_fast = !next_obstacle_fast
@@ -501,11 +521,18 @@ func update_obstacles(delta:float) -> void:
 		var node:Node3D = obstacle.node
 		node.position = pos
 		node.rotation += Vector3(float(obstacle.spin) * delta * 0.55, float(obstacle.spin) * delta, float(obstacle.spin) * delta * 0.35)
+		var pool_item:Dictionary = obstacle_pool[int(obstacle.kind)]
+		var fade:float = smoothstep(-36.0, -27.0, pos.z)
+		for part in pool_item.mesh_parts:
+			(part as GeometryInstance3D).transparency = 1.0 - fade
+		(pool_item.trail as MeshInstance3D).transparency = 1.0 - fade
+		(pool_item.light as OmniLight3D).light_energy = 4.2 * fade
 		if previous_z < MAYCON_DEPTH && pos.z >= MAYCON_DEPTH && !obstacle.resolved:
 			resolve_obstacle(obstacle)
 			obstacle["resolved"] = true
 		if pos.z > MAYCON_DEPTH + 4.0:
-			node.queue_free()
+			node.hide()
+			(pool_item.light as OmniLight3D).light_energy = 0.0
 			obstacles.remove_at(i)
 			spawn_timer = maxf(spawn_timer, randf_range(0.34, 0.6) * (1.0 - speed_factor * 0.48))
 
