@@ -20,6 +20,7 @@ var chase_time:float = 0.0
 var state:int = 0
 var rest_time:float = 0.0
 var wall_shape:SphereShape3D
+var trail_distance:float = 0.0
 
 func setup(model_index:int, player:CharacterBody3D, world:Node3D, enemy_type:int = 0) -> void:
 	maycon = player
@@ -117,8 +118,12 @@ func _move_toward(target:Vector3, move_speed:float, delta:float) -> void:
 	wall_query.transform = Transform3D(Basis.IDENTITY, next + Vector3.UP * (0.75 if archetype == 2 else 0.64))
 	wall_query.collision_mask = 1
 	if stage.has_ground_at(next) and get_world_3d().direct_space_state.intersect_shape(wall_query).is_empty():
+		trail_distance += global_position.distance_to(next)
 		global_position = next
 		model.rotation.y = lerp_angle(model.rotation.y, atan2(direction.x, direction.z), minf(delta * 5.0, 1.0))
+		if trail_distance >= 0.75:
+			trail_distance = 0.0
+			stage.spawn_enemy_trail(global_position, archetype)
 
 func _touch_maycon() -> void:
 	if not active:

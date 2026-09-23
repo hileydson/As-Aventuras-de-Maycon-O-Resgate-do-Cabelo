@@ -34,6 +34,11 @@ var hp_bar:ProgressBar
 var hp_label:Label
 var pentagram_label:Label
 var blood_overlay:Control
+var heal_flash:ColorRect
+var heal_tween:Tween
+var fade_rect:ColorRect
+var enemy_trail_mesh:CylinderMesh
+var trail_materials:Array[StandardMaterial3D] = []
 var pentagram_nodes:Dictionary = {}
 var exit_started:bool = false
 var blood_pickups:Array[Node3D] = []
@@ -64,6 +69,7 @@ func _ready() -> void:
 	_build_blue_particles()
 	_build_hud()
 	_build_pause()
+	_build_fade()
 	update_hud()
 
 func _physics_process(delta:float) -> void:
@@ -82,9 +88,10 @@ func _physics_process(delta:float) -> void:
 			continue
 		pickup.rotate_y(delta * 2.0)
 		if pickup.global_position.distance_to(maycon.global_position + Vector3.UP) < 1.4:
-			Global.realtime_hp = minf(Global.realtime_hp_max, Global.realtime_hp + 11.0)
+			Global.realtime_hp = minf(Global.realtime_hp_max, Global.realtime_hp + Global.realtime_hp_max * 0.1)
 			blood_pickups.remove_at(i)
 			pickup.queue_free()
+			_flash_heal()
 			update_hud()
 	for id in pentagram_nodes.keys():
 		var item:Node3D = pentagram_nodes[id]
@@ -116,6 +123,17 @@ func _build_materials() -> void:
 	materials["pine"] = _material(Color("345e54"), 1.0)
 	materials["flower"] = _material(Color("ee8fac"), 0.9)
 	materials["mushroom"] = _material(Color("e46f52"), 0.9)
+	enemy_trail_mesh = CylinderMesh.new()
+	enemy_trail_mesh.top_radius = 0.25
+	enemy_trail_mesh.bottom_radius = 0.27
+	enemy_trail_mesh.height = 0.02
+	enemy_trail_mesh.radial_segments = 10
+	for color in [Color("ee8bb1"), Color("72c7e0"), Color("f2bd65"), Color("ad91d6")]:
+		var trail_material := _material(color, 1.0)
+		trail_material.albedo_color.a = 0.65
+		trail_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		trail_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		trail_materials.append(trail_material)
 
 func _material(color:Color, roughness:float) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
@@ -427,13 +445,26 @@ func enemy_defeated(enemy:Area3D) -> void:
 	var at:Vector3 = enemy.global_position
 	_spawn_blood(at, true)
 	_spawn_color_burst(at + Vector3.UP * 0.8, false)
-	var drop := _asset("heart", at + Vector3.UP * 1.1, 1.0)
-	blood_pickups.append(drop)
+	if randf() < 0.35:
+		var drop := _asset("heart", at + Vector3.UP * 1.1, 1.0)
+		blood_pickups.append(drop)
 	enemy.queue_free()
 
 func enemy_stomped(enemy:Area3D) -> void:
 	enemy_defeated(enemy)
 	total_stomps += 1
+
+func spawn_enemy_trail(at:Vector3, archetype:int) -> void:
+	var mark := MeshInstance3D.new()
+	mark.mesh = enemy_trail_mesh
+	mark.material_override = trail_materials[archetype % trail_materials.size()]
+	mark.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mark.position = at + Vector3(0.0, 0.018, 0.0)
+	mark.rotation.y = randf_range(0.0, TAU)
+	effects.add_child(mark)
+	var tween := create_tween().bind_node(mark)
+	tween.tween_property(mark, "scale", Vector3.ZERO, 1.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.tween_callback(mark.queue_free)
 
 func _spawn_blood(at:Vector3, leave_stain:bool) -> void:
 	var blood := BLOOD_SCENE.instantiate()
@@ -499,9 +530,20 @@ func player_hit(at:Vector3) -> void:
 	_spawn_blood(ground.position if not ground.is_empty() else at, not ground.is_empty())
 	blood_overlay.call("flash")
 
+func _flash_heal() -> void:
+	heal_flash.modulate.a = 1.0
+	if heal_tween and heal_tween.is_valid():
+		heal_tween.kill()
+	heal_tween = create_tween().bind_node(heal_flash)
+	heal_tween.tween_property(heal_flash, "modulate:a", 0.0, 0.58).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
 func respawn(reset_health:bool) -> void:
 	maycon.global_position = Vector3(0.0, 1.4, 32.0)
 	maycon.velocity = Vector3.ZERO
+	maycon.preparing_jump = false
+	maycon.jump_windup = 0.0
+	maycon.jumps = 0
+	maycon.visual.scale = Vector3.ONE
 	maycon.hurt_time = 1.0
 	maycon.camera.global_position = Vector3(0.0, 7.0, 43.0)
 	if reset_health:
@@ -512,10 +554,48 @@ func respawn(reset_health:bool) -> void:
 
 func _exit_stage() -> void:
 	exit_started = true
+	get_tree().paused = false
 	maycon.control_enabled = false
+	await _fade_out()
 	Global.platform_arrival_pending = true
 	Global.save_progress("fase_4")
 	get_tree().change_scene_to_file.call_deferred("res://scenes/fase_1_before_castle_4.tscn")
+
+func exit_to_menu() -> void:
+	if exit_started:
+		return
+	exit_started = true
+	get_tree().paused = false
+	maycon.control_enabled = false
+	await _fade_out()
+	GameSongs.stop(1)
+	Global.back_to_main_camera = true
+	get_tree().change_scene_to_file.call_deferred("res://scenes/menu.tscn")
+
+func _fade_out() -> void:
+	var tween := create_tween().bind_node(fade_rect)
+	tween.tween_property(fade_rect, "modulate:a", 1.0, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	await tween.finished
+
+func _build_fade() -> void:
+	var layer := CanvasLayer.new()
+	layer.name = "TransicaoDaFase"
+	layer.layer = 30
+	layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(layer)
+	fade_rect = ColorRect.new()
+	fade_rect.color = Color.BLACK
+	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(fade_rect)
+	maycon.control_enabled = false
+	var tween := create_tween().bind_node(fade_rect)
+	tween.tween_property(fade_rect, "modulate:a", 0.0, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_callback(_finish_fade_in)
+
+func _finish_fade_in() -> void:
+	if not exit_started:
+		maycon.control_enabled = true
 
 func _build_hud() -> void:
 	var canvas := CanvasLayer.new()
@@ -538,8 +618,8 @@ func _build_hud() -> void:
 	background.anchor_top = 1.0
 	background.anchor_bottom = 1.0
 	background.offset_left = 12.0
-	background.offset_right = 224.0
-	background.offset_top = -66.0
+	background.offset_right = 348.0
+	background.offset_top = -97.0
 	background.offset_bottom = -12.0
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.09, 0.10, 0.14, 0.8)
@@ -548,12 +628,13 @@ func _build_hud() -> void:
 	background.add_theme_stylebox_override("panel", panel_style)
 	canvas.add_child(background)
 	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 5)
 	background.add_child(column)
 	hp_label = Label.new()
 	hp_label.add_theme_font_size_override("font_size", 12)
 	column.add_child(hp_label)
 	hp_bar = ProgressBar.new()
-	hp_bar.custom_minimum_size = Vector2(200.0, 12.0)
+	hp_bar.custom_minimum_size = Vector2(310.0, 12.0)
 	hp_bar.show_percentage = false
 	hp_bar.max_value = Global.realtime_hp_max
 	var bar_fill := StyleBoxFlat.new()
@@ -563,24 +644,15 @@ func _build_hud() -> void:
 	bar_back.bg_color = Color("3a1924")
 	hp_bar.add_theme_stylebox_override("background", bar_back)
 	column.add_child(hp_bar)
-	var action_background := PanelContainer.new()
-	action_background.anchor_top = 1.0
-	action_background.anchor_bottom = 1.0
-	action_background.offset_left = 238.0
-	action_background.offset_right = 544.0
-	action_background.offset_top = -66.0
-	action_background.offset_bottom = -12.0
-	action_background.add_theme_stylebox_override("panel", panel_style.duplicate())
-	canvas.add_child(action_background)
 	var control_panel := HBoxContainer.new()
 	control_panel.add_theme_constant_override("separation", 6)
-	action_background.add_child(control_panel)
-	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_A.png"), Vector2(30.0, 30.0)))
+	column.add_child(control_panel)
+	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_A.png"), Vector2(26.0, 26.0)))
 	var jump_label := Label.new()
 	jump_label.text = tr("PLATFORM_JUMP_HINT")
 	jump_label.add_theme_font_size_override("font_size", 13)
 	control_panel.add_child(jump_label)
-	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_X.png"), Vector2(30.0, 30.0)))
+	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_X.png"), Vector2(26.0, 26.0)))
 	var run_label := Label.new()
 	run_label.text = tr("PLATFORM_RUN_HINT")
 	run_label.add_theme_font_size_override("font_size", 13)
@@ -588,6 +660,12 @@ func _build_hud() -> void:
 	blood_overlay = Control.new()
 	blood_overlay.set_script(BLOOD_OVERLAY_SCRIPT)
 	canvas.add_child(blood_overlay)
+	heal_flash = ColorRect.new()
+	heal_flash.color = Color(0.25, 0.73, 1.0, 0.38)
+	heal_flash.modulate.a = 0.0
+	heal_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	heal_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(heal_flash)
 
 func _build_pause() -> void:
 	var pause := CanvasLayer.new()

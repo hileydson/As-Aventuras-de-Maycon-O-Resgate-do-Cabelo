@@ -11,6 +11,8 @@ func _ready() -> void:
 	panel.visible = false
 
 func _unhandled_input(event:InputEvent) -> void:
+	if get_parent().exit_started:
+		return
 	if event.is_action_pressed("ui_cancel") or event is InputEventJoypadButton and event.button_index == JOY_BUTTON_START and event.pressed:
 		_toggle()
 		get_viewport().set_input_as_handled()
@@ -28,9 +30,7 @@ func _toggle() -> void:
 func _return_to_menu() -> void:
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	GameSongs.stop(1)
-	Global.back_to_main_camera = true
-	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	get_parent().exit_to_menu()
 
 func _build_panel() -> void:
 	panel = Control.new()

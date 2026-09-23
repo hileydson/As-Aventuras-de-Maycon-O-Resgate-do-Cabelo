@@ -21,6 +21,8 @@ var hurt_time:float = 0.0
 var control_enabled:bool = true
 var dying:bool = false
 var camera_shake:float = 0.0
+var jump_windup:float = 0.0
+var preparing_jump:bool = false
 
 func _ready() -> void:
 	visual = MODEL.instantiate()
@@ -49,25 +51,40 @@ func _physics_process(delta:float) -> void:
 	if dying:
 		velocity = Vector3.ZERO
 		return
-	if is_on_floor():
+	if is_on_floor() and not preparing_jump:
 		coyote_time = 0.13
 		jumps = 0
 	else:
 		coyote_time = maxf(coyote_time - delta, 0.0)
+	if preparing_jump:
+		jump_windup -= delta
+		if jump_windup <= 0.0:
+			preparing_jump = false
+			velocity.y = 8.9
+			jumps = 1
+			coyote_time = 0.0
+			jump_audio.play()
+			visual.scale = Vector3(0.94, 1.13, 0.94)
 	if Input.is_action_just_pressed("ui_accept") and control_enabled:
 		jump_buffer = 0.14
 	else:
 		jump_buffer = maxf(jump_buffer - delta, 0.0)
-	if jump_buffer > 0.0 and control_enabled and (coyote_time > 0.0 or jumps < 2 and not is_on_floor()):
-		if jumps == 1:
+	if jump_buffer > 0.0 and control_enabled and not preparing_jump and (coyote_time > 0.0 or jumps == 1 and not is_on_floor()):
+		if jumps == 0:
+			preparing_jump = true
+			jump_windup = 0.09
+			visual.scale = Vector3(1.1, 0.76, 1.1)
+			_play_animation("Walking")
+		else:
 			_spawn_fart()
-		velocity.y = 8.9 if jumps == 0 else 8.1
-		jumps += 1
+			velocity.y = 8.1
+			jumps = 2
+			jump_audio.play()
+			visual.scale = Vector3(0.91, 1.16, 0.91)
 		coyote_time = 0.0
 		jump_buffer = 0.0
-		jump_audio.play()
-		_play_animation("Walking")
-	velocity.y -= 23.0 * delta
+	if not preparing_jump:
+		velocity.y -= 23.0 * delta
 	if Input.is_action_just_released("ui_accept") and velocity.y > 3.5:
 		velocity.y *= 0.62
 	var input:Vector2 = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down") if control_enabled else Vector2.ZERO
@@ -83,11 +100,17 @@ func _physics_process(delta:float) -> void:
 	if direction.length_squared() > 0.01:
 		visual.rotation.y = lerp_angle(visual.rotation.y, atan2(direction.x, direction.z), minf(delta * 12.0, 1.0))
 	visual.rotation.x = lerpf(visual.rotation.x, 0.0 if is_on_floor() else -0.1 if velocity.y > 0.0 else 0.08, minf(delta * 8.0, 1.0))
-	if is_on_floor():
+	if not preparing_jump:
+		visual.scale = visual.scale.lerp(Vector3.ONE, minf(delta * 6.0, 1.0))
+	if preparing_jump:
+		_play_animation("Walking")
+	elif is_on_floor():
 		_play_animation("Arise" if direction.length_squared() > 0.01 and speed > 7.0 else "Idle" if direction.length_squared() > 0.01 else "Walking")
 	else:
 		_play_animation("Walking")
-	if animation_player and animation_player.current_animation == "Idle":
+	if animation_player and (preparing_jump or not is_on_floor()):
+		animation_player.speed_scale = 0.0
+	elif animation_player and animation_player.current_animation == "Idle":
 		animation_player.speed_scale = 1.35
 	elif animation_player:
 		animation_player.speed_scale = 1.0
@@ -106,6 +129,10 @@ func _step_over_small_lip(delta:float) -> void:
 
 func _spawn_fart() -> void:
 	fart_audio.play()
+	var camera_right := Vector3(cos(camera_yaw), 0.0, -sin(camera_yaw))
+	var side_motion := Input.get_axis("ui_left", "ui_right")
+	if absf(side_motion) < 0.1:
+		side_motion = Vector3(velocity.x, 0.0, velocity.z).dot(camera_right)
 	for i in range(7):
 		var puff := Sprite3D.new()
 		puff.texture = FART_SMOKE
@@ -117,6 +144,7 @@ func _spawn_fart() -> void:
 		puff.shaded = false
 		puff.transparent = true
 		puff.double_sided = true
+		puff.flip_h = side_motion > 0.1
 		get_parent().add_child(puff)
 		puff.global_position = global_position + Vector3(randf_range(-0.38, 0.38), randf_range(0.05, 0.5), randf_range(-0.38, 0.38))
 		var alpha := randf_range(0.4, 0.58)
@@ -169,6 +197,9 @@ func bounce() -> void:
 func receive_damage(amount:float, source:Vector3) -> void:
 	if hurt_time > 0.0 or dying:
 		return
+	preparing_jump = false
+	jump_windup = 0.0
+	visual.scale = Vector3.ONE
 	hurt_time = 1.0
 	Global.realtime_hp = maxf(0.0, Global.realtime_hp - amount)
 	var knockback := global_position - source
