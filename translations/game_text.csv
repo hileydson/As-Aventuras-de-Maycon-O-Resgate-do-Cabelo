@@ -233,3 +233,9 @@ PLATFORM_OBJECTIVE,Siga as ilhas até a bandeira e pule no poço,Follow the isla
 PLATFORM_CONTROLS,WASD / SETAS: MOVER   ESPAÇO / A: PULAR   SHIFT: CORRER   BOTÃO DIREITO: CÂMERA,WASD / ARROWS: MOVE   SPACE / A: JUMP   SHIFT: RUN   RIGHT MOUSE: CAMERA,WASD / FLECHAS: MOVER   ESPACIO / A: SALTAR   SHIFT: CORRER   BOTÓN DERECHO: CÁMARA,WASD / 方向键：移动   空格 / A：跳跃   SHIFT：奔跑   鼠标右键：视角
 PLATFORM_PUNCH,Soco,Punch,Puñetazo,拳击
 PLATFORM_JUMP,Pulo,Jump,Salto,跳跃
+PLATFORM_START_SIGN,Cacete nas Alturas,Sky-High Mayhem,Caos en las Alturas,高空大混战
+PLATFORM_PAUSE_TITLE,Pausa nas Nuvens,Cloud Break,Pausa en las Nubes,云端小憩
+PLATFORM_PAUSE_HINT,Respire fundo. As ilhas esperam por você!,Take a breath. The islands await!,Respira hondo. ¡Las islas te esperan!,深呼吸，岛屿在等着你！
+PLATFORM_BACK_MENU,Voltar ao menu,Back to menu,Volver al menú,返回菜单
+PLATFORM_JUMP_HINT,Pulo / Espaço,Jump / Space,Salto / Espacio,跳跃 / 空格
+PLATFORM_RUN_HINT,Correr / Shift,Run / Shift,Correr / Shift,奔跑 / Shift

@@ -4,6 +4,8 @@ const ENEMY_SCRIPT = preload("res://scripts/3D/platform_enemy.gd")
 const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 const ASSET_ROOT = "res://assets/kenney/platformer_3d/"
 const PENTAGRAM_TEXTURE = preload("res://assets/3D/pentagram_item.png")
+const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
+const BLOOD_OVERLAY_SCRIPT = preload("res://scripts/3D/platform_blood_overlay.gd")
 const HUBS = [
 	Vector3(0, 0, 32), Vector3(-25, 1, 8), Vector3(25, 0.5, 8),
 	Vector3(-44, 2, -24), Vector3(44, 1.5, -24),
@@ -31,6 +33,7 @@ var effects:Node3D
 var hp_bar:ProgressBar
 var hp_label:Label
 var pentagram_label:Label
+var blood_overlay:Control
 var pentagram_nodes:Dictionary = {}
 var exit_started:bool = false
 var blood_pickups:Array[Node3D] = []
@@ -60,6 +63,7 @@ func _ready() -> void:
 	_spawn_pentagrams()
 	_build_blue_particles()
 	_build_hud()
+	_build_pause()
 	update_hud()
 
 func _physics_process(delta:float) -> void:
@@ -88,6 +92,7 @@ func _physics_process(delta:float) -> void:
 			continue
 		item.rotate_y(delta * 1.3)
 		if item.global_position.distance_to(maycon.global_position + Vector3.UP * 0.9) < 1.35:
+			_spawn_color_burst(item.global_position, true)
 			Global.platform_pentagram_collected[id] = true
 			Global.platform_pentagrams += 1
 			pentagram_nodes.erase(id)
@@ -302,7 +307,31 @@ func _scatter_details() -> void:
 		for j in range(2):
 			var side := -1.0 if j == 0 else 1.0
 			_asset("crate" if j == 0 else "barrel", hub + Vector3(side * (half - 2.2), 0.18, -4.0 + float(j) * 7.0), 1.6, float(j))
-	_asset("sign", HUBS[0] + Vector3(3.6, 0.15, -2.0), 2.8)
+	var sign := _asset("sign", HUBS[0] + Vector3(3.6, 0.15, -2.0), 2.8)
+	var sign_back := MeshInstance3D.new()
+	var sign_back_mesh := BoxMesh.new()
+	sign_back_mesh.size = Vector3(4.75, 1.05, 0.16)
+	sign_back.mesh = sign_back_mesh
+	sign_back.material_override = materials["gold"]
+	sign_back.position = sign.position + Vector3(0.0, 1.58, 0.18)
+	geometry.add_child(sign_back)
+	var sign_face := MeshInstance3D.new()
+	var sign_face_mesh := BoxMesh.new()
+	sign_face_mesh.size = Vector3(4.55, 0.86, 0.18)
+	sign_face.mesh = sign_face_mesh
+	sign_face.material_override = materials["wood"]
+	sign_face.position = sign_back.position + Vector3(0.0, 0.0, 0.03)
+	geometry.add_child(sign_face)
+	var sign_text := Label3D.new()
+	sign_text.text = tr("PLATFORM_START_SIGN")
+	sign_text.font_size = 48
+	sign_text.pixel_size = 0.0062
+	sign_text.outline_size = 4
+	sign_text.modulate = Color("fff3d0")
+	sign_text.outline_modulate = Color("4e2c34")
+	sign_text.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	sign_text.position = sign_face.position + Vector3(0.0, 0.0, 0.15)
+	geometry.add_child(sign_text)
 
 func _spawn_enemies() -> void:
 	for i in range(HUBS.size()):
@@ -397,6 +426,7 @@ func has_ground_at(point:Vector3) -> bool:
 func enemy_defeated(enemy:Area3D) -> void:
 	var at:Vector3 = enemy.global_position
 	_spawn_blood(at, true)
+	_spawn_color_burst(at + Vector3.UP * 0.8, false)
 	var drop := _asset("heart", at + Vector3.UP * 1.1, 1.0)
 	blood_pickups.append(drop)
 	enemy.queue_free()
@@ -424,6 +454,51 @@ func _spawn_blood(at:Vector3, leave_stain:bool) -> void:
 		stain.position = Vector3(at.x + cos(angle) * distance, at.y + 0.02 + float(i) * 0.0005, at.z + sin(angle) * distance)
 		effects.add_child(stain)
 
+func _spawn_color_burst(at:Vector3, pickup:bool) -> void:
+	var colors := [Color("ffda60"), Color("ff6fb1"), Color("71d3ff"), Color("a985ff"), Color("8ee899"), Color("ff9369")]
+	var spark_mesh := SphereMesh.new()
+	spark_mesh.radius = 0.075
+	spark_mesh.height = 0.15
+	spark_mesh.radial_segments = 8
+	spark_mesh.rings = 4
+	var spark_materials:Array[StandardMaterial3D] = []
+	for color in colors:
+		var material := _material(color, 0.24)
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		spark_materials.append(material)
+	for i in range(24 if pickup else 30):
+		var spark := MeshInstance3D.new()
+		spark.mesh = spark_mesh
+		spark.material_override = spark_materials[i % spark_materials.size()]
+		spark.position = at
+		spark.scale = Vector3.ONE * randf_range(0.7, 1.5)
+		effects.add_child(spark)
+		var direction := Vector3(randf_range(-1.0, 1.0), randf_range(0.25, 1.1), randf_range(-1.0, 1.0)).normalized()
+		var distance := randf_range(1.0, 2.1) if pickup else randf_range(0.8, 2.4)
+		var tween := create_tween().bind_node(spark).set_parallel(true)
+		tween.tween_property(spark, "position", at + direction * distance, 0.58).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		tween.tween_property(spark, "scale", Vector3.ZERO, 0.58).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tween.chain().tween_callback(spark.queue_free)
+	if pickup:
+		var flash := Sprite3D.new()
+		flash.texture = PENTAGRAM_TEXTURE
+		flash.pixel_size = 0.0031
+		flash.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		flash.shaded = false
+		flash.double_sided = true
+		flash.position = at
+		effects.add_child(flash)
+		var flash_tween := create_tween().bind_node(flash).set_parallel(true)
+		flash_tween.tween_property(flash, "scale", Vector3.ONE * 2.1, 0.48)
+		flash_tween.tween_property(flash, "modulate:a", 0.0, 0.48)
+		flash_tween.chain().tween_callback(flash.queue_free)
+
+func player_hit(at:Vector3) -> void:
+	var ground_query := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.5, at - Vector3.UP * 3.0, 1)
+	var ground := get_world_3d().direct_space_state.intersect_ray(ground_query)
+	_spawn_blood(ground.position if not ground.is_empty() else at, not ground.is_empty())
+	blood_overlay.call("flash")
+
 func respawn(reset_health:bool) -> void:
 	maycon.global_position = Vector3(0.0, 1.4, 32.0)
 	maycon.velocity = Vector3.ZERO
@@ -449,15 +524,15 @@ func _build_hud() -> void:
 	var count_panel := HBoxContainer.new()
 	count_panel.anchor_left = 1.0
 	count_panel.anchor_right = 1.0
-	count_panel.offset_left = -96.0
+	count_panel.offset_left = -135.0
 	count_panel.offset_right = -12.0
-	count_panel.offset_top = 10.0
-	count_panel.offset_bottom = 40.0
+	count_panel.offset_top = 9.0
+	count_panel.offset_bottom = 53.0
 	canvas.add_child(count_panel)
-	count_panel.add_child(_hud_icon(PENTAGRAM_TEXTURE, Vector2(26.0, 26.0)))
+	count_panel.add_child(_hud_icon(PENTAGRAM_TEXTURE, Vector2(42.0, 42.0)))
 	pentagram_label = Label.new()
-	pentagram_label.add_theme_font_size_override("font_size", 18)
-	pentagram_label.add_theme_color_override("font_color", Color("ffe1a1"))
+	pentagram_label.add_theme_font_size_override("font_size", 28)
+	pentagram_label.add_theme_color_override("font_color", Color("d72343"))
 	count_panel.add_child(pentagram_label)
 	var background := PanelContainer.new()
 	background.anchor_top = 1.0
@@ -488,6 +563,37 @@ func _build_hud() -> void:
 	bar_back.bg_color = Color("3a1924")
 	hp_bar.add_theme_stylebox_override("background", bar_back)
 	column.add_child(hp_bar)
+	var action_background := PanelContainer.new()
+	action_background.anchor_top = 1.0
+	action_background.anchor_bottom = 1.0
+	action_background.offset_left = 238.0
+	action_background.offset_right = 544.0
+	action_background.offset_top = -66.0
+	action_background.offset_bottom = -12.0
+	action_background.add_theme_stylebox_override("panel", panel_style.duplicate())
+	canvas.add_child(action_background)
+	var control_panel := HBoxContainer.new()
+	control_panel.add_theme_constant_override("separation", 6)
+	action_background.add_child(control_panel)
+	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_A.png"), Vector2(30.0, 30.0)))
+	var jump_label := Label.new()
+	jump_label.text = tr("PLATFORM_JUMP_HINT")
+	jump_label.add_theme_font_size_override("font_size", 13)
+	control_panel.add_child(jump_label)
+	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_X.png"), Vector2(30.0, 30.0)))
+	var run_label := Label.new()
+	run_label.text = tr("PLATFORM_RUN_HINT")
+	run_label.add_theme_font_size_override("font_size", 13)
+	control_panel.add_child(run_label)
+	blood_overlay = Control.new()
+	blood_overlay.set_script(BLOOD_OVERLAY_SCRIPT)
+	canvas.add_child(blood_overlay)
+
+func _build_pause() -> void:
+	var pause := CanvasLayer.new()
+	pause.name = "PauseFofo"
+	pause.set_script(PAUSE_SCRIPT)
+	add_child(pause)
 
 func _hud_icon(texture:Texture2D, size:Vector2) -> TextureRect:
 	var icon := TextureRect.new()

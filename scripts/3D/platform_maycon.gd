@@ -20,6 +20,7 @@ var jump_buffer:float = 0.0
 var hurt_time:float = 0.0
 var control_enabled:bool = true
 var dying:bool = false
+var camera_shake:float = 0.0
 
 func _ready() -> void:
 	visual = MODEL.instantiate()
@@ -77,6 +78,7 @@ func _physics_process(delta:float) -> void:
 	var acceleration := 25.0 if is_on_floor() else 11.0
 	velocity.x = move_toward(velocity.x, direction.x * speed, acceleration * delta)
 	velocity.z = move_toward(velocity.z, direction.z * speed, acceleration * delta)
+	_step_over_small_lip(delta)
 	move_and_slide()
 	if direction.length_squared() > 0.01:
 		visual.rotation.y = lerp_angle(visual.rotation.y, atan2(direction.x, direction.z), minf(delta * 12.0, 1.0))
@@ -89,6 +91,18 @@ func _physics_process(delta:float) -> void:
 		animation_player.speed_scale = 1.35
 	elif animation_player:
 		animation_player.speed_scale = 1.0
+
+func _step_over_small_lip(delta:float) -> void:
+	if not is_on_floor():
+		return
+	var horizontal_move := Vector3(velocity.x * delta, 0.0, velocity.z * delta)
+	if horizontal_move.length_squared() < 0.00001 or not test_move(global_transform, horizontal_move):
+		return
+	for rise in [0.14, 0.26, 0.38]:
+		var raised := global_transform.translated(Vector3.UP * rise)
+		if not test_move(raised, horizontal_move):
+			global_position.y += rise
+			return
 
 func _spawn_fart() -> void:
 	fart_audio.play()
@@ -138,6 +152,9 @@ func _process(delta:float) -> void:
 		desired = focus + (hit.position - focus).normalized() * maxf(focus.distance_to(hit.position) - 0.4, 1.2)
 	camera.global_position = camera.global_position.lerp(desired, minf(delta * 6.0, 1.0))
 	camera.look_at(focus, Vector3.UP)
+	camera_shake = maxf(camera_shake - delta * 1.8, 0.0)
+	camera.h_offset = randf_range(-camera_shake, camera_shake)
+	camera.v_offset = randf_range(-camera_shake, camera_shake)
 
 func _play_animation(animation:String) -> void:
 	if animation_player and animation_player.has_animation(animation) and animation_player.current_animation != animation:
@@ -161,6 +178,9 @@ func receive_damage(amount:float, source:Vector3) -> void:
 	velocity.x = knockback.x * 7.0
 	velocity.z = knockback.z * 7.0
 	velocity.y = 5.0
+	camera_shake = 0.32
+	Input.start_joy_vibration(0, 0.42, 0.65, 0.25)
+	get_parent().player_hit(global_position)
 	get_parent().update_hud()
 	if Global.realtime_hp <= 0.0:
 		dying = true
