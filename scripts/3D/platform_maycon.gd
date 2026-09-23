@@ -61,11 +61,7 @@ func _physics_process(delta:float) -> void:
 		jump_windup -= delta
 		if jump_windup <= 0.0:
 			preparing_jump = false
-			takeoff_stretch = 0.14
-			velocity.y = 8.9
-			jumps = 1
-			coyote_time = 0.0
-			jump_audio.play()
+			takeoff_stretch = 0.11
 			_play_animation("Arise")
 	if Input.is_action_just_pressed("ui_accept") and control_enabled:
 		jump_buffer = 0.14
@@ -74,25 +70,27 @@ func _physics_process(delta:float) -> void:
 	if jump_buffer > 0.0 and control_enabled and not preparing_jump and (coyote_time > 0.0 or jumps == 1 and not is_on_floor()):
 		if jumps == 0:
 			preparing_jump = true
-			jump_windup = 0.15
+			jump_windup = 0.09
+			velocity.y = 8.9
+			jumps = 1
+			jump_audio.play()
 			_play_animation("Walking")
 		else:
 			_spawn_fart()
 			velocity.y = 8.1
 			jumps = 2
 			jump_audio.play()
-			takeoff_stretch = 0.14
+			takeoff_stretch = 0.11
 		coyote_time = 0.0
 		jump_buffer = 0.0
-	if not preparing_jump:
-		velocity.y -= 23.0 * delta
+	velocity.y -= 23.0 * delta
 	if Input.is_action_just_released("ui_accept") and velocity.y > 3.5:
 		velocity.y *= 0.62
 	var input:Vector2 = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down") if control_enabled else Vector2.ZERO
 	var forward := Vector3(-sin(camera_yaw), 0.0, -cos(camera_yaw))
 	var right := Vector3(cos(camera_yaw), 0.0, -sin(camera_yaw))
 	var direction := (right * input.x - forward * input.y).normalized()
-	var speed := 9.0 if Input.is_action_pressed("run") else 6.8
+	var speed := 9.0 if Input.is_action_pressed("run") else 5.4
 	var acceleration := 25.0 if is_on_floor() else 11.0
 	velocity.x = move_toward(velocity.x, direction.x * speed, acceleration * delta)
 	velocity.z = move_toward(velocity.z, direction.z * speed, acceleration * delta)
@@ -102,18 +100,16 @@ func _physics_process(delta:float) -> void:
 		visual.rotation.y = lerp_angle(visual.rotation.y, atan2(direction.x, direction.z), minf(delta * 12.0, 1.0))
 	visual.rotation.x = lerpf(visual.rotation.x, 0.0 if is_on_floor() else -0.1 if velocity.y > 0.0 else 0.08, minf(delta * 8.0, 1.0))
 	var target_scale := Vector3(1.07, 0.80, 1.07) if preparing_jump else Vector3(0.95, 1.11, 0.95) if takeoff_stretch > 0.0 else Vector3.ONE
-	visual.scale = visual.scale.lerp(target_scale, 1.0 - exp(-17.0 * delta))
+	visual.scale = visual.scale.lerp(target_scale, 1.0 - exp(-27.0 * delta))
 	takeoff_stretch = maxf(takeoff_stretch - delta, 0.0)
 	if preparing_jump:
 		_play_animation("Walking")
 	elif is_on_floor():
-		_play_animation("Arise" if direction.length_squared() > 0.01 and speed > 7.0 else "Idle" if direction.length_squared() > 0.01 else "Walking")
+		_play_animation("Arise" if direction.length_squared() > 0.01 and speed > 7.0 else "Skill_03" if direction.length_squared() > 0.01 else "Walking")
 	else:
 		_play_animation("Arise")
 	if animation_player and preparing_jump:
 		animation_player.speed_scale = 0.0
-	elif animation_player and animation_player.current_animation == "Idle":
-		animation_player.speed_scale = 1.35
 	elif animation_player:
 		animation_player.speed_scale = 1.0
 
@@ -187,7 +183,7 @@ func _process(delta:float) -> void:
 	camera.v_offset = randf_range(-camera_shake, camera_shake)
 
 func _play_animation(animation:String) -> void:
-	if animation_player and animation_player.has_animation(animation) and animation_player.current_animation != animation:
+	if animation_player and animation_player.has_animation(animation) and (animation_player.current_animation != animation or not animation_player.is_playing()):
 		animation_player.play(animation)
 
 func bounce() -> void:
@@ -197,13 +193,13 @@ func bounce() -> void:
 	_play_animation("Arise")
 
 func receive_damage(amount:float, source:Vector3) -> void:
-	if hurt_time > 0.0 or dying:
+	if hurt_time > 0.0 or dying or not is_on_floor():
 		return
 	preparing_jump = false
 	jump_windup = 0.0
 	takeoff_stretch = 0.0
 	visual.scale = Vector3.ONE
-	hurt_time = 1.0
+	hurt_time = 2.0
 	get_parent().set_stage_hp(get_parent().stage_hp - amount)
 	var knockback := global_position - source
 	knockback.y = 0.0

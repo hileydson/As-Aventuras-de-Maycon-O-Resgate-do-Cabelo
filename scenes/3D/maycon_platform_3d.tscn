@@ -1,28 +1,27 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://bw0qiw70oppc1"]
 
-[ext_resource type="Script" path="res://scripts/3D/maycon_platform_3d.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/3D/platform_maycon.gd" id="2"]
+[ext_resource type="Script" uid="uid://rma2xnpjl3m1" path="res://scripts/3D/maycon_platform_3d.gd" id="1"]
+[ext_resource type="Script" uid="uid://cp1virx8dd1w1" path="res://scripts/3D/platform_maycon.gd" id="2"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_maycon"]
 radius = 0.36
 height = 1.65
 
-[node name="MayconPlatform3D" type="Node3D"]
+[node name="MayconPlatform3D" type="Node3D" unique_id=1107985954]
 script = ExtResource("1")
 
-[node name="Maycon" type="CharacterBody3D" parent="."]
-position = Vector3(0, 1.4, 32)
+[node name="Maycon" type="CharacterBody3D" parent="." unique_id=325384372]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 32)
 collision_layer = 2
-collision_mask = 1
 floor_snap_length = 0.35
 script = ExtResource("2")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Maycon"]
-position = Vector3(0, 0.83, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Maycon" unique_id=732782335]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.83, 0)
 shape = SubResource("CapsuleShape3D_maycon")
 
-[node name="Camera3D" type="Camera3D" parent="."]
-position = Vector3(0, 7, 43)
+[node name="Camera3D" type="Camera3D" parent="." unique_id=2077788637]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 43)
 current = true
 fov = 68.0
 far = 220.0

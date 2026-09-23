@@ -495,8 +495,8 @@ func _spawn_blood(at:Vector3, leave_stain:bool) -> void:
 func _spawn_color_burst(at:Vector3, pickup:bool) -> void:
 	var colors := [Color("ffda60"), Color("ff6fb1"), Color("71d3ff"), Color("a985ff"), Color("8ee899"), Color("ff9369")]
 	var spark_mesh := SphereMesh.new()
-	spark_mesh.radius = 0.075
-	spark_mesh.height = 0.15
+	spark_mesh.radius = 0.095
+	spark_mesh.height = 0.19
 	spark_mesh.radial_segments = 8
 	spark_mesh.rings = 4
 	var spark_materials:Array[StandardMaterial3D] = []
@@ -504,18 +504,18 @@ func _spawn_color_burst(at:Vector3, pickup:bool) -> void:
 		var material := _material(color, 0.24)
 		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		spark_materials.append(material)
-	for i in range(24 if pickup else 30):
+	for i in range(36 if pickup else 56):
 		var spark := MeshInstance3D.new()
 		spark.mesh = spark_mesh
 		spark.material_override = spark_materials[i % spark_materials.size()]
 		spark.position = at
-		spark.scale = Vector3.ONE * randf_range(0.7, 1.5)
+		spark.scale = Vector3.ONE * randf_range(0.8, 1.7)
 		effects.add_child(spark)
 		var direction := Vector3(randf_range(-1.0, 1.0), randf_range(0.25, 1.1), randf_range(-1.0, 1.0)).normalized()
-		var distance := randf_range(1.0, 2.1) if pickup else randf_range(0.8, 2.4)
+		var distance := randf_range(1.1, 2.5) if pickup else randf_range(1.2, 3.2)
 		var tween := create_tween().bind_node(spark).set_parallel(true)
-		tween.tween_property(spark, "position", at + direction * distance, 0.58).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		tween.tween_property(spark, "scale", Vector3.ZERO, 0.58).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tween.tween_property(spark, "position", at + direction * distance, 0.7).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		tween.tween_property(spark, "scale", Vector3.ZERO, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		tween.chain().tween_callback(spark.queue_free)
 	if pickup:
 		var flash := Sprite3D.new()
@@ -552,7 +552,7 @@ func respawn(reset_health:bool) -> void:
 	maycon.takeoff_stretch = 0.0
 	maycon.jumps = 0
 	maycon.visual.scale = Vector3.ONE
-	maycon.hurt_time = 1.0
+	maycon.hurt_time = 2.0
 	maycon.camera.global_position = Vector3(0.0, 7.0, 43.0)
 	if reset_health:
 		set_stage_hp(stage_hp_max)

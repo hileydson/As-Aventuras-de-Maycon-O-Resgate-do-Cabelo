@@ -45,13 +45,13 @@ func _build_panel() -> void:
 	var pentagram := TextureRect.new()
 	pentagram.texture = PENTAGRAM_TEXTURE
 	pentagram.set_anchors_preset(Control.PRESET_CENTER)
-	pentagram.offset_left = -310.0
-	pentagram.offset_top = -310.0
-	pentagram.offset_right = 310.0
-	pentagram.offset_bottom = 310.0
+	pentagram.offset_left = -400.0
+	pentagram.offset_top = -400.0
+	pentagram.offset_right = 400.0
+	pentagram.offset_bottom = 400.0
 	pentagram.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	pentagram.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	pentagram.modulate = Color(0.93, 0.53, 0.73, 0.23)
+	pentagram.modulate = Color(0.93, 0.53, 0.73, 0.42)
 	pentagram.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(pentagram)
 	var card := PanelContainer.new()
