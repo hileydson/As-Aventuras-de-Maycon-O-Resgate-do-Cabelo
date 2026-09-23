@@ -80,11 +80,13 @@ func _ready() -> void:
 	set_stage_hp(stage_hp)
 	Global.save_progress("fase_3d_platform")
 	GameSongs.play_song(1)
+	_setup_audio_buses()
 	scream_audio = AudioStreamPlayer.new()
 	scream_audio.stream = MAYCON_SCREAM
 	add_child(scream_audio)
 	pickup_audio = AudioStreamPlayer.new()
 	pickup_audio.stream = PICKUP_SOUND
+	pickup_audio.bus = "ItemReverb"
 	pickup_audio.volume_db = -3.0
 	add_child(pickup_audio)
 	damage_punch_audio = AudioStreamPlayer.new()
@@ -432,8 +434,9 @@ func _scatter_details() -> void:
 	sign_text.outline_size = 4
 	sign_text.modulate = Color("fff3d0")
 	sign_text.outline_modulate = Color("4e2c34")
-	sign_text.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	sign_text.position = sign_face.position + Vector3(0.0, 0.0, 0.15)
+	sign_text.billboard = BaseMaterial3D.BILLBOARD_DISABLED
+	sign_text.double_sided = true
+	sign_text.position = sign_face.position + Vector3(0.0, 0.0, 0.12)
 	geometry.add_child(sign_text)
 
 func _spawn_enemies() -> void:
@@ -575,21 +578,94 @@ func enemy_defeated(enemy:Area3D) -> void:
 	explosion_audio.global_position = at
 	explosion_audio.finished.connect(explosion_audio.queue_free)
 	explosion_audio.play()
-	_spawn_blood(at, true)
+	_spawn_enemy_death_blood(at)
 	_spawn_color_burst(at + Vector3.UP * 0.8, false)
 	if randf() < 0.35:
 		var drop := _asset("heart", at + Vector3.UP * 1.1, 1.0)
 		blood_pickups.append(drop)
 	enemy.queue_free()
 
+func _spawn_enemy_death_blood(at:Vector3) -> void:
+	# Floor stains and primary burst (floor stains count unchanged)
+	_spawn_blood(at, true)
+	# Additional intense radial blood sprays in all directions
+	for i in range(5):
+		var blood := BLOOD_SCENE.instantiate()
+		var y_off := randf_range(0.3, 1.0)
+		blood.position = at + Vector3(randf_range(-0.25, 0.25), y_off, randf_range(-0.25, 0.25))
+		blood.rotation.y = float(i) * (TAU / 5.0) + randf_range(-0.25, 0.25)
+		blood.rotation.x = randf_range(-0.35, 0.35)
+		var particles := blood.get_node_or_null("GPUParticles3D") as GPUParticles3D
+		if particles:
+			particles.amount = 220
+			particles.explosiveness = 0.98
+		effects.add_child(blood)
+		get_tree().create_timer(2.2).timeout.connect(blood.queue_free)
+
+func _setup_audio_buses() -> void:
+	var bus_idx := AudioServer.get_bus_index("ItemReverb")
+	if bus_idx == -1:
+		bus_idx = AudioServer.bus_count
+		AudioServer.add_bus(bus_idx)
+		AudioServer.set_bus_name(bus_idx, "ItemReverb")
+		AudioServer.set_bus_send(bus_idx, "Master")
+		
+		var reverb := AudioEffectReverb.new()
+		reverb.room_size = 0.88
+		reverb.damping = 0.22
+		reverb.spread = 1.0
+		reverb.wet = 0.82
+		reverb.dry = 0.70
+		reverb.hipass = 0.05
+		reverb.predelay_msec = 20.0
+		AudioServer.add_bus_effect(bus_idx, reverb)
+		
+		var delay := AudioEffectDelay.new()
+		delay.dry = 0.70
+		delay.tap1_active = true
+		delay.tap1_delay_ms = 130.0
+		delay.tap1_level_db = -3.5
+		delay.tap2_active = true
+		delay.tap2_delay_ms = 260.0
+		delay.tap2_level_db = -7.0
+		delay.feedback_active = true
+		delay.feedback_delay_ms = 180.0
+		delay.feedback_level_db = -6.5
+		delay.feedback_lowpass = 14000.0
+		AudioServer.add_bus_effect(bus_idx, delay)
+
 func _play_pickup_sound(pentagram:bool) -> void:
+	var base_pitch := 1.25 if pentagram else 0.92
+	var base_vol := 0.0 if pentagram else -2.0
 	var sfx := AudioStreamPlayer.new()
 	sfx.stream = PICKUP_SOUND
-	sfx.pitch_scale = 1.25 if pentagram else 0.92
-	sfx.volume_db = -1.0 if pentagram else -3.0
+	sfx.bus = "ItemReverb"
+	sfx.pitch_scale = base_pitch
+	sfx.volume_db = base_vol
 	add_child(sfx)
 	sfx.finished.connect(sfx.queue_free)
 	sfx.play()
+
+	# Layered echoes bouncing through the reverb
+	var echo_delays := [0.13, 0.26, 0.39, 0.54]
+	var echo_vols := [-5.0, -9.5, -14.0, -18.5]
+	var echo_pitches := [1.02, 1.05, 1.08, 1.11]
+	for idx in range(echo_delays.size()):
+		var delay_time:float = echo_delays[idx]
+		var echo_vol:float = base_vol + echo_vols[idx]
+		var echo_pitch:float = base_pitch * echo_pitches[idx]
+		get_tree().create_timer(delay_time).timeout.connect(func():
+			if not is_instance_valid(self):
+				return
+			var echo_sfx := AudioStreamPlayer.new()
+			echo_sfx.stream = PICKUP_SOUND
+			echo_sfx.bus = "ItemReverb"
+			echo_sfx.pitch_scale = echo_pitch
+			echo_sfx.volume_db = echo_vol
+			add_child(echo_sfx)
+			echo_sfx.finished.connect(echo_sfx.queue_free)
+			echo_sfx.play()
+		)
 
 func enemy_stomped(enemy:Area3D) -> void:
 	enemy_defeated(enemy)
@@ -631,6 +707,11 @@ func activate_special() -> void:
 	if not special_ready or is_invincible or death_in_progress or exit_started:
 		return
 	set_special_ready(false)
+	Global.platform_pentagrams = 0
+	last_invincible_milestone = 0
+	pentagrams_collected_session = 0
+	update_hud()
+	Global.save_progress("fase_3d_platform")
 	start_invincibility(10.0)
 
 func start_invincibility(duration:float = 10.0) -> void:
