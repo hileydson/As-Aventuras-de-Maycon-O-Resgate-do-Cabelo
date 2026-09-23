@@ -13,7 +13,7 @@ func _ready() -> void:
 	panel.visible = false
 
 func _unhandled_input(event:InputEvent) -> void:
-	if get_parent().exit_started:
+	if get_parent().exit_started or get_parent().death_in_progress:
 		return
 	if event.is_action_pressed("ui_cancel") or event is InputEventJoypadButton and event.button_index == JOY_BUTTON_START and event.pressed:
 		_toggle()

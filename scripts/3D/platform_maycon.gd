@@ -3,6 +3,7 @@ extends CharacterBody3D
 const MODEL = preload("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
 const JUMP_SOUND = preload("res://assets/audio/pulo_maycon.mp3")
 const FART_SOUND = preload("res://assets/audio/peido.mp3")
+const STEP_SOUND = preload("res://assets/novos_audios/mario_part_sounds/passo.mp3")
 const FART_SMOKE = preload("res://assets/novas_imagens/effects/smoke_animation.png")
 
 @onready var camera:Camera3D = $"../Camera3D"
@@ -11,9 +12,12 @@ var visual:Node3D
 var animation_player:AnimationPlayer
 var jump_audio:AudioStreamPlayer3D
 var fart_audio:AudioStreamPlayer3D
+var step_audio:AudioStreamPlayer
+var step_timer:float = 0.0
 var fart_puffs:Array[Dictionary] = []
 var camera_yaw:float = 0.0
 var camera_pitch:float = -0.22
+var manual_camera_cooldown:float = 0.0
 var jumps:int = 0
 var coyote_time:float = 0.0
 var jump_buffer:float = 0.0
@@ -38,12 +42,17 @@ func _ready() -> void:
 	fart_audio.unit_size = 12.0
 	fart_audio.pitch_scale = 0.75
 	add_child(fart_audio)
+	step_audio = AudioStreamPlayer.new()
+	step_audio.stream = STEP_SOUND
+	step_audio.volume_db = -4.0
+	add_child(step_audio)
 	_play_animation("Walking")
 
 func _unhandled_input(event:InputEvent) -> void:
-	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+	if event is InputEventMouseMotion and (Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) or Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE) or Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 		camera_yaw -= event.relative.x * 0.004
 		camera_pitch = clampf(camera_pitch - event.relative.y * 0.003, -0.65, 0.28)
+		manual_camera_cooldown = 0.85
 
 func _physics_process(delta:float) -> void:
 	if hurt_time > 0.0:
@@ -51,6 +60,7 @@ func _physics_process(delta:float) -> void:
 	_update_fart_puffs(delta)
 	if dying:
 		velocity = Vector3.ZERO
+		step_audio.stop()
 		return
 	if is_on_floor() and not preparing_jump:
 		coyote_time = 0.13
@@ -70,7 +80,7 @@ func _physics_process(delta:float) -> void:
 	if jump_buffer > 0.0 and control_enabled and not preparing_jump and (coyote_time > 0.0 or jumps == 1 and not is_on_floor()):
 		if jumps == 0:
 			preparing_jump = true
-			jump_windup = 0.09
+			jump_windup = 0.10
 			velocity.y = 8.9
 			jumps = 1
 			jump_audio.play()
@@ -90,17 +100,19 @@ func _physics_process(delta:float) -> void:
 	var forward := Vector3(-sin(camera_yaw), 0.0, -cos(camera_yaw))
 	var right := Vector3(cos(camera_yaw), 0.0, -sin(camera_yaw))
 	var direction := (right * input.x - forward * input.y).normalized()
-	var speed := 9.0 if Input.is_action_pressed("run") else 5.4
+	var speed := 9.0 if Input.is_action_pressed("run") else 3.2
 	var acceleration := 25.0 if is_on_floor() else 11.0
 	velocity.x = move_toward(velocity.x, direction.x * speed, acceleration * delta)
 	velocity.z = move_toward(velocity.z, direction.z * speed, acceleration * delta)
 	_step_over_small_lip(delta)
 	move_and_slide()
+	_update_footsteps(delta, direction, speed)
 	if direction.length_squared() > 0.01:
 		visual.rotation.y = lerp_angle(visual.rotation.y, atan2(direction.x, direction.z), minf(delta * 12.0, 1.0))
 	visual.rotation.x = lerpf(visual.rotation.x, 0.0 if is_on_floor() else -0.1 if velocity.y > 0.0 else 0.08, minf(delta * 8.0, 1.0))
-	var target_scale := Vector3(1.07, 0.80, 1.07) if preparing_jump else Vector3(0.95, 1.11, 0.95) if takeoff_stretch > 0.0 else Vector3.ONE
+	var target_scale := Vector3(1.17, 0.66, 1.17) if preparing_jump else Vector3(0.95, 1.11, 0.95) if takeoff_stretch > 0.0 else Vector3.ONE
 	visual.scale = visual.scale.lerp(target_scale, 1.0 - exp(-27.0 * delta))
+	visual.position.y = lerpf(visual.position.y, -0.26 if preparing_jump else 0.0, 1.0 - exp(-27.0 * delta))
 	takeoff_stretch = maxf(takeoff_stretch - delta, 0.0)
 	if preparing_jump:
 		_play_animation("Walking")
@@ -112,6 +124,19 @@ func _physics_process(delta:float) -> void:
 		animation_player.speed_scale = 0.0
 	elif animation_player:
 		animation_player.speed_scale = 1.0
+
+func _update_footsteps(delta:float, direction:Vector3, speed:float) -> void:
+	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+	if not is_on_floor() or direction.length_squared() < 0.01 or horizontal_speed < 0.8:
+		step_timer = 0.0
+		if step_audio.playing:
+			step_audio.stop()
+		return
+	step_timer -= delta
+	if step_timer <= 0.0:
+		step_audio.pitch_scale = randf_range(1.15, 1.28) if speed > 7.0 else randf_range(0.95, 1.05)
+		step_audio.play()
+		step_timer = 0.28 if speed > 7.0 else 0.44
 
 func _step_over_small_lip(delta:float) -> void:
 	if not is_on_floor():
@@ -169,6 +194,20 @@ func _process(delta:float) -> void:
 	if look.length_squared() > 0.02:
 		camera_yaw -= look.x * delta * 2.5
 		camera_pitch = clampf(camera_pitch - look.y * delta * 1.6, -0.65, 0.28)
+		manual_camera_cooldown = 0.85
+	
+	if manual_camera_cooldown > 0.0:
+		manual_camera_cooldown = maxf(manual_camera_cooldown - delta, 0.0)
+	elif control_enabled and not dying:
+		var horiz_vel := Vector2(velocity.x, velocity.z)
+		if horiz_vel.length() > 0.7:
+			var move_heading := Vector3(velocity.x, 0.0, velocity.z).normalized()
+			var target_yaw := atan2(-move_heading.x, -move_heading.z)
+			var angle_diff := absf(wrapf(target_yaw - camera_yaw, -PI, PI))
+			var alignment_factor := clampf(1.0 - (angle_diff / PI), 0.15, 1.0)
+			var auto_speed := 2.4 if horiz_vel.length() > 6.0 else 1.6
+			camera_yaw = lerp_angle(camera_yaw, target_yaw, auto_speed * alignment_factor * delta)
+
 	var focus := global_position + Vector3(0.0, 1.35, 0.0)
 	var offset := Vector3(sin(camera_yaw) * 11.0, 3.1 - camera_pitch * 5.0, cos(camera_yaw) * 11.0)
 	var desired := focus + offset
@@ -184,7 +223,9 @@ func _process(delta:float) -> void:
 
 func _play_animation(animation:String) -> void:
 	if animation_player and animation_player.has_animation(animation) and (animation_player.current_animation != animation or not animation_player.is_playing()):
-		animation_player.play(animation)
+		var previous := animation_player.current_animation
+		var blend := 0.24 if previous in ["Skill_03", "Arise"] and animation in ["Skill_03", "Arise"] else 0.08
+		animation_player.play(animation, blend)
 
 func bounce() -> void:
 	velocity.y = 10.2
@@ -199,6 +240,7 @@ func receive_damage(amount:float, source:Vector3) -> void:
 	jump_windup = 0.0
 	takeoff_stretch = 0.0
 	visual.scale = Vector3.ONE
+	visual.position.y = 0.0
 	hurt_time = 2.0
 	get_parent().set_stage_hp(get_parent().stage_hp - amount)
 	var knockback := global_position - source
@@ -217,9 +259,4 @@ func receive_damage(amount:float, source:Vector3) -> void:
 		control_enabled = false
 		velocity = Vector3.ZERO
 		_play_animation("Casual_Walk")
-		await get_tree().create_timer(0.9).timeout
-		if is_inside_tree():
-			get_parent().respawn(true)
-			dying = false
-			control_enabled = true
-			_play_animation("Walking")
+		get_parent().start_player_death("enemy")

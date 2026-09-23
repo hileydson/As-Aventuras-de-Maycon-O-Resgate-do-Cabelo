@@ -6,6 +6,13 @@ const ASSET_ROOT = "res://assets/kenney/platformer_3d/"
 const PENTAGRAM_TEXTURE = preload("res://assets/3D/pentagram_item.png")
 const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
 const BLOOD_OVERLAY_SCRIPT = preload("res://scripts/3D/platform_blood_overlay.gd")
+const BLADE_SCRIPT = preload("res://scripts/3D/platform_blade.gd")
+const HAND_SCRIPT = preload("res://scripts/3D/platform_hand.gd")
+const MAYCON_SCREAM = preload("res://assets/novos_audios/maycon_falling_fase_1.mp3")
+const ENEMY_EXPLOSION_SOUND = preload("res://assets/novos_audios/mario_part_sounds/fart_explotion.mp3")
+const PICKUP_SOUND = preload("res://assets/audio/plim.mp3")
+const BLADE_ROUTE_IDS = [2, 5, 8, 11]
+const HAND_HUB_IDS = [1, 4, 7, 10, 12]
 const HUBS = [
 	Vector3(0, 0, 32), Vector3(-25, 1, 8), Vector3(25, 0.5, 8),
 	Vector3(-44, 2, -24), Vector3(44, 1.5, -24),
@@ -30,6 +37,9 @@ var assets:Dictionary = {}
 var geometry:Node3D
 var enemies:Node3D
 var effects:Node3D
+var hazards:Node3D
+var scream_audio:AudioStreamPlayer
+var pickup_audio:AudioStreamPlayer
 var hp_bar:ProgressBar
 var hp_label:Label
 var pentagram_label:Label
@@ -42,10 +52,12 @@ var trail_materials:Array[StandardMaterial3D] = []
 var pentagram_nodes:Dictionary = {}
 var exit_started:bool = false
 var blood_pickups:Array[Node3D] = []
+var blood_stains:Array[Node3D] = []
 var total_stomps:int = 0
 var stage_hp_max:float = 100.0
 var stage_hp:float = 100.0
 var use_realtime_hp:bool = false
+var death_in_progress:bool = false
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -55,6 +67,13 @@ func _ready() -> void:
 	set_stage_hp(stage_hp)
 	Global.save_progress("fase_3d_platform")
 	GameSongs.play_song(1)
+	scream_audio = AudioStreamPlayer.new()
+	scream_audio.stream = MAYCON_SCREAM
+	add_child(scream_audio)
+	pickup_audio = AudioStreamPlayer.new()
+	pickup_audio.stream = PICKUP_SOUND
+	pickup_audio.volume_db = -3.0
+	add_child(pickup_audio)
 	_build_materials()
 	_build_environment()
 	geometry = Node3D.new()
@@ -67,8 +86,12 @@ func _ready() -> void:
 	effects = Node3D.new()
 	effects.name = "Efeitos"
 	add_child(effects)
+	hazards = Node3D.new()
+	hazards.name = "Armadilhas"
+	add_child(hazards)
 	_build_hubs_and_routes()
 	_build_elevated_areas()
+	_build_hands()
 	_build_finish()
 	_scatter_details()
 	_spawn_enemies()
@@ -80,14 +103,15 @@ func _ready() -> void:
 	update_hud()
 
 func _physics_process(delta:float) -> void:
-	if exit_started:
+	if exit_started or death_in_progress:
 		return
 	if maycon.global_position.y < -7.0:
 		var point := maycon.global_position
 		if absf(point.x) < 2.3 and point.z < -202.8 and point.z > -210.5:
 			_exit_stage()
 		else:
-			respawn(false)
+			start_player_death("fall")
+		return
 	for i in range(blood_pickups.size() - 1, -1, -1):
 		var pickup := blood_pickups[i]
 		if not is_instance_valid(pickup):
@@ -99,6 +123,7 @@ func _physics_process(delta:float) -> void:
 			blood_pickups.remove_at(i)
 			pickup.queue_free()
 			_flash_heal()
+			_play_pickup_sound(false)
 			update_hud()
 	for id in pentagram_nodes.keys():
 		var item:Node3D = pentagram_nodes[id]
@@ -107,6 +132,7 @@ func _physics_process(delta:float) -> void:
 		item.rotate_y(delta * 1.3)
 		if item.global_position.distance_to(maycon.global_position + Vector3.UP * 0.9) < 1.35:
 			_spawn_color_burst(item.global_position, true)
+			_play_pickup_sound(true)
 			Global.platform_pentagram_collected[id] = true
 			Global.platform_pentagrams += 1
 			pentagram_nodes.erase(id)
@@ -262,16 +288,37 @@ func _build_hubs_and_routes() -> void:
 		for side in [-1.0, 1.0]:
 			for corner in [-1.0, 1.0]:
 				_asset("block-grass-large", hub + Vector3(side * (size.x * 0.5 - 1.2), -0.2, corner * (size.y * 0.5 - 1.0)), 1.2, float(i) * 0.4)
-	for route in ROUTES:
+	for route_index in range(ROUTES.size()):
+		var route:Vector2i = ROUTES[route_index]
 		var start:Vector3 = HUBS[route.x]
 		var finish:Vector3 = HUBS[route.y]
 		var steps := ceili(start.distance_to(finish) / 4.2)
 		for i in range(1, steps):
 			var point := start.lerp(finish, float(i) / float(steps))
+			if route_index in BLADE_ROUTE_IDS and i == floori(float(steps) * 0.5):
+				_spawn_blade(point, (finish - start).normalized(), route_index)
+				continue
 			var material_name := "wood" if i % 4 == 0 else "stone" if i % 4 == 1 else "grass_light"
 			_platform(point, Vector2(3.5, 3.5), material_name)
 			if i % 5 == 0:
 				_asset("rocks", point + Vector3(-1.6, 0.25, 0.0), 0.7, float(i))
+
+func _spawn_blade(point:Vector3, direction:Vector3, index:int) -> void:
+	var blade := Node3D.new()
+	blade.set_script(BLADE_SCRIPT)
+	blade.name = "Navalha_%d" % index
+	blade.position = point
+	blade.call("setup", self, maycon, direction, index)
+	hazards.add_child(blade)
+
+func _build_hands() -> void:
+	for index in HAND_HUB_IDS:
+		var hand := Node3D.new()
+		hand.set_script(HAND_SCRIPT)
+		hand.name = "MaoEsmagadora_%d" % index
+		hand.position = HUBS[index] + Vector3(0.0, 0.0, -1.8)
+		hand.call("setup", self, maycon, index)
+		hazards.add_child(hand)
 
 func _build_elevated_areas() -> void:
 	for hub_index in range(1, HUBS.size() - 1):
@@ -376,7 +423,8 @@ func _spawn_pentagrams() -> void:
 	for i in range(ROUTES.size()):
 		var route:Vector2i = ROUTES[i]
 		var steps := ceili(HUBS[route.x].distance_to(HUBS[route.y]) / 4.2)
-		var middle:Vector3 = HUBS[route.x].lerp(HUBS[route.y], float(floori(steps * 0.5)) / float(steps))
+		var middle_step := floori(float(steps) * 0.5) + (1 if i in BLADE_ROUTE_IDS else 0)
+		var middle:Vector3 = HUBS[route.x].lerp(HUBS[route.y], float(middle_step) / float(steps))
 		_spawn_pentagram("route_%d" % i, middle + Vector3.UP * 1.45)
 	for i in range(1, HUBS.size() - 1):
 		var hub:Vector3 = HUBS[i]
@@ -450,12 +498,30 @@ func has_ground_at(point:Vector3) -> bool:
 
 func enemy_defeated(enemy:Area3D) -> void:
 	var at:Vector3 = enemy.global_position
+	var explosion_audio := AudioStreamPlayer3D.new()
+	explosion_audio.stream = ENEMY_EXPLOSION_SOUND
+	explosion_audio.unit_size = 14.0
+	explosion_audio.max_distance = 50.0
+	explosion_audio.volume_db = 0.0
+	effects.add_child(explosion_audio)
+	explosion_audio.global_position = at
+	explosion_audio.finished.connect(explosion_audio.queue_free)
+	explosion_audio.play()
 	_spawn_blood(at, true)
 	_spawn_color_burst(at + Vector3.UP * 0.8, false)
 	if randf() < 0.35:
 		var drop := _asset("heart", at + Vector3.UP * 1.1, 1.0)
 		blood_pickups.append(drop)
 	enemy.queue_free()
+
+func _play_pickup_sound(pentagram:bool) -> void:
+	var sfx := AudioStreamPlayer.new()
+	sfx.stream = PICKUP_SOUND
+	sfx.pitch_scale = 1.25 if pentagram else 0.92
+	sfx.volume_db = -1.0 if pentagram else -3.0
+	add_child(sfx)
+	sfx.finished.connect(sfx.queue_free)
+	sfx.play()
 
 func enemy_stomped(enemy:Area3D) -> void:
 	enemy_defeated(enemy)
@@ -491,6 +557,9 @@ func _spawn_blood(at:Vector3, leave_stain:bool) -> void:
 		stain.material_override = materials["blood"]
 		stain.position = Vector3(at.x + cos(angle) * distance, at.y + 0.02 + float(i) * 0.0005, at.z + sin(angle) * distance)
 		effects.add_child(stain)
+		blood_stains.append(stain)
+		if blood_stains.size() > 260:
+			blood_stains.pop_front().queue_free()
 
 func _spawn_color_burst(at:Vector3, pickup:bool) -> void:
 	var colors := [Color("ffda60"), Color("ff6fb1"), Color("71d3ff"), Color("a985ff"), Color("8ee899"), Color("ff9369")]
@@ -552,6 +621,7 @@ func respawn(reset_health:bool) -> void:
 	maycon.takeoff_stretch = 0.0
 	maycon.jumps = 0
 	maycon.visual.scale = Vector3.ONE
+	maycon.visual.position.y = 0.0
 	maycon.hurt_time = 2.0
 	maycon.camera.global_position = Vector3(0.0, 7.0, 43.0)
 	if reset_health:
@@ -564,6 +634,74 @@ func set_stage_hp(value:float) -> void:
 	stage_hp = clampf(value, 0.0, stage_hp_max)
 	if use_realtime_hp:
 		Global.realtime_hp = stage_hp
+
+func start_player_death(kind:String, hazard:Node3D = null) -> void:
+	if death_in_progress or exit_started:
+		return
+	death_in_progress = true
+	maycon.control_enabled = false
+	var old_collision_layer := maycon.collision_layer
+	var old_collision_mask := maycon.collision_mask
+	if kind == "blade" or kind == "hand":
+		maycon.dying = true
+		maycon.velocity = Vector3.ZERO
+		maycon.collision_layer = 0
+		maycon.collision_mask = 0
+		set_stage_hp(0.0)
+		update_hud()
+		maycon.camera_shake = 0.3
+		if kind == "blade":
+			var rotor:Node3D = hazard.get("rotor")
+			maycon.reparent(rotor, true)
+			maycon.position = Vector3(0.9, -0.45, 0.0)
+			maycon.rotation = Vector3(0.0, 0.0, 0.65)
+		else:
+			hazard.call("begin_crush")
+			var palm:Node3D = hazard.get("palm")
+			maycon.reparent(palm, true)
+			maycon.position = Vector3(0.0, -0.34, -0.25)
+			maycon.rotation = Vector3.ZERO
+			maycon.visual.scale = Vector3(1.32, 0.48, 1.32)
+	scream_audio.volume_db = -2.0
+	scream_audio.play()
+	var fade := create_tween().bind_node(fade_rect)
+	fade.tween_interval(0.55)
+	fade.tween_property(fade_rect, "modulate:a", 1.0, 2.65).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	var scream_fade := create_tween().bind_node(scream_audio)
+	scream_fade.tween_interval(0.55)
+	scream_fade.tween_property(scream_audio, "volume_db", -48.0, 2.65)
+	if kind == "blade" or kind == "hand":
+		for i in range(16):
+			var at := maycon.global_position + Vector3(randf_range(-0.5, 0.5), randf_range(0.0, 0.7), randf_range(-0.5, 0.5))
+			if kind == "hand" and i % 2 == 0:
+				_spawn_blood(hazard.global_position + Vector3(randf_range(-0.8, 0.8), 0.18, randf_range(-0.8, 0.8)), true)
+			else:
+				_spawn_blood(at, false)
+			if kind == "hand" and i % 2 == 0:
+				maycon.camera_shake = 0.16
+			if i % 3 == 0:
+				blood_overlay.call("flash")
+			await get_tree().create_timer(0.2).timeout
+	else:
+		await get_tree().create_timer(3.2).timeout
+	if fade.is_running():
+		await fade.finished
+	if maycon.get_parent() != self:
+		maycon.reparent(self, true)
+	maycon.rotation = Vector3.ZERO
+	maycon.collision_layer = old_collision_layer
+	maycon.collision_mask = old_collision_mask
+	if kind == "hand" and is_instance_valid(hazard):
+		hazard.call("reset_after_death")
+	respawn(kind != "fall")
+	maycon.dying = false
+	maycon.call("_play_animation", "Walking")
+	scream_audio.stop()
+	var fade_in := create_tween().bind_node(fade_rect)
+	fade_in.tween_property(fade_rect, "modulate:a", 0.0, 1.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	await fade_in.finished
+	death_in_progress = false
+	maycon.control_enabled = true
 
 func _exit_stage() -> void:
 	exit_started = true
