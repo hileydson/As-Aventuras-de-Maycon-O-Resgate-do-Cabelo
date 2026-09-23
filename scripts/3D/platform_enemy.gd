@@ -16,17 +16,15 @@ var home:Vector3
 var active:bool = true
 var phase:float = 0.0
 var archetype:int = 0
-var health:int = 1
 var chase_time:float = 0.0
 var state:int = 0
-var damage_cooldown:float = 0.0
 var rest_time:float = 0.0
+var wall_shape:SphereShape3D
 
 func setup(model_index:int, player:CharacterBody3D, world:Node3D, enemy_type:int = 0) -> void:
 	maycon = player
 	stage = world
 	archetype = enemy_type
-	health = 3 if archetype == 2 else 2 if archetype == 3 else 1
 	model = MODELS[model_index % MODELS.size()].instantiate()
 	model.scale = Vector3.ONE * (1.12 if archetype == 2 else 0.82 if archetype == 3 else 0.95)
 	add_child(model)
@@ -43,6 +41,8 @@ func setup(model_index:int, player:CharacterBody3D, world:Node3D, enemy_type:int
 	shape.shape = sphere
 	shape.position.y = 0.46 if archetype != 2 else 0.55
 	add_child(shape)
+	wall_shape = SphereShape3D.new()
+	wall_shape.radius = 0.42 if archetype != 2 else 0.51
 	collision_layer = 4
 	collision_mask = 2
 	home = global_position
@@ -76,7 +76,6 @@ func _add_accessory(material:StandardMaterial3D) -> void:
 func _physics_process(delta:float) -> void:
 	if not active or not is_instance_valid(maycon):
 		return
-	damage_cooldown = maxf(damage_cooldown - delta, 0.0)
 	rest_time = maxf(rest_time - delta, 0.0)
 	phase += delta * 3.0
 	model.position.y = absf(sin(phase * 1.7)) * 0.24 if archetype == 3 else sin(phase) * 0.05
@@ -113,22 +112,13 @@ func _move_toward(target:Vector3, move_speed:float, delta:float) -> void:
 		return
 	var direction := difference.normalized()
 	var next := global_position + direction * move_speed * delta
-	if stage.has_ground_at(next):
+	var wall_query := PhysicsShapeQueryParameters3D.new()
+	wall_query.shape = wall_shape
+	wall_query.transform = Transform3D(Basis.IDENTITY, next + Vector3.UP * (0.75 if archetype == 2 else 0.64))
+	wall_query.collision_mask = 1
+	if stage.has_ground_at(next) and get_world_3d().direct_space_state.intersect_shape(wall_query).is_empty():
 		global_position = next
 		model.rotation.y = lerp_angle(model.rotation.y, atan2(direction.x, direction.z), minf(delta * 5.0, 1.0))
-
-func take_damage(amount:int) -> bool:
-	if not active or damage_cooldown > 0.0:
-		return false
-	damage_cooldown = 0.16
-	health -= amount
-	if health <= 0:
-		active = false
-		monitoring = false
-		stage.enemy_defeated(self)
-	else:
-		stage.enemy_hit(self)
-	return true
 
 func _touch_maycon() -> void:
 	if not active:

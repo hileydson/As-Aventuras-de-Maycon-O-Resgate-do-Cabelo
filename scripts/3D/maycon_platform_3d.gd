@@ -4,7 +4,6 @@ const ENEMY_SCRIPT = preload("res://scripts/3D/platform_enemy.gd")
 const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 const ASSET_ROOT = "res://assets/kenney/platformer_3d/"
 const PENTAGRAM_TEXTURE = preload("res://assets/3D/pentagram_item.png")
-const PUNCH_SOUND = preload("res://assets/novos_audios/punch_3.mp3")
 const HUBS = [
 	Vector3(0, 0, 32), Vector3(-25, 1, 8), Vector3(25, 0.5, 8),
 	Vector3(-44, 2, -24), Vector3(44, 1.5, -24),
@@ -36,7 +35,6 @@ var pentagram_nodes:Dictionary = {}
 var exit_started:bool = false
 var blood_pickups:Array[Node3D] = []
 var total_stomps:int = 0
-var punch_audio:AudioStreamPlayer3D
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -47,16 +45,13 @@ func _ready() -> void:
 	geometry = Node3D.new()
 	geometry.name = "Cenario"
 	add_child(geometry)
+	_build_clouds()
 	enemies = Node3D.new()
 	enemies.name = "Inimigos"
 	add_child(enemies)
 	effects = Node3D.new()
 	effects.name = "Efeitos"
 	add_child(effects)
-	punch_audio = AudioStreamPlayer3D.new()
-	punch_audio.stream = PUNCH_SOUND
-	punch_audio.unit_size = 12.0
-	maycon.add_child(punch_audio)
 	_build_hubs_and_routes()
 	_build_elevated_areas()
 	_build_finish()
@@ -173,6 +168,27 @@ func _box(center:Vector3, size:Vector3, material_name:String, solid:bool = true)
 		body.add_child(collision)
 		node.add_child(body)
 	return node
+
+func _build_clouds() -> void:
+	var cloud_mesh := SphereMesh.new()
+	cloud_mesh.radius = 1.0
+	cloud_mesh.height = 2.0
+	cloud_mesh.radial_segments = 12
+	cloud_mesh.rings = 6
+	var cloud_material := StandardMaterial3D.new()
+	cloud_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	cloud_material.albedo_color = Color("f8faff")
+	var cloud_rng := RandomNumberGenerator.new()
+	cloud_rng.seed = 91573
+	for i in range(25):
+		var center := Vector3(cloud_rng.randf_range(-95.0, 95.0), cloud_rng.randf_range(18.0, 32.0), cloud_rng.randf_range(-215.0, 75.0))
+		for puff_index in range(4):
+			var puff := MeshInstance3D.new()
+			puff.mesh = cloud_mesh
+			puff.material_override = cloud_material
+			puff.position = center + Vector3(float(puff_index) * 3.2 - 4.8, cloud_rng.randf_range(-1.2, 1.2), cloud_rng.randf_range(-2.0, 2.0))
+			puff.scale = Vector3(cloud_rng.randf_range(3.5, 5.5), cloud_rng.randf_range(1.2, 2.2), cloud_rng.randf_range(2.3, 4.2))
+			geometry.add_child(puff)
 
 func _asset(name:String, position:Vector3, scale:float = 1.0, rotation:float = 0.0) -> Node3D:
 	if not assets.has(name):
@@ -378,19 +394,6 @@ func has_ground_at(point:Vector3) -> bool:
 	var query := PhysicsRayQueryParameters3D.create(point + Vector3.UP * 1.5, point - Vector3.UP * 3.0, 1)
 	return not get_world_3d().direct_space_state.intersect_ray(query).is_empty()
 
-func punch_enemies(origin:Vector3, facing:Vector3) -> void:
-	punch_audio.play()
-	for enemy in enemies.get_children():
-		if not enemy.active:
-			continue
-		var difference:Vector3 = enemy.global_position - origin
-		var horizontal := Vector3(difference.x, 0.0, difference.z)
-		if horizontal.length() < 2.1 and absf(difference.y) < 1.3 and horizontal.normalized().dot(facing) > 0.28:
-			enemy.take_damage(1)
-
-func enemy_hit(enemy:Area3D) -> void:
-	_spawn_blood(enemy.global_position, false)
-
 func enemy_defeated(enemy:Area3D) -> void:
 	var at:Vector3 = enemy.global_position
 	_spawn_blood(at, true)
@@ -446,36 +449,36 @@ func _build_hud() -> void:
 	var count_panel := HBoxContainer.new()
 	count_panel.anchor_left = 1.0
 	count_panel.anchor_right = 1.0
-	count_panel.offset_left = -137.0
-	count_panel.offset_right = -20.0
-	count_panel.offset_top = 17.0
-	count_panel.offset_bottom = 65.0
+	count_panel.offset_left = -96.0
+	count_panel.offset_right = -12.0
+	count_panel.offset_top = 10.0
+	count_panel.offset_bottom = 40.0
 	canvas.add_child(count_panel)
-	count_panel.add_child(_hud_icon(PENTAGRAM_TEXTURE, Vector2(42.0, 42.0)))
+	count_panel.add_child(_hud_icon(PENTAGRAM_TEXTURE, Vector2(26.0, 26.0)))
 	pentagram_label = Label.new()
-	pentagram_label.add_theme_font_size_override("font_size", 26)
+	pentagram_label.add_theme_font_size_override("font_size", 18)
 	pentagram_label.add_theme_color_override("font_color", Color("ffe1a1"))
 	count_panel.add_child(pentagram_label)
 	var background := PanelContainer.new()
 	background.anchor_top = 1.0
 	background.anchor_bottom = 1.0
-	background.offset_left = 20.0
-	background.offset_right = 426.0
-	background.offset_top = -145.0
-	background.offset_bottom = -18.0
+	background.offset_left = 12.0
+	background.offset_right = 224.0
+	background.offset_top = -66.0
+	background.offset_bottom = -12.0
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.09, 0.10, 0.14, 0.8)
-	panel_style.set_corner_radius_all(10)
-	panel_style.set_content_margin_all(10)
+	panel_style.set_corner_radius_all(6)
+	panel_style.set_content_margin_all(6)
 	background.add_theme_stylebox_override("panel", panel_style)
 	canvas.add_child(background)
 	var column := VBoxContainer.new()
 	background.add_child(column)
 	hp_label = Label.new()
-	hp_label.add_theme_font_size_override("font_size", 16)
+	hp_label.add_theme_font_size_override("font_size", 12)
 	column.add_child(hp_label)
 	hp_bar = ProgressBar.new()
-	hp_bar.custom_minimum_size = Vector2(378.0, 18.0)
+	hp_bar.custom_minimum_size = Vector2(200.0, 12.0)
 	hp_bar.show_percentage = false
 	hp_bar.max_value = Global.realtime_hp_max
 	var bar_fill := StyleBoxFlat.new()
@@ -485,21 +488,6 @@ func _build_hud() -> void:
 	bar_back.bg_color = Color("3a1924")
 	hp_bar.add_theme_stylebox_override("background", bar_back)
 	column.add_child(hp_bar)
-	var controls := HBoxContainer.new()
-	controls.add_theme_constant_override("separation", 4)
-	column.add_child(controls)
-	controls.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_X.png"), Vector2(30.0, 30.0)))
-	controls.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/mouse_trigger.png"), Vector2(30.0, 30.0)))
-	var punch_label := Label.new()
-	punch_label.text = tr("PLATFORM_PUNCH")
-	controls.add_child(punch_label)
-	var action_gap := Control.new()
-	action_gap.custom_minimum_size = Vector2(16.0, 1.0)
-	controls.add_child(action_gap)
-	controls.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_A.png"), Vector2(30.0, 30.0)))
-	var jump_label := Label.new()
-	jump_label.text = tr("PLATFORM_JUMP") + " / SPACE"
-	controls.add_child(jump_label)
 
 func _hud_icon(texture:Texture2D, size:Vector2) -> TextureRect:
 	var icon := TextureRect.new()
