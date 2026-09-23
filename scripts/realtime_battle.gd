@@ -2667,6 +2667,8 @@ func damage_player(damage:float, hit_direction:float) -> void:
 	player_position.x = clampf(player_position.x, 150.0, ARENA_WIDTH - 80.0 if exit_open else 2130.0)
 	player.play("falling_down" if player.sprite_frames.has_animation("falling_down") else "damage")
 	hurt_sound.play()
+	if hit_sound:
+		hit_sound.play()
 	spawn_blood(player_position + Vector2(0, -35), 16, hit_direction)
 	shake(10.0, 0.38)
 	spawn_impact(player_position + Vector2(0, -38), Color("ff304f"), hit_direction)

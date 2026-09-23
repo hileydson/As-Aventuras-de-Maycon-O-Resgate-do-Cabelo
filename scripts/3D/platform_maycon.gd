@@ -30,6 +30,7 @@ var camera_shake:float = 0.0
 var jump_windup:float = 0.0
 var preparing_jump:bool = false
 var takeoff_stretch:float = 0.0
+var latched_count:int = 0
 
 func _ready() -> void:
 	visual = MODEL.instantiate()
@@ -126,6 +127,8 @@ func _physics_process(delta:float) -> void:
 	var direction := (right * input.x - forward * input.y).normalized()
 	var is_running := Input.is_action_pressed("run")
 	var speed := 7.8 if is_running else 3.2
+	if latched_count > 0:
+		speed *= 0.52
 	var acceleration:float
 	if is_on_floor():
 		if direction.length_squared() < 0.01:
@@ -168,9 +171,9 @@ func _update_footsteps(delta:float, direction:Vector3, speed:float) -> void:
 		return
 	step_timer -= delta
 	if step_timer <= 0.0:
-		step_audio.pitch_scale = randf_range(1.02, 1.10) if speed > 6.0 else randf_range(0.88, 0.96)
+		step_audio.pitch_scale = randf_range(0.98, 1.05) if speed > 6.0 else randf_range(0.84, 0.92)
 		step_audio.play()
-		step_timer = 0.42 if speed > 6.0 else 0.58
+		step_timer = 0.49 if speed > 6.0 else 0.84
 
 func _step_over_small_lip(delta:float) -> void:
 	if not is_on_floor():
@@ -273,6 +276,12 @@ func bounce() -> void:
 	jumps = 1
 	jump_buffer = 0.0
 	_play_animation("Arise")
+
+func set_latched(active_val:bool) -> void:
+	if active_val:
+		latched_count += 1
+	else:
+		latched_count = maxi(latched_count - 1, 0)
 
 func receive_damage(amount:float, source:Vector3) -> void:
 	if is_invincible or hurt_time > 0.0 or dying or not is_on_floor():

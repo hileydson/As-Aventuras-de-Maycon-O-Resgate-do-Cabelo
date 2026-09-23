@@ -1,6 +1,7 @@
 extends Node3D
 
 const ENEMY_SCRIPT = preload("res://scripts/3D/platform_enemy.gd")
+const MINI_SECO_SCRIPT = preload("res://scripts/3D/platform_mini_seco.gd")
 const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 const ASSET_ROOT = "res://assets/kenney/platformer_3d/"
 const PENTAGRAM_TEXTURE = preload("res://assets/3D/pentagram_item.png")
@@ -14,6 +15,7 @@ const RUSH_SOUND = preload("res://assets/novos_audios/modo_acelerando.mp3")
 const MAYCON_SCREAM = preload("res://assets/novos_audios/maycon_falling_fase_1.mp3")
 const ENEMY_EXPLOSION_SOUND = preload("res://assets/novos_audios/mario_part_sounds/fart_explotion.mp3")
 const PICKUP_SOUND = preload("res://assets/audio/plim.mp3")
+const DAMAGE_PUNCH_SOUND = preload("res://assets/novos_audios/punch_3.mp3")
 const BLADE_ROUTE_IDS = [2, 5, 8, 11]
 const HAND_HUB_IDS = [1, 4, 7, 10, 12]
 const HUBS = [
@@ -43,6 +45,7 @@ var effects:Node3D
 var hazards:Node3D
 var scream_audio:AudioStreamPlayer
 var pickup_audio:AudioStreamPlayer
+var damage_punch_audio:AudioStreamPlayer
 var hp_bar:ProgressBar
 var hp_label:Label
 var pentagram_label:Label
@@ -84,6 +87,10 @@ func _ready() -> void:
 	pickup_audio.stream = PICKUP_SOUND
 	pickup_audio.volume_db = -3.0
 	add_child(pickup_audio)
+	damage_punch_audio = AudioStreamPlayer.new()
+	damage_punch_audio.stream = DAMAGE_PUNCH_SOUND
+	damage_punch_audio.volume_db = 0.0
+	add_child(damage_punch_audio)
 	_build_materials()
 	_build_environment()
 	geometry = Node3D.new()
@@ -105,6 +112,7 @@ func _ready() -> void:
 	_build_finish()
 	_scatter_details()
 	_spawn_enemies()
+	_spawn_mini_secos()
 	_spawn_pentagrams()
 	_build_blue_particles()
 	_build_hud()
@@ -440,6 +448,43 @@ func _spawn_enemies() -> void:
 			enemy.position = HUBS[i] + Vector3(x, 0.2, z)
 			enemy.setup((i + j) % 4, maycon, self, (i + j) % 4)
 
+func _spawn_mini_secos() -> void:
+	var seco_idx := 0
+	# 1. Spawn on elevated balconies and overlooks (reaching places standard enemies cannot)
+	for hub_index in range(1, HUBS.size() - 1):
+		var hub:Vector3 = HUBS[hub_index]
+		var side := -1.0 if hub.x < 0.0 else 1.0
+		var balcony := hub + Vector3(side * 11.0, 4.3, -4.0)
+		var seco_balcony := Area3D.new()
+		seco_balcony.set_script(MINI_SECO_SCRIPT)
+		seco_balcony.name = "MiniSeco_Balcony_%d" % hub_index
+		enemies.add_child(seco_balcony)
+		seco_balcony.position = balcony
+		seco_balcony.setup(seco_idx % 3, maycon, self)
+		seco_idx += 1
+		
+		# Also spawn on step overlooks
+		if hub_index % 2 == 1:
+			var overlook := hub + Vector3(side * 17.2, 3.6, -7.3)
+			var seco_overlook := Area3D.new()
+			seco_overlook.set_script(MINI_SECO_SCRIPT)
+			seco_overlook.name = "MiniSeco_Overlook_%d" % hub_index
+			enemies.add_child(seco_overlook)
+			seco_overlook.position = overlook
+			seco_overlook.setup(seco_idx % 3, maycon, self)
+			seco_idx += 1
+
+	# 2. Spawn on key intermediate hubs (hubs 2, 4, 6, 8, 10, 12)
+	for hub_index in [2, 4, 6, 8, 10, 12]:
+		var hub:Vector3 = HUBS[hub_index]
+		var seco_hub := Area3D.new()
+		seco_hub.set_script(MINI_SECO_SCRIPT)
+		seco_hub.name = "MiniSeco_Hub_%d" % hub_index
+		enemies.add_child(seco_hub)
+		seco_hub.position = hub + Vector3(-3.5 if hub_index % 4 == 0 else 3.5, 0.3, 2.0)
+		seco_hub.setup(seco_idx % 3, maycon, self)
+		seco_idx += 1
+
 func _spawn_pentagrams() -> void:
 	for i in range(1, HUBS.size()):
 		_spawn_pentagram("hub_%d" % i, HUBS[i] + Vector3.UP * 1.45)
@@ -718,6 +763,9 @@ func _spawn_color_burst(at:Vector3, pickup:bool) -> void:
 		flash_tween.chain().tween_callback(flash.queue_free)
 
 func player_hit(at:Vector3) -> void:
+	if is_instance_valid(damage_punch_audio):
+		damage_punch_audio.pitch_scale = randf_range(0.95, 1.05)
+		damage_punch_audio.play()
 	var ground_query := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.5, at - Vector3.UP * 3.0, 1)
 	var ground := get_world_3d().direct_space_state.intersect_ray(ground_query)
 	_spawn_blood(ground.position if not ground.is_empty() else at, not ground.is_empty())
