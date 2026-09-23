@@ -23,6 +23,7 @@ var dying:bool = false
 var camera_shake:float = 0.0
 var jump_windup:float = 0.0
 var preparing_jump:bool = false
+var takeoff_stretch:float = 0.0
 
 func _ready() -> void:
 	visual = MODEL.instantiate()
@@ -60,11 +61,12 @@ func _physics_process(delta:float) -> void:
 		jump_windup -= delta
 		if jump_windup <= 0.0:
 			preparing_jump = false
+			takeoff_stretch = 0.14
 			velocity.y = 8.9
 			jumps = 1
 			coyote_time = 0.0
 			jump_audio.play()
-			visual.scale = Vector3(0.94, 1.13, 0.94)
+			_play_animation("Arise")
 	if Input.is_action_just_pressed("ui_accept") and control_enabled:
 		jump_buffer = 0.14
 	else:
@@ -72,15 +74,14 @@ func _physics_process(delta:float) -> void:
 	if jump_buffer > 0.0 and control_enabled and not preparing_jump and (coyote_time > 0.0 or jumps == 1 and not is_on_floor()):
 		if jumps == 0:
 			preparing_jump = true
-			jump_windup = 0.09
-			visual.scale = Vector3(1.1, 0.76, 1.1)
+			jump_windup = 0.15
 			_play_animation("Walking")
 		else:
 			_spawn_fart()
 			velocity.y = 8.1
 			jumps = 2
 			jump_audio.play()
-			visual.scale = Vector3(0.91, 1.16, 0.91)
+			takeoff_stretch = 0.14
 		coyote_time = 0.0
 		jump_buffer = 0.0
 	if not preparing_jump:
@@ -100,15 +101,16 @@ func _physics_process(delta:float) -> void:
 	if direction.length_squared() > 0.01:
 		visual.rotation.y = lerp_angle(visual.rotation.y, atan2(direction.x, direction.z), minf(delta * 12.0, 1.0))
 	visual.rotation.x = lerpf(visual.rotation.x, 0.0 if is_on_floor() else -0.1 if velocity.y > 0.0 else 0.08, minf(delta * 8.0, 1.0))
-	if not preparing_jump:
-		visual.scale = visual.scale.lerp(Vector3.ONE, minf(delta * 6.0, 1.0))
+	var target_scale := Vector3(1.07, 0.80, 1.07) if preparing_jump else Vector3(0.95, 1.11, 0.95) if takeoff_stretch > 0.0 else Vector3.ONE
+	visual.scale = visual.scale.lerp(target_scale, 1.0 - exp(-17.0 * delta))
+	takeoff_stretch = maxf(takeoff_stretch - delta, 0.0)
 	if preparing_jump:
 		_play_animation("Walking")
 	elif is_on_floor():
 		_play_animation("Arise" if direction.length_squared() > 0.01 and speed > 7.0 else "Idle" if direction.length_squared() > 0.01 else "Walking")
 	else:
-		_play_animation("Walking")
-	if animation_player and (preparing_jump or not is_on_floor()):
+		_play_animation("Arise")
+	if animation_player and preparing_jump:
 		animation_player.speed_scale = 0.0
 	elif animation_player and animation_player.current_animation == "Idle":
 		animation_player.speed_scale = 1.35
@@ -148,7 +150,7 @@ func _spawn_fart() -> void:
 		get_parent().add_child(puff)
 		puff.global_position = global_position + Vector3(randf_range(-0.38, 0.38), randf_range(0.05, 0.5), randf_range(-0.38, 0.38))
 		var alpha := randf_range(0.4, 0.58)
-		puff.modulate = Color(randf_range(0.48, 0.62), randf_range(0.79, 0.92), randf_range(0.55, 0.71), alpha)
+		puff.modulate = Color(randf_range(0.17, 0.29), randf_range(0.78, 0.96), randf_range(0.12, 0.24), alpha)
 		var duration := randf_range(0.42, 0.64)
 		fart_puffs.append({"node":puff, "life":duration, "duration":duration, "alpha":alpha, "velocity":Vector3(randf_range(-2.0, 2.0), randf_range(-1.8, 0.4), randf_range(-2.0, 2.0)), "start_frame":puff.frame})
 
@@ -192,16 +194,17 @@ func bounce() -> void:
 	velocity.y = 10.2
 	jumps = 1
 	jump_buffer = 0.0
-	_play_animation("Walking")
+	_play_animation("Arise")
 
 func receive_damage(amount:float, source:Vector3) -> void:
 	if hurt_time > 0.0 or dying:
 		return
 	preparing_jump = false
 	jump_windup = 0.0
+	takeoff_stretch = 0.0
 	visual.scale = Vector3.ONE
 	hurt_time = 1.0
-	Global.realtime_hp = maxf(0.0, Global.realtime_hp - amount)
+	get_parent().set_stage_hp(get_parent().stage_hp - amount)
 	var knockback := global_position - source
 	knockback.y = 0.0
 	if knockback.length_squared() > 0.01:
@@ -213,7 +216,7 @@ func receive_damage(amount:float, source:Vector3) -> void:
 	Input.start_joy_vibration(0, 0.42, 0.65, 0.25)
 	get_parent().player_hit(global_position)
 	get_parent().update_hud()
-	if Global.realtime_hp <= 0.0:
+	if get_parent().stage_hp <= 0.0:
 		dying = true
 		control_enabled = false
 		velocity = Vector3.ZERO

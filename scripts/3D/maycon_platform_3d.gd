@@ -43,9 +43,16 @@ var pentagram_nodes:Dictionary = {}
 var exit_started:bool = false
 var blood_pickups:Array[Node3D] = []
 var total_stomps:int = 0
+var stage_hp_max:float = 100.0
+var stage_hp:float = 100.0
+var use_realtime_hp:bool = false
 
 func _ready() -> void:
 	get_tree().paused = false
+	use_realtime_hp = Global.battle_mode == Global.battle_mode_realtime
+	stage_hp_max = Global.realtime_hp_max if use_realtime_hp else 100.0
+	stage_hp = clampf(Global.realtime_hp, 1.0, stage_hp_max) if use_realtime_hp else 100.0
+	set_stage_hp(stage_hp)
 	Global.save_progress("fase_3d_platform")
 	GameSongs.play_song(1)
 	_build_materials()
@@ -88,7 +95,7 @@ func _physics_process(delta:float) -> void:
 			continue
 		pickup.rotate_y(delta * 2.0)
 		if pickup.global_position.distance_to(maycon.global_position + Vector3.UP) < 1.4:
-			Global.realtime_hp = minf(Global.realtime_hp_max, Global.realtime_hp + Global.realtime_hp_max * 0.1)
+			set_stage_hp(stage_hp + stage_hp_max * 0.1)
 			blood_pickups.remove_at(i)
 			pickup.queue_free()
 			_flash_heal()
@@ -542,15 +549,21 @@ func respawn(reset_health:bool) -> void:
 	maycon.velocity = Vector3.ZERO
 	maycon.preparing_jump = false
 	maycon.jump_windup = 0.0
+	maycon.takeoff_stretch = 0.0
 	maycon.jumps = 0
 	maycon.visual.scale = Vector3.ONE
 	maycon.hurt_time = 1.0
 	maycon.camera.global_position = Vector3(0.0, 7.0, 43.0)
 	if reset_health:
-		Global.realtime_hp = Global.realtime_hp_max
+		set_stage_hp(stage_hp_max)
 	else:
-		Global.realtime_hp = maxf(15.0, Global.realtime_hp - 8.0)
+		set_stage_hp(maxf(15.0, stage_hp - 8.0))
 	update_hud()
+
+func set_stage_hp(value:float) -> void:
+	stage_hp = clampf(value, 0.0, stage_hp_max)
+	if use_realtime_hp:
+		Global.realtime_hp = stage_hp
 
 func _exit_stage() -> void:
 	exit_started = true
@@ -570,6 +583,7 @@ func exit_to_menu() -> void:
 	await _fade_out()
 	GameSongs.stop(1)
 	Global.back_to_main_camera = true
+	Global.save_progress("fase_3d_platform")
 	get_tree().change_scene_to_file.call_deferred("res://scenes/menu.tscn")
 
 func _fade_out() -> void:
@@ -636,7 +650,7 @@ func _build_hud() -> void:
 	hp_bar = ProgressBar.new()
 	hp_bar.custom_minimum_size = Vector2(310.0, 12.0)
 	hp_bar.show_percentage = false
-	hp_bar.max_value = Global.realtime_hp_max
+	hp_bar.max_value = stage_hp_max
 	var bar_fill := StyleBoxFlat.new()
 	bar_fill.bg_color = Color("b1223e")
 	hp_bar.add_theme_stylebox_override("fill", bar_fill)
@@ -685,6 +699,6 @@ func _hud_icon(texture:Texture2D, size:Vector2) -> TextureRect:
 func update_hud() -> void:
 	if not is_instance_valid(hp_bar):
 		return
-	hp_bar.value = Global.realtime_hp
+	hp_bar.value = stage_hp
 	hp_label.text = tr("UI_HEALTH")
 	pentagram_label.text = str(Global.platform_pentagrams)

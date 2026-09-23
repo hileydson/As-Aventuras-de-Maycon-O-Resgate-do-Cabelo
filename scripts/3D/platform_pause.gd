@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const PENTAGRAM_TEXTURE = preload("res://assets/3D/pentagram_item.png")
+
 var panel:Control
 var resume_button:Button
 var previous_mouse_mode:Input.MouseMode
@@ -40,6 +42,18 @@ func _build_panel() -> void:
 	dim.color = Color(0.08, 0.12, 0.23, 0.69)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	panel.add_child(dim)
+	var pentagram := TextureRect.new()
+	pentagram.texture = PENTAGRAM_TEXTURE
+	pentagram.set_anchors_preset(Control.PRESET_CENTER)
+	pentagram.offset_left = -310.0
+	pentagram.offset_top = -310.0
+	pentagram.offset_right = 310.0
+	pentagram.offset_bottom = 310.0
+	pentagram.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	pentagram.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	pentagram.modulate = Color(0.93, 0.53, 0.73, 0.23)
+	pentagram.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(pentagram)
 	var card := PanelContainer.new()
 	card.set_anchors_preset(Control.PRESET_CENTER)
 	card.position = Vector2(-220.0, -145.0)
