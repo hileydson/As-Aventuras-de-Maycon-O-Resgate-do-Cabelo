@@ -21,6 +21,8 @@ var state:int = 0
 var rest_time:float = 0.0
 var wall_shape:SphereShape3D
 var trail_distance:float = 0.0
+var is_slow_motion:bool = false
+var blue_aura:MeshInstance3D
 
 func setup(model_index:int, player:CharacterBody3D, world:Node3D, enemy_type:int = 0) -> void:
 	maycon = player
@@ -50,7 +52,31 @@ func setup(model_index:int, player:CharacterBody3D, world:Node3D, enemy_type:int
 	phase = randf_range(0.0, TAU)
 	activation_radius = 0.0 if archetype == 2 else 5.0 if archetype == 1 else 6.2
 	speed = 2.0 if archetype == 2 else 2.8 if archetype == 0 else 2.3 if archetype == 1 else 3.4
+	
+	var aura_mesh := SphereMesh.new()
+	aura_mesh.radius = 0.82 if archetype != 2 else 0.95
+	aura_mesh.height = 1.64 if archetype != 2 else 1.9
+	aura_mesh.radial_segments = 16
+	aura_mesh.rings = 8
+	blue_aura = MeshInstance3D.new()
+	blue_aura.mesh = aura_mesh
+	var aura_mat := StandardMaterial3D.new()
+	aura_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	aura_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	aura_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	aura_mat.albedo_color = Color(0.18, 0.65, 1.0, 0.45)
+	aura_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	blue_aura.material_override = aura_mat
+	blue_aura.position.y = 0.52 if archetype != 2 else 0.62
+	blue_aura.visible = false
+	add_child(blue_aura)
+	
 	set_physics_process(true)
+
+func set_slow_motion(active_val:bool) -> void:
+	is_slow_motion = active_val
+	if is_instance_valid(blue_aura):
+		blue_aura.visible = active_val
 
 func _add_accessory(material:StandardMaterial3D) -> void:
 	if archetype == 2:
@@ -77,8 +103,11 @@ func _add_accessory(material:StandardMaterial3D) -> void:
 func _physics_process(delta:float) -> void:
 	if not active or not is_instance_valid(maycon):
 		return
-	rest_time = maxf(rest_time - delta, 0.0)
-	phase += delta * 3.0
+	var delta_eff := delta * (0.10 if is_slow_motion else 1.0)
+	if is_slow_motion and is_instance_valid(blue_aura):
+		blue_aura.scale = Vector3.ONE * (1.0 + sin(Time.get_ticks_msec() * 0.007) * 0.08)
+	rest_time = maxf(rest_time - delta_eff, 0.0)
+	phase += delta_eff * 3.0
 	model.position.y = absf(sin(phase * 1.7)) * 0.24 if archetype == 3 else sin(phase) * 0.05
 	var difference := maycon.global_position - global_position
 	var horizontal := Vector2(difference.x, difference.z)
@@ -86,19 +115,19 @@ func _physics_process(delta:float) -> void:
 		state = 1
 		chase_time = 3.4
 	if state == 1:
-		chase_time -= delta
+		chase_time -= delta_eff
 		if chase_time <= 0.0 or horizontal.length() > activation_radius * 1.4 or home.distance_to(maycon.global_position) > 8.5:
 			state = 2
 		elif horizontal.length() > 0.66:
-			_move_toward(maycon.global_position, speed, delta)
+			_move_toward(maycon.global_position, speed, delta_eff)
 	elif state == 2:
-		_move_toward(home, speed * 0.7, delta)
+		_move_toward(home, speed * 0.7, delta_eff)
 		if global_position.distance_to(home) < 0.2:
 			state = 0
 			rest_time = 2.3
 	elif archetype == 1:
 		var patrol := home + Vector3(sin(phase * 0.35) * 2.4, 0.0, cos(phase * 0.35) * 2.4)
-		_move_toward(patrol, speed * 0.5, delta)
+		_move_toward(patrol, speed * 0.5, delta_eff)
 	if horizontal.length() < 0.74:
 		_touch_maycon()
 	if active and monitoring:
@@ -129,6 +158,12 @@ func _touch_maycon() -> void:
 	if not active:
 		return
 	if absf(maycon.global_position.y - global_position.y) > 1.65:
+		return
+	if is_slow_motion or stage.get("is_invincible") == true or maycon.get("is_invincible") == true:
+		active = false
+		monitoring = false
+		maycon.bounce()
+		stage.enemy_stomped(self)
 		return
 	if maycon.velocity.y < -1.5 and maycon.global_position.y > global_position.y + 0.68:
 		active = false

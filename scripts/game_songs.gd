@@ -21,6 +21,12 @@ func play_song(n:int) -> void:
 	if n==1002:
 		song_fase_1_fire_cracling.play()
 
+func set_song_pitch(pitch: float) -> void:
+	if is_instance_valid(song_fase_1):
+		song_fase_1.pitch_scale = pitch
+	if is_instance_valid(song_fase_1_fire_cracling):
+		song_fase_1_fire_cracling.pitch_scale = pitch
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.

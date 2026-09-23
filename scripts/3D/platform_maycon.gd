@@ -18,6 +18,8 @@ var fart_puffs:Array[Dictionary] = []
 var camera_yaw:float = 0.0
 var camera_pitch:float = -0.22
 var manual_camera_cooldown:float = 0.0
+var is_invincible:bool = false
+var invincibility_aura:MeshInstance3D
 var jumps:int = 0
 var coyote_time:float = 0.0
 var jump_buffer:float = 0.0
@@ -46,7 +48,29 @@ func _ready() -> void:
 	step_audio.stream = STEP_SOUND
 	step_audio.volume_db = -4.0
 	add_child(step_audio)
+	
+	var aura_mesh := CapsuleMesh.new()
+	aura_mesh.radius = 0.46
+	aura_mesh.height = 1.7
+	invincibility_aura = MeshInstance3D.new()
+	invincibility_aura.mesh = aura_mesh
+	var aura_mat := StandardMaterial3D.new()
+	aura_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	aura_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	aura_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	aura_mat.albedo_color = Color(1.0, 0.85, 0.2, 0.45)
+	aura_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	invincibility_aura.material_override = aura_mat
+	invincibility_aura.position.y = 0.83
+	invincibility_aura.visible = false
+	add_child(invincibility_aura)
+	
 	_play_animation("Walking")
+
+func set_invincible(active_val:bool, _duration:float = 0.0) -> void:
+	is_invincible = active_val
+	if is_instance_valid(invincibility_aura):
+		invincibility_aura.visible = active_val
 
 func _unhandled_input(event:InputEvent) -> void:
 	if event is InputEventMouseMotion and (Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) or Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE) or Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
@@ -220,6 +244,13 @@ func _process(delta:float) -> void:
 	camera_shake = maxf(camera_shake - delta * 1.8, 0.0)
 	camera.h_offset = randf_range(-camera_shake, camera_shake)
 	camera.v_offset = randf_range(-camera_shake, camera_shake)
+	
+	if is_invincible and is_instance_valid(invincibility_aura):
+		var hue := fmod(Time.get_ticks_msec() * 0.0018, 1.0)
+		var mat := invincibility_aura.material_override as StandardMaterial3D
+		if mat:
+			mat.albedo_color = Color.from_hsv(hue, 0.8, 1.0, 0.45 + sin(Time.get_ticks_msec() * 0.01) * 0.15)
+		invincibility_aura.scale = Vector3.ONE * (1.0 + sin(Time.get_ticks_msec() * 0.008) * 0.06)
 
 func _play_animation(animation:String) -> void:
 	if animation_player and animation_player.has_animation(animation) and (animation_player.current_animation != animation or not animation_player.is_playing()):
@@ -234,7 +265,7 @@ func bounce() -> void:
 	_play_animation("Arise")
 
 func receive_damage(amount:float, source:Vector3) -> void:
-	if hurt_time > 0.0 or dying or not is_on_floor():
+	if is_invincible or hurt_time > 0.0 or dying or not is_on_floor():
 		return
 	preparing_jump = false
 	jump_windup = 0.0

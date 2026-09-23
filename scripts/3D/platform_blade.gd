@@ -7,6 +7,9 @@ var maycon:CharacterBody3D
 var rotor:Node3D
 var spin_speed:float = 4.8
 var sweep_time:float = 0.0
+var is_slow_motion:bool = false
+var blue_aura:MeshInstance3D
+var saw_audio:AudioStreamPlayer3D
 
 func setup(owner_stage:Node3D, player:CharacterBody3D, direction:Vector3, index:int) -> void:
 	stage = owner_stage
@@ -16,7 +19,7 @@ func setup(owner_stage:Node3D, player:CharacterBody3D, direction:Vector3, index:
 	sweep_time = float(index) * 1.7
 
 func _ready() -> void:
-	var saw_audio := AudioStreamPlayer3D.new()
+	saw_audio = AudioStreamPlayer3D.new()
 	var saw_stream:AudioStreamMP3 = SAW_SOUND.duplicate()
 	saw_stream.loop = true
 	saw_audio.stream = saw_stream
@@ -39,6 +42,23 @@ func _ready() -> void:
 	rotor.name = "NavalhaGiratoria"
 	rotor.position.y = 1.05
 	add_child(rotor)
+	var aura_mesh := CylinderMesh.new()
+	aura_mesh.top_radius = 1.95
+	aura_mesh.bottom_radius = 1.95
+	aura_mesh.height = 0.52
+	aura_mesh.radial_segments = 24
+	blue_aura = MeshInstance3D.new()
+	blue_aura.mesh = aura_mesh
+	var aura_mat := StandardMaterial3D.new()
+	aura_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	aura_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	aura_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	aura_mat.albedo_color = Color(0.18, 0.65, 1.0, 0.42)
+	aura_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	blue_aura.material_override = aura_mat
+	blue_aura.rotation.x = PI * 0.5
+	blue_aura.visible = false
+	rotor.add_child(blue_aura)
 	var rim := CylinderMesh.new()
 	rim.top_radius = 1.49
 	rim.bottom_radius = 1.49
@@ -86,13 +106,25 @@ func _ready() -> void:
 	contact.add_child(shape)
 	contact.body_entered.connect(_on_body_entered)
 
+func set_slow_motion(active_val:bool) -> void:
+	is_slow_motion = active_val
+	if is_instance_valid(blue_aura):
+		blue_aura.visible = active_val
+	if is_instance_valid(saw_audio):
+		saw_audio.pitch_scale = 0.35 if active_val else 1.0
+
 func _physics_process(delta:float) -> void:
-	sweep_time += delta
+	var delta_eff := delta * (0.10 if is_slow_motion else 1.0)
+	sweep_time += delta_eff
 	rotor.position.x = sin(sweep_time * 1.25) * 0.45
-	rotor.rotation.z += spin_speed * delta
+	rotor.rotation.z += spin_speed * delta_eff
+	if is_slow_motion and is_instance_valid(blue_aura):
+		blue_aura.scale = Vector3.ONE * (1.0 + sin(Time.get_ticks_msec() * 0.006) * 0.07)
 
 func _on_body_entered(body:Node3D) -> void:
 	if body == maycon:
+		if is_slow_motion or stage.get("is_invincible") == true or maycon.get("is_invincible") == true:
+			return
 		stage.call_deferred("start_player_death", "blade", self)
 
 func _part(parent:Node3D, mesh:Mesh, material:Material, at:Vector3) -> MeshInstance3D:

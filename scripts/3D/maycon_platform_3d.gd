@@ -8,6 +8,9 @@ const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
 const BLOOD_OVERLAY_SCRIPT = preload("res://scripts/3D/platform_blood_overlay.gd")
 const BLADE_SCRIPT = preload("res://scripts/3D/platform_blade.gd")
 const HAND_SCRIPT = preload("res://scripts/3D/platform_hand.gd")
+const INVINCIBLE_OVERLAY_SCRIPT = preload("res://scripts/3D/platform_invincible_overlay.gd")
+const FREEZE_SOUND = preload("res://assets/novos_audios/special_freeze_distorted.mp3")
+const RUSH_SOUND = preload("res://assets/novos_audios/modo_acelerando.mp3")
 const MAYCON_SCREAM = preload("res://assets/novos_audios/maycon_falling_fase_1.mp3")
 const ENEMY_EXPLOSION_SOUND = preload("res://assets/novos_audios/mario_part_sounds/fart_explotion.mp3")
 const PICKUP_SOUND = preload("res://assets/audio/plim.mp3")
@@ -58,6 +61,12 @@ var stage_hp_max:float = 100.0
 var stage_hp:float = 100.0
 var use_realtime_hp:bool = false
 var death_in_progress:bool = false
+var is_invincible:bool = false
+var is_slow_motion:bool = false
+var invincibility_time_left:float = 0.0
+var last_invincible_milestone:int = 0
+var pentagrams_collected_session:int = 0
+var invincible_overlay:CanvasLayer
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -100,9 +109,16 @@ func _ready() -> void:
 	_build_hud()
 	_build_pause()
 	_build_fade()
+	invincible_overlay = CanvasLayer.new()
+	invincible_overlay.set_script(INVINCIBLE_OVERLAY_SCRIPT)
+	add_child(invincible_overlay)
 	update_hud()
 
 func _physics_process(delta:float) -> void:
+	if is_invincible:
+		invincibility_time_left = maxf(invincibility_time_left - delta, 0.0)
+		if invincibility_time_left <= 0.0:
+			end_invincibility()
 	if exit_started or death_in_progress:
 		return
 	if maycon.global_position.y < -7.0:
@@ -135,10 +151,12 @@ func _physics_process(delta:float) -> void:
 			_play_pickup_sound(true)
 			Global.platform_pentagram_collected[id] = true
 			Global.platform_pentagrams += 1
+			pentagrams_collected_session += 1
 			pentagram_nodes.erase(id)
 			item.queue_free()
 			Global.save_progress("fase_3d_platform")
 			update_hud()
+			_check_invincibility_milestone()
 
 func _build_materials() -> void:
 	materials["grass"] = _material(Color("529755"), 0.9)
@@ -527,6 +545,69 @@ func enemy_stomped(enemy:Area3D) -> void:
 	enemy_defeated(enemy)
 	total_stomps += 1
 
+func _check_invincibility_milestone() -> void:
+	var total := Global.platform_pentagrams
+	var milestone := total / 10
+	if (total >= 10 and milestone > last_invincible_milestone) or (pentagrams_collected_session > 0 and pentagrams_collected_session % 10 == 0):
+		last_invincible_milestone = maxi(last_invincible_milestone, milestone)
+		start_invincibility(10.0)
+
+func start_invincibility(duration:float = 10.0) -> void:
+	is_invincible = true
+	is_slow_motion = true
+	invincibility_time_left = duration
+
+	var freeze_audio := AudioStreamPlayer.new()
+	freeze_audio.stream = FREEZE_SOUND
+	freeze_audio.volume_db = 0.0
+	add_child(freeze_audio)
+	freeze_audio.finished.connect(freeze_audio.queue_free)
+	freeze_audio.play()
+
+	var rush_audio := AudioStreamPlayer.new()
+	rush_audio.stream = RUSH_SOUND
+	rush_audio.volume_db = -4.0
+	add_child(rush_audio)
+	rush_audio.finished.connect(rush_audio.queue_free)
+	rush_audio.play()
+
+	GameSongs.set_song_pitch(1.3)
+
+	if is_instance_valid(maycon):
+		maycon.set_invincible(true, duration)
+
+	for enemy in enemies.get_children():
+		if is_instance_valid(enemy) and enemy.has_method("set_slow_motion"):
+			enemy.set_slow_motion(true)
+
+	for hazard in hazards.get_children():
+		if is_instance_valid(hazard) and hazard.has_method("set_slow_motion"):
+			hazard.set_slow_motion(true)
+
+	if is_instance_valid(invincible_overlay) and invincible_overlay.has_method("start_invincibility"):
+		invincible_overlay.start_invincibility(duration)
+
+func end_invincibility() -> void:
+	is_invincible = false
+	is_slow_motion = false
+	invincibility_time_left = 0.0
+
+	GameSongs.set_song_pitch(1.0)
+
+	if is_instance_valid(maycon):
+		maycon.set_invincible(false, 0.0)
+
+	for enemy in enemies.get_children():
+		if is_instance_valid(enemy) and enemy.has_method("set_slow_motion"):
+			enemy.set_slow_motion(false)
+
+	for hazard in hazards.get_children():
+		if is_instance_valid(hazard) and hazard.has_method("set_slow_motion"):
+			hazard.set_slow_motion(false)
+
+	if is_instance_valid(invincible_overlay) and invincible_overlay.has_method("stop_invincibility"):
+		invincible_overlay.stop_invincibility()
+
 func spawn_enemy_trail(at:Vector3, archetype:int) -> void:
 	var mark := MeshInstance3D.new()
 	mark.mesh = enemy_trail_mesh
@@ -638,6 +719,8 @@ func set_stage_hp(value:float) -> void:
 func start_player_death(kind:String, hazard:Node3D = null) -> void:
 	if death_in_progress or exit_started:
 		return
+	if is_invincible:
+		end_invincibility()
 	death_in_progress = true
 	maycon.control_enabled = false
 	var old_collision_layer := maycon.collision_layer
@@ -704,6 +787,8 @@ func start_player_death(kind:String, hazard:Node3D = null) -> void:
 	maycon.control_enabled = true
 
 func _exit_stage() -> void:
+	if is_invincible:
+		end_invincibility()
 	exit_started = true
 	get_tree().paused = false
 	maycon.control_enabled = false
@@ -715,6 +800,8 @@ func _exit_stage() -> void:
 func exit_to_menu() -> void:
 	if exit_started:
 		return
+	if is_invincible:
+		end_invincibility()
 	exit_started = true
 	get_tree().paused = false
 	maycon.control_enabled = false

@@ -13,6 +13,8 @@ var crushing:bool = false
 var crush_time:float = 0.0
 var impact_audio:AudioStreamPlayer3D
 var crush_was_raised:bool = false
+var is_slow_motion:bool = false
+var blue_aura:MeshInstance3D
 
 func setup(owner_stage:Node3D, player:CharacterBody3D, index:int) -> void:
 	stage = owner_stage
@@ -35,6 +37,20 @@ func _ready() -> void:
 	palm.name = "MaoGigante"
 	palm.position.y = 4.5
 	add_child(palm)
+	var aura_mesh := BoxMesh.new()
+	aura_mesh.size = Vector3(3.2, 1.8, 3.2)
+	blue_aura = MeshInstance3D.new()
+	blue_aura.mesh = aura_mesh
+	var aura_mat := StandardMaterial3D.new()
+	aura_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	aura_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	aura_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	aura_mat.albedo_color = Color(0.18, 0.65, 1.0, 0.40)
+	aura_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	blue_aura.material_override = aura_mat
+	blue_aura.position = Vector3(0.0, 0.0, -0.35)
+	blue_aura.visible = false
+	palm.add_child(blue_aura)
 	var sphere := SphereMesh.new()
 	sphere.radius = 1.0
 	sphere.height = 2.0
@@ -82,9 +98,17 @@ func _ready() -> void:
 	shadow.position = Vector3(0.0, 0.13, -0.25)
 	add_child(shadow)
 
+func set_slow_motion(active_val:bool) -> void:
+	is_slow_motion = active_val
+	if is_instance_valid(blue_aura):
+		blue_aura.visible = active_val
+
 func _physics_process(delta:float) -> void:
+	var delta_eff := delta * (0.10 if is_slow_motion else 1.0)
+	if is_slow_motion and is_instance_valid(blue_aura):
+		blue_aura.scale = Vector3.ONE * (1.0 + sin(Time.get_ticks_msec() * 0.006) * 0.06)
 	if crushing:
-		crush_time += delta
+		crush_time += delta_eff
 		palm.position.y = 0.55 + absf(sin(crush_time * 9.0)) * 0.68
 		if palm.position.y > 0.95:
 			crush_was_raised = true
@@ -93,7 +117,7 @@ func _physics_process(delta:float) -> void:
 			crush_was_raised = false
 		_set_shadow_alpha(0.52)
 		return
-	timer -= delta
+	timer -= delta_eff
 	match state:
 		0:
 			palm.position.y = 4.5
@@ -144,6 +168,8 @@ func reset_after_death() -> void:
 
 func _on_body_entered(body:Node3D) -> void:
 	if body == maycon:
+		if is_slow_motion or stage.get("is_invincible") == true or maycon.get("is_invincible") == true:
+			return
 		stage.call_deferred("start_player_death", "hand", self)
 
 func _set_shadow_alpha(alpha:float) -> void:
