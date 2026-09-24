@@ -37,6 +37,8 @@ SETTINGS_EVENTS,Eventos do Jogo (game_events):,Game Events (game_events):,Evento
 SETTINGS_GAME_EVENTS,Eventos do Jogo (game_events):,Game Events (game_events):,Eventos del Juego (game_events):,游戏事件 (game_events):
 SETTINGS_CLOSE,Fechar,Close,Cerrar,关闭
 SETTINGS_LANGUAGE,Idioma,Language,Idioma,语言
+SETTINGS_DEBUG_NO_BATTLES,Não entrar em batalha (derrota ao encostar),No battle encounters (defeat on touch),No entrar en batalla (derrota al tocar),不进入战斗 (接触即击败)
+SETTINGS_DEBUG_NO_BATTLES_DESC,Ao encostar nos inimigos eles são derrotados instantaneamente sem iniciar batalhas.,Touching enemies defeats them instantly without triggering battles.,Tocar a los enemigos los derrota al instante sin iniciar batallas.,触碰敌人时立即击败敌人且不触发战斗。
 UI_HOLD_SKIP,SEGURE ESC / START PARA PULAR,HOLD ESC / START TO SKIP,MANTÉN ESC / START PARA SALTAR,按住 ESC / START 跳过
 STORY_SKIP_PROMPT,SEGURE ESC / START PARA PULAR,HOLD ESC / START TO SKIP,MANTÉN ESC / START PARA SALTAR,按住 ESC / START 跳过
 UI_HEALTH,VIDA,HEALTH,SALUD,生命

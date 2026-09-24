@@ -72,6 +72,7 @@ var inimigos_mortos = {}
 var realtime_enemy_respawns:Dictionary = {}
 var aim_assist_strength:float = 0.6
 var show_debug_tab:bool = true
+var debug_disable_battles:bool = false
 
 func normalize_language(lang: String) -> String:
 	var l = lang.to_lower().strip_edges()
@@ -371,6 +372,44 @@ func request_realtime_position_restore() -> void:
 	if realtime_return_position_valid:
 		realtime_restore_pending = true
 		realtime_restore_frames = 45
+
+func try_debug_instakill_enemy(enemy_node: Node, enemy_id: String, unique_id: String = "") -> bool:
+	if not debug_disable_battles:
+		return false
+	
+	if unique_id != "":
+		inimigos_mortos[unique_id] = true
+	elif enemy_node and is_instance_valid(enemy_node):
+		var generated_id: String = ""
+		if enemy_node.get_tree() and enemy_node.get_tree().current_scene:
+			generated_id = enemy_node.get_tree().current_scene.name + "_" + str(enemy_node.get_path())
+		else:
+			generated_id = str(enemy_node.get_path())
+		inimigos_mortos[generated_id] = true
+	
+	if enemy_id == "1001" or (unique_id != "" and unique_id.contains("boss_seco")):
+		game_events["seco_defeated"] = true
+	
+	# Cancela qualquer gatilho pendente de batalha
+	battle_next_enemy = "0"
+	battle_next_boss = 0
+	battle_started = false
+	
+	# Efeito sonoro de impacto rápido
+	var punch_stream = load("res://assets/novos_audios/punch_4.mp3")
+	if punch_stream:
+		var snd := AudioStreamPlayer.new()
+		snd.stream = punch_stream
+		snd.volume_db = -3.0
+		snd.pitch_scale = randf_range(0.95, 1.15)
+		add_child(snd)
+		snd.finished.connect(snd.queue_free)
+		snd.play()
+
+	if enemy_node and is_instance_valid(enemy_node):
+		enemy_node.queue_free()
+	
+	return true
 
 func register_enemy_encounter(enemy_spawn_id:String) -> void:
 	realtime_enemy_spawn_id = enemy_spawn_id

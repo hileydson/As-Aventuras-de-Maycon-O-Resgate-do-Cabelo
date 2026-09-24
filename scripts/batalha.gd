@@ -80,6 +80,7 @@ var died:bool = false
 
 var boss_song:bool = false
 var realtime_transitioning:bool = false
+var suppress_next_opening_explosion:bool = false
 
 var mapas_backgrounds = {
 	"1" = preload("res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_in_fire.png"),
@@ -182,7 +183,10 @@ func play_inicio()->void:
 	fade.get_node("Transition").play("fade_in")
 	camera_maycon.make_current()
 	
-	explosao.play()
+	if suppress_next_opening_explosion:
+		suppress_next_opening_explosion = false
+	else:
+		explosao.play()
 	inicio_batalha.play("inicio")
 	maycon_batalha.play("float")
 	maycon_batalha_default.play("idle")
@@ -236,6 +240,12 @@ func _ready() -> void:
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if Global.debug_disable_battles:
+		Global.battle_next_enemy = "0"
+		Global.battle_next_boss = 0
+		Global.battle_started = false
+		return
+
 	if Global.battle_mode == Global.battle_mode_realtime && !realtime_transitioning:
 		if Global.battle_next_enemy != "0":
 			start_realtime_battle(Global.battle_next_enemy)
@@ -321,6 +331,9 @@ func _process(delta: float) -> void:
 				power_count = power_count+1
 
 
+func suppress_opening_explosion() -> void:
+	suppress_next_opening_explosion = true
+	explosao.stop()
 
 func control_attack_power() -> void:
 	if timer_power.time_left!=0.0 && timer_power.time_left<2.0:

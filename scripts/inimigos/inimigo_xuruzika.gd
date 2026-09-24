@@ -108,6 +108,8 @@ func _on_animation_finished() -> void:
 
 
 func _on_to_battle_body_entered(body: Node2D) -> void:
+	if Global.try_debug_instakill_enemy(self, "4", id_unico):
+		return
 	Global.battle_next_enemy = "4"
 	Global.register_enemy_encounter(id_unico)
 	$".".process_mode = Node.PROCESS_MODE_DISABLED

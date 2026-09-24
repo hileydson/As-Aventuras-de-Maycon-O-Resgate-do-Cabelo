@@ -129,6 +129,26 @@ func _populate_debug_events() -> void:
 			Global.game_events[event_name] = Global.game_events_default[event_name]
 	
 	var checks: Array[CheckBox] = []
+
+	# 1. Opção especial de teste: Desativar batalhas / Derrota instantânea ao encostar
+	var battle_check = CheckBox.new()
+	battle_check.text = "⚡ " + tr("SETTINGS_DEBUG_NO_BATTLES")
+	battle_check.tooltip_text = tr("SETTINGS_DEBUG_NO_BATTLES_DESC")
+	battle_check.button_pressed = Global.debug_disable_battles
+	battle_check.focus_mode = Control.FOCUS_ALL
+	battle_check.add_theme_color_override("font_color", Color(1.0, 0.85, 0.35))
+	battle_check.add_theme_color_override("font_hover_color", Color(1.0, 0.95, 0.55))
+	battle_check.add_theme_color_override("font_focus_color", Color(1.0, 0.95, 0.55))
+	battle_check.toggled.connect(func(pressed: bool):
+		Global.debug_disable_battles = pressed
+	)
+	debug_events_container.add_child(battle_check)
+	checks.append(battle_check)
+
+	var sep = HSeparator.new()
+	debug_events_container.add_child(sep)
+
+	# 2. Eventos da história / game_events
 	for event_name in Global.game_events.keys():
 		var check = CheckBox.new()
 		check.text = str(event_name)

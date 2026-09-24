@@ -95,6 +95,9 @@ func _start_seco_intro() -> void:
 		return
 	entering_well = true
 	seco_intro_started = true
+	var battle_intro:AnimationPlayer = get_tree().current_scene.get_node_or_null("battle/Cenario de batalha/batalha_moves") as AnimationPlayer
+	if battle_intro && battle_intro.has_method("suppress_opening_explosion"):
+		battle_intro.suppress_opening_explosion()
 	for song in GameSongs.get_children():
 		if song is AudioStreamPlayer:
 			song.stop()

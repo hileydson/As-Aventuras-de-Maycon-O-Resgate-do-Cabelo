@@ -12,7 +12,6 @@ const BLADE_SCRIPT = preload("res://scripts/3D/platform_blade.gd")
 const HAND_SCRIPT = preload("res://scripts/3D/platform_hand.gd")
 const INVINCIBLE_OVERLAY_SCRIPT = preload("res://scripts/3D/platform_invincible_overlay.gd")
 const FREEZE_SOUND = preload("res://assets/novos_audios/special_freeze_distorted.mp3")
-const RUSH_SOUND = preload("res://assets/novos_audios/modo_acelerando.mp3")
 const MAYCON_SCREAM = preload("res://assets/novos_audios/maycon_falling_fase_1.mp3")
 const ENEMY_EXPLOSION_SOUND = preload("res://assets/novos_audios/mario_part_sounds/fart_explotion.mp3")
 const EXPLOSION_SOUND = preload("res://assets/novos_audios/explosao.mp3")
@@ -741,6 +740,15 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 		return
 	cutscene_running = true
 
+	# 0. Imediatamente zerar contador de pentagramas e retirar o poder do pentagrama
+	Global.platform_pentagrams = 0
+	pentagrams_collected_session = 0
+	last_invincible_milestone = 0
+	set_special_ready(false)
+	update_hud()
+	Global.save_progress("fase_3d_platform")
+	end_invincibility()
+
 	# 1. Congelar e estabilizar totalmente o Maycon no chão onde o golpe fatal foi dado
 	if is_instance_valid(maycon):
 		if maycon.has_method("set_cutscene_active"):
@@ -932,10 +940,6 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 		maycon.control_enabled = true
 		maycon.velocity = Vector3.ZERO
 		maycon.set("saved_cutscene_velocity", Vector3.ZERO)
-		if is_invincible:
-			maycon.set_invincible(true, invincibility_time_left)
-			if is_instance_valid(invincible_overlay):
-				invincible_overlay.visible = true
 
 	if is_instance_valid(enemies):
 		enemies.process_mode = Node.PROCESS_MODE_INHERIT
@@ -1355,21 +1359,8 @@ func start_invincibility(duration:float = 10.0) -> void:
 	is_slow_motion = true
 	invincibility_time_left = duration
 
-	var freeze_audio := AudioStreamPlayer.new()
-	freeze_audio.stream = FREEZE_SOUND
-	freeze_audio.volume_db = 0.0
-	add_child(freeze_audio)
-	freeze_audio.finished.connect(freeze_audio.queue_free)
-	freeze_audio.play()
-
-	var rush_audio := AudioStreamPlayer.new()
-	rush_audio.stream = RUSH_SOUND
-	rush_audio.volume_db = -4.0
-	add_child(rush_audio)
-	rush_audio.finished.connect(rush_audio.queue_free)
-	rush_audio.play()
-
-	GameSongs.set_song_pitch(1.3)
+	# Acelera bastante a música durante o poder (sem tocar sons adicionais)
+	GameSongs.set_song_pitch(1.55)
 
 	if is_instance_valid(maycon):
 		maycon.set_invincible(true, duration)
