@@ -1,5 +1,8 @@
 extends Node2D
 
+const PAUSE_SOUND:AudioStream = preload("res://assets/novos_audios/pause_sfxr.mp3")
+const PAUSE_VISUAL = preload("res://scripts/ui/pause_visual.gd")
+
 const ARENA_WIDTH:float = 2600.0
 const MIN_Y:float = 260.0
 const MAX_Y:float = 585.0
@@ -1877,29 +1880,19 @@ func build_hud() -> void:
 
 func build_pause_overlay() -> void:
 	pause_overlay = ColorRect.new()
-	pause_overlay.position = Vector2.ZERO
-	pause_overlay.size = Vector2(1152, 648)
-	pause_overlay.color = Color(0.015, 0.02, 0.035, 0.88)
+	pause_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	pause_overlay.z_index = 4000
 	pause_overlay.visible = false
-	pause_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	hud_canvas.add_child(pause_overlay)
-	var pause_title = Label.new()
-	pause_title.position = Vector2(276, 245)
-	pause_title.size = Vector2(600, 62)
-	pause_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pause_title.text = tr("MENU_BATTLE_PAUSED")
-	pause_title.add_theme_font_size_override("font_size", 42)
-	pause_title.add_theme_color_override("font_color", Color("ffd166"))
-	pause_overlay.add_child(pause_title)
-	var pause_hint = Label.new()
-	pause_hint.position = Vector2(276, 320)
-	pause_hint.size = Vector2(600, 36)
-	pause_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pause_hint.text = tr("MENU_PAUSE_HINT")
-	pause_hint.add_theme_font_size_override("font_size", 20)
-	pause_hint.add_theme_color_override("font_color", Color(0.88, 0.92, 1.0, 0.9))
-	pause_overlay.add_child(pause_hint)
+	PAUSE_VISUAL.configure_backdrop(pause_overlay, 0.91)
+	PAUSE_VISUAL.add_header(pause_overlay, tr("MENU_BATTLE_PAUSED"), tr("MENU_PAUSE_HINT"))
+	PAUSE_VISUAL.add_side_glow(pause_overlay)
+	var pause_audio := AudioStreamPlayer.new()
+	pause_audio.name = "PauseAudio"
+	pause_audio.process_mode = Node.PROCESS_MODE_ALWAYS
+	pause_audio.stream = PAUSE_SOUND
+	pause_audio.volume_db = -8.0
+	pause_overlay.add_child(pause_audio)
 
 func build_action_buttons_hud() -> void:
 	if !hud_canvas:
@@ -2188,6 +2181,11 @@ func _process(delta:float) -> void:
 func toggle_battle_pause() -> void:
 	battle_paused = !battle_paused
 	pause_overlay.visible = battle_paused
+	if battle_paused:
+		var pause_audio := pause_overlay.get_node_or_null("PauseAudio") as AudioStreamPlayer
+		if is_instance_valid(pause_audio):
+			pause_audio.play()
+		PAUSE_VISUAL.animate_open(pause_overlay)
 	get_tree().paused = battle_paused
 	for child in get_children():
 		if child is AudioStreamPlayer:

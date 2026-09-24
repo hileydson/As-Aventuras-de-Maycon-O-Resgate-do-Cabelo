@@ -5,6 +5,7 @@ const ICON_BTN_A = preload("res://assets/novas_imagens/buttons/360_A.png")
 const ICON_BTN_Y = preload("res://assets/novas_imagens/buttons/360_Y.png")
 const ICON_KEY_SPACE = preload("res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png")
 const ICON_KEY_Q = preload("res://assets/novas_imagens/buttons/Q_Key_Light.png")
+const PAUSE_FONT:Font = preload("res://assets/fonts/contrast.ttf")
 
 var health:float = 100.0
 var progress:float = 0.0
@@ -160,9 +161,18 @@ func _draw() -> void:
 	if explosion >= 0.0:
 		draw_rect(Rect2(0, 0, width, height), Color(0.02, 0.0, 0.015, clampf((explosion - 0.72) / 1.45, 0.0, 1.0)), true)
 	if paused_local:
-		draw_rect(Rect2(0, 0, width, height), Color(0.008, 0.015, 0.03, 0.8), true)
-		draw_string(font, Vector2(width * 0.5 - 200.0, height * 0.5 - 14.0), tr("MENU_PAUSE"), HORIZONTAL_ALIGNMENT_CENTER, 400, 46, Color(1.0, 0.83, 0.42))
-		draw_string(font, Vector2(width * 0.5 - 290.0, height * 0.5 + 34.0), tr("MENU_PAUSE_HINT"), HORIZONTAL_ALIGNMENT_CENTER, 580, 21, Color(0.83, 0.92, 1.0))
+		draw_rect(Rect2(0, 0, width, height), Color(0.008, 0.026, 0.043, 0.91), true)
+		var horizon_y := height * 0.68
+		for i in 8:
+			var wave_alpha := 0.018 + sin(time * 0.7 + float(i)) * 0.006
+			draw_line(Vector2(0.0, horizon_y + float(i) * 9.0), Vector2(width, horizon_y + float(i) * 9.0), Color(0.18, 0.62, 0.68, wave_alpha), 2.0)
+		var title_pos := Vector2(70.0, 120.0)
+		draw_string(PAUSE_FONT, title_pos, tr("MENU_PAUSE").to_upper(), HORIZONTAL_ALIGNMENT_LEFT, 430.0, 46, Color(0.95, 0.96, 0.92))
+		draw_rect(Rect2(70.0, 137.0, 360.0, 2.0), Color(0.35, 0.72, 0.77, 0.72), true)
+		draw_string(PAUSE_FONT, Vector2(70.0, 170.0), tr("MENU_PAUSE_HINT"), HORIZONTAL_ALIGNMENT_LEFT, 470.0, 17, Color(0.67, 0.80, 0.82))
+		draw_line(Vector2(470.0, 54.0), Vector2(470.0, height - 54.0), Color(0.30, 0.70, 0.75, 0.32), 1.0)
+		var pulse_radius := 82.0 + sin(time * 1.8) * 8.0
+		draw_arc(Vector2(width * 0.72, height * 0.48), pulse_radius, -1.2, 1.8, 64, Color(0.32, 0.82, 0.85, 0.18), 2.0)
 
 func draw_pentagram(center:Vector2, energy:float) -> void:
 	var pulse:float = 1.0 + sin(time * (3.0 + speed_factor * 10.0 + energy * 5.0)) * (0.035 + speed_factor * 0.09 + energy * 0.07)

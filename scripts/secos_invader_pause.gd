@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const PAUSE_SOUND:AudioStream = preload("res://assets/novos_audios/pause_sfxr.mp3")
+const PAUSE_VISUAL = preload("res://scripts/ui/pause_visual.gd")
 
 var panel:ColorRect
 var resume_button:Button
@@ -16,23 +17,17 @@ func _ready() -> void:
 	pause_audio.volume_db = -8.0
 	add_child(pause_audio)
 	panel = ColorRect.new()
-	panel.color = Color(0.0, 0.0, 0.02, 0.88)
 	panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	panel.visible = false
 	add_child(panel)
-	var heading:Label = Label.new()
-	heading.text = tr("MENU_BATTLE_PAUSED")
-	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	heading.add_theme_font_size_override("font_size", 38)
-	heading.set_anchors_preset(Control.PRESET_CENTER)
-	heading.position = Vector2(-260.0, -100.0)
-	heading.size = Vector2(520.0, 70.0)
-	panel.add_child(heading)
+	PAUSE_VISUAL.configure_backdrop(panel, 0.93)
+	PAUSE_VISUAL.add_header(panel, tr("MENU_BATTLE_PAUSED"), tr("MENU_PAUSE_HINT"))
+	PAUSE_VISUAL.add_side_glow(panel)
 	resume_button = Button.new()
-	resume_button.text = tr("MENU_CONTINUE")
-	resume_button.set_anchors_preset(Control.PRESET_CENTER)
-	resume_button.position = Vector2(-100.0, 15.0)
-	resume_button.size = Vector2(200.0, 48.0)
+	resume_button.text = tr("MENU_CONTINUE").to_upper()
+	resume_button.position = Vector2(70.0, 205.0)
+	resume_button.size = Vector2(360.0, 52.0)
+	PAUSE_VISUAL.style_button(resume_button)
 	resume_button.pressed.connect(_toggle)
 	panel.add_child(resume_button)
 
@@ -50,5 +45,6 @@ func _toggle() -> void:
 	if panel.visible:
 		pause_audio.play()
 		resume_button.grab_focus()
+		PAUSE_VISUAL.animate_open(panel, resume_button)
 	else:
 		resume_button.release_focus()

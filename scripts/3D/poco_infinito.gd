@@ -47,6 +47,7 @@ var dash_sound:AudioStreamPlayer
 var hit_sound:AudioStreamPlayer
 var scream_sound:AudioStreamPlayer
 var explosion_sound:AudioStreamPlayer
+var pause_sound:AudioStreamPlayer
 var health:float = 100.0
 var pentagram_charge:float = 0.0
 var pentagram_invulnerability:float = 0.0
@@ -94,6 +95,8 @@ func _ready() -> void:
 	hit_sound = make_audio("res://assets/novos_audios/hurt_sound_3d.mp3", -4.0)
 	scream_sound = make_audio("res://assets/novos_audios/maycon_falling_fase_1.mp3", -2.0)
 	explosion_sound = make_audio("res://assets/novos_audios/explosao.mp3", -5.0)
+	pause_sound = make_audio("res://assets/novos_audios/pause_sfxr.mp3", -8.0)
+	pause_sound.process_mode = Node.PROCESS_MODE_ALWAYS
 	music.play()
 	wind.play()
 	Global.finish_well_entry_scream(2.5)
@@ -431,9 +434,11 @@ func toggle_pause() -> void:
 	music.stream_paused = locally_paused
 	wind.stream_paused = locally_paused
 	hud.call("set_pause", locally_paused)
-	hud.set_process(!locally_paused)
+	hud.set_process(true)
 	blood_spray.speed_scale = 0.0 if locally_paused else 1.0
 	dash_blur.visible = false
+	if locally_paused:
+		pause_sound.play()
 
 func activate_pentagram() -> void:
 	pentagram_charge = 0.0

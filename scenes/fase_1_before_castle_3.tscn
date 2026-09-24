@@ -435,17 +435,6 @@ texture = ExtResource("7_wup0o")
 process_mode = 0
 position = Vector2(-670, 329)
 
-[node name="Pause" parent="." unique_id=1068062862 instance=ExtResource("7_2rg5i")]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 866.0
-offset_top = -1283.0
-offset_right = 866.0
-offset_bottom = -1283.0
-grow_horizontal = 1
-grow_vertical = 1
-
 [node name="fogo2" type="AnimatedSprite2D" parent="." unique_id=151258892]
 position = Vector2(1325, 1272)
 scale = Vector2(9.375, 7.0416665)
@@ -695,6 +684,17 @@ flip_h = true
 
 [node name="pos_passagem_pestilenta" type="Marker2D" parent="." unique_id=607371238]
 position = Vector2(2097, 906)
+
+[node name="Pause" parent="." unique_id=1068062862 instance=ExtResource("7_2rg5i")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 866.0
+offset_top = -1283.0
+offset_right = 866.0
+offset_bottom = -1283.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]
