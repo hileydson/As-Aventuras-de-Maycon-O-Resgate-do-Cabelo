@@ -26,6 +26,9 @@ var coyote_time:float = 0.0
 var jump_buffer:float = 0.0
 var hurt_time:float = 0.0
 var control_enabled:bool = true
+var intro_mode:bool = false
+var landing_recovery_time:float = 0.0
+var landing_recovery_duration:float = 0.85
 var dying:bool = false
 var death_hazard:String = ""
 var death_hazard_node:Node3D = null
@@ -37,6 +40,8 @@ var latched_count:int = 0
 var current_camera_distance:float = 11.0
 var air_wobble_time:float = 0.0
 var air_random_phase:float = 0.0
+var cutscene_active:bool = false
+var saved_cutscene_velocity:Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	visual = MODEL.instantiate()
@@ -83,7 +88,23 @@ func set_invincible(active_val:bool, _duration:float = 0.0) -> void:
 	if is_instance_valid(invincibility_aura):
 		invincibility_aura.visible = active_val
 
+func set_cutscene_active(val:bool) -> void:
+	cutscene_active = val
+	if val:
+		control_enabled = false
+		saved_cutscene_velocity = velocity
+		velocity = Vector3.ZERO
+		if is_instance_valid(animation_player) and animation_player.is_playing():
+			animation_player.pause()
+	else:
+		control_enabled = true
+		velocity = saved_cutscene_velocity
+		if is_instance_valid(animation_player) and not animation_player.is_playing():
+			animation_player.play()
+
 func _unhandled_input(event:InputEvent) -> void:
+	if cutscene_active or not control_enabled:
+		return
 	if event is InputEventMouseMotion and (Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) or Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE) or Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 		camera_yaw -= event.relative.x * 0.004
 		camera_pitch = clampf(camera_pitch - event.relative.y * 0.003, -0.65, 0.28)
@@ -93,6 +114,25 @@ func _physics_process(delta:float) -> void:
 	if hurt_time > 0.0:
 		hurt_time -= delta
 	_update_fart_puffs(delta)
+	if intro_mode or cutscene_active:
+		return
+	if landing_recovery_time > 0.0:
+		landing_recovery_time = maxf(landing_recovery_time - delta, 0.0)
+		control_enabled = false
+		velocity = Vector3.ZERO
+		var recover_progress := clampf((landing_recovery_duration - landing_recovery_time) / minf(0.9, landing_recovery_duration), 0.0, 1.0)
+		var recover_factor := ease(recover_progress, 0.5)
+		if is_instance_valid(visual):
+			visual.scale = Vector3(1.35, 0.60, 1.35).lerp(Vector3.ONE, recover_factor)
+			visual.position.y = lerpf(-0.22, 0.0, recover_factor)
+		if landing_recovery_time <= 0.0:
+			control_enabled = true
+			if is_instance_valid(visual):
+				visual.scale = Vector3.ONE
+				visual.position.y = 0.0
+		_play_animation("Walking")
+		move_and_slide()
+		return
 	if dying:
 		velocity = Vector3.ZERO
 		step_audio.stop()
@@ -263,6 +303,8 @@ func _update_fart_puffs(delta:float) -> void:
 			fart_puffs.remove_at(i)
 
 func _process(delta:float) -> void:
+	if intro_mode:
+		return
 	var look:Vector2 = Vector2(Input.get_axis("look_left", "look_right"), Input.get_axis("look_up", "look_down"))
 	if look.length_squared() > 0.02:
 		camera_yaw -= look.x * delta * 2.5
@@ -355,10 +397,10 @@ func set_latched(active_val:bool) -> void:
 		latched_count = maxi(latched_count - 1, 0)
 
 func is_immune_to_latch() -> bool:
-	return is_invincible or (jumps == 2 and not is_on_floor())
+	return cutscene_active or is_invincible or (jumps == 2 and not is_on_floor())
 
 func receive_damage(amount:float, source:Vector3) -> void:
-	if is_invincible or hurt_time > 0.0 or dying or not is_on_floor():
+	if cutscene_active or is_invincible or hurt_time > 0.0 or dying or not is_on_floor():
 		return
 	preparing_jump = false
 	jump_windup = 0.0
@@ -384,3 +426,12 @@ func receive_damage(amount:float, source:Vector3) -> void:
 		velocity = Vector3.ZERO
 		_play_animation("Casual_Walk")
 		get_parent().start_player_death("enemy")
+
+func start_landing_cooldown(duration: float = 0.85) -> void:
+	control_enabled = false
+	landing_recovery_time = duration
+	landing_recovery_duration = duration
+	velocity = Vector3.ZERO
+	if is_instance_valid(visual):
+		visual.scale = Vector3(1.35, 0.60, 1.35)
+		visual.position.y = -0.22

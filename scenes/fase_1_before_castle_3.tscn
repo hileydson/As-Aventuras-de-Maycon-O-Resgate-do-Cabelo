@@ -250,6 +250,48 @@ position = Vector2(2128, 907)
 [node name="maycon_itens" parent="." unique_id=2018509241 instance=ExtResource("1_1ljjb")]
 position = Vector2(1586, 683)
 
+[node name="Fase1BeforeCastle3" type="Sprite2D" parent="." unique_id=1932326557]
+position = Vector2(4138, 444)
+rotation = 1.5766972
+scale = Vector2(0.6956875, 1.4516056)
+texture = ExtResource("1_vjg2b")
+
+[node name="Fase1BeforeCastle4" type="Sprite2D" parent="." unique_id=1251402583]
+position = Vector2(4131, 2521.9998)
+rotation = 1.5766972
+scale = Vector2(0.6956875, 1.4516056)
+texture = ExtResource("1_vjg2b")
+
+[node name="Fase1BeforeCastle5" type="Sprite2D" parent="." unique_id=1046450710]
+position = Vector2(2038.0002, 2289)
+rotation = -3.1183167
+scale = Vector2(0.69568753, 1.4516056)
+texture = ExtResource("1_vjg2b")
+
+[node name="Fase1BeforeCastle6" type="Sprite2D" parent="." unique_id=305240187]
+position = Vector2(2062.9998, -960.99976)
+rotation = -3.1329777
+scale = Vector2(0.6956875, 1.4516056)
+texture = ExtResource("1_vjg2b")
+
+[node name="Fase1BeforeCastle7" type="Sprite2D" parent="." unique_id=644236140]
+position = Vector2(4277, -1037)
+rotation = -3.1329777
+scale = Vector2(0.6956875, 1.4516056)
+texture = ExtResource("1_vjg2b")
+
+[node name="Fase1BeforeCastle8" type="Sprite2D" parent="." unique_id=892056075]
+position = Vector2(4702.0005, 903.9999)
+rotation = 0.0011951287
+scale = Vector2(0.6956875, 1.4516056)
+texture = ExtResource("1_vjg2b")
+
+[node name="Fase1BeforeCastle9" type="Sprite2D" parent="." unique_id=2129153070]
+position = Vector2(1719, 2264)
+rotation = -3.1379333
+scale = Vector2(0.6956875, 1.4516057)
+texture = ExtResource("1_vjg2b")
+
 [node name="Fase1BeforeCastle" type="Sprite2D" parent="." unique_id=1510336538]
 process_mode = 1
 position = Vector2(1586, 683)
@@ -441,25 +483,99 @@ sprite_frames = SubResource("SpriteFrames_pyjnh")
 autoplay = "default"
 
 [node name="fogo8" type="AnimatedSprite2D" parent="." unique_id=1837495125]
+visible = false
 position = Vector2(2973.0002, 1228)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_pyjnh")
 autoplay = "default"
 
 [node name="fogo9" type="AnimatedSprite2D" parent="." unique_id=815597832]
+visible = false
 position = Vector2(3066.0002, 1243)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_pyjnh")
 autoplay = "default"
 
 [node name="fogo10" type="AnimatedSprite2D" parent="." unique_id=461547596]
-position = Vector2(3100, 1224)
+position = Vector2(3049.0002, 1113)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_pyjnh")
 autoplay = "default"
 
 [node name="fogo11" type="AnimatedSprite2D" parent="." unique_id=726866504]
-position = Vector2(3036, 1142)
+position = Vector2(3071.0002, 1147)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo12" type="AnimatedSprite2D" parent="." unique_id=186660730]
+position = Vector2(2819, 1607)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo13" type="AnimatedSprite2D" parent="." unique_id=532338525]
+position = Vector2(2950.0002, 1637)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo14" type="AnimatedSprite2D" parent="." unique_id=971199566]
+position = Vector2(3081.0002, 1647)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo15" type="AnimatedSprite2D" parent="." unique_id=1183950834]
+position = Vector2(3106.0002, 1586)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo16" type="AnimatedSprite2D" parent="." unique_id=936920878]
+position = Vector2(3116, 1525)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo17" type="AnimatedSprite2D" parent="." unique_id=244336935]
+position = Vector2(3116.0002, 1480)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo18" type="AnimatedSprite2D" parent="." unique_id=1126437731]
+position = Vector2(3101.0002, 1419)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo19" type="AnimatedSprite2D" parent="." unique_id=250142870]
+position = Vector2(3121, 1368)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo20" type="AnimatedSprite2D" parent="." unique_id=1360690013]
+position = Vector2(3136, 1355)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo21" type="AnimatedSprite2D" parent="." unique_id=1597725864]
+position = Vector2(3126, 1299)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo22" type="AnimatedSprite2D" parent="." unique_id=1345626868]
+position = Vector2(3111, 1228)
+scale = Vector2(9.375, 7.0416665)
+sprite_frames = SubResource("SpriteFrames_pyjnh")
+autoplay = "default"
+
+[node name="fogo23" type="AnimatedSprite2D" parent="." unique_id=1020101891]
+position = Vector2(3101.0002, 1208)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_pyjnh")
 autoplay = "default"

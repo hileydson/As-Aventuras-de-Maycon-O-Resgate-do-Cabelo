@@ -609,16 +609,44 @@ func take_hit_from_maycon() -> void:
 	if stage and stage.get("blood_overlay"):
 		stage.blood_overlay.call("flash")
 
-	# 4. Maycon recua com impacto dramático para não ficar grudado
-	if is_instance_valid(maycon):
-		var push_dir := (maycon.global_position - global_position).normalized()
-		if push_dir.length_squared() < 0.01:
-			push_dir = Vector3.BACK
-		maycon.velocity = Vector3(push_dir.x * 14.0, 9.0, push_dir.z * 14.0)
-
-	# 5. Derrota se zerar vida (4 acertos)
+	# 4. Derrota cinematográfica se zerar vida (4 acertos)
 	if hp <= 0:
-		_defeat_boss()
+		is_defeated = true
+		if model:
+			model.visible = true
+		if is_instance_valid(target_indicator):
+			target_indicator.visible = false
+		if is_instance_valid(bottom_smoke_particles):
+			bottom_smoke_particles.emitting = false
+		if is_instance_valid(air_trail_particles):
+			air_trail_particles.emitting = true
+		boss_defeated.emit()
+		if stage and stage.has_method("start_boss_lips_death_cutscene"):
+			stage.start_boss_lips_death_cutscene(self)
+		else:
+			_defeat_boss()
+		return
+
+	# 5. Se ainda tiver vida: é o Lips quem sofre o recuo/afastamento pelo poder do Maycon (Maycon não sofre recoil!)
+	var recoil_dir := (global_position - maycon.global_position).normalized() if is_instance_valid(maycon) else Vector3.ZERO
+	if recoil_dir.length_squared() < 0.01:
+		recoil_dir = -global_transform.basis.z
+	recoil_dir.y = 0.0
+	recoil_dir = recoil_dir.normalized()
+
+	var target_recoil_pos := global_position + recoil_dir * 5.2
+	var space := get_world_3d().direct_space_state
+	var ground_check := PhysicsRayQueryParameters3D.create(target_recoil_pos + Vector3.UP * 2.0, target_recoil_pos - Vector3.UP * 8.0, 1)
+	var ground_hit := space.intersect_ray(ground_check)
+	if ground_hit.is_empty():
+		target_recoil_pos = global_position + recoil_dir * 2.2
+
+	var lips_recoil_tw := create_tween().bind_node(self).set_parallel(true)
+	lips_recoil_tw.tween_property(self, "global_position", target_recoil_pos, 0.42).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if is_instance_valid(model):
+		var tilt_dir := -recoil_dir
+		lips_recoil_tw.tween_property(model, "rotation:x", model.rotation.x + tilt_dir.z * 0.45, 0.16).set_trans(Tween.TRANS_QUAD)
+		lips_recoil_tw.chain().tween_property(model, "rotation:x", 0.0, 0.28)
 
 func _spawn_boss_blood() -> void:
 	if not is_instance_valid(stage):

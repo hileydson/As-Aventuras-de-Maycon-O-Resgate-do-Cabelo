@@ -493,8 +493,31 @@ func _get_stomped() -> void:
 		struggle_widget.visible = false
 	active = false
 	monitoring = false
-	maycon.bounce()
+	var is_inv: bool = (is_instance_valid(stage) and stage.get("is_invincible") == true) or (is_instance_valid(maycon) and maycon.get("is_invincible") == true)
+	if not is_inv:
+		maycon.bounce()
+	else:
+		_launch_mini_seco_away()
 	stage.enemy_stomped(self)
+
+func _launch_mini_seco_away() -> void:
+	if not is_instance_valid(model) or not is_instance_valid(maycon):
+		return
+	var away := (global_position - maycon.global_position).normalized()
+	if away.length_squared() < 0.01:
+		away = Vector3(randf_range(-1.0, 1.0), 0.0, randf_range(-1.0, 1.0)).normalized()
+	if is_instance_valid(stage) and "effects" in stage:
+		var corpse := model.duplicate() as Node3D
+		corpse.position = global_position
+		corpse.rotation = model.rotation
+		corpse.scale = model.scale
+		stage.effects.add_child(corpse)
+		var fly_target := global_position + Vector3(away.x * 14.0, 7.0, away.z * 14.0)
+		var fly_tw := stage.create_tween().bind_node(corpse).set_parallel(true)
+		fly_tw.tween_property(corpse, "position", fly_target, 0.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		fly_tw.tween_property(corpse, "rotation", Vector3(randf_range(-10, 10), randf_range(-10, 10), randf_range(-10, 10)), 0.55)
+		fly_tw.tween_property(corpse, "scale", Vector3.ZERO, 0.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		fly_tw.chain().tween_callback(corpse.queue_free)
 
 func _start_latch() -> void:
 	state = State.LATCHED

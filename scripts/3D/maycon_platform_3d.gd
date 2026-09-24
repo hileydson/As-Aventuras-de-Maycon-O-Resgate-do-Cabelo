@@ -18,6 +18,10 @@ const ENEMY_EXPLOSION_SOUND = preload("res://assets/novos_audios/mario_part_soun
 const PICKUP_SOUND = preload("res://assets/audio/plim.mp3")
 const DAMAGE_PUNCH_SOUND = preload("res://assets/novos_audios/punch_3.mp3")
 const WOOD_BREAK_SOUND = preload("res://assets/novos_audios/mario_part_sounds/wood_barrier_break.mp3")
+const LANDING_SOUND = preload("res://assets/novos_audios/maycon_platform_landing.mp3")
+const FART_SMOKE = preload("res://assets/novas_imagens/effects/smoke_animation.png")
+const PUNCH_IMPACT_SOUND = preload("res://assets/novos_audios/punch.mp3")
+const FONT_CONTRAST = preload("res://assets/fonts/contrast.ttf")
 const BLADE_ROUTE_IDS = [2, 5, 8, 11]
 const HAND_HUB_IDS = [1, 4, 7, 10, 12]
 const HUBS = [
@@ -74,6 +78,7 @@ var pentagrams_collected_session:int = 0
 var special_ready:bool = false
 var invincible_overlay:CanvasLayer
 var lips_enemy:Node3D
+var cutscene_running:bool = false
 
 var pentagram_spawners:Dictionary = {}
 var boss_barrier:Node3D
@@ -83,6 +88,16 @@ var boss_hp_bar:ProgressBar
 var boss_hp_label:Label
 var boss_name_label:Label
 var path_open_announcement:Label
+var exit_arrow:Node3D
+var exit_arrow_mat:StandardMaterial3D
+var landing_audio:AudioStreamPlayer
+var intro_active:bool = true
+var intro_time:float = 0.0
+const INTRO_DURATION:float = 1.75
+const INTRO_P0 = Vector3(0.0, -5.5, 45.0)
+const INTRO_P1 = Vector3(0.0, 12.0, 48.5)
+const INTRO_P2 = Vector3(0.0, 9.5, 38.0)
+const INTRO_P3 = Vector3(0.0, 0.18, 32.0)
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -105,6 +120,10 @@ func _ready() -> void:
 	damage_punch_audio.stream = DAMAGE_PUNCH_SOUND
 	damage_punch_audio.volume_db = 0.0
 	add_child(damage_punch_audio)
+	landing_audio = AudioStreamPlayer.new()
+	landing_audio.stream = LANDING_SOUND
+	landing_audio.volume_db = 2.0
+	add_child(landing_audio)
 	_build_materials()
 	_build_environment()
 	geometry = Node3D.new()
@@ -141,8 +160,14 @@ func _ready() -> void:
 		last_invincible_milestone = Global.platform_pentagrams / 10
 		set_special_ready(true)
 	update_hud()
+	_start_intro()
 
 func _physics_process(delta:float) -> void:
+	if intro_active:
+		_process_intro(delta)
+		return
+	if cutscene_running:
+		return
 	if is_invincible:
 		invincibility_time_left = maxf(invincibility_time_left - delta, 0.0)
 		if invincibility_time_left <= 0.0:
@@ -175,6 +200,9 @@ func _physics_process(delta:float) -> void:
 			continue
 		item.rotate_y(delta * 1.3)
 		if item.global_position.distance_to(maycon.global_position + Vector3.UP * 0.9) < 1.35:
+			# Limite de 10 pentagramas para liberar o poder: não deixa pegar mais novos até ativar/gastar o poder
+			if Global.platform_pentagrams >= 10:
+				continue
 			_spawn_color_burst(item.global_position, true)
 			_play_pickup_sound(true)
 			Global.platform_pentagrams += 1
@@ -183,7 +211,7 @@ func _physics_process(delta:float) -> void:
 			item.queue_free()
 			if pentagram_spawners.has(id):
 				pentagram_spawners[id].active = false
-				pentagram_spawners[id].timer = 14.0
+				pentagram_spawners[id].timer = 28.0
 			Global.save_progress("fase_3d_platform")
 			update_hud()
 			_check_invincibility_milestone()
@@ -196,6 +224,17 @@ func _physics_process(delta:float) -> void:
 			if spawner.timer <= 0.0:
 				spawner.active = true
 				_respawn_pentagram(id, spawner.pos)
+
+	# Atualizar seta vermelha pulsando e flutuando em cima do buraco de saída da fase
+	if is_instance_valid(exit_arrow):
+		var t := Time.get_ticks_msec() * 0.001
+		exit_arrow.position.y = 4.8 + sin(t * 3.5) * 0.45
+		var scale_pulse := 1.0 + sin(t * 5.0) * 0.15
+		exit_arrow.scale = Vector3(scale_pulse, scale_pulse, scale_pulse)
+		exit_arrow.rotate_y(delta * 1.6)
+		if exit_arrow_mat:
+			var glow := 0.75 + sin(t * 6.5) * 0.25
+			exit_arrow_mat.albedo_color = Color(1.0, 0.12 * glow, 0.15 * glow, 0.95)
 
 func _build_materials() -> void:
 	materials["grass"] = _material(Color("529755"), 0.9)
@@ -415,7 +454,51 @@ func _build_finish() -> void:
 	beam.light_energy = 1.5
 	beam.omni_range = 6.0
 	add_child(beam)
+	_build_exit_arrow()
 	_build_giant_wooden_barrier()
+
+func _build_exit_arrow() -> void:
+	exit_arrow = Node3D.new()
+	exit_arrow.name = "ExitHoleArrow"
+	exit_arrow.position = Vector3(0.0, 4.8, -206.0)
+	
+	exit_arrow_mat = StandardMaterial3D.new()
+	exit_arrow_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	exit_arrow_mat.albedo_color = Color(1.0, 0.12, 0.15, 0.95)
+	
+	# Haste cilíndrica da seta
+	var shaft := MeshInstance3D.new()
+	var shaft_mesh := CylinderMesh.new()
+	shaft_mesh.top_radius = 0.35
+	shaft_mesh.bottom_radius = 0.35
+	shaft_mesh.height = 1.8
+	shaft_mesh.radial_segments = 16
+	shaft.mesh = shaft_mesh
+	shaft.material_override = exit_arrow_mat
+	shaft.position.y = 0.9
+	exit_arrow.add_child(shaft)
+	
+	# Ponta cônica invertida apontando diretamente para o buraco (para baixo)
+	var head := MeshInstance3D.new()
+	var head_mesh := CylinderMesh.new()
+	head_mesh.top_radius = 0.0
+	head_mesh.bottom_radius = 1.05
+	head_mesh.height = 1.4
+	head_mesh.radial_segments = 16
+	head.mesh = head_mesh
+	head.material_override = exit_arrow_mat
+	head.rotation.x = PI # Aponta para baixo
+	head.position.y = -0.4
+	exit_arrow.add_child(head)
+	
+	# Luz vermelha suave para destacar a seta e o buraco
+	var arrow_light := OmniLight3D.new()
+	arrow_light.light_color = Color(1.0, 0.2, 0.2)
+	arrow_light.light_energy = 2.2
+	arrow_light.omni_range = 7.0
+	exit_arrow.add_child(arrow_light)
+	
+	add_child(exit_arrow)
 
 func _build_giant_wooden_barrier() -> void:
 	boss_barrier = StaticBody3D.new()
@@ -1281,18 +1364,350 @@ func _build_fade() -> void:
 	layer.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(layer)
 	fade_rect = ColorRect.new()
-	fade_rect.color = Color.BLACK
+	fade_rect.color = Color.WHITE
 	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	layer.add_child(fade_rect)
 	maycon.control_enabled = false
 	var tween := create_tween().bind_node(fade_rect)
-	tween.tween_property(fade_rect, "modulate:a", 0.0, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(fade_rect, "modulate:a", 0.0, 1.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_callback(_finish_fade_in)
 
 func _finish_fade_in() -> void:
-	if not exit_started:
-		maycon.control_enabled = true
+	if not intro_active and not exit_started and is_instance_valid(maycon):
+		if maycon.get("landing_recovery_time") == null or maycon.landing_recovery_time <= 0.0:
+			maycon.control_enabled = true
+
+func _start_intro() -> void:
+	intro_active = true
+	intro_time = 0.0
+	if is_instance_valid(maycon):
+		maycon.intro_mode = true
+		maycon.control_enabled = false
+		maycon.global_position = INTRO_P0
+		maycon.velocity = Vector3.ZERO
+		if is_instance_valid(maycon.visual):
+			maycon.visual.rotation.x = -0.32
+			maycon.visual.rotation.y = PI
+			maycon.visual.rotation.z = 0.0
+		maycon._play_animation("Air_Flail")
+		if is_instance_valid(maycon.animation_player):
+			maycon.animation_player.speed_scale = 0.65
+		if is_instance_valid(maycon.camera):
+			var focus := INTRO_P0 + Vector3(0.0, 1.35, 0.0)
+			maycon.camera.global_position = focus + Vector3(0.0, 4.2, 11.0)
+			maycon.camera.look_at(focus, Vector3.UP)
+
+func _process_intro(delta: float) -> void:
+	intro_time += delta
+	var t := clampf(intro_time / INTRO_DURATION, 0.0, 1.0)
+	var pos := _bezier_3d(INTRO_P0, INTRO_P1, INTRO_P2, INTRO_P3, t)
+	
+	if is_instance_valid(maycon):
+		maycon.global_position = pos
+		maycon.velocity = Vector3.ZERO
+		maycon._play_animation("Air_Flail")
+		if is_instance_valid(maycon.animation_player):
+			maycon.animation_player.speed_scale = 0.65
+		if is_instance_valid(maycon.visual):
+			maycon.visual.rotation.y = PI
+			var target_pitch := -0.32 if t < 0.52 else 0.28
+			maycon.visual.rotation.x = lerpf(maycon.visual.rotation.x, target_pitch, minf(delta * 9.0, 1.0))
+			maycon.visual.rotation.z = sin(intro_time * 5.5) * 0.07
+		
+		if is_instance_valid(maycon.camera):
+			var focus := pos + Vector3(0.0, 1.35, 0.0)
+			var desired_cam := focus + Vector3(0.0, 4.2, 11.0)
+			maycon.camera.global_position = maycon.camera.global_position.lerp(desired_cam, minf(delta * 9.0, 1.0))
+			maycon.camera.look_at(focus, Vector3.UP)
+	
+	if t >= 1.0:
+		_finish_intro()
+
+func _finish_intro() -> void:
+	intro_active = false
+	if is_instance_valid(maycon):
+		maycon.global_position = INTRO_P3
+		maycon.velocity = Vector3.ZERO
+		maycon.intro_mode = false
+		if is_instance_valid(maycon.visual):
+			maycon.visual.rotation.x = 0.0
+			maycon.visual.rotation.z = 0.0
+			maycon.visual.rotation.y = PI
+		maycon._play_animation("Walking")
+		maycon.camera_shake = 0.65
+		if maycon.has_method("start_landing_cooldown"):
+			maycon.start_landing_cooldown(4.4)
+		else:
+			maycon.control_enabled = false
+	
+	if is_instance_valid(landing_audio):
+		landing_audio.pitch_scale = randf_range(0.96, 1.04)
+		landing_audio.play()
+	
+	_spawn_landing_dust(INTRO_P3)
+	_show_super_maycon_brother_banner()
+
+func _show_super_maycon_brother_banner() -> void:
+	var title_layer := CanvasLayer.new()
+	title_layer.name = "SuperMayconTitleLayer"
+	title_layer.layer = 35
+	title_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(title_layer)
+	
+	var root_ctrl := Control.new()
+	root_ctrl.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root_ctrl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title_layer.add_child(root_ctrl)
+	
+	var title_box := Control.new()
+	title_box.set_anchors_preset(Control.PRESET_CENTER)
+	title_box.custom_minimum_size = Vector2(980.0, 160.0)
+	title_box.size = Vector2(980.0, 160.0)
+	title_box.pivot_offset = Vector2(490.0, 80.0)
+	title_box.position = -title_box.pivot_offset
+	title_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root_ctrl.add_child(title_box)
+	
+	var glow := ColorRect.new()
+	glow.set_anchors_preset(Control.PRESET_CENTER)
+	glow.size = Vector2(850.0, 130.0)
+	glow.position = -glow.size * 0.5 + Vector2(490.0, 80.0)
+	glow.color = Color(1.0, 0.90, 0.45, 0.22)
+	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title_box.add_child(glow)
+	
+	var label := RichTextLabel.new()
+	label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.bbcode_enabled = true
+	label.fit_content = true
+	label.scroll_active = false
+	label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	
+	label.add_theme_font_override("normal_font", FONT_CONTRAST)
+	label.add_theme_font_size_override("normal_font_size", 68)
+	label.add_theme_constant_override("outline_size", 16)
+	label.add_theme_color_override("font_outline_color", Color(0.06, 0.06, 0.10, 1.0))
+	label.add_theme_constant_override("shadow_offset_x", 6)
+	label.add_theme_constant_override("shadow_offset_y", 8)
+	label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.9))
+	
+	var title_text := tr("PLATFORM_TITLE_SUPER_MAYCON")
+	var rainbow_colors := [
+		"#FF2D55", "#FF9500", "#FFCC00", "#34C759", "#00B0FF",
+		"#AF52DE", "#FF3B30", "#FFD60A", "#30D158", "#00C7BE",
+		"#BF5AF2", "#FF2D55", "#FF9500", "#FFCC00", "#34C759",
+		"#00B0FF", "#AF52DE", "#FF3B30", "#FFD60A", "#30D158"
+	]
+	var bbcode := "[center][wave amp=28.0 freq=4.0]"
+	var color_idx := 0
+	for char in title_text:
+		if char == " ":
+			bbcode += "  "
+		else:
+			var col: String = rainbow_colors[color_idx % rainbow_colors.size()]
+			bbcode += "[color=" + col + "]" + char + "[/color]"
+			color_idx += 1
+	bbcode += "[/wave][/center]"
+	label.text = bbcode
+	title_box.add_child(label)
+	
+	var punch_audio := AudioStreamPlayer.new()
+	punch_audio.stream = PUNCH_IMPACT_SOUND
+	punch_audio.volume_db = 4.0
+	add_child(punch_audio)
+	
+	title_box.scale = Vector2(3.2, 3.2)
+	title_box.modulate.a = 0.0
+	
+	var tw := create_tween().bind_node(title_box)
+	tw.set_parallel(true)
+	tw.tween_property(title_box, "scale", Vector2.ONE, 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(title_box, "modulate:a", 1.0, 0.12)
+	tw.chain().tween_callback(func():
+		punch_audio.play()
+		if is_instance_valid(maycon) and "camera_shake" in maycon:
+			maycon.camera_shake = 0.6
+		var viewport_center := root_ctrl.get_viewport_rect().size * 0.5
+		_spawn_purpurina(root_ctrl, viewport_center)
+	)
+	
+	# Momento com a frase na tela demorando bem mais (3.8s)
+	tw.chain().tween_interval(3.8)
+	tw.chain().tween_property(title_box, "scale", Vector2(1.18, 1.18), 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(title_box, "modulate:a", 0.0, 0.4)
+	tw.chain().tween_callback(func():
+		title_layer.queue_free()
+		punch_audio.queue_free()
+		if is_instance_valid(maycon) and not exit_started and not death_in_progress:
+			maycon.control_enabled = true
+	)
+
+func _spawn_purpurina(parent: Control, center: Vector2) -> void:
+	if not is_instance_valid(parent):
+		return
+	
+	var glitter_colors := [
+		Color("ffd700"), Color("fff066"), Color("ffffff"), Color("ff5fa2"),
+		Color("00e5ff"), Color("b388ff"), Color("76ff03"), Color("ff9100"),
+		Color("ff4081"), Color("ffff00"), Color("e040fb"), Color("64ffda")
+	]
+	
+	# 1. Grande explosão radial de purpurina (70 fragmentos cintilantes)
+	var count := 70
+	for i in range(count):
+		var star := Polygon2D.new()
+		var r := randf_range(7.0, 16.0)
+		var star_points := PackedVector2Array([
+			Vector2(0, -r),
+			Vector2(r * 0.32, -r * 0.32),
+			Vector2(r, 0),
+			Vector2(r * 0.32, r * 0.32),
+			Vector2(0, r),
+			Vector2(-r * 0.32, r * 0.32),
+			Vector2(-r, 0),
+			Vector2(-r * 0.32, -r * 0.32)
+		])
+		star.polygon = star_points
+		star.color = glitter_colors[i % glitter_colors.size()]
+		star.position = center + Vector2(randf_range(-160.0, 160.0), randf_range(-30.0, 30.0))
+		star.scale = Vector2.ONE * randf_range(0.4, 0.8)
+		parent.add_child(star)
+		
+		var angle := randf_range(0.0, TAU)
+		var dist := randf_range(180.0, 560.0)
+		var target_pos := center + Vector2(cos(angle) * dist * 1.5, sin(angle) * dist)
+		var duration := randf_range(1.6, 2.5)
+		
+		var tw := create_tween().bind_node(star).set_parallel(true)
+		tw.tween_property(star, "position", target_pos, duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		tw.tween_property(star, "rotation", randf_range(-14.0, 14.0), duration)
+		tw.tween_property(star, "scale", Vector2.ONE * randf_range(1.1, 1.8), duration * 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw.chain().tween_property(star, "scale", Vector2.ZERO, duration * 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.parallel().tween_property(star, "modulate:a", 0.0, duration * 0.6)
+		tw.chain().tween_callback(star.queue_free)
+	
+	# 2. Purpurina flutuante contínua cintilando ao longo de toda a exibição (65 sparkles)
+	for i in range(65):
+		var sparkle := Polygon2D.new()
+		var r := randf_range(5.0, 12.0)
+		sparkle.polygon = PackedVector2Array([
+			Vector2(0, -r), Vector2(r * 0.28, 0), Vector2(0, r), Vector2(-r * 0.28, 0)
+		])
+		sparkle.color = glitter_colors[randi() % glitter_colors.size()]
+		var offset := Vector2(randf_range(-460.0, 460.0), randf_range(-80.0, 80.0))
+		sparkle.position = center + offset
+		sparkle.scale = Vector2.ZERO
+		parent.add_child(sparkle)
+		
+		var delay := randf_range(0.05, 3.2)
+		var float_dur := randf_range(1.0, 1.6)
+		var float_tw := create_tween().bind_node(sparkle)
+		float_tw.tween_interval(delay)
+		float_tw.tween_property(sparkle, "scale", Vector2.ONE * randf_range(0.9, 1.6), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		float_tw.parallel().tween_property(sparkle, "rotation", randf_range(-4.5, 4.5), float_dur)
+		float_tw.parallel().tween_property(sparkle, "position:y", sparkle.position.y - randf_range(25.0, 75.0), float_dur)
+		float_tw.tween_property(sparkle, "scale", Vector2.ZERO, 0.4)
+		float_tw.parallel().tween_property(sparkle, "modulate:a", 0.0, 0.4)
+		float_tw.chain().tween_callback(sparkle.queue_free)
+
+func _bezier_3d(p0: Vector3, p1: Vector3, p2: Vector3, p3: Vector3, t: float) -> Vector3:
+	var u := 1.0 - t
+	var tt := t * t
+	var uu := u * u
+	var uuu := uu * u
+	var ttt := tt * t
+	return uuu * p0 + 3.0 * uu * t * p1 + 3.0 * u * tt * p2 + ttt * p3
+
+func _spawn_landing_dust(at: Vector3) -> void:
+	if not is_instance_valid(effects):
+		return
+	
+	var puff_count := 18
+	for i in range(puff_count):
+		var angle := float(i) / float(puff_count) * TAU + randf_range(-0.12, 0.12)
+		var dir := Vector3(cos(angle), 0.0, sin(angle))
+		var puff := Sprite3D.new()
+		puff.texture = FART_SMOKE
+		puff.hframes = 3
+		puff.vframes = 2
+		puff.frame = randi_range(0, 2)
+		puff.pixel_size = randf_range(0.012, 0.018)
+		puff.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		puff.shaded = false
+		puff.transparent = true
+		puff.double_sided = true
+		puff.position = at + dir * 0.35 + Vector3(0.0, 0.15, 0.0)
+		var tone := randf_range(0.82, 0.94)
+		puff.modulate = Color(tone, tone * 0.94, tone * 0.82, randf_range(0.80, 0.95))
+		puff.scale = Vector3.ONE * 0.4
+		effects.add_child(puff)
+		
+		var target_pos := at + dir * randf_range(2.6, 4.2) + Vector3(0.0, randf_range(0.2, 0.7), 0.0)
+		var duration := randf_range(0.65, 0.95)
+		var tw := create_tween().bind_node(puff).set_parallel(true)
+		tw.tween_property(puff, "position", target_pos, duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		tw.tween_property(puff, "scale", Vector3.ONE * randf_range(1.6, 2.5), duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw.tween_property(puff, "modulate:a", 0.0, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.chain().tween_callback(puff.queue_free)
+	
+	for i in range(8):
+		var center_puff := Sprite3D.new()
+		center_puff.texture = FART_SMOKE
+		center_puff.hframes = 3
+		center_puff.vframes = 2
+		center_puff.frame = randi_range(1, 3)
+		center_puff.pixel_size = randf_range(0.015, 0.022)
+		center_puff.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		center_puff.shaded = false
+		center_puff.transparent = true
+		center_puff.double_sided = true
+		center_puff.position = at + Vector3(randf_range(-0.4, 0.4), randf_range(0.1, 0.35), randf_range(-0.4, 0.4))
+		var tone := randf_range(0.86, 0.96)
+		center_puff.modulate = Color(tone, tone * 0.93, tone * 0.85, randf_range(0.75, 0.90))
+		center_puff.scale = Vector3.ONE * 0.5
+		effects.add_child(center_puff)
+		
+		var lift_pos := center_puff.position + Vector3(randf_range(-0.5, 0.5), randf_range(1.2, 2.2), randf_range(-0.5, 0.5))
+		var duration := randf_range(0.75, 1.1)
+		var center_tw := create_tween().bind_node(center_puff).set_parallel(true)
+		center_tw.tween_property(center_puff, "position", lift_pos, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		center_tw.tween_property(center_puff, "scale", Vector3.ONE * randf_range(2.0, 3.2), duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		center_tw.tween_property(center_puff, "modulate:a", 0.0, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		center_tw.chain().tween_callback(center_puff.queue_free)
+	
+	var dust_mesh := BoxMesh.new()
+	dust_mesh.size = Vector3(0.12, 0.12, 0.12)
+	var dust_mat := StandardMaterial3D.new()
+	dust_mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	dust_mat.albedo_color = Color("8c6a46")
+	
+	for i in range(24):
+		var particle := MeshInstance3D.new()
+		particle.mesh = dust_mesh
+		particle.material_override = dust_mat
+		particle.position = at + Vector3(randf_range(-0.3, 0.3), 0.2, randf_range(-0.3, 0.3))
+		particle.scale = Vector3.ONE * randf_range(0.6, 1.3)
+		effects.add_child(particle)
+		
+		var spread_angle := randf_range(0.0, TAU)
+		var spread_dist := randf_range(1.4, 3.2)
+		var end_pos := at + Vector3(cos(spread_angle) * spread_dist, randf_range(0.1, 0.3), sin(spread_angle) * spread_dist)
+		var peak_y := at.y + randf_range(1.2, 2.5)
+		
+		var part_tw := create_tween().bind_node(particle)
+		part_tw.set_parallel(true)
+		part_tw.tween_property(particle, "position:x", end_pos.x, 0.65).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		part_tw.tween_property(particle, "position:z", end_pos.z, 0.65).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		part_tw.tween_property(particle, "rotation", Vector3(randf_range(-6, 6), randf_range(-6, 6), randf_range(-6, 6)), 0.65)
+		
+		var y_tw := create_tween().bind_node(particle)
+		y_tw.tween_property(particle, "position:y", peak_y, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		y_tw.tween_property(particle, "position:y", end_pos.y, 0.37).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		
+		part_tw.chain().tween_property(particle, "scale", Vector3.ZERO, 0.15)
+		part_tw.chain().tween_callback(particle.queue_free)
 
 func _build_hud() -> void:
 	var canvas := CanvasLayer.new()
