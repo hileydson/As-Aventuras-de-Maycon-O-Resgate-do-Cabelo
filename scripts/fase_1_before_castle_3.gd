@@ -159,7 +159,7 @@ func _update_seco_intro(delta:float) -> void:
 			create_tween().tween_property(intro_scream, "volume_db", -30.0, 0.8)
 			intro_kick.play()
 			var maycon_scream:AudioStreamPlayer = AudioStreamPlayer.new()
-			maycon_scream.stream = preload("res://assets/novos_audios/maycon_falling_fase_1.mp3")
+			maycon_scream.stream = preload("res://assets/novos_audios/maycon_falling_fase_1_transition.mp3")
 			maycon_scream.volume_db = -3.0
 			Global.add_child(maycon_scream)
 			maycon_scream.finished.connect(maycon_scream.queue_free)
@@ -198,6 +198,9 @@ func _on_dead_line_body_entered(body: Node2D) -> void:
 	if body != maycon_fase || entering_well:
 		return
 	entering_well = true
+	var battle_intro:AnimationPlayer = get_tree().current_scene.get_node_or_null("battle/Cenario de batalha/batalha_moves") as AnimationPlayer
+	if battle_intro && battle_intro.has_method("suppress_opening_explosion"):
+		battle_intro.suppress_opening_explosion()
 	maycon_fase.velocity = Vector2.ZERO
 	maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
 	Global.start_well_entry_scream()

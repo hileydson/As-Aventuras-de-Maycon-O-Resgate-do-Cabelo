@@ -3566,7 +3566,7 @@ Objects.png::CompressedTexture2D::2603308936418570908::1767636737::1767636737::1
 Rotating_blades.png::CompressedTexture2D::6149366124704441297::1767636737::1767636737::1::::<><><>0<>0<>2fca820f122e19df28bb2db13d324fce<>res://.godot/imported/Rotating_blades.png-778390e24f5b94daf7df31c4f7d64871.ctex::
 scull.png::CompressedTexture2D::924674051756614918::1767636737::1767636737::1::::<><><>0<>0<>88eb904c1d7beb8167d968b4d6b1cae2<>res://.godot/imported/scull.png-4bd9b4129b919690a5980b9d4505cce9.ctex::
 web.png::CompressedTexture2D::1665521307035554969::1767636737::1767636737::1::::<><><>0<>0<>2c41fd68a1281a64f1d37785b533eed3<>res://.godot/imported/web.png-555c1399ada65fb9f4e6bf50c2102997.ctex::
-::res://assets/novos_audios/::1790259872
+::res://assets/novos_audios/::1790260995
 3d_first_battle_seco.mp3::AudioStreamMP3::9112742089382917435::1769799971::1769800042::1::::<><><>0<>0<>58169ca5379430dc1b6d26419f4d403f<>res://.godot/imported/3d_first_battle_seco.mp3-e99bf30f277278144a0a538012a2b91d.mp3str::
 balao_conversa.mp3::AudioStreamMP3::7050655661624707243::1770925133::1770925139::1::::<><><>0<>0<>a117f8ff1f77e4f280e68d2751a017bb<>res://.godot/imported/balao_conversa.mp3-67afbdd3f08c480ed2a2a7a0d42c9703.mp3str::
 barulho_gilhotina.mp3::AudioStreamMP3::8054641206314790354::1768242746::1768242795::1::::<><><>0<>0<>3bb2122a6b5ff28702a9719956e80f60<>res://.godot/imported/barulho_gilhotina.mp3-e1cb096fd5e9330e98b66e2f8bd0d47b.mp3str::
@@ -3596,7 +3596,7 @@ jamelao_song.mp3::AudioStreamMP3::6014226010079025805::1767636737::1767636737::1
 jamelao_song__.mp3::AudioStreamMP3::1530985086709736776::1767636737::1767636737::1::::<><><>0<>0<>dcf874773f44775c0af00b1b08f6b540<>res://.godot/imported/jamelao_song__.mp3-f18c534fbb90781cb9c16e7b36486ec1.mp3str::
 kick.mp3::AudioStreamMP3::1871951467951622464::1767636737::1767636737::1::::<><><>0<>0<>a692f05dc12f0142b05e355762ecd434<>res://.godot/imported/kick.mp3-c5cb215c7134f8b4fc76f664dcb1eb81.mp3str::
 maycon_falling_fase_1.mp3::AudioStreamMP3::715838324561866592::1767636737::1767636737::1::::<><><>0<>0<>7a65c6b4c2de35183ed21974ca527428<>res://.godot/imported/maycon_falling_fase_1.mp3-cf0d01a7e091543740b8c0557d6753db.mp3str::
-maycon_falling_fase_1_no_blast.mp3::AudioStreamMP3::4805785826644319115::1790259872::1790260139::1::::<><><>0<>0<>15f09f4cf7274badb8b57f0497b4baa4<>res://.godot/imported/maycon_falling_fase_1_no_blast.mp3-c5842f58a43db5463541c9fc8426fb8d.mp3str::
+maycon_falling_fase_1_transition.mp3::AudioStreamMP3::2888908327687717771::1790260870::1790261057::1::::<><><>0<>0<>b63a0b6a02bb7632bd413883863bd570<>res://.godot/imported/maycon_falling_fase_1_transition.mp3-6d201b78ea120165fdb510e46a93ecc7.mp3str::
 maycon_platform_landing.mp3::AudioStreamMP3::2930489128637354731::1790216476::1790216478::1::::<><><>0<>0<>b993a07aa7839762412a6328cbab109f<>res://.godot/imported/maycon_platform_landing.mp3-a427a25f1b5502026e5e97ae628fa22f.mp3str::
 metal_batendo.mp3::AudioStreamMP3::2883176126387864187::1768245014::1768245030::1::::<><><>0<>0<>a1f272c2428e414072b510bd80073739<>res://.godot/imported/metal_batendo.mp3-7cc83f903c2dba0178b70df9fbdb42cf.mp3str::
 mk_dudun.mp3::AudioStreamMP3::4600405516911073507::1767636737::1767636737::1::::<><><>0<>0<>9b9ab0a066a819f866170ec9b9251b2b<>res://.godot/imported/mk_dudun.mp3-53b0bfae55b8e7dbc5edfc1d41039d97.mp3str::
@@ -3842,7 +3842,7 @@ configuracoes_dialog.tscn::PackedScene::4339851293418817919::1790256482::0::1:::
 maycon_itens.tscn::PackedScene::6963755944896746500::1769775609::0::1::::<><><>0<>0<><>::uid://broav1jkk1nk1::::res://scripts/maycon_itens.gd<>uid://30tsd1l3hqfw::::res://assets/novas_imagens/objects/Items.png<>uid://b8xm3n05un7xf::::res://assets/novas_imagens/effects/Explosion/1.png<>uid://dlowt45jrflns::::res://assets/novas_imagens/effects/Explosion/3.png
 ::res://scripts/::1790217399
 balao_conversa.gd::GDScript::6627363207731980991::1790094698::0::1::::<>CanvasLayer<><>0<>0<><>::
-batalha.gd::GDScript::7248754106168415276::1790171814::0::1::::<>AnimationPlayer<><>0<>0<><>::
+batalha.gd::GDScript::7248754106168415276::1790260951::0::1::::<>AnimationPlayer<><>0<>0<><>::
 battle_3d.gd::GDScript::5694209551412885657::1767636737::0::1::::<>Camera3D<><>0<>0<><>::
 battle_mode_selection.gd::GDScript::1174737547514756521::1790095213::0::1::::<>Control<><>0<>0<><>::
 caixa.gd::GDScript::7282922310310176152::1770228608::0::1::::<>Sprite2D<><>0<>0<><>::
@@ -3857,7 +3857,7 @@ effect_stage_show.gd::GDScript::684586504690271007::1767636737::0::1::::<>Animat
 explosao.gd::GDScript::6255021781690688224::1767836030::0::1::::<>CPUParticles2D<><>0<>0<><>::
 fase_1_before_castle_1.gd::GDScript::6635833604853315044::1790094794::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_2.gd::GDScript::3133076191879326939::1768258387::0::1::::<>Sprite2D<><>0<>0<><>::
-fase_1_before_castle_3.gd::GDScript::6184730094203413863::1790258862::0::1::::<>Sprite2D<><>0<>0<><>::
+fase_1_before_castle_3.gd::GDScript::6184730094203413863::1790260958::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_4.gd::GDScript::2154952988607779227::1790177896::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_castle_1.gd::GDScript::102494842549205663::1769783164::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_castle_2.gd::GDScript::3502049742876632077::1770302202::0::1::::<>Sprite2D<><>0<>0<><>::
@@ -3869,8 +3869,8 @@ fase_1_outside_castle_again_no_fire_2.gd::GDScript::6243358031740958106::1790020
 fase_1_outside_castle_again_no_fire_3.gd::GDScript::1824109410800073102::1790094775::0::1::::<>Sprite2D<><>0<>0<><>::
 game.gd::GDScript::676883979450412678::1789995246::0::1::::<>Node2D<><>0<>0<><>::
 game_songs.gd::GDScript::614287363896591786::1790190803::0::1::::<>Node2D<><>0<>0<><>::
-Global.gd::GDScript::2969336717215221737::1790256722::0::1::::<>Node<><>0<>0<><>::
-hp.gd::GDScript::5708940543160946882::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
+Global.gd::GDScript::2969336717215221737::1790260951::0::1::::<>Node<><>0<>0<><>::
+hp.gd::GDScript::5708940543160946882::1790260951::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 intro_batalha_frozen_effect.gd::GDScript::6657063382709979058::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 intro_game.gd::GDScript::1191826035399765642::1767636737::0::1::::<>VideoStreamPlayer<><>0<>0<><>::
 intro_historia.gd::GDScript::126320934224770046::1790094682::0::1::::<>Control<><>0<>0<><>::
@@ -3892,7 +3892,7 @@ realtime_battle_foreground.gd::GDScript::2882700291306978348::1790000216::0::1::
 realtime_battle_specials.gd::GDScript::594959556313240947::1790095167::0::1::::<>Node2D<><>0<>0<><>::
 sangue_fill.gd::GDScript::6760165581029737568::1789961722::0::1::::<>Area2D<><>0<>0<><>::
 seco.gd::GDScript::1005395561379310119::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-secos_invader.gd::GDScript::6531996241197983491::1790258582::0::1::::<>Node2D<><>0<>0<><>::
+secos_invader.gd::GDScript::6531996241197983491::1790260951::0::1::::<>Node2D<><>0<>0<><>::
 secos_invader_fireball.gd::GDScript::-1::1790217238::0::1::::<>Node2D<><>0<>0<><>::
 secos_invader_pause.gd::GDScript::-1::1790217238::0::1::::<>CanvasLayer<><>0<>0<><>::
 two_layers_fps_mode.gd::GDScript::-1::1770925133::0::1::::<>Node3D<><>0<>0<><>::
@@ -3909,7 +3909,7 @@ inimigo_3d_default.gd::GDScript::8339874909618318337::1790032513::0::1::::<>Char
 inimigo_bomba_pretti_3d.gd::GDScript::1560456019525848244::1769970166::0::1::::<>CharacterBody3D<><>0<>0<><>::
 lamp.gd::GDScript::7790728560667219145::1770063258::0::1::::<>Area3D<><>0<>0<><>::
 last_part_before_end.gd::GDScript::5006405053871241004::1790129985::0::1::::<>Node3D<><>0<>0<><>::
-maycon_platform_3d.gd::GDScript::1218032320144234282::1790259029::0::1::::<>Node3D<><>0<>0<><>::
+maycon_platform_3d.gd::GDScript::1218032320144234282::1790260511::0::1::::<>Node3D<><>0<>0<><>::
 object_3d.gd::GDScript::9078826269963351129::1769912058::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d.gd::GDScript::7171831727451377016::1790094648::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d_moto_cidade.gd::GDScript::6726714682699407671::1790129014::0::1::::<>Node3D<><>0<>0<><>::
@@ -3935,15 +3935,15 @@ torcha_3d.gd::GDScript::615674382515287521::1770238924::0::1::::<>Node3D<><>0<>0
 world_3d.gd::GDScript::390495286410503036::1790171676::0::1::::<>Node3D<><>0<>0<><>::
 ::res://scripts/inimigos/::1789953371
 enemy_data.gd::GDScript::5291297442027347434::1768420697::0::1::::<>Node2D<><>0<>0<><>::
-inimigo_1.gd::GDScript::9091500814300405403::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-inimigo_bomba_pretti.gd::GDScript::4437398683527321362::1789994034::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-inimigo_boss_seco.gd::GDScript::1067754854763735143::1790020849::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-inimigo_camilita.gd::GDScript::723427351081780412::1789994034::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-inimigo_fofo.gd::GDScript::1646365888988713657::1789994034::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-inimigo_manga.gd::GDScript::2159721504695700621::1789994034::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-inimigo_xuruzika.gd::GDScript::3730474420872568580::1789994034::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
+inimigo_1.gd::GDScript::9091500814300405403::1790260209::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
+inimigo_bomba_pretti.gd::GDScript::4437398683527321362::1790260236::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
+inimigo_boss_seco.gd::GDScript::1067754854763735143::1790260293::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
+inimigo_camilita.gd::GDScript::723427351081780412::1790260222::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
+inimigo_fofo.gd::GDScript::1646365888988713657::1790260252::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
+inimigo_manga.gd::GDScript::2159721504695700621::1790260279::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
+inimigo_xuruzika.gd::GDScript::3730474420872568580::1790260267::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 ::res://scripts/menus/::1790087580
-configuracoes_dialog.gd::GDScript::5435864756212849056::1790256302::0::1::::<>CanvasLayer<><>0<>0<><>::
+configuracoes_dialog.gd::GDScript::5435864756212849056::1790260183::0::1::::<>CanvasLayer<><>0<>0<><>::
 ::res://terrain_3d_data/::1770136386
 terrain3d-01-01.res::Terrain3DRegion::876206289458360874::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d-01-02.res::Terrain3DRegion::5592144705733295144::1770136386::0::1::::<><><>0<>0<><>::
@@ -3951,7 +3951,7 @@ terrain3d-01_00.res::Terrain3DRegion::4979166056605722663::1770136386::0::1::::<
 terrain3d_00-01.res::Terrain3DRegion::5019486532651089028::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00-02.res::Terrain3DRegion::3854885546111145601::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00_00.res::Terrain3DRegion::4948174298051947078::1770136386::0::1::::<><><>0<>0<><>::
-::res://translations/::1790219441
+::res://translations/::1790260139
 game_text.csv::Translation::1292654866392114924::1790260123::1790260139::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
 game_text.en.translation::OptimizedTranslation::1712006235640866847::1790260139::0::1::::<><><>0<>0<><>::
 game_text.es.translation::OptimizedTranslation::9151324834628544493::1790260139::0::1::::<><><>0<>0<><>::

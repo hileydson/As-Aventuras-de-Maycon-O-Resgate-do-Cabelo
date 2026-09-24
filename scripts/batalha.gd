@@ -334,6 +334,9 @@ func _process(delta: float) -> void:
 func suppress_opening_explosion() -> void:
 	suppress_next_opening_explosion = true
 	explosao.stop()
+	for hp_node in [$"../hp_1", $"../hp_2", $"../hp_3"]:
+		if hp_node.has_method("suppress_explosion_sound_once"):
+			hp_node.suppress_explosion_sound_once()
 
 func control_attack_power() -> void:
 	if timer_power.time_left!=0.0 && timer_power.time_left<2.0:

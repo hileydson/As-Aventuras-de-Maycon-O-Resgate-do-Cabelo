@@ -7,7 +7,7 @@ const language_zh = "zh"
 const battle_mode_realtime = "realtime"
 const battle_mode_strategic = "strategic"
 const realtime_enemy_respawn_seconds:float = 75.0
-const WELL_ENTRY_SCREAM:AudioStreamMP3 = preload("res://assets/novos_audios/maycon_falling_fase_1.mp3")
+const WELL_ENTRY_SCREAM:AudioStreamMP3 = preload("res://assets/novos_audios/maycon_falling_fase_1_transition.mp3")
 
 var load_from_castle_1:bool = false
 var load_from_outside_1:bool = false

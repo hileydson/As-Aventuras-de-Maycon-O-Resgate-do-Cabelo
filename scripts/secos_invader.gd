@@ -311,6 +311,7 @@ func _update_intro(delta:float) -> void:
 		seco.position.y = lerpf(screen.y + 110.0, screen.y - 105.0, smoothstep(2.55, 4.9, intro_time))
 	if intro_time >= 3.55 && intro_time - delta < 3.55:
 		title.modulate.a = 1.0
+		punch.play()
 		_spawn_sparks(Vector2(screen.x * 0.5, screen.y * 0.49), 45, Color(0.65, 0.17, 1.0))
 	if intro_time > 5.1:
 		title.modulate.a = maxf(0.0, 1.0 - (intro_time - 5.1) * 0.78)
