@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b23iyms3w1v1h"]
 
-[ext_resource type="Script" uid="uid://dnukveey38m7" path="res://scripts/menus/configuracoes_dialog.gd" id="1_x8q1y"]
+[ext_resource type="Script" uid="uid://cjpf5sqs3bkou" path="res://scripts/menus/configuracoes_dialog.gd" id="1_x8q1y"]
 [ext_resource type="FontFile" uid="uid://b1o834pgp267n" path="res://assets/fonts/contrast.ttf" id="2_y8q2z"]
 
 [node name="ConfiguracoesDialog" type="CanvasLayer"]
@@ -129,6 +129,7 @@ text = "Eventos do Jogo (game_events):"
 [node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+follow_focus = true
 horizontal_scroll_mode = 0
 
 [node name="DebugEventsContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer/ScrollContainer"]

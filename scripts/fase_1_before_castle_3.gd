@@ -13,6 +13,7 @@ var seco_intro_started:bool = false
 var seco_intro_time:float = 0.0
 var intro_camera:Camera2D
 var intro_kick:AudioStreamPlayer
+var intro_scream:AudioStreamPlayer
 var intro_blur:ColorRect
 var intro_black:ColorRect
 
@@ -47,6 +48,10 @@ func _ready() -> void:
 	intro_kick = AudioStreamPlayer.new()
 	intro_kick.stream = preload("res://assets/novos_audios/kick.mp3")
 	add_child(intro_kick)
+	intro_scream = AudioStreamPlayer.new()
+	intro_scream.stream = preload("res://assets/novos_audios/seco_scream.mp3")
+	intro_scream.volume_db = -5.0
+	add_child(intro_scream)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -90,6 +95,13 @@ func _start_seco_intro() -> void:
 		return
 	entering_well = true
 	seco_intro_started = true
+	for song in GameSongs.get_children():
+		if song is AudioStreamPlayer:
+			song.stop()
+	var battle_song:AudioStreamPlayer2D = get_tree().current_scene.get_node_or_null("battle/Cenario de batalha/Battle_Song") as AudioStreamPlayer2D
+	if battle_song:
+		battle_song.stop()
+	intro_scream.play()
 	maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
 	maycon_fase.velocity = Vector2.ZERO
 	seco.visible = true
@@ -141,7 +153,14 @@ func _update_seco_intro(delta:float) -> void:
 		intro_camera.global_position = intro_camera.global_position.lerp(seco.global_position, minf(1.0, delta * 7.0))
 	elif seco_intro_time < 2.45:
 		if seco_intro_time - delta < 1.15:
+			intro_scream.stop()
 			intro_kick.play()
+			var dimensional_whoosh:AudioStreamPlayer = AudioStreamPlayer.new()
+			dimensional_whoosh.stream = preload("res://assets/novos_audios/seco_kick_dimensional_whoosh_pixabay.mp3")
+			dimensional_whoosh.volume_db = -4.0
+			Global.add_child(dimensional_whoosh)
+			dimensional_whoosh.finished.connect(dimensional_whoosh.queue_free)
+			dimensional_whoosh.play()
 			Input.start_joy_vibration(0, 0.8, 0.8, 0.25)
 		maycon_fase.global_position += Vector2(0.0, -1700.0 * delta)
 		seco.global_position += Vector2(0.0, -1580.0 * delta)

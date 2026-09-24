@@ -20,6 +20,7 @@ var back_to_main_camera = false
 var back_to_fase = false
 var from_slum = false
 var well_entry_scream:AudioStreamPlayer
+var well_entry_scream_tween:Tween
 var platform_arrival_pending:bool = false
 var platform_pentagrams:int = 0
 var platform_pentagram_collected:Dictionary = {}
@@ -70,7 +71,7 @@ axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated
 var inimigos_mortos = {}
 var realtime_enemy_respawns:Dictionary = {}
 var aim_assist_strength:float = 0.6
-var show_debug_tab:bool = false
+var show_debug_tab:bool = true
 
 func normalize_language(lang: String) -> String:
 	var l = lang.to_lower().strip_edges()
@@ -84,10 +85,11 @@ func normalize_language(lang: String) -> String:
 		return language_en
 	return language_pt_br
 
-func set_game_language(lang_code: String) -> void:
+func set_game_language(lang_code: String, should_save: bool = true) -> void:
 	default_language = normalize_language(lang_code)
 	TranslationServer.set_locale(default_language)
-	save_settings()
+	if should_save:
+		save_settings()
 
 func _ready() -> void:
 	load_settings()
@@ -96,7 +98,32 @@ func save_settings() -> void:
 	var config = ConfigFile.new()
 	config.set_value("gameplay", "aim_assist_strength", aim_assist_strength)
 	config.set_value("gameplay", "language", default_language)
+	config.set_value("debug", "game_events", game_events)
 	config.save("user://settings.cfg")
+	save_to_player_savegame()
+
+func save_to_player_savegame() -> void:
+	if FileAccess.file_exists("user://savegame.save"):
+		var file = FileAccess.open("user://savegame.save", FileAccess.READ)
+		if file:
+			var json_text = file.get_as_text()
+			file.close()
+			var data = JSON.parse_string(json_text)
+			if data is Dictionary:
+				data["game_events"] = game_events.duplicate()
+				data["aim_assist_strength"] = aim_assist_strength
+				data["default_language"] = default_language
+				var w_file = FileAccess.open("user://savegame.save", FileAccess.WRITE)
+				if w_file:
+					w_file.store_line(JSON.stringify(data))
+					w_file.close()
+					save_array = data
+				return
+	
+	if last_fase != "":
+		save_progress(last_fase)
+	else:
+		save_progress("fase_1")
 
 func load_settings() -> void:
 	var config = ConfigFile.new()
@@ -104,9 +131,14 @@ func load_settings() -> void:
 	if err == OK:
 		aim_assist_strength = float(config.get_value("gameplay", "aim_assist_strength", 0.6))
 		var saved_lang = str(config.get_value("gameplay", "language", default_language))
-		set_game_language(saved_lang)
+		set_game_language(saved_lang, false)
+		if config.has_section_key("debug", "game_events"):
+			var saved_events = config.get_value("debug", "game_events", null)
+			if saved_events is Dictionary:
+				for k in saved_events.keys():
+					game_events[k] = saved_events[k]
 	else:
-		set_game_language(default_language)
+		set_game_language(default_language, false)
 
 
 func _process(_delta: float) -> void:
@@ -226,6 +258,8 @@ func fade_out_sound(stream_player: AudioStreamPlayer, duracao: float):
 		tween.tween_property(stream_player, "volume_db", -20.0, duracao)
 
 func start_well_entry_scream() -> void:
+	if is_instance_valid(well_entry_scream_tween) and well_entry_scream_tween.is_running():
+		well_entry_scream_tween.kill()
 	if !is_instance_valid(well_entry_scream):
 		well_entry_scream = AudioStreamPlayer.new()
 		var scream_stream:AudioStreamMP3 = WELL_ENTRY_SCREAM.duplicate()
@@ -235,12 +269,14 @@ func start_well_entry_scream() -> void:
 	well_entry_scream.volume_db = -2.0
 	well_entry_scream.play()
 
-func finish_well_entry_scream() -> void:
+func finish_well_entry_scream(duration: float = 0.25) -> void:
 	if !is_instance_valid(well_entry_scream) || !well_entry_scream.playing:
 		return
-	var tween:Tween = create_tween()
-	tween.tween_property(well_entry_scream, "volume_db", -30.0, 0.25)
-	tween.tween_callback(well_entry_scream.stop)
+	if is_instance_valid(well_entry_scream_tween) and well_entry_scream_tween.is_running():
+		well_entry_scream_tween.kill()
+	well_entry_scream_tween = create_tween()
+	well_entry_scream_tween.tween_property(well_entry_scream, "volume_db", -30.0, duration)
+	well_entry_scream_tween.tween_callback(well_entry_scream.stop)
 	
 		
 func load_progress()->void:
@@ -264,7 +300,7 @@ func load_progress()->void:
 			save_array = JSON.parse_string(json_string)
 			
 			if save_array.has("default_language"):
-				set_game_language(str(save_array["default_language"]))
+				set_game_language(str(save_array["default_language"]), false)
 			maycon_itens = save_array["maycon_itens"]
 			game_events = game_events_default.duplicate()
 			game_events.merge(save_array["game_events"], true)

@@ -15,13 +15,17 @@ const GLITTER_COLORS := [
 	Color("38ef7d")  # Emerald
 ]
 
+const CONFIGURACOES_DIALOG_SCENE = preload("res://scenes/menus/configuracoes_dialog.tscn")
+
 var panel:Control
 var card:PanelContainer
 var resume_button:Button
+var config_button:Button
 var previous_mouse_mode:Input.MouseMode
 var pause_audio:AudioStreamPlayer
 var glitter_overlay:Control
 var particles:Array[Dictionary] = []
+var configuracoes_dialog:CanvasLayer
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -31,10 +35,14 @@ func _ready() -> void:
 	pause_audio.stream = PAUSE_SOUND
 	pause_audio.volume_db = -8.0
 	add_child(pause_audio)
+	configuracoes_dialog = CONFIGURACOES_DIALOG_SCENE.instantiate()
+	add_child(configuracoes_dialog)
 	_build_panel()
 	panel.visible = false
 
 func _unhandled_input(event:InputEvent) -> void:
+	if is_instance_valid(configuracoes_dialog) and configuracoes_dialog.visible:
+		return
 	if get_parent().exit_started or get_parent().death_in_progress:
 		return
 	if event.is_action_pressed("ui_cancel") or event is InputEventJoypadButton and event.button_index == JOY_BUTTON_START and event.pressed:
@@ -51,11 +59,13 @@ func _toggle() -> void:
 			pause_audio.play()
 		_spawn_glitter_explosion()
 		if is_instance_valid(card):
-			card.pivot_offset = Vector2(220.0, 145.0)
+			card.pivot_offset = Vector2(220.0, 172.0)
 			card.scale = Vector2(0.7, 0.7)
 			var tween := create_tween().bind_node(self)
 			tween.tween_property(card, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	else:
+		if is_instance_valid(configuracoes_dialog) and configuracoes_dialog.visible:
+			configuracoes_dialog.fechar()
 		Input.mouse_mode = previous_mouse_mode
 		particles.clear()
 		if is_instance_valid(glitter_overlay):
@@ -197,8 +207,8 @@ func _build_panel() -> void:
 
 	card = PanelContainer.new()
 	card.set_anchors_preset(Control.PRESET_CENTER)
-	card.position = Vector2(-220.0, -145.0)
-	card.custom_minimum_size = Vector2(440.0, 290.0)
+	card.position = Vector2(-220.0, -172.0)
+	card.custom_minimum_size = Vector2(440.0, 344.0)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color("3d345f")
 	style.border_color = Color("f6cae3")
@@ -235,9 +245,20 @@ func _build_panel() -> void:
 	resume_button = _button(tr("MENU_CONTINUE"), Color("da709f"))
 	resume_button.pressed.connect(_toggle)
 	column.add_child(resume_button)
+	config_button = _button(tr("MENU_SETTINGS"), Color("5c94d4"))
+	config_button.pressed.connect(func():
+		if is_instance_valid(configuracoes_dialog):
+			configuracoes_dialog.abrir()
+	)
+	column.add_child(config_button)
 	var menu_button := _button(tr("PLATFORM_BACK_MENU"), Color("897cc6"))
 	menu_button.pressed.connect(_return_to_menu)
 	column.add_child(menu_button)
+
+	resume_button.focus_neighbor_bottom = config_button.get_path()
+	config_button.focus_neighbor_top = resume_button.get_path()
+	config_button.focus_neighbor_bottom = menu_button.get_path()
+	menu_button.focus_neighbor_top = config_button.get_path()
 
 	glitter_overlay = Control.new()
 	glitter_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)

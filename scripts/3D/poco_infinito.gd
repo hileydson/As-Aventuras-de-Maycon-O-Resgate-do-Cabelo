@@ -111,7 +111,7 @@ func _finish_entry_fade(blackout:ColorRect) -> void:
 	wind.play()
 
 func _exit_tree() -> void:
-	if entry_transitioning:
+	if entry_transitioning || (!ending_success && finishing):
 		Global.finish_well_entry_scream()
 
 func make_audio(path:String, volume:float, pitch:float = 1.0, looped:bool = false) -> AudioStreamPlayer:
@@ -681,7 +681,7 @@ func update_ending(delta:float) -> void:
 		maycon.rotation.x = ending_start_pitch + smoothstep(0.0, 1.0, turn_progress) * PI
 		if ending_time > 0.75 && !ending_scream_started:
 			ending_scream_started = true
-			scream_sound.play()
+			Global.start_well_entry_scream()
 		if ending_time > 1.2:
 			maycon.position.y -= 13.0 * delta
 			maycon.position.z -= 9.0 * delta

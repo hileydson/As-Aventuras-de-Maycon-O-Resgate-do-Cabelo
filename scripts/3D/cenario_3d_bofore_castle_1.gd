@@ -25,6 +25,7 @@ func _ready() -> void:
 	
 	sliding.play()
 	await get_tree().create_timer(2.1).timeout
+	Global.finish_well_entry_scream(0.3)
 	sangue_fill_effect.play()
 	sliding.stop()
 	Input.start_joy_vibration(0,0.5, 0.7, 0.3)
@@ -74,3 +75,6 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 func _on_area_3d_body_exited(body: Node3D) -> void:
 	if body is CharacterBody3D:
 		prompt.visible = false
+
+func _exit_tree() -> void:
+	Global.finish_well_entry_scream(0.1)
