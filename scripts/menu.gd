@@ -696,7 +696,6 @@ func _build_interface() -> void:
 	stack_main.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	stack_main.add_theme_constant_override("separation", 3)
 	menu_panel.add_child(stack_main)
-	stack_main.add_child(_label("MENU_NIGHT_KICKER", 15, Color(0.54, 0.82, 0.88), true))
 	var title := _label("GAME_TITLE", 39, Color(0.95, 0.96, 0.92), true)
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	stack_main.add_child(title)
