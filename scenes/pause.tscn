@@ -1,4 +1,4 @@
-[gd_scene load_steps=98 format=3 uid="uid://bxrvb1ninxb77"]
+[gd_scene format=3 uid="uid://bxrvb1ninxb77"]
 
 [ext_resource type="Script" uid="uid://deep1rb4hx2ta" path="res://scripts/pause.gd" id="1_f1d2v"]
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="2_30wyh"]
@@ -31,6 +31,7 @@
 [ext_resource type="Texture2D" uid="uid://b4nuieuqfk5wl" path="res://assets/novas_imagens/buttons/360_A.png" id="29_l1hj0"]
 [ext_resource type="Texture2D" uid="uid://b8xm3n05un7xf" path="res://assets/novas_imagens/effects/Explosion/1.png" id="30_4hiuc"]
 [ext_resource type="Texture2D" uid="uid://dlowt45jrflns" path="res://assets/novas_imagens/effects/Explosion/3.png" id="31_gs1sl"]
+[ext_resource type="PackedScene" uid="uid://b23iyms3w1v1h" path="res://scenes/menus/configuracoes_dialog.tscn" id="32_4hiuc"]
 
 [sub_resource type="Animation" id="Animation_gcd8f"]
 length = 0.001
@@ -936,7 +937,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Pause" type="Control"]
+[node name="Pause" type="Control" unique_id=1921894990]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -949,14 +950,12 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_f1d2v")
 
-[node name="pause_animation" type="AnimationPlayer" parent="."]
+[node name="pause_animation" type="AnimationPlayer" parent="." unique_id=1955981579]
 root_node = NodePath("../black_screen")
-libraries = {
-&"": SubResource("AnimationLibrary_t3fa8")
-}
-autoplay = "intro"
+libraries/ = SubResource("AnimationLibrary_t3fa8")
+autoplay = &"intro"
 
-[node name="black_screen" type="ColorRect" parent="."]
+[node name="black_screen" type="ColorRect" parent="." unique_id=69440657]
 custom_minimum_size = Vector2(30, 0)
 layout_mode = 0
 offset_left = -1.0
@@ -965,13 +964,13 @@ offset_right = 1198.0
 offset_bottom = 676.0
 color = Color(0, 0, 0, 1)
 
-[node name="camera" type="Camera2D" parent="black_screen"]
+[node name="camera" type="Camera2D" parent="black_screen" unique_id=899894201]
 position = Vector2(1, 3)
 offset = Vector2(580, 330)
 
-[node name="auto_fade_in" parent="black_screen" instance=ExtResource("2_30wyh")]
+[node name="auto_fade_in" parent="black_screen" unique_id=1950005044 instance=ExtResource("2_30wyh")]
 
-[node name="VBoxContainer" type="VBoxContainer" parent="black_screen"]
+[node name="VBoxContainer" type="VBoxContainer" parent="black_screen" unique_id=354305383]
 layout_direction = 2
 layout_mode = 1
 offset_left = 472.0
@@ -980,16 +979,20 @@ offset_right = 559.0968
 offset_bottom = 606.0
 scale = Vector2(1.9200001, 1.6400001)
 
-[node name="close" type="Button" parent="black_screen/VBoxContainer"]
+[node name="close" type="Button" parent="black_screen/VBoxContainer" unique_id=1659286003]
 layout_mode = 2
 text = "FECHAR"
 language = "pt"
 
-[node name="quit" type="Button" parent="black_screen/VBoxContainer"]
+[node name="settings" type="Button" parent="black_screen/VBoxContainer" unique_id=1272884730]
+layout_mode = 2
+text = "CONFIGURAÇÕES"
+
+[node name="quit" type="Button" parent="black_screen/VBoxContainer" unique_id=1299681292]
 layout_mode = 2
 text = "QUIT"
 
-[node name="maycon" type="AnimatedSprite2D" parent="black_screen"]
+[node name="maycon" type="AnimatedSprite2D" parent="black_screen" unique_id=1959734226]
 position = Vector2(-124, 308)
 scale = Vector2(3.1786866, 2.9598992)
 sprite_frames = SubResource("SpriteFrames_xw83q")
@@ -997,7 +1000,7 @@ animation = &"idle"
 frame = 12
 frame_progress = 1.0
 
-[node name="pause" type="Label" parent="black_screen"]
+[node name="pause" type="Label" parent="black_screen" unique_id=202096651]
 layout_mode = 0
 offset_left = 497.0
 offset_top = 23.0
@@ -1007,22 +1010,22 @@ text = "PAUSE
 "
 label_settings = SubResource("LabelSettings_gcd8f")
 
-[node name="jump" type="Sprite2D" parent="black_screen"]
+[node name="jump" type="Sprite2D" parent="black_screen" unique_id=1008635527]
 position = Vector2(791.5, 326.5)
 scale = Vector2(2.71875, 2.1562498)
 texture = ExtResource("15_qn06s")
 
-[node name="defence" type="Sprite2D" parent="black_screen"]
+[node name="defence" type="Sprite2D" parent="black_screen" unique_id=1420824846]
 position = Vector2(711.5, 329)
 scale = Vector2(2.5937507, 2.4999998)
 texture = ExtResource("16_30wyh")
 
-[node name="power" type="Sprite2D" parent="black_screen"]
+[node name="power" type="Sprite2D" parent="black_screen" unique_id=2053623470]
 position = Vector2(752, 173.75)
 scale = Vector2(3.953125, 3.796875)
 texture = ExtResource("16_vrtv1")
 
-[node name="powers" type="Label" parent="black_screen"]
+[node name="powers" type="Label" parent="black_screen" unique_id=1232061432]
 layout_mode = 0
 offset_left = 823.00006
 offset_top = 115.74997
@@ -1034,7 +1037,7 @@ KICK
  JUMP"
 label_settings = SubResource("LabelSettings_nbku2")
 
-[node name="run_label" type="Label" parent="black_screen"]
+[node name="run_label" type="Label" parent="black_screen" unique_id=887416204]
 layout_mode = 0
 offset_left = 757.0
 offset_top = 417.5
@@ -1044,7 +1047,7 @@ text = "RUN
 "
 label_settings = SubResource("LabelSettings_gcd8f")
 
-[node name="down_label" type="Label" parent="black_screen"]
+[node name="down_label" type="Label" parent="black_screen" unique_id=1547579344]
 visible = false
 layout_mode = 0
 offset_left = 725.0
@@ -1054,65 +1057,65 @@ offset_bottom = 659.5
 text = "Croutch"
 label_settings = SubResource("LabelSettings_gcd8f")
 
-[node name="ArrowDownKeyLight" type="Sprite2D" parent="black_screen"]
+[node name="ArrowDownKeyLight" type="Sprite2D" parent="black_screen" unique_id=300777074]
 visible = false
 position = Vector2(993, 567.5)
 scale = Vector2(0.75, 0.73)
 texture = ExtResource("19_nru7y")
 
-[node name="ButtonIconSwitchDpadDown" type="Sprite2D" parent="black_screen"]
+[node name="ButtonIconSwitchDpadDown" type="Sprite2D" parent="black_screen" unique_id=1112453918]
 visible = false
 position = Vector2(1080, 566.5)
 scale = Vector2(0.77, 0.75)
 texture = ExtResource("20_f2c3o")
 
-[node name="360X" type="Sprite2D" parent="black_screen"]
+[node name="360X" type="Sprite2D" parent="black_screen" unique_id=535879234]
 position = Vector2(1081.0001, 447.5)
 scale = Vector2(0.77, 0.77)
 texture = ExtResource("21_2hkh7")
 
-[node name="Shift" type="Sprite2D" parent="black_screen"]
+[node name="Shift" type="Sprite2D" parent="black_screen" unique_id=1440413384]
 position = Vector2(992, 449)
 texture = ExtResource("22_2hkh7")
 
-[node name="QKeyLight" type="Sprite2D" parent="."]
+[node name="QKeyLight" type="Sprite2D" parent="." unique_id=810652314]
 position = Vector2(1000, 141)
 scale = Vector2(0.63, 0.58)
 texture = ExtResource("23_gs1sl")
 
-[node name="360Y" type="Sprite2D" parent="."]
+[node name="360Y" type="Sprite2D" parent="." unique_id=955775962]
 position = Vector2(1076, 141)
 scale = Vector2(0.6, 0.63)
 texture = ExtResource("24_ai0yt")
 
-[node name="WKeyLight" type="Sprite2D" parent="."]
+[node name="WKeyLight" type="Sprite2D" parent="." unique_id=1959534931]
 position = Vector2(1000, 201)
 scale = Vector2(0.62, 0.63)
 texture = ExtResource("25_57sbn")
 
-[node name="360B" type="Sprite2D" parent="."]
+[node name="360B" type="Sprite2D" parent="." unique_id=105313760]
 position = Vector2(1078, 204)
 scale = Vector2(0.63, 0.64)
 texture = ExtResource("26_8kyqv")
 
-[node name="BlankWhiteSuperWide" type="Sprite2D" parent="."]
+[node name="BlankWhiteSuperWide" type="Sprite2D" parent="." unique_id=822177703]
 position = Vector2(994, 348)
 scale = Vector2(0.73999995, 0.57999986)
 texture = ExtResource("27_72xvg")
 
-[node name="BlankWhiteEnter" type="Sprite2D" parent="."]
+[node name="BlankWhiteEnter" type="Sprite2D" parent="." unique_id=432163513]
 position = Vector2(993, 304)
 scale = Vector2(0.67, 0.65)
 texture = ExtResource("28_w3st5")
 
-[node name="360A" type="Sprite2D" parent="."]
+[node name="360A" type="Sprite2D" parent="." unique_id=507161443]
 position = Vector2(1079, 324)
 scale = Vector2(0.75, 0.71)
 texture = ExtResource("29_l1hj0")
 
-[node name="maycon_hp" type="Node2D" parent="."]
+[node name="maycon_hp" type="Node2D" parent="." unique_id=393682779]
 
-[node name="hp_1" type="AnimatedSprite2D" parent="maycon_hp"]
+[node name="hp_1" type="AnimatedSprite2D" parent="maycon_hp" unique_id=1207124603]
 position = Vector2(65.00003, 619)
 scale = Vector2(0.3042036, 0.26972094)
 sprite_frames = SubResource("SpriteFrames_2hkh7")
@@ -1120,21 +1123,24 @@ animation = &"semi_explotion"
 autoplay = "semi_explotion"
 frame_progress = 0.7605639
 
-[node name="hp_2" type="AnimatedSprite2D" parent="maycon_hp"]
+[node name="hp_2" type="AnimatedSprite2D" parent="maycon_hp" unique_id=1403940931]
 position = Vector2(128.00003, 618)
 scale = Vector2(0.3042036, 0.26972094)
 sprite_frames = SubResource("SpriteFrames_4hiuc")
 animation = &"semi_explotion"
 autoplay = "semi_explotion"
 
-[node name="hp_3" type="AnimatedSprite2D" parent="maycon_hp"]
+[node name="hp_3" type="AnimatedSprite2D" parent="maycon_hp" unique_id=931293523]
 position = Vector2(193.00003, 618)
 scale = Vector2(0.3042036, 0.26972094)
 sprite_frames = SubResource("SpriteFrames_gs1sl")
 animation = &"semi_explotion"
 autoplay = "semi_explotion"
 
+[node name="ConfiguracoesDialog" parent="." unique_id=673907019 instance=ExtResource("32_4hiuc")]
+
 [connection signal="pressed" from="black_screen/VBoxContainer/close" to="." method="_on_close_pressed"]
+[connection signal="pressed" from="black_screen/VBoxContainer/settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="black_screen/VBoxContainer/quit" to="." method="_on_quit_pressed"]
 [connection signal="animation_changed" from="maycon_hp/hp_1" to="maycon_hp/hp_1" method="_on_animation_changed"]
 [connection signal="animation_finished" from="maycon_hp/hp_1" to="maycon_hp/hp_1" method="_on_animation_finished"]

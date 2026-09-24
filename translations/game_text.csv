@@ -41,6 +41,29 @@ SETTINGS_CLOSE,Fechar,Close,Cerrar,关闭
 SETTINGS_LANGUAGE,Idioma,Language,Idioma,语言
 SETTINGS_DEBUG_NO_BATTLES,Não entrar em batalha (derrota ao encostar),No battle encounters (defeat on touch),No entrar en batalla (derrota al tocar),不进入战斗 (接触即击败)
 SETTINGS_DEBUG_NO_BATTLES_DESC,Ao encostar nos inimigos eles são derrotados instantaneamente sem iniciar batalhas.,Touching enemies defeats them instantly without triggering battles.,Tocar a los enemigos los derrota al instante sin iniciar batallas.,触碰敌人时立即击败敌人且不触发战斗。
+SETTINGS_GRAPHICS_3D,Gráfico 3D,3D Graphics,Gráficos 3D,3D图形
+SETTINGS_GRAPHICS_2D,Gráfico 2D,2D Graphics,Gráficos 2D,2D图形
+SETTINGS_GFX_OFF,Desligado,Off,Desactivado,关闭
+SETTINGS_GFX_SHADOW_LOW,Baixa,Low,Baja,低
+SETTINGS_GFX_SHADOW_MEDIUM,Média,Medium,Media,中
+SETTINGS_GFX_SHADOW_HIGH,Alta,High,Alta,高
+SETTINGS_GFX_FILTER_NEAREST,Nítido (Pixelado),Sharp (Pixelated),Nítido (Pixelado),锐利(像素化)
+SETTINGS_GFX_FILTER_LINEAR,Suave,Smooth,Suave,平滑
+SETTINGS_GFX_MSAA_3D,MSAA 3D,3D MSAA,MSAA 3D,3D MSAA
+SETTINGS_GFX_MSAA_3D_DESC,Suaviza as bordas dos modelos 3D.,Smooths the edges of 3D models.,Suaviza los bordes de los modelos 3D.,平滑3D模型的边缘。
+SETTINGS_GFX_RES_SCALE,Escala de Resolução 3D,3D Resolution Scale,Escala de Resolución 3D,3D分辨率缩放
+SETTINGS_GFX_RES_SCALE_DESC,Reduz a resolução interna da renderização 3D para melhorar a performance.,Reduces the internal 3D rendering resolution to improve performance.,Reduce la resolución interna del renderizado 3D para mejorar el rendimiento.,降低3D渲染的内部分辨率以提升性能。
+SETTINGS_GFX_GLOW,Brilho (Glow),Glow,Brillo (Glow),辉光(Glow)
+SETTINGS_GFX_GLOW_DESC,Realça luzes e brilhos intensos na cena atual.,Enhances bright lights and intense glows in the current scene.,Realza luces y brillos intensos en la escena actual.,增强当前场景中的强光与辉光效果。
+SETTINGS_GFX_SSAO,Oclusão de Ambiente (SSAO),Ambient Occlusion (SSAO),Oclusión Ambiental (SSAO),环境光遮蔽(SSAO)
+SETTINGS_GFX_SSAO_DESC,Adiciona sombreamento suave nos cantos e contatos entre objetos.,Adds soft shading in corners and contact points between objects.,Añade sombreado suave en las esquinas y puntos de contacto entre objetos.,在物体的角落和接触点添加柔和阴影。
+SETTINGS_GFX_SHADOW,Qualidade das Sombras,Shadow Quality,Calidad de las Sombras,阴影质量
+SETTINGS_GFX_SHADOW_DESC,Resolução do mapa de sombras dos objetos e inimigos.,Shadow map resolution for objects and enemies.,Resolución del mapa de sombras de objetos y enemigos.,物体和敌人阴影贴图的分辨率。
+SETTINGS_GFX_RESTORE,Restaurar Padrão,Restore Default,Restaurar Predeterminado,恢复默认
+SETTINGS_GFX_MSAA_2D,MSAA 2D,2D MSAA,MSAA 2D,2D MSAA
+SETTINGS_GFX_MSAA_2D_DESC,Suaviza bordas de linhas e formas desenhadas na tela.,Smooths edges of lines and shapes drawn on screen.,Suaviza los bordes de líneas y formas dibujadas en pantalla.,平滑屏幕上绘制的线条和形状的边缘。
+SETTINGS_GFX_TEXTURE_FILTER,Filtro de Textura,Texture Filter,Filtro de Textura,纹理过滤
+SETTINGS_GFX_TEXTURE_FILTER_DESC,Nítido preserva o estilo original; Suave deixa os sprites mais lisos.,Sharp preserves the original style; Smooth makes sprites softer.,Nítido conserva el estilo original; Suave deja los sprites más lisos.,锐利保留原始风格;平滑让精灵更柔和。
 UI_HOLD_SKIP,SEGURE ESC / START PARA PULAR,HOLD ESC / START TO SKIP,MANTÉN ESC / START PARA SALTAR,按住 ESC / START 跳过
 STORY_SKIP_PROMPT,SEGURE ESC / START PARA PULAR,HOLD ESC / START TO SKIP,MANTÉN ESC / START PARA SALTAR,按住 ESC / START 跳过
 UI_HEALTH,VIDA,HEALTH,SALUD,生命

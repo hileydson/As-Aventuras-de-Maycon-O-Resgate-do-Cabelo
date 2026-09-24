@@ -3,7 +3,9 @@ extends Control
 @onready var camera: Camera2D = $black_screen/camera
 @onready var maycon: AnimatedSprite2D = $black_screen/maycon
 @onready var close: Button = $black_screen/VBoxContainer/close
+@onready var settings_btn: Button = $black_screen/VBoxContainer/settings
 @onready var quit: Button = $black_screen/VBoxContainer/quit
+@onready var configuracoes_dialog = $ConfiguracoesDialog
 @onready var run_label: Label = $black_screen/run_label
 @onready var down_label: Label = $black_screen/down_label
 @onready var space_keys: Label = get_node_or_null("black_screen/space_keys")
@@ -28,6 +30,7 @@ func _ready() -> void:
 	var p3 = tr("POWER_DASH") if Global.battle_mode == Global.battle_mode_realtime else tr("POWER_JUMP")
 	powers.text = " " + tr("POWER_PUNCH") + " \n " + tr("POWER_KICK") + " \n\n " + p3
 	close.text = tr("MENU_CLOSE")
+	settings_btn.text = tr("SETTINGS_TITLE")
 	
 	if Global.game_events["before_prologo"]:
 		quit.text = tr("MENU_EXIT")
@@ -85,6 +88,10 @@ func _process(delta: float) -> void:
 
 func _on_close_pressed() -> void:
 	processa_pause_unpause()
+
+
+func _on_settings_pressed() -> void:
+	configuracoes_dialog.abrir()
 
 
 func _on_quit_pressed() -> void:

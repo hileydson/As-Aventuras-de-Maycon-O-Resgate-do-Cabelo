@@ -75,6 +75,19 @@ var aim_assist_strength:float = 0.6
 var show_debug_tab:bool = true
 var debug_disable_battles:bool = false
 
+# --- Configurações gráficas (aplicadas em tempo real, ver menu Configurações) ---
+const shadow_atlas_sizes:Array[int] = [1024, 2048, 4096]
+var gfx_msaa_3d:int = 2 # padrão 4x
+var gfx_resolution_scale:float = 1.0
+var gfx_shadow_atlas_size:int = 4096
+var gfx_glow_override:int = -1 # -1 = respeita o valor original da cena, 0 = forçar desligado, 1 = forçar ligado
+var gfx_ssao_override:int = -1
+var gfx_msaa_2d:int = 2 # padrão 4x
+var gfx_texture_filter_2d:int = 0
+
+var _gfx_defaults_captured:bool = false
+var _gfx_defaults:Dictionary = {}
+
 func normalize_language(lang: String) -> String:
 	var l = lang.to_lower().strip_edges()
 	if l.begins_with("pt"):
@@ -94,15 +107,148 @@ func set_game_language(lang_code: String, should_save: bool = true) -> void:
 		save_settings()
 
 func _ready() -> void:
+	capture_graphics_defaults()
 	load_settings()
+	apply_all_graphics_settings()
+	get_tree().node_added.connect(_on_node_added_check_environment)
 
 func save_settings() -> void:
 	var config = ConfigFile.new()
 	config.set_value("gameplay", "aim_assist_strength", aim_assist_strength)
 	config.set_value("gameplay", "language", default_language)
 	config.set_value("debug", "game_events", game_events)
+	config.set_value("graphics", "msaa_3d", gfx_msaa_3d)
+	config.set_value("graphics", "resolution_scale", gfx_resolution_scale)
+	config.set_value("graphics", "shadow_atlas_size", gfx_shadow_atlas_size)
+	config.set_value("graphics", "glow_override", gfx_glow_override)
+	config.set_value("graphics", "ssao_override", gfx_ssao_override)
+	config.set_value("graphics", "msaa_2d", gfx_msaa_2d)
+	config.set_value("graphics", "texture_filter_2d", gfx_texture_filter_2d)
 	config.save("user://settings.cfg")
 	save_to_player_savegame()
+
+func capture_graphics_defaults() -> void:
+	if _gfx_defaults_captured:
+		return
+	var vp := get_viewport()
+	if vp == null:
+		return
+	_gfx_defaults = {
+		"msaa_3d": 2, # padrão do jogo é 4x, não o padrão "sem antialiasing" do motor
+		"resolution_scale": vp.scaling_3d_scale,
+		"shadow_atlas_size": vp.positional_shadow_atlas_size,
+		"msaa_2d": 2, # padrão do jogo é 4x, não o padrão "sem antialiasing" do motor
+		"texture_filter_2d": vp.canvas_item_default_texture_filter,
+	}
+	gfx_msaa_3d = _gfx_defaults["msaa_3d"]
+	gfx_resolution_scale = _gfx_defaults["resolution_scale"]
+	gfx_shadow_atlas_size = _gfx_defaults["shadow_atlas_size"]
+	gfx_msaa_2d = _gfx_defaults["msaa_2d"]
+	gfx_texture_filter_2d = _gfx_defaults["texture_filter_2d"]
+	_gfx_defaults_captured = true
+
+func apply_all_graphics_settings() -> void:
+	capture_graphics_defaults()
+	apply_gfx_msaa_3d(gfx_msaa_3d)
+	apply_gfx_resolution_scale(gfx_resolution_scale)
+	apply_gfx_shadow_atlas_size(gfx_shadow_atlas_size)
+	apply_gfx_msaa_2d(gfx_msaa_2d)
+	apply_gfx_texture_filter_2d(gfx_texture_filter_2d)
+	_apply_environment_overrides(get_active_3d_environment())
+
+func apply_gfx_msaa_3d(value:int) -> void:
+	gfx_msaa_3d = value
+	var vp := get_viewport()
+	if vp:
+		vp.msaa_3d = value as Viewport.MSAA
+
+func apply_gfx_resolution_scale(value:float) -> void:
+	gfx_resolution_scale = value
+	var vp := get_viewport()
+	if vp:
+		vp.scaling_3d_scale = value
+
+func apply_gfx_shadow_atlas_size(value:int) -> void:
+	gfx_shadow_atlas_size = value
+	var vp := get_viewport()
+	if vp:
+		vp.positional_shadow_atlas_size = value
+
+func apply_gfx_msaa_2d(value:int) -> void:
+	gfx_msaa_2d = value
+	var vp := get_viewport()
+	if vp:
+		vp.msaa_2d = value as Viewport.MSAA
+
+func apply_gfx_texture_filter_2d(value:int) -> void:
+	gfx_texture_filter_2d = value
+	var vp := get_viewport()
+	if vp:
+		vp.canvas_item_default_texture_filter = value as Viewport.DefaultCanvasItemTextureFilter
+
+func get_active_3d_environment() -> Environment:
+	var vp := get_viewport()
+	if vp == null:
+		return null
+	var cam := vp.get_camera_3d()
+	if cam and cam.environment:
+		return cam.environment
+	if vp.world_3d and vp.world_3d.environment:
+		return vp.world_3d.environment
+	return null
+
+func apply_gfx_glow_override(value:int) -> void:
+	gfx_glow_override = value
+	_apply_environment_overrides(get_active_3d_environment())
+
+func apply_gfx_ssao_override(value:int) -> void:
+	gfx_ssao_override = value
+	_apply_environment_overrides(get_active_3d_environment())
+
+func _apply_environment_overrides(env:Environment) -> void:
+	if env == null:
+		return
+	if gfx_glow_override != -1:
+		env.glow_enabled = (gfx_glow_override == 1)
+	if gfx_ssao_override != -1:
+		env.ssao_enabled = (gfx_ssao_override == 1)
+
+func _on_node_added_check_environment(node:Node) -> void:
+	if node is WorldEnvironment:
+		_apply_environment_overrides(node.environment)
+
+func restore_graphics_defaults_3d() -> void:
+	capture_graphics_defaults()
+	apply_gfx_msaa_3d(_gfx_defaults.get("msaa_3d", 2))
+	apply_gfx_resolution_scale(_gfx_defaults.get("resolution_scale", 1.0))
+	apply_gfx_shadow_atlas_size(_gfx_defaults.get("shadow_atlas_size", 4096))
+	apply_gfx_glow_override(-1)
+	apply_gfx_ssao_override(-1)
+
+func _graphics_settings_to_dict() -> Dictionary:
+	return {
+		"msaa_3d": gfx_msaa_3d,
+		"resolution_scale": gfx_resolution_scale,
+		"shadow_atlas_size": gfx_shadow_atlas_size,
+		"glow_override": gfx_glow_override,
+		"ssao_override": gfx_ssao_override,
+		"msaa_2d": gfx_msaa_2d,
+		"texture_filter_2d": gfx_texture_filter_2d,
+	}
+
+func _apply_graphics_settings_from_dict(d:Dictionary) -> void:
+	apply_gfx_msaa_3d(int(d.get("msaa_3d", gfx_msaa_3d)))
+	apply_gfx_resolution_scale(float(d.get("resolution_scale", gfx_resolution_scale)))
+	apply_gfx_shadow_atlas_size(int(d.get("shadow_atlas_size", gfx_shadow_atlas_size)))
+	apply_gfx_glow_override(int(d.get("glow_override", gfx_glow_override)))
+	apply_gfx_ssao_override(int(d.get("ssao_override", gfx_ssao_override)))
+	apply_gfx_msaa_2d(int(d.get("msaa_2d", gfx_msaa_2d)))
+	apply_gfx_texture_filter_2d(int(d.get("texture_filter_2d", gfx_texture_filter_2d)))
+
+func restore_graphics_defaults_2d() -> void:
+	capture_graphics_defaults()
+	apply_gfx_msaa_2d(_gfx_defaults.get("msaa_2d", 2))
+	apply_gfx_texture_filter_2d(_gfx_defaults.get("texture_filter_2d", 0))
 
 func save_to_player_savegame() -> void:
 	_ensure_legacy_save_migration()
@@ -118,6 +264,7 @@ func save_to_player_savegame() -> void:
 				data["game_events"] = game_events.duplicate()
 				data["aim_assist_strength"] = aim_assist_strength
 				data["default_language"] = default_language
+				data["graphics_settings"] = _graphics_settings_to_dict()
 				data["save_timestamp"] = Time.get_datetime_string_from_system()
 				var w_file = FileAccess.open(path, FileAccess.WRITE)
 				if w_file:
@@ -261,6 +408,14 @@ func load_settings() -> void:
 			if saved_events is Dictionary:
 				for k in saved_events.keys():
 					game_events[k] = saved_events[k]
+		if config.has_section("graphics"):
+			gfx_msaa_3d = int(config.get_value("graphics", "msaa_3d", gfx_msaa_3d))
+			gfx_resolution_scale = float(config.get_value("graphics", "resolution_scale", gfx_resolution_scale))
+			gfx_shadow_atlas_size = int(config.get_value("graphics", "shadow_atlas_size", gfx_shadow_atlas_size))
+			gfx_glow_override = int(config.get_value("graphics", "glow_override", gfx_glow_override))
+			gfx_ssao_override = int(config.get_value("graphics", "ssao_override", gfx_ssao_override))
+			gfx_msaa_2d = int(config.get_value("graphics", "msaa_2d", gfx_msaa_2d))
+			gfx_texture_filter_2d = int(config.get_value("graphics", "texture_filter_2d", gfx_texture_filter_2d))
 	else:
 		set_game_language(default_language, false)
 
@@ -361,6 +516,7 @@ func save_progress(fase:String)->void:
 	save_array["game_events"] = game_events
 	save_array["inimigos_mortos"] = inimigos_mortos
 	save_array["aim_assist_strength"] = aim_assist_strength
+	save_array["graphics_settings"] = _graphics_settings_to_dict()
 	save_array["last_fase"] = fase
 	save_array["platform_pentagrams"] = platform_pentagrams
 	save_array["platform_pentagram_collected"] = platform_pentagram_collected
@@ -446,6 +602,8 @@ func load_progress(slot: int = -1)->void:
 			inimigos_mortos = save_array["inimigos_mortos"]
 			if save_array.has("aim_assist_strength"):
 				aim_assist_strength = float(save_array["aim_assist_strength"])
+			if save_array.has("graphics_settings") and save_array["graphics_settings"] is Dictionary:
+				_apply_graphics_settings_from_dict(save_array["graphics_settings"])
 			last_fase = save_array["last_fase"]
 			platform_pentagrams = int(save_array.get("platform_pentagrams", 0))
 			platform_pentagram_collected = save_array.get("platform_pentagram_collected", {})

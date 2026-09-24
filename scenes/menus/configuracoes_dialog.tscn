@@ -3,13 +3,13 @@
 [ext_resource type="Script" uid="uid://cjpf5sqs3bkou" path="res://scripts/menus/configuracoes_dialog.gd" id="1_x8q1y"]
 [ext_resource type="FontFile" uid="uid://b1o834pgp267n" path="res://assets/fonts/contrast.ttf" id="2_y8q2z"]
 
-[node name="ConfiguracoesDialog" type="CanvasLayer"]
+[node name="ConfiguracoesDialog" type="CanvasLayer" unique_id=673907019]
 process_mode = 3
 layer = 100
 visible = false
 script = ExtResource("1_x8q1y")
 
-[node name="Backdrop" type="ColorRect" parent="."]
+[node name="Backdrop" type="ColorRect" parent="." unique_id=221641785]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,7 +17,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.705882)
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1611553283]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -30,37 +30,37 @@ offset_bottom = 220.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=1471622270]
 layout_mode = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=797213189]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Header" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Header" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1276344454]
 layout_mode = 2
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Header"]
+[node name="TitleLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Header" unique_id=1530373596]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_y8q2z")
 theme_override_font_sizes/font_size = 22
 text = "Configurações"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1782273640]
 layout_mode = 2
 
-[node name="TabContainer" type="TabContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="TabContainer" type="TabContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1204649193]
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="Gameplay" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer"]
+[node name="Gameplay" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer" unique_id=402746778]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
@@ -68,25 +68,25 @@ theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 metadata/_tab_index = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay" unique_id=332652274]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="AimAssistSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer"]
+[node name="AimAssistSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer" unique_id=1476640918]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="AimTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection"]
+[node name="AimTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection" unique_id=876799597]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_y8q2z")
 theme_override_font_sizes/font_size = 18
 text = "Assistente de Mira"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection" unique_id=2053386231]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="AimSlider" type="HSlider" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection/HBoxContainer"]
+[node name="AimSlider" type="HSlider" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection/HBoxContainer" unique_id=404549300]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -94,20 +94,20 @@ max_value = 1.0
 step = 0.05
 value = 0.6
 
-[node name="AimValueLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection/HBoxContainer"]
+[node name="AimValueLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection/HBoxContainer" unique_id=2049630435]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 text = "60%"
 horizontal_alignment = 2
 
-[node name="AimDesc" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection"]
+[node name="AimDesc" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection" unique_id=877131341]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.85)
 theme_override_font_sizes/font_size = 13
 text = "Ajusta a intensidade da atração e assistência de mira no combate 3D."
 autowrap_mode = 2
 
-[node name="Debug" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer"]
+[node name="Graphics3D" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer" unique_id=41496044]
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 16
@@ -116,35 +116,244 @@ theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 metadata/_tab_index = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D" unique_id=266297436]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer" unique_id=406668517]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="Msaa3DSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox" unique_id=390090395]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Msaa3DTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/Msaa3DSection" unique_id=1535078932]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "MSAA 3D"
+
+[node name="Msaa3DOption" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/Msaa3DSection" unique_id=231847540]
+layout_mode = 2
+
+[node name="Msaa3DDesc" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/Msaa3DSection" unique_id=1298623875]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.8)
+theme_override_font_sizes/font_size = 13
+text = "Suaviza as bordas dos modelos 3D."
+autowrap_mode = 2
+
+[node name="Sep1" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox" unique_id=1877766722]
+layout_mode = 2
+
+[node name="ResolutionScaleSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox" unique_id=1579877964]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ResolutionScaleTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/ResolutionScaleSection" unique_id=316639016]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Escala de Resolução 3D"
+
+[node name="ResolutionScaleRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/ResolutionScaleSection" unique_id=245420362]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ResolutionScaleSlider" type="HSlider" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/ResolutionScaleSection/ResolutionScaleRow" unique_id=1722461599]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 0.5
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="ResolutionScaleValueLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/ResolutionScaleSection/ResolutionScaleRow" unique_id=293167681]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="ResolutionScaleDesc" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/ResolutionScaleSection" unique_id=1864360374]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.8)
+theme_override_font_sizes/font_size = 13
+text = "Reduz a resolução interna da renderização 3D para melhorar a performance."
+autowrap_mode = 2
+
+[node name="Sep3" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox" unique_id=1110315059]
+layout_mode = 2
+
+[node name="GlowSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox" unique_id=230241357]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="GlowCheck" type="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/GlowSection" unique_id=2047495819]
+layout_mode = 2
+text = "Brilho (Glow)"
+
+[node name="GlowDesc" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/GlowSection" unique_id=368318196]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.8)
+theme_override_font_sizes/font_size = 13
+text = "Realça luzes e brilhos intensos na cena atual."
+autowrap_mode = 2
+
+[node name="SsaoSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox" unique_id=1089317496]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SsaoCheck" type="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/SsaoSection" unique_id=529119782]
+layout_mode = 2
+text = "Oclusão de Ambiente (SSAO)"
+
+[node name="SsaoDesc" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/SsaoSection" unique_id=588844741]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.8)
+theme_override_font_sizes/font_size = 13
+text = "Adiciona sombreamento suave nos cantos e contatos entre objetos."
+autowrap_mode = 2
+
+[node name="Sep4" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox" unique_id=1912039571]
+layout_mode = 2
+
+[node name="ShadowQualitySection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox" unique_id=1201101899]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ShadowQualityTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/ShadowQualitySection" unique_id=1023873780]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Qualidade das Sombras"
+
+[node name="ShadowQualityOption" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/ShadowQualitySection" unique_id=107273355]
+layout_mode = 2
+
+[node name="ShadowQualityDesc" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/ShadowQualitySection" unique_id=1001543259]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.8)
+theme_override_font_sizes/font_size = 13
+text = "Resolução do mapa de sombras dos objetos e inimigos."
+autowrap_mode = 2
+
+[node name="Sep5" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox" unique_id=1948694658]
+layout_mode = 2
+
+[node name="RestoreRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox" unique_id=1406326807]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnRestore3D" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer/VBox/RestoreRow" unique_id=1682190833]
+custom_minimum_size = Vector2(200, 34)
+layout_mode = 2
+text = "Restaurar Padrão"
+
+[node name="Graphics2D" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer" unique_id=1799956478]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+metadata/_tab_index = 2
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D" unique_id=1630717083]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Msaa2DSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox" unique_id=1337747981]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Msaa2DTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox/Msaa2DSection" unique_id=399696861]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "MSAA 2D"
+
+[node name="Msaa2DOption" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox/Msaa2DSection" unique_id=1278633247]
+layout_mode = 2
+
+[node name="Msaa2DDesc" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox/Msaa2DSection" unique_id=1103441952]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.8)
+theme_override_font_sizes/font_size = 13
+text = "Suaviza bordas de linhas e formas desenhadas na tela."
+autowrap_mode = 2
+
+[node name="Sep1" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox" unique_id=1353591518]
+layout_mode = 2
+
+[node name="TextureFilterSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox" unique_id=1592700013]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TextureFilterTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox/TextureFilterSection" unique_id=2026300662]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Filtro de Textura"
+
+[node name="TextureFilterOption" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox/TextureFilterSection" unique_id=616820779]
+layout_mode = 2
+
+[node name="TextureFilterDesc" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox/TextureFilterSection" unique_id=76769464]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.8)
+theme_override_font_sizes/font_size = 13
+text = "Nítido preserva o estilo original; Suave deixa os sprites mais lisos."
+autowrap_mode = 2
+
+[node name="Sep2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox" unique_id=98869332]
+layout_mode = 2
+
+[node name="RestoreRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox" unique_id=2026701133]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnRestore2D" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics2D/VBox/RestoreRow" unique_id=417305574]
+custom_minimum_size = Vector2(200, 34)
+layout_mode = 2
+text = "Restaurar Padrão"
+
+[node name="Debug" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer" unique_id=202596054]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+metadata/_tab_index = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug" unique_id=1740498471]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="DebugTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer"]
+[node name="DebugTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer" unique_id=1083563889]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_y8q2z")
 theme_override_font_sizes/font_size = 16
 text = "Eventos do Jogo (game_events):"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer" unique_id=884589041]
 layout_mode = 2
 size_flags_vertical = 3
 follow_focus = true
 horizontal_scroll_mode = 0
 
-[node name="DebugEventsContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer/ScrollContainer"]
+[node name="DebugEventsContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer/ScrollContainer" unique_id=1989687785]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="HSeparator2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=189874684]
 layout_mode = 2
 
-[node name="Footer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Footer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=488429170]
 layout_mode = 2
 alignment = 1
 
-[node name="BtnClose" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/Footer"]
+[node name="BtnClose" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/Footer" unique_id=1401494984]
 custom_minimum_size = Vector2(130, 36)
 layout_mode = 2
 text = "Fechar"
