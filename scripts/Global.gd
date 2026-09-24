@@ -7,6 +7,7 @@ const language_zh = "zh"
 const battle_mode_realtime = "realtime"
 const battle_mode_strategic = "strategic"
 const realtime_enemy_respawn_seconds:float = 75.0
+const WELL_ENTRY_SCREAM:AudioStreamMP3 = preload("res://assets/novos_audios/maycon_falling_fase_1.mp3")
 
 var load_from_castle_1:bool = false
 var load_from_outside_1:bool = false
@@ -18,6 +19,7 @@ var is_two_player_active = false
 var back_to_main_camera = false
 var back_to_fase = false
 var from_slum = false
+var well_entry_scream:AudioStreamPlayer
 var platform_arrival_pending:bool = false
 var platform_pentagrams:int = 0
 var platform_pentagram_collected:Dictionary = {}
@@ -222,6 +224,23 @@ func fade_out_sound(stream_player: AudioStreamPlayer, duracao: float):
 	# Faz o volume ir do valor atual até -80 dB (silêncio total)
 	if stream_player:
 		tween.tween_property(stream_player, "volume_db", -20.0, duracao)
+
+func start_well_entry_scream() -> void:
+	if !is_instance_valid(well_entry_scream):
+		well_entry_scream = AudioStreamPlayer.new()
+		var scream_stream:AudioStreamMP3 = WELL_ENTRY_SCREAM.duplicate()
+		scream_stream.loop = true
+		well_entry_scream.stream = scream_stream
+		add_child(well_entry_scream)
+	well_entry_scream.volume_db = -2.0
+	well_entry_scream.play()
+
+func finish_well_entry_scream() -> void:
+	if !is_instance_valid(well_entry_scream) || !well_entry_scream.playing:
+		return
+	var tween:Tween = create_tween()
+	tween.tween_property(well_entry_scream, "volume_db", -30.0, 0.25)
+	tween.tween_callback(well_entry_scream.stop)
 	
 		
 func load_progress()->void:
@@ -247,7 +266,8 @@ func load_progress()->void:
 			if save_array.has("default_language"):
 				set_game_language(str(save_array["default_language"]))
 			maycon_itens = save_array["maycon_itens"]
-			game_events = save_array["game_events"]
+			game_events = game_events_default.duplicate()
+			game_events.merge(save_array["game_events"], true)
 			inimigos_mortos = save_array["inimigos_mortos"]
 			if save_array.has("aim_assist_strength"):
 				aim_assist_strength = float(save_array["aim_assist_strength"])
