@@ -1,8 +1,7 @@
 shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled, depth_draw_never;
+render_mode unshaded, cull_disabled, depth_draw_never, fog_disabled;
 
 void fragment() {
-	float radius = length(UV - vec2(0.5));
 	ALBEDO = COLOR.rgb;
-	ALPHA = (1.0 - smoothstep(0.08, 0.5, radius)) * COLOR.a;
+	EMISSION = COLOR.rgb * 1.4;
 }

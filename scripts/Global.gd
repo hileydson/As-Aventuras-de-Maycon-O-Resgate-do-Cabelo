@@ -54,6 +54,7 @@ var maycon_pegou_bullet:bool = false
 
 # data to be saved
 var can_load:bool = false
+var current_save_slot:int = 1
 var in_cutscene:bool = false
 var save_array = {}
 var default_language:String = language_pt_br
@@ -104,8 +105,11 @@ func save_settings() -> void:
 	save_to_player_savegame()
 
 func save_to_player_savegame() -> void:
-	if FileAccess.file_exists("user://savegame.save"):
-		var file = FileAccess.open("user://savegame.save", FileAccess.READ)
+	_ensure_legacy_save_migration()
+	var path := get_slot_save_path(current_save_slot)
+	if FileAccess.file_exists(path) or (current_save_slot == 1 and FileAccess.file_exists("user://savegame.save")):
+		var open_path := path if FileAccess.file_exists(path) else "user://savegame.save"
+		var file = FileAccess.open(open_path, FileAccess.READ)
 		if file:
 			var json_text = file.get_as_text()
 			file.close()
@@ -114,17 +118,136 @@ func save_to_player_savegame() -> void:
 				data["game_events"] = game_events.duplicate()
 				data["aim_assist_strength"] = aim_assist_strength
 				data["default_language"] = default_language
-				var w_file = FileAccess.open("user://savegame.save", FileAccess.WRITE)
+				data["save_timestamp"] = Time.get_datetime_string_from_system()
+				var w_file = FileAccess.open(path, FileAccess.WRITE)
 				if w_file:
 					w_file.store_line(JSON.stringify(data))
 					w_file.close()
 					save_array = data
+				if current_save_slot == 1:
+					var leg_w = FileAccess.open("user://savegame.save", FileAccess.WRITE)
+					if leg_w:
+						leg_w.store_line(JSON.stringify(data))
+						leg_w.close()
 				return
 	
 	if last_fase != "":
 		save_progress(last_fase)
 	else:
 		save_progress("fase_1")
+
+func get_slot_save_path(slot: int = -1) -> String:
+	var s: int = slot if slot in [1, 2, 3] else current_save_slot
+	return "user://savegame_slot_%d.save" % s
+
+func _ensure_legacy_save_migration() -> void:
+	if FileAccess.file_exists("user://savegame.save") and not FileAccess.file_exists("user://savegame_slot_1.save"):
+		var f_in := FileAccess.open("user://savegame.save", FileAccess.READ)
+		if f_in:
+			var txt := f_in.get_as_text()
+			f_in.close()
+			var f_out := FileAccess.open("user://savegame_slot_1.save", FileAccess.WRITE)
+			if f_out:
+				f_out.store_string(txt)
+				f_out.close()
+
+func has_save_slot(slot: int) -> bool:
+	_ensure_legacy_save_migration()
+	if slot == 1:
+		return FileAccess.file_exists("user://savegame_slot_1.save") or FileAccess.file_exists("user://savegame.save")
+	return FileAccess.file_exists("user://savegame_slot_%d.save" % slot)
+
+func has_any_save() -> bool:
+	return has_save_slot(1) or has_save_slot(2) or has_save_slot(3)
+
+func get_fase_friendly_name(fase_key: String) -> String:
+	var map := {
+		"fase_1": "FASE_NAME_FASE_1",
+		"fase_2": "FASE_NAME_FASE_2",
+		"fase_3": "FASE_NAME_FASE_3",
+		"fase_3d_platform": "FASE_NAME_FASE_3D_PLATFORM",
+		"fase_4": "FASE_NAME_FASE_4",
+		"castelo_1": "FASE_NAME_CASTELO_1",
+		"castelo_2": "FASE_NAME_CASTELO_2",
+		"castelo_3": "FASE_NAME_CASTELO_3",
+		"castelo_no_fire_1": "FASE_NAME_CASTELO_1",
+		"castelo_no_fire_2": "FASE_NAME_CASTELO_2",
+		"outside_castelo_1": "FASE_NAME_OUTSIDE_1",
+		"outside_castelo_2": "FASE_NAME_OUTSIDE_2",
+		"outside_castelo_3": "FASE_NAME_OUTSIDE_3",
+		"fase_1_before_castle_1": "FASE_NAME_FASE_1",
+		"fase_1_before_castle_2": "FASE_NAME_FASE_2",
+		"fase_1_before_castle_3": "FASE_NAME_FASE_3",
+		"fase_1_before_castle_4": "FASE_NAME_FASE_4",
+		"fase_1_castle_1": "FASE_NAME_CASTELO_1",
+		"fase_1_castle_2": "FASE_NAME_CASTELO_2",
+		"fase_1_castle_3": "FASE_NAME_CASTELO_3",
+		"fase_1_castle_no_fire_1": "FASE_NAME_CASTELO_1",
+		"fase_1_castle_no_fire_2": "FASE_NAME_CASTELO_2",
+		"fase_1_outside_castle_again_no_fire_1": "FASE_NAME_OUTSIDE_1",
+		"fase_1_outside_castle_again_no_fire_2": "FASE_NAME_OUTSIDE_2",
+		"fase_1_outside_castle_again_no_fire_3": "FASE_NAME_OUTSIDE_3",
+	}
+	if map.has(fase_key):
+		return tr(map[fase_key])
+	return fase_key.capitalize()
+
+func get_slot_info(slot: int) -> Dictionary:
+	_ensure_legacy_save_migration()
+	var path := get_slot_save_path(slot)
+	if not FileAccess.file_exists(path):
+		if slot == 1 and FileAccess.file_exists("user://savegame.save"):
+			path = "user://savegame.save"
+		else:
+			return {"exists": false}
+
+	var f := FileAccess.open(path, FileAccess.READ)
+	if not f:
+		return {"exists": false}
+
+	var json_str := f.get_as_text()
+	f.close()
+	var data = JSON.parse_string(json_str)
+	if not (data is Dictionary):
+		return {"exists": false}
+
+	var fase: String = str(data.get("last_fase", "fase_1"))
+	var date_str: String = str(data.get("save_timestamp", ""))
+	if date_str == "":
+		var mtime := FileAccess.get_modified_time(path)
+		var dt := Time.get_datetime_dict_from_unix_time(mtime)
+		date_str = "%02d/%02d/%04d %02d:%02d" % [dt.day, dt.month, dt.year, dt.hour, dt.minute]
+	elif date_str.contains("T"):
+		var parts := date_str.split("T")
+		if parts.size() == 2:
+			var d_parts := parts[0].split("-")
+			if d_parts.size() == 3:
+				var time_part := parts[1].substr(0, 5)
+				date_str = "%s/%s/%s %s" % [d_parts[2], d_parts[1], d_parts[0], time_part]
+
+	return {
+		"exists": true,
+		"last_fase": fase,
+		"fase_display": get_fase_friendly_name(fase),
+		"date": date_str,
+		"hp": float(data.get("realtime_hp", realtime_hp_max)),
+		"battle_mode": str(data.get("battle_mode", battle_mode_realtime)),
+		"pentagrams": int(data.get("platform_pentagrams", 0))
+	}
+
+func delete_save_slot(slot: int) -> bool:
+	var path := get_slot_save_path(slot)
+	var deleted := false
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(path)
+		deleted = true
+	if slot == 1 and FileAccess.file_exists("user://savegame.save"):
+		DirAccess.remove_absolute("user://savegame.save")
+		deleted = true
+	if current_save_slot == slot:
+		reset_default_values()
+		current_save_slot = 1
+	return deleted
 
 func load_settings() -> void:
 	var config = ConfigFile.new()
@@ -241,16 +364,23 @@ func save_progress(fase:String)->void:
 	save_array["last_fase"] = fase
 	save_array["platform_pentagrams"] = platform_pentagrams
 	save_array["platform_pentagram_collected"] = platform_pentagram_collected
+	save_array["save_timestamp"] = Time.get_datetime_string_from_system()
 	
-	var file = FileAccess.open("user://savegame.save", FileAccess.WRITE) 
-	var json_string = JSON.stringify(save_array) 
-	file.store_line(json_string)
+	var path := get_slot_save_path(current_save_slot)
+	var file = FileAccess.open(path, FileAccess.WRITE) 
+	if file:
+		var json_string = JSON.stringify(save_array) 
+		file.store_line(json_string)
+		file.close()
+
+	if current_save_slot == 1:
+		var leg_file = FileAccess.open("user://savegame.save", FileAccess.WRITE)
+		if leg_file:
+			leg_file.store_line(JSON.stringify(save_array))
+			leg_file.close()
 
 func check_load():
-	if FileAccess.file_exists("user://savegame.save"): 
-		can_load = true
-	
-	return can_load
+	return has_any_save()
 	
 func fade_out_sound(stream_player: AudioStreamPlayer, duracao: float):
 	var tween = create_tween()
@@ -280,7 +410,9 @@ func finish_well_entry_scream(duration: float = 0.25) -> void:
 	well_entry_scream_tween.tween_callback(well_entry_scream.stop)
 	
 		
-func load_progress()->void:
+func load_progress(slot: int = -1)->void:
+	if slot in [1, 2, 3]:
+		current_save_slot = slot
 	
 	if load_from_castle_1:
 		reset_save_to_castle_1()
@@ -294,10 +426,16 @@ func load_progress()->void:
 		load_progress()
 	else:
 		reset_default_values()
-		if FileAccess.file_exists("user://savegame.save"): 
+		_ensure_legacy_save_migration()
+		var path := get_slot_save_path(current_save_slot)
+		if not FileAccess.file_exists(path) and current_save_slot == 1 and FileAccess.file_exists("user://savegame.save"):
+			path = "user://savegame.save"
+
+		if FileAccess.file_exists(path): 
 			can_load = true
-			var file = FileAccess.open("user://savegame.save", FileAccess.READ) 
+			var file = FileAccess.open(path, FileAccess.READ) 
 			var json_string = file.get_as_text() 
+			file.close()
 			save_array = JSON.parse_string(json_string)
 			
 			if save_array.has("default_language"):

@@ -274,3 +274,43 @@ INTRO_SUB_11,Mas quando voltou: cadê o Cabelo? Só havia uma carta no chão!,Bu
 INTRO_SUB_12,Nela estava escrito mas não dava pra entender nada!,Words were written on it but completely unreadable!,¡Había algo escrito pero no se entendía absolutamente nada!,上面写了字但字迹潦草得根本无法辨认！
 INTRO_SUB_13,Maycon guardou a carta e saiu em busca do seu amigo pra valer!,Maycon kept the letter and set out to rescue his best friend!,¡Maycon guardó la carta y salió en busca de su amigo de verdad!,麦肯收好信件毅然踏上了营救挚友的冒险之旅！
 INTRO_SUB_14,Agora Maycon... é com você! É com você!,Now Maycon... it is all up to you! It is up to you!,Ahora Maycon... ¡depende de ti! ¡Depende de ti!,现在麦肯……全靠你了！靠你了！
+MENU_LOAD,Carregar,Load,Cargar,读取
+MENU_SLOTS_TITLE,SLOTS DE MEMÓRIA,MEMORY SLOTS,RANURAS DE MEMORIA,存档栏位
+MENU_SLOTS_DESC,Escolha um slot de save para carregar ou gerenciar:,Choose a save slot to load or manage:,Elige una ranura de guardado para cargar o gestionar:,选择一个存档栏位以读取或管理：
+MENU_SLOT_1_LABEL,Slot 1,Slot 1,Ranura 1,栏位 1
+MENU_SLOT_2_LABEL,Slot 2,Slot 2,Ranura 2,栏位 2
+MENU_SLOT_3_LABEL,Slot 3,Slot 3,Ranura 3,栏位 3
+MENU_SLOT_EMPTY,[ Slot Vazio ],[ Empty Slot ],[ Ranura Vacía ],[ 空存档 ]
+MENU_SLOT_ACTION_TITLE,GERENCIAR SLOT,MANAGE SLOT,GESTIONAR RANURA,管理栏位
+MENU_SLOT_LOAD_BTN,Carregar Jogo,Load Game,Cargar Juego,读取游戏
+MENU_SLOT_DELETE_BTN,Apagar Save,Delete Save,Borrar Guardado,删除存档
+MENU_BACK,Voltar,Back,Volver,返回
+MENU_DELETE_FULLSCREEN_TITLE,TEM CERTEZA QUE QUER APAGAR?,ARE YOU SURE YOU WANT TO DELETE?,¿ESTÁS SEGURO DE QUE QUIERES BORRAR?,你确定要删除存档吗？
+MENU_DELETE_FULLSCREEN_DESC,O progresso salvo neste slot será apagado permanentemente!,The progress saved in this slot will be permanently deleted!,¡El progreso guardado en esta ranura se borrará permanentemente!,此栏位中保存的游戏进度将被永久删除！
+MENU_DELETE_COOLDOWN,Aguarde (%ds)...,Wait (%ds)...,Espere (%ds)...,请稍候 (%ds)...
+MENU_DELETE_CONFIRM_NOW,SIM APAGAR DEFINITIVAMENTE,YES PERMANENTLY DELETE,SÍ BORRAR DEFINITIVAMENTE,是的彻底删除
+MENU_DELETE_CANCEL,CANCELAR,CANCEL,CANCELAR,取消
+FASE_NAME_FASE_1,Bela Aurora (Parte 1),Bela Aurora (Part 1),Bela Aurora (Parte 1),贝拉奥罗拉 (第1部分)
+FASE_NAME_FASE_2,Bela Aurora (Parte 2),Bela Aurora (Part 2),Bela Aurora (Parte 2),贝拉奥罗拉 (第2部分)
+FASE_NAME_FASE_3,Caminho do Castelo,Castle Path,Camino del Castillo,城堡小径
+FASE_NAME_FASE_3D_PLATFORM,Super Maycon Brother,Super Maycon Brother,Super Maycon Brother,超级麦肯兄弟
+FASE_NAME_FASE_4,Posto Estrela da Serra,Estrela da Serra Gas Station,Gasolinera Estrela da Serra,塞拉之星加油站
+FASE_NAME_CASTELO_1,Castelo do Seco (Entrada),Seco Castle (Entrance),Castillo de Seco (Entrada),塞科城堡 (入口)
+FASE_NAME_CASTELO_2,Castelo do Seco (Salão),Seco Castle (Hall),Castillo de Seco (Salón),塞科城堡 (大厅)
+FASE_NAME_CASTELO_3,Castelo do Seco (Torre),Seco Castle (Tower),Castillo de Seco (Torre),塞科城堡 (塔楼)
+FASE_NAME_OUTSIDE_1,Fora do Castelo (Parte 1),Outside Castle (Part 1),Fuera del Castillo (Parte 1),城堡外围 (第1部分)
+FASE_NAME_OUTSIDE_2,Fora do Castelo (Parte 2),Outside Castle (Part 2),Fuera del Castillo (Parte 2),城堡外围 (第2部分)
+FASE_NAME_OUTSIDE_3,Fora do Castelo (Parte 3),Outside Castle (Part 3),Fuera del Castillo (Parte 3),城堡外围 (第3部分)
+MENU_SLOT_SAVED,Salvo,Saved,Guardado,已保存
+MENU_SLOT_NO_DATA,Nenhum dado salvo neste slot.,No save data in this slot.,No hay datos guardados en esta ranura.,此栏位中没有存档数据。
+MENU_SLOT_NEW_GAME,Novo Jogo neste Slot,New Game on this Slot,Nueva Partida en esta Ranura,在此栏位开始新游戏
+MENU_SLOTS_NEWGAME_DESC,Escolha um slot de memória para salvar o jogo:,Choose a memory slot to save the game:,Elige una ranura de memoria para guardar la partida:,选择用于保存游戏的记忆栏位：
+MENU_STAGE_LABEL,Fase,Stage,Fase,关卡
+MENU_DATE_LABEL,Data,Date,Fecha,日期
+MENU_HEALTH_LABEL,Vida,Health,Salud,生命
+MENU_MODE_LABEL,Modo,Mode,Modo,模式
+MENU_MODE_REALTIME,Tempo Real,Real-time,Tiempo Real,即时
+MENU_MODE_STRATEGIC,Estratégico,Strategic,Estratégico,回合战略
+MENU_OVERWRITE_TITLE,SOBRESCREVER SAVE?,OVERWRITE SAVE?,¿SOBREESCRIBIR GUARDADO?,覆盖存档？
+MENU_OVERWRITE_DESC,"Este slot já possui um jogo salvo. Iniciar um Novo Jogo irá sobrescrever o progresso anterior.","This slot already has a saved game. Starting a New Game will overwrite previous progress.","Esta ranura ya tiene una partida guardada. Iniciar una Nueva Partida sobrescribirá el progreso anterior.","此栏位已有存档。开始新游戏将覆盖之前的进度。"
+MENU_OVERWRITE_CONFIRM,SOBRESCREVER E INICIAR,OVERWRITE AND START,SOBREESCRIBIR E INICIAR,覆盖并开始

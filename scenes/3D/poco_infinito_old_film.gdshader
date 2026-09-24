@@ -12,6 +12,8 @@ uniform float flicker_intensity : hint_range(0.0, 0.2) = 0.04;
 uniform float scratch_intensity : hint_range(0.0, 1.0) = 0.35;
 uniform float dust_intensity : hint_range(0.0, 1.0) = 0.35;
 uniform float jitter_amount : hint_range(0.0, 0.01) = 0.0006;
+uniform vec2 motion_blur_vector = vec2(0.0);
+uniform float motion_blur_mix : hint_range(0.0, 1.0) = 0.0;
 
 // Função hash pseudo-aleatória de alta distribuição
 float hash(vec2 p) {
@@ -31,6 +33,12 @@ void fragment() {
 	// Cor base renderizada na tela
 	vec4 base_color = texture(screen_texture, uv);
 	vec3 color = base_color.rgb;
+	if (motion_blur_mix > 0.001) {
+		vec3 motion_color = texture(screen_texture, clamp(uv - motion_blur_vector, vec2(0.0), vec2(1.0))).rgb * 0.25;
+		motion_color += base_color.rgb * 0.5;
+		motion_color += texture(screen_texture, clamp(uv + motion_blur_vector, vec2(0.0), vec2(1.0))).rgb * 0.25;
+		color = mix(color, motion_color, motion_blur_mix);
+	}
 	
 	// Tremulação de luz do projetor vintage (Flicker)
 	float flicker_sine = sin(TIME * 29.4) * cos(TIME * 15.3);
