@@ -210,6 +210,7 @@ func create_shaft() -> void:
 func create_maycon() -> void:
 	maycon = MAYCON_MODEL_SCENE.instantiate()
 	maycon.name = "MayconFalling"
+	_adjust_maycon_materials(maycon)
 	maycon.scale = Vector3.ONE * 3.25
 	maycon.rotation = Vector3(1.1, PI + 0.35, 0.1)
 	add_child(maycon)
@@ -802,3 +803,29 @@ func update_ending(delta:float) -> void:
 			transition_sent = true
 			GameSongs.play_song(1)
 			get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
+
+
+func _adjust_maycon_materials(root: Node) -> void:
+	for mesh in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := mesh as MeshInstance3D
+		if not mi:
+			continue
+		if mi.material_override is BaseMaterial3D:
+			var mat = mi.material_override.duplicate() as BaseMaterial3D
+			mat.metallic = 0.0
+			mat.roughness = 0.85
+			mat.metallic_specular = 0.25
+			mat.emission_enabled = false
+			mi.material_override = mat
+		if mi.mesh:
+			for s in range(mi.mesh.get_surface_count()):
+				var mat = mi.get_surface_override_material(s)
+				if not mat:
+					mat = mi.mesh.surface_get_material(s)
+				if mat is BaseMaterial3D:
+					var dup = mat.duplicate() as BaseMaterial3D
+					dup.metallic = 0.0
+					dup.roughness = 0.85
+					dup.metallic_specular = 0.25
+					dup.emission_enabled = false
+					mi.set_surface_override_material(s, dup)

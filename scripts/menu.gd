@@ -187,6 +187,7 @@ func _build_world() -> void:
 	add_child(maycon)
 	var model := MAYCON_SCENE.instantiate()
 	model.name = "MayconModel"
+	_adjust_maycon_materials(model)
 	maycon.add_child(model)
 	maycon_animation = model.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	maycon_skeleton = model.find_child("Skeleton3D", true, false) as Skeleton3D
@@ -214,6 +215,32 @@ func _build_world() -> void:
 		take_camera.current = false
 		add_child(take_camera)
 		take_cameras.append(take_camera)
+
+
+func _adjust_maycon_materials(root: Node) -> void:
+	for mesh in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := mesh as MeshInstance3D
+		if not mi:
+			continue
+		if mi.material_override is BaseMaterial3D:
+			var mat = mi.material_override.duplicate() as BaseMaterial3D
+			mat.metallic = 0.0
+			mat.roughness = 0.85
+			mat.metallic_specular = 0.25
+			mat.emission_enabled = false
+			mi.material_override = mat
+		if mi.mesh:
+			for s in range(mi.mesh.get_surface_count()):
+				var mat = mi.get_surface_override_material(s)
+				if not mat:
+					mat = mi.mesh.surface_get_material(s)
+				if mat is BaseMaterial3D:
+					var dup = mat.duplicate() as BaseMaterial3D
+					dup.metallic = 0.0
+					dup.roughness = 0.85
+					dup.metallic_specular = 0.25
+					dup.emission_enabled = false
+					mi.set_surface_override_material(s, dup)
 
 
 func _build_sand() -> void:
@@ -703,6 +730,15 @@ func _build_interface() -> void:
 	buttons.add_child(exit_button)
 	exit_button.pressed.connect(_on_exit_pressed)
 
+	btn_new_game.focus_neighbor_top = exit_button.get_path()
+	btn_new_game.focus_neighbor_bottom = btn_load.get_path()
+	btn_load.focus_neighbor_top = btn_new_game.get_path()
+	btn_load.focus_neighbor_bottom = settings.get_path()
+	settings.focus_neighbor_top = btn_load.get_path()
+	settings.focus_neighbor_bottom = exit_button.get_path()
+	exit_button.focus_neighbor_top = settings.get_path()
+	exit_button.focus_neighbor_bottom = btn_new_game.get_path()
+
 	# 2. Slot selection submenu stack
 	stack_slots = VBoxContainer.new()
 	stack_slots.name = "StackSlots"
@@ -743,6 +779,16 @@ func _build_interface() -> void:
 	var btn_slots_back := _menu_button("MENU_BACK", "SlotsBack")
 	stack_slots.add_child(btn_slots_back)
 	btn_slots_back.pressed.connect(_show_main_menu)
+
+	if slot_cards.size() == 3:
+		slot_cards[0].focus_neighbor_top = btn_slots_back.get_path()
+		slot_cards[0].focus_neighbor_bottom = slot_cards[1].get_path()
+		slot_cards[1].focus_neighbor_top = slot_cards[0].get_path()
+		slot_cards[1].focus_neighbor_bottom = slot_cards[2].get_path()
+		slot_cards[2].focus_neighbor_top = slot_cards[1].get_path()
+		slot_cards[2].focus_neighbor_bottom = btn_slots_back.get_path()
+		btn_slots_back.focus_neighbor_top = slot_cards[2].get_path()
+		btn_slots_back.focus_neighbor_bottom = slot_cards[0].get_path()
 
 	# 3. Slot actions submenu stack
 	stack_slot_actions = VBoxContainer.new()
@@ -1002,18 +1048,50 @@ func _update_slot_actions_view() -> void:
 		else:
 			action_pentagrams_row.visible = false
 
+		btn_slot_load.visible = true
 		btn_slot_load.disabled = false
+		btn_slot_load.focus_mode = Control.FOCUS_ALL
+
+		btn_slot_delete.visible = true
 		btn_slot_delete.disabled = false
+		btn_slot_delete.focus_mode = Control.FOCUS_ALL
+
 		btn_slot_newgame.visible = false
+		btn_slot_newgame.focus_mode = Control.FOCUS_NONE
+
+		btn_slot_back.visible = true
+		btn_slot_back.focus_mode = Control.FOCUS_ALL
+
+		btn_slot_load.focus_neighbor_top = btn_slot_back.get_path()
+		btn_slot_load.focus_neighbor_bottom = btn_slot_delete.get_path()
+		btn_slot_delete.focus_neighbor_top = btn_slot_load.get_path()
+		btn_slot_delete.focus_neighbor_bottom = btn_slot_back.get_path()
+		btn_slot_back.focus_neighbor_top = btn_slot_delete.get_path()
+		btn_slot_back.focus_neighbor_bottom = btn_slot_load.get_path()
 	else:
 		action_status_badge.text = tr("MENU_SLOT_EMPTY").to_upper()
 		action_status_badge.add_theme_color_override("font_color", Color(0.48, 0.58, 0.60))
 		action_empty_label.visible = true
 		action_details_vbox.visible = false
 
+		btn_slot_load.visible = false
 		btn_slot_load.disabled = true
+		btn_slot_load.focus_mode = Control.FOCUS_NONE
+
+		btn_slot_delete.visible = false
 		btn_slot_delete.disabled = true
+		btn_slot_delete.focus_mode = Control.FOCUS_NONE
+
 		btn_slot_newgame.visible = true
+		btn_slot_newgame.focus_mode = Control.FOCUS_ALL
+
+		btn_slot_back.visible = true
+		btn_slot_back.focus_mode = Control.FOCUS_ALL
+
+		btn_slot_newgame.focus_neighbor_top = btn_slot_back.get_path()
+		btn_slot_newgame.focus_neighbor_bottom = btn_slot_back.get_path()
+		btn_slot_back.focus_neighbor_top = btn_slot_newgame.get_path()
+		btn_slot_back.focus_neighbor_bottom = btn_slot_newgame.get_path()
 
 
 func _show_main_menu() -> void:
@@ -1051,7 +1129,7 @@ func _show_slot_actions_menu() -> void:
 	if info.get("exists", false):
 		btn_slot_load.grab_focus.call_deferred()
 	else:
-		btn_slot_back.grab_focus.call_deferred()
+		btn_slot_newgame.grab_focus.call_deferred()
 
 
 func _on_slot_selected(slot: int) -> void:
@@ -1171,6 +1249,9 @@ func _open_delete_confirmation() -> void:
 
 	delete_cooldown = 2.5
 	delete_confirm_btn.disabled = true
+	delete_confirm_btn.focus_mode = Control.FOCUS_NONE
+	delete_cancel_btn.focus_neighbor_top = delete_cancel_btn.get_path()
+	delete_cancel_btn.focus_neighbor_bottom = delete_cancel_btn.get_path()
 	var secs := int(ceil(delete_cooldown))
 	delete_confirm_btn.text = tr("MENU_DELETE_COOLDOWN") % secs
 	fullscreen_delete_dialog.visible = true
@@ -1185,7 +1266,12 @@ func _update_delete_cooldown(delta: float) -> void:
 		if delete_cooldown <= 0.0:
 			delete_cooldown = 0.0
 			delete_confirm_btn.disabled = false
+			delete_confirm_btn.focus_mode = Control.FOCUS_ALL
 			delete_confirm_btn.text = tr("MENU_DELETE_CONFIRM_NOW")
+			delete_confirm_btn.focus_neighbor_top = delete_cancel_btn.get_path()
+			delete_confirm_btn.focus_neighbor_bottom = delete_cancel_btn.get_path()
+			delete_cancel_btn.focus_neighbor_top = delete_confirm_btn.get_path()
+			delete_cancel_btn.focus_neighbor_bottom = delete_confirm_btn.get_path()
 		else:
 			var secs := int(ceil(delete_cooldown))
 			delete_confirm_btn.text = tr("MENU_DELETE_COOLDOWN") % secs
@@ -1204,7 +1290,7 @@ func _on_delete_confirmed() -> void:
 	fullscreen_delete_dialog.visible = false
 	_update_slot_cards()
 	_update_slot_actions_view()
-	btn_slot_back.grab_focus.call_deferred()
+	btn_slot_newgame.grab_focus.call_deferred()
 
 
 func _build_overwrite_dialog(root: Control) -> void:
@@ -1298,6 +1384,11 @@ func _build_overwrite_dialog(root: Control) -> void:
 	overwrite_cancel_btn.custom_minimum_size = Vector2(0, 48)
 	ow_buttons.add_child(overwrite_cancel_btn)
 	overwrite_cancel_btn.pressed.connect(_close_overwrite_confirmation)
+
+	overwrite_confirm_btn.focus_neighbor_top = overwrite_cancel_btn.get_path()
+	overwrite_confirm_btn.focus_neighbor_bottom = overwrite_cancel_btn.get_path()
+	overwrite_cancel_btn.focus_neighbor_top = overwrite_confirm_btn.get_path()
+	overwrite_cancel_btn.focus_neighbor_bottom = overwrite_confirm_btn.get_path()
 
 
 func _open_overwrite_confirmation(slot: int) -> void:

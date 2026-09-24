@@ -45,6 +45,7 @@ var saved_cutscene_velocity:Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	visual = MODEL.instantiate()
+	_adjust_maycon_materials(visual)
 	add_child(visual)
 	animation_player = visual.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if animation_player and AIR_FLAIL_ANIM:
@@ -448,3 +449,29 @@ func start_landing_cooldown(duration: float = 0.85) -> void:
 	if is_instance_valid(visual):
 		visual.scale = Vector3(1.35, 0.60, 1.35)
 		visual.position.y = -0.22
+
+
+func _adjust_maycon_materials(root: Node) -> void:
+	for mesh in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := mesh as MeshInstance3D
+		if not mi:
+			continue
+		if mi.material_override is BaseMaterial3D:
+			var mat = mi.material_override.duplicate() as BaseMaterial3D
+			mat.metallic = 0.0
+			mat.roughness = 0.85
+			mat.metallic_specular = 0.25
+			mat.emission_enabled = false
+			mi.material_override = mat
+		if mi.mesh:
+			for s in range(mi.mesh.get_surface_count()):
+				var mat = mi.get_surface_override_material(s)
+				if not mat:
+					mat = mi.mesh.surface_get_material(s)
+				if mat is BaseMaterial3D:
+					var dup = mat.duplicate() as BaseMaterial3D
+					dup.metallic = 0.0
+					dup.roughness = 0.85
+					dup.metallic_specular = 0.25
+					dup.emission_enabled = false
+					mi.set_surface_override_material(s, dup)

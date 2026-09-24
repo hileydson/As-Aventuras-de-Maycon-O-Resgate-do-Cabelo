@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1790265623
+::res://::1790266832
 AGENTS.md::TextFile::-1::1790200506::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1789958757::0::1::::<><><>0<>0<><>::
 export_presets.cfg::TextFile::-1::1790036186::0::1::::<><><>0<>0<><>::
@@ -7,6 +7,8 @@ godot-ai-LICENSE.txt::TextFile::-1::1789951369::0::1::::<><><>0<>0<><>::
 icon.png::CompressedTexture2D::2575902027917887430::1770123705::1770123705::1::::<><><>0<>0<>dab7b3249af0a6a42bb7c259ab178f80<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.bptc.ctex<*>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.astc.ctex::
 icon.svg::CompressedTexture2D::1790880795757653::1767636737::1767636737::1::::<><><>0<>0<>1d558fff71561543e2cf7e0d300c3350<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
 README.md::TextFile::-1::1769709718::0::1::::<><><>0<>0<><>::
+verify_import.gd::GDScript::4911590254148135675::1790266822::0::1::::<>Node<><>0<>0<><>::
+verify_import.tscn::PackedScene::-1::1790266832::0::1::::<><><>0<>0<><>::
 ::res://addons/::1789951437
 ::res://addons/godot_ai/::1789951437
 client_configurator.gd::GDScript::1846084051969471465::1789951434::0::1::::McpClientConfigurator<>RefCounted<><>0<>1<><>::
@@ -758,7 +760,7 @@ torcha_1.png::CompressedTexture2D::5519473588858953449::1770057816::1770057934::
 torcha_2.png::CompressedTexture2D::5053565095746490411::1770057824::1770058044::1::::<><><>0<>0<>857c0a9034844937582d106808c7b1bf<>res://.godot/imported/torcha_2.png-af979f1479a3b897368f10547c31867e.s3tc.ctex<*>res://.godot/imported/torcha_2.png-af979f1479a3b897368f10547c31867e.etc2.ctex::
 torcha_3.png::CompressedTexture2D::2076185651423826683::1770057830::1770058044::1::::<><><>0<>0<>364395229ea8a75e6f895421584e8f4e<>res://.godot/imported/torcha_3.png-1b2f5399ef8430dc49c63df43899daec.s3tc.ctex<*>res://.godot/imported/torcha_3.png-1b2f5399ef8430dc49c63df43899daec.etc2.ctex::
 torcha_4.png::CompressedTexture2D::6036841447037756255::1770057857::1770058044::1::::<><><>0<>0<>37abcfd6316d6397fb7d1f3ac2a0d7f0<>res://.godot/imported/torcha_4.png-20831063d929da7da00d3bd894d81eb9.s3tc.ctex<*>res://.godot/imported/torcha_4.png-20831063d929da7da00d3bd894d81eb9.etc2.ctex::
-::res://assets/novas_imagens/3d_enemies/::1790263201
+::res://assets/novas_imagens/3d_enemies/::1790266798
 cigarro_perfect.glb::PackedScene::7148045277797944353::1770925133::1770925133::1::::<><><>0<>0<>c2c51c7e4951d7d76c24ac618e809799<>res://.godot/imported/cigarro_perfect.glb-2e839053b6b2f87c9f1bc10d60bdf5ff.scn::
 cigarro_perfect_animations.glb::PackedScene::1128251127219636459::1770925133::1770925133::1::::<><><>0<>0<>c388e487840ca07549090a9034eb5b71<>res://.godot/imported/cigarro_perfect_animations.glb-15109144219ec2e170efab8cbcdbbd69.scn::
 cigarro_perfect_animations_texture_0.png::CompressedTexture2D::3310925626512915177::1770925133::1770925133::1::::<><><>0<>0<>c53b8f8cad94a127b47648e5bb99ec95<>res://.godot/imported/cigarro_perfect_animations_texture_0.png-430c691b24d5e098d1ab206bbd779661.s3tc.ctex<*>res://.godot/imported/cigarro_perfect_animations_texture_0.png-430c691b24d5e098d1ab206bbd779661.etc2.ctex::
@@ -766,8 +768,8 @@ cigarro_perfect_animations_texture_0_1.png::CompressedTexture2D::642144329170649
 cigarro_perfect_texture_0.png::CompressedTexture2D::7142435760089513256::1770925133::1770925133::1::::<><><>0<>0<>0b6db68cda8607b1437e9826a795d5b8<>res://.godot/imported/cigarro_perfect_texture_0.png-edeb7d2d2637533912abb2fab94c1d51.s3tc.ctex<*>res://.godot/imported/cigarro_perfect_texture_0.png-edeb7d2d2637533912abb2fab94c1d51.etc2.ctex::
 cigarro_perfect_texture_0_1.png::CompressedTexture2D::7534274922384871015::1770925133::1770925133::1::::<><><>0<>0<>7cfb5dec3e2ebe41a398f54b3d197d23<>res://.godot/imported/cigarro_perfect_texture_0_1.png-29907798113d0451b85bcb3556135caa.s3tc.ctex<*>res://.godot/imported/cigarro_perfect_texture_0_1.png-29907798113d0451b85bcb3556135caa.etc2.ctex::
 maycon_3d_model_ia.glb::PackedScene::7736172373439540554::1770925133::1770925133::1::::<><><>0<>0<>279980e286b521e281c4fca04a4b1ee6<>res://.godot/imported/maycon_3d_model_ia.glb-51e97247747f68fc6eaf16a18ed023f3.scn::
-maycon_3d_model_ia_animations.glb::PackedScene::4741082092158360552::1790186525::1790186593::1::::<><><>0<>0<>d90dc851b7e742520690969382a10625<>res://.godot/imported/maycon_3d_model_ia_animations.glb-004c2bf2920b79f42edc2123ac368998.scn::uid://d12j781ww7elw::::res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations_texture_0.png
-maycon_3d_model_ia_animations_texture_0.png::CompressedTexture2D::9040515557833324988::1770925133::1790186592::1::::<><><>0<>0<>8344f423ee2e3eccb6e00b7df9c92da3<>res://.godot/imported/maycon_3d_model_ia_animations_texture_0.png-aa0503561b26a0605b2274a57ce7c8bb.s3tc.ctex<*>res://.godot/imported/maycon_3d_model_ia_animations_texture_0.png-aa0503561b26a0605b2274a57ce7c8bb.etc2.ctex::
+maycon_3d_model_ia_animations.glb::PackedScene::4741082092158360552::1790266808::1790266841::1::::<><><>0<>0<>d90dc851b7e742520690969382a10625<>res://.godot/imported/maycon_3d_model_ia_animations.glb-004c2bf2920b79f42edc2123ac368998.scn::uid://d12j781ww7elw::::res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations_texture_0.png
+maycon_3d_model_ia_animations_texture_0.png::CompressedTexture2D::9040515557833324988::1770925133::1790266839::1::::<><><>0<>0<>8344f423ee2e3eccb6e00b7df9c92da3<>res://.godot/imported/maycon_3d_model_ia_animations_texture_0.png-aa0503561b26a0605b2274a57ce7c8bb.s3tc.ctex<*>res://.godot/imported/maycon_3d_model_ia_animations_texture_0.png-aa0503561b26a0605b2274a57ce7c8bb.etc2.ctex::
 maycon_3d_model_ia_texture_0.png::CompressedTexture2D::2659056241704487796::1770925133::1770925133::1::::<><><>0<>0<>ea1bd41592bf55bbfa3c3b2130b4ce9d<>res://.godot/imported/maycon_3d_model_ia_texture_0.png-832f37e2dee353456843250291472154.s3tc.ctex<*>res://.godot/imported/maycon_3d_model_ia_texture_0.png-832f37e2dee353456843250291472154.etc2.ctex::
 maycon_air_flail.glb::PackedScene::4829731457964129792::1790215563::1790215770::1::::<><><>0<>0<>06f7c00a9f1ab8dfad9049f0096e5ac8<>res://.godot/imported/maycon_air_flail.glb-06a1185cc3880461d0f8f5d5996651df.scn::uid://bxetbtdok2jyj::::res://assets/novas_imagens/3d_enemies/maycon_air_flail_texture_0.png
 maycon_air_flail.res::Animation::3930789119081791467::1790216177::0::1::::<><><>0<>0<><>::
@@ -3891,7 +3893,7 @@ maycon.gd::GDScript::2120782937936992069::1790094717::0::1::::<>CharacterBody2D<
 maycon_batalha.gd::GDScript::5958723479534775137::1769904053::0::1::::<>CharacterBody2D<><>0<>0<><>::
 maycon_fase.gd::GDScript::2636479185831734840::1790094737::0::1::::<>CharacterBody2D<><>0<>0<><>::
 maycon_itens.gd::GDScript::3608571195747589650::1790094841::0::1::::<>Node2D<><>0<>0<><>::
-menu.gd::GDScript::1661121416407267804::1790266068::0::1::::<>Node3D<><>0<>0<><>::
+menu.gd::GDScript::1661121416407267804::1790266290::0::1::::<>Node3D<><>0<>0<><>::
 pause.gd::GDScript::7449233017950370426::1790094635::0::1::::<>Control<><>0<>0<><>::
 realtime_battle.gd::GDScript::7867064034200866415::1790193451::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_3d.gd::GDScript::2141243869699419406::1790009870::0::1::::<>CanvasLayer<><>0<>0<><>::
@@ -3962,7 +3964,7 @@ terrain3d-01_00.res::Terrain3DRegion::4979166056605722663::1770136386::0::1::::<
 terrain3d_00-01.res::Terrain3DRegion::5019486532651089028::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00-02.res::Terrain3DRegion::3854885546111145601::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00_00.res::Terrain3DRegion::4948174298051947078::1770136386::0::1::::<><><>0<>0<><>::
-::res://translations/::1790265324
+::res://translations/::1790266085
 game_text.csv::Translation::1292654866392114924::1790265994::1790266085::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
 game_text.en.translation::OptimizedTranslation::1712006235640866847::1790266085::0::1::::<><><>0<>0<><>::
 game_text.es.translation::OptimizedTranslation::9151324834628544493::1790266085::0::1::::<><><>0<>0<><>::
