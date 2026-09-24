@@ -56,6 +56,8 @@ func _process(delta: float) -> void:
 	if seco_intro_started:
 		_update_seco_intro(delta)
 		return
+	if entering_well:
+		return
 	if !entering_well && !Global.battle_started && maycon_fase.global_position.x >= seco.global_position.x - 35.0 && maycon_fase.global_position.x < 3170.0:
 		_start_seco_intro()
 		return
@@ -165,6 +167,20 @@ func _on_dead_line_body_entered(body: Node2D) -> void:
 	if body != maycon_fase || entering_well:
 		return
 	entering_well = true
+	maycon_fase.velocity = Vector2.ZERO
+	maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
+	Global.start_well_entry_scream()
+	var fade_layer:CanvasLayer = CanvasLayer.new()
+	fade_layer.layer = 100
+	get_parent().add_child(fade_layer)
+	var blackout:ColorRect = ColorRect.new()
+	blackout.color = Color(0.0, 0.0, 0.0, 0.0)
+	blackout.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade_layer.add_child(blackout)
+	blackout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var fade_tween:Tween = create_tween()
+	fade_tween.tween_property(blackout, "color:a", 1.0, 0.85)
+	await fade_tween.finished
 	get_tree().change_scene_to_file("res://scenes/3D/poco_infinito.tscn")
 
 

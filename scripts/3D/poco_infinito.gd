@@ -70,6 +70,7 @@ var ending_success:bool = false
 var ending_start_pitch:float = 0.0
 var ending_scream_started:bool = false
 var transition_sent:bool = false
+var entry_transitioning:bool = true
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -88,9 +89,30 @@ func _ready() -> void:
 	hit_sound = make_audio("res://assets/novos_audios/hurt_sound_3d.mp3", -4.0)
 	scream_sound = make_audio("res://assets/novos_audios/maycon_falling_fase_1.mp3", -2.0)
 	explosion_sound = make_audio("res://assets/novos_audios/explosao.mp3", -5.0)
+	hud.call("set_state", health, 0.0, 0.0, 0.0, 0.0)
+	start_entry_fade()
+
+func start_entry_fade() -> void:
+	var blackout:ColorRect = ColorRect.new()
+	blackout.color = Color.BLACK
+	blackout.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	blackout.z_index = 100
+	$CanvasLayer.add_child(blackout)
+	blackout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var fade_tween:Tween = create_tween()
+	fade_tween.tween_property(blackout, "color:a", 0.0, 0.9)
+	fade_tween.finished.connect(_finish_entry_fade.bind(blackout))
+
+func _finish_entry_fade(blackout:ColorRect) -> void:
+	blackout.queue_free()
+	entry_transitioning = false
+	Global.finish_well_entry_scream()
 	music.play()
 	wind.play()
-	hud.call("set_state", health, 0.0, 0.0, 0.0, 0.0)
+
+func _exit_tree() -> void:
+	if entry_transitioning:
+		Global.finish_well_entry_scream()
 
 func make_audio(path:String, volume:float, pitch:float = 1.0, looped:bool = false) -> AudioStreamPlayer:
 	var player := AudioStreamPlayer.new()
@@ -316,6 +338,11 @@ func create_speed_lines() -> void:
 		speed_lines.append({"node":streak, "speed":randf_range(50.0, 96.0)})
 
 func _process(delta:float) -> void:
+	if entry_transitioning:
+		animate_environment(delta)
+		animate_falling_limbs(delta)
+		update_body_effects(delta)
+		return
 	if Input.is_action_just_pressed("ui_cancel") && !finishing:
 		toggle_pause()
 	if locally_paused:
