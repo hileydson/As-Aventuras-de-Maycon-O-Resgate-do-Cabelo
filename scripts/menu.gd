@@ -12,10 +12,15 @@ const MEMORY_SHADER = preload("res://scenes/3D/menu_memory.gdshader")
 const STAR_SHADER = preload("res://scenes/3D/menu_stars.gdshader")
 const MIST_SHADER = preload("res://scenes/3D/menu_horizon_mist.gdshader")
 
+const LOOK_OUT_DURATION := 3.4
+const WALK_START := 5.0
 const WALK_DURATION := 28.0
 const TURN_DURATION := 4.5
-const MEMORY_START := 31.0
-const MEMORY_FULL := 40.0
+const MEMORY_START := 36.5
+const MEMORY_FULL := 45.5
+const TAKE_WIDE := 0
+const TAKE_LOW := 1
+const TAKE_POV := 2
 
 @export var load_from_castle_1: bool = false
 @export var load_from_outside_1: bool = false
@@ -25,6 +30,14 @@ var elapsed := 0.0
 var maycon: Node3D
 var maycon_animation: AnimationPlayer
 var camera: Camera3D
+var take_cameras: Array[Camera3D] = []
+var take_rng := RandomNumberGenerator.new()
+var take_order: Array[int] = []
+var current_take := TAKE_WIDE
+var previous_take := TAKE_WIDE
+var transition_start := -10.0
+var next_take_time := WALK_START + 4.5
+var pov_start_time := -1.0
 var memory_material: ShaderMaterial
 var moon_glow_material: ShaderMaterial
 var menu_panel: Control
@@ -39,10 +52,11 @@ func _ready() -> void:
 	Global.load_from_castle_1 = load_from_castle_1
 	Global.load_from_outside_1 = load_from_outside_1
 	Global.show_debug_tab = enable_debug_tab
+	take_rng.randomize()
 	_build_world()
 	_build_interface()
 	_build_audio()
-	_update_cinematic(0.0)
+	_update_cinematic(0.0, 0.0)
 	var reveal := create_tween()
 	reveal.tween_property(fade_rect, "color:a", 0.0, 2.8).set_trans(Tween.TRANS_SINE)
 	reveal.parallel().tween_property(menu_panel, "modulate:a", 1.0, 3.6).set_trans(Tween.TRANS_SINE)
@@ -53,7 +67,7 @@ func _process(delta: float) -> void:
 	if leaving:
 		return
 	elapsed += delta
-	_update_cinematic(elapsed)
+	_update_cinematic(elapsed, delta)
 
 
 func _material(shader: Shader) -> ShaderMaterial:
@@ -113,7 +127,7 @@ func _build_world() -> void:
 			maycon_animation.add_animation_library("", MAYCON_MENU_ANIMATIONS)
 		maycon_animation.get_animation("Walking").loop_mode = Animation.LOOP_LINEAR
 		maycon_animation.get_animation("Idle").loop_mode = Animation.LOOP_LINEAR
-		maycon_animation.play("Walking")
+		maycon_animation.play("Idle")
 		maycon_animation.speed_scale = 0.78
 	camera = Camera3D.new()
 	camera.name = "CinematicCamera"
@@ -122,6 +136,12 @@ func _build_world() -> void:
 	camera.far = 260.0
 	camera.current = true
 	add_child(camera)
+	for take_name in ["WideTake", "LowShoreTake", "MayconEyesTake"]:
+		var take_camera := Camera3D.new()
+		take_camera.name = take_name
+		take_camera.current = false
+		add_child(take_camera)
+		take_cameras.append(take_camera)
 
 
 func _build_sand() -> void:
@@ -547,4 +567,3 @@ func _on_settings_pressed() -> void:
 
 func _on_exit_pressed() -> void:
 	get_tree().quit()
-
