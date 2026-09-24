@@ -492,7 +492,8 @@ class SpecialOverlay:
 
 		var title_scale = 1.0 + sin(effect_time * 14.0) * 0.035
 		draw_string(font, Vector2(246, 96), tr("POWER_MAYCON_RUSH"), HORIZONTAL_ALIGNMENT_CENTER, 660, int(42.0 * title_scale), Color(1.0, 0.88, 0.32, 0.98))
-		draw_string(font, Vector2(326, 142), "%02d / 50 " % hit_count + tr("BATTLE_HITS"), HORIZONTAL_ALIGNMENT_CENTER, 500, 28, Color(0.35, 0.9, 1.0, 1.0))
+		var rush_hits_text = tr("BATTLE_HITS") % hit_count if "%d" in tr("BATTLE_HITS") else ("%d HITS" % hit_count)
+		draw_string(font, Vector2(326, 142), ("%02d / 50 " % hit_count) + rush_hits_text, HORIZONTAL_ALIGNMENT_CENTER, 500, 28, Color(0.35, 0.9, 1.0, 1.0))
 		draw_line(Vector2(320, 156), Vector2(832, 156), Color(1.0, 0.12, 0.4, 0.65 + energy * 0.3), 4.0)
 
 		# Banner visual: Instrução para apertar Soco e Chute + Medidor de Aceleração
@@ -598,10 +599,12 @@ func _process(delta:float) -> void:
 
 func _unhandled_input(event:InputEvent) -> void:
 	if special_active && rush_active:
-		if event.is_action_pressed("key_q"):
+		if event.is_action_pressed("key_q") || (event is InputEventMouseButton && event.pressed && event.button_index == MOUSE_BUTTON_LEFT):
 			register_rush_mash("punch")
-		elif event.is_action_pressed("key_w"):
+		elif event.is_action_pressed("key_w") || (event is InputEventMouseButton && event.pressed && event.button_index == MOUSE_BUTTON_RIGHT):
 			register_rush_mash("kick")
+		return
+	super(event)
 
 func update_rush_mashing_input(delta:float) -> void:
 	if !rush_active:
@@ -788,8 +791,11 @@ func build_special_hud() -> void:
 
 	special_hits_label = Label.new()
 	special_hits_label.position = Vector2(778, 613)
-	special_hits_label.size = Vector2(48, 22)
-	special_hits_label.text = tr("BATTLE_HITS")
+	special_hits_label.size = Vector2(86, 22)
+	if "%d" in tr("BATTLE_HITS"):
+		special_hits_label.text = tr("BATTLE_HITS") % special_hits
+	else:
+		special_hits_label.text = "%d HITS" % special_hits
 	special_hits_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	special_hits_label.add_theme_font_size_override("font_size", 14)
 	special_hits_label.add_theme_color_override("font_color", Color("d8f3ff"))
@@ -799,7 +805,7 @@ func build_special_hud() -> void:
 	hud_canvas.add_child(special_hits_label)
 
 	symbol_dash_ctrl = PanelContainer.new()
-	symbol_dash_ctrl.position = Vector2(830, 608)
+	symbol_dash_ctrl.position = Vector2(430, 580)
 	symbol_dash_ctrl.size = Vector2(86, 28)
 	symbol_dash_ctrl.pivot_offset = Vector2(43, 14)
 	symbol_dash_ctrl.visible = false
@@ -822,7 +828,7 @@ func build_special_hud() -> void:
 	hud_canvas.add_child(symbol_dash_ctrl)
 
 	symbol_pentagram_ctrl = PanelContainer.new()
-	symbol_pentagram_ctrl.position = Vector2(924, 608)
+	symbol_pentagram_ctrl.position = Vector2(534, 580)
 	symbol_pentagram_ctrl.size = Vector2(80, 28)
 	symbol_pentagram_ctrl.pivot_offset = Vector2(40, 14)
 	symbol_pentagram_ctrl.visible = false
@@ -845,7 +851,7 @@ func build_special_hud() -> void:
 	hud_canvas.add_child(symbol_pentagram_ctrl)
 
 	symbol_rush_ctrl = PanelContainer.new()
-	symbol_rush_ctrl.position = Vector2(1012, 608)
+	symbol_rush_ctrl.position = Vector2(638, 580)
 	symbol_rush_ctrl.size = Vector2(80, 28)
 	symbol_rush_ctrl.pivot_offset = Vector2(40, 14)
 	symbol_rush_ctrl.visible = false
@@ -875,6 +881,11 @@ func build_special_hud() -> void:
 func update_special_meter_hud() -> void:
 	if !special_meter:
 		return
+	if special_hits_label:
+		if "%d" in tr("BATTLE_HITS"):
+			special_hits_label.text = tr("BATTLE_HITS") % special_hits
+		else:
+			special_hits_label.text = "%d HITS" % special_hits
 	special_meter.value = special_hits
 	var fill:StyleBoxFlat = special_meter.get_theme_stylebox("fill").duplicate() as StyleBoxFlat
 	if special_hits >= SPECIAL_RUSH_THRESHOLD:

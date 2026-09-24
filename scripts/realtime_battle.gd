@@ -350,6 +350,14 @@ var enemy_power_sound:AudioStreamPlayer
 var enemy_voice_sound:AudioStreamPlayer
 var enemy_teleport_sound:AudioStreamPlayer
 
+var action_buttons_panel:PanelContainer
+var action_row_punch:PanelContainer
+var action_row_kick:PanelContainer
+var action_row_dash:PanelContainer
+var action_punch_flash:float = 0.0
+var action_kick_flash:float = 0.0
+var action_dash_flash:float = 0.0
+
 var player_position := Vector2(280, 500)
 var enemy_position := Vector2(1060, 475)
 var player_hp:float = 210.0
@@ -1865,6 +1873,7 @@ func build_hud() -> void:
 	intro_label.add_theme_color_override("font_color", Color("ffd166"))
 	hud_canvas.add_child(intro_label)
 	build_pause_overlay()
+	build_action_buttons_hud()
 
 func build_pause_overlay() -> void:
 	pause_overlay = ColorRect.new()
@@ -1891,6 +1900,181 @@ func build_pause_overlay() -> void:
 	pause_hint.add_theme_font_size_override("font_size", 20)
 	pause_hint.add_theme_color_override("font_color", Color(0.88, 0.92, 1.0, 0.9))
 	pause_overlay.add_child(pause_hint)
+
+func build_action_buttons_hud() -> void:
+	if !hud_canvas:
+		return
+	action_buttons_panel = PanelContainer.new()
+	action_buttons_panel.position = Vector2(938, 498)
+	action_buttons_panel.size = Vector2(198, 134)
+	action_buttons_panel.z_index = 120
+	action_buttons_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+
+	var panel_box = StyleBoxFlat.new()
+	panel_box.bg_color = Color(0.015, 0.025, 0.05, 0.82)
+	panel_box.border_color = Color(0.2, 0.45, 0.75, 0.55)
+	panel_box.set_border_width_all(2)
+	panel_box.set_corner_radius_all(8)
+	panel_box.content_margin_left = 6.0
+	panel_box.content_margin_right = 6.0
+	panel_box.content_margin_top = 5.0
+	panel_box.content_margin_bottom = 5.0
+	action_buttons_panel.add_theme_stylebox_override("panel", panel_box)
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 4)
+	vbox.mouse_filter = Control.MOUSE_FILTER_PASS
+
+	var tex_q = load("res://assets/novas_imagens/buttons/Q_Key_Light.png")
+	var tex_w = load("res://assets/novas_imagens/buttons/W_Key_Light.png")
+	var tex_space = load("res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png")
+	var tex_mouse_l = load("res://assets/novas_imagens/buttons/mouse_trigger.png")
+	var tex_mouse_r = load("res://assets/novas_imagens/buttons/mouse_right_click.png")
+	var tex_y = load("res://assets/novas_imagens/buttons/360_Y.png")
+	var tex_b = load("res://assets/novas_imagens/buttons/360_B.png")
+	var tex_a = load("res://assets/novas_imagens/buttons/360_A.png")
+
+	action_row_punch = _create_action_row("👊 " + tr("POWER_PUNCH"), Color(0.35, 0.9, 1.0), tex_q, tex_mouse_l, tex_y, false)
+	action_row_kick = _create_action_row("🦵 " + tr("POWER_KICK"), Color(1.0, 0.35, 0.65), tex_w, tex_mouse_r, tex_b, false)
+	action_row_dash = _create_action_row("💨 " + tr("POWER_DASH"), Color(1.0, 0.88, 0.35), tex_space, null, tex_a, true)
+
+	action_row_punch.gui_input.connect(func(event:InputEvent):
+		if event is InputEventMouseButton && event.pressed && event.button_index == MOUSE_BUTTON_LEFT:
+			if player_attack_time <= 0.0 && dodge_time <= 0.0 && !battle_paused && intro_time <= 0.0 && !player_dead:
+				start_player_attack(false)
+	)
+	action_row_kick.gui_input.connect(func(event:InputEvent):
+		if event is InputEventMouseButton && event.pressed && event.button_index == MOUSE_BUTTON_LEFT:
+			if player_attack_time <= 0.0 && dodge_time <= 0.0 && !battle_paused && intro_time <= 0.0 && !player_dead:
+				start_player_attack(true)
+	)
+	action_row_dash.gui_input.connect(func(event:InputEvent):
+		if event is InputEventMouseButton && event.pressed && event.button_index == MOUSE_BUTTON_LEFT:
+			if dodge_cooldown <= 0.0 && !battle_paused && intro_time <= 0.0 && !player_dead:
+				player_attack_time = 0.0
+				start_dodge()
+	)
+
+	vbox.add_child(action_row_punch)
+	vbox.add_child(action_row_kick)
+	vbox.add_child(action_row_dash)
+	action_buttons_panel.add_child(vbox)
+	hud_canvas.add_child(action_buttons_panel)
+
+func _create_action_row(action_text:String, label_color:Color, key_tex:Texture2D, mouse_tex:Texture2D, pad_tex:Texture2D, is_space:bool) -> PanelContainer:
+	var row = PanelContainer.new()
+	row.custom_minimum_size = Vector2(0, 36)
+	row.mouse_filter = Control.MOUSE_FILTER_PASS
+
+	var row_box = StyleBoxFlat.new()
+	row_box.bg_color = Color(0.04, 0.07, 0.14, 0.65)
+	row_box.border_color = Color(label_color.r, label_color.g, label_color.b, 0.35)
+	row_box.set_border_width_all(1)
+	row_box.set_corner_radius_all(6)
+	row_box.content_margin_left = 6.0
+	row_box.content_margin_right = 6.0
+	row_box.content_margin_top = 2.0
+	row_box.content_margin_bottom = 2.0
+	row.add_theme_stylebox_override("panel", row_box)
+
+	var hbox = HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 4)
+	hbox.mouse_filter = Control.MOUSE_FILTER_PASS
+
+	var label = Label.new()
+	label.text = action_text
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_color_override("font_color", label_color)
+	label.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.05, 0.95))
+	label.add_theme_constant_override("outline_size", 3)
+	hbox.add_child(label)
+
+	if key_tex:
+		if is_space:
+			var space_ctrl = Control.new()
+			space_ctrl.custom_minimum_size = Vector2(34, 20)
+			space_ctrl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			var tr_key = TextureRect.new()
+			tr_key.texture = key_tex
+			tr_key.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			tr_key.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			tr_key.stretch_mode = TextureRect.STRETCH_SCALE
+			space_ctrl.add_child(tr_key)
+			var space_lbl = Label.new()
+			space_lbl.text = "SPACE"
+			space_lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			space_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			space_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			space_lbl.add_theme_font_size_override("font_size", 8)
+			space_lbl.add_theme_color_override("font_color", Color(0.15, 0.15, 0.2, 0.9))
+			space_ctrl.add_child(space_lbl)
+			hbox.add_child(space_ctrl)
+		else:
+			var tr_key = TextureRect.new()
+			tr_key.texture = key_tex
+			tr_key.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			tr_key.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			tr_key.custom_minimum_size = Vector2(22, 22)
+			tr_key.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			hbox.add_child(tr_key)
+
+	if mouse_tex:
+		var tr_mouse = TextureRect.new()
+		tr_mouse.texture = mouse_tex
+		tr_mouse.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr_mouse.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		tr_mouse.custom_minimum_size = Vector2(20, 20)
+		tr_mouse.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		hbox.add_child(tr_mouse)
+
+	var div = Label.new()
+	div.text = "/"
+	div.add_theme_font_size_override("font_size", 11)
+	div.add_theme_color_override("font_color", Color(1, 1, 1, 0.35))
+	div.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hbox.add_child(div)
+
+	if pad_tex:
+		var tr_pad = TextureRect.new()
+		tr_pad.texture = pad_tex
+		tr_pad.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr_pad.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		tr_pad.custom_minimum_size = Vector2(22, 22)
+		tr_pad.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		hbox.add_child(tr_pad)
+
+	row.add_child(hbox)
+	return row
+
+func update_action_buttons_hud(delta:float) -> void:
+	if !action_buttons_panel:
+		return
+
+	action_punch_flash = maxf(0.0, action_punch_flash - delta * 5.0)
+	action_kick_flash = maxf(0.0, action_kick_flash - delta * 5.0)
+	action_dash_flash = maxf(0.0, action_dash_flash - delta * 5.0)
+
+	_update_row_style(action_row_punch, action_punch_flash, Color(0.2, 0.85, 1.0), Color(0.04, 0.08, 0.16, 0.65))
+	_update_row_style(action_row_kick, action_kick_flash, Color(1.0, 0.25, 0.65), Color(0.14, 0.04, 0.09, 0.65))
+	_update_row_style(action_row_dash, action_dash_flash, Color(1.0, 0.88, 0.3), Color(0.14, 0.11, 0.03, 0.65))
+
+func _update_row_style(row:PanelContainer, flash:float, flash_color:Color, base_bg:Color) -> void:
+	if !row:
+		return
+	var style:StyleBoxFlat = row.get_theme_stylebox("panel") as StyleBoxFlat
+	if !style:
+		return
+	var cur_bg = base_bg.lerp(Color(flash_color.r * 0.4, flash_color.g * 0.4, flash_color.b * 0.4, 0.9), flash)
+	var cur_border = Color(flash_color.r, flash_color.g, flash_color.b, 0.35).lerp(flash_color, flash)
+	style.bg_color = cur_bg
+	style.border_color = cur_border
+	var b_width = int(1.0 + flash * 2.0)
+	style.border_width_left = b_width
+	style.border_width_top = b_width
+	style.border_width_right = b_width
+	style.border_width_bottom = b_width
 
 func start_entry_sequence() -> void:
 	player.modulate = Color(1, 1, 1, 0)
@@ -1963,6 +2147,7 @@ func _process(delta:float) -> void:
 		return
 	update_effects(delta)
 	update_shake(delta)
+	update_action_buttons_hud(delta)
 	if leaving:
 		return
 	if player_dead:
@@ -2008,6 +2193,21 @@ func toggle_battle_pause() -> void:
 		if child is AudioStreamPlayer:
 			child.stream_paused = battle_paused
 
+func _unhandled_input(event:InputEvent) -> void:
+	if battle_paused || intro_time > 0.0 || leaving || player_dead:
+		return
+	if event is InputEventMouseButton && event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if player_attack_time <= 0.0 && dodge_time <= 0.0:
+				start_player_attack(false)
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			if player_attack_time <= 0.0 && dodge_time <= 0.0:
+				start_player_attack(true)
+		elif event.button_index == MOUSE_BUTTON_MIDDLE:
+			if dodge_cooldown <= 0.0:
+				player_attack_time = 0.0
+				start_dodge()
+
 func update_player(delta:float) -> void:
 	# Se o dash do player estiver ativo, bloqueia o resto do update
 	if player_dash_active:
@@ -2022,8 +2222,8 @@ func update_player(delta:float) -> void:
 		combo = 0
 		combo_label.text = ""
 
-	# CANCELAMENTO IMEDIATO: Apertar Dash (ui_accept) interrompe QUALQUER acao atual (soco, chute, etc)
-	if Input.is_action_just_pressed("ui_accept") && dodge_cooldown <= 0.0:
+	# CANCELAMENTO IMEDIATO: Apertar Dash (ui_accept ou run) interrompe QUALQUER acao atual (soco, chute, etc)
+	if (Input.is_action_just_pressed("ui_accept") || Input.is_action_just_pressed("run")) && dodge_cooldown <= 0.0:
 		player_attack_time = 0.0
 		start_dodge()
 		return
@@ -2062,6 +2262,7 @@ func update_player(delta:float) -> void:
 	player_position.y = clampf(player_position.y, MIN_Y, MAX_Y)
 
 func start_dodge() -> void:
+	action_dash_flash = 1.0
 	player_attack_time = 0.0
 	player_attack_move_dir = Vector2.ZERO
 	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
@@ -2308,6 +2509,10 @@ func update_player_dash_effects(delta:float) -> void:
 			player_dash_particles[i] = p
 
 func start_player_attack(kick:bool) -> void:
+	if kick:
+		action_kick_flash = 1.0
+	else:
+		action_punch_flash = 1.0
 	var attack_name = "attack_kick" if kick else "attack_punch"
 	player_attack_time = get_sprite_animation_duration(player, attack_name, 0.32, 0.75)
 	var input_facing = Input.get_axis("ui_left", "ui_right")
