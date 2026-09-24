@@ -92,13 +92,26 @@ func set_cutscene_active(val:bool) -> void:
 	cutscene_active = val
 	if val:
 		control_enabled = false
-		saved_cutscene_velocity = velocity
+		saved_cutscene_velocity = Vector3.ZERO
 		velocity = Vector3.ZERO
+		if is_instance_valid(visual):
+			visual.visible = true
+			visual.scale = Vector3.ONE
+			visual.position = Vector3.ZERO
+			visual.rotation.x = 0.0
+			visual.rotation.z = 0.0
 		if is_instance_valid(animation_player) and animation_player.is_playing():
 			animation_player.pause()
 	else:
 		control_enabled = true
-		velocity = saved_cutscene_velocity
+		velocity = Vector3.ZERO
+		saved_cutscene_velocity = Vector3.ZERO
+		if is_instance_valid(visual):
+			visual.visible = true
+			visual.scale = Vector3.ONE
+			visual.position = Vector3.ZERO
+			visual.rotation.x = 0.0
+			visual.rotation.z = 0.0
 		if is_instance_valid(animation_player) and not animation_player.is_playing():
 			animation_player.play()
 
@@ -303,7 +316,7 @@ func _update_fart_puffs(delta:float) -> void:
 			fart_puffs.remove_at(i)
 
 func _process(delta:float) -> void:
-	if intro_mode:
+	if intro_mode or cutscene_active:
 		return
 	var look:Vector2 = Vector2(Input.get_axis("look_left", "look_right"), Input.get_axis("look_up", "look_down"))
 	if look.length_squared() > 0.02:

@@ -153,14 +153,23 @@ func _update_seco_intro(delta:float) -> void:
 		intro_camera.global_position = intro_camera.global_position.lerp(seco.global_position, minf(1.0, delta * 7.0))
 	elif seco_intro_time < 2.45:
 		if seco_intro_time - delta < 1.15:
-			intro_scream.stop()
+			create_tween().tween_property(intro_scream, "volume_db", -30.0, 0.8)
 			intro_kick.play()
+			var maycon_scream:AudioStreamPlayer = AudioStreamPlayer.new()
+			maycon_scream.stream = preload("res://assets/novos_audios/maycon_falling_fase_1.mp3")
+			maycon_scream.volume_db = -3.0
+			Global.add_child(maycon_scream)
+			maycon_scream.finished.connect(maycon_scream.queue_free)
+			maycon_scream.play()
 			var dimensional_whoosh:AudioStreamPlayer = AudioStreamPlayer.new()
 			dimensional_whoosh.stream = preload("res://assets/novos_audios/seco_kick_dimensional_whoosh_pixabay.mp3")
-			dimensional_whoosh.volume_db = -4.0
-			Global.add_child(dimensional_whoosh)
-			dimensional_whoosh.finished.connect(dimensional_whoosh.queue_free)
+			dimensional_whoosh.volume_db = -9.0
+			add_child(dimensional_whoosh)
 			dimensional_whoosh.play()
+			var whoosh_fade:Tween = create_tween()
+			whoosh_fade.tween_interval(0.55)
+			whoosh_fade.tween_property(dimensional_whoosh, "volume_db", -45.0, 0.65)
+			whoosh_fade.tween_callback(dimensional_whoosh.queue_free)
 			Input.start_joy_vibration(0, 0.8, 0.8, 0.25)
 		maycon_fase.global_position += Vector2(0.0, -1700.0 * delta)
 		seco.global_position += Vector2(0.0, -1580.0 * delta)

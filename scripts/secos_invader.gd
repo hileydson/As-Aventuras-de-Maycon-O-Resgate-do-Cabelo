@@ -159,11 +159,15 @@ func _build_ui() -> void:
 	var hud:CanvasLayer = CanvasLayer.new()
 	hud.name = "HUD"
 	add_child(hud)
+	var explosion_layer:CanvasLayer = CanvasLayer.new()
+	explosion_layer.name = "ExplosionWhiteout"
+	explosion_layer.layer = 100
+	add_child(explosion_layer)
 	whiteout = ColorRect.new()
 	whiteout.color = Color(1.0, 1.0, 1.0, 0.0)
 	whiteout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	whiteout.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hud.add_child(whiteout)
+	explosion_layer.add_child(whiteout)
 	title = Label.new()
 	title.text = tr("SECO_INVADER_TITLE")
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -307,7 +311,6 @@ func _update_intro(delta:float) -> void:
 		seco.position.y = lerpf(screen.y + 110.0, screen.y - 105.0, smoothstep(2.55, 4.9, intro_time))
 	if intro_time >= 3.55 && intro_time - delta < 3.55:
 		title.modulate.a = 1.0
-		punch.play()
 		_spawn_sparks(Vector2(screen.x * 0.5, screen.y * 0.49), 45, Color(0.65, 0.17, 1.0))
 	if intro_time > 5.1:
 		title.modulate.a = maxf(0.0, 1.0 - (intro_time - 5.1) * 0.78)

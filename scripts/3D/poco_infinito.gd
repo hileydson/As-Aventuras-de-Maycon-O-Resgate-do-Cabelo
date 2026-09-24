@@ -6,6 +6,7 @@ const PLAYER_LIMIT:float = 5.0
 const SHAFT_SPEED:float = 24.5
 const MAYCON_DEPTH:float = 7.0
 const DASH_SMOKE_TEXTURE:Texture2D = preload("res://assets/novas_imagens/effects/smoke_animation.png")
+const MAYCON_MODEL_SCENE:PackedScene = preload("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
 const OBSTACLE_SCENES:Array[String] = [
 	"res://assets/polyhaven/endless_well/wooden_crate_01/wooden_crate_01_1k.gltf",
 	"res://assets/polyhaven/endless_well/barrel_03/barrel_03_1k.gltf",
@@ -18,6 +19,8 @@ const OBSTACLE_SCALE:Array[float] = [2.7, 2.5, 2.6, 2.7]
 @onready var camera:Camera3D = $Camera3D
 @onready var hud:Control = $CanvasLayer/HUD
 @onready var dash_blur:ColorRect = $CanvasLayer/DashBlur
+@onready var old_film_filter:ColorRect = $CanvasLayer/OldFilmFilter
+@onready var fade_overlay:ColorRect = $CanvasLayer/FadeOverlay
 
 var maycon:Node3D
 var maycon_animation:AnimationPlayer
@@ -33,6 +36,8 @@ var obstacle_pool:Array[Dictionary] = []
 var shaft_sections:Array[Node3D] = []
 var speed_lines:Array[Dictionary] = []
 var dash_puffs:Array[Dictionary] = []
+var dash_ghosts:Array[Dictionary] = []
+var ghost_spawn_timer:float = 0.0
 var rock_material:StandardMaterial3D
 var trim_material:StandardMaterial3D
 var shaft_line_material:StandardMaterial3D
@@ -89,30 +94,43 @@ func _ready() -> void:
 	hit_sound = make_audio("res://assets/novos_audios/hurt_sound_3d.mp3", -4.0)
 	scream_sound = make_audio("res://assets/novos_audios/maycon_falling_fase_1.mp3", -2.0)
 	explosion_sound = make_audio("res://assets/novos_audios/explosao.mp3", -5.0)
+	music.play()
+	wind.play()
+	Global.finish_well_entry_scream(2.5)
 	hud.call("set_state", health, 0.0, 0.0, 0.0, 0.0)
 	start_entry_fade()
 
 func start_entry_fade() -> void:
-	var blackout:ColorRect = ColorRect.new()
-	blackout.color = Color.BLACK
-	blackout.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	blackout.z_index = 100
-	$CanvasLayer.add_child(blackout)
-	blackout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if !is_instance_valid(fade_overlay):
+		fade_overlay = get_node_or_null("CanvasLayer/FadeOverlay") as ColorRect
+	if !is_instance_valid(fade_overlay):
+		fade_overlay = ColorRect.new()
+		fade_overlay.color = Color.BLACK
+		fade_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		fade_overlay.z_index = 100
+		$CanvasLayer.add_child(fade_overlay)
+		fade_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	fade_overlay.color = Color(0.0, 0.0, 0.0, 1.0)
+	fade_overlay.visible = true
 	var fade_tween:Tween = create_tween()
-	fade_tween.tween_property(blackout, "color:a", 0.0, 0.9)
-	fade_tween.finished.connect(_finish_entry_fade.bind(blackout))
+	fade_tween.set_trans(Tween.TRANS_SINE)
+	fade_tween.set_ease(Tween.EASE_IN_OUT)
+	fade_tween.tween_property(fade_overlay, "color:a", 0.0, 8.0)
+	fade_tween.finished.connect(_finish_entry_fade)
 
-func _finish_entry_fade(blackout:ColorRect) -> void:
-	blackout.queue_free()
+func _finish_entry_fade() -> void:
+	if is_instance_valid(fade_overlay):
+		fade_overlay.visible = false
+		fade_overlay.queue_free()
 	entry_transitioning = false
-	Global.finish_well_entry_scream()
-	music.play()
-	wind.play()
 
 func _exit_tree() -> void:
 	if entry_transitioning || (!ending_success && finishing):
 		Global.finish_well_entry_scream()
+	for data in dash_ghosts:
+		if is_instance_valid(data.get("node")):
+			(data.node as Node3D).queue_free()
+	dash_ghosts.clear()
 
 func make_audio(path:String, volume:float, pitch:float = 1.0, looped:bool = false) -> AudioStreamPlayer:
 	var player := AudioStreamPlayer.new()
@@ -190,8 +208,7 @@ func create_shaft() -> void:
 			section.add_child(bracket)
 
 func create_maycon() -> void:
-	var scene:PackedScene = load("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
-	maycon = scene.instantiate()
+	maycon = MAYCON_MODEL_SCENE.instantiate()
 	maycon.name = "MayconFalling"
 	maycon.scale = Vector3.ONE * 3.25
 	maycon.rotation = Vector3(1.1, PI + 0.35, 0.1)
@@ -338,11 +355,6 @@ func create_speed_lines() -> void:
 		speed_lines.append({"node":streak, "speed":randf_range(50.0, 96.0)})
 
 func _process(delta:float) -> void:
-	if entry_transitioning:
-		animate_environment(delta)
-		animate_falling_limbs(delta)
-		update_body_effects(delta)
-		return
 	if Input.is_action_just_pressed("ui_cancel") && !finishing:
 		toggle_pause()
 	if locally_paused:
@@ -351,6 +363,7 @@ func _process(delta:float) -> void:
 	speed_factor = clampf(elapsed / SURVIVAL_TIME, 0.0, 1.0)
 	animate_environment(delta)
 	update_dash_puffs(delta)
+	update_dash_ghosts(delta)
 	camera_shake = maxf(0.0, camera_shake - delta * 1.25)
 	camera.position = Vector3(3.0, 1.25, 15.0) + Vector3(randf_range(-camera_shake, camera_shake), randf_range(-camera_shake, camera_shake), 0.0)
 	camera.fov = 66.0 + (5.0 if dash_time > 0.0 else 0.0) + sin(elapsed * 3.5) * 0.35
@@ -381,8 +394,13 @@ func _process(delta:float) -> void:
 		player_pos += dash_direction * (17.5 + speed_factor * 3.0) * delta
 		puff_timer -= delta
 		if puff_timer <= 0.0:
-			puff_timer = 0.06
+			puff_timer = 0.05
 			spawn_dash_trail()
+		ghost_spawn_timer -= delta
+		if ghost_spawn_timer <= 0.0:
+			ghost_spawn_timer = 0.036
+			spawn_dash_ghost()
+			spawn_dash_streak()
 	else:
 		player_pos += input_direction * (6.8 + speed_factor * 1.2) * delta
 	player_pos.x = clampf(player_pos.x, -PLAYER_LIMIT, PLAYER_LIMIT)
@@ -401,7 +419,6 @@ func _process(delta:float) -> void:
 		maycon.transform = tumble_transform
 	animate_falling_limbs(delta)
 	update_body_effects(delta)
-	update_dash_blur()
 	spawn_timer -= delta
 	if spawn_timer <= 0.0 && obstacles.is_empty():
 		spawn_obstacle()
@@ -415,7 +432,7 @@ func toggle_pause() -> void:
 	hud.call("set_pause", locally_paused)
 	hud.set_process(!locally_paused)
 	blood_spray.speed_scale = 0.0 if locally_paused else 1.0
-	dash_blur.visible = false if locally_paused else dash_time > 0.0
+	dash_blur.visible = false
 
 func activate_pentagram() -> void:
 	pentagram_charge = 0.0
@@ -453,7 +470,7 @@ func update_body_effects(delta:float) -> void:
 		ghost.rotation.z = sin(elapsed * 3.0 + lag * 5.0) * 0.17
 		ghost.visible = !finishing
 		var shadow_material:StandardMaterial3D = ghost.material_override
-		shadow_material.albedo_color.a = (0.08 + speed_factor * 0.045) * (1.5 if dash_time > 0.0 else 1.0)
+		shadow_material.albedo_color.a = (0.04 + speed_factor * 0.025) * (1.2 if dash_time > 0.0 else 1.0)
 	for streak_data in body_streaks:
 		var streak:MeshInstance3D = streak_data.node
 		var phase:float = fposmod(float(streak_data.phase) + elapsed * (3.5 if dash_time > 0.0 else 2.1 + speed_factor * 0.9), 1.0)
@@ -467,17 +484,96 @@ func update_body_effects(delta:float) -> void:
 		power_aura.position = maycon.position + Vector3(0.0, 0.0, 0.1)
 		power_aura.scale = Vector3.ONE * (1.0 + sin(elapsed * 17.0) * 0.13)
 
-func update_dash_blur() -> void:
-	dash_blur.visible = dash_time > 0.0
-	if !dash_blur.visible:
+func spawn_dash_ghost() -> void:
+	if not is_instance_valid(maycon) or not is_instance_valid(maycon_skeleton):
 		return
-	var from_screen:Vector2 = camera.unproject_position(maycon.position)
-	var to_screen:Vector2 = camera.unproject_position(maycon.position + Vector3(dash_direction.x, dash_direction.y, 0.0))
-	var screen_direction:Vector2 = (to_screen - from_screen).normalized()
-	var material:ShaderMaterial = dash_blur.material
-	material.set_shader_parameter("blur_direction", screen_direction)
-	material.set_shader_parameter("blur_center", from_screen / get_viewport().get_visible_rect().size)
-	material.set_shader_parameter("blur_strength", clampf(dash_time / 0.22, 0.0, 1.0))
+	var ghost: Node3D = MAYCON_MODEL_SCENE.instantiate()
+	ghost.transform = maycon.transform
+	add_child(ghost)
+	
+	var ghost_skel: Skeleton3D = ghost.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+	if ghost_skel:
+		for i in maycon_skeleton.get_bone_count():
+			ghost_skel.set_bone_pose_rotation(i, maycon_skeleton.get_bone_pose_rotation(i))
+	
+	var anim: AnimationPlayer = ghost.get_node_or_null("AnimationPlayer") as AnimationPlayer
+	if anim:
+		anim.stop()
+		anim.process_mode = Node.PROCESS_MODE_DISABLED
+	
+	var mesh_node: MeshInstance3D = ghost.find_children("*", "MeshInstance3D", true, false)[0] as MeshInstance3D
+	var ghost_mat := StandardMaterial3D.new()
+	ghost_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ghost_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ghost_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	
+	var is_super: bool = pentagram_invulnerability > 0.0
+	var col: Color = Color(1.0, 0.88, 0.28, 0.28) if is_super else Color(0.25, 0.85, 1.0, 0.22)
+	ghost_mat.albedo_color = col
+	if mesh_node:
+		mesh_node.material_override = ghost_mat
+	
+	dash_ghosts.append({
+		"node": ghost,
+		"mat": ghost_mat,
+		"life": 0.25,
+		"duration": 0.25,
+		"initial_alpha": col.a,
+		"base_scale": ghost.scale
+	})
+
+func spawn_dash_streak() -> void:
+	if not is_instance_valid(maycon):
+		return
+	var streak := MeshInstance3D.new()
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 0.015
+	cyl.bottom_radius = 0.07
+	cyl.height = randf_range(2.2, 4.2)
+	cyl.radial_segments = 5
+	streak.mesh = cyl
+	
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var is_super: bool = pentagram_invulnerability > 0.0
+	var col: Color = Color(1.0, 0.92, 0.45, 0.25) if is_super else Color(0.35, 0.90, 1.0, 0.20)
+	mat.albedo_color = col
+	streak.material_override = mat
+	
+	var offset := Vector3(randf_range(-0.55, 0.55), randf_range(-0.55, 0.55), randf_range(-0.35, 0.25))
+	streak.position = maycon.position + offset
+	add_child(streak)
+	var dash_dir_3d := Vector3(dash_direction.x, dash_direction.y, 0.0).normalized()
+	if dash_dir_3d.length_squared() > 0.001:
+		streak.look_at(streak.position + dash_dir_3d, Vector3.UP)
+		streak.rotate_object_local(Vector3.RIGHT, PI * 0.5)
+	dash_ghosts.append({
+		"node": streak,
+		"mat": mat,
+		"life": 0.18,
+		"duration": 0.18,
+		"initial_alpha": col.a,
+		"base_scale": streak.scale
+	})
+
+func update_dash_ghosts(delta: float) -> void:
+	for i in range(dash_ghosts.size() - 1, -1, -1):
+		var data: Dictionary = dash_ghosts[i]
+		var node: Node3D = data.node
+		if not is_instance_valid(node):
+			dash_ghosts.remove_at(i)
+			continue
+		data["life"] = float(data.life) - delta
+		var progress: float = clampf(float(data.life) / float(data.duration), 0.0, 1.0)
+		var mat: StandardMaterial3D = data.mat
+		if mat:
+			mat.albedo_color.a = pow(progress, 1.35) * float(data.initial_alpha)
+		node.scale = (data.base_scale as Vector3) * (1.0 + (1.0 - progress) * 0.10)
+		if data.life <= 0.0:
+			node.queue_free()
+			dash_ghosts.remove_at(i)
 
 func spawn_dash_burst() -> void:
 	for i in 7:
@@ -501,7 +597,7 @@ func spawn_smoke_cloud(initial:bool) -> void:
 	cloud.position = maycon.position - Vector3(dash_direction.x * 0.8, dash_direction.y * 0.8, 0.45)
 	cloud.position += Vector3(randf_range(-0.48, 0.48), randf_range(-0.4, 0.4), randf_range(-0.55, 0.12))
 	cloud.rotation.z = randf_range(-0.48, 0.48)
-	var alpha:float = randf_range(0.36, 0.56) if initial else randf_range(0.23, 0.4)
+	var alpha:float = randf_range(0.18, 0.28) if initial else randf_range(0.10, 0.18)
 	cloud.modulate = Color(randf_range(0.48, 0.62), randf_range(0.79, 0.92), randf_range(0.55, 0.71), alpha)
 	add_child(cloud)
 	var side:Vector2 = Vector2(-dash_direction.y, dash_direction.x) * randf_range(-2.1, 2.1)
@@ -528,11 +624,15 @@ func start_dash(direction:Vector2) -> void:
 	dash_time = 0.22
 	dash_cooldown = 0.6
 	puff_timer = 0.0
+	ghost_spawn_timer = 0.0
 	camera_shake = maxf(camera_shake, 0.12)
 	dash_sound.pitch_scale = randf_range(0.7, 0.8)
 	dash_sound.volume_db = -3.0
 	dash_sound.play()
 	spawn_dash_burst()
+	spawn_dash_ghost()
+	for s in 3:
+		spawn_dash_streak()
 	hud.call("dash_flash")
 
 func create_obstacle_pool() -> void:
@@ -648,6 +748,10 @@ func apply_hit(obstacle:Dictionary) -> void:
 
 func start_ending(success:bool) -> void:
 	finishing = true
+	for data in dash_ghosts:
+		if is_instance_valid(data.get("node")):
+			(data.node as Node3D).queue_free()
+	dash_ghosts.clear()
 	for trail_data in body_trails:
 		(trail_data.node as Node3D).visible = false
 	for streak_data in body_streaks:

@@ -27,6 +27,11 @@ var max_hp: int = 4
 var hp: int = 4
 var hurt_invulnerable_timer: float = 0.0
 var is_defeated: bool = false
+var hits_current_power: int = 0
+const MAX_HITS_PER_POWER: int = 2
+
+func reset_power_hits() -> void:
+	hits_current_power = 0
 
 signal hp_changed(current_hp: int, max_hp: int)
 signal boss_defeated()
@@ -310,6 +315,8 @@ func _build_smoke_effects() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_defeated:
+		if model and not model.visible:
+			model.visible = true
 		return
 
 	if hurt_invulnerable_timer > 0.0:
@@ -422,6 +429,7 @@ func _process_leap(delta: float) -> void:
 
 func _trigger_belly_flop() -> void:
 	current_state = State.FLOP
+	current_hub_index = target_hub_index
 	state_timer = 1.2
 	global_position = target_position
 	_snap_to_ground()
@@ -574,9 +582,15 @@ func _check_maycon_collision() -> void:
 	if horizontal_dist < 4.6 and vertical_diff < 5.8:
 		var maycon_invincible: bool = (maycon.get("is_invincible") == true) or (is_instance_valid(stage) and stage.get("is_invincible") == true)
 		if maycon_invincible:
-			if hurt_invulnerable_timer <= 0.0:
-				take_hit_from_maycon()
+			# Limite de no máximo 2 acertos consecutivos durante este poder de invencibilidade
+			if hits_current_power < MAX_HITS_PER_POWER:
+				if hurt_invulnerable_timer <= 0.0:
+					take_hit_from_maycon()
+			# Se já atingiu 2 vezes nesta mesma ativação da invencibilidade,
+			# Maycon NÃO toma dano nem recoil do Lips pois continua invencível!
 		else:
+			# Maycon não está invencível: reseta contador para permitir acertos no próximo poder
+			hits_current_power = 0
 			# Not invincible: if Maycon walks into Lips on the ground, knock him back
 			if hurt_invulnerable_timer <= 0.0 and current_state in [State.SIT, State.TURN, State.CROUCH, State.FLOP, State.GET_UP] and maycon.get("hurt_time") != null and maycon.hurt_time <= 0.0:
 				if maycon.has_method("receive_damage"):
@@ -586,7 +600,8 @@ func take_hit_from_maycon() -> void:
 	if is_defeated or hurt_invulnerable_timer > 0.0:
 		return
 	
-	hurt_invulnerable_timer = 2.2
+	hits_current_power += 1
+	hurt_invulnerable_timer = 1.2
 	hp = maxi(0, hp - 1)
 	hp_changed.emit(hp, max_hp)
 	if stage and stage.has_method("update_boss_lips_hp"):
@@ -612,6 +627,7 @@ func take_hit_from_maycon() -> void:
 	# 4. Derrota cinematográfica se zerar vida (4 acertos)
 	if hp <= 0:
 		is_defeated = true
+		hurt_invulnerable_timer = 0.0
 		if model:
 			model.visible = true
 		if is_instance_valid(target_indicator):
@@ -642,11 +658,78 @@ func take_hit_from_maycon() -> void:
 		target_recoil_pos = global_position + recoil_dir * 2.2
 
 	var lips_recoil_tw := create_tween().bind_node(self).set_parallel(true)
-	lips_recoil_tw.tween_property(self, "global_position", target_recoil_pos, 0.42).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	lips_recoil_tw.tween_property(self, "global_position", target_recoil_pos, 0.38).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	if is_instance_valid(model):
 		var tilt_dir := -recoil_dir
 		lips_recoil_tw.tween_property(model, "rotation:x", model.rotation.x + tilt_dir.z * 0.45, 0.16).set_trans(Tween.TRANS_QUAD)
-		lips_recoil_tw.chain().tween_property(model, "rotation:x", 0.0, 0.28)
+		lips_recoil_tw.chain().tween_property(model, "rotation:x", 0.0, 0.22)
+	
+	# Assim que o dano acontece e o recuo termina, ele já se prepara para sair de lá e sai logo depois!
+	lips_recoil_tw.chain().tween_callback(func():
+		if not is_defeated:
+			_start_flee()
+	)
+
+func _choose_flee_hub() -> void:
+	if not stage or not ("HUBS" in stage):
+		target_position = global_position
+		return
+
+	var hubs: Array = stage.HUBS
+	var curr_pos: Vector3 = hubs[current_hub_index]
+	var maycon_pos: Vector3 = maycon.global_position if is_instance_valid(maycon) else curr_pos
+	var maycon_hub := _find_nearest_hub_to_position(maycon_pos)
+
+	var candidate_hubs: Array[int] = []
+	for i in range(hubs.size()):
+		if i == current_hub_index:
+			continue
+		var dist: float = curr_pos.distance_to(hubs[i])
+		if dist < 65.0:
+			candidate_hubs.append(i)
+
+	if candidate_hubs.is_empty():
+		for i in range(hubs.size()):
+			if i != current_hub_index:
+				candidate_hubs.append(i)
+
+	# Fugir para longe do Maycon: escolher o hub candidato que maximiza a distância do Maycon
+	var best_hub: int = candidate_hubs[0]
+	var max_dist_to_maycon: float = -1.0
+	for h_idx in candidate_hubs:
+		if h_idx == maycon_hub and candidate_hubs.size() > 1:
+			continue
+		var dist_to_m: float = hubs[h_idx].distance_to(maycon_pos)
+		if dist_to_m > max_dist_to_maycon:
+			max_dist_to_maycon = dist_to_m
+			best_hub = h_idx
+
+	target_hub_index = best_hub
+	var raw_dest: Vector3 = hubs[target_hub_index]
+	target_position = Vector3(raw_dest.x, raw_dest.y + 0.18, raw_dest.z)
+
+func _start_flee() -> void:
+	if is_defeated:
+		return
+	current_hub_index = _find_nearest_hub_to_position(global_position)
+	_snap_to_ground()
+	_choose_flee_hub()
+	
+	if is_instance_valid(target_indicator):
+		target_indicator.global_position = target_position + Vector3.UP * 0.15
+		target_indicator.visible = true
+
+	var flat_dir := Vector3(target_position.x - global_position.x, 0, target_position.z - global_position.z).normalized()
+	if flat_dir.length_squared() > 0.001:
+		rotation.y = atan2(flat_dir.x, flat_dir.z)
+
+	# Prepara-se para sair agachando com grunhido e logo depois sai voando
+	current_state = State.CROUCH
+	state_timer = 0.55
+	_play_anim("Jump_Prep", 0.15)
+	if grunt_audio:
+		grunt_audio.pitch_scale = randf_range(0.95, 1.15)
+		grunt_audio.play()
 
 func _spawn_boss_blood() -> void:
 	if not is_instance_valid(stage):

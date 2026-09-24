@@ -1,5 +1,11 @@
 extends Control
 
+const ICON_DPAD = preload("res://assets/novas_imagens/buttons/PS5_Dpad.png")
+const ICON_BTN_A = preload("res://assets/novas_imagens/buttons/360_A.png")
+const ICON_BTN_Y = preload("res://assets/novas_imagens/buttons/360_Y.png")
+const ICON_KEY_SPACE = preload("res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png")
+const ICON_KEY_Q = preload("res://assets/novas_imagens/buttons/Q_Key_Light.png")
+
 var health:float = 100.0
 var progress:float = 0.0
 var pentagram_charge:float = 0.0
@@ -117,8 +123,7 @@ func _draw() -> void:
 	for i in 10:
 		var nx:float = 38.0 + float(i) * 25.5
 		draw_line(Vector2(nx, 64), Vector2(nx, 88), Color(0.02, 0.01, 0.018, 0.45), 1.0)
-	var hint_color := Color(0.65, 0.84, 0.94, 0.9)
-	draw_string(font, Vector2(25, height - 45), tr("WELL_CONTROLS"), HORIZONTAL_ALIGNMENT_LEFT, width - 50, 17, hint_color)
+	_draw_bottom_badges(height)
 	draw_rect(Rect2(24, height - 31, width - 48.0, 17), Color(0.012, 0.02, 0.035, 0.82), true)
 	draw_rect(Rect2(28, height - 27, (width - 56.0) * progress, 9), Color(0.12, 0.72, 0.92).lerp(Color(0.97, 0.15, 0.23), speed_factor), true)
 	var marker_x:float = 28.0 + (width - 56.0) * progress
@@ -189,3 +194,40 @@ func draw_pentagram(center:Vector2, energy:float) -> void:
 		var distance:float = radius * (0.19 + absf(sin(float(i) * 1.7)) * 0.66)
 		var stain:Vector2 = center + Vector2.from_angle(angle) * distance
 		draw_circle(stain, 2.0 + float(i % 4), Color(0.75, 0.0, 0.035, visibility * 0.76))
+
+func _draw_bottom_badges(height: float) -> void:
+	var base_y: float = height - 76.0
+	var panel_h: float = 38.0
+	var bg_col := Color(0.012, 0.02, 0.035, 0.84)
+	var border_col := Color(0.31, 0.67, 0.8, 0.65)
+	
+	# 1. Badge Movimento (D-Pad)
+	var p1 := Rect2(24.0, base_y, 48.0, panel_h)
+	draw_rect(p1, bg_col, true)
+	draw_rect(p1, border_col, false, 1.5)
+	draw_texture_rect(ICON_DPAD, Rect2(34.0, base_y + 5.0, 28.0, 28.0), false)
+	
+	# 2. Badge Dash (Espaço + Botão A)
+	var p2 := Rect2(80.0, base_y, 90.0, panel_h)
+	var is_dashing: bool = cooldown > 0.0
+	var dash_alpha: float = 0.45 if is_dashing else 1.0
+	var p2_border: Color = Color(0.2, 0.45, 0.55, 0.5) if is_dashing else border_col
+	draw_rect(p2, bg_col, true)
+	draw_rect(p2, p2_border, false, 1.5)
+	draw_texture_rect(ICON_KEY_SPACE, Rect2(87.0, base_y + 6.0, 32.0, 26.0), false, Color(1, 1, 1, dash_alpha))
+	draw_texture_rect(ICON_BTN_A, Rect2(133.0, base_y + 6.0, 26.0, 26.0), false, Color(1, 1, 1, dash_alpha))
+	if is_dashing:
+		var fill_w: float = 86.0 * (1.0 - cooldown / 0.6)
+		draw_rect(Rect2(82.0, base_y + panel_h - 4.0, fill_w, 2.5), Color(0.25, 0.85, 1.0, 0.9), true)
+	
+	# 3. Badge Especial/Pentagrama (Tecla Q + Botão Y)
+	var p3 := Rect2(178.0, base_y, 88.0, panel_h)
+	var is_charged: bool = pentagram_charge >= 1.0
+	var p3_border: Color = Color(1.0, 0.82, 0.35, 0.85 + sin(time * 8.0) * 0.15) if is_charged else border_col
+	var pent_alpha: float = 1.0 if is_charged else 0.55
+	if is_charged:
+		draw_rect(p3.grow(2.0), Color(1.0, 0.82, 0.2, 0.18 + sin(time * 8.0) * 0.08), true)
+	draw_rect(p3, bg_col, true)
+	draw_rect(p3, p3_border, false, 2.0 if is_charged else 1.5)
+	draw_texture_rect(ICON_KEY_Q, Rect2(186.0, base_y + 6.0, 26.0, 26.0), false, Color(1, 1, 1, pent_alpha))
+	draw_texture_rect(ICON_BTN_Y, Rect2(230.0, base_y + 6.0, 26.0, 26.0), false, Color(1, 1, 1, pent_alpha))
