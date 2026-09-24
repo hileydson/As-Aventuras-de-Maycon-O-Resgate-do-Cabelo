@@ -8,6 +8,6 @@ void fragment() {
 	vec3 face = texture(portrait, sample_uv).rgb;
 	float oval = 1.0 - smoothstep(0.31, 0.49, length((UV - vec2(0.5)) * vec2(1.05, 1.35)));
 	float cloud = sin(UV.y * 18.0 + UV.x * 8.0 + TIME * 0.13) * 0.07;
-	ALBEDO = mix(face, vec3(0.45, 0.76, 0.82), 0.38);
-	ALPHA = oval * (0.29 + cloud) * reveal;
+	ALBEDO = mix(face, vec3(0.45, 0.76, 0.82), 0.22);
+	ALPHA = oval * (0.43 + cloud) * reveal;
 }

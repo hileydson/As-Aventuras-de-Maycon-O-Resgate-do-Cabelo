@@ -16,8 +16,8 @@ void sky() {
 	float haze = 1.0 - smoothstep(-0.12, 0.55, abs(d.y));
 	float cloud = noise(d * 5.0 + vec3(TIME * 0.008, 0.0, 0.0)) * 0.6 + noise(d * 12.0 - vec3(TIME * 0.015, 0.0, 0.0)) * 0.4;
 	vec3 color = mix(vec3(0.005, 0.017, 0.043), vec3(0.016, 0.100, 0.132), haze);
-	color += vec3(0.035, 0.105, 0.135) * smoothstep(0.55, 0.80, cloud) * (0.4 + haze);
-	float star = step(0.995, hash(floor(d * 420.0)));
-	color += vec3(0.42, 0.72, 0.81) * star * smoothstep(-0.04, 0.3, d.y);
+	color += vec3(0.045, 0.11, 0.14) * smoothstep(0.38, 0.72, cloud) * (0.4 + haze);
+	float star = step(0.985, hash(floor(d * 260.0)));
+	color += vec3(0.70, 0.87, 0.92) * star * smoothstep(-0.04, 0.28, d.y);
 	COLOR = color;
 }
