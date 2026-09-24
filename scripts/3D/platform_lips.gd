@@ -503,8 +503,8 @@ func _check_maycon_collision() -> void:
 			if hurt_invulnerable_timer <= 0.0:
 				take_hit_from_maycon()
 		else:
-			# Not invincible: if Maycon walks into sitting Lips or in prep, knock him back
-			if hurt_invulnerable_timer <= 0.0 and current_state in [State.SIT, State.PREP] and maycon.get("hurt_time") != null and maycon.hurt_time <= 0.0:
+			# Not invincible: if Maycon walks into Lips on the ground, knock him back
+			if hurt_invulnerable_timer <= 0.0 and current_state in [State.SIT, State.TURN, State.CROUCH, State.FLOP, State.GET_UP] and maycon.get("hurt_time") != null and maycon.hurt_time <= 0.0:
 				if maycon.has_method("receive_damage"):
 					maycon.receive_damage(25.0, global_position)
 
