@@ -656,8 +656,6 @@ position = Vector2(1, 177)
 scale = Vector2(2.3282413, 1.9032443)
 sprite_frames = SubResource("SpriteFrames_ffqrc")
 animation = &"idle"
-frame = 9
-frame_progress = 1.0
 
 [node name="JamelaoSong" type="AudioStreamPlayer" parent="Camera2D" unique_id=476045704]
 stream = ExtResource("16_g6gyw")

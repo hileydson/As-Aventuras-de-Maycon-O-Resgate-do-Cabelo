@@ -60,6 +60,8 @@ var shockwave_mat: StandardMaterial3D
 var shockwave_time: float = 0.0
 
 var dust_particles: GPUParticles3D
+var bottom_smoke_particles: GPUParticles3D
+var air_trail_particles: GPUParticles3D
 
 func setup(owner_stage: Node3D, player: CharacterBody3D, initial_hub: int = 3) -> void:
 	stage = owner_stage
@@ -77,7 +79,7 @@ func _ready() -> void:
 	
 	animation_player = model.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if animation_player:
-		animation_player.play("Idle")
+		_play_anim("Idle", 0.0)
 	
 	# 2. Setup Audio Players
 	grunt_audio = _create_audio_player(GRUNT_SOUND, 22.0, 75.0, 2.0)
@@ -90,6 +92,7 @@ func _ready() -> void:
 
 	# 4. Create Dust Particles Emitter
 	_build_dust_particles()
+	_build_smoke_effects()
 
 	# 5. Create Target Indicator (Warning zone on landing platform)
 	_build_target_indicator()
@@ -116,7 +119,7 @@ func reset_position(hub_idx: int = 4) -> void:
 	state_timer = randf_range(2.5, 3.8)
 	if is_instance_valid(target_indicator):
 		target_indicator.visible = false
-	_play_anim("Idle")
+	_play_anim("Idle", 0.35)
 
 func _create_audio_player(stream: AudioStream, unit_size: float, max_dist: float, vol_db: float) -> AudioStreamPlayer3D:
 	var player := AudioStreamPlayer3D.new()
@@ -236,6 +239,75 @@ func _build_dust_particles() -> void:
 	
 	add_child(dust_particles)
 
+func _build_smoke_effects() -> void:
+	# 1. Fumaça saindo de baixo do Lips quando estiver no chão / flutuando
+	bottom_smoke_particles = GPUParticles3D.new()
+	bottom_smoke_particles.name = "LipsBottomSmoke"
+	bottom_smoke_particles.amount = 75
+	bottom_smoke_particles.lifetime = 1.5
+	bottom_smoke_particles.explosiveness = 0.0
+	bottom_smoke_particles.position.y = 0.35
+	
+	var b_mat := ParticleProcessMaterial.new()
+	b_mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_RING
+	b_mat.emission_ring_radius = 2.4
+	b_mat.emission_ring_inner_radius = 0.6
+	b_mat.emission_ring_height = 0.25
+	b_mat.emission_ring_axis = Vector3(0, 1, 0)
+	b_mat.direction = Vector3(0, 1.0, 0)
+	b_mat.spread = 45.0
+	b_mat.initial_velocity_min = 1.2
+	b_mat.initial_velocity_max = 2.6
+	b_mat.gravity = Vector3(0, 0.45, 0)
+	b_mat.scale_min = 0.9
+	b_mat.scale_max = 2.2
+	bottom_smoke_particles.process_material = b_mat
+	
+	var b_sphere := SphereMesh.new()
+	b_sphere.radius = 0.45
+	b_sphere.height = 0.90
+	var b_smoke_mat := StandardMaterial3D.new()
+	b_smoke_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	b_smoke_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	b_smoke_mat.albedo_color = Color(0.92, 0.90, 0.96, 0.38)
+	b_sphere.material = b_smoke_mat
+	bottom_smoke_particles.draw_pass_1 = b_sphere
+	add_child(bottom_smoke_particles)
+	bottom_smoke_particles.emitting = true
+
+	# 2. Rastro contínuo no ar por onde ele passar durante o pulo
+	air_trail_particles = GPUParticles3D.new()
+	air_trail_particles.name = "LipsAirTrail"
+	air_trail_particles.local_coords = false # Fica no mundo desenhando o rastro tridimensional
+	air_trail_particles.amount = 180
+	air_trail_particles.lifetime = 2.2
+	air_trail_particles.explosiveness = 0.0
+	air_trail_particles.position.y = 1.6
+	
+	var a_mat := ParticleProcessMaterial.new()
+	a_mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	a_mat.emission_sphere_radius = 1.3
+	a_mat.direction = Vector3(0, 0.15, 0)
+	a_mat.spread = 40.0
+	a_mat.initial_velocity_min = 0.6
+	a_mat.initial_velocity_max = 1.8
+	a_mat.gravity = Vector3(0, -0.3, 0)
+	a_mat.scale_min = 1.2
+	a_mat.scale_max = 3.2
+	air_trail_particles.process_material = a_mat
+	
+	var a_sphere := SphereMesh.new()
+	a_sphere.radius = 0.55
+	a_sphere.height = 1.10
+	var a_smoke_mat := StandardMaterial3D.new()
+	a_smoke_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	a_smoke_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	a_smoke_mat.albedo_color = Color(0.94, 0.92, 0.98, 0.45)
+	a_sphere.material = a_smoke_mat
+	air_trail_particles.draw_pass_1 = a_sphere
+	add_child(air_trail_particles)
+	air_trail_particles.emitting = false
+
 func _physics_process(delta: float) -> void:
 	if is_defeated:
 		return
@@ -247,6 +319,11 @@ func _physics_process(delta: float) -> void:
 			model.visible = blink or hurt_invulnerable_timer <= 0.0
 	elif model and not model.visible:
 		model.visible = true
+
+	if is_instance_valid(bottom_smoke_particles):
+		bottom_smoke_particles.emitting = (current_state != State.LEAP)
+	if is_instance_valid(air_trail_particles):
+		air_trail_particles.emitting = (current_state == State.LEAP)
 
 	_check_maycon_collision()
 	_update_shockwave(delta)
@@ -275,7 +352,7 @@ func _process_sit(delta: float) -> void:
 func _start_turn() -> void:
 	current_state = State.TURN
 	state_timer = 1.1
-	_play_anim("Turn")
+	_play_anim("Turn", 0.30)
 
 	# Exibir indicador de área de impacto na plataforma de destino
 	if is_instance_valid(target_indicator):
@@ -300,7 +377,7 @@ func _start_jump_prep() -> void:
 	var flat_dir := Vector3(target_position.x - global_position.x, 0, target_position.z - global_position.z).normalized()
 	if flat_dir.length_squared() > 0.001:
 		rotation.y = atan2(flat_dir.x, flat_dir.z)
-	_play_anim("Jump_Prep")
+	_play_anim("Jump_Prep", 0.25)
 	grunt_audio.play()
 
 func _process_crouch(delta: float) -> void:
@@ -314,7 +391,7 @@ func _launch_leap() -> void:
 	leap_progress = 0.0
 	has_screamed_in_air = false
 	has_dealt_slam_damage = false
-	_play_anim("Jump_Ascent")
+	_play_anim("Jump_Ascent", 0.18)
 
 	# Efeito de poeira no impulso de lançamento
 	dust_particles.emitting = true
@@ -336,7 +413,7 @@ func _process_leap(delta: float) -> void:
 	# Transição no ar para pose de mergulho de cara/barriga para baixo com urro
 	if t >= 0.38 and not has_screamed_in_air:
 		has_screamed_in_air = true
-		_play_anim("Belly_Dive")
+		_play_anim("Belly_Dive", 0.35)
 		scream_audio.play()
 
 	# Aterrissagem
@@ -350,7 +427,7 @@ func _trigger_belly_flop() -> void:
 	_snap_to_ground()
 	
 	# Cai de cara e barriga no chão!
-	_play_anim("Belly_Flop")
+	_play_anim("Belly_Flop", 0.10)
 	slam_audio.play()
 
 	# Esconder indicador de alvo
@@ -376,7 +453,7 @@ func _process_flop(delta: float) -> void:
 func _start_get_up() -> void:
 	current_state = State.GET_UP
 	state_timer = 1.6
-	_play_anim("Get_Up")
+	_play_anim("Get_Up", 0.28)
 
 func _process_get_up(delta: float) -> void:
 	state_timer -= delta
@@ -384,10 +461,7 @@ func _process_get_up(delta: float) -> void:
 		current_state = State.SIT
 		current_hub_index = target_hub_index
 		state_timer = randf_range(2.6, 4.0)
-		_play_anim("Idle")
-
-	# Damage calculation: ONLY affects Maycon, NOT other enemies!
-	_apply_slam_damage()
+		_play_anim("Idle", 0.35)
 
 func _apply_slam_damage() -> void:
 	if not is_instance_valid(maycon) or has_dealt_slam_damage:
@@ -485,9 +559,9 @@ func _snap_to_ground() -> void:
 	if not hit.is_empty():
 		global_position.y = hit.position.y
 
-func _play_anim(anim_name: String) -> void:
+func _play_anim(anim_name: String, custom_blend: float = 0.28) -> void:
 	if animation_player and animation_player.has_animation(anim_name):
-		animation_player.play(anim_name)
+		animation_player.play(anim_name, custom_blend)
 
 func _check_maycon_collision() -> void:
 	if not is_instance_valid(maycon) or is_defeated:

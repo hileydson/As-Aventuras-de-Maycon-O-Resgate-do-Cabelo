@@ -466,14 +466,10 @@ func _on_body_entered(body:Node3D) -> void:
 		_get_stomped()
 		return
 		
-	# Immune to latch if Maycon performed the second jump (double jump with fart explosion)
-	if (maycon.has_method("is_immune_to_latch") and maycon.is_immune_to_latch()) or (maycon.get("jumps") == 2 and not maycon.is_on_floor()):
-		if maycon.velocity.y < 0.5:
+	# Regra: não agarrar Maycon se ele estiver no ar! Somente consegue agarrar se Maycon estiver no chão.
+	if not maycon.is_on_floor():
+		if maycon.velocity.y < 0.5 and maycon.global_position.y > global_position.y:
 			_get_stomped()
-		return
-		
-	if maycon.velocity.y < -1.5 and maycon.global_position.y > global_position.y + 0.5:
-		_get_stomped()
 		return
 		
 	# Do not attack or latch if another monster is already fighting Maycon

@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://casgjkx6xefuq" path="res://assets/novas_imagens/3d_cenarios/escada.png" id="12_nj030"]
 [ext_resource type="Texture2D" uid="uid://cldr3pb1hha2p" path="res://assets/novas_imagens/cenarios/metade_bloqueio_passagem.png" id="13_2rg5i"]
 [ext_resource type="Texture2D" uid="uid://d3y21yi0f8kgy" path="res://assets/novas_imagens/cenarios/bloqueio_passagem.png" id="14_0r645"]
+[ext_resource type="PackedScene" uid="uid://dep6dmg0ng8e0" path="res://scenes/inimigos/inimigo_boss_seco.tscn" id="15_dg1pv"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -567,6 +568,14 @@ shape = SubResource("RectangleShape2D_afvqi")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="portal_slum" unique_id=150234957]
 position = Vector2(705, 1648)
 shape = SubResource("RectangleShape2D_0r645")
+
+[node name="inimigo_boss_seco" parent="." unique_id=699337783 instance=ExtResource("15_dg1pv")]
+z_index = 20
+position = Vector2(2905, 1592)
+rotation = 7.8713555
+animation = &"attack"
+frame_progress = 0.0
+flip_h = true
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]
