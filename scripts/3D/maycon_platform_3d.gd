@@ -124,30 +124,10 @@ func _ready() -> void:
 	landing_audio.volume_db = 2.0
 	add_child(landing_audio)
 	_build_materials()
-	_build_environment()
-	geometry = Node3D.new()
-	geometry.name = "Cenario"
-	add_child(geometry)
-	_build_clouds()
-	enemies = Node3D.new()
-	enemies.name = "Inimigos"
-	add_child(enemies)
-	effects = Node3D.new()
-	effects.name = "Efeitos"
-	add_child(effects)
-	hazards = Node3D.new()
-	hazards.name = "Armadilhas"
-	add_child(hazards)
-	_build_hubs_and_routes()
-	_build_elevated_areas()
-	_build_hands()
-	_build_finish()
-	_scatter_details()
-	_spawn_enemies()
-	_spawn_mini_secos()
-	_spawn_lips()
-	_spawn_pentagrams()
-	_build_blue_particles()
+	if has_node("Cenario"):
+		_bind_baked_scene()
+	else:
+		_build_all_procedural()
 	_build_hud()
 	_build_pause()
 	_build_fade()
@@ -268,6 +248,117 @@ func _material(color:Color, roughness:float) -> StandardMaterial3D:
 	material.albedo_color = color
 	material.roughness = roughness
 	return material
+
+func _build_all_procedural() -> void:
+	_build_environment()
+	geometry = Node3D.new()
+	geometry.name = "Cenario"
+	add_child(geometry)
+	_build_clouds()
+	enemies = Node3D.new()
+	enemies.name = "Inimigos"
+	add_child(enemies)
+	effects = Node3D.new()
+	effects.name = "Efeitos"
+	add_child(effects)
+	hazards = Node3D.new()
+	hazards.name = "Armadilhas"
+	add_child(hazards)
+	_build_hubs_and_routes()
+	_build_elevated_areas()
+	_build_hands()
+	_build_finish()
+	_scatter_details()
+	_spawn_enemies()
+	_spawn_mini_secos()
+	_spawn_lips()
+	_spawn_pentagrams()
+	_build_blue_particles()
+
+func _bind_baked_scene() -> void:
+	geometry = $Cenario
+
+	hazards = get_node_or_null("Armadilhas")
+	if not hazards:
+		hazards = Node3D.new()
+		hazards.name = "Armadilhas"
+		add_child(hazards)
+
+	enemies = get_node_or_null("Inimigos")
+	if not enemies:
+		enemies = Node3D.new()
+		enemies.name = "Inimigos"
+		add_child(enemies)
+
+	effects = get_node_or_null("Efeitos")
+	if not effects:
+		effects = Node3D.new()
+		effects.name = "Efeitos"
+		add_child(effects)
+
+	boss_barrier = get_node_or_null("GiantWoodenBarrier")
+	if boss_barrier:
+		boss_barrier_collider = boss_barrier.get_node_or_null("CollisionShape3D")
+
+	exit_arrow = get_node_or_null("ExitHoleArrow")
+	if exit_arrow:
+		var shaft = exit_arrow.get_node_or_null("Shaft")
+		if shaft is MeshInstance3D and shaft.material_override is StandardMaterial3D:
+			exit_arrow_mat = shaft.material_override
+	if not exit_arrow_mat:
+		exit_arrow_mat = StandardMaterial3D.new()
+		exit_arrow_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		exit_arrow_mat.albedo_color = Color(1.0, 0.12, 0.15, 0.95)
+
+	# Reconectar / indexar pentagramas salvos na cena
+	var pent_group = geometry.get_node_or_null("Pentagramas")
+	if pent_group:
+		for pent in pent_group.get_children():
+			var p_name: String = pent.name
+			if p_name.begins_with("Pentagrama_"):
+				var id := p_name.replace("Pentagrama_", "")
+				pentagram_nodes[id] = pent
+				pentagram_spawners[id] = {"pos": pent.position, "timer": 0.0, "active": true}
+	else:
+		_spawn_pentagrams()
+
+	# Configurar entidades de Inimigos
+	if enemies:
+		var seco_idx := 0
+		for child in enemies.get_children():
+			if child.name.begins_with("Inimigo_"):
+				var parts := child.name.split("_")
+				if parts.size() >= 3:
+					var i := parts[1].to_int()
+					var j := parts[2].to_int()
+					if child.has_method("setup"):
+						child.setup((i + j) % 4, maycon, self, (i + j) % 4)
+			elif child.name.begins_with("MiniSeco_"):
+				if child.has_method("setup"):
+					child.setup(seco_idx % 3, maycon, self)
+					seco_idx += 1
+			elif child.name == "LipsGargaroker":
+				lips_enemy = child
+				if lips_enemy.has_method("setup"):
+					lips_enemy.setup(self, maycon, 4)
+
+		if not lips_enemy:
+			_spawn_lips()
+
+	# Configurar armadilhas existentes
+	if hazards:
+		for child in hazards.get_children():
+			if child.name.begins_with("Navalha_"):
+				var idx := child.name.replace("Navalha_", "").to_int()
+				if idx < ROUTES.size():
+					var route: Vector2i = ROUTES[idx]
+					var dir: Vector3 = (Vector3(HUBS[route.y]) - Vector3(HUBS[route.x])).normalized()
+					if child.has_method("setup"):
+						child.setup(self, maycon, dir, idx)
+			elif child.name.begins_with("MaoEsmagadora_"):
+				var idx := child.name.replace("MaoEsmagadora_", "").to_int()
+				if child.has_method("setup"):
+					child.setup(self, maycon, idx)
 
 func _build_environment() -> void:
 	var environment := Environment.new()

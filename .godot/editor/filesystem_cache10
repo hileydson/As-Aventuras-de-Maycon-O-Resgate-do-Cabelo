@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1790259160
+::res://::1790261284
 AGENTS.md::TextFile::-1::1790200506::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1789958757::0::1::::<><><>0<>0<><>::
 export_presets.cfg::TextFile::-1::1790036186::0::1::::<><><>0<>0<><>::
@@ -283,7 +283,7 @@ transform_changed_notifier.gd::GDScript::5546349407322732584::1770123704::0::1::
 ::res://android/::1767817891
 ::res://assets/::1790177691
 ::res://assets/3D/::1790127372
-pentagram_item.png::CompressedTexture2D::3690588538832558303::1790126948::1790127372::1::::<><><>0<>0<>58286bdeff63b94b2b437e2f3a0bebaf<>res://.godot/imported/pentagram_item.png-a29248e8591df383c26534ead9c01b62.ctex::
+pentagram_item.png::CompressedTexture2D::3690588538832558303::1790126948::1790261834::1::::<><><>0<>0<>be564862e12018cc58171d6dca2324c6<>res://.godot/imported/pentagram_item.png-a29248e8591df383c26534ead9c01b62.s3tc.ctex<*>res://.godot/imported/pentagram_item.png-a29248e8591df383c26534ead9c01b62.etc2.ctex::
 ::res://assets/audio/::1767636736
 continuar.mp3::AudioStreamMP3::1185995632260611407::1767636736::1767636736::1::::<><><>0<>0<>63b4e3fdc8a487c34bec8b8448b581a2<>res://.godot/imported/continuar.mp3-0e5bb9de9e1957bc5b4462915908a0dd.mp3str::
 essa_historia.mp3::AudioStreamMP3::4893823388281824508::1767636736::1767636736::1::::<><><>0<>0<>48e5c422ead974b743ae03a843e8dcc9<>res://.godot/imported/essa_historia.mp3-0dde0acebb6f83b51af79ff26480462b.mp3str::
@@ -3566,7 +3566,7 @@ Objects.png::CompressedTexture2D::2603308936418570908::1767636737::1767636737::1
 Rotating_blades.png::CompressedTexture2D::6149366124704441297::1767636737::1767636737::1::::<><><>0<>0<>2fca820f122e19df28bb2db13d324fce<>res://.godot/imported/Rotating_blades.png-778390e24f5b94daf7df31c4f7d64871.ctex::
 scull.png::CompressedTexture2D::924674051756614918::1767636737::1767636737::1::::<><><>0<>0<>88eb904c1d7beb8167d968b4d6b1cae2<>res://.godot/imported/scull.png-4bd9b4129b919690a5980b9d4505cce9.ctex::
 web.png::CompressedTexture2D::1665521307035554969::1767636737::1767636737::1::::<><><>0<>0<>2c41fd68a1281a64f1d37785b533eed3<>res://.godot/imported/web.png-555c1399ada65fb9f4e6bf50c2102997.ctex::
-::res://assets/novos_audios/::1790260995
+::res://assets/novos_audios/::1790261057
 3d_first_battle_seco.mp3::AudioStreamMP3::9112742089382917435::1769799971::1769800042::1::::<><><>0<>0<>58169ca5379430dc1b6d26419f4d403f<>res://.godot/imported/3d_first_battle_seco.mp3-e99bf30f277278144a0a538012a2b91d.mp3str::
 balao_conversa.mp3::AudioStreamMP3::7050655661624707243::1770925133::1770925139::1::::<><><>0<>0<>a117f8ff1f77e4f280e68d2751a017bb<>res://.godot/imported/balao_conversa.mp3-67afbdd3f08c480ed2a2a7a0d42c9703.mp3str::
 barulho_gilhotina.mp3::AudioStreamMP3::8054641206314790354::1768242746::1768242795::1::::<><><>0<>0<>3bb2122a6b5ff28702a9719956e80f60<>res://.godot/imported/barulho_gilhotina.mp3-e1cb096fd5e9330e98b66e2f8bd0d47b.mp3str::
@@ -3797,7 +3797,7 @@ secos_invader_clouds.gdshader::Shader::3319236136636404415::1790215336::0::1::::
 TESTES.tscn::PackedScene::4539221544595366990::1768225158::0::1::::<><><>0<>0<><>::uid://dvs2lwybcbwt2::::res://scenes/maycon_fase.tscn<>uid://d35e0jeya7iev::::res://scenes/caixa.tscn<>uid://chpqi8ryj0b1g::::res://scenes/bloco.tscn<>uid://c0hdoyj76p8qk::::res://scenes/coxinha.tscn
 tunel_fogo.tscn::PackedScene::4341796888319329057::1768323970::0::1::::<><><>0<>0<><>::uid://cros6010x6vuk::::res://assets/videos/caindo_tunel.ogv<>uid://defi0lubtlfmm::::res://scripts/intro_tunel.gd<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn
 two_layers_fps_mode.tscn::PackedScene::-1::1770925139::0::1::::<><><>0<>0<><>::
-::res://scenes/3D/::1790258017
+::res://scenes/3D/::1790261808
 blood.tscn::PackedScene::3378112629565214641::1790123747::0::1::::<><><>0<>0<><>::uid://b6xclp8odu70a::::res://scripts/3D/blood.gd
 bullets.tscn::PackedScene::1053247965064024194::1770494548::0::1::::<><><>0<>0<><>::uid://lr74moi08s8w::::res://scripts/3D/bullets.gd<>uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3<>uid://b3fd11n6arqyd::::res://assets/novas_imagens/3d_battle/bullets.png<>uid://bwxswwjvm1rsh::::res://scripts/3D/bounce_item.gd
 castelo_3d.tscn::PackedScene::2193107508504318551::1769800933::0::1::::<><><>0<>0<><>::uid://d12tsbs23bhs0::::res://scripts/3D/character_body_3d.gd
@@ -3810,7 +3810,7 @@ gpu_particles_3d.gd::GDScript::2296606666366010620::1769803289::0::1::::<>Node3D
 lamp.tscn::PackedScene::7048353893226947562::1770074388::0::1::::<><><>0<>0<><>::uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3<>uid://di85fqkatdjvt::::res://scripts/3D/lamp.gd<>uid://fww6et7us54v::::res://assets/novas_imagens/3d_cenarios/lamp/lamp_apagado.png<>uid://bwxswwjvm1rsh::::res://scripts/3D/bounce_item.gd
 last_fight_before_end.tscn::PackedScene::5049353050264955805::1790110553::0::1::::<><><>0<>0<><>::uid://cdle03k43r5ga::::res://scripts/3D/last_part_before_end.gd<>uid://c5do17jvoskfm::::res://scenes/3D/maycon_3d.tscn<>uid://dc43lyrfshuje::::res://assets/novos_audios/raining.mp3<>uid://flcvrefsfqqn::::res://assets/novas_imagens/3d_cenarios/map_-_streets_of_crime_car_thief_3d/scene.gltf<>uid://tmi2ugb5efor::::res://assets/novas_imagens/3d_cenarios/sol.png<>uid://dbicvg8ismuhi::::res://assets/novas_imagens/maycon/jamelao_float_1.png<>uid://fjql0fxruscu::::res://assets/novas_imagens/3d_cenarios/lua.png<>uid://jpruwl1kxn8m::::res://assets/novas_imagens/cabelo/cabelo_idle.png<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn<>res://scenes/3D/pause_3d_moto_cidade.tscn<>uid://dgp6h015l1dye::::res://assets/novas_imagens/objects/interrogacao.png<>uid://b7ukdc2kwsyj2::::res://assets/novas_imagens/cigarro/cigarro.png<>uid://dvbmi0w8buqmi::::res://assets/novos_audios/the_almost_end_song.mp3<>uid://nio71tyqvdky::::res://assets/novas_imagens/npcs/lips.png<>uid://bsq8x4bkht5dj::::res://assets/novos_audios/cidade_intro_rewind.mp3<>uid://0kp82bpo7vl4::::res://assets/novas_imagens/npcs/iago.png<>uid://bjenhldl4rogi::::res://assets/novos_audios/cidade_intro_up_sky.mp3<>uid://dd7rg3habgw28::::res://assets/novas_imagens/npcs/luks.png<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://b35jq8goxova5::::res://assets/novas_imagens/npcs/tony.png
 maycon_3d.tscn::PackedScene::6885597973953626926::1790183339::0::1::::<><><>0<>0<><>::uid://d12tsbs23bhs0::::res://scripts/3D/character_body_3d.gd<>uid://qcsepxxx2pcd::::res://assets/novas_imagens/3d_enemies/cigarro_perfect_animations.glb<>uid://bs67ndmklpp1b::::res://assets/novas_imagens/maycon/maycon_falling.png<>uid://dmk7ag335ld5j::::res://assets/audio/pulo_maycon.mp3<>uid://o0m05edowij::::res://assets/audio/passos_maycon.mp3<>uid://b8su6umib7an5::::res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb<>uid://b08rp3cauqekx::::res://scenes/3D/cigarro_two_player.tscn<>uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3<>uid://b7ukdc2kwsyj2::::res://assets/novas_imagens/cigarro/cigarro.png<>uid://dhv5ghy38te6w::::res://assets/novas_imagens/3d_battle/segurando_arma_3d.png<>uid://dxlxhstdapo76::::res://assets/novos_audios/gun_shot.mp3<>uid://xdd1agi20lk7::::res://assets/novas_imagens/3d_cenarios/lamp/lamp_na_mao_no_light.png<>uid://b231oswqr842e::::res://assets/novas_imagens/maycon/maycon_idle.png<>uid://v26pfw0k1oo0::::res://assets/novas_imagens/effects/Pixel fire/fire asset yellow floored/Group 7 - 5/Group 7 - 5.png<>uid://d3co1rwdx1gkd::::res://assets/novas_imagens/maycon/maycon_run.png<>uid://dl1flpd73rljh::::res://assets/novas_imagens/3d_cenarios/lamp/lamp_na_mao.png<>uid://cy1x2n0ltysjh::::res://assets/novas_imagens/3d_battle/bala.png<>uid://d20k0m5bseynp::::res://assets/novas_imagens/3d_battle/gun_load/gun_load_1.png<>uid://v53vaixjwwai::::res://assets/novas_imagens/maycon/metralhadora_moto.png<>uid://bgxxn46q4nutx::::res://assets/novas_imagens/3d_battle/gun_load/gun_load_2.png<>uid://b1nhpgedhfvw3::::res://assets/novas_imagens/3d_battle/gun_load/gun_load_3.png<>uid://reyl5mf2bho2::::res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_moto.png<>uid://c54ujioar2c72::::res://assets/novas_imagens/3d_battle/gun_load/gun_load_4.png<>uid://bpd6r1c6dq1eq::::res://assets/novas_imagens/3d_battle/gun_load/gun_load_5.png<>uid://c47is26nrvf1s::::res://assets/novas_imagens/buttons/button_trigger.png<>uid://b8xm3n05un7xf::::res://assets/novas_imagens/effects/Explosion/1.png<>uid://dppvyhho21hku::::res://assets/novas_imagens/buttons/directional_back.png<>uid://dlowt45jrflns::::res://assets/novas_imagens/effects/Explosion/3.png<>uid://cgkeliuxxfu5p::::res://assets/novas_imagens/objects/pneu_moto.png<>uid://cn553mn1ycaas::::res://assets/novas_imagens/buttons/mouse_trigger.png<>uid://dug7qpxj2ic5g::::res://assets/novas_imagens/buttons/mouse_right_click.png<>uid://b4nuieuqfk5wl::::res://assets/novas_imagens/buttons/360_A.png<>uid://b0cv160eigo1w::::res://assets/novas_imagens/buttons/360_B.png<>uid://bu87adwoqopfd::::res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png<>uid://b1fgp6ussyeji::::res://assets/novas_imagens/3d_battle/segurando_arma_3d_uma_mao.png<>uid://clwe6bwguowon::::res://assets/novos_audios/hurt_sound_3d.mp3<>uid://b0mccquxgce6d::::res://assets/novos_audios/motorcycle_sound.mp3<>uid://c21fjct4a2rfb::::res://assets/novos_audios/modo_acelerando.mp3<>uid://dc43lyrfshuje::::res://assets/novos_audios/raining.mp3<>uid://7yyx5i6mjf46::::res://assets/novas_imagens/buttons/rb_xbox.png<>uid://d1pj4ydyoywea::::res://assets/novas_imagens/buttons/shift_dark.png<>uid://cjt41lpa50dg::::res://assets/novas_imagens/3d_cenarios/cigarro_on_3d/cigarro_icon.png<>uid://csgc2fbe5pg63::::res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_icon.png
-maycon_platform_3d.tscn::PackedScene::3983171651919456274::1790187098::0::1::::<><><>0<>0<><>::uid://rma2xnpjl3m1::::res://scripts/3D/maycon_platform_3d.gd<>uid://cp1virx8dd1w1::::res://scripts/3D/platform_maycon.gd
+maycon_platform_3d.tscn::PackedScene::3983171651919456274::1790261670::0::1::::<><><>0<>0<><>::uid://rma2xnpjl3m1::::res://scripts/3D/maycon_platform_3d.gd<>uid://cp1virx8dd1w1::::res://scripts/3D/platform_maycon.gd
 object_3d.tscn::PackedScene::254120802091748693::1769800469::0::1::::<><><>0<>0<><>::uid://d2l37bhsd7lhp::::res://scripts/3D/object_3d.gd<>uid://cj2glpmry1pkv::::res://scenes/3D/seco_3d.tscn
 pause_3d.tscn::PackedScene::4108292807599718841::1790087550::0::1::::<><><>0<>0<><>::uid://dagdax751ux57::::res://scripts/3D/pause_3d.gd
 pause_3d_moto_cidade.tscn::PackedScene::-1::1790087601::0::1::::<><><>0<>0<><>::
@@ -3840,7 +3840,7 @@ inimigo_xuruzika.tscn::PackedScene::6737765857473348084::1770237486::0::1::::<><
 ::res://scenes/menus/::1790087768
 configuracoes_dialog.tscn::PackedScene::4339851293418817919::1790256482::0::1::::<><><>0<>0<><>::uid://cjpf5sqs3bkou::::res://scripts/menus/configuracoes_dialog.gd<>uid://b1o834pgp267n::::res://assets/fonts/contrast.ttf
 maycon_itens.tscn::PackedScene::6963755944896746500::1769775609::0::1::::<><><>0<>0<><>::uid://broav1jkk1nk1::::res://scripts/maycon_itens.gd<>uid://30tsd1l3hqfw::::res://assets/novas_imagens/objects/Items.png<>uid://b8xm3n05un7xf::::res://assets/novas_imagens/effects/Explosion/1.png<>uid://dlowt45jrflns::::res://assets/novas_imagens/effects/Explosion/3.png
-::res://scripts/::1790217399
+::res://scripts/::1790261419
 balao_conversa.gd::GDScript::6627363207731980991::1790094698::0::1::::<>CanvasLayer<><>0<>0<><>::
 batalha.gd::GDScript::7248754106168415276::1790260951::0::1::::<>AnimationPlayer<><>0<>0<><>::
 battle_3d.gd::GDScript::5694209551412885657::1767636737::0::1::::<>Camera3D<><>0<>0<><>::
@@ -3872,7 +3872,7 @@ game_songs.gd::GDScript::614287363896591786::1790190803::0::1::::<>Node2D<><>0<>
 Global.gd::GDScript::2969336717215221737::1790260951::0::1::::<>Node<><>0<>0<><>::
 hp.gd::GDScript::5708940543160946882::1790260951::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 intro_batalha_frozen_effect.gd::GDScript::6657063382709979058::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-intro_game.gd::GDScript::1191826035399765642::1767636737::0::1::::<>VideoStreamPlayer<><>0<>0<><>::
+intro_game.gd::GDScript::1191826035399765642::1790261781::0::1::::<>VideoStreamPlayer<><>0<>0<><>::
 intro_historia.gd::GDScript::126320934224770046::1790094682::0::1::::<>Control<><>0<>0<><>::
 intro_pacoca_producoes.gd::GDScript::605818693792145467::1769794257::0::1::::<>VideoStreamPlayer<><>0<>0<><>::
 intro_tunel.gd::GDScript::7450870303915689952::1767636737::0::1::::<>VideoStreamPlayer<><>0<>0<><>::
@@ -3909,7 +3909,7 @@ inimigo_3d_default.gd::GDScript::8339874909618318337::1790032513::0::1::::<>Char
 inimigo_bomba_pretti_3d.gd::GDScript::1560456019525848244::1769970166::0::1::::<>CharacterBody3D<><>0<>0<><>::
 lamp.gd::GDScript::7790728560667219145::1770063258::0::1::::<>Area3D<><>0<>0<><>::
 last_part_before_end.gd::GDScript::5006405053871241004::1790129985::0::1::::<>Node3D<><>0<>0<><>::
-maycon_platform_3d.gd::GDScript::1218032320144234282::1790260511::0::1::::<>Node3D<><>0<>0<><>::
+maycon_platform_3d.gd::GDScript::1218032320144234282::1790261711::0::1::::<>Node3D<><>0<>0<><>::
 object_3d.gd::GDScript::9078826269963351129::1769912058::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d.gd::GDScript::7171831727451377016::1790094648::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d_moto_cidade.gd::GDScript::6726714682699407671::1790129014::0::1::::<>Node3D<><>0<>0<><>::
@@ -3944,6 +3944,8 @@ inimigo_manga.gd::GDScript::2159721504695700621::1790260279::0::1::::<>AnimatedS
 inimigo_xuruzika.gd::GDScript::3730474420872568580::1790260267::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 ::res://scripts/menus/::1790087580
 configuracoes_dialog.gd::GDScript::5435864756212849056::1790260183::0::1::::<>CanvasLayer<><>0<>0<><>::
+::res://scripts/tools/::1790261518
+bake_platform_scene.gd::GDScript::5181919851487842878::1790261518::0::1::::<>SceneTree<><>0<>1<><>::
 ::res://terrain_3d_data/::1770136386
 terrain3d-01-01.res::Terrain3DRegion::876206289458360874::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d-01-02.res::Terrain3DRegion::5592144705733295144::1770136386::0::1::::<><><>0<>0<><>::
@@ -3951,9 +3953,9 @@ terrain3d-01_00.res::Terrain3DRegion::4979166056605722663::1770136386::0::1::::<
 terrain3d_00-01.res::Terrain3DRegion::5019486532651089028::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00-02.res::Terrain3DRegion::3854885546111145601::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00_00.res::Terrain3DRegion::4948174298051947078::1770136386::0::1::::<><><>0<>0<><>::
-::res://translations/::1790260139
-game_text.csv::Translation::1292654866392114924::1790260123::1790260139::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
-game_text.en.translation::OptimizedTranslation::1712006235640866847::1790260139::0::1::::<><><>0<>0<><>::
-game_text.es.translation::OptimizedTranslation::9151324834628544493::1790260139::0::1::::<><><>0<>0<><>::
-game_text.pt.translation::OptimizedTranslation::8740695643655975537::1790260139::0::1::::<><><>0<>0<><>::
-game_text.zh.translation::OptimizedTranslation::3741015231047276320::1790260139::0::1::::<><><>0<>0<><>::
+::res://translations/::1790261167
+game_text.csv::Translation::1292654866392114924::1790261150::1790261167::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
+game_text.en.translation::OptimizedTranslation::1712006235640866847::1790261167::0::1::::<><><>0<>0<><>::
+game_text.es.translation::OptimizedTranslation::9151324834628544493::1790261167::0::1::::<><><>0<>0<><>::
+game_text.pt.translation::OptimizedTranslation::8740695643655975537::1790261167::0::1::::<><><>0<>0<><>::
+game_text.zh.translation::OptimizedTranslation::3741015231047276320::1790261167::0::1::::<><><>0<>0<><>::
