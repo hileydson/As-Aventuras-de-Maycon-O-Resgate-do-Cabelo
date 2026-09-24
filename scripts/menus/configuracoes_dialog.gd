@@ -79,6 +79,9 @@ func _on_aim_slider_value_changed(val: float) -> void:
 func _populate_debug_events() -> void:
 	for child in debug_events_container.get_children():
 		child.queue_free()
+	for event_name in Global.game_events_default.keys():
+		if !Global.game_events.has(event_name):
+			Global.game_events[event_name] = Global.game_events_default[event_name]
 	
 	for event_name in Global.game_events.keys():
 		var check = CheckBox.new()
