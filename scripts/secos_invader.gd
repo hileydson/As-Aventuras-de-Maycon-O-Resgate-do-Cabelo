@@ -328,19 +328,18 @@ func _update_survival(delta:float) -> void:
 	var input_direction:Vector2 = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if input_direction.length() > 0.15:
 		last_direction = input_direction.normalized()
-	var lower_progress:float = smoothstep(screen.y * 0.42, screen.y * 0.7, maycon_anchor.y)
-	var safe_half_width:float = lerpf(screen.x * 0.42, screen.x * 0.23, lower_progress)
-	if corner_push_time <= 0.0 && lower_progress > 0.05 && absf(maycon_anchor.x - screen.x * 0.5) > safe_half_width:
-		corner_push_time = 0.35
-		corner_push_direction = (Vector2(screen.x * 0.5, screen.y * 0.42) - maycon_anchor).normalized()
+	var corner_width:float = screen.x * 0.065
+	if corner_push_time <= 0.0 && maycon_anchor.y > screen.y * 0.63 && (maycon_anchor.x < 38.0 + corner_width || maycon_anchor.x > screen.x - 85.0 - corner_width):
+		corner_push_time = 0.24
+		corner_push_direction = (Vector2(screen.x * 0.5, screen.y * 0.5) - maycon_anchor).normalized()
 		dash_time = 0.0
-		_spawn_sparks(maycon.position, 48, Color(0.32, 0.76, 1.0))
+		_spawn_sparks(maycon.position, 20, Color(0.32, 0.76, 1.0))
 	if Input.is_action_just_pressed("ui_accept"):
 		_try_dash()
 	dash_cooldown = maxf(0.0, dash_cooldown - delta)
 	if corner_push_time > 0.0:
 		corner_push_time = maxf(0.0, corner_push_time - delta)
-		maycon_anchor = maycon_anchor.move_toward(Vector2(screen.x * 0.5, screen.y * 0.42), 1100.0 * delta)
+		maycon_anchor = maycon_anchor.move_toward(Vector2(screen.x * 0.5, screen.y * 0.5), 380.0 * delta)
 	elif dash_time > 0.0:
 		dash_time = maxf(0.0, dash_time - delta)
 		maycon_anchor += dash_direction * 1050.0 * delta
@@ -529,8 +528,8 @@ func _draw() -> void:
 		draw_texture_rect(texture, Rect2(-texture.get_size() * maycon.scale * 0.5, texture.get_size() * maycon.scale), false, Color(0.42, 0.68, 1.0, alpha))
 	draw_set_transform(Vector2.ZERO)
 	if corner_push_time > 0.0:
-		var push_alpha:float = corner_push_time / 0.35
-		draw_arc(maycon.position, 35.0 + (1.0 - push_alpha) * 42.0, 0.0, TAU, 48, Color(0.3, 0.75, 1.0, push_alpha * 0.8), 3.0)
+		var push_alpha:float = corner_push_time / 0.24
+		draw_arc(maycon.position, 35.0 + (1.0 - push_alpha) * 28.0, 0.0, TAU, 48, Color(0.3, 0.75, 1.0, push_alpha * 0.65), 2.0)
 	for i in range(seco_trail.size() - 1, -1, -1):
 		draw_circle(seco_trail[i], 34.0 + i * 2.0, Color(0.44, 0.07, 0.9, (1.0 - float(i) / 9.0) * 0.045))
 	for bullet in bullets:
