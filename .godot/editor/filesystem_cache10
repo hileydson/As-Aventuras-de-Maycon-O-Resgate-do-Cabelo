@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1790269627
+::res://::1790270366
 AGENTS.md::TextFile::-1::1790200506::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1789958757::0::1::::<><><>0<>0<><>::
 export_presets.cfg::TextFile::-1::1790036186::0::1::::<><><>0<>0<><>::
@@ -297,7 +297,7 @@ pulo_maycon.mp3::AudioStreamMP3::8024115255752159689::1767636736::1767636736::1:
 sair.mp3::AudioStreamMP3::8687246828843105594::1767636736::1767636736::1::::<><><>0<>0<>37c2928e1022df0677441d742c698d11<>res://.godot/imported/sair.mp3-677e98a84718b146fa570d4231053b2f.mp3str::
 sound0.wav::AudioStreamWAV::4412821191005728883::1767636736::1767636736::1::::<><><>0<>0<>8ec9c02dd2e6aecab1e7e77bd0ed9c84<>res://.godot/imported/sound0.wav-671a985a643f216f16d5ed6d2ce4ccea.sample::
 sound1.mp3::AudioStreamMP3::2394456978190327307::1767636736::1767636736::1::::<><><>0<>0<>8522cae094c628da9a32d886aa07d7b1<>res://.godot/imported/sound1.mp3-631d84f9e51cfc2664f7d180108e8d93.mp3str::
-::res://assets/fonts/::1770211971
+::res://assets/fonts/::1790270218
 contrast.ttf::FontFile::4242287116472386449::1790270125::1790270218::1::::<><><>0<>0<>551e4b3f8d818437e52c8373b33ca9bc<>res://.godot/imported/contrast.ttf-de11ed9f140ba5c32970615019343744.fontdata::
 ::res://assets/images/::1767636736
 andando_direita_0.png::CompressedTexture2D::5636034720339164745::1767636736::1767636736::1::::<><><>0<>0<>f0bbeb16087c404db3e50ca690a8bfde<>res://.godot/imported/andando_direita_0.png-e2fdb8e41a91c38ee50e85f5b9187ad3.ctex::
