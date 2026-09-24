@@ -1,9 +1,9 @@
+Marker2D
 Camera3D
 CanvasLayer
 SubViewport
 SubViewportContainer
 Label
-Marker2D
 AnimatedSprite2D
 AnimatedSprite3D
 RichTextLabel
@@ -12,4 +12,3 @@ ColorRect
 StaticBody3D
 SpotLight3D
 OmniLight3D
-Sprite3D

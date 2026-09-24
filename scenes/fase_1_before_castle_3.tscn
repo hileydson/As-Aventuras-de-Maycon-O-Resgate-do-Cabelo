@@ -309,7 +309,7 @@ texture = ExtResource("12_nj030")
 light_mask = 512
 visibility_layer = 524800
 z_index = 1
-position = Vector2(497.99976, 155)
+position = Vector2(-1547.9999, 190)
 scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
 collision_mask = 1
@@ -692,6 +692,9 @@ rotation = 7.8713555
 animation = &"attack"
 frame_progress = 0.0
 flip_h = true
+
+[node name="pos_passagem_pestilenta" type="Marker2D" parent="." unique_id=607371238]
+position = Vector2(2097, 906)
 
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]
 [connection signal="body_entered" from="dead_line" to="Fase1BeforeCastle" method="_on_dead_line_body_entered"]

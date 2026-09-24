@@ -47,7 +47,7 @@ func _process(delta: float) -> void:
 	else:
 		player.get_node("hud_canvas").get_node("control_lamp").visible = false
 	
-	if prompt.visible:
+	if prompt.visible && !fim_cenario_3d:
 		if Input.is_action_pressed("ui_accept"):
 			if pause_3d:
 				pause_3d.queue_free()
@@ -61,6 +61,8 @@ func _process(delta: float) -> void:
 			Global.fade_out_sound(subindo_escada, 4.0)
 			await get_tree().create_timer(3.0).timeout
 			Global.from_slum = true
+			Global.game_events["passagem_pestilenta_feita"] = true
+			Global.save_progress("fase_3")
 			get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
 
 

@@ -6,6 +6,7 @@ const INTRO_BLUR_SHADER:Shader = preload("res://scenes/secos_invader_blur.gdshad
 @onready var camera: Camera2D = $maycon_fase/Camera2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
 @onready var back_from_slum: Marker2D = $"../back_from_slum"
+@onready var pos_passagem_pestilenta: Marker2D = $"../pos_passagem_pestilenta"
 @onready var seco: AnimatedSprite2D = $"../inimigo_boss_seco"
 var entering_well:bool = false
 var seco_intro_started:bool = false
@@ -27,7 +28,10 @@ func _ready() -> void:
 
 	if Global.from_slum:
 		GameSongs.play_song(1)
+		Global.from_slum = false
 		maycon_fase.global_position = back_from_slum.global_position
+	if Global.game_events.get("passagem_pestilenta_feita", false):
+		maycon_fase.global_position = pos_passagem_pestilenta.global_position
 	var seco_original:AnimatedSprite2D = seco
 	seco = AnimatedSprite2D.new()
 	seco.name = "seco_intro"

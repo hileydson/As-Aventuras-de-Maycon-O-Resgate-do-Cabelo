@@ -49,6 +49,8 @@ var float_time:float = 0.0
 var dash_time:float = 0.0
 var dash_cooldown:float = 0.0
 var dash_direction:Vector2 = Vector2.UP
+var corner_push_time:float = 0.0
+var corner_push_direction:Vector2 = Vector2.UP
 var last_direction:Vector2 = Vector2.UP
 var dash_ghost_time:float = 0.0
 var invulnerable_time:float = 0.0
@@ -197,43 +199,40 @@ func _build_ui() -> void:
 	hud.add_child(hp_bar)
 	dash_button = Button.new()
 	dash_button.position = Vector2(165.0, 17.0)
-	dash_button.size = Vector2(160.0, 34.0)
+	dash_button.size = Vector2(124.0, 32.0)
+	dash_button.clip_contents = true
 	dash_button.visible = false
 	dash_button.pressed.connect(_try_dash)
 	hud.add_child(dash_button)
-	var gamepad_icon:TextureRect = TextureRect.new()
+	var gamepad_icon:Sprite2D = Sprite2D.new()
 	gamepad_icon.texture = DASH_GAMEPAD_ICON
-	gamepad_icon.position = Vector2(5.0, 2.0)
-	gamepad_icon.size = Vector2(30.0, 30.0)
-	gamepad_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	gamepad_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gamepad_icon.position = Vector2(16.0, 16.0)
+	gamepad_icon.scale = Vector2(0.22, 0.22)
 	dash_button.add_child(gamepad_icon)
 	var separator:Label = Label.new()
 	separator.text = "/"
-	separator.position = Vector2(37.0, 7.0)
-	separator.add_theme_font_size_override("font_size", 13)
+	separator.position = Vector2(29.0, 8.0)
+	separator.add_theme_font_size_override("font_size", 11)
 	separator.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dash_button.add_child(separator)
-	var keyboard_icon:TextureRect = TextureRect.new()
+	var keyboard_icon:Sprite2D = Sprite2D.new()
 	keyboard_icon.texture = DASH_KEYBOARD_ICON
-	keyboard_icon.position = Vector2(47.0, -8.0)
-	keyboard_icon.size = Vector2(58.0, 50.0)
-	keyboard_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	keyboard_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	keyboard_icon.position = Vector2(57.0, 16.0)
+	keyboard_icon.scale = Vector2(0.38, 0.38)
 	dash_button.add_child(keyboard_icon)
 	var keyboard_label:Label = Label.new()
 	keyboard_label.text = tr("SECO_INVADER_SPACE_KEY")
-	keyboard_label.position = Vector2(53.0, 11.0)
-	keyboard_label.size = Vector2(46.0, 15.0)
+	keyboard_label.position = Vector2(38.0, 11.0)
+	keyboard_label.size = Vector2(38.0, 11.0)
 	keyboard_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	keyboard_label.add_theme_font_size_override("font_size", 9)
+	keyboard_label.add_theme_font_size_override("font_size", 7)
 	keyboard_label.add_theme_color_override("font_color", Color(0.15, 0.15, 0.17))
 	keyboard_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dash_button.add_child(keyboard_label)
 	var dash_label:Label = Label.new()
 	dash_label.text = tr("POWER_DASH")
-	dash_label.position = Vector2(108.0, 7.0)
-	dash_label.add_theme_font_size_override("font_size", 13)
+	dash_label.position = Vector2(81.0, 7.0)
+	dash_label.add_theme_font_size_override("font_size", 11)
 	dash_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dash_button.add_child(dash_label)
 	timeline = ProgressBar.new()
@@ -329,10 +328,20 @@ func _update_survival(delta:float) -> void:
 	var input_direction:Vector2 = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if input_direction.length() > 0.15:
 		last_direction = input_direction.normalized()
+	var lower_progress:float = smoothstep(screen.y * 0.42, screen.y * 0.7, maycon_anchor.y)
+	var safe_half_width:float = lerpf(screen.x * 0.42, screen.x * 0.23, lower_progress)
+	if corner_push_time <= 0.0 && lower_progress > 0.05 && absf(maycon_anchor.x - screen.x * 0.5) > safe_half_width:
+		corner_push_time = 0.35
+		corner_push_direction = (Vector2(screen.x * 0.5, screen.y * 0.42) - maycon_anchor).normalized()
+		dash_time = 0.0
+		_spawn_sparks(maycon.position, 48, Color(0.32, 0.76, 1.0))
 	if Input.is_action_just_pressed("ui_accept"):
 		_try_dash()
 	dash_cooldown = maxf(0.0, dash_cooldown - delta)
-	if dash_time > 0.0:
+	if corner_push_time > 0.0:
+		corner_push_time = maxf(0.0, corner_push_time - delta)
+		maycon_anchor = maycon_anchor.move_toward(Vector2(screen.x * 0.5, screen.y * 0.42), 1100.0 * delta)
+	elif dash_time > 0.0:
 		dash_time = maxf(0.0, dash_time - delta)
 		maycon_anchor += dash_direction * 1050.0 * delta
 		dash_ghost_time -= delta
@@ -344,7 +353,7 @@ func _update_survival(delta:float) -> void:
 	maycon_anchor.x = clampf(maycon_anchor.x, 38.0, screen.x - 85.0)
 	maycon_anchor.y = clampf(maycon_anchor.y, 78.0, screen.y * 0.7)
 	maycon.position = maycon_anchor + Vector2(sin(float_time * 2.0) * 8.0, sin(float_time * 3.4) * 8.0)
-	var steering_direction:Vector2 = dash_direction if dash_time > 0.0 else input_direction
+	var steering_direction:Vector2 = corner_push_direction if corner_push_time > 0.0 else (dash_direction if dash_time > 0.0 else input_direction)
 	var target_rotation:float = Vector2.UP.angle_to(steering_direction) if steering_direction.length() > 0.15 else 0.0
 	maycon.rotation = lerp_angle(maycon.rotation, target_rotation + sin(float_time * 1.7) * 0.035, 1.0 - exp(-3.4 * delta))
 	if absf(seco.position.x - seco_target_x) < 7.0:
@@ -374,7 +383,7 @@ func _update_survival(delta:float) -> void:
 
 
 func _try_dash() -> void:
-	if phase != 1 or dash_cooldown > 0.0 or get_tree().paused:
+	if phase != 1 or dash_cooldown > 0.0 or corner_push_time > 0.0 or get_tree().paused:
 		return
 	var direction:Vector2 = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	dash_direction = direction.normalized() if direction.length() > 0.15 else last_direction
@@ -463,7 +472,7 @@ func _update_atmosphere(delta:float) -> void:
 			line.x = rng.randf_range(0.0, screen.x)
 	maycon_trail.push_front({"position": maycon.position, "rotation": maycon.rotation})
 	seco_trail.push_front(seco.position)
-	if maycon_trail.size() > (22 if dash_time > 0.0 else 14):
+	if maycon_trail.size() > (22 if dash_time > 0.0 or corner_push_time > 0.0 else 14):
 		maycon_trail.pop_back()
 	if seco_trail.size() > 11:
 		seco_trail.pop_back()
@@ -514,11 +523,14 @@ func _draw() -> void:
 	for line in lines:
 		draw_line(Vector2(line.x, line.y - line.length), Vector2(line.x, line.y), Color(0.12, 0.52, 1.0, 0.22), 1.0)
 	for i in range(maycon_trail.size() - 1, -1, -1):
-		var alpha:float = (1.0 - float(i) / float(maxi(1, maycon_trail.size()))) * (0.30 if dash_time > 0.0 or phase == 0 else 0.15)
+		var alpha:float = (1.0 - float(i) / float(maxi(1, maycon_trail.size()))) * (0.30 if dash_time > 0.0 or corner_push_time > 0.0 or phase == 0 else 0.15)
 		var texture:Texture2D = maycon.sprite_frames.get_frame_texture("float", maycon.frame)
 		draw_set_transform(maycon_trail[i].position, maycon_trail[i].rotation)
 		draw_texture_rect(texture, Rect2(-texture.get_size() * maycon.scale * 0.5, texture.get_size() * maycon.scale), false, Color(0.42, 0.68, 1.0, alpha))
 	draw_set_transform(Vector2.ZERO)
+	if corner_push_time > 0.0:
+		var push_alpha:float = corner_push_time / 0.35
+		draw_arc(maycon.position, 35.0 + (1.0 - push_alpha) * 42.0, 0.0, TAU, 48, Color(0.3, 0.75, 1.0, push_alpha * 0.8), 3.0)
 	for i in range(seco_trail.size() - 1, -1, -1):
 		draw_circle(seco_trail[i], 34.0 + i * 2.0, Color(0.44, 0.07, 0.9, (1.0 - float(i) / 9.0) * 0.045))
 	for bullet in bullets:

@@ -589,6 +589,22 @@ func _build_giant_wooden_barrier() -> void:
 
 	add_child(boss_barrier)
 
+func _show_path_open_announcement() -> void:
+	if not is_instance_valid(path_open_announcement):
+		return
+	path_open_announcement.visible = true
+	path_open_announcement.modulate.a = 0.0
+	path_open_announcement.scale = Vector2(0.6, 0.6)
+	var banner_tween := create_tween().bind_node(path_open_announcement).set_parallel(true)
+	banner_tween.tween_property(path_open_announcement, "modulate:a", 1.0, 0.4)
+	banner_tween.tween_property(path_open_announcement, "scale", Vector2.ONE, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	banner_tween.chain().tween_interval(3.8)
+	banner_tween.chain().tween_property(path_open_announcement, "modulate:a", 0.0, 1.0)
+	banner_tween.chain().tween_callback(func():
+		if is_instance_valid(path_open_announcement):
+			path_open_announcement.visible = false
+	)
+
 func open_wooden_barrier() -> void:
 	if not is_instance_valid(boss_barrier):
 		return
@@ -598,7 +614,7 @@ func open_wooden_barrier() -> void:
 	
 	var break_audio := AudioStreamPlayer.new()
 	break_audio.stream = WOOD_BREAK_SOUND
-	break_audio.volume_db = 4.0
+	break_audio.volume_db = 6.0
 	add_child(break_audio)
 	break_audio.play()
 	get_tree().create_timer(4.5).timeout.connect(break_audio.queue_free)
@@ -607,7 +623,7 @@ func open_wooden_barrier() -> void:
 		maycon.camera_shake = 1.0
 
 	_spawn_color_burst(boss_barrier.global_position + Vector3(0, 4.0, 0), false)
-	for i in range(8):
+	for i in range(12):
 		var blood := BLOOD_SCENE.instantiate()
 		blood.position = boss_barrier.global_position + Vector3(randf_range(-6.0, 6.0), randf_range(1.0, 6.0), randf_range(-1.0, 1.0))
 		blood.scale = Vector3.ONE * randf_range(2.0, 3.2)
@@ -619,28 +635,195 @@ func open_wooden_barrier() -> void:
 		if child is CollisionShape3D:
 			continue
 		if child is Node3D:
-			var spread_x := randf_range(-9.0, 9.0)
-			var spread_y := randf_range(2.0, 8.0)
-			var spread_z := randf_range(4.0, 12.0)
+			var spread_x := randf_range(-10.0, 10.0)
+			var spread_y := randf_range(2.0, 9.0)
+			var spread_z := randf_range(-14.0, 6.0)
 			tween.tween_property(child, "position", child.position + Vector3(spread_x, spread_y, spread_z), 1.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-			tween.tween_property(child, "rotation", child.rotation + Vector3(randf_range(-4, 4), randf_range(-4, 4), randf_range(-4, 4)), 1.6)
+			tween.tween_property(child, "rotation", child.rotation + Vector3(randf_range(-5, 5), randf_range(-5, 5), randf_range(-5, 5)), 1.6)
 			tween.tween_property(child, "scale", Vector3.ZERO, 1.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	
 	tween.chain().tween_callback(boss_barrier.queue_free)
 
-	if is_instance_valid(path_open_announcement):
-		path_open_announcement.visible = true
-		path_open_announcement.modulate.a = 0.0
-		path_open_announcement.scale = Vector2(0.6, 0.6)
-		var banner_tween := create_tween().bind_node(path_open_announcement).set_parallel(true)
-		banner_tween.tween_property(path_open_announcement, "modulate:a", 1.0, 0.4)
-		banner_tween.tween_property(path_open_announcement, "scale", Vector2.ONE, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		banner_tween.chain().tween_interval(3.8)
-		banner_tween.chain().tween_property(path_open_announcement, "modulate:a", 0.0, 1.0)
-		banner_tween.chain().tween_callback(func():
-			if is_instance_valid(path_open_announcement):
-				path_open_announcement.visible = false
-		)
+	if not cutscene_running:
+		_show_path_open_announcement()
+
+func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
+	if cutscene_running:
+		return
+	cutscene_running = true
+
+	# 1. Congelar tempo para Maycon e torná-lo invulnerável/imóvel
+	if is_instance_valid(maycon):
+		if maycon.has_method("set_cutscene_active"):
+			maycon.set_cutscene_active(true)
+		else:
+			maycon.set("cutscene_active", true)
+			maycon.control_enabled = false
+			maycon.velocity = Vector3.ZERO
+
+	# 2. Congelar tempo para inimigos e perigos
+	if is_instance_valid(enemies):
+		enemies.process_mode = Node.PROCESS_MODE_DISABLED
+	if is_instance_valid(hazards):
+		hazards.process_mode = Node.PROCESS_MODE_DISABLED
+
+	# 3. Atualizar barra e texto de vida do boss
+	if is_instance_valid(boss_hp_bar):
+		boss_hp_bar.value = 0.0
+	if is_instance_valid(boss_hp_label):
+		boss_hp_label.text = "0 / 4  (0%)"
+	if is_instance_valid(boss_name_label):
+		boss_name_label.text = "☠ " + tr("PLATFORM_BOSS_DEFEATED") + " ☠"
+		boss_name_label.add_theme_color_override("font_color", Color("66ff88"))
+
+	# 4. Criar Câmera de Cutscene dinâmica
+	var cutscene_cam := Camera3D.new()
+	cutscene_cam.name = "BossDeathCutsceneCam"
+	cutscene_cam.fov = 68.0
+	add_child(cutscene_cam)
+
+	var p_start: Vector3 = lips_boss.global_position
+	var p_barrier: Vector3 = Vector3(0.0, 3.8, -193.2)
+	var p_abyss: Vector3 = Vector3(0.0, 1.2, -206.0)
+
+	# Posição inicial da câmera perto do Lips
+	cutscene_cam.global_position = p_start + Vector3(5.5, 3.2, 7.5)
+	cutscene_cam.look_at(p_start + Vector3(0.0, 0.5, -2.0), Vector3.UP)
+	cutscene_cam.make_current()
+
+	# Urro dramático do Lips
+	if is_instance_valid(lips_boss) and lips_boss.get("scream_audio") != null:
+		var s_aud: AudioStreamPlayer3D = lips_boss.scream_audio
+		s_aud.pitch_scale = 0.60
+		s_aud.play()
+	elif scream_audio:
+		scream_audio.pitch_scale = 0.62
+		scream_audio.volume_db = 2.5
+		scream_audio.play()
+
+	# 5. Arremesso Lento do Lips em direção à cerca de madeira
+	var flight_duration := 3.8
+	var flight_tw := create_tween()
+	flight_tw.tween_method(func(prog: float):
+		if not is_instance_valid(lips_boss):
+			return
+		var px := lerpf(p_start.x, p_barrier.x, prog)
+		var pz := lerpf(p_start.z, p_barrier.z, prog)
+		var base_y := lerpf(p_start.y, p_barrier.y, prog)
+		var arc_peak := maxf(p_start.y, 4.0) + 5.5
+		var py := base_y + sin(prog * PI) * arc_peak
+		lips_boss.global_position = Vector3(px, py, pz)
+
+		# Rotação lenta no ar
+		lips_boss.rotation.x = prog * TAU * 1.5
+		lips_boss.rotation.y += 0.03
+		lips_boss.rotation.z = sin(prog * TAU) * 0.45
+
+		# Câmera acompanha o Lips
+		if is_instance_valid(cutscene_cam):
+			var desired_cam := lips_boss.global_position + Vector3(5.5, 3.2, 7.5)
+			cutscene_cam.global_position = cutscene_cam.global_position.lerp(desired_cam, 0.22)
+			cutscene_cam.look_at(lips_boss.global_position + Vector3(0.0, 0.5, -2.0), Vector3.UP)
+
+		# Partículas ocasionais de sangue
+		if randf() < 0.25:
+			var blood := BLOOD_SCENE.instantiate()
+			blood.position = lips_boss.global_position + Vector3(randf_range(-1.2, 1.2), randf_range(-0.5, 0.8), randf_range(-1.2, 1.2))
+			blood.scale = Vector3.ONE * randf_range(1.5, 2.5)
+			effects.add_child(blood)
+			get_tree().create_timer(1.8).timeout.connect(blood.queue_free)
+	, 0.0, 1.0, flight_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	await flight_tw.finished
+
+	# 6. Colisão e quebra da cerca de madeira!
+	if is_instance_valid(lips_boss):
+		lips_boss.global_position = p_barrier
+
+	open_wooden_barrier()
+
+	# Tremor na câmera de cutscene
+	if is_instance_valid(cutscene_cam):
+		var shake_tw := create_tween()
+		for i in range(10):
+			shake_tw.tween_property(cutscene_cam, "h_offset", randf_range(-0.45, 0.45), 0.03)
+			shake_tw.parallel().tween_property(cutscene_cam, "v_offset", randf_range(-0.45, 0.45), 0.03)
+		shake_tw.tween_property(cutscene_cam, "h_offset", 0.0, 0.05)
+		shake_tw.parallel().tween_property(cutscene_cam, "v_offset", 0.0, 0.05)
+
+	# 7. Lips atravessa a cerca quebrada e vai até o buraco
+	if is_instance_valid(lips_boss):
+		var through_tw := create_tween().set_parallel(true)
+		through_tw.tween_property(lips_boss, "global_position:z", p_abyss.z, 0.95).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		through_tw.tween_property(lips_boss, "global_position:y", p_abyss.y + 1.2, 0.95)
+		through_tw.tween_property(lips_boss, "global_position:x", 0.0, 0.95)
+		through_tw.tween_property(lips_boss, "rotation:x", lips_boss.rotation.x + 3.5, 0.95)
+		if is_instance_valid(cutscene_cam):
+			through_tw.tween_property(cutscene_cam, "global_position", Vector3(4.8, 5.2, -192.5), 0.95).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		await through_tw.finished
+
+	# 8. Lips cai no abismo
+	if is_instance_valid(cutscene_cam):
+		cutscene_cam.look_at(p_abyss, Vector3.UP)
+
+	if is_instance_valid(lips_boss):
+		var fall_tw := create_tween().set_parallel(true)
+		fall_tw.tween_property(lips_boss, "global_position:y", -50.0, 1.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		fall_tw.tween_property(lips_boss, "scale", Vector3.ZERO, 1.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		fall_tw.tween_property(lips_boss, "rotation:x", lips_boss.rotation.x + 12.0, 1.6)
+		fall_tw.tween_property(lips_boss, "rotation:z", lips_boss.rotation.z + 8.0, 1.6)
+		if is_instance_valid(lips_boss) and lips_boss.get("scream_audio") != null:
+			var s_aud: AudioStreamPlayer3D = lips_boss.scream_audio
+			var s_tw := create_tween().bind_node(s_aud)
+			s_tw.tween_property(s_aud, "volume_db", -40.0, 1.5)
+		elif scream_audio:
+			var s_tw := create_tween().bind_node(scream_audio)
+			s_tw.tween_property(scream_audio, "volume_db", -40.0, 1.5)
+		await fall_tw.finished
+
+	# Pausa para ver o buraco desimpedido
+	await get_tree().create_timer(0.6).timeout
+
+	# 9. Fade out de transição para tela preta
+	if is_instance_valid(fade_rect):
+		fade_rect.color = Color.BLACK
+		var fade_out := create_tween().bind_node(fade_rect)
+		fade_out.tween_property(fade_rect, "modulate:a", 1.0, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		await fade_out.finished
+
+	# 10. Durante a tela preta: limpar Lips, restaurar câmera do Maycon, desobstruir e despausar tempo
+	if is_instance_valid(lips_boss):
+		lips_boss.queue_free()
+	if is_instance_valid(cutscene_cam):
+		cutscene_cam.queue_free()
+	if is_instance_valid(maycon) and is_instance_valid(maycon.camera):
+		maycon.camera.make_current()
+
+	if is_instance_valid(boss_hud_container):
+		boss_hud_container.visible = false
+
+	# Descongelar Maycon e inimigos
+	if is_instance_valid(maycon):
+		if maycon.has_method("set_cutscene_active"):
+			maycon.set_cutscene_active(false)
+		else:
+			maycon.set("cutscene_active", false)
+			maycon.control_enabled = true
+	if is_instance_valid(enemies):
+		enemies.process_mode = Node.PROCESS_MODE_INHERIT
+	if is_instance_valid(hazards):
+		hazards.process_mode = Node.PROCESS_MODE_INHERIT
+
+	cutscene_running = false
+
+	# 11. Fade in de volta para o Maycon
+	if is_instance_valid(fade_rect):
+		var fade_in := create_tween().bind_node(fade_rect)
+		fade_in.tween_property(fade_rect, "modulate:a", 0.0, 0.75).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		await fade_in.finished
+
+	# 12. Mostrar banner triunfante de caminho livre
+	_show_path_open_announcement()
 
 func update_boss_lips_hp(current_hp: int, max_hp: int) -> void:
 	if not is_instance_valid(boss_hp_bar):
@@ -670,7 +853,8 @@ func boss_lips_defeated() -> void:
 		boss_name_label.text = "☠ " + tr("PLATFORM_BOSS_DEFEATED") + " ☠"
 		boss_name_label.add_theme_color_override("font_color", Color("66ff88"))
 	
-	open_wooden_barrier()
+	if not cutscene_running:
+		open_wooden_barrier()
 	
 	if is_instance_valid(boss_hud_container):
 		var hud_tw := create_tween().bind_node(boss_hud_container)
