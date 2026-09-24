@@ -12,6 +12,7 @@ const MEMORY_SHADER = preload("res://scenes/3D/menu_memory.gdshader")
 const STAR_SHADER = preload("res://scenes/3D/menu_stars.gdshader")
 const MIST_SHADER = preload("res://scenes/3D/menu_horizon_mist.gdshader")
 const OLD_FILM_SHADER = preload("res://scenes/3D/poco_infinito_old_film.gdshader")
+const MENU_SOUND_CONTROLLER = preload("res://scripts/ui/menu_sound_controller.gd")
 
 const LOOK_OUT_DURATION := 3.4
 const WALK_START := 5.0
@@ -55,6 +56,7 @@ var memory_sound: AudioStreamPlayer
 var sand_steps: AudioStreamPlayer
 var memory_sound_played := false
 var leaving := false
+var menu_sounds: Node
 
 var stack_main: VBoxContainer
 var stack_slots: VBoxContainer
@@ -102,6 +104,8 @@ func _ready() -> void:
 	Global.load_from_outside_1 = load_from_outside_1
 	Global.show_debug_tab = enable_debug_tab
 	take_rng.randomize()
+	menu_sounds = MENU_SOUND_CONTROLLER.new()
+	add_child(menu_sounds)
 	_build_world()
 	_build_film_filter()
 	_build_interface()
@@ -125,15 +129,19 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		if fullscreen_delete_dialog and fullscreen_delete_dialog.visible:
+			menu_sounds.play_back()
 			_close_delete_confirmation()
 			get_viewport().set_input_as_handled()
 		elif fullscreen_overwrite_dialog and fullscreen_overwrite_dialog.visible:
+			menu_sounds.play_back()
 			_close_overwrite_confirmation()
 			get_viewport().set_input_as_handled()
 		elif stack_slot_actions and stack_slot_actions.visible:
+			menu_sounds.play_back()
 			_show_slots_menu(slots_mode)
 			get_viewport().set_input_as_handled()
 		elif stack_slots and stack_slots.visible:
+			menu_sounds.play_back()
 			_show_main_menu()
 			get_viewport().set_input_as_handled()
 
@@ -1462,6 +1470,9 @@ func _menu_button(key: String, node_name: String, is_danger: bool = false) -> Bu
 	button.text = tr(key).to_upper()
 	button.custom_minimum_size = Vector2(0, 47)
 	_apply_menu_button_style(button, is_danger)
+	if is_instance_valid(menu_sounds):
+		var sound_action := "back" if node_name.contains("Back") or node_name.contains("Cancel") else "confirm"
+		menu_sounds.bind_button(button, sound_action)
 	return button
 
 
@@ -1508,6 +1519,7 @@ func _start_new_game_on_slot(slot: int) -> void:
 	if leaving:
 		return
 	leaving = true
+	menu_sounds.play_start()
 	Global.current_save_slot = slot
 	Global.reset_default_values()
 	Global.current_save_slot = slot

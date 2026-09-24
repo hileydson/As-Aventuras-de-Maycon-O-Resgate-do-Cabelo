@@ -2,6 +2,7 @@ extends Control
 
 const PAUSE_SOUND:AudioStream = preload("res://assets/novos_audios/pause_sfxr.mp3")
 const PAUSE_VISUAL = preload("res://scripts/ui/pause_visual.gd")
+const MENU_SOUND_CONTROLLER = preload("res://scripts/ui/menu_sound_controller.gd")
 const PENTAGRAM_TEXTURE:Texture2D = preload("res://assets/3D/pentagram_item.png")
 const KEY_Q_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Q_Key_Light.png")
 const KEY_W_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/W_Key_Light.png")
@@ -30,6 +31,7 @@ const PAD_Y_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_
 var realtime_hp_bar:ProgressBar
 var realtime_hp_label:Label
 var pause_audio:AudioStreamPlayer
+var menu_sounds:Node
 var controls_card:PanelContainer
 var background_pentagram:TextureRect
 var pause_background:ColorRect
@@ -38,6 +40,11 @@ var transition_in_progress:bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	menu_sounds = MENU_SOUND_CONTROLLER.new()
+	add_child(menu_sounds)
+	menu_sounds.bind_button(close, "back")
+	menu_sounds.bind_button(settings_btn)
+	menu_sounds.bind_button(quit)
 	build_realtime_hp_display()
 	update_hp_display()
 	if Global.game_events["before_prologo"]==false:
@@ -69,7 +76,7 @@ func _ready() -> void:
 	add_child(pause_audio)
 		
 
-func processa_pause_unpause()->void:
+func processa_pause_unpause(play_close_sound:bool = true)->void:
 	if transition_in_progress:
 		return
 	update_hp_display()
@@ -81,6 +88,8 @@ func processa_pause_unpause()->void:
 		maycon_hp.visible = false
 	
 	if get_tree().paused:
+		if play_close_sound:
+			menu_sounds.play_back()
 		_fade_out_and_resume()
 		return
 	else:
@@ -117,7 +126,7 @@ func _process(delta: float) -> void:
 			
 
 func _on_close_pressed() -> void:
-	processa_pause_unpause()
+	processa_pause_unpause(false)
 
 
 func _on_settings_pressed() -> void:
