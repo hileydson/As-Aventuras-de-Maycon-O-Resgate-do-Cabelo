@@ -2,6 +2,7 @@ extends Node3D
 
 const ENEMY_SCRIPT = preload("res://scripts/3D/platform_enemy.gd")
 const MINI_SECO_SCRIPT = preload("res://scripts/3D/platform_mini_seco.gd")
+const LIPS_SCRIPT = preload("res://scripts/3D/platform_lips.gd")
 const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 const ASSET_ROOT = "res://assets/kenney/platformer_3d/"
 const PENTAGRAM_TEXTURE = preload("res://assets/3D/pentagram_item.png")
@@ -16,6 +17,7 @@ const MAYCON_SCREAM = preload("res://assets/novos_audios/maycon_falling_fase_1.m
 const ENEMY_EXPLOSION_SOUND = preload("res://assets/novos_audios/mario_part_sounds/fart_explotion.mp3")
 const PICKUP_SOUND = preload("res://assets/audio/plim.mp3")
 const DAMAGE_PUNCH_SOUND = preload("res://assets/novos_audios/punch_3.mp3")
+const WOOD_BREAK_SOUND = preload("res://assets/novos_audios/mario_part_sounds/wood_barrier_break.mp3")
 const BLADE_ROUTE_IDS = [2, 5, 8, 11]
 const HAND_HUB_IDS = [1, 4, 7, 10, 12]
 const HUBS = [
@@ -71,6 +73,16 @@ var last_invincible_milestone:int = 0
 var pentagrams_collected_session:int = 0
 var special_ready:bool = false
 var invincible_overlay:CanvasLayer
+var lips_enemy:Node3D
+
+var pentagram_spawners:Dictionary = {}
+var boss_barrier:Node3D
+var boss_barrier_collider:CollisionShape3D
+var boss_hud_container:Control
+var boss_hp_bar:ProgressBar
+var boss_hp_label:Label
+var boss_name_label:Label
+var path_open_announcement:Label
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -87,7 +99,7 @@ func _ready() -> void:
 	pickup_audio = AudioStreamPlayer.new()
 	pickup_audio.stream = PICKUP_SOUND
 	pickup_audio.bus = "ItemReverb"
-	pickup_audio.volume_db = -3.0
+	pickup_audio.volume_db = -11.0
 	add_child(pickup_audio)
 	damage_punch_audio = AudioStreamPlayer.new()
 	damage_punch_audio.stream = DAMAGE_PUNCH_SOUND
@@ -115,6 +127,7 @@ func _ready() -> void:
 	_scatter_details()
 	_spawn_enemies()
 	_spawn_mini_secos()
+	_spawn_lips()
 	_spawn_pentagrams()
 	_build_blue_particles()
 	_build_hud()
@@ -164,14 +177,25 @@ func _physics_process(delta:float) -> void:
 		if item.global_position.distance_to(maycon.global_position + Vector3.UP * 0.9) < 1.35:
 			_spawn_color_burst(item.global_position, true)
 			_play_pickup_sound(true)
-			Global.platform_pentagram_collected[id] = true
 			Global.platform_pentagrams += 1
 			pentagrams_collected_session += 1
 			pentagram_nodes.erase(id)
 			item.queue_free()
+			if pentagram_spawners.has(id):
+				pentagram_spawners[id].active = false
+				pentagram_spawners[id].timer = 14.0
 			Global.save_progress("fase_3d_platform")
 			update_hud()
 			_check_invincibility_milestone()
+
+	# Respawn de pentagramas após tempo para formar loop de gameplay
+	for id in pentagram_spawners.keys():
+		var spawner: Dictionary = pentagram_spawners[id]
+		if not spawner.active:
+			spawner.timer -= delta
+			if spawner.timer <= 0.0:
+				spawner.active = true
+				_respawn_pentagram(id, spawner.pos)
 
 func _build_materials() -> void:
 	materials["grass"] = _material(Color("529755"), 0.9)
@@ -391,6 +415,189 @@ func _build_finish() -> void:
 	beam.light_energy = 1.5
 	beam.omni_range = 6.0
 	add_child(beam)
+	_build_giant_wooden_barrier()
+
+func _build_giant_wooden_barrier() -> void:
+	boss_barrier = StaticBody3D.new()
+	boss_barrier.name = "GiantWoodenBarrier"
+	boss_barrier.position = Vector3(0.0, 0.0, -193.2)
+	
+	boss_barrier_collider = CollisionShape3D.new()
+	var box_shape := BoxShape3D.new()
+	box_shape.size = Vector3(20.0, 10.0, 3.0)
+	boss_barrier_collider.shape = box_shape
+	boss_barrier_collider.position = Vector3(0.0, 5.0, 0.0)
+	boss_barrier.add_child(boss_barrier_collider)
+
+	var wood_mat: StandardMaterial3D = materials["wood"]
+	var dark_wood_mat: StandardMaterial3D = materials["earth_dark"]
+	var metal_mat: StandardMaterial3D = materials["stone_dark"]
+
+	for i in range(18):
+		var log_inst := MeshInstance3D.new()
+		var log_mesh := CylinderMesh.new()
+		var log_h := randf_range(8.2, 9.8)
+		log_mesh.top_radius = randf_range(0.48, 0.62)
+		log_mesh.bottom_radius = randf_range(0.55, 0.70)
+		log_mesh.height = log_h
+		log_mesh.radial_segments = 14
+		log_inst.mesh = log_mesh
+		log_inst.material_override = wood_mat if i % 2 == 0 else dark_wood_mat
+		var offset_x: float = -9.2 + float(i) * 1.08 + randf_range(-0.08, 0.08)
+		log_inst.position = Vector3(offset_x, log_h * 0.5, randf_range(-0.25, 0.25))
+		log_inst.rotation = Vector3(randf_range(-0.03, 0.03), randf_range(-0.2, 0.2), randf_range(-0.04, 0.04))
+		boss_barrier.add_child(log_inst)
+
+	var beam_heights := [1.8, 4.4, 7.0]
+	for bh in beam_heights:
+		var beam := MeshInstance3D.new()
+		var beam_mesh := BoxMesh.new()
+		beam_mesh.size = Vector3(20.2, 0.75, 0.85)
+		beam.mesh = beam_mesh
+		beam.material_override = wood_mat
+		beam.position = Vector3(0.0, bh, 0.45)
+		boss_barrier.add_child(beam)
+		
+		for mx in [-8.0, -4.0, 0.0, 4.0, 8.0]:
+			var band := MeshInstance3D.new()
+			var band_mesh := BoxMesh.new()
+			band_mesh.size = Vector3(0.55, 0.85, 0.95)
+			band.mesh = band_mesh
+			band.material_override = metal_mat
+			band.position = Vector3(mx, bh, 0.45)
+			boss_barrier.add_child(band)
+
+	for angle in [-0.42, 0.42]:
+		var diag := MeshInstance3D.new()
+		var diag_mesh := BoxMesh.new()
+		diag_mesh.size = Vector3(18.5, 0.55, 0.65)
+		diag.mesh = diag_mesh
+		diag.material_override = dark_wood_mat
+		diag.position = Vector3(0.0, 4.4, 0.6)
+		diag.rotation.z = angle
+		boss_barrier.add_child(diag)
+
+	var sign_board := MeshInstance3D.new()
+	var sign_mesh := BoxMesh.new()
+	sign_mesh.size = Vector3(9.2, 2.2, 0.35)
+	sign_board.mesh = sign_mesh
+	sign_board.material_override = dark_wood_mat
+	sign_board.position = Vector3(0.0, 3.6, 0.95)
+	boss_barrier.add_child(sign_board)
+
+	var sign_border := MeshInstance3D.new()
+	var border_mesh := BoxMesh.new()
+	border_mesh.size = Vector3(9.5, 2.45, 0.25)
+	sign_border.mesh = border_mesh
+	sign_border.material_override = materials["gold"]
+	sign_border.position = Vector3(0.0, 3.6, 0.85)
+	boss_barrier.add_child(sign_border)
+
+	var label_3d := Label3D.new()
+	label_3d.text = tr("PLATFORM_BARRIER_SIGN")
+	label_3d.font_size = 46
+	label_3d.outline_size = 14
+	label_3d.modulate = Color(1.0, 0.88, 0.3)
+	label_3d.outline_modulate = Color(0.12, 0.02, 0.02)
+	label_3d.position = Vector3(0.0, 3.6, 1.15)
+	label_3d.billboard = BaseMaterial3D.BILLBOARD_DISABLED
+	label_3d.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	boss_barrier.add_child(label_3d)
+
+	add_child(boss_barrier)
+
+func open_wooden_barrier() -> void:
+	if not is_instance_valid(boss_barrier):
+		return
+	
+	if is_instance_valid(boss_barrier_collider):
+		boss_barrier_collider.set_deferred("disabled", true)
+	
+	var break_audio := AudioStreamPlayer.new()
+	break_audio.stream = WOOD_BREAK_SOUND
+	break_audio.volume_db = 4.0
+	add_child(break_audio)
+	break_audio.play()
+	get_tree().create_timer(4.5).timeout.connect(break_audio.queue_free)
+
+	if is_instance_valid(maycon) and "camera_shake" in maycon:
+		maycon.camera_shake = 1.0
+
+	_spawn_color_burst(boss_barrier.global_position + Vector3(0, 4.0, 0), false)
+	for i in range(8):
+		var blood := BLOOD_SCENE.instantiate()
+		blood.position = boss_barrier.global_position + Vector3(randf_range(-6.0, 6.0), randf_range(1.0, 6.0), randf_range(-1.0, 1.0))
+		blood.scale = Vector3.ONE * randf_range(2.0, 3.2)
+		effects.add_child(blood)
+		get_tree().create_timer(3.0).timeout.connect(blood.queue_free)
+
+	var tween := create_tween().bind_node(boss_barrier).set_parallel(true)
+	for child in boss_barrier.get_children():
+		if child is CollisionShape3D:
+			continue
+		if child is Node3D:
+			var spread_x := randf_range(-9.0, 9.0)
+			var spread_y := randf_range(2.0, 8.0)
+			var spread_z := randf_range(4.0, 12.0)
+			tween.tween_property(child, "position", child.position + Vector3(spread_x, spread_y, spread_z), 1.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			tween.tween_property(child, "rotation", child.rotation + Vector3(randf_range(-4, 4), randf_range(-4, 4), randf_range(-4, 4)), 1.6)
+			tween.tween_property(child, "scale", Vector3.ZERO, 1.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	
+	tween.chain().tween_callback(boss_barrier.queue_free)
+
+	if is_instance_valid(path_open_announcement):
+		path_open_announcement.visible = true
+		path_open_announcement.modulate.a = 0.0
+		path_open_announcement.scale = Vector2(0.6, 0.6)
+		var banner_tween := create_tween().bind_node(path_open_announcement).set_parallel(true)
+		banner_tween.tween_property(path_open_announcement, "modulate:a", 1.0, 0.4)
+		banner_tween.tween_property(path_open_announcement, "scale", Vector2.ONE, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		banner_tween.chain().tween_interval(3.8)
+		banner_tween.chain().tween_property(path_open_announcement, "modulate:a", 0.0, 1.0)
+		banner_tween.chain().tween_callback(func():
+			if is_instance_valid(path_open_announcement):
+				path_open_announcement.visible = false
+		)
+
+func update_boss_lips_hp(current_hp: int, max_hp: int) -> void:
+	if not is_instance_valid(boss_hp_bar):
+		return
+	var pct: int = int((float(current_hp) / float(max_hp)) * 100.0)
+	var hp_tw := create_tween().bind_node(boss_hp_bar)
+	hp_tw.tween_property(boss_hp_bar, "value", float(current_hp), 0.35).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	
+	if is_instance_valid(boss_hp_label):
+		boss_hp_label.text = "%d / %d  (%d%%)" % [current_hp, max_hp, pct]
+	
+	if is_instance_valid(boss_name_label):
+		boss_name_label.text = "💥 " + tr("PLATFORM_BOSS_HIT") + " 💥"
+		boss_name_label.add_theme_color_override("font_color", Color("ffeedd"))
+		get_tree().create_timer(1.2).timeout.connect(func():
+			if is_instance_valid(boss_name_label) and current_hp > 0:
+				boss_name_label.text = "★ " + tr("PLATFORM_BOSS_NAME") + " ★"
+				boss_name_label.add_theme_color_override("font_color", Color("f9ca51"))
+		)
+
+func boss_lips_defeated() -> void:
+	if is_instance_valid(boss_hp_bar):
+		boss_hp_bar.value = 0.0
+	if is_instance_valid(boss_hp_label):
+		boss_hp_label.text = "0 / 4  (0%)"
+	if is_instance_valid(boss_name_label):
+		boss_name_label.text = "☠ " + tr("PLATFORM_BOSS_DEFEATED") + " ☠"
+		boss_name_label.add_theme_color_override("font_color", Color("66ff88"))
+	
+	open_wooden_barrier()
+	
+	if is_instance_valid(boss_hud_container):
+		var hud_tw := create_tween().bind_node(boss_hud_container)
+		hud_tw.tween_interval(3.5)
+		hud_tw.tween_property(boss_hud_container, "modulate:a", 0.0, 1.2)
+		hud_tw.chain().tween_callback(func():
+			if is_instance_valid(boss_hud_container):
+				boss_hud_container.visible = false
+		)
+
 
 func _scatter_details() -> void:
 	var rng := RandomNumberGenerator.new()
@@ -488,6 +695,13 @@ func _spawn_mini_secos() -> void:
 		seco_hub.setup(seco_idx % 3, maycon, self)
 		seco_idx += 1
 
+func _spawn_lips() -> void:
+	lips_enemy = Node3D.new()
+	lips_enemy.set_script(LIPS_SCRIPT)
+	lips_enemy.name = "LipsGargaroker"
+	enemies.add_child(lips_enemy)
+	lips_enemy.setup(self, maycon, 4)
+
 func _spawn_pentagrams() -> void:
 	for i in range(1, HUBS.size()):
 		_spawn_pentagram("hub_%d" % i, HUBS[i] + Vector3.UP * 1.45)
@@ -503,8 +717,7 @@ func _spawn_pentagrams() -> void:
 		_spawn_pentagram("high_%d" % i, hub + Vector3(side * 11.0, 5.55, -4.0))
 
 func _spawn_pentagram(id:String, position:Vector3) -> void:
-	if Global.platform_pentagram_collected.has(id):
-		return
+	pentagram_spawners[id] = {"pos": position, "timer": 0.0, "active": true}
 	var item := Node3D.new()
 	item.name = "Pentagrama_" + id
 	item.position = position
@@ -517,6 +730,27 @@ func _spawn_pentagram(id:String, position:Vector3) -> void:
 	item.add_child(sprite)
 	geometry.add_child(item)
 	pentagram_nodes[id] = item
+
+func _respawn_pentagram(id:String, position:Vector3) -> void:
+	if pentagram_nodes.has(id) and is_instance_valid(pentagram_nodes[id]):
+		return
+	var item := Node3D.new()
+	item.name = "Pentagrama_" + id
+	item.position = position
+	item.scale = Vector3.ZERO
+	var sprite := Sprite3D.new()
+	sprite.texture = PENTAGRAM_TEXTURE
+	sprite.pixel_size = 0.0031
+	sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	sprite.shaded = false
+	sprite.double_sided = true
+	item.add_child(sprite)
+	geometry.add_child(item)
+	pentagram_nodes[id] = item
+	
+	_spawn_color_burst(position, false)
+	var tween := create_tween().bind_node(item)
+	tween.tween_property(item, "scale", Vector3.ONE, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _build_blue_particles() -> void:
 	var particle_material := ParticleProcessMaterial.new()
@@ -609,50 +843,63 @@ func _setup_audio_buses() -> void:
 		AudioServer.add_bus(bus_idx)
 		AudioServer.set_bus_name(bus_idx, "ItemReverb")
 		AudioServer.set_bus_send(bus_idx, "Master")
+		AudioServer.set_bus_volume_db(bus_idx, -5.0)
 		
 		var reverb := AudioEffectReverb.new()
 		reverb.room_size = 0.88
 		reverb.damping = 0.22
 		reverb.spread = 1.0
-		reverb.wet = 0.82
-		reverb.dry = 0.70
+		reverb.wet = 0.90
+		reverb.dry = 0.30
 		reverb.hipass = 0.05
 		reverb.predelay_msec = 20.0
 		AudioServer.add_bus_effect(bus_idx, reverb)
 		
 		var delay := AudioEffectDelay.new()
-		delay.dry = 0.70
+		delay.dry = 0.40
 		delay.tap1_active = true
 		delay.tap1_delay_ms = 130.0
-		delay.tap1_level_db = -3.5
+		delay.tap1_level_db = -4.0
 		delay.tap2_active = true
 		delay.tap2_delay_ms = 260.0
-		delay.tap2_level_db = -7.0
+		delay.tap2_level_db = -8.0
 		delay.feedback_active = true
 		delay.feedback_delay_ms = 180.0
-		delay.feedback_level_db = -6.5
+		delay.feedback_level_db = -7.0
 		delay.feedback_lowpass = 14000.0
 		AudioServer.add_bus_effect(bus_idx, delay)
 
 func _play_pickup_sound(pentagram:bool) -> void:
 	var base_pitch := 1.25 if pentagram else 0.92
-	var base_vol := 0.0 if pentagram else -2.0
-	var sfx := AudioStreamPlayer.new()
-	sfx.stream = PICKUP_SOUND
-	sfx.bus = "ItemReverb"
-	sfx.pitch_scale = base_pitch
-	sfx.volume_db = base_vol
-	add_child(sfx)
-	sfx.finished.connect(sfx.queue_free)
-	sfx.play()
+	var orig_vol := -10.0 if pentagram else -12.5
+	
+	# 1. Som original nítido e suave tocando por cima (foreground)
+	var orig_sfx := AudioStreamPlayer.new()
+	orig_sfx.stream = PICKUP_SOUND
+	orig_sfx.pitch_scale = base_pitch
+	orig_sfx.volume_db = orig_vol
+	add_child(orig_sfx)
+	orig_sfx.finished.connect(orig_sfx.queue_free)
+	orig_sfx.play()
 
-	# Layered echoes bouncing through the reverb
+	# 2. Som com eco e reverb tocando por trás em volume ainda mais baixo (background ambient tail)
+	var bg_vol := orig_vol - 8.5
+	var bg_sfx := AudioStreamPlayer.new()
+	bg_sfx.stream = PICKUP_SOUND
+	bg_sfx.bus = "ItemReverb"
+	bg_sfx.pitch_scale = base_pitch
+	bg_sfx.volume_db = bg_vol
+	add_child(bg_sfx)
+	bg_sfx.finished.connect(bg_sfx.queue_free)
+	bg_sfx.play()
+
+	# Ecos em cascata mais baixos por trás
 	var echo_delays := [0.13, 0.26, 0.39, 0.54]
-	var echo_vols := [-5.0, -9.5, -14.0, -18.5]
+	var echo_vols := [-5.0, -9.0, -13.0, -17.0]
 	var echo_pitches := [1.02, 1.05, 1.08, 1.11]
 	for idx in range(echo_delays.size()):
 		var delay_time:float = echo_delays[idx]
-		var echo_vol:float = base_vol + echo_vols[idx]
+		var echo_vol:float = bg_vol + echo_vols[idx]
 		var echo_pitch:float = base_pitch * echo_pitches[idx]
 		get_tree().create_timer(delay_time).timeout.connect(func():
 			if not is_instance_valid(self):
@@ -905,6 +1152,8 @@ func respawn(reset_health:bool) -> void:
 	maycon.current_camera_distance = 11.0
 	maycon.death_hazard = ""
 	maycon.death_hazard_node = null
+	if is_instance_valid(lips_enemy) and lips_enemy.has_method("reset_position"):
+		lips_enemy.reset_position(4)
 	if reset_health:
 		set_stage_hp(stage_hp_max)
 	else:
@@ -1119,6 +1368,85 @@ func _build_hud() -> void:
 	heal_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	heal_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
 	canvas.add_child(heal_flash)
+
+	# Boss HP HUD (Top Center)
+	boss_hud_container = PanelContainer.new()
+	boss_hud_container.name = "BossHUD"
+	boss_hud_container.anchor_left = 0.5
+	boss_hud_container.anchor_right = 0.5
+	boss_hud_container.offset_left = -210.0
+	boss_hud_container.offset_right = 210.0
+	boss_hud_container.offset_top = 14.0
+	boss_hud_container.offset_bottom = 68.0
+	boss_hud_container.grow_horizontal = Control.GROW_DIRECTION_BOTH
+
+	var boss_style := StyleBoxFlat.new()
+	boss_style.bg_color = Color(0.08, 0.08, 0.12, 0.88)
+	boss_style.border_color = Color(0.85, 0.72, 0.28, 0.9)
+	boss_style.set_border_width_all(2)
+	boss_style.set_corner_radius_all(8)
+	boss_style.set_content_margin_all(8)
+	boss_hud_container.add_theme_stylebox_override("panel", boss_style)
+	canvas.add_child(boss_hud_container)
+
+	var boss_vbox := VBoxContainer.new()
+	boss_vbox.add_theme_constant_override("separation", 3)
+	boss_hud_container.add_child(boss_vbox)
+
+	var boss_top_row := HBoxContainer.new()
+	boss_vbox.add_child(boss_top_row)
+
+	boss_name_label = Label.new()
+	boss_name_label.text = "★ " + tr("PLATFORM_BOSS_NAME") + " ★"
+	boss_name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	boss_name_label.add_theme_font_size_override("font_size", 14)
+	boss_name_label.add_theme_color_override("font_color", Color("f9ca51"))
+	boss_top_row.add_child(boss_name_label)
+
+	boss_hp_label = Label.new()
+	boss_hp_label.text = "4 / 4  (100%)"
+	boss_hp_label.add_theme_font_size_override("font_size", 12)
+	boss_hp_label.add_theme_color_override("font_color", Color("ff9999"))
+	boss_top_row.add_child(boss_hp_label)
+
+	boss_hp_bar = ProgressBar.new()
+	boss_hp_bar.custom_minimum_size = Vector2(400.0, 14.0)
+	boss_hp_bar.show_percentage = false
+	boss_hp_bar.max_value = 4.0
+	boss_hp_bar.value = 4.0
+	var boss_fill := StyleBoxFlat.new()
+	boss_fill.bg_color = Color("c71a36")
+	boss_fill.set_corner_radius_all(3)
+	boss_hp_bar.add_theme_stylebox_override("fill", boss_fill)
+	var boss_back := StyleBoxFlat.new()
+	boss_back.bg_color = Color(0.22, 0.08, 0.12, 0.95)
+	boss_back.set_corner_radius_all(3)
+	boss_hp_bar.add_theme_stylebox_override("background", boss_back)
+	boss_vbox.add_child(boss_hp_bar)
+
+	# Banner de anúncio "CAMINHO LIBERADO!"
+	path_open_announcement = Label.new()
+	path_open_announcement.name = "PathOpenAnnouncement"
+	path_open_announcement.anchor_left = 0.5
+	path_open_announcement.anchor_right = 0.5
+	path_open_announcement.anchor_top = 0.5
+	path_open_announcement.anchor_bottom = 0.5
+	path_open_announcement.offset_left = -400.0
+	path_open_announcement.offset_right = 400.0
+	path_open_announcement.offset_top = -60.0
+	path_open_announcement.offset_bottom = 60.0
+	path_open_announcement.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	path_open_announcement.grow_vertical = Control.GROW_DIRECTION_BOTH
+	path_open_announcement.pivot_offset = Vector2(400.0, 60.0)
+	path_open_announcement.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	path_open_announcement.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	path_open_announcement.text = tr("PLATFORM_PATH_OPEN")
+	path_open_announcement.add_theme_font_size_override("font_size", 28)
+	path_open_announcement.add_theme_color_override("font_color", Color("ffd700"))
+	path_open_announcement.add_theme_color_override("font_outline_color", Color("1a0a00"))
+	path_open_announcement.add_theme_constant_override("outline_size", 8)
+	path_open_announcement.visible = false
+	canvas.add_child(path_open_announcement)
 
 func _build_pause() -> void:
 	var pause := CanvasLayer.new()

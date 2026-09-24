@@ -5,6 +5,7 @@ const JUMP_SOUND = preload("res://assets/audio/pulo_maycon.mp3")
 const FART_SOUND = preload("res://assets/audio/peido.mp3")
 const STEP_SOUND = preload("res://assets/novos_audios/mario_part_sounds/passo.mp3")
 const FART_SMOKE = preload("res://assets/novas_imagens/effects/smoke_animation.png")
+const AIR_FLAIL_ANIM = preload("res://assets/novas_imagens/3d_enemies/maycon_air_flail.res")
 
 @onready var camera:Camera3D = $"../Camera3D"
 
@@ -34,11 +35,17 @@ var preparing_jump:bool = false
 var takeoff_stretch:float = 0.0
 var latched_count:int = 0
 var current_camera_distance:float = 11.0
+var air_wobble_time:float = 0.0
+var air_random_phase:float = 0.0
 
 func _ready() -> void:
 	visual = MODEL.instantiate()
 	add_child(visual)
 	animation_player = visual.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if animation_player and AIR_FLAIL_ANIM:
+		var lib: AnimationLibrary = animation_player.get_animation_library("")
+		if lib and not lib.has_animation("Air_Flail"):
+			lib.add_animation("Air_Flail", AIR_FLAIL_ANIM)
 	jump_audio = AudioStreamPlayer3D.new()
 	jump_audio.stream = JUMP_SOUND
 	jump_audio.unit_size = 9.0
@@ -100,7 +107,7 @@ func _physics_process(delta:float) -> void:
 		if jump_windup <= 0.0:
 			preparing_jump = false
 			takeoff_stretch = 0.11
-			_play_animation("Arise")
+			_play_animation("Air_Flail")
 	if Input.is_action_just_pressed("ui_accept") and control_enabled:
 		jump_buffer = 0.14
 	else:
@@ -111,14 +118,19 @@ func _physics_process(delta:float) -> void:
 			jump_windup = 0.10
 			velocity.y = 8.9
 			jumps = 1
+			air_random_phase = randf_range(0.0, TAU)
+			air_wobble_time = 0.0
 			jump_audio.play()
 			_play_animation("Walking")
 		else:
 			_spawn_fart()
 			velocity.y = 8.1
 			jumps = 2
+			air_random_phase = randf_range(0.0, TAU)
+			air_wobble_time = 0.0
 			jump_audio.play()
 			takeoff_stretch = 0.11
+			_play_animation("Air_Flail")
 		coyote_time = 0.0
 		jump_buffer = 0.0
 	velocity.y -= 23.0 * delta
@@ -149,7 +161,25 @@ func _physics_process(delta:float) -> void:
 	_update_footsteps(delta, direction, speed)
 	if direction.length_squared() > 0.01:
 		visual.rotation.y = lerp_angle(visual.rotation.y, atan2(direction.x, direction.z), minf(delta * 12.0, 1.0))
-	visual.rotation.x = lerpf(visual.rotation.x, 0.0 if is_on_floor() else -0.1 if velocity.y > 0.0 else 0.08, minf(delta * 8.0, 1.0))
+	if not is_on_floor():
+		air_wobble_time += delta
+		var wobble_pitch := sin(air_wobble_time * 3.2 + air_random_phase) * 0.12 + cos(air_wobble_time * 1.9) * 0.06
+		var wobble_roll := sin(air_wobble_time * 2.6 + 1.2 + air_random_phase) * 0.10
+		var base_pitch: float
+		if jumps >= 2:
+			# Segundo pulo: muito mais inclinado!
+			base_pitch = -0.46 if velocity.y > 0.0 else 0.25
+		else:
+			# Primeiro pulo: inclinação moderada
+			base_pitch = -0.16 if velocity.y > 0.0 else 0.10
+		var target_x := base_pitch + wobble_pitch
+		var target_z := wobble_roll
+		visual.rotation.x = lerpf(visual.rotation.x, target_x, minf(delta * 8.0, 1.0))
+		visual.rotation.z = lerpf(visual.rotation.z, target_z, minf(delta * 8.0, 1.0))
+	else:
+		air_wobble_time = 0.0
+		visual.rotation.x = lerpf(visual.rotation.x, 0.0, minf(delta * 14.0, 1.0))
+		visual.rotation.z = lerpf(visual.rotation.z, 0.0, minf(delta * 14.0, 1.0))
 	var target_scale := Vector3(1.17, 0.66, 1.17) if preparing_jump else Vector3(0.95, 1.11, 0.95) if takeoff_stretch > 0.0 else Vector3.ONE
 	visual.scale = visual.scale.lerp(target_scale, 1.0 - exp(-27.0 * delta))
 	visual.position.y = lerpf(visual.position.y, -0.26 if preparing_jump else 0.0, 1.0 - exp(-27.0 * delta))
@@ -159,12 +189,14 @@ func _physics_process(delta:float) -> void:
 	elif is_on_floor():
 		_play_animation("Arise" if direction.length_squared() > 0.01 and speed > 6.0 else "Skill_03" if direction.length_squared() > 0.01 else "Walking")
 	else:
-		_play_animation("Arise")
+		_play_animation("Air_Flail")
 	if animation_player and preparing_jump:
 		animation_player.speed_scale = 0.0
 	elif animation_player:
 		var is_walking := is_on_floor() and direction.length_squared() > 0.01 and speed <= 6.0
-		animation_player.speed_scale = 1.6 if is_walking else 1.0
+		var is_air := not is_on_floor()
+		# Braços e pernas batendo mais lentamente no ar (0.62 em vez de 1.35)
+		animation_player.speed_scale = 1.6 if is_walking else 0.62 if is_air else 1.0
 
 func _update_footsteps(delta:float, direction:Vector3, speed:float) -> void:
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
@@ -307,14 +339,14 @@ func _process(delta:float) -> void:
 func _play_animation(animation:String) -> void:
 	if animation_player and animation_player.has_animation(animation) and (animation_player.current_animation != animation or not animation_player.is_playing()):
 		var previous := animation_player.current_animation
-		var blend := 0.24 if previous in ["Skill_03", "Arise"] and animation in ["Skill_03", "Arise"] else 0.08
+		var blend := 0.24 if previous in ["Skill_03", "Arise"] and animation in ["Skill_03", "Arise"] else 0.10 if animation == "Air_Flail" or previous == "Air_Flail" else 0.08
 		animation_player.play(animation, blend)
 
 func bounce() -> void:
 	velocity.y = 10.2
 	jumps = 1
 	jump_buffer = 0.0
-	_play_animation("Arise")
+	_play_animation("Air_Flail")
 
 func set_latched(active_val:bool) -> void:
 	if active_val:
