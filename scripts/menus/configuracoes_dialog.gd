@@ -311,17 +311,70 @@ func _populate_debug_events() -> void:
 	debug_events_container.add_child(dungeon_invincible_check)
 	checks.append(dungeon_invincible_check)
 
+	# Botão para resetar eventos do calabouço no save slot atual
+	var reset_dungeon_btn = Button.new()
+	reset_dungeon_btn.text = "🔄 " + tr("SETTINGS_DEBUG_RESET_DUNGEON")
+	reset_dungeon_btn.tooltip_text = tr("SETTINGS_DEBUG_RESET_DUNGEON_DESC")
+	reset_dungeon_btn.focus_mode = Control.FOCUS_ALL
+	reset_dungeon_btn.add_theme_color_override("font_color", Color(1.0, 0.45, 0.45))
+	reset_dungeon_btn.add_theme_color_override("font_hover_color", Color(1.0, 0.7, 0.7))
+	reset_dungeon_btn.pressed.connect(func():
+		Global.reset_dungeon_events(true)
+		_populate_debug_events()
+	)
+	debug_events_container.add_child(reset_dungeon_btn)
+	checks.append(reset_dungeon_btn)
+
 	var sep = HSeparator.new()
 	debug_events_container.add_child(sep)
 
-	# 2. Eventos da história / game_events
-	for event_name in Global.game_events.keys():
+	# 2. Eventos da história / game_events (organizados: calabouço primeiro destacados, depois gerais)
+	var dungeon_keys: Array[String] = []
+	var other_keys: Array[String] = []
+	for k in Global.game_events.keys():
+		if str(k).begins_with("dungeon_") or k == "axe_taken":
+			dungeon_keys.append(str(k))
+		else:
+			other_keys.append(str(k))
+
+	var dungeon_label = Label.new()
+	dungeon_label.text = "🏰 " + tr("SETTINGS_DEBUG_DUNGEON_SECTION")
+	dungeon_label.add_theme_color_override("font_color", Color(0.85, 0.65, 1.0))
+	debug_events_container.add_child(dungeon_label)
+
+	for event_name in dungeon_keys:
+		var check = CheckBox.new()
+		check.text = str(event_name)
+		check.button_pressed = bool(Global.game_events.get(event_name, false))
+		check.focus_mode = Control.FOCUS_ALL
+		check.add_theme_color_override("font_color", Color(0.8, 0.88, 1.0))
+		check.toggled.connect(func(pressed: bool):
+			Global.game_events[event_name] = pressed
+			if event_name == "axe_taken" or event_name == "dungeon_axe_taken":
+				Global.maycon_itens["axe"] = pressed
+			Global.save_to_player_savegame()
+			Global.save_settings()
+		)
+		debug_events_container.add_child(check)
+		checks.append(check)
+
+	var sep2 = HSeparator.new()
+	debug_events_container.add_child(sep2)
+
+	var story_label = Label.new()
+	story_label.text = "📜 " + tr("SETTINGS_DEBUG_STORY_SECTION")
+	story_label.add_theme_color_override("font_color", Color(0.9, 0.85, 0.55))
+	debug_events_container.add_child(story_label)
+
+	for event_name in other_keys:
 		var check = CheckBox.new()
 		check.text = str(event_name)
 		check.button_pressed = bool(Global.game_events.get(event_name, false))
 		check.focus_mode = Control.FOCUS_ALL
 		check.toggled.connect(func(pressed: bool):
 			Global.game_events[event_name] = pressed
+			Global.save_to_player_savegame()
+			Global.save_settings()
 		)
 		debug_events_container.add_child(check)
 		checks.append(check)

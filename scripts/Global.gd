@@ -340,6 +340,7 @@ func get_fase_friendly_name(fase_key: String) -> String:
 		"fase_1_outside_castle_again_no_fire_1": "FASE_NAME_OUTSIDE_1",
 		"fase_1_outside_castle_again_no_fire_2": "FASE_NAME_OUTSIDE_2",
 		"fase_1_outside_castle_again_no_fire_3": "FASE_NAME_OUTSIDE_3",
+		"calabouco_terror": "FASE_NAME_CALABOUCO_TERROR",
 	}
 	if map.has(fase_key):
 		return tr(map[fase_key])
@@ -651,6 +652,24 @@ func load_progress(slot: int = -1)->void:
 				get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_2.tscn")
 			elif last_fase == "outside_castelo_3":
 				get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_3.tscn")
+			elif last_fase == "calabouco_terror":
+				get_tree().change_scene_to_file("res://scenes/3D/calabouco_terror.tscn")
+
+func reset_dungeon_events(save_now: bool = true) -> void:
+	var dungeon_keys := [
+		"dungeon_unlocked", "dungeon_flashlight_taken", "dungeon_pistol_taken",
+		"dungeon_gun_taken", "dungeon_blue_key_taken", "dungeon_red_key_taken",
+		"dungeon_green_key_taken", "dungeon_key_taken", "dungeon_intro_lever",
+		"dungeon_blue_lever", "dungeon_red_lever", "dungeon_green_lever",
+		"dungeon_finale_triggered", "dungeon_axe_door_open", "dungeon_axe_taken",
+		"axe_taken"
+	]
+	for k in dungeon_keys:
+		game_events[k] = false
+	maycon_itens["axe"] = false
+	if save_now:
+		save_to_player_savegame()
+		save_settings()
 
 func capture_realtime_return_state(scene:Node) -> void:
 	realtime_return_position_valid = false

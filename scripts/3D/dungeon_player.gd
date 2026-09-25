@@ -38,7 +38,7 @@ func _ready() -> void:
 	muzzle_light.visible = false
 	step_audio = AudioStreamPlayer.new()
 	step_audio.stream = STEP_SOUND
-	step_audio.volume_db = -5.0
+	step_audio.volume_db = -18.0
 	add_child(step_audio)
 	build_view_gun()
 
@@ -181,3 +181,14 @@ func add_gun_box(position_value:Vector3, size:Vector3, material:Material) -> voi
 
 func camera_forward() -> Vector3:
 	return -camera.global_transform.basis.z
+
+func shake_camera(intensity:float = 0.06, duration:float = 0.6) -> void:
+	var tween := create_tween()
+	var steps := int(duration / 0.05)
+	for i in steps:
+		var offset := Vector3(randf_range(-intensity, intensity), randf_range(-intensity, intensity), 0.0)
+		var rot := randf_range(-intensity * 0.4, intensity * 0.4)
+		tween.tween_property(camera, "position", Vector3(0, 0, 0) + offset, 0.05)
+		tween.parallel().tween_property(camera, "rotation:z", rot, 0.05)
+	tween.tween_property(camera, "position", Vector3.ZERO, 0.1)
+	tween.parallel().tween_property(camera, "rotation:z", 0.0, 0.1)

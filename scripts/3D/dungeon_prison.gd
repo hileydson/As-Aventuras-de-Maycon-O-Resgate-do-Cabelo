@@ -1,9 +1,9 @@
 extends Node3D
 
 const PLAYER_SCENE:PackedScene = preload("res://scenes/3D/dungeon_player.tscn")
-const ZOMBIE_MODEL := "res://assets/horror_creatures/infected_zombie.glb"
-const RUNNER_MODEL := "res://assets/horror_creatures/horror_runner.glb"
-const HOUND_MODEL := "res://assets/horror_creatures/plague_hound.glb"
+const ZOMBIE_MODEL := "res://assets/horror_creatures/infected_zombie_animated.glb"
+const RUNNER_MODEL := "res://assets/horror_creatures/horror_mutant.glb"
+const HOUND_MODEL := "res://assets/horror_creatures/plague_hound_clean.glb"
 
 var player:DungeonPlayer
 var world_root:Node3D
@@ -56,6 +56,7 @@ func _ready() -> void:
 	build_hud()
 	build_audio()
 	apply_saved_state()
+	Global.save_progress("calabouco_terror")
 	start_arrival()
 
 func build_materials() -> void:
@@ -209,6 +210,16 @@ func build_gate(node_name:String, position_value:Vector3, width:float, axis:Stri
 		create_bar(Vector3(0, 2.05, offset) if axis == "x" else Vector3(offset, 2.05, 0), 4.3, 0.09, door)
 	for height in [0.45, 2.05, 3.65]:
 		create_box("Crossbar", Vector3(0, height, 0), Vector3(0.16, 0.13, width) if axis == "x" else Vector3(width, 0.13, 0.16), iron_material, true, door)
+	# Barreira física contínua que impede 100% que o player atravesse as grades da cela
+	var barrier := StaticBody3D.new()
+	barrier.name = "SolidGateBarrier"
+	barrier.position = Vector3(0, 2.15, 0)
+	var b_col := CollisionShape3D.new()
+	var b_shape := BoxShape3D.new()
+	b_shape.size = Vector3(0.35, 4.3, width) if axis == "x" else Vector3(width, 4.3, 0.35)
+	b_col.shape = b_shape
+	barrier.add_child(b_col)
+	door.add_child(barrier)
 	if add_light:
 		build_light(Vector3(0, 3.3, 0), color, 3.6, 7, door)
 	return door
@@ -422,7 +433,11 @@ func instantiate_model(path:String, position_value:Vector3, scale_value:Vector3,
 	return model
 
 func spawn_record(position_value:Vector3, stage:String, door:Node3D) -> void:
-	var variants := [{"path": ZOMBIE_MODEL, "kind": "zombie", "scale": 1.55}, {"path": RUNNER_MODEL, "kind": "runner", "scale": 1.18}, {"path": HOUND_MODEL, "kind": "hound", "scale": 0.58}]
+	var variants := [
+		{"path": ZOMBIE_MODEL, "kind": "zombie", "scale": 1.05},
+		{"path": HOUND_MODEL, "kind": "hound", "scale": 0.72},
+		{"path": RUNNER_MODEL, "kind": "mutant", "scale": 1.35}
+	]
 	var variant:Dictionary = variants[enemy_spawns.size() % variants.size()]
 	var automatic:bool = stage == "intro" && !auto_release_assigned
 	if automatic:
@@ -501,14 +516,53 @@ func build_hud() -> void:
 	blood_overlay.z_index = 90
 	blood_overlay.visible = false
 	hud.add_child(blood_overlay)
-	for index in 38:
-		var splash := ColorRect.new()
-		splash.size = Vector2(randf_range(25, 150), randf_range(18, 110))
-		splash.position = Vector2(randf_range(-40, 1880), randf_range(-30, 1040))
-		splash.rotation = randf_range(-PI, PI)
-		splash.color = Color(0.42 + randf() * 0.25, 0, 0.01, randf_range(0.45, 0.88))
-		blood_overlay.add_child(splash)
+	build_blood_overlay_graphics()
 	update_hud()
+
+func generate_organic_blood_texture(radius:int) -> ImageTexture:
+	var size := radius * 2
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var center := Vector2(radius, radius)
+	var seed_offset := randf() * 100.0
+	for y in size:
+		for x in size:
+			var pos := Vector2(x, y)
+			var dist := pos.distance_to(center)
+			var angle := (pos - center).angle()
+			var radius_noise := float(radius) * (0.6 + 0.32 * sin(angle * 4.0 + seed_offset) * cos(angle * 2.0))
+			if dist < radius_noise:
+				var edge_fade := clampf((radius_noise - dist) / 6.0, 0.0, 1.0)
+				var alpha := clampf((1.0 - (dist / radius_noise) * 0.45) * edge_fade, 0.0, 0.95)
+				img.set_pixel(x, y, Color(randf_range(0.38, 0.65), randf_range(0.005, 0.02), randf_range(0.01, 0.025), alpha))
+	# Adicionar respingos finos e gotas ao redor da mancha
+	for s in 10:
+		var s_angle := randf() * TAU
+		var s_dist := randf_range(radius * 0.45, radius * 0.92)
+		var s_center := center + Vector2(cos(s_angle), sin(s_angle)) * s_dist
+		var s_rad := randf_range(2.0, radius * 0.22)
+		for dy in range(-int(s_rad), int(s_rad) + 1):
+			for dx in range(-int(s_rad), int(s_rad) + 1):
+				var px := int(s_center.x + dx)
+				var py := int(s_center.y + dy)
+				if px >= 0 && px < size && py >= 0 && py < size:
+					if Vector2(dx, dy).length() < s_rad:
+						img.set_pixel(px, py, Color(randf_range(0.42, 0.62), 0.01, 0.015, 0.88))
+	return ImageTexture.create_from_image(img)
+
+func build_blood_overlay_graphics() -> void:
+	for child in blood_overlay.get_children():
+		child.queue_free()
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	for i in range(24):
+		var patch := TextureRect.new()
+		var rad := rng.randi_range(55, 145)
+		patch.texture = generate_organic_blood_texture(rad)
+		patch.position = Vector2(rng.randf_range(-40, 1820), rng.randf_range(-30, 980))
+		patch.rotation = rng.randf_range(-PI, PI)
+		patch.modulate.a = 0.0
+		patch.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		blood_overlay.add_child(patch)
 
 func build_inventory_hud(hud:CanvasLayer) -> void:
 	inventory_bar = HBoxContainer.new()
@@ -529,6 +583,7 @@ func build_inventory_hud(hud:CanvasLayer) -> void:
 		panel.set_border_width_all(2)
 		panel.set_corner_radius_all(5)
 		slot.add_theme_stylebox_override("normal", panel)
+		slot.visible = false
 		inventory_bar.add_child(slot)
 		inventory_slots[data[0]] = slot
 
@@ -661,6 +716,7 @@ func collect_pickup(pickup_name:String) -> void:
 			player.set_weapon("machinegun")
 	pickup_sound.play()
 	pickup.queue_free()
+	Global.save_progress("calabouco_terror")
 	update_hud()
 
 func collect_axe() -> void:
@@ -669,7 +725,7 @@ func collect_axe() -> void:
 	Global.game_events["dungeon_axe_taken"] = true
 	pickup_sound.play()
 	axe_pickup.queue_free()
-	Global.save_progress("fase_1_castle_2")
+	Global.save_progress("calabouco_terror")
 	update_hud()
 
 func update_interaction() -> void:
@@ -707,6 +763,7 @@ func activate_stage(stage:String, with_sound:bool) -> void:
 	var handle:Node3D = levers[stage].get_meta("handle", null)
 	if is_instance_valid(handle):
 		handle.rotation.x = 0.75
+	Global.save_progress("calabouco_terror")
 	update_hud()
 
 func release_enemy(enemy:DungeonInfected) -> void:
@@ -776,7 +833,16 @@ func update_hud() -> void:
 	weapon_label.text = tr("DUNGEON_MACHINEGUN_READY") if player.weapon_mode == "machinegun" else (tr("DUNGEON_PISTOL_READY") if player.weapon_mode == "pistol" else "")
 	var found := {"flashlight": event_is_true("dungeon_flashlight_taken"), "blue_key": event_is_true("dungeon_blue_key_taken"), "pistol": event_is_true("dungeon_pistol_taken"), "red_key": event_is_true("dungeon_red_key_taken"), "green_key": event_is_true("dungeon_green_key_taken"), "cell_key": event_is_true("dungeon_key_taken"), "machinegun": event_is_true("dungeon_gun_taken"), "axe": has_axe_event()}
 	for item_name in inventory_slots:
-		inventory_slots[item_name].visible = found[item_name]
+		var slot: Control = inventory_slots[item_name]
+		var should_be_visible: bool = bool(found.get(item_name, false))
+		if should_be_visible:
+			if not slot.visible:
+				slot.visible = true
+				slot.scale = Vector2(0.2, 0.2)
+				slot.pivot_offset = slot.size * 0.5
+				create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT).tween_property(slot, "scale", Vector2.ONE, 0.28)
+		else:
+			slot.visible = false
 
 func event_is_true(event_name:String) -> bool:
 	return bool(Global.game_events.get(event_name, false))
@@ -798,18 +864,18 @@ func on_player_fired(origin:Vector3, direction:Vector3) -> void:
 func spawn_blood_hit(hit_position:Vector3, direction:Vector3) -> void:
 	var particles := CPUParticles3D.new()
 	particles.position = hit_position
-	particles.amount = 34
+	particles.amount = 45
 	particles.lifetime = 0.65
 	particles.one_shot = true
 	particles.explosiveness = 0.95
 	particles.direction = direction
-	particles.spread = 48
-	particles.initial_velocity_min = 2
-	particles.initial_velocity_max = 6.5
+	particles.spread = 55
+	particles.initial_velocity_min = 2.4
+	particles.initial_velocity_max = 7.0
 	particles.gravity = Vector3(0, -9.8, 0)
 	var mesh := SphereMesh.new()
-	mesh.radius = 0.035
-	mesh.height = 0.07
+	mesh.radius = 0.018
+	mesh.height = 0.04
 	mesh.material = blood_material
 	particles.mesh = mesh
 	add_child(particles)
@@ -876,31 +942,64 @@ func restart_after_caught(infected:DungeonInfected) -> void:
 	sequence_running = true
 	player.controls_enabled = false
 	player.velocity = Vector3.ZERO
+	
+	# Som de sangue e dano forte
+	var hit_sfx := AudioStreamPlayer.new()
+	hit_sfx.stream = load("res://assets/novos_audios/sangue_fill_effect.mp3")
+	hit_sfx.volume_db = 0.0
+	add_child(hit_sfx)
+	hit_sfx.play()
+
+	var is_hound: bool = is_instance_valid(infected) && infected.enemy_kind == "hound"
+	
 	if is_instance_valid(infected):
 		infected.set_physics_process(false)
-		infected.global_position = player.global_position + player.camera_forward() * 1.15
-	create_grabbing_hands()
+		if is_hound:
+			# Rato pula na altura da câmera atacando
+			infected.global_position = player.global_position + player.camera_forward() * 0.95 + Vector3(0, 0.45, 0)
+			player.shake_camera(0.1, 0.85)
+		else:
+			# Humanoide / mutante: aproxima de frente e estica as mãos na direção do jogador
+			infected.global_position = player.global_position + player.camera_forward() * 1.15
+			player.shake_camera(0.07, 0.8)
+			
+	# Espirros de sangue 3D finos
+	spawn_blood_spurt(player.camera.global_position + player.camera_forward() * 0.4)
+	
+	# Manchas orgânicas cobrem a tela com fade suave
 	blood_overlay.visible = true
 	for child in blood_overlay.get_children():
-		child.modulate.a = 0
-		create_tween().tween_property(child, "modulate:a", 1, randf_range(0.08, 0.35)).set_delay(randf_range(0, 0.42))
-	await get_tree().create_timer(1.05).timeout
+		child.modulate.a = 0.0
+		create_tween().tween_property(child, "modulate:a", randf_range(0.65, 0.95), randf_range(0.06, 0.28)).set_delay(randf_range(0.0, 0.35))
+		
+	await get_tree().create_timer(1.15).timeout
 	fade_overlay.visible = true
 	fade_overlay.color = Color(0.12, 0, 0, 0)
-	await create_tween().tween_property(fade_overlay, "color:a", 1, 0.8).finished
+	await create_tween().tween_property(fade_overlay, "color:a", 1.0, 0.75).finished
 	get_tree().reload_current_scene()
 
-func create_grabbing_hands() -> void:
-	for side in [-1.0, 1.0]:
-		var hand := MeshInstance3D.new()
-		var mesh := CapsuleMesh.new()
-		mesh.radius = 0.13
-		mesh.height = 0.75
-		mesh.material = flesh_material
-		hand.mesh = mesh
-		hand.position = Vector3(side * 1.1, -0.8, -1.2)
-		player.camera.add_child(hand)
-		create_tween().tween_property(hand, "position", Vector3(side * 0.34, -0.15, -0.48), 0.34)
+func spawn_blood_spurt(origin_pos:Vector3) -> void:
+	var particles := CPUParticles3D.new()
+	particles.position = origin_pos
+	particles.amount = 75
+	particles.lifetime = 0.75
+	particles.one_shot = true
+	particles.explosiveness = 0.98
+	particles.direction = -player.camera_forward() + Vector3(0, 0.4, 0)
+	particles.spread = 75.0
+	particles.initial_velocity_min = 2.5
+	particles.initial_velocity_max = 7.0
+	particles.gravity = Vector3(0, -9.8, 0)
+	
+	# Gotículas finas alongadas, sem cubos nem malhas geométricas
+	var droplet := SphereMesh.new()
+	droplet.radius = 0.016
+	droplet.height = 0.045
+	droplet.material = blood_material
+	particles.mesh = droplet
+	add_child(particles)
+	particles.emitting = true
+	get_tree().create_timer(1.2).timeout.connect(particles.queue_free)
 
 func on_infected_died(infected:DungeonInfected) -> void:
 	enemies.erase(infected)

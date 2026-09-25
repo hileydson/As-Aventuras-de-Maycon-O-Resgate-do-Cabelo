@@ -370,3 +370,8 @@ DUNGEON_ITEM_MACHINEGUN,Metralha,Machine gun,Ametralladora,机枪
 DUNGEON_ITEM_AXE,Machado,Axe,Hacha,斧头
 SETTINGS_DEBUG_DUNGEON_INVINCIBLE,Invencível no Calabouço,Invincible in the Dungeon,Invencible en la Mazmorra,地牢中无敌
 SETTINGS_DEBUG_DUNGEON_INVINCIBLE_DESC,Impede que os infectados agarrem Maycon e causem o efeito de sangue nesta fase.,Prevents infected creatures from grabbing Maycon or triggering the blood effect in this stage.,Impide que los infectados agarren a Maycon o activen el efecto de sangre en esta fase.,防止感染者在本关抓住 Maycon 或触发血液效果。
+FASE_NAME_CALABOUCO_TERROR,Calabouço do Castelo,Castle Dungeon,Calabozo del Castillo,城堡地牢
+SETTINGS_DEBUG_RESET_DUNGEON,Resetar Eventos do Calabouço,Reset Dungeon Events,Reiniciar Eventos del Calabozo,重置地牢事件
+SETTINGS_DEBUG_RESET_DUNGEON_DESC,Limpa as chaves e armas coletadas no calabouço e restaura o estado inicial.,Clears keys and weapons collected in the dungeon and restores its initial state.,Limpia las llaves y armas del calabozo y restaura su estado inicial.,清除地牢中收集的钥匙和武器并恢复初始状态。
+SETTINGS_DEBUG_DUNGEON_SECTION,Eventos do Calabouço (3D Terror),Dungeon Events (3D Horror),Eventos del Calabozo (Terror 3D),地牢事件 (3D恐怖)
+SETTINGS_DEBUG_STORY_SECTION,Outros Eventos do Jogo,Other Game Events,Otros Eventos del Juego,其他游戏事件
