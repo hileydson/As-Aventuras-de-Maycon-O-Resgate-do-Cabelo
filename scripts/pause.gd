@@ -68,7 +68,8 @@ func _ready() -> void:
 	run_label.text = tr("MENU_RUN")
 	down_label.text = tr("MENU_CROUCH")
 	_setup_pause_canvas_layer()
-	_apply_modern_pause_layout(p3)
+	if not Global.game_events["before_prologo"]:
+		_apply_modern_pause_layout(p3)
 	pause_audio = AudioStreamPlayer.new()
 	pause_audio.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_audio.stream = PAUSE_SOUND
@@ -260,7 +261,6 @@ func _setup_pause_canvas_layer() -> void:
 	pause_layer.layer = 50
 	pause_layer.visible = false
 	add_child(pause_layer)
-	pause_animation.reparent(pause_layer)
 	black_screen.reparent(pause_layer)
 	maycon_hp.reparent(pause_layer)
 	black_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

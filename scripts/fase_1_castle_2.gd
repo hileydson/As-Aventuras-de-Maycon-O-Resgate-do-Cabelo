@@ -10,6 +10,7 @@ extends Sprite2D
 
 var played_axe:bool = false
 var aconteceu_animacao_axe:bool = false
+var transitioning_to_dungeon:bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -28,12 +29,16 @@ func _ready() -> void:
 	Global.battle_next_enemy = "0"
 	Global.battle_background = "1"
 	
-	if Global.back_to_fase == true:
+	if Global.dungeon_return_pending:
+		Global.dungeon_return_pending = false
+		await play_dungeon_return()
+	elif Global.back_to_fase == true:
 		Global.back_to_fase = false
 		animacoes.play("maycon_back_to_fase")
 		await get_tree().create_timer(1.0).timeout
 	
-	played_axe = Global.maycon_itens["axe"]
+	played_axe = Global.maycon_itens["axe"] || bool(Global.game_events.get("dungeon_unlocked", false))
+	aconteceu_animacao_axe = bool(Global.game_events.get("dungeon_unlocked", false))
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -68,7 +73,15 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 
 
 func _on_dead_line_body_entered(body: Node2D) -> void:
-	get_tree().reload_current_scene()
+	if transitioning_to_dungeon:
+		return
+	var in_first_hole:bool = body.global_position.x >= 550.0 && body.global_position.x <= 875.0
+	if in_first_hole && bool(Global.game_events.get("dungeon_unlocked", false)):
+		transitioning_to_dungeon = true
+		Global.save_progress("fase_1_castle_2")
+		get_tree().change_scene_to_file("res://scenes/3D/calabouco_terror.tscn")
+	else:
+		get_tree().reload_current_scene()
 
 
 func _on_back_stage_body_entered(body: Node2D) -> void:
@@ -79,11 +92,24 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 
 
 func _on_axe_area_body_entered(body: Node2D) -> void:
-	if aconteceu_animacao_axe && animacoes.animation_finished:
-		Global.maycon_itens["axe"] = true
-		Global.game_events["axe_taken"] = true
+	# O machado agora só pode ser recuperado dentro do calabouço.
+	pass
 
 
 func _on_animacoes_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "axe_fall":
 		aconteceu_animacao_axe = true
+		Global.game_events["dungeon_unlocked"] = true
+		Global.save_progress("fase_1_castle_2")
+
+func play_dungeon_return() -> void:
+	maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
+	maycon_fase.visible = true
+	maycon_fase.position = Vector2(-876.0, -520.0)
+	camera.make_current()
+	var arrival := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	arrival.tween_property(maycon_fase, "position", Vector2(-876.0, 20.0), 0.85)
+	arrival.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	arrival.tween_property(maycon_fase, "position", Vector2(-650.0, 98.0), 0.5)
+	await arrival.finished
+	maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT

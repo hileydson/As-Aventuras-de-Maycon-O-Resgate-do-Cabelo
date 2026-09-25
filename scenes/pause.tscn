@@ -953,7 +953,7 @@ script = ExtResource("1_f1d2v")
 [node name="pause_animation" type="AnimationPlayer" parent="." unique_id=1955981579]
 root_node = NodePath("../black_screen")
 libraries/ = SubResource("AnimationLibrary_t3fa8")
-autoplay = &"intro"
+autoplay = &""
 
 [node name="black_screen" type="ColorRect" parent="." unique_id=69440657]
 custom_minimum_size = Vector2(30, 0)

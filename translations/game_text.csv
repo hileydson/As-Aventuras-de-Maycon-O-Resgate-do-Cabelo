@@ -337,3 +337,19 @@ MENU_MODE_STRATEGIC,Estratégico,Strategic,Estratégico,回合战略
 MENU_OVERWRITE_TITLE,SOBRESCREVER SAVE?,OVERWRITE SAVE?,¿SOBREESCRIBIR GUARDADO?,覆盖存档？
 MENU_OVERWRITE_DESC,"Este slot já possui um jogo salvo. Iniciar um Novo Jogo irá sobrescrever o progresso anterior.","This slot already has a saved game. Starting a New Game will overwrite previous progress.","Esta ranura ya tiene una partida guardada. Iniciar una Nueva Partida sobrescribirá el progreso anterior.","此栏位已有存档。开始新游戏将覆盖之前的进度。"
 MENU_OVERWRITE_CONFIRM,SOBRESCREVER E INICIAR,OVERWRITE AND START,SOBREESCRIBIR E INICIAR,覆盖并开始
+DUNGEON_MOVE_HINT,WASD / Analógico para mover • E / X para interagir,WASD / Stick to move • E / X to interact,WASD / Palanca para mover • E / X para interactuar,WASD / 摇杆移动 • E / X 互动
+DUNGEON_OBJECTIVE_FLASHLIGHT,OBJETIVO: encontre a lanterna à sua frente,OBJECTIVE: find the flashlight ahead,OBJETIVO: encuentra la linterna al frente,目标：找到前方的手电筒
+DUNGEON_OBJECTIVE_EXPLORE,OBJETIVO: atravesse a prisão e encontre a chave e a metralhadora,OBJECTIVE: cross the prison and find the key and machine gun,OBJETIVO: cruza la prisión y encuentra la llave y la ametralladora,目标：穿过监狱并找到钥匙和机枪
+DUNGEON_OBJECTIVE_AXE,OBJETIVO: volte à cela do início e recupere o machado,OBJECTIVE: return to the first cell and recover the axe,OBJETIVO: vuelve a la celda inicial y recupera el hacha,目标：回到起始牢房取回斧头
+DUNGEON_OBJECTIVE_ESCAPE,OBJETIVO: use o trampolim do início para voltar ao castelo,OBJECTIVE: use the entrance spring to return to the castle,OBJETIVO: usa el trampolín de la entrada para volver al castillo,目标：使用入口处的弹簧返回城堡
+DUNGEON_FLASHLIGHT_ON,LANTERNA: LIGADA • Y / Botão direito,FLASHLIGHT: ON • Y / Right click,LINTERNA: ENCENDIDA • Y / Clic derecho,手电筒：开启 • Y / 鼠标右键
+DUNGEON_FLASHLIGHT_OFF,LANTERNA: DESLIGADA • Y / Botão direito,FLASHLIGHT: OFF • Y / Right click,LINTERNA: APAGADA • Y / Clic derecho,手电筒：关闭 • Y / 鼠标右键
+DUNGEON_WEAPON_READY,METRALHADORA • Segure tiro para disparar,MACHINE GUN • Hold fire to shoot,AMETRALLADORA • Mantén disparo para tirar,机枪 • 按住射击键开火
+DUNGEON_PROMPT_FLASHLIGHT,[E / X] PEGAR LANTERNA,[E / X] TAKE FLASHLIGHT,[E / X] TOMAR LINTERNA,[E / X] 拿起手电筒
+DUNGEON_PROMPT_GUN,[E / X] PEGAR METRALHADORA,[E / X] TAKE MACHINE GUN,[E / X] TOMAR AMETRALLADORA,[E / X] 拿起机枪
+DUNGEON_PROMPT_KEY,[E / X] PEGAR CHAVE DA CELA,[E / X] TAKE CELL KEY,[E / X] TOMAR LLAVE DE LA CELDA,[E / X] 拿起牢房钥匙
+DUNGEON_PROMPT_OPEN_CELL,[E / X] ABRIR A CELA DO MACHADO,[E / X] OPEN THE AXE CELL,[E / X] ABRIR LA CELDA DEL HACHA,[E / X] 打开斧头牢房
+DUNGEON_CELL_LOCKED,A cela está trancada. A chave está no fim da prisão.,The cell is locked. The key is at the end of the prison.,La celda está cerrada. La llave está al final de la prisión.,牢房上锁了。钥匙在监狱尽头。
+DUNGEON_PROMPT_AXE,[E / X] RECUPERAR O MACHADO,[E / X] RECOVER THE AXE,[E / X] RECUPERAR EL HACHA,[E / X] 取回斧头
+DUNGEON_PROMPT_TRAMPOLINE,[E / X] PULAR E VOLTAR AO CASTELO,[E / X] JUMP BACK TO THE CASTLE,[E / X] SALTAR Y VOLVER AL CASTILLO,[E / X] 跳回城堡
+DUNGEON_TRAMPOLINE_LOCKED,Você precisa recuperar o machado antes de subir.,You must recover the axe before climbing back.,Debes recuperar el hacha antes de subir.,返回前必须先取回斧头。
