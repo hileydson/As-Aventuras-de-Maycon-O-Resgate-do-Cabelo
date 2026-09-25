@@ -280,7 +280,7 @@ func _populate_debug_events() -> void:
 		if !Global.game_events.has(event_name):
 			Global.game_events[event_name] = Global.game_events_default[event_name]
 	
-	var checks: Array[CheckBox] = []
+	var checks: Array[Control] = []
 
 	# 1. Opção especial de teste: Desativar batalhas / Derrota instantânea ao encostar
 	var battle_check = CheckBox.new()

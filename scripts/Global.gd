@@ -657,10 +657,12 @@ func load_progress(slot: int = -1)->void:
 
 func reset_dungeon_events(save_now: bool = true) -> void:
 	var dungeon_keys := [
-		"dungeon_unlocked", "dungeon_flashlight_taken", "dungeon_pistol_taken",
+		"dungeon_intro_cutscene_seen", "dungeon_unlocked", "dungeon_flashlight_taken", "dungeon_pistol_taken",
 		"dungeon_gun_taken", "dungeon_blue_key_taken", "dungeon_red_key_taken",
 		"dungeon_green_key_taken", "dungeon_key_taken", "dungeon_intro_lever",
 		"dungeon_blue_lever", "dungeon_red_lever", "dungeon_green_lever",
+		"dungeon_red_gate_open", "dungeon_green_gate_open", "dungeon_blue_gate_open",
+		"dungeon_red_key_used", "dungeon_green_key_used", "dungeon_blue_key_used", "dungeon_cell_key_used",
 		"dungeon_finale_triggered", "dungeon_axe_door_open", "dungeon_axe_taken",
 		"axe_taken"
 	]

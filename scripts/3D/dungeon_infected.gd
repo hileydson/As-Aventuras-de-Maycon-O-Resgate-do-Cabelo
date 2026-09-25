@@ -54,14 +54,14 @@ func setup(target:DungeonPlayer, owner_dungeon:Node, model_path:String, initiall
 	enemy_kind = kind
 	model_scale = scale_value
 	if enemy_kind == "hound":
-		speed = 2.1
-		health = 2
+		speed = 2.4
+		health = 4
 	elif enemy_kind == "mutant":
-		speed = 1.25
-		health = 5
+		speed = 1.45
+		health = 8
 	else:
-		speed = 1.1
-		health = 3
+		speed = 1.15
+		health = 6
 	home = global_position
 	wander_target = home
 	build_body(model_path)
@@ -81,6 +81,43 @@ func build_body(model_path:String) -> void:
 		model_root.scale = Vector3.ONE * model_scale
 		add_child(model_root)
 		model_origin = model_root.position
+		
+		# Limpeza de geometrias extras
+		for extra in ["Icosphere", "Icosphere_001", "Icosphere_002", "pCube1", "pCube2"]:
+			var extra_node = model_root.find_child(extra, true, false)
+			if extra_node:
+				extra_node.queue_free()
+				
+		if enemy_kind == "hound":
+			# Rato rotacionado 180 graus para a cabeça apontar para frente (-Z)
+			model_root.rotation.y = PI
+			
+			# Materiais de rato horror: pelo escuro, olhos vermelhos brilhantes e dentes sujos
+			var fur_mat := StandardMaterial3D.new()
+			fur_mat.albedo_color = Color(0.18, 0.14, 0.11)
+			fur_mat.roughness = 0.88
+			
+			var eye_mat := StandardMaterial3D.new()
+			eye_mat.albedo_color = Color(0.9, 0.02, 0.02)
+			eye_mat.emission_enabled = true
+			eye_mat.emission = Color(1.0, 0.05, 0.05)
+			eye_mat.emission_energy_multiplier = 2.5
+			
+			var teeth_mat := StandardMaterial3D.new()
+			teeth_mat.albedo_color = Color(0.85, 0.78, 0.55)
+			teeth_mat.roughness = 0.4
+			
+			for m_name in ["Body", "Head"]:
+				var mesh_node = model_root.find_child(m_name, true, false) as MeshInstance3D
+				if mesh_node:
+					mesh_node.material_override = fur_mat
+			var eyes_node = model_root.find_child("Eyes", true, false) as MeshInstance3D
+			if eyes_node:
+				eyes_node.material_override = eye_mat
+			var teeth_node = model_root.find_child("Teeth", true, false) as MeshInstance3D
+			if teeth_node:
+				teeth_node.material_override = teeth_mat
+				
 		animator = model_root.find_child("AnimationPlayer", true, false) as AnimationPlayer
 		if animator:
 			play_idle_animation()
@@ -341,7 +378,7 @@ func can_see_player() -> bool:
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
 	return hit.is_empty() || hit.get("collider") == player
 
-func take_damage(amount:int) -> void:
+func take_damage(amount:int, weapon_type:String = "pistol") -> void:
 	if dead:
 		return
 	health -= amount
@@ -360,6 +397,8 @@ func take_damage(amount:int) -> void:
 		collision_mask = 0
 		if is_instance_valid(dungeon) && dungeon.has_method("spawn_enemy_death_blood"):
 			dungeon.call("spawn_enemy_death_blood", global_position + Vector3.UP * (0.55 if enemy_kind == "hound" else 1.05), enemy_kind)
+		if is_instance_valid(dungeon) && dungeon.has_method("spawn_ammo_drop"):
+			dungeon.call("spawn_ammo_drop", global_position + Vector3.UP * 0.35, weapon_type)
 		died.emit(self)
 		var tween := create_tween().set_parallel()
 		tween.tween_property(model_root, "scale", Vector3.ZERO, 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)

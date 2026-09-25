@@ -1,9 +1,13 @@
 extends Node3D
 
 const PLAYER_SCENE:PackedScene = preload("res://scenes/3D/dungeon_player.tscn")
+const MAYCON_SCENE = preload("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
+const MAYCON_MENU_ANIMATIONS = preload("res://assets/novas_imagens/3d_enemies/menu_maycon_animations.res")
 const ZOMBIE_MODEL := "res://assets/horror_creatures/infected_zombie_animated.glb"
-const RUNNER_MODEL := "res://assets/horror_creatures/horror_mutant.glb"
-const HOUND_MODEL := "res://assets/horror_creatures/plague_hound_clean.glb"
+const RUNNER_MODEL := "res://assets/horror_creatures/horror_runner.glb"
+const HOUND_MODEL := "res://assets/horror_creatures/plague_hound.glb"
+const FALL_IMPACT_SOUND := preload("res://assets/novos_audios/calabouco_terror/dungeon_fall_impact.wav")
+const DUST_TEXTURE := preload("res://assets/novas_imagens/effects/dust_puff.png")
 
 var player:DungeonPlayer
 var world_root:Node3D
@@ -26,6 +30,13 @@ var help_label:Label
 var prompt_label:Label
 var flashlight_label:Label
 var weapon_label:Label
+var ammo_label:Label
+var sprint_hud:Control
+var sprint_rb_icon:Sprite2D
+var sprint_shift_icon:Sprite2D
+var notice_label:Label
+var notice_timer:float = 0.0
+var active_ammo_drops:Array[Node3D] = []
 var fade_overlay:ColorRect
 var blood_overlay:Control
 var inventory_bar:HBoxContainer
@@ -57,7 +68,10 @@ func _ready() -> void:
 	build_audio()
 	apply_saved_state()
 	Global.save_progress("calabouco_terror")
-	start_arrival()
+	if !event_is_true("dungeon_intro_cutscene_seen"):
+		start_intro_cutscene()
+	else:
+		start_arrival()
 
 func build_materials() -> void:
 	stone_material = StandardMaterial3D.new()
@@ -353,12 +367,17 @@ func build_player() -> void:
 
 func build_pickups() -> void:
 	pickups["flashlight"] = build_flashlight(Vector3(0.2, 0.45, -2.5))
-	pickups["blue_key"] = build_key(Vector3(-56, 0.65, -141), Color(0.08, 0.3, 1), "BlueKey")
+	# Caminho azul onde pega a pistola e a chave vermelha
 	pickups["pistol"] = build_gun(Vector3(-53.8, 0.62, -141), false)
-	pickups["red_key"] = build_key(Vector3(56, 0.65, -141), Color(1, 0.035, 0.02), "RedKey")
-	pickups["green_key"] = build_key(Vector3(-52.5, 0.65, -164), Color(0.04, 1, 0.2), "GreenKey")
-	pickups["cell_key"] = build_key(Vector3(52.5, 0.65, -164), Color(0.9, 0.8, 0.52), "CellKey")
-	pickups["machinegun"] = build_gun(Vector3(52.5, 0.62, -161.7), true)
+	pickups["red_key"] = build_key(Vector3(-56, 0.65, -141), Color(1, 0.035, 0.02), "RedKey")
+	# Caminho vermelho (sala à esquerda em z: -164): pega a metralhadora e a chave verde
+	pickups["machinegun"] = build_gun(Vector3(-43.0, 0.62, -164), true)
+	pickups["green_key"] = build_key(Vector3(-38.0, 0.65, -164), Color(0.04, 1, 0.2), "GreenKey")
+	# Caminho verde (sala à direita em z: -164): pega a chave da cela do machado
+	pickups["cell_key"] = build_key(Vector3(43.0, 0.65, -164), Color(0.9, 0.8, 0.52), "CellKey")
+	# Chave azul de suporte
+	pickups["blue_key"] = build_key(Vector3(56, 0.65, -141), Color(0.08, 0.3, 1), "BlueKey")
+	
 	axe_door = build_gate("AxeCellDoor", Vector3(-5.25, 0, -7), 5.8, "x", Color(0.95, 0.02, 0.01))
 	axe_pickup = build_axe(Vector3(-8.2, 0.72, -7))
 	trampoline = Node3D.new()
@@ -434,9 +453,9 @@ func instantiate_model(path:String, position_value:Vector3, scale_value:Vector3,
 
 func spawn_record(position_value:Vector3, stage:String, door:Node3D) -> void:
 	var variants := [
-		{"path": ZOMBIE_MODEL, "kind": "zombie", "scale": 1.05},
-		{"path": HOUND_MODEL, "kind": "hound", "scale": 0.72},
-		{"path": RUNNER_MODEL, "kind": "mutant", "scale": 1.35}
+		{"path": ZOMBIE_MODEL, "kind": "zombie", "scale": 1.0},
+		{"path": HOUND_MODEL, "kind": "hound", "scale": 0.85},
+		{"path": RUNNER_MODEL, "kind": "mutant", "scale": 0.85}
 	]
 	var variant:Dictionary = variants[enemy_spawns.size() % variants.size()]
 	var automatic:bool = stage == "intro" && !auto_release_assigned
@@ -498,6 +517,77 @@ func build_hud() -> void:
 	prompt_label.position = Vector2(-550, -112)
 	prompt_label.size = Vector2(1100, 44)
 	hud.add_child(prompt_label)
+	
+	ammo_label = make_label(18, Color(1, 0.85, 0.4), HORIZONTAL_ALIGNMENT_RIGHT)
+	ammo_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	ammo_label.position = Vector2(-340, -128)
+	ammo_label.size = Vector2(315, 48)
+	var ammo_panel := StyleBoxFlat.new()
+	ammo_panel.bg_color = Color(0.015, 0.025, 0.03, 0.88)
+	ammo_panel.border_color = Color(0.85, 0.68, 0.25, 0.8)
+	ammo_panel.set_border_width_all(2)
+	ammo_panel.set_corner_radius_all(6)
+	ammo_label.add_theme_stylebox_override("normal", ammo_panel)
+	ammo_label.visible = false
+	hud.add_child(ammo_label)
+	
+	# HUD de comando para correr (padrão cena cidade perdida: RB / Shift no canto inferior direito)
+	sprint_hud = Control.new()
+	sprint_hud.name = "SprintHUD"
+	sprint_hud.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	sprint_hud.position = Vector2(-225, -68)
+	sprint_hud.size = Vector2(200, 52)
+	hud.add_child(sprint_hud)
+	
+	var sprint_panel := Panel.new()
+	sprint_panel.size = Vector2(200, 52)
+	var sp_box := StyleBoxFlat.new()
+	sp_box.bg_color = Color(0.015, 0.025, 0.03, 0.82)
+	sp_box.border_color = Color(0.42, 0.48, 0.54, 0.7)
+	sp_box.set_border_width_all(1)
+	sp_box.set_corner_radius_all(6)
+	sprint_panel.add_theme_stylebox_override("panel", sp_box)
+	sprint_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	sprint_hud.add_child(sprint_panel)
+	
+	sprint_rb_icon = Sprite2D.new()
+	sprint_rb_icon.texture = load("res://assets/novas_imagens/buttons/rb_xbox.png")
+	sprint_rb_icon.scale = Vector2(0.44, 0.40)
+	sprint_rb_icon.position = Vector2(30, 26)
+	sprint_rb_icon.rotation = 0.22
+	sprint_rb_icon.self_modulate = Color(1.0, 1.0, 1.0, 0.84)
+	sprint_hud.add_child(sprint_rb_icon)
+	
+	var slash_sep := make_label(16, Color(0.65, 0.72, 0.8, 0.8), HORIZONTAL_ALIGNMENT_CENTER)
+	slash_sep.position = Vector2(58, 12)
+	slash_sep.size = Vector2(16, 28)
+	slash_sep.text = "/"
+	sprint_hud.add_child(slash_sep)
+	
+	sprint_shift_icon = Sprite2D.new()
+	sprint_shift_icon.texture = load("res://assets/novas_imagens/buttons/shift_dark.png")
+	sprint_shift_icon.scale = Vector2(0.52, 0.44)
+	sprint_shift_icon.position = Vector2(98, 26)
+	sprint_shift_icon.self_modulate = Color(1.0, 1.0, 1.0, 0.61)
+	sprint_hud.add_child(sprint_shift_icon)
+	
+	var sprint_title := make_label(16, Color(0.9, 0.94, 0.98, 0.95), HORIZONTAL_ALIGNMENT_LEFT)
+	sprint_title.position = Vector2(132, 14)
+	sprint_title.size = Vector2(65, 26)
+	sprint_title.text = tr("DUNGEON_RUN_ACTION")
+	sprint_hud.add_child(sprint_title)
+	
+	notice_label = make_label(22, Color(1.0, 0.92, 0.25), HORIZONTAL_ALIGNMENT_CENTER)
+	notice_label.set_anchors_preset(Control.PRESET_CENTER)
+	notice_label.position = Vector2(-320, 80)
+	notice_label.size = Vector2(640, 44)
+	notice_label.visible = false
+	hud.add_child(notice_label)
+	
+	player.ammo_changed.connect(func(_c:int, _r:int, _w:String): update_hud())
+	player.reload_started.connect(func(): update_hud())
+	player.reload_finished.connect(func(): update_hud())
+	
 	var crosshair := make_label(24, Color(0.9, 0.92, 0.9, 0.75), HORIZONTAL_ALIGNMENT_CENTER)
 	crosshair.set_anchors_preset(Control.PRESET_CENTER)
 	crosshair.position = Vector2(-20, -22)
@@ -518,6 +608,20 @@ func build_hud() -> void:
 	hud.add_child(blood_overlay)
 	build_blood_overlay_graphics()
 	update_hud()
+
+func show_pickup_notice(text_msg:String) -> void:
+	if !is_instance_valid(notice_label):
+		return
+	notice_label.text = text_msg
+	notice_label.visible = true
+	notice_label.modulate.a = 1.0
+	notice_label.scale = Vector2(1.2, 1.2)
+	notice_label.pivot_offset = notice_label.size * 0.5
+	var t := create_tween()
+	t.tween_property(notice_label, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t.tween_interval(1.2)
+	t.tween_property(notice_label, "modulate:a", 0.0, 0.5)
+	t.tween_callback(func(): notice_label.visible = false)
 
 func generate_organic_blood_texture(radius:int) -> ImageTexture:
 	var size := radius * 2
@@ -627,19 +731,23 @@ func apply_saved_state() -> void:
 		player.set_weapon("machinegun")
 	elif event_is_true("dungeon_pistol_taken"):
 		player.set_weapon("pistol")
+	else:
+		player.set_weapon("")
 	for data in [["flashlight", "dungeon_flashlight_taken"], ["blue_key", "dungeon_blue_key_taken"], ["pistol", "dungeon_pistol_taken"], ["red_key", "dungeon_red_key_taken"], ["green_key", "dungeon_green_key_taken"], ["cell_key", "dungeon_key_taken"], ["machinegun", "dungeon_gun_taken"]]:
-		if event_is_true(data[1]) && is_instance_valid(pickups[data[0]]):
+		if event_is_true(data[1]) && is_instance_valid(pickups.get(data[0])):
 			pickups[data[0]].queue_free()
+			pickups.erase(data[0])
 	for color in ["blue", "red", "green"]:
-		if event_is_true("dungeon_%s_key_taken" % color):
+		if event_is_true("dungeon_%s_gate_open" % color) && is_instance_valid(route_gates.get(color)):
 			open_door(route_gates[color], false)
 	for stage in ["intro", "blue", "red", "green"]:
 		if event_is_true("dungeon_%s_lever" % stage) || event_is_true("dungeon_finale_triggered"):
 			activate_stage(stage, false)
-	if event_is_true("dungeon_axe_door_open") || event_is_true("dungeon_key_taken") || has_axe_event():
+	if event_is_true("dungeon_axe_door_open") || has_axe_event():
 		open_door(axe_door, false)
 	if has_axe_event() && is_instance_valid(axe_pickup):
 		axe_pickup.queue_free()
+		axe_pickup = null
 	update_hud()
 
 func start_arrival() -> void:
@@ -653,18 +761,260 @@ func start_arrival() -> void:
 	sequence_running = false
 	fade_overlay.visible = false
 
+func start_intro_cutscene() -> void:
+	sequence_running = true
+	player.controls_enabled = false
+	player.set_weapon("")
+	player.set_flashlight_available(false)
+	
+	# Queda inicial em primeira pessoa
+	player.position = Vector3(0, 4.2, 1.8)
+	fade_overlay.visible = true
+	fade_overlay.color = Color(0, 0, 0, 1)
+	
+	var fall_tween := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fall_tween.tween_property(player, "position:y", 0.08, 0.78)
+	fall_tween.parallel().tween_property(fade_overlay, "color:a", 0.0, 0.45)
+	await fall_tween.finished
+	
+	var land_sound := AudioStreamPlayer.new()
+	land_sound.stream = FALL_IMPACT_SOUND
+	land_sound.volume_db = 2.0
+	add_child(land_sound)
+	land_sound.play()
+	player.shake_camera(0.24, 0.75)
+	
+	# Poeiras subindo no chão na visão de primeira pessoa
+	spawn_dust_landing(Vector3(0, 0.05, 1.8))
+	
+	# Maycon olhando levemente para baixo após a queda
+	var look_down_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	look_down_tween.tween_property(player.head, "rotation:x", -0.42, 0.55)
+	await look_down_tween.finished
+	await get_tree().create_timer(0.4).timeout
+	
+	# Olhando para a direita
+	var look_right_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_right_tween.tween_property(player.head, "rotation:y", -0.58, 0.72)
+	look_right_tween.parallel().tween_property(player.head, "rotation:x", -0.15, 0.72)
+	await look_right_tween.finished
+	await get_tree().create_timer(0.3).timeout
+	
+	# Olhando para a esquerda
+	var look_left_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_left_tween.tween_property(player.head, "rotation:y", 0.58, 0.95)
+	look_left_tween.parallel().tween_property(player.head, "rotation:x", -0.08, 0.95)
+	await look_left_tween.finished
+	await get_tree().create_timer(0.3).timeout
+	
+	# Olhando para a frente
+	var look_forward_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_forward_tween.tween_property(player.head, "rotation:y", 0.0, 0.65)
+	look_forward_tween.parallel().tween_property(player.head, "rotation:x", 0.0, 0.65)
+	await look_forward_tween.finished
+	await get_tree().create_timer(0.45).timeout
+	
+	# Instancia o Maycon Dummy em pose Idle exatamente como na praia
+	var maycon_dummy: Node3D = MAYCON_SCENE.instantiate()
+	maycon_dummy.position = Vector3(0, 0.08, 1.8)
+	maycon_dummy.scale = Vector3.ONE * 0.95
+	# Maycon olhando para frente (direção dos portões em -Z)
+	maycon_dummy.rotation.y = PI
+	world_root.add_child(maycon_dummy)
+	
+	var dummy_anim: AnimationPlayer = maycon_dummy.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if dummy_anim:
+		if not dummy_anim.has_animation("Walking"):
+			if dummy_anim.get_animation_library_list().has(""):
+				dummy_anim.remove_animation_library("")
+			dummy_anim.add_animation_library("", MAYCON_MENU_ANIMATIONS)
+		var anim_to_play = "Walking" if dummy_anim.has_animation("Walking") else "Idle"
+		var a = dummy_anim.get_animation(anim_to_play)
+		if a:
+			a.loop_mode = Animation.LOOP_LINEAR
+		dummy_anim.play(anim_to_play)
+		dummy_anim.speed_scale = 0.95
+		
+	# Câmera da cutscene vindo lá de perto dos portões coloridos
+	var cutscene_cam := Camera3D.new()
+	add_child(cutscene_cam)
+	cutscene_cam.position = Vector3(0, 1.8, -26.0)
+	cutscene_cam.look_at(Vector3(0, 1.1, 1.8), Vector3.UP)
+	cutscene_cam.current = true
+	
+	# Câmera vem em linha reta de encontro ao Maycon
+	var approach_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	approach_tween.tween_property(cutscene_cam, "position", Vector3(0, 1.35, -1.8), 3.4)
+	
+	while approach_tween.is_running():
+		await get_tree().process_frame
+		cutscene_cam.look_at(Vector3(0, 1.1, 1.8), Vector3.UP)
+		
+	# Câmera dá uma volta ao redor do Maycon e para olhando para as costas dele
+	var orbit_time := 3.0
+	var orbit_timer := 0.0
+	var maycon_center := Vector3(0, 1.1, 1.8)
+	var radius := 2.6
+	
+	while orbit_timer < orbit_time:
+		var delta_t: float = get_process_delta_time()
+		orbit_timer += delta_t
+		var t_norm := clampf(orbit_timer / orbit_time, 0.0, 1.0)
+		var smooth_t := (1.0 - cos(t_norm * PI)) * 0.5
+		var angle := -PI * 0.5 + smooth_t * PI
+		var cam_x := sin(angle) * radius
+		var cam_z := 1.8 - cos(angle) * radius
+		var cam_y := lerpf(1.35, 1.55, smooth_t)
+		cutscene_cam.position = Vector3(cam_x, cam_y, cam_z)
+		cutscene_cam.look_at(maycon_center + Vector3(0, 0.1, 0), Vector3.UP)
+		await get_tree().process_frame
+		
+	# Câmera sobe na região da cabeça e entra na cabeça dele simulando a primeira pessoa
+	var enter_tween := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	enter_tween.tween_property(cutscene_cam, "position", Vector3(0, 1.62, 1.82), 1.25)
+	await enter_tween.finished
+	
+	# Transição para a gameplay de fato
+	player.camera.current = true
+	cutscene_cam.queue_free()
+	maycon_dummy.queue_free()
+	
+	Global.game_events["dungeon_intro_cutscene_seen"] = true
+	Global.save_progress("calabouco_terror")
+	
+	player.controls_enabled = true
+	sequence_running = false
+	update_hud()
+
+func spawn_dust_landing(pos:Vector3) -> void:
+	var root := Node3D.new()
+	root.position = pos
+	world_root.add_child(root)
+	
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = DUST_TEXTURE
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.vertex_color_use_as_albedo = true
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	
+	var quad := QuadMesh.new()
+	quad.size = Vector2(1.15, 1.15)
+	quad.material = mat
+	
+	var scale_curve := Curve.new()
+	scale_curve.add_point(Vector2(0.0, 0.35))
+	scale_curve.add_point(Vector2(0.25, 0.85))
+	scale_curve.add_point(Vector2(1.0, 1.55))
+	
+	var color_grad := Gradient.new()
+	color_grad.set_color(0, Color(0.72, 0.67, 0.58, 0.0))
+	color_grad.add_point(0.12, Color(0.74, 0.69, 0.60, 0.75))
+	color_grad.add_point(0.55, Color(0.70, 0.65, 0.56, 0.42))
+	color_grad.set_color(color_grad.get_point_count() - 1, Color(0.66, 0.62, 0.54, 0.0))
+	
+	# Pluma de poeira ascendente
+	var dust_plume := CPUParticles3D.new()
+	dust_plume.mesh = quad
+	dust_plume.amount = 32
+	dust_plume.lifetime = 2.1
+	dust_plume.one_shot = true
+	dust_plume.explosiveness = 0.92
+	dust_plume.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	dust_plume.emission_sphere_radius = 0.32
+	dust_plume.direction = Vector3.UP
+	dust_plume.spread = 48.0
+	dust_plume.initial_velocity_min = 1.1
+	dust_plume.initial_velocity_max = 2.5
+	dust_plume.gravity = Vector3(0, 0.12, 0)
+	dust_plume.damping_min = 0.8
+	dust_plume.damping_max = 1.5
+	dust_plume.angle_min = 0.0
+	dust_plume.angle_max = 360.0
+	dust_plume.angular_velocity_min = -30.0
+	dust_plume.angular_velocity_max = 30.0
+	dust_plume.scale_amount_min = 0.7
+	dust_plume.scale_amount_max = 1.6
+	dust_plume.scale_amount_curve = scale_curve
+	dust_plume.color_ramp = color_grad
+	root.add_child(dust_plume)
+	dust_plume.emitting = true
+	
+	# Anel de poeira rápido espalhado no solo
+	var dust_ring := CPUParticles3D.new()
+	dust_ring.mesh = quad
+	dust_ring.amount = 26
+	dust_ring.lifetime = 1.35
+	dust_ring.one_shot = true
+	dust_ring.explosiveness = 0.96
+	dust_ring.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
+	dust_ring.emission_ring_radius = 0.35
+	dust_ring.emission_ring_inner_radius = 0.1
+	dust_ring.direction = Vector3.UP
+	dust_ring.spread = 90.0
+	dust_ring.initial_velocity_min = 2.2
+	dust_ring.initial_velocity_max = 3.8
+	dust_ring.gravity = Vector3(0, -0.4, 0)
+	dust_ring.damping_min = 2.2
+	dust_ring.damping_max = 3.6
+	dust_ring.angle_min = 0.0
+	dust_ring.angle_max = 360.0
+	dust_ring.angular_velocity_min = -45.0
+	dust_ring.angular_velocity_max = 45.0
+	dust_ring.scale_amount_min = 0.5
+	dust_ring.scale_amount_max = 1.2
+	dust_ring.scale_amount_curve = scale_curve
+	dust_ring.color_ramp = color_grad
+	root.add_child(dust_ring)
+	dust_ring.emitting = true
+	
+	# Onda de choque sutil no piso
+	var shock_mesh := MeshInstance3D.new()
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.15
+	torus.outer_radius = 0.28
+	var ring_mat := StandardMaterial3D.new()
+	ring_mat.albedo_color = Color(0.78, 0.74, 0.65, 0.45)
+	ring_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ring_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	torus.material = ring_mat
+	shock_mesh.mesh = torus
+	shock_mesh.position = Vector3(0, 0.02, 0)
+	root.add_child(shock_mesh)
+	
+	var ring_tween := create_tween()
+	ring_tween.parallel().tween_property(shock_mesh, "scale", Vector3(5.5, 1.0, 5.5), 0.65).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	ring_tween.parallel().tween_property(ring_mat, "albedo_color:a", 0.0, 0.65).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	
+	get_tree().create_timer(2.6).timeout.connect(root.queue_free)
+
 func _process(delta:float) -> void:
 	elapsed += delta
+	if is_instance_valid(player) && is_instance_valid(sprint_hud):
+		var running_now: bool = player.is_sprint_pressed()
+		if is_instance_valid(sprint_rb_icon):
+			sprint_rb_icon.self_modulate = Color(1.3, 1.2, 0.45, 1.0) if running_now else Color(1.0, 1.0, 1.0, 0.84)
+		if is_instance_valid(sprint_shift_icon):
+			sprint_shift_icon.self_modulate = Color(1.3, 1.2, 0.45, 1.0) if running_now else Color(1.0, 1.0, 1.0, 0.61)
 	for data in flicker_lights:
 		var light:OmniLight3D = data.light
 		var pulse:float = sin(elapsed * 7.3 + data.phase) * sin(elapsed * 13.7 + data.phase * 2)
 		light.light_energy = data.base * (0.65 + absf(pulse) * 0.45) * (0.08 if pulse > 0.82 else 1)
-	for key in pickups:
-		var pickup = pickups[key]
+	for key in pickups.keys():
+		var pickup = pickups.get(key)
 		if is_instance_valid(pickup):
 			pickup.rotation.y += delta * (1.15 if "key" in key else 0.55)
 	if is_instance_valid(axe_pickup):
 		axe_pickup.rotation.y = sin(elapsed * 1.3) * 0.1
+	for i in range(active_ammo_drops.size() - 1, -1, -1):
+		var drop:Node3D = active_ammo_drops[i]
+		if is_instance_valid(drop):
+			drop.rotation.y += delta * 1.6
+			if player.global_position.distance_to(drop.global_position) < 1.65:
+				collect_ammo_drop(drop)
+				active_ammo_drops.remove_at(i)
+		else:
+			active_ammo_drops.remove_at(i)
 	if !sequence_running:
 		for enemy in enemies:
 			if is_instance_valid(enemy) && !enemy.released && enemy.get_meta("auto_release", false) && player.global_position.z < enemy.global_position.z + 6.0:
@@ -674,72 +1024,121 @@ func _process(delta:float) -> void:
 		if player.position.y < -4:
 			restart_after_caught(null)
 
+func collect_ammo_drop(drop:Node3D) -> void:
+	var w_type:String = str(drop.get_meta("weapon_type", "pistol"))
+	var amount:int = int(drop.get_meta("amount", 4))
+	player.add_ammo(w_type, amount)
+	pickup_sound.play()
+	if w_type == "pistol":
+		show_pickup_notice(tr("DUNGEON_AMMO_PISTOL_DROPPED"))
+	else:
+		show_pickup_notice(tr("DUNGEON_AMMO_MG_DROPPED"))
+	var t := create_tween()
+	t.tween_property(drop, "scale", Vector3.ZERO, 0.15)
+	t.tween_callback(drop.queue_free)
+
 func check_automatic_pickups() -> void:
-	for pickup_name in pickups:
-		var pickup = pickups[pickup_name]
+	var to_collect: Array[String] = []
+	for pickup_name in pickups.keys():
+		var pickup = pickups.get(pickup_name)
 		if is_instance_valid(pickup) && player.global_position.distance_to(pickup.global_position) < 1.65:
-			collect_pickup(pickup_name)
+			to_collect.append(str(pickup_name))
+	for p_name in to_collect:
+		collect_pickup(p_name)
 	if is_instance_valid(axe_pickup) && event_is_true("dungeon_axe_door_open") && player.global_position.distance_to(axe_pickup.global_position) < 1.7:
 		collect_axe()
 
 func collect_pickup(pickup_name:String) -> void:
-	var pickup:Node3D = pickups[pickup_name]
-	if !is_instance_valid(pickup):
+	if !pickups.has(pickup_name):
 		return
+	var pickup = pickups.get(pickup_name)
+	if !is_instance_valid(pickup):
+		pickups.erase(pickup_name)
+		return
+	pickup_sound.play()
 	match pickup_name:
 		"flashlight":
 			Global.game_events["dungeon_flashlight_taken"] = true
 			player.set_flashlight_available(true)
 			player.toggle_flashlight()
+			show_pickup_notice(tr("DUNGEON_ITEM_FLASHLIGHT"))
 		"blue_key":
 			Global.game_events["dungeon_blue_key_taken"] = true
-			open_door(route_gates["blue"], true)
+			show_pickup_notice(tr("DUNGEON_ITEM_BLUE_KEY"))
 		"pistol":
 			Global.game_events["dungeon_pistol_taken"] = true
 			player.set_weapon("pistol")
+			show_pickup_notice(tr("DUNGEON_ITEM_PISTOL"))
 		"red_key":
 			Global.game_events["dungeon_red_key_taken"] = true
-			open_door(route_gates["red"], true)
+			show_pickup_notice(tr("DUNGEON_ITEM_RED_KEY"))
 		"green_key":
 			Global.game_events["dungeon_green_key_taken"] = true
-			open_door(route_gates["green"], true)
+			show_pickup_notice(tr("DUNGEON_ITEM_GREEN_KEY"))
 		"cell_key":
 			Global.game_events["dungeon_key_taken"] = true
-			Global.game_events["dungeon_gun_taken"] = true
-			player.set_weapon("machinegun")
-			if is_instance_valid(pickups["machinegun"]):
-				pickups["machinegun"].queue_free()
-			open_door(axe_door, true)
-			start_finale_cutscene.call_deferred()
+			show_pickup_notice(tr("DUNGEON_ITEM_CELL_KEY"))
 		"machinegun":
 			Global.game_events["dungeon_gun_taken"] = true
 			player.set_weapon("machinegun")
-	pickup_sound.play()
+			show_pickup_notice(tr("DUNGEON_ITEM_MACHINEGUN"))
 	pickup.queue_free()
+	pickups.erase(pickup_name)
 	Global.save_progress("calabouco_terror")
 	update_hud()
 
 func collect_axe() -> void:
+	if !is_instance_valid(axe_pickup):
+		return
 	Global.maycon_itens["axe"] = true
 	Global.game_events["axe_taken"] = true
 	Global.game_events["dungeon_axe_taken"] = true
 	pickup_sound.play()
 	axe_pickup.queue_free()
+	axe_pickup = null
+	show_pickup_notice(tr("DUNGEON_ITEM_AXE"))
 	Global.save_progress("calabouco_terror")
 	update_hud()
 
 func update_interaction() -> void:
 	current_interaction = ""
 	var prompt_key := ""
-	for stage in levers:
-		var lever:Node3D = levers[stage]
-		if !event_is_true("dungeon_%s_lever" % stage) && player.global_position.distance_to(lever.global_position) < 2.2:
-			current_interaction = "lever:" + stage
-			prompt_key = "DUNGEON_PROMPT_LEVER"
-			break
-	if prompt_key == "" && player.global_position.distance_to(trampoline.global_position) < 2.4:
-		current_interaction = "trampoline"
-		prompt_key = "DUNGEON_PROMPT_TRAMPOLINE" if has_axe_event() else "DUNGEON_TRAMPOLINE_LOCKED"
+	
+	if !event_is_true("dungeon_red_gate_open") && is_instance_valid(route_gates.get("red")) && player.global_position.distance_to(route_gates["red"].global_position) < 2.5:
+		if event_is_true("dungeon_red_key_taken") && !event_is_true("dungeon_red_key_used"):
+			current_interaction = "unlock_gate:red"
+			prompt_key = "DUNGEON_PROMPT_UNLOCK_RED"
+		else:
+			prompt_key = "DUNGEON_GATE_LOCKED_RED"
+	elif !event_is_true("dungeon_green_gate_open") && is_instance_valid(route_gates.get("green")) && player.global_position.distance_to(route_gates["green"].global_position) < 2.5:
+		if event_is_true("dungeon_green_key_taken") && !event_is_true("dungeon_green_key_used"):
+			current_interaction = "unlock_gate:green"
+			prompt_key = "DUNGEON_PROMPT_UNLOCK_GREEN"
+		else:
+			prompt_key = "DUNGEON_GATE_LOCKED_GREEN"
+	elif !event_is_true("dungeon_blue_gate_open") && is_instance_valid(route_gates.get("blue")) && player.global_position.distance_to(route_gates["blue"].global_position) < 2.5:
+		if event_is_true("dungeon_blue_key_taken") && !event_is_true("dungeon_blue_key_used"):
+			current_interaction = "unlock_gate:blue"
+			prompt_key = "DUNGEON_PROMPT_UNLOCK_BLUE"
+		else:
+			prompt_key = "DUNGEON_GATE_LOCKED_BLUE"
+	elif !event_is_true("dungeon_axe_door_open") && is_instance_valid(axe_door) && player.global_position.distance_to(axe_door.global_position) < 2.5:
+		if event_is_true("dungeon_key_taken") && !event_is_true("dungeon_cell_key_used"):
+			current_interaction = "unlock_gate:axe"
+			prompt_key = "DUNGEON_PROMPT_UNLOCK_AXE"
+		else:
+			prompt_key = "DUNGEON_GATE_LOCKED_AXE"
+	else:
+		for stage in levers:
+			var lever:Node3D = levers[stage]
+			if !event_is_true("dungeon_%s_lever" % stage) && player.global_position.distance_to(lever.global_position) < 2.2:
+				current_interaction = "lever:" + stage
+				prompt_key = "DUNGEON_PROMPT_LEVER"
+				break
+		if prompt_key == "" && player.global_position.distance_to(trampoline.global_position) < 2.4:
+			current_interaction = "trampoline"
+			prompt_key = "DUNGEON_PROMPT_TRAMPOLINE" if has_axe_event() else "DUNGEON_TRAMPOLINE_LOCKED"
+			
 	prompt_label.visible = prompt_key != ""
 	if prompt_key != "":
 		prompt_label.text = tr(prompt_key)
@@ -747,10 +1146,30 @@ func update_interaction() -> void:
 func on_interact_pressed() -> void:
 	if sequence_running:
 		return
-	if current_interaction.begins_with("lever:"):
+	if current_interaction.begins_with("unlock_gate:"):
+		var gate_name := current_interaction.trim_prefix("unlock_gate:")
+		unlock_gate_manually(gate_name)
+	elif current_interaction.begins_with("lever:"):
 		activate_stage(current_interaction.trim_prefix("lever:"), true)
 	elif current_interaction == "trampoline" && has_axe_event():
 		return_to_castle()
+
+func unlock_gate_manually(gate_name:String) -> void:
+	pickup_sound.play()
+	if gate_name == "axe":
+		Global.game_events["dungeon_axe_door_open"] = true
+		Global.game_events["dungeon_cell_key_used"] = true
+		open_door(axe_door, true)
+		show_pickup_notice(tr("DUNGEON_PROMPT_OPEN_CELL"))
+		if !event_is_true("dungeon_finale_triggered"):
+			start_finale_cutscene.call_deferred()
+	elif gate_name in route_gates:
+		Global.game_events["dungeon_%s_gate_open" % gate_name] = true
+		Global.game_events["dungeon_%s_key_used" % gate_name] = true
+		open_door(route_gates[gate_name], true)
+		show_pickup_notice(tr("DUNGEON_PROMPT_UNLOCK_" + gate_name.to_upper()))
+	Global.save_progress("calabouco_terror")
+	update_hud()
 
 func activate_stage(stage:String, with_sound:bool) -> void:
 	Global.game_events["dungeon_%s_lever" % stage] = true
@@ -815,8 +1234,6 @@ func update_hud() -> void:
 		return
 	if !player.has_flashlight:
 		objective_label.text = tr("DUNGEON_OBJECTIVE_FLASHLIGHT")
-	elif !event_is_true("dungeon_blue_key_taken"):
-		objective_label.text = tr("DUNGEON_OBJECTIVE_BLUE_KEY")
 	elif !event_is_true("dungeon_red_key_taken"):
 		objective_label.text = tr("DUNGEON_OBJECTIVE_RED_KEY")
 	elif !event_is_true("dungeon_green_key_taken"):
@@ -827,11 +1244,40 @@ func update_hud() -> void:
 		objective_label.text = tr("DUNGEON_OBJECTIVE_AXE")
 	else:
 		objective_label.text = tr("DUNGEON_OBJECTIVE_ESCAPE")
+		
 	flashlight_label.text = tr("DUNGEON_FLASHLIGHT_ON") if player.flashlight_on else tr("DUNGEON_FLASHLIGHT_OFF")
 	if !player.has_flashlight:
 		flashlight_label.text = ""
 	weapon_label.text = tr("DUNGEON_MACHINEGUN_READY") if player.weapon_mode == "machinegun" else (tr("DUNGEON_PISTOL_READY") if player.weapon_mode == "pistol" else "")
-	var found := {"flashlight": event_is_true("dungeon_flashlight_taken"), "blue_key": event_is_true("dungeon_blue_key_taken"), "pistol": event_is_true("dungeon_pistol_taken"), "red_key": event_is_true("dungeon_red_key_taken"), "green_key": event_is_true("dungeon_green_key_taken"), "cell_key": event_is_true("dungeon_key_taken"), "machinegun": event_is_true("dungeon_gun_taken"), "axe": has_axe_event()}
+	
+	if is_instance_valid(ammo_label):
+		if player.has_gun:
+			ammo_label.visible = true
+			var w_name:String = tr("DUNGEON_ITEM_MACHINEGUN") if player.weapon_mode == "machinegun" else tr("DUNGEON_ITEM_PISTOL")
+			var clip:int = player.get_current_clip()
+			var res:int = player.get_current_reserve()
+			if player.is_reloading:
+				ammo_label.text = "%s\n%s" % [w_name, tr("DUNGEON_RELOADING")]
+				ammo_label.add_theme_color_override("font_color", Color(1.0, 0.45, 0.2))
+			elif clip == 0:
+				ammo_label.text = "%s [ 0 / %d ]\n%s" % [w_name, res, tr("DUNGEON_RELOAD_PROMPT")]
+				ammo_label.add_theme_color_override("font_color", Color(1.0, 0.2, 0.2))
+			else:
+				ammo_label.text = "%s [ %d / %d ]" % [w_name, clip, res]
+				ammo_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.4))
+		else:
+			ammo_label.visible = false
+			
+	var found := {
+		"flashlight": event_is_true("dungeon_flashlight_taken"),
+		"blue_key": event_is_true("dungeon_blue_key_taken") && !event_is_true("dungeon_blue_key_used"),
+		"pistol": event_is_true("dungeon_pistol_taken") && !event_is_true("dungeon_gun_taken"),
+		"red_key": event_is_true("dungeon_red_key_taken") && !event_is_true("dungeon_red_key_used"),
+		"green_key": event_is_true("dungeon_green_key_taken") && !event_is_true("dungeon_green_key_used"),
+		"cell_key": event_is_true("dungeon_key_taken") && !event_is_true("dungeon_cell_key_used"),
+		"machinegun": event_is_true("dungeon_gun_taken"),
+		"axe": has_axe_event()
+	}
 	for item_name in inventory_slots:
 		var slot: Control = inventory_slots[item_name]
 		var should_be_visible: bool = bool(found.get(item_name, false))
@@ -853,13 +1299,42 @@ func has_axe_event() -> bool:
 func on_player_fired(origin:Vector3, direction:Vector3) -> void:
 	if sequence_running:
 		return
+	gun_sound.pitch_scale = randf_range(1.15, 1.3) if player.weapon_mode == "machinegun" else randf_range(0.9, 1.05)
 	gun_sound.play()
 	var query := PhysicsRayQueryParameters3D.create(origin, origin + direction * 68)
 	query.exclude = [player.get_rid()]
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
 	if !hit.is_empty() && hit.collider is DungeonInfected:
-		hit.collider.take_damage(2 if player.weapon_mode == "pistol" else 1)
+		hit.collider.take_damage(2 if player.weapon_mode == "pistol" else 1, player.weapon_mode)
 		spawn_blood_hit(hit.position, direction)
+
+func spawn_ammo_drop(pos:Vector3, weapon_type:String) -> void:
+	var drop := Node3D.new()
+	drop.name = "AmmoDrop"
+	drop.position = pos
+	drop.set_meta("weapon_type", weapon_type)
+	drop.set_meta("amount", 4 if weapon_type == "pistol" else 15)
+	world_root.add_child(drop)
+	
+	var box := MeshInstance3D.new()
+	var b_mesh := BoxMesh.new()
+	b_mesh.size = Vector3(0.32, 0.22, 0.44) if weapon_type == "machinegun" else Vector3(0.24, 0.18, 0.32)
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.18, 0.38, 0.12) if weapon_type == "machinegun" else Color(0.72, 0.52, 0.18)
+	mat.metallic = 0.8
+	mat.roughness = 0.3
+	b_mesh.material = mat
+	box.mesh = b_mesh
+	drop.add_child(box)
+	
+	var light := OmniLight3D.new()
+	light.light_color = Color(0.2, 1.0, 0.35) if weapon_type == "machinegun" else Color(1.0, 0.75, 0.15)
+	light.light_energy = 2.4
+	light.omni_range = 3.6
+	drop.add_child(light)
+	
+	active_ammo_drops.append(drop)
+
 
 func spawn_blood_hit(hit_position:Vector3, direction:Vector3) -> void:
 	var particles := CPUParticles3D.new()

@@ -375,3 +375,17 @@ SETTINGS_DEBUG_RESET_DUNGEON,Resetar Eventos do Calabouço,Reset Dungeon Events,
 SETTINGS_DEBUG_RESET_DUNGEON_DESC,Limpa as chaves e armas coletadas no calabouço e restaura o estado inicial.,Clears keys and weapons collected in the dungeon and restores its initial state.,Limpia las llaves y armas del calabozo y restaura su estado inicial.,清除地牢中收集的钥匙和武器并恢复初始状态。
 SETTINGS_DEBUG_DUNGEON_SECTION,Eventos do Calabouço (3D Terror),Dungeon Events (3D Horror),Eventos del Calabozo (Terror 3D),地牢事件 (3D恐怖)
 SETTINGS_DEBUG_STORY_SECTION,Outros Eventos do Jogo,Other Game Events,Otros Eventos del Juego,其他游戏事件
+DUNGEON_AMMO_HUD,Munição,Ammo,Munición,弹药
+DUNGEON_RELOAD_PROMPT,R: Recarregar,R: Reload,R: Recargar,R: 换弹
+DUNGEON_RELOADING,Recarregando...,Reloading...,Recargando...,换弹中...
+DUNGEON_AMMO_PISTOL_DROPPED,+4 Balas de Pistola,+4 Pistol Ammo,+4 Balas de Pistola,+4 手枪子弹
+DUNGEON_AMMO_MG_DROPPED,+15 Balas de Metralhadora,+15 Machine Gun Ammo,+15 Balas de Ametralladora,+15 机枪子弹
+DUNGEON_PROMPT_UNLOCK_BLUE,[E / X] USAR CHAVE AZUL E DESTRANCAR,[E / X] USE BLUE KEY TO UNLOCK,[E / X] USAR LLAVE AZUL Y DESBLOQUEAR,[E / X] 使用蓝钥匙开门
+DUNGEON_PROMPT_UNLOCK_RED,[E / X] USAR CHAVE VERMELHA E DESTRANCAR,[E / X] USE RED KEY TO UNLOCK,[E / X] USAR LLAVE ROJA Y DESBLOQUEAR,[E / X] 使用红钥匙开门
+DUNGEON_PROMPT_UNLOCK_GREEN,[E / X] USAR CHAVE VERDE E DESTRANCAR,[E / X] USE GREEN KEY TO UNLOCK,[E / X] USAR LLAVE VERDE Y DESBLOQUEAR,[E / X] 使用绿钥匙开门
+DUNGEON_PROMPT_UNLOCK_AXE,[E / X] USAR CHAVE DA CELA E DESTRANCAR,[E / X] USE CELL KEY TO UNLOCK,[E / X] USAR LLAVE DE CELDA Y DESBLOQUEAR,[E / X] 使用牢房钥匙开门
+DUNGEON_GATE_LOCKED_BLUE,Portão Azul Trancado (Requer Chave Azul),Blue Gate Locked (Requires Blue Key),Portón Azul Cerrado (Requiere Llave Azul),蓝色大门已锁（需要蓝钥匙）
+DUNGEON_GATE_LOCKED_RED,Portão Vermelho Trancado (Requer Chave Vermelha),Red Gate Locked (Requires Red Key),Portón Rojo Cerrado (Requiere Llave Roja),红色大门已锁（需要红钥匙）
+DUNGEON_GATE_LOCKED_GREEN,Portão Verde Trancado (Requer Chave Verde),Green Gate Locked (Requires Green Key),Portón Verde Cerrado (Requiere Llave Verde),绿色大门已锁（需要绿钥匙）
+DUNGEON_GATE_LOCKED_AXE,Cela do Machado Trancada (Requer Chave da Cela),Axe Cell Locked (Requires Cell Key),Celda del Hacha Cerrada (Requiere Llave de Celda),斧头牢房已锁（需要牢房钥匙）
+DUNGEON_RUN_ACTION,Correr,Run,Correr,奔跑
