@@ -8,8 +8,8 @@ const SMG_ALBEDO:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_Defau
 const SMG_NORMAL:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Normal.png")
 const SMG_METALLIC:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Metallic.png")
 const SMG_ROUGHNESS:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Roughness.png")
-const PISTOL_REST_POSITION := Vector3(0.29, -0.3, -0.48)
-const SMG_REST_POSITION := Vector3(0.27, -0.31, -0.58)
+const PISTOL_REST_POSITION := Vector3(0.29, -0.49, -0.26)
+const SMG_REST_POSITION := Vector3(0.27, -0.22, -0.42)
 
 signal interact_pressed
 signal fired(origin:Vector3, direction:Vector3)
@@ -109,9 +109,9 @@ func _unhandled_input(event:InputEvent) -> void:
 		return
 	if (event is InputEventMouseButton && event.button_index == MOUSE_BUTTON_RIGHT) || (event is InputEventJoypadButton && event.button_index == JOY_BUTTON_Y):
 		toggle_flashlight()
-	elif (event is InputEventKey && event.physical_keycode == KEY_E) || (event is InputEventJoypadButton && event.button_index == JOY_BUTTON_X):
+	elif (event is InputEventKey && event.physical_keycode == KEY_E) || (event is InputEventJoypadButton && event.button_index == JOY_BUTTON_A):
 		interact_pressed.emit()
-	elif (event is InputEventKey && event.physical_keycode == KEY_R) || (event is InputEventJoypadButton && event.button_index == JOY_BUTTON_B):
+	elif (event is InputEventKey && event.physical_keycode == KEY_R) || (event is InputEventJoypadButton && (event.button_index == JOY_BUTTON_B || event.button_index == JOY_BUTTON_X)):
 		start_reload()
 
 func _physics_process(delta:float) -> void:
@@ -178,9 +178,10 @@ func _physics_process(delta:float) -> void:
 		fire()
 
 func is_sprint_pressed() -> bool:
+	# Não usa a action global "run" (ela inclui o botão X do controle em outras cenas).
+	# Aqui, no calabouço, só corre com Shift ou RB — X fica livre para recarregar.
 	return (
-		Input.is_action_pressed("run")
-		or Input.is_key_pressed(KEY_SHIFT)
+		Input.is_key_pressed(KEY_SHIFT)
 		or Input.is_joy_button_pressed(0, JOY_BUTTON_RIGHT_SHOULDER)
 		or Input.is_joy_button_pressed(1, JOY_BUTTON_RIGHT_SHOULDER)
 	)

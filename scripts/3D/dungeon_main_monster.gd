@@ -10,8 +10,8 @@ const ATTACK_1:AudioStream = preload("res://assets/novos_audios/calabouco_terror
 const ATTACK_2:AudioStream = preload("res://assets/novos_audios/calabouco_terror/monster_scream_2.wav")
 
 const MODEL_SCALE:float = 1.35
-const PATROL_SPEED:float = 1.25
-const CHASE_SPEED:float = 2.15
+const PATROL_SPEED:float = 1.75
+const CHASE_SPEED:float = 3.0
 const ACTIVATION_DISTANCE:float = 16.0
 const DISENGAGE_DISTANCE:float = 27.0
 const TEMPORARY_DEFEAT_DAMAGE:int = 8
@@ -68,6 +68,7 @@ func build_body() -> void:
 
 	model_root = MODEL.instantiate() as Node3D
 	model_root.scale = Vector3.ONE * MODEL_SCALE
+	model_root.rotation.y = PI # Modelo vinha de costas; gira no yaw para a frente apontar para -Z
 	add_child(model_root)
 	apply_horror_materials()
 	animator = model_root.find_child("AnimationPlayer", true, false) as AnimationPlayer

@@ -39,6 +39,9 @@ var model_scale:float = 1.0
 var wander_target:Vector3
 var wander_timer:float = 0.0
 var release_grace_time:float = 0.0
+var cell_target:Vector3
+var cell_wander_timer:float = 0.0
+var cell_is_moving:bool = false
 var animator:AnimationPlayer
 var current_animation:StringName = &""
 var model_origin:Vector3 = Vector3.ZERO
@@ -62,8 +65,9 @@ func setup(target:DungeonPlayer, owner_dungeon:Node, model_path:String, initiall
 	else:
 		speed = 1.15
 		health = 6
-	home = global_position
+	home = global_position if is_inside_tree() else position
 	wander_target = home
+	cell_target = home
 	build_body(model_path)
 
 func build_body(model_path:String) -> void:
@@ -117,7 +121,6 @@ func build_body(model_path:String) -> void:
 			var teeth_node = model_root.find_child("Teeth", true, false) as MeshInstance3D
 			if teeth_node:
 				teeth_node.material_override = teeth_mat
-				
 		animator = model_root.find_child("AnimationPlayer", true, false) as AnimationPlayer
 		if animator:
 			play_idle_animation()
@@ -156,8 +159,11 @@ func release_from_cell() -> void:
 	if released || dead:
 		return
 	released = true
-	release_grace_time = 6.0
+	release_grace_time = 5.0
 	wander_timer = 0.0
+	# Ao abrir a cela sai andando pelo cenário
+	var forward_exit := -global_transform.basis.z * 3.5
+	wander_target = global_position + forward_exit + Vector3(randf_range(-1.5, 1.5), 0.0, randf_range(-1.5, 1.5))
 	if is_instance_valid(metal_audio):
 		metal_audio.play()
 
@@ -171,10 +177,32 @@ func _physics_process(delta:float) -> void:
 		velocity.y -= 18.0 * delta
 		
 	if !released:
-		velocity.x = 0.0
-		velocity.z = 0.0
-		rotation.z = sin(sway * 2.8) * 0.02
-		update_model_motion(false, false)
+		cell_wander_timer -= delta
+		if cell_wander_timer <= 0.0 || global_position.distance_to(cell_target) < 0.35:
+			cell_wander_timer = randf_range(2.2, 4.5)
+			# Ponto aleatório dentro da cela (raio de 1.15m em torno de home)
+			cell_target = home + Vector3(randf_range(-1.15, 1.15), 0.0, randf_range(-1.15, 1.15))
+			cell_is_moving = randf() < 0.82
+		
+		if cell_is_moving:
+			var cell_dir := cell_target - global_position
+			cell_dir.y = 0.0
+			if cell_dir.length() > 0.15:
+				var move_speed := speed * 0.42
+				velocity.x = cell_dir.normalized().x * move_speed
+				velocity.z = cell_dir.normalized().z * move_speed
+				look_at_horizontal(global_position + velocity)
+				update_model_motion(true, false)
+			else:
+				velocity.x = 0.0
+				velocity.z = 0.0
+				update_model_motion(false, false)
+		else:
+			velocity.x = 0.0
+			velocity.z = 0.0
+			rotation.z = sin(sway * 2.8) * 0.02
+			update_model_motion(false, false)
+			
 		if growl_cooldown <= 0.0:
 			growl_cooldown = randf_range(3.5, 7.5)
 			if randf() < 0.45 && is_instance_valid(metal_audio):

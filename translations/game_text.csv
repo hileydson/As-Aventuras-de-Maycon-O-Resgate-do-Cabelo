@@ -337,7 +337,7 @@ MENU_MODE_STRATEGIC,Estratégico,Strategic,Estratégico,回合战略
 MENU_OVERWRITE_TITLE,SOBRESCREVER SAVE?,OVERWRITE SAVE?,¿SOBREESCRIBIR GUARDADO?,覆盖存档？
 MENU_OVERWRITE_DESC,"Este slot já possui um jogo salvo. Iniciar um Novo Jogo irá sobrescrever o progresso anterior.","This slot already has a saved game. Starting a New Game will overwrite previous progress.","Esta ranura ya tiene una partida guardada. Iniciar una Nueva Partida sobrescribirá el progreso anterior.","此栏位已有存档。开始新游戏将覆盖之前的进度。"
 MENU_OVERWRITE_CONFIRM,SOBRESCREVER E INICIAR,OVERWRITE AND START,SOBREESCRIBIR E INICIAR,覆盖并开始
-DUNGEON_MOVE_HINT,WASD / Analógico para mover • E / X para interagir,WASD / Stick to move • E / X to interact,WASD / Palanca para mover • E / X para interactuar,WASD / 摇杆移动 • E / X 互动
+DUNGEON_MOVE_HINT,WASD / Analógico para mover • E / A para interagir,WASD / Stick to move • E / A to interact,WASD / Palanca para mover • E / A para interactuar,WASD / 摇杆移动 • E / A 互动
 DUNGEON_OBJECTIVE_FLASHLIGHT,OBJETIVO: encontre a lanterna à sua frente,OBJECTIVE: find the flashlight ahead,OBJETIVO: encuentra la linterna al frente,目标：找到前方的手电筒
 DUNGEON_OBJECTIVE_EXPLORE,OBJETIVO: atravesse a prisão e encontre a chave e a metralhadora,OBJECTIVE: cross the prison and find the key and machine gun,OBJETIVO: cruza la prisión y encuentra la llave y la ametralladora,目标：穿过监狱并找到钥匙和机枪
 DUNGEON_OBJECTIVE_AXE,OBJETIVO: volte à cela do início e recupere o machado,OBJECTIVE: return to the first cell and recover the axe,OBJETIVO: vuelve a la celda inicial y recupera el hacha,目标：回到起始牢房取回斧头
@@ -345,19 +345,19 @@ DUNGEON_OBJECTIVE_ESCAPE,OBJETIVO: use o trampolim do início para voltar ao cas
 DUNGEON_FLASHLIGHT_ON,LANTERNA: LIGADA • Y / Botão direito,FLASHLIGHT: ON • Y / Right click,LINTERNA: ENCENDIDA • Y / Clic derecho,手电筒：开启 • Y / 鼠标右键
 DUNGEON_FLASHLIGHT_OFF,LANTERNA: DESLIGADA • Y / Botão direito,FLASHLIGHT: OFF • Y / Right click,LINTERNA: APAGADA • Y / Clic derecho,手电筒：关闭 • Y / 鼠标右键
 DUNGEON_WEAPON_READY,METRALHADORA • Segure tiro para disparar,MACHINE GUN • Hold fire to shoot,AMETRALLADORA • Mantén disparo para tirar,机枪 • 按住射击键开火
-DUNGEON_PROMPT_FLASHLIGHT,[E / X] PEGAR LANTERNA,[E / X] TAKE FLASHLIGHT,[E / X] TOMAR LINTERNA,[E / X] 拿起手电筒
-DUNGEON_PROMPT_GUN,[E / X] PEGAR METRALHADORA,[E / X] TAKE MACHINE GUN,[E / X] TOMAR AMETRALLADORA,[E / X] 拿起机枪
-DUNGEON_PROMPT_KEY,[E / X] PEGAR CHAVE DA CELA,[E / X] TAKE CELL KEY,[E / X] TOMAR LLAVE DE LA CELDA,[E / X] 拿起牢房钥匙
-DUNGEON_PROMPT_OPEN_CELL,[E / X] ABRIR A CELA DO MACHADO,[E / X] OPEN THE AXE CELL,[E / X] ABRIR LA CELDA DEL HACHA,[E / X] 打开斧头牢房
+DUNGEON_PROMPT_FLASHLIGHT,[E / A] PEGAR LANTERNA,[E / A] TAKE FLASHLIGHT,[E / A] TOMAR LINTERNA,[E / A] 拿起手电筒
+DUNGEON_PROMPT_GUN,[E / A] PEGAR METRALHADORA,[E / A] TAKE MACHINE GUN,[E / A] TOMAR AMETRALLADORA,[E / A] 拿起机枪
+DUNGEON_PROMPT_KEY,[E / A] PEGAR CHAVE DA CELA,[E / A] TAKE CELL KEY,[E / A] TOMAR LLAVE DE LA CELDA,[E / A] 拿起牢房钥匙
+DUNGEON_PROMPT_OPEN_CELL,[E / A] ABRIR A CELA DO MACHADO,[E / A] OPEN THE AXE CELL,[E / A] ABRIR LA CELDA DEL HACHA,[E / A] 打开斧头牢房
 DUNGEON_CELL_LOCKED,A cela está trancada. A chave está no fim da prisão.,The cell is locked. The key is at the end of the prison.,La celda está cerrada. La llave está al final de la prisión.,牢房上锁了。钥匙在监狱尽头。
-DUNGEON_PROMPT_AXE,[E / X] RECUPERAR O MACHADO,[E / X] RECOVER THE AXE,[E / X] RECUPERAR EL HACHA,[E / X] 取回斧头
-DUNGEON_PROMPT_TRAMPOLINE,[E / X] PULAR E VOLTAR AO CASTELO,[E / X] JUMP BACK TO THE CASTLE,[E / X] SALTAR Y VOLVER AL CASTILLO,[E / X] 跳回城堡
+DUNGEON_PROMPT_AXE,[E / A] RECUPERAR O MACHADO,[E / A] RECOVER THE AXE,[E / A] RECUPERAR EL HACHA,[E / A] 取回斧头
+DUNGEON_PROMPT_TRAMPOLINE,[E / A] PULAR E VOLTAR AO CASTELO,[E / A] JUMP BACK TO THE CASTLE,[E / A] SALTAR Y VOLVER AL CASTILLO,[E / A] 跳回城堡
 DUNGEON_TRAMPOLINE_LOCKED,Você precisa recuperar o machado antes de subir.,You must recover the axe before climbing back.,Debes recuperar el hacha antes de subir.,返回前必须先取回斧头。
 DUNGEON_OBJECTIVE_BLUE_KEY,OBJETIVO: siga a rota aberta e acione a alavanca da chave azul,OBJECTIVE: follow the open route and pull the blue-key lever,OBJETIVO: sigue la ruta abierta y acciona la palanca de la llave azul,目标：沿开放路线前进并拉下蓝钥匙拉杆
 DUNGEON_OBJECTIVE_RED_KEY,OBJETIVO: use o portão azul e procure a chave vermelha,OBJECTIVE: pass the blue gate and find the red key,OBJETIVO: cruza el portón azul y busca la llave roja,目标：穿过蓝色大门并寻找红钥匙
 DUNGEON_OBJECTIVE_GREEN_KEY,OBJETIVO: atravesse o portão vermelho e encontre a chave verde,OBJECTIVE: cross the red gate and find the green key,OBJETIVO: atraviesa el portón rojo y encuentra la llave verde,目标：穿过红色大门并找到绿钥匙
 DUNGEON_OBJECTIVE_CELL_KEY,OBJETIVO: entre no caminho verde e encontre a chave da cela,OBJECTIVE: enter the green route and find the cell key,OBJETIVO: entra en el camino verde y encuentra la llave de la celda,目标：进入绿色路线并找到牢房钥匙
-DUNGEON_PROMPT_LEVER,[E / X] PUXAR ALAVANCA — TODAS AS CELAS DESTA ALA SERÃO ABERTAS,[E / X] PULL LEVER — ALL CELLS IN THIS WING WILL OPEN,[E / X] TIRAR DE LA PALANCA — SE ABRIRÁN TODAS LAS CELDAS DE ESTA ALA,[E / X] 拉下拉杆——本区所有牢房都会打开
+DUNGEON_PROMPT_LEVER,[E / A] PUXAR ALAVANCA — TODAS AS CELAS DESTA ALA SERÃO ABERTAS,[E / A] PULL LEVER — ALL CELLS IN THIS WING WILL OPEN,[E / A] TIRAR DE LA PALANCA — SE ABRIRÁN TODAS LAS CELDAS DE ESTA ALA,[E / A] 拉下拉杆——本区所有牢房都会打开
 DUNGEON_PISTOL_READY,PISTOLA • Clique esquerdo / gatilho para atirar,PISTOL • Left click / trigger to fire,PISTOLA • Clic izquierdo / gatillo para disparar,手枪 • 左键 / 扳机射击
 DUNGEON_MACHINEGUN_READY,METRALHADORA • Segure o disparo,MACHINE GUN • Hold to fire,AMETRALLADORA • Mantén para disparar,机枪 • 按住射击
 DUNGEON_ITEM_FLASHLIGHT,Lanterna,Flashlight,Linterna,手电筒
@@ -376,14 +376,14 @@ SETTINGS_DEBUG_RESET_DUNGEON_DESC,Limpa as chaves e armas coletadas no calabouç
 SETTINGS_DEBUG_DUNGEON_SECTION,Eventos do Calabouço (3D Terror),Dungeon Events (3D Horror),Eventos del Calabozo (Terror 3D),地牢事件 (3D恐怖)
 SETTINGS_DEBUG_STORY_SECTION,Outros Eventos do Jogo,Other Game Events,Otros Eventos del Juego,其他游戏事件
 DUNGEON_AMMO_HUD,Munição,Ammo,Munición,弹药
-DUNGEON_RELOAD_PROMPT,R: Recarregar,R: Reload,R: Recargar,R: 换弹
+DUNGEON_RELOAD_PROMPT,R / X: Recarregar,R / X: Reload,R / X: Recargar,R / X: 换弹
 DUNGEON_RELOADING,Recarregando...,Reloading...,Recargando...,换弹中...
 DUNGEON_AMMO_PISTOL_DROPPED,+4 Balas de Pistola,+4 Pistol Ammo,+4 Balas de Pistola,+4 手枪子弹
 DUNGEON_AMMO_MG_DROPPED,+15 Balas de Metralhadora,+15 Machine Gun Ammo,+15 Balas de Ametralladora,+15 机枪子弹
-DUNGEON_PROMPT_UNLOCK_BLUE,[E / X] USAR CHAVE AZUL E DESTRANCAR,[E / X] USE BLUE KEY TO UNLOCK,[E / X] USAR LLAVE AZUL Y DESBLOQUEAR,[E / X] 使用蓝钥匙开门
-DUNGEON_PROMPT_UNLOCK_RED,[E / X] USAR CHAVE VERMELHA E DESTRANCAR,[E / X] USE RED KEY TO UNLOCK,[E / X] USAR LLAVE ROJA Y DESBLOQUEAR,[E / X] 使用红钥匙开门
-DUNGEON_PROMPT_UNLOCK_GREEN,[E / X] USAR CHAVE VERDE E DESTRANCAR,[E / X] USE GREEN KEY TO UNLOCK,[E / X] USAR LLAVE VERDE Y DESBLOQUEAR,[E / X] 使用绿钥匙开门
-DUNGEON_PROMPT_UNLOCK_AXE,[E / X] USAR CHAVE DA CELA E DESTRANCAR,[E / X] USE CELL KEY TO UNLOCK,[E / X] USAR LLAVE DE CELDA Y DESBLOQUEAR,[E / X] 使用牢房钥匙开门
+DUNGEON_PROMPT_UNLOCK_BLUE,[E / A] USAR CHAVE AZUL E DESTRANCAR,[E / A] USE BLUE KEY TO UNLOCK,[E / A] USAR LLAVE AZUL Y DESBLOQUEAR,[E / A] 使用蓝钥匙开门
+DUNGEON_PROMPT_UNLOCK_RED,[E / A] USAR CHAVE VERMELHA E DESTRANCAR,[E / A] USE RED KEY TO UNLOCK,[E / A] USAR LLAVE ROJA Y DESBLOQUEAR,[E / A] 使用红钥匙开门
+DUNGEON_PROMPT_UNLOCK_GREEN,[E / A] USAR CHAVE VERDE E DESTRANCAR,[E / A] USE GREEN KEY TO UNLOCK,[E / A] USAR LLAVE VERDE Y DESBLOQUEAR,[E / A] 使用绿钥匙开门
+DUNGEON_PROMPT_UNLOCK_AXE,[E / A] USAR CHAVE DA CELA E DESTRANCAR,[E / A] USE CELL KEY TO UNLOCK,[E / A] USAR LLAVE DE CELDA Y DESBLOQUEAR,[E / A] 使用牢房钥匙开门
 DUNGEON_GATE_LOCKED_BLUE,Portão Azul Trancado (Requer Chave Azul),Blue Gate Locked (Requires Blue Key),Portón Azul Cerrado (Requiere Llave Azul),蓝色大门已锁（需要蓝钥匙）
 DUNGEON_GATE_LOCKED_RED,Portão Vermelho Trancado (Requer Chave Vermelha),Red Gate Locked (Requires Red Key),Portón Rojo Cerrado (Requiere Llave Roja),红色大门已锁（需要红钥匙）
 DUNGEON_GATE_LOCKED_GREEN,Portão Verde Trancado (Requer Chave Verde),Green Gate Locked (Requires Green Key),Portón Verde Cerrado (Requiere Llave Verde),绿色大门已锁（需要绿钥匙）

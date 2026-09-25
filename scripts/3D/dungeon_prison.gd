@@ -106,7 +106,10 @@ func build_materials() -> void:
 	iron_material = colored_material(Color(0.045, 0.052, 0.049), 0.94, 0.42)
 	wet_material = colored_material(Color(0.025, 0.045, 0.04), 0.18, 0.2)
 	rotten_material = colored_material(Color(0.18, 0.13, 0.045), 0.0, 1.0)
-	blood_material = colored_material(Color(0.28, 0.003, 0.006), 0.0, 0.42)
+	blood_material = colored_material(Color(0.34, 0.004, 0.006), 0.0, 0.22)
+	blood_material.clearcoat_enabled = true
+	blood_material.clearcoat = 0.85
+	blood_material.clearcoat_roughness = 0.15
 	flesh_material = colored_material(Color(0.3, 0.18, 0.13), 0.0, 0.94)
 
 func colored_material(color:Color, metallic:float, roughness:float) -> StandardMaterial3D:
@@ -336,9 +339,13 @@ func build_lever(position_value:Vector3, stage:String, rotation_y:float = 0.0) -
 	lever.rotation.y = rotation_y
 	world_root.add_child(lever)
 	create_box("Base", Vector3.ZERO, Vector3(0.65, 1, 0.35), iron_material, false, lever)
-	var handle := create_box("Handle", Vector3(0, 0.65, -0.08), Vector3(0.14, 0.95, 0.14), rotten_material, false, lever)
-	handle.rotation.x = -0.55
-	lever.set_meta("handle", handle)
+	var hinge := Node3D.new()
+	hinge.name = "Hinge"
+	hinge.position = Vector3(0, 0.5, 0) # ponto de articulação no meio/topo da base
+	lever.add_child(hinge)
+	create_box("Handle", Vector3(0, 0.475, 0), Vector3(0.14, 0.95, 0.14), rotten_material, false, hinge)
+	hinge.rotation.x = -0.55
+	lever.set_meta("handle", hinge)
 	build_light(Vector3(0, 0.6, 0.35), Color(1, 0.5, 0.04), 2.4, 4, lever)
 	return lever
 
@@ -569,7 +576,7 @@ func instantiate_model(path:String, position_value:Vector3, scale_value:Vector3,
 
 func spawn_record(position_value:Vector3, stage:String, door:Node3D) -> void:
 	var variants := [
-		{"path": ZOMBIE_MODEL, "kind": "zombie", "scale": 1.0},
+		{"path": ZOMBIE_MODEL, "kind": "zombie", "scale": 1.35},
 		{"path": HOUND_MODEL, "kind": "hound", "scale": 0.85},
 		{"path": RUNNER_MODEL, "kind": "mutant", "scale": 0.85}
 	]
@@ -1410,7 +1417,7 @@ func activate_stage(stage:String, with_sound:bool) -> void:
 			enemy.release_from_cell()
 	var handle:Node3D = levers[stage].get_meta("handle", null)
 	if is_instance_valid(handle):
-		handle.rotation.x = 0.75
+		create_tween().tween_property(handle, "rotation:x", 0.75, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	Global.save_progress("calabouco_terror")
 	update_hud()
 
@@ -1440,18 +1447,10 @@ func start_finale_cutscene() -> void:
 		spawn_infected(record, true)
 	sequence_running = true
 	player.controls_enabled = false
-	var cinematic := Camera3D.new()
-	add_child(cinematic)
-	cinematic.global_position = player.camera.global_position
-	cinematic.current = true
-	for point in [Vector3(0, 3, -45), Vector3(0, 3.2, -92), Vector3(-45, 3, -104), Vector3(-56, 3, -132), Vector3(48, 3, -102), Vector3(56, 3, -132), Vector3(-32, 3, -164), Vector3(32, 3, -164)]:
-		cinematic.look_at(point + Vector3(0, -0.8, -5), Vector3.UP)
-		await create_tween().set_trans(Tween.TRANS_SINE).tween_property(cinematic, "global_position", point, 0.72).finished
 	fade_overlay.visible = true
 	fade_overlay.color = Color(0, 0, 0, 0)
 	await create_tween().tween_property(fade_overlay, "color:a", 1, 0.4).finished
-	player.camera.current = true
-	cinematic.queue_free()
+	await get_tree().create_timer(0.3).timeout
 	await create_tween().tween_property(fade_overlay, "color:a", 0, 0.55).finished
 	fade_overlay.visible = false
 	player.controls_enabled = true
@@ -1586,51 +1585,91 @@ func spawn_ammo_drop(pos:Vector3, weapon_type:String) -> void:
 	active_ammo_drops.append(drop)
 
 
+func blood_fade_ramp() -> Gradient:
+	var gradient := Gradient.new()
+	gradient.set_color(0, Color(0.62, 0.03, 0.03, 1.0))
+	gradient.set_color(1, Color(0.2, 0.004, 0.008, 0.0))
+	gradient.add_point(0.45, Color(0.4, 0.01, 0.015, 1.0))
+	return gradient
+
 func spawn_blood_hit(hit_position:Vector3, direction:Vector3) -> void:
 	var particles := CPUParticles3D.new()
 	particles.position = hit_position
-	particles.amount = 45
-	particles.lifetime = 0.65
+	particles.amount = 90
+	particles.lifetime = 0.75
 	particles.one_shot = true
-	particles.explosiveness = 0.95
+	particles.explosiveness = 0.92
 	particles.direction = direction
-	particles.spread = 55
-	particles.initial_velocity_min = 2.4
-	particles.initial_velocity_max = 7.0
-	particles.gravity = Vector3(0, -9.8, 0)
+	particles.spread = 42
+	particles.initial_velocity_min = 3.2
+	particles.initial_velocity_max = 9.5
+	particles.gravity = Vector3(0, -13.0, 0)
+	particles.scale_amount_min = 0.55
+	particles.scale_amount_max = 1.6
+	particles.color_ramp = blood_fade_ramp()
+	particles.particle_flag_align_y = true
 	var mesh := SphereMesh.new()
-	mesh.radius = 0.018
-	mesh.height = 0.04
+	mesh.radius = 0.011
+	mesh.height = 0.1
 	mesh.material = blood_material
 	particles.mesh = mesh
 	add_child(particles)
 	particles.emitting = true
-	get_tree().create_timer(1.2).timeout.connect(particles.queue_free)
+	get_tree().create_timer(1.4).timeout.connect(particles.queue_free)
 
 func spawn_enemy_death_blood(death_position:Vector3, enemy_kind:String) -> void:
+	var base_amount:int = 380 if enemy_kind != "hound" else 260
+	# Jato principal: gotas grandes e velozes, esticadas na direção do voo (mais realista que "bolinhas")
 	var particles := CPUParticles3D.new()
 	particles.position = death_position
-	particles.amount = 170 if enemy_kind != "hound" else 110
-	particles.lifetime = 1.15
+	particles.amount = base_amount
+	particles.lifetime = 1.4
 	particles.one_shot = true
 	particles.explosiveness = 1.0
 	particles.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
-	particles.emission_sphere_radius = 0.28
+	particles.emission_sphere_radius = 0.32
 	particles.direction = Vector3.UP
 	particles.spread = 180.0
-	particles.initial_velocity_min = 3.2
-	particles.initial_velocity_max = 9.5
-	particles.gravity = Vector3(0, -13.5, 0)
-	particles.scale_amount_min = 0.55
-	particles.scale_amount_max = 1.65
+	particles.initial_velocity_min = 4.0
+	particles.initial_velocity_max = 13.0
+	particles.gravity = Vector3(0, -16.0, 0)
+	particles.scale_amount_min = 0.5
+	particles.scale_amount_max = 1.9
+	particles.color_ramp = blood_fade_ramp()
+	particles.particle_flag_align_y = true
 	var droplet := SphereMesh.new()
-	droplet.radius = 0.045
-	droplet.height = 0.09
+	droplet.radius = 0.02
+	droplet.height = 0.17
 	droplet.material = blood_material
 	particles.mesh = droplet
 	add_child(particles)
 	particles.emitting = true
-	get_tree().create_timer(1.8).timeout.connect(particles.queue_free)
+	get_tree().create_timer(2.1).timeout.connect(particles.queue_free)
+	# Névoa fina complementar, para dar volume/densidade à explosão de sangue
+	var mist := CPUParticles3D.new()
+	mist.position = death_position
+	mist.amount = int(base_amount * 0.6)
+	mist.lifetime = 0.85
+	mist.one_shot = true
+	mist.explosiveness = 1.0
+	mist.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	mist.emission_sphere_radius = 0.22
+	mist.direction = Vector3.UP
+	mist.spread = 180.0
+	mist.initial_velocity_min = 1.5
+	mist.initial_velocity_max = 5.5
+	mist.gravity = Vector3(0, -6.0, 0)
+	mist.scale_amount_min = 0.2
+	mist.scale_amount_max = 0.55
+	mist.color_ramp = blood_fade_ramp()
+	var mist_mesh := SphereMesh.new()
+	mist_mesh.radius = 0.01
+	mist_mesh.height = 0.02
+	mist_mesh.material = blood_material
+	mist.mesh = mist_mesh
+	add_child(mist)
+	mist.emitting = true
+	get_tree().create_timer(1.2).timeout.connect(mist.queue_free)
 	create_blood_stain(Vector3(death_position.x, 0.025, death_position.z), enemy_kind)
 
 func create_blood_stain(floor_position:Vector3, enemy_kind:String) -> void:
@@ -1639,8 +1678,8 @@ func create_blood_stain(floor_position:Vector3, enemy_kind:String) -> void:
 	stain.position = floor_position
 	stain.rotation.y = randf_range(-PI, PI)
 	world_root.add_child(stain)
-	var stain_scale:float = 1.0 if enemy_kind != "hound" else 0.68
-	for index in 9:
+	var stain_scale:float = 1.35 if enemy_kind != "hound" else 0.9
+	for index in 13:
 		var pool := MeshInstance3D.new()
 		var disk := CylinderMesh.new()
 		var radius := randf_range(0.22, 0.62) * stain_scale
@@ -1661,12 +1700,14 @@ func on_player_caught(infected:DungeonInfected) -> void:
 	if Global.debug_dungeon_invincible || sequence_running:
 		return
 	
-	var damage:float = 34.0
+	var damage:float = 25.0
 	if is_instance_valid(infected):
 		if infected.enemy_kind == "hound":
-			damage = 38.0
+			damage = 14.0 # Rato tira menos sangue, o menor dos 3
+		elif infected.enemy_kind == "zombie":
+			damage = 25.0
 		elif infected.enemy_kind == "mutant":
-			damage = 44.0
+			damage = 42.0
 			
 	var hit_sfx := AudioStreamPlayer.new()
 	hit_sfx.stream = load("res://assets/novos_audios/sangue_fill_effect.mp3")
@@ -1776,7 +1817,7 @@ func apply_main_monster_strike(monster:DungeonMainMonster, attack_variant:int) -
 	throw_direction.y = 0.0
 	if throw_direction.length_squared() < 0.01:
 		throw_direction = -monster.global_transform.basis.z
-	var died := player.take_damage(45.0 + attack_variant * 5.0)
+	var died := player.take_damage(26.0 + attack_variant * 3.5)
 	player.apply_knockback(throw_direction.normalized() * (5.4 + attack_variant * 0.22) + Vector3.UP * 1.7, 0.56)
 	player.shake_camera(0.085, 0.62)
 	show_main_monster_blood(0.78)
@@ -1825,7 +1866,8 @@ func end_main_monster_grab(monster:DungeonMainMonster) -> void:
 	player.apply_knockback(throw_direction.normalized() * 10.5 + Vector3.UP * 5.6, 0.92)
 	player.shake_camera(0.14, 0.92)
 	show_main_monster_blood(1.0)
-	var died := player.take_damage(50.0)
+	var grab_damage:float = maxf(1.0, player.current_hp * 0.85)
+	var died := player.take_damage(grab_damage)
 	sequence_running = false
 	if died:
 		restart_after_caught(null)

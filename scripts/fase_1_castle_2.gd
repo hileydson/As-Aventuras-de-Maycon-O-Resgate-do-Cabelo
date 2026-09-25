@@ -105,11 +105,18 @@ func _on_animacoes_animation_finished(anim_name: StringName) -> void:
 func play_dungeon_return() -> void:
 	maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
 	maycon_fase.visible = true
-	maycon_fase.position = Vector2(-876.0, -520.0)
+	var landing_position := Vector2(-650.0, 98.0)
+	# Ele pulou do trampolim lá no calabouço, então tem que subir pelo mesmo buraco por onde caiu, não descer do céu.
+	var hole_position := Vector2(landing_position.x, landing_position.y + 160.0)
+	var launch_peak := Vector2(landing_position.x, landing_position.y - 340.0)
+	maycon_fase.position = hole_position
 	camera.make_current()
-	var arrival := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	arrival.tween_property(maycon_fase, "position", Vector2(-876.0, 20.0), 0.85)
+	var arrival := create_tween()
+	arrival.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	arrival.tween_property(maycon_fase, "position", launch_peak, 0.55)
+	arrival.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	arrival.tween_property(maycon_fase, "position", Vector2(landing_position.x, landing_position.y - 40.0), 0.45)
 	arrival.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	arrival.tween_property(maycon_fase, "position", Vector2(-650.0, 98.0), 0.5)
+	arrival.tween_property(maycon_fase, "position", landing_position, 0.35)
 	await arrival.finished
 	maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
