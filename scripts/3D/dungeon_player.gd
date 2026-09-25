@@ -2,6 +2,14 @@ class_name DungeonPlayer
 extends CharacterBody3D
 
 const STEP_SOUND:AudioStreamMP3 = preload("res://assets/novos_audios/mario_part_sounds/passo.mp3")
+const SERVICE_PISTOL_MODEL:PackedScene = preload("res://assets/modelo_3d/calabouco/service_pistol_4k.glb")
+const SMG_MODEL:PackedScene = preload("res://assets/modelo_3d/calabouco/SMG.fbx")
+const SMG_ALBEDO:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_BaseColor.png")
+const SMG_NORMAL:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Normal.png")
+const SMG_METALLIC:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Metallic.png")
+const SMG_ROUGHNESS:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Roughness.png")
+const PISTOL_REST_POSITION := Vector3(0.29, -0.3, -0.48)
+const SMG_REST_POSITION := Vector3(0.27, -0.31, -0.58)
 
 signal interact_pressed
 signal fired(origin:Vector3, direction:Vector3)
@@ -9,6 +17,9 @@ signal flashlight_toggled(enabled:bool)
 signal ammo_changed(current:int, reserve:int, weapon_name:String)
 signal reload_started
 signal reload_finished
+signal hp_changed(current:float, max_val:float)
+signal stamina_changed(current:float, max_val:float)
+signal player_died
 
 @export var walk_speed:float = 4.2
 @export var sprint_speed:float = 6.8
@@ -30,7 +41,9 @@ var fire_cooldown:float = 0.0
 var head_bob_time:float = 0.0
 var base_head_y:float = 1.58
 var gun_view:Node3D
-var gun_rest_position:Vector3 = Vector3(0.38, -0.36, -0.72)
+var weapon_model:Node3D
+var muzzle_marker:Marker3D
+var casing_eject_marker:Marker3D
 var step_audio:AudioStreamPlayer
 var step_timer:float = 0.0
 
@@ -45,6 +58,19 @@ const MACHINEGUN_CLIP_SIZE:int = 15
 var is_reloading:bool = false
 var reload_audio:AudioStreamPlayer
 var dry_fire_audio:AudioStreamPlayer
+var knockback_timer:float = 0.0
+var flashlight_reflection:ColorRect
+var flashlight_reflection_material:ShaderMaterial
+var flashlight_reflection_strength:float = 0.0
+var flashlight_reflection_time:float = 0.0
+
+var max_hp:float = 100.0
+var current_hp:float = 100.0
+var max_stamina:float = 100.0
+var current_stamina:float = 100.0
+var can_sprint:bool = true
+var is_sprinting:bool = false
+var damage_immune_timer:float = 0.0
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -67,6 +93,7 @@ func _ready() -> void:
 	dry_fire_audio.pitch_scale = 1.8
 	add_child(dry_fire_audio)
 	
+	build_flashlight_reflection()
 	build_view_gun()
 
 func _unhandled_input(event:InputEvent) -> void:
@@ -88,7 +115,16 @@ func _unhandled_input(event:InputEvent) -> void:
 		start_reload()
 
 func _physics_process(delta:float) -> void:
+	update_flashlight_reflection(delta)
 	fire_cooldown = maxf(0.0, fire_cooldown - delta)
+	damage_immune_timer = maxf(0.0, damage_immune_timer - delta)
+	if knockback_timer > 0.0:
+		knockback_timer = maxf(0.0, knockback_timer - delta)
+		if !is_on_floor():
+			velocity.y -= 18.0 * delta
+		move_and_slide()
+		_update_footsteps(delta, false, false)
+		return
 	if !is_on_floor():
 		velocity.y -= 18.0 * delta
 	else:
@@ -98,17 +134,38 @@ func _physics_process(delta:float) -> void:
 		velocity.x = move_toward(velocity.x, 0.0, 12.0 * delta)
 		velocity.z = move_toward(velocity.z, 0.0, 12.0 * delta)
 		move_and_slide()
+		if current_stamina < max_stamina:
+			current_stamina = minf(max_stamina, current_stamina + 24.0 * delta)
+			stamina_changed.emit(current_stamina, max_stamina)
 		return
 	var input_vector := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var direction := (transform.basis * Vector3(input_vector.x, 0.0, input_vector.y)).normalized()
-	var speed := sprint_speed if is_sprint_pressed() else walk_speed
+	var has_movement_input := input_vector.length_squared() > 0.01
+
+	# --- CONTROLE DE ESTAMINA E SPRINT (Impede corrida infinita) ---
+	var sprint_desired: bool = is_sprint_pressed() and has_movement_input
+	if sprint_desired and can_sprint and current_stamina > 0.0:
+		is_sprinting = true
+		current_stamina = maxf(0.0, current_stamina - 36.0 * delta) # ~2.8 segundos de sprint
+		if current_stamina <= 0.0:
+			can_sprint = false # Cansou completamente!
+	else:
+		is_sprinting = false
+		if current_stamina < max_stamina:
+			var regen_rate := 24.0 if !has_movement_input else 18.0
+			current_stamina = minf(max_stamina, current_stamina + regen_rate * delta)
+			if !can_sprint and current_stamina >= 25.0:
+				can_sprint = true # Recuperou fôlego suficiente para voltar a correr
+	
+	stamina_changed.emit(current_stamina, max_stamina)
+	var speed := sprint_speed if is_sprinting else walk_speed
 	velocity.x = move_toward(velocity.x, direction.x * speed, 18.0 * delta)
 	velocity.z = move_toward(velocity.z, direction.z * speed, 18.0 * delta)
 	move_and_slide()
 	var moving := Vector2(velocity.x, velocity.z).length() > 0.4 && is_on_floor()
-	_update_footsteps(delta, moving, speed == sprint_speed)
+	_update_footsteps(delta, moving, is_sprinting)
 	if moving:
-		head_bob_time += delta * (11.0 if speed == sprint_speed else 8.0)
+		head_bob_time += delta * (11.0 if is_sprinting else 8.0)
 		head.position.y = base_head_y + sin(head_bob_time) * 0.035
 	else:
 		head.position.y = lerpf(head.position.y, base_head_y, delta * 8.0)
@@ -159,6 +216,64 @@ func toggle_flashlight() -> void:
 	flashlight_spill.visible = flashlight_on
 	flashlight_toggled.emit(flashlight_on)
 
+func build_flashlight_reflection() -> void:
+	var overlay_layer := CanvasLayer.new()
+	overlay_layer.name = "FlashlightCameraReflection"
+	overlay_layer.layer = -1
+	overlay_layer.add_to_group("hide_on_pause")
+	add_child(overlay_layer)
+	flashlight_reflection = ColorRect.new()
+	flashlight_reflection.name = "LensReflection"
+	flashlight_reflection.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	flashlight_reflection.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var reflection_shader := Shader.new()
+	reflection_shader.code = """
+shader_type canvas_item;
+render_mode unshaded;
+
+uniform float intensity = 0.0;
+uniform float flare_time = 0.0;
+
+float soft_orb(vec2 uv, vec2 center, float radius, float softness) {
+	float distance_to_center = length((uv - center) * vec2(1.0, 1.72));
+	return 1.0 - smoothstep(radius, radius + softness, distance_to_center);
+}
+
+void fragment() {
+	vec2 uv = UV;
+	float breathe = 0.96 + sin(flare_time * 2.1) * 0.025 + sin(flare_time * 6.7) * 0.012;
+	vec2 center = vec2(0.535, 0.52 + sin(flare_time * 1.35) * 0.0025);
+	float core = soft_orb(uv, center, 0.055, 0.19) * 0.075;
+	float inner = soft_orb(uv, center, 0.015, 0.055) * 0.065;
+	float ring_distance = length((uv - center) * vec2(1.0, 1.72));
+	float ring = (1.0 - smoothstep(0.012, 0.035, abs(ring_distance - 0.225))) * 0.018;
+	vec2 axis = center - uv;
+	float ghost_a = soft_orb(uv, center + axis * 1.7 + vec2(-0.19, 0.12), 0.012, 0.052) * 0.032;
+	float ghost_b = soft_orb(uv, center + axis * 0.8 + vec2(0.22, -0.14), 0.02, 0.065) * 0.024;
+	float streak = exp(-abs(uv.y - center.y) * 115.0) * exp(-abs(uv.x - center.x) * 3.8) * 0.012;
+	float alpha = (core + inner + ring + ghost_a + ghost_b + streak) * intensity * breathe;
+	vec3 warm_light = mix(vec3(1.0, 0.76, 0.42), vec3(0.72, 0.88, 1.0), clamp(ring + ghost_b, 0.0, 1.0));
+	COLOR = vec4(warm_light, alpha);
+}
+"""
+	flashlight_reflection_material = ShaderMaterial.new()
+	flashlight_reflection_material.shader = reflection_shader
+	flashlight_reflection.material = flashlight_reflection_material
+	overlay_layer.add_child(flashlight_reflection)
+
+func update_flashlight_reflection(delta:float) -> void:
+	if !is_instance_valid(flashlight_reflection_material):
+		return
+	flashlight_reflection_time += delta
+	var target_strength:float = 1.0 if has_flashlight && flashlight_on else 0.0
+	flashlight_reflection_strength = move_toward(flashlight_reflection_strength, target_strength, delta * 3.6)
+	flashlight_reflection_material.set_shader_parameter("intensity", flashlight_reflection_strength)
+	flashlight_reflection_material.set_shader_parameter("flare_time", flashlight_reflection_time)
+
+func apply_knockback(force:Vector3, duration:float = 0.65) -> void:
+	velocity = force
+	knockback_timer = duration
+
 func _update_footsteps(delta:float, moving:bool, running:bool) -> void:
 	if !moving:
 		step_timer = 0.0
@@ -199,8 +314,8 @@ func start_reload() -> void:
 		
 	# Animação de inclinar/abaixar a arma durante recarga
 	if is_instance_valid(gun_view):
-		var target_down:Vector3 = (Vector3(0.38, -0.4, -0.64) if weapon_mode == "pistol" else gun_rest_position) + Vector3(0, -0.28, 0.12)
-		var rest_pos:Vector3 = Vector3(0.38, -0.4, -0.64) if weapon_mode == "pistol" else gun_rest_position
+		var rest_pos:Vector3 = get_weapon_rest_position()
+		var target_down:Vector3 = rest_pos + Vector3(0, -0.28, 0.12)
 		var t := create_tween()
 		t.tween_property(gun_view, "position", target_down, dur * 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		t.tween_interval(dur * 0.15)
@@ -225,17 +340,19 @@ func start_reload() -> void:
 
 func eject_casing() -> void:
 	var casing := RigidBody3D.new()
+	casing.name = "EjectedCasing"
 	var mesh_inst := MeshInstance3D.new()
 	var cyl := CylinderMesh.new()
-	cyl.top_radius = 0.009
-	cyl.bottom_radius = 0.009
-	cyl.height = 0.028
+	cyl.top_radius = 0.011 if weapon_mode == "pistol" else 0.009
+	cyl.bottom_radius = cyl.top_radius
+	cyl.height = 0.034 if weapon_mode == "pistol" else 0.03
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.85, 0.65, 0.22)
+	mat.albedo_color = Color(0.92, 0.68, 0.19)
 	mat.metallic = 0.95
-	mat.roughness = 0.2
+	mat.roughness = 0.16
 	cyl.material = mat
 	mesh_inst.mesh = cyl
+	mesh_inst.rotation.z = PI * 0.5
 	casing.add_child(mesh_inst)
 	var col := CollisionShape3D.new()
 	var col_shape := SphereShape3D.new()
@@ -245,16 +362,82 @@ func eject_casing() -> void:
 	casing.collision_layer = 0
 	casing.collision_mask = 1
 	casing.mass = 0.02
-	
-	var spawn_pos := camera.global_position + camera.global_transform.basis * Vector3(0.32, -0.22, -0.45)
-	casing.global_position = spawn_pos
 	get_parent().add_child(casing)
-	
-	var eject_dir := camera.global_transform.basis * Vector3(randf_range(2.2, 3.8), randf_range(1.6, 2.8), randf_range(0.4, 1.2))
+	var spawn_transform := casing_eject_marker.global_transform if is_instance_valid(casing_eject_marker) else camera.global_transform.translated_local(Vector3(0.3, -0.2, -0.45))
+	casing.global_transform = spawn_transform
+	var eject_dir := camera.global_transform.basis * Vector3(randf_range(3.2, 4.8), randf_range(2.0, 3.4), randf_range(0.2, 1.0))
 	casing.linear_velocity = eject_dir
-	casing.angular_velocity = Vector3(randf_range(-15, 15), randf_range(-15, 15), randf_range(-15, 15))
-	
-	get_tree().create_timer(2.5).timeout.connect(casing.queue_free)
+	casing.angular_velocity = Vector3(randf_range(-24, 24), randf_range(-24, 24), randf_range(-24, 24))
+	get_tree().create_timer(4.0).timeout.connect(casing.queue_free)
+
+func play_muzzle_flash() -> void:
+	if !is_instance_valid(muzzle_marker):
+		return
+	var flash_root := Node3D.new()
+	flash_root.name = "MuzzleFlash"
+	get_parent().add_child(flash_root)
+	flash_root.global_transform = muzzle_marker.global_transform
+	var flash_material := StandardMaterial3D.new()
+	flash_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	flash_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	flash_material.albedo_color = Color(1.0, 0.58, 0.08, 0.96)
+	flash_material.emission_enabled = true
+	flash_material.emission = Color(1.0, 0.22, 0.015)
+	flash_material.emission_energy_multiplier = 8.0
+	var flame := MeshInstance3D.new()
+	var flame_mesh := SphereMesh.new()
+	flame_mesh.radius = 0.052
+	flame_mesh.height = 0.3
+	flame_mesh.material = flash_material
+	flame.mesh = flame_mesh
+	flame.rotation.x = PI * 0.5
+	flame.position.z = -0.12
+	flash_root.add_child(flame)
+	var core_material := StandardMaterial3D.new()
+	core_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	core_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	core_material.albedo_color = Color(1.0, 0.94, 0.55, 1.0)
+	core_material.emission_enabled = true
+	core_material.emission = Color(1.0, 0.62, 0.08)
+	core_material.emission_energy_multiplier = 12.0
+	var core := MeshInstance3D.new()
+	var core_mesh := SphereMesh.new()
+	core_mesh.radius = 0.022
+	core_mesh.height = 0.2
+	core_mesh.material = core_material
+	core.mesh = core_mesh
+	core.rotation.x = PI * 0.5
+	core.position.z = -0.1
+	flash_root.add_child(core)
+	var sparks := CPUParticles3D.new()
+	sparks.amount = 22 if weapon_mode == "machinegun" else 16
+	sparks.lifetime = 0.18
+	sparks.one_shot = true
+	sparks.explosiveness = 1.0
+	sparks.direction = Vector3(0, 0, -1)
+	sparks.spread = 24.0
+	sparks.initial_velocity_min = 4.5
+	sparks.initial_velocity_max = 10.5
+	sparks.scale_amount_min = 0.5
+	sparks.scale_amount_max = 1.35
+	var spark_mesh := SphereMesh.new()
+	spark_mesh.radius = 0.006
+	spark_mesh.height = 0.035
+	spark_mesh.material = flash_material
+	sparks.mesh = spark_mesh
+	flash_root.add_child(sparks)
+	sparks.emitting = true
+	muzzle_light.position = camera.to_local(muzzle_marker.global_position)
+	muzzle_light.light_energy = 7.0 if weapon_mode == "machinegun" else 5.8
+	muzzle_light.visible = true
+	var flash_tween := create_tween().set_parallel()
+	flash_tween.tween_property(flash_root, "scale", Vector3(0.2, 0.2, 0.55), 0.055).from(Vector3(1.15, 1.15, 1.4))
+	flash_tween.tween_property(flash_material, "albedo_color:a", 0.0, 0.07)
+	flash_tween.tween_property(core_material, "albedo_color:a", 0.0, 0.055)
+	get_tree().create_timer(0.075).timeout.connect(func():
+		muzzle_light.visible = false
+		flash_root.queue_free()
+	)
 
 func fire() -> void:
 	if is_reloading:
@@ -279,56 +462,81 @@ func fire() -> void:
 		return
 		
 	eject_casing()
+	play_muzzle_flash()
 	ammo_changed.emit(get_current_clip(), get_current_reserve(), weapon_mode)
 	
 	var direction := -camera.global_transform.basis.z
 	fired.emit(camera.global_position, direction)
-	muzzle_light.visible = true
-	var tween := create_tween()
-	tween.tween_interval(0.035)
-	tween.tween_callback(func(): muzzle_light.visible = false)
 	camera.rotation.z = randf_range(-0.012, 0.012)
 	create_tween().tween_property(camera, "rotation:z", 0.0, 0.07)
 	if is_instance_valid(gun_view):
-		gun_view.position = (Vector3(0.38, -0.4, -0.64) if weapon_mode == "pistol" else gun_rest_position) + Vector3(0, 0.02, 0.09)
-		create_tween().tween_property(gun_view, "position", (Vector3(0.38, -0.4, -0.64) if weapon_mode == "pistol" else gun_rest_position), 0.075)
+		var rest_position := get_weapon_rest_position()
+		gun_view.position = rest_position + Vector3(0, 0.025, 0.1)
+		gun_view.rotation.x = -0.055
+		var recoil := create_tween().set_parallel()
+		recoil.tween_property(gun_view, "position", rest_position, 0.085).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		recoil.tween_property(gun_view, "rotation:x", 0.0, 0.09).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		
 	if get_current_clip() == 0 && get_current_reserve() > 0:
 		start_reload()
 
 func build_view_gun() -> void:
 	gun_view = Node3D.new()
-	gun_view.name = "MachineGunView"
-	gun_view.position = gun_rest_position
+	gun_view.name = "WeaponView"
+	gun_view.position = SMG_REST_POSITION
 	gun_view.visible = false
 	camera.add_child(gun_view)
-	var dark_metal := StandardMaterial3D.new()
-	dark_metal.albedo_color = Color(0.055, 0.06, 0.065)
-	dark_metal.metallic = 0.88
-	dark_metal.roughness = 0.32
-	var wood := StandardMaterial3D.new()
-	wood.albedo_color = Color(0.22, 0.105, 0.045)
-	wood.roughness = 0.85
-	add_gun_box(Vector3.ZERO, Vector3(0.22, 0.2, 0.72), dark_metal)
-	add_gun_box(Vector3(0, 0.025, -0.56), Vector3(0.08, 0.08, 0.55), dark_metal)
-	add_gun_box(Vector3(0, -0.08, 0.47), Vector3(0.2, 0.3, 0.35), wood)
-	add_gun_box(Vector3(0.12, -0.18, 0.06), Vector3(0.09, 0.33, 0.12), dark_metal)
+	muzzle_marker = Marker3D.new()
+	muzzle_marker.name = "MuzzleMarker"
+	gun_view.add_child(muzzle_marker)
+	casing_eject_marker = Marker3D.new()
+	casing_eject_marker.name = "CasingEjectMarker"
+	gun_view.add_child(casing_eject_marker)
 	update_view_gun()
 
 func update_view_gun() -> void:
 	if !is_instance_valid(gun_view):
 		return
-	gun_view.scale = Vector3(0.72, 0.82, 0.7) if weapon_mode == "pistol" else Vector3.ONE
-	gun_view.position = Vector3(0.38, -0.4, -0.64) if weapon_mode == "pistol" else gun_rest_position
+	if is_instance_valid(weapon_model):
+		weapon_model.queue_free()
+	weapon_model = (SERVICE_PISTOL_MODEL if weapon_mode == "pistol" else SMG_MODEL).instantiate() as Node3D
+	weapon_model.name = "ServicePistolModel" if weapon_mode == "pistol" else "SMGModel"
+	gun_view.add_child(weapon_model)
+	if weapon_mode == "pistol":
+		weapon_model.scale = Vector3.ONE * 1.55
+		weapon_model.rotation.y = PI * 0.5
+		hide_service_pistol_loose_parts(weapon_model)
+		muzzle_marker.position = Vector3(0, 0.035, -0.185)
+		casing_eject_marker.position = Vector3(0.045, 0.07, -0.035)
+	else:
+		weapon_model.scale = Vector3.ONE * 0.86
+		weapon_model.rotation.y = PI
+		apply_smg_material(weapon_model)
+		muzzle_marker.position = Vector3(0, 0.035, -0.34)
+		casing_eject_marker.position = Vector3(0.07, 0.075, -0.08)
+	gun_view.position = get_weapon_rest_position()
+	gun_view.rotation = Vector3.ZERO
 
-func add_gun_box(position_value:Vector3, size:Vector3, material:Material) -> void:
-	var mesh_instance := MeshInstance3D.new()
-	var mesh := BoxMesh.new()
-	mesh.size = size
-	mesh.material = material
-	mesh_instance.mesh = mesh
-	mesh_instance.position = position_value
-	gun_view.add_child(mesh_instance)
+func get_weapon_rest_position() -> Vector3:
+	return PISTOL_REST_POSITION if weapon_mode == "pistol" else SMG_REST_POSITION
+
+func hide_service_pistol_loose_parts(model:Node3D) -> void:
+	for node_name in ["service_pistol_bullet", "service_pistol_magazine_loaded"]:
+		var loose_part := model.find_child(node_name, true, false) as Node3D
+		if is_instance_valid(loose_part):
+			loose_part.visible = false
+
+func apply_smg_material(model:Node3D) -> void:
+	var material := StandardMaterial3D.new()
+	material.albedo_texture = SMG_ALBEDO
+	material.normal_enabled = true
+	material.normal_texture = SMG_NORMAL
+	material.metallic = 1.0
+	material.metallic_texture = SMG_METALLIC
+	material.roughness = 1.0
+	material.roughness_texture = SMG_ROUGHNESS
+	for mesh in model.find_children("*", "MeshInstance3D", true, false):
+		(mesh as MeshInstance3D).material_override = material
 
 func camera_forward() -> Vector3:
 	return -camera.global_transform.basis.z
@@ -343,3 +551,27 @@ func shake_camera(intensity:float = 0.06, duration:float = 0.6) -> void:
 		tween.parallel().tween_property(camera, "rotation:z", rot, 0.05)
 	tween.tween_property(camera, "position", Vector3.ZERO, 0.1)
 	tween.parallel().tween_property(camera, "rotation:z", 0.0, 0.1)
+
+func take_damage(amount:float) -> bool:
+	var global_node = get_node_or_null("/root/Global")
+	if is_instance_valid(global_node) && "debug_dungeon_invincible" in global_node && global_node.debug_dungeon_invincible:
+		return false
+	if damage_immune_timer > 0.0 || current_hp <= 0.0:
+		return false
+	damage_immune_timer = 0.45
+	current_hp = maxf(0.0, current_hp - amount)
+	hp_changed.emit(current_hp, max_hp)
+	shake_camera(0.08, 0.42)
+	if current_hp <= 0.0:
+		player_died.emit()
+		return true
+	return false
+
+func heal(amount:float) -> void:
+	current_hp = minf(max_hp, current_hp + amount)
+	hp_changed.emit(current_hp, max_hp)
+
+func curar_sangue(percentual:float = 0.20) -> int:
+	var heal_amt := max_hp * percentual
+	heal(heal_amt)
+	return int(heal_amt)

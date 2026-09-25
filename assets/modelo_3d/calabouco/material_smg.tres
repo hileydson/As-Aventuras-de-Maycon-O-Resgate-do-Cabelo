@@ -1,0 +1,19 @@
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_BaseColor.png" id="1_d23mp"]
+[ext_resource type="Texture2D" path="res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Height.png" id="2_ua7um"]
+[ext_resource type="Texture2D" path="res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Metallic.png" id="3_c781m"]
+[ext_resource type="Texture2D" path="res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Normal.png" id="4_ctbnm"]
+[ext_resource type="Texture2D" path="res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Roughness.png" id="5_u8e2f"]
+
+[resource]
+resource_name = "SMG_Material"
+albedo_texture = ExtResource("1_d23mp")
+metallic = 1.0
+metallic_texture = ExtResource("3_c781m")
+roughness_texture = ExtResource("5_u8e2f")
+normal_enabled = true
+normal_texture = ExtResource("4_ctbnm")
+heightmap_enabled = true
+heightmap_scale = 0.02
+heightmap_texture = ExtResource("2_ua7um")

@@ -53,5 +53,5 @@ Qualquer texto novo do jogo deve ser incluído nos arquivos CSV de localização
 - **Poly Haven:** downloads de modelos e texturas estão liberados em <https://polyhaven.com/models> e <https://polyhaven.com/textures>.
 - **Kenney:** texturas estão disponíveis em <https://kenney.nl/assets/category:Textures>.
 - **Sketchfab:** quando necessário, é permitido pesquisar e baixar modelos gratuitos em <https://sketchfab.com/features/free-3d-models>, desde que a licença específica do modelo seja compatível com o uso no jogo e sejam cumpridos os requisitos de atribuição.
-- **sfxr.me:** é permitido gerar e baixar sons dessa plataforma em <https://sfxr.me/> criando o som que quiser, especialmente indicado para sons voltados para menu e sons de interface.
-- **Pixabay:** downloads de efeitos sonoros gratuitos para qualquer necessidade estão liberados em <https://pixabay.com/pt/sound-effects/search/>.
+- **sfxr.me:** somente é permitido usar essa plataforma (<https://sfxr.me/>) para gerar e baixar sons voltados exclusivamente para menus e interface, e NÃO para o jogo em si (gameplay). Para os sons do game em si, utilize as outras fontes disponíveis na lista próprias para sons diversos (como o Pixabay).
+- **Pixabay:** downloads de efeitos sonoros gratuitos para qualquer necessidade do jogo estão liberados em <https://pixabay.com/pt/sound-effects/search/>.

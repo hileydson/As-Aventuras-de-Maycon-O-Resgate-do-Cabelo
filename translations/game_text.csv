@@ -389,3 +389,5 @@ DUNGEON_GATE_LOCKED_RED,Portão Vermelho Trancado (Requer Chave Vermelha),Red Ga
 DUNGEON_GATE_LOCKED_GREEN,Portão Verde Trancado (Requer Chave Verde),Green Gate Locked (Requires Green Key),Portón Verde Cerrado (Requiere Llave Verde),绿色大门已锁（需要绿钥匙）
 DUNGEON_GATE_LOCKED_AXE,Cela do Machado Trancada (Requer Chave da Cela),Axe Cell Locked (Requires Cell Key),Celda del Hacha Cerrada (Requiere Llave de Celda),斧头牢房已锁（需要牢房钥匙）
 DUNGEON_RUN_ACTION,Correr,Run,Correr,奔跑
+DUNGEON_HP_LABEL,SANGUE,BLOOD,SANGRE,血量
+DUNGEON_STAMINA_LABEL,ESTAMINA,STAMINA,ESTAMINA,耐力

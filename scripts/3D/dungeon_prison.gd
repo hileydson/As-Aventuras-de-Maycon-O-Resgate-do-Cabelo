@@ -8,8 +8,15 @@ const RUNNER_MODEL := "res://assets/horror_creatures/horror_runner.glb"
 const HOUND_MODEL := "res://assets/horror_creatures/plague_hound.glb"
 const FALL_IMPACT_SOUND := preload("res://assets/novos_audios/calabouco_terror/dungeon_fall_impact.wav")
 const DUST_TEXTURE := preload("res://assets/novas_imagens/effects/dust_puff.png")
+const SERVICE_PISTOL_PATH := "res://assets/modelo_3d/calabouco/service_pistol_4k.glb"
+const SMG_PATH := "res://assets/modelo_3d/calabouco/SMG.fbx"
+const SMG_ALBEDO:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_BaseColor.png")
+const SMG_NORMAL:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Normal.png")
+const SMG_METALLIC:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Metallic.png")
+const SMG_ROUGHNESS:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Roughness.png")
 
 var player:DungeonPlayer
+var main_monster:DungeonMainMonster
 var world_root:Node3D
 var enemies:Array[DungeonInfected] = []
 var enemy_spawns:Array[Dictionary] = []
@@ -31,9 +38,15 @@ var prompt_label:Label
 var flashlight_label:Label
 var weapon_label:Label
 var ammo_label:Label
+var crosshair_label:Label
 var sprint_hud:Control
 var sprint_rb_icon:Sprite2D
 var sprint_shift_icon:Sprite2D
+var status_hud:Control
+var health_bar:ProgressBar
+var health_label:Label
+var stamina_bar:ProgressBar
+var stamina_label:Label
 var notice_label:Label
 var notice_timer:float = 0.0
 var active_ammo_drops:Array[Node3D] = []
@@ -43,6 +56,7 @@ var inventory_bar:HBoxContainer
 var gun_sound:AudioStreamPlayer
 var pickup_sound:AudioStreamPlayer
 var gate_sound:AudioStreamPlayer3D
+var monster_damage_sound:AudioStreamPlayer
 var current_interaction := ""
 var sequence_running := false
 var elapsed := 0.0
@@ -54,6 +68,10 @@ var rotten_material:StandardMaterial3D
 var blood_material:StandardMaterial3D
 var flesh_material:StandardMaterial3D
 var auto_release_assigned:bool = false
+var main_monster_grab_active:bool = false
+var main_monster_grab_anchor:Marker3D
+var main_monster_grabber:DungeonMainMonster
+var monster_damage_serial:int = 0
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -64,6 +82,7 @@ func _ready() -> void:
 	build_player()
 	build_pickups()
 	build_infected_population()
+	build_main_monster()
 	build_hud()
 	build_audio()
 	apply_saved_state()
@@ -145,9 +164,10 @@ func build_prison() -> void:
 	for x in [28.0, 43.0]:
 		build_cell_x(x, -164, -1, "green", x == 28.0)
 		build_cell_x(x, -164, 1, "green", false)
-	route_gates["blue"] = build_gate("BlueRouteGate", Vector3(19, 0, -94), 9, "x", Color(0.08, 0.3, 1))
-	route_gates["red"] = build_gate("RedRouteGate", Vector3(-7, 0, -108), 8, "z", Color(1, 0.035, 0.02))
-	route_gates["green"] = build_gate("GreenRouteGate", Vector3(7, 0, -108), 8, "z", Color(0.04, 1, 0.2))
+	create_box("EntranceSouthWall", Vector3(0, 2.15, 6), Vector3(22.6, 4.8, 0.6), stone_material, true, world_root)
+	route_gates["blue"] = build_gate("BlueRouteGate", Vector3(17.7, 0, -94), 12.2, "x", Color(0.08, 0.3, 1))
+	route_gates["red"] = build_gate("RedRouteGate", Vector3(-7, 0, -107.7), 10.2, "z", Color(1, 0.035, 0.02))
+	route_gates["green"] = build_gate("GreenRouteGate", Vector3(7, 0, -107.7), 10.2, "z", Color(0.04, 1, 0.2))
 	build_key_rooms()
 	build_debris()
 	for fixture in [Vector3(0, 4.15, -8), Vector3(0, 4.15, -36), Vector3(0, 4.15, -70), Vector3(-35, 4.15, -94), Vector3(-56, 4.15, -118), Vector3(35, 4.15, -94), Vector3(56, 4.15, -118), Vector3(-30, 4.15, -164), Vector3(30, 4.15, -164)]:
@@ -167,9 +187,45 @@ func build_hub() -> void:
 
 func build_corridor_z(prefix:String, x:float, z:float, width:float, length:float) -> void:
 	create_box(prefix + "Floor", Vector3(x, -0.25, z), Vector3(width, 0.5, length), floor_material, true, world_root)
-	create_box(prefix + "Ceiling", Vector3(x, 4.6, z), Vector3(width, 0.45, length), stone_material, true, world_root)
+	if prefix == "Entrance":
+		build_entrance_ceiling_hole(x, z, width, length)
+	else:
+		create_box(prefix + "Ceiling", Vector3(x, 4.6, z), Vector3(width, 0.45, length), stone_material, true, world_root)
 	create_box(prefix + "LeftWall", Vector3(x - width * 0.5, 2.15, z), Vector3(0.6, 4.8, length), stone_material, true, world_root)
 	create_box(prefix + "RightWall", Vector3(x + width * 0.5, 2.15, z), Vector3(0.6, 4.8, length), stone_material, true, world_root)
+
+func build_entrance_ceiling_hole(x:float, z:float, width:float, length:float) -> void:
+	var hole_center_z:float = 3.5
+	var hole_width:float = 5.6
+	var hole_length:float = 5.0
+	var side_width:float = (width - hole_width) * 0.5
+	var side_offset:float = hole_width * 0.5 + side_width * 0.5
+	create_box("EntranceCeilingLeft", Vector3(x - side_offset, 4.6, z), Vector3(side_width, 0.45, length), stone_material, true, world_root)
+	create_box("EntranceCeilingRight", Vector3(x + side_offset, 4.6, z), Vector3(side_width, 0.45, length), stone_material, true, world_root)
+	var corridor_min_z:float = z - length * 0.5
+	var hole_min_z:float = hole_center_z - hole_length * 0.5
+	var back_length:float = hole_min_z - corridor_min_z
+	create_box("EntranceCeilingBack", Vector3(x, 4.6, corridor_min_z + back_length * 0.5), Vector3(hole_width, 0.45, back_length), stone_material, true, world_root)
+	build_trampoline_shaft(Vector3(x, 4.6, hole_center_z), hole_width, hole_length)
+
+func build_trampoline_shaft(hole_center:Vector3, hole_width:float, hole_length:float) -> void:
+	var shaft_height:float = 6.2
+	var shaft_center_y:float = hole_center.y + shaft_height * 0.5
+	create_box("TrampolineShaftLeft", Vector3(hole_center.x - hole_width * 0.5, shaft_center_y, hole_center.z), Vector3(0.4, shaft_height, hole_length), stone_material, true, world_root)
+	create_box("TrampolineShaftRight", Vector3(hole_center.x + hole_width * 0.5, shaft_center_y, hole_center.z), Vector3(0.4, shaft_height, hole_length), stone_material, true, world_root)
+	create_box("TrampolineShaftBack", Vector3(hole_center.x, shaft_center_y, hole_center.z - hole_length * 0.5), Vector3(hole_width, shaft_height, 0.4), stone_material, true, world_root)
+	create_box("TrampolineShaftFront", Vector3(hole_center.x, shaft_center_y, hole_center.z + hole_length * 0.5), Vector3(hole_width, shaft_height, 0.4), stone_material, true, world_root)
+	var void_material := colored_material(Color(0.0005, 0.0005, 0.001), 0.0, 1.0)
+	void_material.emission_enabled = true
+	void_material.emission = Color(0.0002, 0.0002, 0.0005)
+	create_box("TrampolineShaftDarkness", Vector3(hole_center.x, hole_center.y + shaft_height + 0.05, hole_center.z), Vector3(hole_width - 0.35, 0.1, hole_length - 0.35), void_material, false, world_root)
+	for rim in [
+		[Vector3(hole_center.x - hole_width * 0.5, hole_center.y, hole_center.z), Vector3(0.5, 0.32, hole_length + 0.5)],
+		[Vector3(hole_center.x + hole_width * 0.5, hole_center.y, hole_center.z), Vector3(0.5, 0.32, hole_length + 0.5)],
+		[Vector3(hole_center.x, hole_center.y, hole_center.z - hole_length * 0.5), Vector3(hole_width + 0.5, 0.32, 0.5)],
+		[Vector3(hole_center.x, hole_center.y, hole_center.z + hole_length * 0.5), Vector3(hole_width + 0.5, 0.32, 0.5)]
+	]:
+		create_box("BrokenHoleRim", rim[0], rim[1], stone_material, true, world_root)
 
 func build_corridor_x(prefix:String, x:float, z:float, length:float, width:float) -> void:
 	create_box(prefix + "Floor", Vector3(x, -0.25, z), Vector3(length, 0.5, width), floor_material, true, world_root)
@@ -182,7 +238,7 @@ func build_cell_z(corridor_x:float, side:int, z:float, stage:String, empty:bool)
 	var front_x := corridor_x + side * 5.25
 	create_box("CellDivider", Vector3(center_x, 2, z - 3.4), Vector3(5.6, 4.4, 0.35), stone_material, true, world_root)
 	create_box("CellDivider", Vector3(center_x, 2, z + 3.4), Vector3(5.6, 4.4, 0.35), stone_material, true, world_root)
-	var door := build_gate("Cell_%s_%s" % [stage, str(z)], Vector3(front_x, 0, z), 5.8, "x", Color(0.32, 0.09, 0.05), false)
+	var door := build_gate("Cell_%s_%s" % [stage, str(z)], Vector3(front_x, 0, z), 7.0, "x", Color(0.32, 0.09, 0.05), false)
 	if empty:
 		hiding_zones.append(AABB(Vector3(minf(front_x, center_x) - 0.5, -0.2, z - 3), Vector3(absf(center_x - front_x) + 1, 2.8, 6)))
 		create_box("CellCover", Vector3(center_x, 0.8, z), Vector3(1.8, 1.6, 2.4), rotten_material, true, world_root)
@@ -195,7 +251,7 @@ func build_cell_x(x:float, corridor_z:float, side:int, stage:String, empty:bool)
 	var front_z := corridor_z + side * 5.25
 	create_box("CellDivider", Vector3(x - 3.4, 2, center_z), Vector3(0.35, 4.4, 5.6), stone_material, true, world_root)
 	create_box("CellDivider", Vector3(x + 3.4, 2, center_z), Vector3(0.35, 4.4, 5.6), stone_material, true, world_root)
-	var door := build_gate("Cell_%s_%s" % [stage, str(x)], Vector3(x, 0, front_z), 5.8, "z", Color(0.32, 0.09, 0.05), false)
+	var door := build_gate("Cell_%s_%s" % [stage, str(x)], Vector3(x, 0, front_z), 7.0, "z", Color(0.32, 0.09, 0.05), false)
 	if empty:
 		hiding_zones.append(AABB(Vector3(x - 3, -0.2, minf(front_z, center_z) - 0.5), Vector3(6, 2.8, absf(center_z - front_z) + 1)))
 		create_box("CellCover", Vector3(x, 0.8, center_z), Vector3(2.4, 1.6, 1.8), rotten_material, true, world_root)
@@ -204,14 +260,49 @@ func build_cell_x(x:float, corridor_z:float, side:int, stage:String, empty:bool)
 		spawn_record(Vector3(x, 0, center_z), stage, door)
 
 func build_key_rooms() -> void:
-	key_room_doors["intro"] = build_gate("BlueKeyRoom", Vector3(-56, 0, -137), 9, "z", Color(0.08, 0.3, 1))
-	key_room_doors["blue"] = build_gate("RedKeyRoom", Vector3(56, 0, -137), 9, "z", Color(1, 0.035, 0.02))
-	key_room_doors["red"] = build_gate("GreenKeyRoom", Vector3(-49, 0, -164), 9, "x", Color(0.04, 1, 0.2))
-	key_room_doors["green"] = build_gate("FinalKeyRoom", Vector3(49, 0, -164), 9, "x", Color(0.8, 0.72, 0.5))
-	levers["intro"] = build_lever(Vector3(-51.5, 1, -133.5), "intro")
-	levers["blue"] = build_lever(Vector3(51.5, 1, -133.5), "blue")
-	levers["red"] = build_lever(Vector3(-45.5, 1, -159.5), "red")
-	levers["green"] = build_lever(Vector3(45.5, 1, -159.5), "green")
+	# --- 1. ALA INTRO (Caminho aberto do início: contém a Chave Azul) ---
+	# Fechamento do fundo do corredor OpenWing (z = -144)
+	create_box("OpenWingEndWall", Vector3(-56, 2.15, -144), Vector3(22.6, 4.8, 0.6), stone_material, true, world_root)
+	# Paredes da divisória frontal (z = -135) que selam de parede a parede
+	create_box("OpenWingGateWallL", Vector3(-63.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
+	create_box("OpenWingGateWallR", Vector3(-48.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
+	# Grade central azulada (tranca a sala onde fica a Chave Azul)
+	key_room_doors["intro"] = build_gate("BlueKeyRoom", Vector3(-56, 0, -135), 8.2, "z", Color(0.15, 0.45, 1.0))
+	# Alavanca na frente da grade, virada para o corredor por onde o jogador chega
+	levers["intro"] = build_lever(Vector3(-50.5, 1, -132.5), "intro", 0.0)
+
+	# --- 2. ALA AZUL (Portão Azul no Hub: contém a Chave Vermelha) ---
+	# Fechamento do fundo do corredor BlueWing (z = -144)
+	create_box("BlueWingEndWall", Vector3(56, 2.15, -144), Vector3(22.6, 4.8, 0.6), stone_material, true, world_root)
+	# Paredes da divisória frontal (z = -135)
+	create_box("BlueWingGateWallL", Vector3(48.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
+	create_box("BlueWingGateWallR", Vector3(63.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
+	# Grade central vermelha (tranca a sala onde fica a Chave Vermelha)
+	key_room_doors["blue"] = build_gate("RedKeyRoom", Vector3(56, 0, -135), 8.2, "z", Color(1.0, 0.05, 0.02))
+	# Alavanca na frente da grade, virada para o corredor
+	levers["blue"] = build_lever(Vector3(50.5, 1, -132.5), "blue", 0.0)
+
+	# --- 3. ALA VERMELHA (Portão Vermelho no Hub: contém a Chave Verde) ---
+	# Fechamento do fundo oeste do corredor RedWing (x = -53)
+	create_box("RedWingEndWall", Vector3(-53, 2.15, -164), Vector3(0.6, 4.8, 22.6), stone_material, true, world_root)
+	# Paredes da divisória frontal (x = -45)
+	create_box("RedWingGateWallN", Vector3(-45, 2.15, -171.5), Vector3(0.6, 4.8, 7.2), stone_material, true, world_root)
+	create_box("RedWingGateWallS", Vector3(-45, 2.15, -156.5), Vector3(0.6, 4.8, 7.2), stone_material, true, world_root)
+	# Grade central verde (tranca a sala onde fica a Chave Verde)
+	key_room_doors["red"] = build_gate("GreenKeyRoom", Vector3(-45, 0, -164), 8.2, "x", Color(0.05, 1.0, 0.2))
+	# Alavanca na frente da grade, virada para o leste/corredor
+	levers["red"] = build_lever(Vector3(-42.5, 1, -158.5), "red", PI * 0.5)
+
+	# --- 4. ALA VERDE (Portão Verde no Hub: contém a Chave da Cela do Machado) ---
+	# Fechamento do fundo leste do corredor GreenWing (x = 53)
+	create_box("GreenWingEndWall", Vector3(53, 2.15, -164), Vector3(0.6, 4.8, 22.6), stone_material, true, world_root)
+	# Paredes da divisória frontal (x = 45)
+	create_box("GreenWingGateWallN", Vector3(45, 2.15, -171.5), Vector3(0.6, 4.8, 7.2), stone_material, true, world_root)
+	create_box("GreenWingGateWallS", Vector3(45, 2.15, -156.5), Vector3(0.6, 4.8, 7.2), stone_material, true, world_root)
+	# Grade central (tranca a sala onde fica a Chave da Cela)
+	key_room_doors["green"] = build_gate("FinalKeyRoom", Vector3(45, 0, -164), 8.2, "x", Color(0.9, 0.8, 0.52))
+	# Alavanca na frente da grade, virada para o oeste/corredor
+	levers["green"] = build_lever(Vector3(42.5, 1, -158.5), "green", -PI * 0.5)
 
 func build_gate(node_name:String, position_value:Vector3, width:float, axis:String, color:Color, add_light:bool = true) -> Node3D:
 	var door := Node3D.new()
@@ -238,10 +329,11 @@ func build_gate(node_name:String, position_value:Vector3, width:float, axis:Stri
 		build_light(Vector3(0, 3.3, 0), color, 3.6, 7, door)
 	return door
 
-func build_lever(position_value:Vector3, stage:String) -> Node3D:
+func build_lever(position_value:Vector3, stage:String, rotation_y:float = 0.0) -> Node3D:
 	var lever := Node3D.new()
 	lever.name = "Lever_" + stage
 	lever.position = position_value
+	lever.rotation.y = rotation_y
 	world_root.add_child(lever)
 	create_box("Base", Vector3.ZERO, Vector3(0.65, 1, 0.35), iron_material, false, lever)
 	var handle := create_box("Handle", Vector3(0, 0.65, -0.08), Vector3(0.14, 0.95, 0.14), rotten_material, false, lever)
@@ -367,18 +459,22 @@ func build_player() -> void:
 
 func build_pickups() -> void:
 	pickups["flashlight"] = build_flashlight(Vector3(0.2, 0.45, -2.5))
-	# Caminho azul onde pega a pistola e a chave vermelha
-	pickups["pistol"] = build_gun(Vector3(-53.8, 0.62, -141), false)
-	pickups["red_key"] = build_key(Vector3(-56, 0.65, -141), Color(1, 0.035, 0.02), "RedKey")
-	# Caminho vermelho (sala à esquerda em z: -164): pega a metralhadora e a chave verde
-	pickups["machinegun"] = build_gun(Vector3(-43.0, 0.62, -164), true)
-	pickups["green_key"] = build_key(Vector3(-38.0, 0.65, -164), Color(0.04, 1, 0.2), "GreenKey")
-	# Caminho verde (sala à direita em z: -164): pega a chave da cela do machado
-	pickups["cell_key"] = build_key(Vector3(43.0, 0.65, -164), Color(0.9, 0.8, 0.52), "CellKey")
-	# Chave azul de suporte
-	pickups["blue_key"] = build_key(Vector3(56, 0.65, -141), Color(0.08, 0.3, 1), "BlueKey")
 	
-	axe_door = build_gate("AxeCellDoor", Vector3(-5.25, 0, -7), 5.8, "x", Color(0.95, 0.02, 0.01))
+	# Caminho aberto de início (OpenWing): pistola no corredor e chave azul dentro da cela
+	pickups["pistol"] = build_gun(Vector3(-56.0, 0.62, -125.0), false)
+	pickups["blue_key"] = build_key(Vector3(-56.0, 0.65, -140.0), Color(0.12, 0.4, 1.0), "BlueKey")
+
+	# Passagem azul (BlueWing): chave vermelha dentro da cela
+	pickups["red_key"] = build_key(Vector3(56.0, 0.65, -140.0), Color(1.0, 0.05, 0.02), "RedKey")
+
+	# Passagem vermelha (RedWing): metralhadora no corredor e chave verde dentro da cela
+	pickups["machinegun"] = build_gun(Vector3(-32.0, 0.62, -164.0), true)
+	pickups["green_key"] = build_key(Vector3(-49.5, 0.65, -164.0), Color(0.05, 1.0, 0.2), "GreenKey")
+
+	# Passagem verde (GreenWing): chave da cela do machado dentro da cela
+	pickups["cell_key"] = build_key(Vector3(49.5, 0.65, -164.0), Color(0.9, 0.8, 0.52), "CellKey")
+
+	axe_door = build_gate("AxeCellDoor", Vector3(-5.25, 0, -7), 7.0, "x", Color(0.95, 0.02, 0.01))
 	axe_pickup = build_axe(Vector3(-8.2, 0.72, -7))
 	trampoline = Node3D.new()
 	trampoline.position = Vector3(0, 0, 3.5)
@@ -396,13 +492,33 @@ func build_flashlight(position_value:Vector3) -> Node3D:
 
 func build_gun(position_value:Vector3, machinegun:bool) -> Node3D:
 	var gun := Node3D.new()
+	gun.name = "SMGPickup" if machinegun else "ServicePistolPickup"
 	gun.position = position_value
 	world_root.add_child(gun)
-	create_box("Body", Vector3.ZERO, Vector3(0.3, 0.26, 1.15 if machinegun else 0.62), iron_material, false, gun)
-	create_box("Barrel", Vector3(0, 0.03, -0.78 if machinegun else -0.48), Vector3(0.11, 0.11, 0.75 if machinegun else 0.42), iron_material, false, gun)
-	create_box("Grip", Vector3(0, -0.24, 0.2), Vector3(0.18, 0.48, 0.22), rotten_material, false, gun)
+	var model := instantiate_model(SMG_PATH if machinegun else SERVICE_PISTOL_PATH, Vector3.ZERO, Vector3.ONE * (0.95 if machinegun else 2.15), gun)
+	if is_instance_valid(model):
+		model.rotation.y = PI if machinegun else PI * 0.5
+		if machinegun:
+			apply_pickup_smg_material(model)
+		else:
+			for node_name in ["service_pistol_bullet", "service_pistol_magazine_loaded"]:
+				var loose_part := model.find_child(node_name, true, false) as Node3D
+				if is_instance_valid(loose_part):
+					loose_part.visible = false
 	build_light(Vector3(0, 0.3, 0), Color(1, 0.48, 0.08), 3, 4.5, gun)
 	return gun
+
+func apply_pickup_smg_material(model:Node3D) -> void:
+	var material := StandardMaterial3D.new()
+	material.albedo_texture = SMG_ALBEDO
+	material.normal_enabled = true
+	material.normal_texture = SMG_NORMAL
+	material.metallic = 1.0
+	material.metallic_texture = SMG_METALLIC
+	material.roughness = 1.0
+	material.roughness_texture = SMG_ROUGHNESS
+	for mesh in model.find_children("*", "MeshInstance3D", true, false):
+		(mesh as MeshInstance3D).material_override = material
 
 func build_key(position_value:Vector3, color:Color, node_name:String) -> Node3D:
 	var key := Node3D.new()
@@ -482,6 +598,13 @@ func spawn_infected(record:Dictionary, force_released:bool) -> DungeonInfected:
 	enemies.append(infected)
 	stage_enemies[stage].append(infected)
 	return infected
+
+func build_main_monster() -> void:
+	main_monster = DungeonMainMonster.new()
+	main_monster.name = "AnimMonsterStalker"
+	main_monster.position = Vector3(0, 0.05, -91)
+	add_child(main_monster)
+	main_monster.setup(player, self)
 
 func build_hud() -> void:
 	var hud := CanvasLayer.new()
@@ -588,13 +711,15 @@ func build_hud() -> void:
 	player.reload_started.connect(func(): update_hud())
 	player.reload_finished.connect(func(): update_hud())
 	
-	var crosshair := make_label(24, Color(0.9, 0.92, 0.9, 0.75), HORIZONTAL_ALIGNMENT_CENTER)
-	crosshair.set_anchors_preset(Control.PRESET_CENTER)
-	crosshair.position = Vector2(-20, -22)
-	crosshair.size = Vector2(40, 40)
-	crosshair.text = "+"
-	hud.add_child(crosshair)
+	crosshair_label = make_label(24, Color(0.9, 0.92, 0.9, 0.75), HORIZONTAL_ALIGNMENT_CENTER)
+	crosshair_label.set_anchors_preset(Control.PRESET_CENTER)
+	crosshair_label.position = Vector2(-20, -22)
+	crosshair_label.size = Vector2(40, 40)
+	crosshair_label.text = "+"
+	crosshair_label.visible = false
+	hud.add_child(crosshair_label)
 	build_inventory_hud(hud)
+	build_status_hud(hud)
 	fade_overlay = ColorRect.new()
 	fade_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	fade_overlay.color = Color.BLACK
@@ -671,10 +796,10 @@ func build_blood_overlay_graphics() -> void:
 func build_inventory_hud(hud:CanvasLayer) -> void:
 	inventory_bar = HBoxContainer.new()
 	inventory_bar.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	inventory_bar.position = Vector2(24, -86)
+	inventory_bar.position = Vector2(24, -142)
 	inventory_bar.size = Vector2(840, 60)
 	hud.add_child(inventory_bar)
-	for data in [["flashlight", "🔦", "DUNGEON_ITEM_FLASHLIGHT", Color(0.55, 0.78, 1)], ["blue_key", "🔑", "DUNGEON_ITEM_BLUE_KEY", Color(0.15, 0.35, 1)], ["pistol", "🔫", "DUNGEON_ITEM_PISTOL", Color(0.8, 0.65, 0.35)], ["red_key", "🔑", "DUNGEON_ITEM_RED_KEY", Color(1, 0.12, 0.08)], ["green_key", "🔑", "DUNGEON_ITEM_GREEN_KEY", Color(0.08, 1, 0.24)], ["cell_key", "🔑", "DUNGEON_ITEM_CELL_KEY", Color(0.9, 0.78, 0.48)], ["machinegun", "🔫", "DUNGEON_ITEM_MACHINEGUN", Color(1, 0.5, 0.08)], ["axe", "🪓", "DUNGEON_ITEM_AXE", Color(0.92, 0.15, 0.08)]]:
+	for data in [["flashlight", "🔦", "DUNGEON_ITEM_FLASHLIGHT", Color(0.55, 0.78, 1)], ["pistol", "🔫", "DUNGEON_ITEM_PISTOL", Color(0.8, 0.65, 0.35)], ["blue_key", "🔑", "DUNGEON_ITEM_BLUE_KEY", Color(0.15, 0.35, 1)], ["red_key", "🔑", "DUNGEON_ITEM_RED_KEY", Color(1, 0.12, 0.08)], ["machinegun", "🔫", "DUNGEON_ITEM_MACHINEGUN", Color(1, 0.5, 0.08)], ["green_key", "🔑", "DUNGEON_ITEM_GREEN_KEY", Color(0.08, 1, 0.24)], ["cell_key", "🔑", "DUNGEON_ITEM_CELL_KEY", Color(0.9, 0.78, 0.48)], ["axe", "🪓", "DUNGEON_ITEM_AXE", Color(0.92, 0.15, 0.08)]]:
 		var slot := Label.new()
 		slot.text = "%s\n%s" % [data[1], tr(data[2])]
 		slot.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -690,6 +815,104 @@ func build_inventory_hud(hud:CanvasLayer) -> void:
 		slot.visible = false
 		inventory_bar.add_child(slot)
 		inventory_slots[data[0]] = slot
+
+func build_status_hud(hud:CanvasLayer) -> void:
+	status_hud = Control.new()
+	status_hud.name = "StatusHUD"
+	status_hud.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	status_hud.position = Vector2(24, -74)
+	status_hud.size = Vector2(220, 52)
+	hud.add_child(status_hud)
+	
+	# --- BARRA DE SANGUE / VIDA ---
+	health_bar = ProgressBar.new()
+	health_bar.name = "HealthBar"
+	health_bar.position = Vector2(0, 0)
+	health_bar.size = Vector2(220, 22)
+	health_bar.show_percentage = false
+	health_bar.max_value = player.max_hp
+	health_bar.value = player.current_hp
+	
+	var hp_bg := StyleBoxFlat.new()
+	hp_bg.bg_color = Color(0.02, 0.025, 0.035, 0.92)
+	hp_bg.border_color = Color(0.52, 0.56, 0.62, 0.7)
+	hp_bg.set_border_width_all(2)
+	hp_bg.set_corner_radius_all(6)
+	
+	var hp_fill := StyleBoxFlat.new()
+	# Vermelho menos claro (tom denso e escuro de sangue carmesim/vinho)
+	hp_fill.bg_color = Color(0.52, 0.07, 0.11)
+	hp_fill.set_corner_radius_all(5)
+	
+	health_bar.add_theme_stylebox_override("background", hp_bg)
+	health_bar.add_theme_stylebox_override("fill", hp_fill)
+	status_hud.add_child(health_bar)
+	
+	health_label = make_label(12, Color(0.96, 0.88, 0.9), HORIZONTAL_ALIGNMENT_CENTER)
+	health_label.position = Vector2(0, 0)
+	health_label.size = Vector2(220, 22)
+	health_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	health_label.text = "%s %d%%" % [tr("DUNGEON_HP_LABEL"), int(player.current_hp)]
+	status_hud.add_child(health_label)
+	
+	# --- BARRA DE ESTAMINA ---
+	stamina_bar = ProgressBar.new()
+	stamina_bar.name = "StaminaBar"
+	stamina_bar.position = Vector2(0, 26)
+	stamina_bar.size = Vector2(220, 14)
+	stamina_bar.show_percentage = false
+	stamina_bar.max_value = player.max_stamina
+	stamina_bar.value = player.current_stamina
+	
+	var st_bg := StyleBoxFlat.new()
+	st_bg.bg_color = Color(0.015, 0.02, 0.025, 0.9)
+	st_bg.border_color = Color(0.38, 0.44, 0.48, 0.55)
+	st_bg.set_border_width_all(1)
+	st_bg.set_corner_radius_all(4)
+	
+	var st_fill := StyleBoxFlat.new()
+	st_fill.bg_color = Color(0.18, 0.62, 0.38) # Verde esmeralda de estamina
+	st_fill.set_corner_radius_all(3)
+	
+	stamina_bar.add_theme_stylebox_override("background", st_bg)
+	stamina_bar.add_theme_stylebox_override("fill", st_fill)
+	status_hud.add_child(stamina_bar)
+	
+	stamina_label = make_label(10, Color(0.85, 0.95, 0.9), HORIZONTAL_ALIGNMENT_CENTER)
+	stamina_label.position = Vector2(0, 26)
+	stamina_label.size = Vector2(220, 14)
+	stamina_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	stamina_label.text = tr("DUNGEON_STAMINA_LABEL")
+	status_hud.add_child(stamina_label)
+	
+	player.hp_changed.connect(on_player_hp_changed)
+	player.stamina_changed.connect(on_player_stamina_changed)
+	player.player_died.connect(func(): on_player_caught(null))
+
+func on_player_hp_changed(current:float, max_val:float) -> void:
+	if is_instance_valid(health_bar):
+		health_bar.max_value = max_val
+		create_tween().tween_property(health_bar, "value", current, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	if is_instance_valid(health_label):
+		var pct := int(round((current / maxf(1.0, max_val)) * 100.0))
+		health_label.text = "%s %d%%" % [tr("DUNGEON_HP_LABEL"), pct]
+		if pct <= 25:
+			health_label.modulate = Color(1.0, 0.35, 0.35, 1.0)
+		else:
+			health_label.modulate = Color(1.0, 1.0, 1.0, 1.0)
+
+func on_player_stamina_changed(current:float, max_val:float) -> void:
+	if is_instance_valid(stamina_bar):
+		stamina_bar.max_value = max_val
+		stamina_bar.value = current
+		if current <= 0.0 or !player.can_sprint:
+			stamina_bar.modulate = Color(1.0, 0.45, 0.45, 0.85)
+			if is_instance_valid(sprint_hud):
+				sprint_hud.modulate = Color(1.0, 0.5, 0.5, 0.6)
+		else:
+			stamina_bar.modulate = Color(1.0, 1.0, 1.0, 1.0)
+			if is_instance_valid(sprint_hud):
+				sprint_hud.modulate = Color(1.0, 1.0, 1.0, 1.0)
 
 func make_label(font_size:int, color:Color, alignment:HorizontalAlignment) -> Label:
 	var label := Label.new()
@@ -713,6 +936,7 @@ func build_audio() -> void:
 	ambience.play()
 	gun_sound = make_audio("res://assets/novos_audios/gun_shot.mp3", -5)
 	pickup_sound = make_audio("res://assets/novos_audios/gun_load.mp3", -7)
+	monster_damage_sound = make_audio("res://assets/novos_audios/sangue_fill_effect.mp3", -1.5)
 	gate_sound = AudioStreamPlayer3D.new()
 	gate_sound.stream = load("res://assets/novos_audios/metal_batendo.mp3")
 	gate_sound.max_distance = 30
@@ -990,6 +1214,11 @@ func spawn_dust_landing(pos:Vector3) -> void:
 
 func _process(delta:float) -> void:
 	elapsed += delta
+	update_main_monster_grab()
+	if is_instance_valid(crosshair_label):
+		var should_show_crosshair: bool = !sequence_running && is_instance_valid(player) && player.controls_enabled
+		if crosshair_label.visible != should_show_crosshair:
+			crosshair_label.visible = should_show_crosshair
 	if is_instance_valid(player) && is_instance_valid(sprint_hud):
 		var running_now: bool = player.is_sprint_pressed()
 		if is_instance_valid(sprint_rb_icon):
@@ -1104,25 +1333,25 @@ func update_interaction() -> void:
 	current_interaction = ""
 	var prompt_key := ""
 	
-	if !event_is_true("dungeon_red_gate_open") && is_instance_valid(route_gates.get("red")) && player.global_position.distance_to(route_gates["red"].global_position) < 2.5:
-		if event_is_true("dungeon_red_key_taken") && !event_is_true("dungeon_red_key_used"):
-			current_interaction = "unlock_gate:red"
-			prompt_key = "DUNGEON_PROMPT_UNLOCK_RED"
-		else:
-			prompt_key = "DUNGEON_GATE_LOCKED_RED"
-	elif !event_is_true("dungeon_green_gate_open") && is_instance_valid(route_gates.get("green")) && player.global_position.distance_to(route_gates["green"].global_position) < 2.5:
-		if event_is_true("dungeon_green_key_taken") && !event_is_true("dungeon_green_key_used"):
-			current_interaction = "unlock_gate:green"
-			prompt_key = "DUNGEON_PROMPT_UNLOCK_GREEN"
-		else:
-			prompt_key = "DUNGEON_GATE_LOCKED_GREEN"
-	elif !event_is_true("dungeon_blue_gate_open") && is_instance_valid(route_gates.get("blue")) && player.global_position.distance_to(route_gates["blue"].global_position) < 2.5:
+	if !event_is_true("dungeon_blue_gate_open") && is_instance_valid(route_gates.get("blue")) && player.global_position.distance_to(route_gates["blue"].global_position) < 4.8:
 		if event_is_true("dungeon_blue_key_taken") && !event_is_true("dungeon_blue_key_used"):
 			current_interaction = "unlock_gate:blue"
 			prompt_key = "DUNGEON_PROMPT_UNLOCK_BLUE"
 		else:
 			prompt_key = "DUNGEON_GATE_LOCKED_BLUE"
-	elif !event_is_true("dungeon_axe_door_open") && is_instance_valid(axe_door) && player.global_position.distance_to(axe_door.global_position) < 2.5:
+	elif !event_is_true("dungeon_red_gate_open") && is_instance_valid(route_gates.get("red")) && player.global_position.distance_to(route_gates["red"].global_position) < 3.2:
+		if event_is_true("dungeon_red_key_taken") && !event_is_true("dungeon_red_key_used"):
+			current_interaction = "unlock_gate:red"
+			prompt_key = "DUNGEON_PROMPT_UNLOCK_RED"
+		else:
+			prompt_key = "DUNGEON_GATE_LOCKED_RED"
+	elif !event_is_true("dungeon_green_gate_open") && is_instance_valid(route_gates.get("green")) && player.global_position.distance_to(route_gates["green"].global_position) < 3.2:
+		if event_is_true("dungeon_green_key_taken") && !event_is_true("dungeon_green_key_used"):
+			current_interaction = "unlock_gate:green"
+			prompt_key = "DUNGEON_PROMPT_UNLOCK_GREEN"
+		else:
+			prompt_key = "DUNGEON_GATE_LOCKED_GREEN"
+	elif !event_is_true("dungeon_axe_door_open") && is_instance_valid(axe_door) && player.global_position.distance_to(axe_door.global_position) < 3.0:
 		if event_is_true("dungeon_key_taken") && !event_is_true("dungeon_cell_key_used"):
 			current_interaction = "unlock_gate:axe"
 			prompt_key = "DUNGEON_PROMPT_UNLOCK_AXE"
@@ -1131,11 +1360,11 @@ func update_interaction() -> void:
 	else:
 		for stage in levers:
 			var lever:Node3D = levers[stage]
-			if !event_is_true("dungeon_%s_lever" % stage) && player.global_position.distance_to(lever.global_position) < 2.2:
+			if !event_is_true("dungeon_%s_lever" % stage) && player.global_position.distance_to(lever.global_position) < 2.6:
 				current_interaction = "lever:" + stage
 				prompt_key = "DUNGEON_PROMPT_LEVER"
 				break
-		if prompt_key == "" && player.global_position.distance_to(trampoline.global_position) < 2.4:
+		if prompt_key == "" && player.global_position.distance_to(trampoline.global_position) < 2.6:
 			current_interaction = "trampoline"
 			prompt_key = "DUNGEON_PROMPT_TRAMPOLINE" if has_axe_event() else "DUNGEON_TRAMPOLINE_LOCKED"
 			
@@ -1234,6 +1463,8 @@ func update_hud() -> void:
 		return
 	if !player.has_flashlight:
 		objective_label.text = tr("DUNGEON_OBJECTIVE_FLASHLIGHT")
+	elif !event_is_true("dungeon_blue_key_taken"):
+		objective_label.text = tr("DUNGEON_OBJECTIVE_BLUE_KEY")
 	elif !event_is_true("dungeon_red_key_taken"):
 		objective_label.text = tr("DUNGEON_OBJECTIVE_RED_KEY")
 	elif !event_is_true("dungeon_green_key_taken"):
@@ -1289,6 +1520,21 @@ func update_hud() -> void:
 				create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT).tween_property(slot, "scale", Vector2.ONE, 0.28)
 		else:
 			slot.visible = false
+	if is_instance_valid(crosshair_label):
+		crosshair_label.visible = !sequence_running && is_instance_valid(player) && player.controls_enabled
+	if is_instance_valid(status_hud):
+		status_hud.visible = !sequence_running
+	if is_instance_valid(sprint_hud):
+		sprint_hud.visible = !sequence_running
+	if is_instance_valid(health_bar):
+		health_bar.max_value = player.max_hp
+		health_bar.value = player.current_hp
+	if is_instance_valid(health_label):
+		var pct := int(round((player.current_hp / maxf(1.0, player.max_hp)) * 100.0))
+		health_label.text = "%s %d%%" % [tr("DUNGEON_HP_LABEL"), pct]
+	if is_instance_valid(stamina_bar):
+		stamina_bar.max_value = player.max_stamina
+		stamina_bar.value = player.current_stamina
 
 func event_is_true(event_name:String) -> bool:
 	return bool(Global.game_events.get(event_name, false))
@@ -1304,9 +1550,13 @@ func on_player_fired(origin:Vector3, direction:Vector3) -> void:
 	var query := PhysicsRayQueryParameters3D.create(origin, origin + direction * 68)
 	query.exclude = [player.get_rid()]
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
-	if !hit.is_empty() && hit.collider is DungeonInfected:
-		hit.collider.take_damage(2 if player.weapon_mode == "pistol" else 1, player.weapon_mode)
-		spawn_blood_hit(hit.position, direction)
+	if !hit.is_empty():
+		if hit.collider is DungeonMainMonster:
+			hit.collider.take_damage(2 if player.weapon_mode == "pistol" else 1, player.weapon_mode)
+			spawn_blood_hit(hit.position, direction)
+		elif hit.collider is DungeonInfected:
+			hit.collider.take_damage(2 if player.weapon_mode == "pistol" else 1, player.weapon_mode)
+			spawn_blood_hit(hit.position, direction)
 
 func spawn_ammo_drop(pos:Vector3, weapon_type:String) -> void:
 	var drop := Node3D.new()
@@ -1408,10 +1658,53 @@ func create_blood_stain(floor_position:Vector3, enemy_kind:String) -> void:
 		stain.add_child(pool)
 
 func on_player_caught(infected:DungeonInfected) -> void:
-	if Global.debug_dungeon_invincible:
+	if Global.debug_dungeon_invincible || sequence_running:
 		return
-	if !sequence_running:
+	
+	var damage:float = 34.0
+	if is_instance_valid(infected):
+		if infected.enemy_kind == "hound":
+			damage = 38.0
+		elif infected.enemy_kind == "mutant":
+			damage = 44.0
+			
+	var hit_sfx := AudioStreamPlayer.new()
+	hit_sfx.stream = load("res://assets/novos_audios/sangue_fill_effect.mp3")
+	hit_sfx.volume_db = 0.0
+	add_child(hit_sfx)
+	hit_sfx.play()
+	hit_sfx.finished.connect(hit_sfx.queue_free)
+	
+	spawn_blood_spurt(player.camera.global_position + player.camera_forward() * 0.4)
+	
+	var died := player.take_damage(damage)
+	if died:
 		restart_after_caught(infected)
+	else:
+		flash_blood_damage_overlay(0.7)
+		if is_instance_valid(infected):
+			var push_dir := (player.global_position - infected.global_position).normalized()
+			push_dir.y = 0.22
+			player.apply_knockback(push_dir * 4.6, 0.4)
+			infected.recover_from_attack(1.4)
+
+func flash_blood_damage_overlay(intensity:float = 0.7) -> void:
+	monster_damage_serial += 1
+	var current_serial := monster_damage_serial
+	blood_overlay.visible = true
+	for child in blood_overlay.get_children():
+		child.modulate.a = 0.0
+		var target_alpha := randf_range(0.35, 0.75) * intensity
+		create_tween().tween_property(child, "modulate:a", target_alpha, randf_range(0.04, 0.15))
+	await get_tree().create_timer(0.45).timeout
+	if current_serial != monster_damage_serial:
+		return
+	var fade := create_tween().set_parallel()
+	for child in blood_overlay.get_children():
+		fade.tween_property(child, "modulate:a", 0.0, 0.55)
+	await fade.finished
+	if current_serial == monster_damage_serial:
+		blood_overlay.visible = false
 
 func restart_after_caught(infected:DungeonInfected) -> void:
 	sequence_running = true
@@ -1475,6 +1768,89 @@ func spawn_blood_spurt(origin_pos:Vector3) -> void:
 	add_child(particles)
 	particles.emitting = true
 	get_tree().create_timer(1.2).timeout.connect(particles.queue_free)
+
+func apply_main_monster_strike(monster:DungeonMainMonster, attack_variant:int) -> void:
+	if Global.debug_dungeon_invincible || sequence_running || !is_instance_valid(monster):
+		return
+	var throw_direction := player.global_position - monster.global_position
+	throw_direction.y = 0.0
+	if throw_direction.length_squared() < 0.01:
+		throw_direction = -monster.global_transform.basis.z
+	var died := player.take_damage(45.0 + attack_variant * 5.0)
+	player.apply_knockback(throw_direction.normalized() * (5.4 + attack_variant * 0.22) + Vector3.UP * 1.7, 0.56)
+	player.shake_camera(0.085, 0.62)
+	show_main_monster_blood(0.78)
+	if died:
+		restart_after_caught(null)
+
+func begin_main_monster_grab(monster:DungeonMainMonster, anchor:Marker3D) -> bool:
+	if Global.debug_dungeon_invincible || sequence_running || !is_instance_valid(monster) || !is_instance_valid(anchor):
+		return false
+	main_monster_grab_active = true
+	main_monster_grabber = monster
+	main_monster_grab_anchor = anchor
+	sequence_running = true
+	player.controls_enabled = false
+	player.velocity = Vector3.ZERO
+	player.collision_layer = 0
+	player.collision_mask = 0
+	player.set_physics_process(false)
+	player.shake_camera(0.055, 0.45)
+	show_main_monster_blood(0.52)
+	return true
+
+func update_main_monster_grab() -> void:
+	if !main_monster_grab_active || !is_instance_valid(player) || !is_instance_valid(main_monster_grabber) || !is_instance_valid(main_monster_grab_anchor):
+		return
+	player.global_position = main_monster_grab_anchor.global_position - Vector3.UP * 1.32
+	player.look_at(main_monster_grabber.global_position + Vector3.UP * 2.05, Vector3.UP)
+	player.head.rotation.x = -0.12
+
+func end_main_monster_grab(monster:DungeonMainMonster) -> void:
+	if !main_monster_grab_active || monster != main_monster_grabber:
+		return
+	var release_position := player.global_position
+	var throw_direction := release_position - monster.global_position
+	throw_direction.y = 0.0
+	if throw_direction.length_squared() < 0.01:
+		throw_direction = -monster.global_transform.basis.z
+	main_monster_grab_active = false
+	main_monster_grab_anchor = null
+	main_monster_grabber = null
+	player.global_position = release_position
+	player.collision_layer = 2
+	player.collision_mask = 1
+	player.set_physics_process(true)
+	player.controls_enabled = true
+	player.apply_knockback(throw_direction.normalized() * 10.5 + Vector3.UP * 5.6, 0.92)
+	player.shake_camera(0.14, 0.92)
+	show_main_monster_blood(1.0)
+	var died := player.take_damage(50.0)
+	sequence_running = false
+	if died:
+		restart_after_caught(null)
+
+func show_main_monster_blood(intensity:float) -> void:
+	monster_damage_serial += 1
+	var current_serial:int = monster_damage_serial
+	if is_instance_valid(monster_damage_sound):
+		monster_damage_sound.pitch_scale = randf_range(0.86, 1.04)
+		monster_damage_sound.play()
+	spawn_blood_spurt(player.camera.global_position + player.camera_forward() * 0.38)
+	blood_overlay.visible = true
+	for child in blood_overlay.get_children():
+		child.modulate.a = 0.0
+		var target_alpha:float = randf_range(0.42, 0.82) * intensity
+		create_tween().tween_property(child, "modulate:a", target_alpha, randf_range(0.05, 0.2)).set_delay(randf_range(0.0, 0.22))
+	await get_tree().create_timer(0.8 + intensity * 0.45).timeout
+	if current_serial != monster_damage_serial:
+		return
+	var fade := create_tween().set_parallel()
+	for child in blood_overlay.get_children():
+		fade.tween_property(child, "modulate:a", 0.0, 0.65)
+	await fade.finished
+	if current_serial == monster_damage_serial:
+		blood_overlay.visible = false
 
 func on_infected_died(infected:DungeonInfected) -> void:
 	enemies.erase(infected)

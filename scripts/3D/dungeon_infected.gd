@@ -292,6 +292,17 @@ func trigger_caught() -> void:
 		create_tween().tween_property(self, "global_position", global_position + (player.global_position - global_position).normalized() * 0.4, 0.25)
 	caught_player.emit(self)
 
+func recover_from_attack(recovery_time:float = 1.3) -> void:
+	if dead:
+		return
+	var t := create_tween()
+	t.tween_interval(recovery_time)
+	t.tween_callback(func():
+		if !dead:
+			is_attacking = false
+			is_leaping = false
+	)
+
 func look_at_horizontal(target_pos:Vector3) -> void:
 	var h_target := Vector3(target_pos.x, global_position.y, target_pos.z)
 	if global_position.distance_squared_to(h_target) > 0.001:
