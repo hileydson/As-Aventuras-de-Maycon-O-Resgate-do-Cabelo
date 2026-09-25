@@ -129,6 +129,7 @@ func build_body(model_path:String) -> void:
 			if teeth_node:
 				teeth_node.material_override = teeth_mat
 		if enemy_kind == "zombie":
+			model_root.rotation.x = PI * 0.5
 			setup_zombie_rig()
 		animator = model_root.find_child("AnimationPlayer", true, false) as AnimationPlayer
 		if animator:

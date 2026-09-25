@@ -6,7 +6,7 @@ const MAYCON_MENU_ANIMATIONS = preload("res://assets/novas_imagens/3d_enemies/me
 const ZOMBIE_MODEL := "res://assets/horror_creatures/infected_zombie_animated.glb"
 const RUNNER_MODEL := "res://assets/horror_creatures/horror_runner.glb"
 const HOUND_MODEL := "res://assets/horror_creatures/plague_hound.glb"
-const FALL_IMPACT_SOUND := preload("res://assets/novos_audios/calabouco_terror/dungeon_fall_impact.wav")
+const FALL_IMPACT_SOUND := preload("res://assets/novos_audios/maycon_platform_landing.mp3")
 const DUST_TEXTURE := preload("res://assets/novas_imagens/effects/dust_puff.png")
 const SERVICE_PISTOL_PATH := "res://assets/modelo_3d/calabouco/service_pistol_4k.glb"
 const SMG_PATH := "res://assets/modelo_3d/calabouco/SMG.fbx"
@@ -271,8 +271,8 @@ func build_key_rooms() -> void:
 	create_box("OpenWingGateWallR", Vector3(-48.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
 	# Grade central azulada (tranca a sala onde fica a Chave Azul)
 	key_room_doors["intro"] = build_gate("BlueKeyRoom", Vector3(-56, 0, -135), 8.2, "z", Color(0.15, 0.45, 1.0))
-	# Alavanca na frente da grade, virada para o corredor por onde o jogador chega
-	levers["intro"] = build_lever(Vector3(-50.5, 1, -132.5), "intro", 0.0)
+	# Alavanca na frente da grade, apoiada no chão
+	levers["intro"] = build_lever(Vector3(-50.5, 0, -132.5), "intro", 0.0)
 
 	# --- 2. ALA AZUL (Portão Azul no Hub: contém a Chave Vermelha) ---
 	# Fechamento do fundo do corredor BlueWing (z = -144)
@@ -282,8 +282,8 @@ func build_key_rooms() -> void:
 	create_box("BlueWingGateWallR", Vector3(63.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
 	# Grade central vermelha (tranca a sala onde fica a Chave Vermelha)
 	key_room_doors["blue"] = build_gate("RedKeyRoom", Vector3(56, 0, -135), 8.2, "z", Color(1.0, 0.05, 0.02))
-	# Alavanca na frente da grade, virada para o corredor
-	levers["blue"] = build_lever(Vector3(50.5, 1, -132.5), "blue", 0.0)
+	# Alavanca na frente da grade, apoiada no chão
+	levers["blue"] = build_lever(Vector3(50.5, 0, -132.5), "blue", 0.0)
 
 	# --- 3. ALA VERMELHA (Portão Vermelho no Hub: contém a Chave Verde) ---
 	# Fechamento do fundo oeste do corredor RedWing (x = -53)
@@ -293,8 +293,8 @@ func build_key_rooms() -> void:
 	create_box("RedWingGateWallS", Vector3(-45, 2.15, -156.5), Vector3(0.6, 4.8, 7.2), stone_material, true, world_root)
 	# Grade central verde (tranca a sala onde fica a Chave Verde)
 	key_room_doors["red"] = build_gate("GreenKeyRoom", Vector3(-45, 0, -164), 8.2, "x", Color(0.05, 1.0, 0.2))
-	# Alavanca na frente da grade, virada para o leste/corredor
-	levers["red"] = build_lever(Vector3(-42.5, 1, -158.5), "red", PI * 0.5)
+	# Alavanca na frente da grade, apoiada no chão
+	levers["red"] = build_lever(Vector3(-42.5, 0, -158.5), "red", PI * 0.5)
 
 	# --- 4. ALA VERDE (Portão Verde no Hub: contém a Chave da Cela do Machado) ---
 	# Fechamento do fundo leste do corredor GreenWing (x = 53)
@@ -304,8 +304,8 @@ func build_key_rooms() -> void:
 	create_box("GreenWingGateWallS", Vector3(45, 2.15, -156.5), Vector3(0.6, 4.8, 7.2), stone_material, true, world_root)
 	# Grade central (tranca a sala onde fica a Chave da Cela)
 	key_room_doors["green"] = build_gate("FinalKeyRoom", Vector3(45, 0, -164), 8.2, "x", Color(0.9, 0.8, 0.52))
-	# Alavanca na frente da grade, virada para o oeste/corredor
-	levers["green"] = build_lever(Vector3(42.5, 1, -158.5), "green", -PI * 0.5)
+	# Alavanca na frente da grade, apoiada no chão
+	levers["green"] = build_lever(Vector3(42.5, 0, -158.5), "green", -PI * 0.5)
 
 func build_gate(node_name:String, position_value:Vector3, width:float, axis:String, color:Color, add_light:bool = true) -> Node3D:
 	var door := Node3D.new()
@@ -338,15 +338,16 @@ func build_lever(position_value:Vector3, stage:String, rotation_y:float = 0.0) -
 	lever.position = position_value
 	lever.rotation.y = rotation_y
 	world_root.add_child(lever)
-	create_box("Base", Vector3.ZERO, Vector3(0.65, 1, 0.35), iron_material, false, lever)
+	# Base de 1m de altura apoiada firmemente no chão (centro em Y = 0.5)
+	create_box("Base", Vector3(0, 0.5, 0), Vector3(0.65, 1.0, 0.35), iron_material, false, lever)
 	var hinge := Node3D.new()
 	hinge.name = "Hinge"
-	hinge.position = Vector3(0, 0.5, 0) # ponto de articulação no meio/topo da base
+	hinge.position = Vector3(0, 0.95, 0) # Ponto de articulação no topo da base
 	lever.add_child(hinge)
-	create_box("Handle", Vector3(0, 0.475, 0), Vector3(0.14, 0.95, 0.14), rotten_material, false, hinge)
+	create_box("Handle", Vector3(0, 0.45, 0), Vector3(0.14, 0.9, 0.14), rotten_material, false, hinge)
 	hinge.rotation.x = -0.55
 	lever.set_meta("handle", hinge)
-	build_light(Vector3(0, 0.6, 0.35), Color(1, 0.5, 0.04), 2.4, 4, lever)
+	build_light(Vector3(0, 1.1, 0.35), Color(1, 0.5, 0.04), 2.4, 4, lever)
 	return lever
 
 func create_bar(local_position:Vector3, height:float, radius:float, parent:Node3D) -> void:
@@ -938,7 +939,7 @@ func build_audio() -> void:
 		ambience_stream = ambience_stream.duplicate()
 		ambience_stream.set("loop", true)
 	ambience.stream = ambience_stream
-	ambience.volume_db = -10.5
+	ambience.volume_db = -1.5
 	add_child(ambience)
 	ambience.play()
 	gun_sound = make_audio("res://assets/novos_audios/gun_shot.mp3", -5)
@@ -1011,7 +1012,7 @@ func start_intro_cutscene() -> void:
 	
 	var land_sound := AudioStreamPlayer.new()
 	land_sound.stream = FALL_IMPACT_SOUND
-	land_sound.volume_db = 2.0
+	land_sound.volume_db = 4.0
 	add_child(land_sound)
 	land_sound.play()
 	player.shake_camera(0.24, 0.75)
@@ -1238,16 +1239,33 @@ func _process(delta:float) -> void:
 		var light:OmniLight3D = data.light
 		var pulse:float = sin(elapsed * 7.3 + data.phase) * sin(elapsed * 13.7 + data.phase * 2)
 		light.light_energy = data.base * (0.65 + absf(pulse) * 0.45) * (0.08 if pulse > 0.82 else 1)
+	# Rotação contínua e flutuação senoidal suave (bobbing) de todos os itens colecionáveis
 	for key in pickups.keys():
-		var pickup = pickups.get(key)
+		var pickup:Node3D = pickups.get(key)
 		if is_instance_valid(pickup):
-			pickup.rotation.y += delta * (1.15 if "key" in key else 0.55)
+			if !pickup.has_meta("base_y"):
+				pickup.set_meta("base_y", pickup.position.y)
+				pickup.set_meta("bob_phase", randf_range(0.0, TAU))
+			pickup.rotation.y += delta * 1.85
+			var p_base_y:float = pickup.get_meta("base_y")
+			var p_phase:float = pickup.get_meta("bob_phase")
+			pickup.position.y = p_base_y + sin(elapsed * 2.8 + p_phase) * 0.08
 	if is_instance_valid(axe_pickup):
-		axe_pickup.rotation.y = sin(elapsed * 1.3) * 0.1
+		if !axe_pickup.has_meta("base_y"):
+			axe_pickup.set_meta("base_y", axe_pickup.position.y)
+		axe_pickup.rotation.y += delta * 1.4
+		var axe_base_y:float = axe_pickup.get_meta("base_y")
+		axe_pickup.position.y = axe_base_y + sin(elapsed * 2.4) * 0.08
 	for i in range(active_ammo_drops.size() - 1, -1, -1):
 		var drop:Node3D = active_ammo_drops[i]
 		if is_instance_valid(drop):
-			drop.rotation.y += delta * 1.6
+			if !drop.has_meta("base_y"):
+				drop.set_meta("base_y", drop.position.y)
+				drop.set_meta("bob_phase", randf_range(0.0, TAU))
+			drop.rotation.y += delta * 2.2
+			var drop_base_y:float = drop.get_meta("base_y")
+			var drop_phase:float = drop.get_meta("bob_phase")
+			drop.position.y = drop_base_y + sin(elapsed * 3.2 + drop_phase) * 0.06
 			if player.global_position.distance_to(drop.global_position) < 1.65:
 				collect_ammo_drop(drop)
 				active_ammo_drops.remove_at(i)
