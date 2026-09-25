@@ -353,3 +353,20 @@ DUNGEON_CELL_LOCKED,A cela está trancada. A chave está no fim da prisão.,The 
 DUNGEON_PROMPT_AXE,[E / X] RECUPERAR O MACHADO,[E / X] RECOVER THE AXE,[E / X] RECUPERAR EL HACHA,[E / X] 取回斧头
 DUNGEON_PROMPT_TRAMPOLINE,[E / X] PULAR E VOLTAR AO CASTELO,[E / X] JUMP BACK TO THE CASTLE,[E / X] SALTAR Y VOLVER AL CASTILLO,[E / X] 跳回城堡
 DUNGEON_TRAMPOLINE_LOCKED,Você precisa recuperar o machado antes de subir.,You must recover the axe before climbing back.,Debes recuperar el hacha antes de subir.,返回前必须先取回斧头。
+DUNGEON_OBJECTIVE_BLUE_KEY,OBJETIVO: siga a rota aberta e acione a alavanca da chave azul,OBJECTIVE: follow the open route and pull the blue-key lever,OBJETIVO: sigue la ruta abierta y acciona la palanca de la llave azul,目标：沿开放路线前进并拉下蓝钥匙拉杆
+DUNGEON_OBJECTIVE_RED_KEY,OBJETIVO: use o portão azul e procure a chave vermelha,OBJECTIVE: pass the blue gate and find the red key,OBJETIVO: cruza el portón azul y busca la llave roja,目标：穿过蓝色大门并寻找红钥匙
+DUNGEON_OBJECTIVE_GREEN_KEY,OBJETIVO: atravesse o portão vermelho e encontre a chave verde,OBJECTIVE: cross the red gate and find the green key,OBJETIVO: atraviesa el portón rojo y encuentra la llave verde,目标：穿过红色大门并找到绿钥匙
+DUNGEON_OBJECTIVE_CELL_KEY,OBJETIVO: entre no caminho verde e encontre a chave da cela,OBJECTIVE: enter the green route and find the cell key,OBJETIVO: entra en el camino verde y encuentra la llave de la celda,目标：进入绿色路线并找到牢房钥匙
+DUNGEON_PROMPT_LEVER,[E / X] PUXAR ALAVANCA — TODAS AS CELAS DESTA ALA SERÃO ABERTAS,[E / X] PULL LEVER — ALL CELLS IN THIS WING WILL OPEN,[E / X] TIRAR DE LA PALANCA — SE ABRIRÁN TODAS LAS CELDAS DE ESTA ALA,[E / X] 拉下拉杆——本区所有牢房都会打开
+DUNGEON_PISTOL_READY,PISTOLA • Clique esquerdo / gatilho para atirar,PISTOL • Left click / trigger to fire,PISTOLA • Clic izquierdo / gatillo para disparar,手枪 • 左键 / 扳机射击
+DUNGEON_MACHINEGUN_READY,METRALHADORA • Segure o disparo,MACHINE GUN • Hold to fire,AMETRALLADORA • Mantén para disparar,机枪 • 按住射击
+DUNGEON_ITEM_FLASHLIGHT,Lanterna,Flashlight,Linterna,手电筒
+DUNGEON_ITEM_BLUE_KEY,Azul,Blue,Azul,蓝钥匙
+DUNGEON_ITEM_PISTOL,Pistola,Pistol,Pistola,手枪
+DUNGEON_ITEM_RED_KEY,Vermelha,Red,Roja,红钥匙
+DUNGEON_ITEM_GREEN_KEY,Verde,Green,Verde,绿钥匙
+DUNGEON_ITEM_CELL_KEY,Cela,Cell,Celda,牢房钥匙
+DUNGEON_ITEM_MACHINEGUN,Metralha,Machine gun,Ametralladora,机枪
+DUNGEON_ITEM_AXE,Machado,Axe,Hacha,斧头
+SETTINGS_DEBUG_DUNGEON_INVINCIBLE,Invencível no Calabouço,Invincible in the Dungeon,Invencible en la Mazmorra,地牢中无敌
+SETTINGS_DEBUG_DUNGEON_INVINCIBLE_DESC,Impede que os infectados agarrem Maycon e causem o efeito de sangue nesta fase.,Prevents infected creatures from grabbing Maycon or triggering the blood effect in this stage.,Impide que los infectados agarren a Maycon o activen el efecto de sangre en esta fase.,防止感染者在本关抓住 Maycon 或触发血液效果。

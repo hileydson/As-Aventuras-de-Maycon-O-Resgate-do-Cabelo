@@ -297,6 +297,20 @@ func _populate_debug_events() -> void:
 	debug_events_container.add_child(battle_check)
 	checks.append(battle_check)
 
+	var dungeon_invincible_check = CheckBox.new()
+	dungeon_invincible_check.text = "🛡 " + tr("SETTINGS_DEBUG_DUNGEON_INVINCIBLE")
+	dungeon_invincible_check.tooltip_text = tr("SETTINGS_DEBUG_DUNGEON_INVINCIBLE_DESC")
+	dungeon_invincible_check.button_pressed = Global.debug_dungeon_invincible
+	dungeon_invincible_check.focus_mode = Control.FOCUS_ALL
+	dungeon_invincible_check.add_theme_color_override("font_color", Color(0.45, 0.85, 1.0))
+	dungeon_invincible_check.add_theme_color_override("font_hover_color", Color(0.68, 0.94, 1.0))
+	dungeon_invincible_check.add_theme_color_override("font_focus_color", Color(0.68, 0.94, 1.0))
+	dungeon_invincible_check.toggled.connect(func(pressed: bool):
+		Global.debug_dungeon_invincible = pressed
+	)
+	debug_events_container.add_child(dungeon_invincible_check)
+	checks.append(dungeon_invincible_check)
+
 	var sep = HSeparator.new()
 	debug_events_container.add_child(sep)
 

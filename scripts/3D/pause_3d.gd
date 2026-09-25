@@ -51,15 +51,24 @@ func processa_pause_unpause()->void:
 		if configuracoes_dialog and configuracoes_dialog.visible:
 			configuracoes_dialog.fechar()
 		control.visible = false
+		set_pause_hidden_nodes_visible(true)
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		get_tree().paused = false
 	else:
 		close.grab_focus()
+		set_pause_hidden_nodes_visible(false)
 		control.visible = true
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		get_tree().paused = true
 		pause_audio.play()
 		PAUSE_VISUAL.animate_open(control, $Control/VBoxContainer)
+
+func set_pause_hidden_nodes_visible(value:bool) -> void:
+	for node in get_tree().get_nodes_in_group("hide_on_pause"):
+		if node is CanvasLayer:
+			(node as CanvasLayer).visible = value
+		elif node is CanvasItem:
+			(node as CanvasItem).visible = value
 		
 		
 func _on_close_pressed() -> void:

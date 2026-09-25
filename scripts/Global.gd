@@ -63,22 +63,23 @@ var maycon_hp_count:int = 0
 var maycon_itens_default = {axe=false}
 var game_stage_1_events_died_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=true, first_battle=false, before_prologo=false, passagem_pestilenta_feita=false,
-dungeon_unlocked=false, dungeon_flashlight_taken=false, dungeon_gun_taken=false, dungeon_key_taken=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
+dungeon_unlocked=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
 var game_stage_outside_1_events_died_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=true, gilhotina_broken=true, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=true, first_battle=false, before_prologo=false, passagem_pestilenta_feita=false,
-dungeon_unlocked=true, dungeon_flashlight_taken=true, dungeon_gun_taken=true, dungeon_key_taken=true, dungeon_axe_door_open=true, dungeon_axe_taken=true}
+dungeon_unlocked=true, dungeon_flashlight_taken=true, dungeon_pistol_taken=true, dungeon_gun_taken=true, dungeon_blue_key_taken=true, dungeon_red_key_taken=true, dungeon_green_key_taken=true, dungeon_key_taken=true, dungeon_intro_lever=true, dungeon_blue_lever=true, dungeon_red_lever=true, dungeon_green_lever=true, dungeon_finale_triggered=true, dungeon_axe_door_open=true, dungeon_axe_taken=true}
 var maycon_itens = {axe=false}
 var game_events_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true, passagem_pestilenta_feita=false,
-dungeon_unlocked=false, dungeon_flashlight_taken=false, dungeon_gun_taken=false, dungeon_key_taken=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
+dungeon_unlocked=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
 var game_events = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true, passagem_pestilenta_feita=false,
-dungeon_unlocked=false, dungeon_flashlight_taken=false, dungeon_gun_taken=false, dungeon_key_taken=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
+dungeon_unlocked=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
 var inimigos_mortos = {}
 var realtime_enemy_respawns:Dictionary = {}
 var aim_assist_strength:float = 0.6
 var show_debug_tab:bool = true
 var debug_disable_battles:bool = false
+var debug_dungeon_invincible:bool = false
 
 # --- Configurações gráficas (aplicadas em tempo real, ver menu Configurações) ---
 const shadow_atlas_sizes:Array[int] = [1024, 2048, 4096]
@@ -429,6 +430,7 @@ func _process(_delta: float) -> void:
 	restore_realtime_player_position()
 
 func reset_default_values()->void:
+	debug_dungeon_invincible = false
 	back_to_main_camera = false
 	back_to_fase = false
 	dungeon_return_pending = false
