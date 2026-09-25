@@ -49,6 +49,13 @@ var is_attacking:bool = false
 var is_leaping:bool = false
 var leap_timer:float = 0.0
 
+# Rig procedural do zumbi (o modelo não traz animação usável, só T-pose)
+var zombie_skel:Skeleton3D
+var zombie_rest:Dictionary = {}   # bone_name -> Quaternion de descanso
+var zombie_phase:float = 0.0
+var zombie_move_amt:float = 0.0   # 0 parado .. 1 andando (suavizado)
+var zombie_reach:float = 0.0      # 0 .. 1 (bracos esticados para agarrar)
+
 func setup(target:DungeonPlayer, owner_dungeon:Node, model_path:String, initially_released:bool, trigger_distance:float, kind:String = "zombie", scale_value:float = 1.0) -> void:
 	player = target
 	dungeon = owner_dungeon
@@ -121,9 +128,16 @@ func build_body(model_path:String) -> void:
 			var teeth_node = model_root.find_child("Teeth", true, false) as MeshInstance3D
 			if teeth_node:
 				teeth_node.material_override = teeth_mat
+		if enemy_kind == "zombie":
+			setup_zombie_rig()
 		animator = model_root.find_child("AnimationPlayer", true, false) as AnimationPlayer
 		if animator:
-			play_idle_animation()
+			if enemy_kind == "zombie" && is_instance_valid(zombie_skel):
+				# O glb do zumbi só tem pose T (sem animação real); usamos rig procedural.
+				animator.active = false
+				animator.stop()
+			else:
+				play_idle_animation()
 	else:
 		var mesh_instance := MeshInstance3D.new()
 		var capsule_mesh := CapsuleMesh.new()
@@ -154,6 +168,70 @@ func make_spatial_audio(stream_res:AudioStream, volume:float, distance:float) ->
 	audio.unit_size = 4.0
 	add_child(audio)
 	return audio
+
+func setup_zombie_rig() -> void:
+	zombie_skel = model_root.find_child("Skeleton3D", true, false) as Skeleton3D
+	if !is_instance_valid(zombie_skel):
+		return
+	var wanted := [
+		"CityDeadOutfit_Hips", "CityDeadOutfit_Spine", "CityDeadOutfit_Spine1", "CityDeadOutfit_Spine2",
+		"CityDeadOutfit_Neck", "CityDeadOutfit_Head",
+		"CityDeadOutfit_LeftUpLeg", "CityDeadOutfit_LeftLeg", "CityDeadOutfit_RightUpLeg", "CityDeadOutfit_RightLeg",
+		"CityDeadOutfit_LeftShoulder", "CityDeadOutfit_LeftArm", "CityDeadOutfit_LeftForeArm",
+		"CityDeadOutfit_RightShoulder", "CityDeadOutfit_RightArm", "CityDeadOutfit_RightForeArm"
+	]
+	for bn in wanted:
+		var idx := zombie_skel.find_bone(bn)
+		if idx != -1:
+			zombie_rest[bn] = zombie_skel.get_bone_pose_rotation(idx)
+
+func set_zombie_bone(bone_name:String, euler:Vector3) -> void:
+	if !zombie_rest.has(bone_name):
+		return
+	var idx := zombie_skel.find_bone(bone_name)
+	if idx == -1:
+		return
+	var rest:Quaternion = zombie_rest[bone_name]
+	zombie_skel.set_bone_pose_rotation(idx, rest * Quaternion.from_euler(euler))
+
+func pose_zombie(delta:float, moving:bool) -> void:
+	if !is_instance_valid(zombie_skel):
+		return
+	zombie_move_amt = move_toward(zombie_move_amt, 1.0 if moving else 0.0, delta * 3.5)
+	zombie_reach = move_toward(zombie_reach, 1.0 if is_attacking else 0.0, delta * 5.0)
+	zombie_phase += delta * (7.0 if moving else 2.4)
+	var swing := sin(zombie_phase)
+	var bob := sin(zombie_phase * 2.0)
+	var idle_breath := sin(zombie_phase) * 0.03
+
+	# Postura de zumbi: levemente curvado para frente e cabeça pendida
+	set_zombie_bone("CityDeadOutfit_Spine", Vector3(0.18, 0.0, 0.0))
+	set_zombie_bone("CityDeadOutfit_Spine1", Vector3(0.12, 0.0, 0.0))
+	set_zombie_bone("CityDeadOutfit_Neck", Vector3(0.15, 0.0, 0.0))
+	set_zombie_bone("CityDeadOutfit_Head", Vector3(0.12, swing * 0.08, 0.05))
+
+	# Braços: da pose T descem para frente (zumbi). reach estica-os ainda mais para agarrar.
+	var arm_down := 1.15 + zombie_reach * 0.15
+	var arm_fwd := 0.55 + zombie_reach * 0.9
+	var elbow := 0.7 - zombie_reach * 0.55
+	var arm_swing := swing * 0.15 * zombie_move_amt * (1.0 - zombie_reach)
+	set_zombie_bone("CityDeadOutfit_LeftShoulder", Vector3(0.0, 0.0, -0.1))
+	set_zombie_bone("CityDeadOutfit_RightShoulder", Vector3(0.0, 0.0, 0.1))
+	set_zombie_bone("CityDeadOutfit_LeftArm", Vector3(arm_fwd + arm_swing, 0.1, arm_down))
+	set_zombie_bone("CityDeadOutfit_RightArm", Vector3(arm_fwd - arm_swing, -0.1, -arm_down))
+	set_zombie_bone("CityDeadOutfit_LeftForeArm", Vector3(elbow, 0.0, 0.2))
+	set_zombie_bone("CityDeadOutfit_RightForeArm", Vector3(elbow, 0.0, -0.2))
+
+	# Pernas: passada alternada ao andar; leve balanço parado
+	var leg := swing * 0.5 * zombie_move_amt
+	var knee := maxf(0.0, -bob) * 0.6 * zombie_move_amt
+	set_zombie_bone("CityDeadOutfit_LeftUpLeg", Vector3(leg, 0.0, 0.0))
+	set_zombie_bone("CityDeadOutfit_RightUpLeg", Vector3(-leg, 0.0, 0.0))
+	set_zombie_bone("CityDeadOutfit_LeftLeg", Vector3(knee, 0.0, 0.0))
+	set_zombie_bone("CityDeadOutfit_RightLeg", Vector3(maxf(0.0, bob) * 0.6 * zombie_move_amt, 0.0, 0.0))
+
+	# Cambaleio geral do corpo
+	set_zombie_bone("CityDeadOutfit_Hips", Vector3(idle_breath, 0.0, swing * 0.06 * zombie_move_amt))
 
 func release_from_cell() -> void:
 	if released || dead:
@@ -213,6 +291,8 @@ func _physics_process(delta:float) -> void:
 	if is_attacking:
 		velocity.x = move_toward(velocity.x, 0.0, 10.0 * delta)
 		velocity.z = move_toward(velocity.z, 0.0, 10.0 * delta)
+		if enemy_kind == "zombie" && is_instance_valid(zombie_skel):
+			pose_zombie(delta, false)
 		move_and_slide()
 		return
 		
@@ -347,6 +427,8 @@ func play_growl_sound() -> void:
 	growl_audio.play()
 
 func play_idle_animation() -> void:
+	if enemy_kind == "zombie" && is_instance_valid(zombie_skel):
+		return
 	if enemy_kind == "hound":
 		play_animation_by_names(["Idle_000", "idle", "Stand"])
 	elif enemy_kind == "mutant":
@@ -355,6 +437,8 @@ func play_idle_animation() -> void:
 		play_animation_by_names(["idle", "walk"])
 
 func play_animation_by_names(names:Array) -> void:
+	if enemy_kind == "zombie" && is_instance_valid(zombie_skel):
+		return
 	if !is_instance_valid(animator) || animator.get_animation_list().is_empty():
 		return
 	var candidate_list := animator.get_animation_list()
@@ -372,6 +456,9 @@ func play_animation_by_names(names:Array) -> void:
 
 func update_model_motion(moving:bool, chasing:bool) -> void:
 	if !is_instance_valid(model_root):
+		return
+	if enemy_kind == "zombie" && is_instance_valid(zombie_skel):
+		pose_zombie(get_physics_process_delta_time(), moving)
 		return
 	if is_instance_valid(animator):
 		if moving:

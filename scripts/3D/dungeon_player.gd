@@ -10,6 +10,8 @@ const SMG_METALLIC:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_Def
 const SMG_ROUGHNESS:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Roughness.png")
 const PISTOL_REST_POSITION := Vector3(0.29, -0.49, -0.26)
 const SMG_REST_POSITION := Vector3(0.27, -0.22, -0.42)
+const MAYCON_MODEL:PackedScene = preload("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
+const MAYCON_AIR_FLAIL:Resource = preload("res://assets/novas_imagens/3d_enemies/maycon_air_flail.res")
 
 signal interact_pressed
 signal fired(origin:Vector3, direction:Vector3)
@@ -46,6 +48,10 @@ var muzzle_marker:Marker3D
 var casing_eject_marker:Marker3D
 var step_audio:AudioStreamPlayer
 var step_timer:float = 0.0
+var maycon_body:Node3D
+var maycon_anim:AnimationPlayer
+var maycon_skeleton:Skeleton3D
+var head_bone_idx:int = -1
 
 var pistol_clip:int = 4
 var pistol_reserve:int = 8
@@ -95,6 +101,7 @@ func _ready() -> void:
 	
 	build_flashlight_reflection()
 	build_view_gun()
+	build_maycon_body()
 
 func _unhandled_input(event:InputEvent) -> void:
 	if event is InputEventMouseMotion && controls_enabled && Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -124,6 +131,7 @@ func _physics_process(delta:float) -> void:
 			velocity.y -= 18.0 * delta
 		move_and_slide()
 		_update_footsteps(delta, false, false)
+		_update_maycon_animations(delta, false, false, Vector2.ZERO)
 		return
 	if !is_on_floor():
 		velocity.y -= 18.0 * delta
@@ -131,6 +139,7 @@ func _physics_process(delta:float) -> void:
 		velocity.y = -0.2
 	if !controls_enabled:
 		_update_footsteps(delta, false, false)
+		_update_maycon_animations(delta, false, false, Vector2.ZERO)
 		velocity.x = move_toward(velocity.x, 0.0, 12.0 * delta)
 		velocity.z = move_toward(velocity.z, 0.0, 12.0 * delta)
 		move_and_slide()
@@ -164,6 +173,7 @@ func _physics_process(delta:float) -> void:
 	move_and_slide()
 	var moving := Vector2(velocity.x, velocity.z).length() > 0.4 && is_on_floor()
 	_update_footsteps(delta, moving, is_sprinting)
+	_update_maycon_animations(delta, moving, is_sprinting, input_vector)
 	if moving:
 		head_bob_time += delta * (11.0 if is_sprinting else 8.0)
 		head.position.y = base_head_y + sin(head_bob_time) * 0.035
@@ -576,3 +586,101 @@ func curar_sangue(percentual:float = 0.20) -> int:
 	var heal_amt := max_hp * percentual
 	heal(heal_amt)
 	return int(heal_amt)
+
+func build_maycon_body() -> void:
+	maycon_body = MAYCON_MODEL.instantiate() as Node3D
+	maycon_body.name = "MayconBody"
+	maycon_body.rotation.y = PI
+	maycon_body.position = Vector3(0, 0, 0)
+	_adjust_maycon_materials(maycon_body)
+	add_child(maycon_body)
+	
+	maycon_anim = maycon_body.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if is_instance_valid(maycon_anim):
+		if !maycon_anim.has_animation_library(""):
+			var glb_state := MAYCON_MODEL.get_state()
+			for i in range(glb_state.get_node_count()):
+				if glb_state.get_node_type(i) == "AnimationPlayer":
+					for pidx in range(glb_state.get_node_property_count(i)):
+						var pval = glb_state.get_node_property_value(i, pidx)
+						if pval is AnimationLibrary:
+							maycon_anim.add_animation_library("", pval)
+							break
+					break
+		var lib: AnimationLibrary = maycon_anim.get_animation_library("") if maycon_anim.has_animation_library("") else null
+		if lib and MAYCON_AIR_FLAIL and !lib.has_animation("Air_Flail"):
+			lib.add_animation("Air_Flail", MAYCON_AIR_FLAIL)
+		
+		for anim_name in ["Walking", "Skill_03", "Arise", "Air_Flail"]:
+			if maycon_anim.has_animation(anim_name):
+				var a := maycon_anim.get_animation(anim_name)
+				if is_instance_valid(a):
+					a.loop_mode = Animation.LOOP_LINEAR
+	
+	for c in maycon_body.find_children("*", "Skeleton3D", true, false):
+		maycon_skeleton = c as Skeleton3D
+		break
+	if is_instance_valid(maycon_skeleton):
+		head_bone_idx = maycon_skeleton.find_bone("Head")
+		if head_bone_idx != -1:
+			maycon_skeleton.set_bone_pose_scale(head_bone_idx, Vector3.ZERO)
+	
+	_play_maycon_animation("Walking")
+
+func _adjust_maycon_materials(root_node: Node) -> void:
+	for mesh in root_node.find_children("*", "MeshInstance3D", true, false):
+		var mi := mesh as MeshInstance3D
+		if not mi:
+			continue
+		if mi.material_override is BaseMaterial3D:
+			var mat = mi.material_override.duplicate() as BaseMaterial3D
+			mat.metallic = 0.0
+			mat.roughness = 0.85
+			mat.metallic_specular = 0.25
+			mat.emission_enabled = false
+			mi.material_override = mat
+		if mi.mesh:
+			for s in range(mi.mesh.get_surface_count()):
+				var mat = mi.get_surface_override_material(s)
+				if not mat:
+					mat = mi.mesh.surface_get_material(s)
+				if mat is BaseMaterial3D:
+					var dup = mat.duplicate() as BaseMaterial3D
+					dup.metallic = 0.0
+					dup.roughness = 0.85
+					dup.metallic_specular = 0.25
+					dup.emission_enabled = false
+					mi.set_surface_override_material(s, dup)
+
+func _play_maycon_animation(anim_name:String) -> void:
+	if is_instance_valid(maycon_anim) and maycon_anim.has_animation(anim_name) and (maycon_anim.current_animation != anim_name or not maycon_anim.is_playing()):
+		var previous := maycon_anim.current_animation
+		var blend := 0.24 if previous in ["Skill_03", "Arise"] and anim_name in ["Skill_03", "Arise"] else 0.10 if anim_name == "Air_Flail" or previous == "Air_Flail" else 0.08
+		maycon_anim.play(anim_name, blend)
+
+func _update_maycon_animations(_delta:float, moving:bool, running:bool, input_vector:Vector2) -> void:
+	if !is_instance_valid(maycon_anim):
+		return
+	if !is_on_floor():
+		_play_maycon_animation("Air_Flail")
+		maycon_anim.speed_scale = 0.62
+	elif moving:
+		if running:
+			_play_maycon_animation("Arise")
+			maycon_anim.speed_scale = 1.15
+		else:
+			_play_maycon_animation("Skill_03")
+			if input_vector.y > 0.1:
+				maycon_anim.speed_scale = -1.45
+			else:
+				maycon_anim.speed_scale = 1.45
+	else:
+		_play_maycon_animation("Walking")
+		maycon_anim.speed_scale = 1.0
+	
+	if is_instance_valid(maycon_skeleton) and head_bone_idx != -1:
+		maycon_skeleton.set_bone_pose_scale(head_bone_idx, Vector3.ZERO)
+
+func set_body_visible(val:bool) -> void:
+	if is_instance_valid(maycon_body):
+		maycon_body.visible = val

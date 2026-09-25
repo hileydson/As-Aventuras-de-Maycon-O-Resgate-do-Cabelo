@@ -995,6 +995,7 @@ func start_arrival() -> void:
 func start_intro_cutscene() -> void:
 	sequence_running = true
 	player.controls_enabled = false
+	player.set_body_visible(false)
 	player.set_weapon("")
 	player.set_flashlight_available(false)
 	
@@ -1109,6 +1110,7 @@ func start_intro_cutscene() -> void:
 	player.camera.current = true
 	cutscene_cam.queue_free()
 	maycon_dummy.queue_free()
+	player.set_body_visible(true)
 	
 	Global.game_events["dungeon_intro_cutscene_seen"] = true
 	Global.save_progress("calabouco_terror")
