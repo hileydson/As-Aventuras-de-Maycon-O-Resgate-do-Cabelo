@@ -80,6 +80,9 @@ var giant_zombies:Array[DungeonGiantZombie] = []
 var giant_grab_active:bool = false
 var giant_grab_anchor:Marker3D
 var giant_grabber:DungeonGiantZombie
+var infected_grab_active:bool = false
+var infected_grab_anchor:Marker3D
+var infected_grabber:DungeonInfected
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -89,7 +92,7 @@ func _ready() -> void:
 	build_prison()
 	build_player()
 	build_pickups()
-	# Cutscene em primeira pessoa do machado caindo do teto e escorregando até a cela.
+	# Cutscene em primeira pessoa do machado caindo do teto e escorregando até a cela.mud
 	# Roda logo após o machado cair no buraco em fase_1_castle_2 e depois volta para lá.
 	if Global.axe_cutscene_pending:
 		Global.axe_cutscene_pending = false
@@ -484,7 +487,12 @@ func build_player() -> void:
 
 func build_pickups() -> void:
 	pickups["flashlight"] = build_flashlight(Vector3(0.2, 0.45, -2.5))
-	
+
+	# TESTE: duas armas extras logo no início da fase para validar as mãos do modelo 3D.
+	# Não substituem as armas originais (que continuam nos corredores).
+	pickups["pistol_test"] = build_gun(Vector3(-1.4, 0.62, -2.2), false)
+	pickups["machinegun_test"] = build_gun(Vector3(1.4, 0.62, -2.2), true)
+
 	# Caminho aberto de início (OpenWing): pistola no corredor e chave azul dentro da cela
 	pickups["pistol"] = build_gun(Vector3(-56.0, 0.62, -125.0), false)
 	pickups["blue_key"] = build_key(Vector3(-56.0, 0.65, -140.0), Color(0.12, 0.4, 1.0), "BlueKey")
@@ -1045,7 +1053,7 @@ func build_audio() -> void:
 	if ambience_stream:
 		ambience_stream.loop = true
 	ambience.stream = ambience_stream
-	ambience.volume_db = 8.0
+	ambience.volume_db = -2.5
 	ambience.autoplay = true
 	ambience.finished.connect(func():
 		if is_instance_valid(ambience) && is_inside_tree():
@@ -1293,6 +1301,35 @@ func start_intro_cutscene() -> void:
 	var approach_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	approach_tween.tween_property(cutscene_cam, "position", Vector3(0, 1.35, -1.8), 3.4)
 	
+	# Título bem grande no meio da tela que surge com a aproximação da câmera
+	var title_layer := CanvasLayer.new()
+	title_layer.name = "DungeonTitleCutsceneLayer"
+	title_layer.layer = 95
+	add_child(title_layer)
+	
+	var title_container := Control.new()
+	title_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	title_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title_container.modulate.a = 0.0
+	title_layer.add_child(title_container)
+	
+	var title_label := Label.new()
+	title_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title_label.text = tr("DUNGEON_TITLE_CUTSCENE")
+	title_label.add_theme_font_size_override("font_size", 48)
+	title_label.add_theme_color_override("font_color", Color(0.96, 0.92, 0.88, 1.0))
+	title_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.95))
+	title_label.add_theme_constant_override("shadow_offset_x", 3)
+	title_label.add_theme_constant_override("shadow_offset_y", 3)
+	title_label.add_theme_color_override("font_outline_color", Color(0.04, 0.015, 0.015, 0.98))
+	title_label.add_theme_constant_override("outline_size", 10)
+	title_container.add_child(title_label)
+	
+	# Fade in do título durante a aproximação
+	create_tween().tween_property(title_container, "modulate:a", 1.0, 1.1)
+	
 	while approach_tween.is_running():
 		await get_tree().process_frame
 		cutscene_cam.look_at(Vector3(0, 1.1, 1.8), Vector3.UP)
@@ -1333,6 +1370,17 @@ func start_intro_cutscene() -> void:
 	player.controls_enabled = true
 	sequence_running = false
 	update_hud()
+	
+	# Deixa o título na tela por um tempo após a gameplay voltar e faz fade out suave
+	var title_fade_routine := func():
+		await get_tree().create_timer(1.8).timeout
+		if is_instance_valid(title_container):
+			var fade_tw := create_tween()
+			fade_tw.tween_property(title_container, "modulate:a", 0.0, 1.35)
+			await fade_tw.finished
+			if is_instance_valid(title_layer):
+				title_layer.queue_free()
+	title_fade_routine.call()
 
 func spawn_dust_landing(pos:Vector3) -> void:
 	var root := Node3D.new()
@@ -1440,6 +1488,7 @@ func _process(delta:float) -> void:
 	elapsed += delta
 	update_main_monster_grab()
 	update_giant_grab()
+	update_infected_grab()
 	if is_instance_valid(crosshair_label):
 		var should_show_crosshair: bool = !sequence_running && is_instance_valid(player) && player.controls_enabled
 		if crosshair_label.visible != should_show_crosshair:
@@ -1551,6 +1600,12 @@ func collect_pickup(pickup_name:String) -> void:
 			show_pickup_notice(tr("DUNGEON_ITEM_CELL_KEY"))
 		"machinegun":
 			Global.game_events["dungeon_gun_taken"] = true
+			player.set_weapon("machinegun")
+			show_pickup_notice(tr("DUNGEON_ITEM_MACHINEGUN"))
+		"pistol_test":
+			player.set_weapon("pistol")
+			show_pickup_notice(tr("DUNGEON_ITEM_PISTOL"))
+		"machinegun_test":
 			player.set_weapon("machinegun")
 			show_pickup_notice(tr("DUNGEON_ITEM_MACHINEGUN"))
 	pickup.queue_free()
@@ -2162,6 +2217,68 @@ func finish_giant_grab_kill(giant:DungeonGiantZombie) -> void:
 	giant_grab_anchor = null
 	giant_grabber = null
 	restart_after_caught(null)
+
+func begin_infected_grab(infected:DungeonInfected, anchor:Marker3D) -> bool:
+	# Zumbi pequeno agarra e segura o player na mão (igual o monstro principal).
+	if Global.debug_dungeon_invincible || sequence_running || !is_instance_valid(infected) || !is_instance_valid(anchor):
+		return false
+	infected_grab_active = true
+	infected_grabber = infected
+	infected_grab_anchor = anchor
+	sequence_running = true
+	player.controls_enabled = false
+	player.velocity = Vector3.ZERO
+	player.collision_layer = 0
+	player.collision_mask = 0
+	player.set_physics_process(false)
+	player.shake_camera(0.05, 0.4)
+	show_main_monster_blood(0.5)
+	return true
+
+func update_infected_grab() -> void:
+	if !infected_grab_active:
+		return
+	if !is_instance_valid(player) || !is_instance_valid(infected_grabber) || !is_instance_valid(infected_grab_anchor):
+		# O agarrador sumiu (morreu/foi liberado): solta o player em segurança
+		if is_instance_valid(player):
+			player.collision_layer = 2
+			player.collision_mask = 1
+			player.set_physics_process(true)
+			player.controls_enabled = true
+		infected_grab_active = false
+		infected_grab_anchor = null
+		infected_grabber = null
+		sequence_running = false
+		return
+	player.global_position = infected_grab_anchor.global_position - Vector3.UP * 1.1
+	player.look_at(infected_grabber.global_position + Vector3.UP * 1.4, Vector3.UP)
+	player.head.rotation.x = -0.1
+
+func end_infected_grab(infected:DungeonInfected) -> void:
+	# Solta arremessando o player com dano forte (igual o monstro principal).
+	if !infected_grab_active || infected != infected_grabber:
+		return
+	var release_position := player.global_position
+	var throw_direction := release_position - infected.global_position
+	throw_direction.y = 0.0
+	if throw_direction.length_squared() < 0.01:
+		throw_direction = -infected.global_transform.basis.z
+	infected_grab_active = false
+	infected_grab_anchor = null
+	infected_grabber = null
+	player.global_position = release_position
+	player.collision_layer = 2
+	player.collision_mask = 1
+	player.set_physics_process(true)
+	player.controls_enabled = true
+	player.apply_knockback(throw_direction.normalized() * 9.0 + Vector3.UP * 4.8, 0.85)
+	player.shake_camera(0.12, 0.8)
+	show_main_monster_blood(0.9)
+	var grab_damage:float = maxf(1.0, player.current_hp * 0.7)
+	var died := player.take_damage(grab_damage)
+	sequence_running = false
+	if died:
+		restart_after_caught(infected)
 
 func on_infected_died(infected:DungeonInfected) -> void:
 	enemies.erase(infected)

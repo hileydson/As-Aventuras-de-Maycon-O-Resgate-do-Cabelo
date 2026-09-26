@@ -130,24 +130,29 @@ static func _watch(rest:Dictionary, skel_path:String) -> Animation:
 	return a
 
 static func _walk(rest:Dictionary, skel_path:String) -> Animation:
+	# Ciclo de passada humanoide: a coxa balança frente/trás (cos) e o joelho DOBRA
+	# durante a fase de balanço (quando a perna vem de trás para a frente), levando o
+	# joelho à frente em vez de a canela chutar para trás.
 	var a := Animation.new()
 	a.length = 1.0
 	a.loop_mode = Animation.LOOP_LINEAR
 	var frames := []
-	var samples := 8
+	var samples := 12
 	for i in range(samples + 1):
 		var t := 1.0 * i / samples
 		var ph := TAU * i / samples
-		var swing := sin(ph)
-		var bob := sin(ph * 2.0)
+		var l_thigh := cos(ph)               # + = coxa para a frente
+		var r_thigh := cos(ph + PI)
+		var l_knee := maxf(0.0, -sin(ph))    # dobra no balanço (ph em pi..2pi)
+		var r_knee := maxf(0.0, -sin(ph + PI))
 		var pose := _apply(_stance(), {
-			"Spine": Vector3(0.2, 0, swing * 0.05),
-			"LeftUpLeg": Vector3(swing * 0.5, 0, 0),
-			"RightUpLeg": Vector3(-swing * 0.5, 0, 0),
-			"LeftLeg": Vector3(maxf(0.0, -bob) * 0.7, 0, 0),
-			"RightLeg": Vector3(maxf(0.0, bob) * 0.7, 0, 0),
-			"LeftArm": Vector3(0.55 - swing * 0.2, 0.1, 1.1),
-			"RightArm": Vector3(0.55 + swing * 0.2, -0.1, -1.1),
+			"Spine": Vector3(0.18, 0, 0),
+			"LeftUpLeg": Vector3(l_thigh * 0.5, 0, 0),
+			"RightUpLeg": Vector3(r_thigh * 0.5, 0, 0),
+			"LeftLeg": Vector3(l_knee * 0.95, 0, 0),
+			"RightLeg": Vector3(r_knee * 0.95, 0, 0),
+			"LeftArm": Vector3(0.55 - l_thigh * 0.18, 0.1, 1.1),
+			"RightArm": Vector3(0.55 - r_thigh * 0.18, -0.1, -1.1),
 		})
 		frames.append([t, pose])
 	_build(a, rest, skel_path, frames)

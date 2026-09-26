@@ -48,6 +48,7 @@ var model_origin:Vector3 = Vector3.ZERO
 var is_attacking:bool = false
 var is_leaping:bool = false
 var leap_timer:float = 0.0
+var grab_anchor:Marker3D          # zumbi: ponto na mão onde o player fica preso ao agarrar
 
 # Rig procedural do zumbi (o modelo não traz animação usável, só T-pose)
 var zombie_skel:Skeleton3D
@@ -140,6 +141,13 @@ func build_body(model_path:String) -> void:
 				if z_anim.has_animation_library(""):
 					z_anim.remove_animation_library("")
 				z_anim.add_animation_library("", ZombieAnimationFactory.load_or_build(z_skel))
+			# Âncora na mão direita para segurar o player durante o agarrão
+			if is_instance_valid(z_skel):
+				var grab_att := BoneAttachment3D.new()
+				grab_att.bone_name = &"CityDeadOutfit_RightHand"
+				z_skel.add_child(grab_att)
+				grab_anchor = Marker3D.new()
+				grab_att.add_child(grab_anchor)
 		animator = model_root.find_child("AnimationPlayer", true, false) as AnimationPlayer
 		if animator:
 			play_idle_animation()
@@ -397,6 +405,10 @@ func trigger_caught() -> void:
 	look_at_horizontal(player.global_position)
 	if is_instance_valid(attack_audio):
 		attack_audio.play()
+	# Zumbi: agarra e segura o player, depois arremessa (igual o monstro principal)
+	if enemy_kind == "zombie" && is_instance_valid(grab_anchor):
+		do_zombie_grab()
+		return
 	if enemy_kind == "hound":
 		play_animation_by_names(["Attack_000", "attack", "run"])
 	else:
@@ -404,6 +416,23 @@ func trigger_caught() -> void:
 		# Inimigo estica as mãos na direção do player e avança levemente
 		create_tween().tween_property(self, "global_position", global_position + (player.global_position - global_position).normalized() * 0.4, 0.25)
 	caught_player.emit(self)
+
+func do_zombie_grab() -> void:
+	# Avança a mão em direção ao player, agarra e SEGURA, depois solta arremessando.
+	play_animation_by_names(["attack", "walk"])
+	create_tween().tween_property(self, "global_position", global_position + (player.global_position - global_position).normalized() * 0.35, 0.2)
+	await get_tree().create_timer(0.22).timeout
+	if dead || !is_instance_valid(player):
+		return
+	if !bool(dungeon.call("begin_infected_grab", self, grab_anchor)):
+		recover_from_attack(1.0)
+		return
+	play_animation_by_names(["grab", "attack"])
+	await get_tree().create_timer(1.5).timeout
+	# Solta sempre (mesmo morrendo) para o player nunca ficar preso
+	dungeon.call("end_infected_grab", self)
+	if !dead:
+		recover_from_attack(1.2)
 
 func recover_from_attack(recovery_time:float = 1.3) -> void:
 	if dead:

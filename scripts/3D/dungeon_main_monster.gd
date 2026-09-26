@@ -244,20 +244,20 @@ func process_rest(delta:float) -> void:
 		state = "patrol"
 		choose_next_patrol_target()
 
-func start_random_attack(player_distance:float) -> void:
-	var close_enough_for_grab:bool = player_distance <= 2.15
-	attack_number = 6 if close_enough_for_grab && randf() < 0.24 else int([1, 2, 3, 5].pick_random())
+func start_random_attack(_player_distance:float) -> void:
+	# O monstro principal agora só tem o ataque de AGARRAR (os golpes foram removidos).
+	attack_number = 6
 	state = "attack"
 	action_elapsed = 0.0
 	attack_impact_done = false
 	velocity.x = 0.0
 	velocity.z = 0.0
-	attack_audio.stream = ATTACK_2 if attack_number == 6 || randf() < 0.5 else ATTACK_1
+	attack_audio.stream = ATTACK_2
 	attack_audio.pitch_scale = randf_range(0.88, 1.05)
 	attack_audio.play()
 	action_timer = play_animation("Attack_%d" % attack_number, false, 1.0)
 	if action_timer <= 0.0:
-		action_timer = 2.4 if attack_number == 6 else 2.0
+		action_timer = 2.4
 
 func process_attack(delta:float) -> void:
 	velocity.x = 0.0
@@ -265,14 +265,10 @@ func process_attack(delta:float) -> void:
 	action_timer -= delta
 	action_elapsed += delta
 	look_at_horizontal(player.global_position)
-	var impact_moment:float = 0.72 if attack_number == 6 else 0.62
-	if !attack_impact_done && action_elapsed >= impact_moment:
+	if !attack_impact_done && action_elapsed >= 0.72:
 		attack_impact_done = true
 		if global_position.distance_to(player.global_position) <= 3.25:
-			if attack_number == 6:
-				grab_active = bool(dungeon.call("begin_main_monster_grab", self, grab_anchor))
-			else:
-				dungeon.call("apply_main_monster_strike", self, attack_number)
+			grab_active = bool(dungeon.call("begin_main_monster_grab", self, grab_anchor))
 	if grab_active && (action_elapsed >= 1.95 || action_timer <= 0.15):
 		dungeon.call("end_main_monster_grab", self)
 		grab_active = false
