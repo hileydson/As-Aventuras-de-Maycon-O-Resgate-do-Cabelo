@@ -15,7 +15,7 @@ const SMG_REST_ROTATION := Vector3(-0.03, 0.05, -0.02)
 
 var weapon_bob_time:float = 0.0
 var weapon_recoil_offset:Vector3 = Vector3.ZERO
-var weapon_recoil_rot_x:float = 0.0
+var weapon_recoil_rot:Vector3 = Vector3.ZERO
 
 # Pose de mira (delta a partir do repouso, em graus) para levantar os braços à frente da câmera.
 const RIGHT_ARM_AIM_EULER := Vector3(100.0, 0.0, 0.0)
@@ -217,17 +217,17 @@ func _physics_process(delta:float) -> void:
 				0.0
 			) + weapon_recoil_offset
 			var target_rot := rest_rot + Vector3(
-				sin(weapon_bob_time) * (bob_y_amp * 0.4) + weapon_recoil_rot_x,
-				0.0,
-				cos(weapon_bob_time * 0.5) * bob_rot_z
+				sin(weapon_bob_time) * (bob_y_amp * 0.4) + weapon_recoil_rot.x,
+				weapon_recoil_rot.y,
+				cos(weapon_bob_time * 0.5) * bob_rot_z + weapon_recoil_rot.z
 			)
-			gun_view.position = gun_view.position.lerp(target_pos, delta * 12.0)
-			gun_view.rotation = gun_view.rotation.lerp(target_rot, delta * 12.0)
+			gun_view.position = gun_view.position.lerp(target_pos, delta * 14.0)
+			gun_view.rotation = gun_view.rotation.lerp(target_rot, delta * 14.0)
 		else:
 			var target_pos := rest_pos + weapon_recoil_offset
-			var target_rot := rest_rot + Vector3(weapon_recoil_rot_x, 0.0, 0.0)
-			gun_view.position = gun_view.position.lerp(target_pos, delta * 8.0)
-			gun_view.rotation = gun_view.rotation.lerp(target_rot, delta * 8.0)
+			var target_rot := rest_rot + weapon_recoil_rot
+			gun_view.position = gun_view.position.lerp(target_pos, delta * 12.0)
+			gun_view.rotation = gun_view.rotation.lerp(target_rot, delta * 12.0)
 	var look := Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	if look.length() > 0.12:
 		rotate_y(-look.x * joy_sensitivity * delta)
@@ -456,7 +456,7 @@ func play_muzzle_flash() -> void:
 	flame_mesh.material = flash_material
 	flame.mesh = flame_mesh
 	flame.rotation.x = PI * 0.5
-	flame.position.z = -0.12
+	flame.position.z = -0.06
 	flash_root.add_child(flame)
 	var core_material := StandardMaterial3D.new()
 	core_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -472,7 +472,7 @@ func play_muzzle_flash() -> void:
 	core_mesh.material = core_material
 	core.mesh = core_mesh
 	core.rotation.x = PI * 0.5
-	core.position.z = -0.1
+	core.position.z = -0.04
 	flash_root.add_child(core)
 	var sparks := CPUParticles3D.new()
 	sparks.amount = 22 if weapon_mode == "machinegun" else 16
@@ -490,6 +490,7 @@ func play_muzzle_flash() -> void:
 	spark_mesh.height = 0.035
 	spark_mesh.material = flash_material
 	sparks.mesh = spark_mesh
+	sparks.position.z = 0.0
 	flash_root.add_child(sparks)
 	sparks.emitting = true
 	muzzle_light.position = camera.to_local(muzzle_marker.global_position)
@@ -535,17 +536,38 @@ func fire() -> void:
 	camera.rotation.z = randf_range(-0.012, 0.012)
 	create_tween().tween_property(camera, "rotation:z", 0.0, 0.07)
 	if is_instance_valid(gun_view):
-		weapon_recoil_offset = Vector3(0, 0.02, 0.06)
-		weapon_recoil_rot_x = -0.055
-		var recoil := create_tween()
-		if is_instance_valid(recoil):
-			recoil.set_parallel(true)
-			var tw1 = recoil.tween_property(self, "weapon_recoil_offset", Vector3.ZERO, 0.085)
-			if tw1:
-				tw1.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-			var tw2 = recoil.tween_property(self, "weapon_recoil_rot_x", 0.0, 0.09)
-			if tw2:
-				tw2.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		if weapon_mode == "pistol":
+			weapon_recoil_offset = Vector3(randf_range(-0.015, 0.015), 0.055, 0.14)
+			weapon_recoil_rot = Vector3(0.20, randf_range(-0.025, 0.025), randf_range(-0.035, 0.035))
+			gun_view.position += Vector3(0.0, 0.03, 0.09)
+			gun_view.rotation.x += 0.12
+			
+			head.rotation.x = clamp(head.rotation.x + randf_range(0.03, 0.045), -1.35, 1.35)
+			camera.rotation.z = randf_range(-0.025, 0.025)
+			create_tween().tween_property(camera, "rotation:z", 0.0, 0.12)
+			shake_camera(0.035, 0.14)
+			
+			var recoil := create_tween()
+			if is_instance_valid(recoil):
+				recoil.set_parallel(true)
+				recoil.tween_property(self, "weapon_recoil_offset", Vector3.ZERO, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+				recoil.tween_property(self, "weapon_recoil_rot", Vector3.ZERO, 0.20).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		else:
+			weapon_recoil_offset = Vector3(randf_range(-0.018, 0.018), 0.032, 0.095)
+			weapon_recoil_rot = Vector3(0.12, randf_range(-0.028, 0.028), randf_range(-0.025, 0.025))
+			gun_view.position += Vector3(randf_range(-0.008, 0.008), 0.016, 0.055)
+			gun_view.rotation.x += 0.065
+			
+			head.rotation.x = clamp(head.rotation.x + randf_range(0.015, 0.024), -1.35, 1.35)
+			camera.rotation.z = randf_range(-0.018, 0.018)
+			create_tween().tween_property(camera, "rotation:z", 0.0, 0.08)
+			shake_camera(0.02, 0.08)
+			
+			var recoil := create_tween()
+			if is_instance_valid(recoil):
+				recoil.set_parallel(true)
+				recoil.tween_property(self, "weapon_recoil_offset", Vector3.ZERO, 0.085).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+				recoil.tween_property(self, "weapon_recoil_rot", Vector3.ZERO, 0.09).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		
 	if get_current_clip() == 0 && get_current_reserve() > 0:
 		start_reload()
@@ -581,8 +603,8 @@ func update_view_gun() -> void:
 		weapon_model.scale = Vector3.ONE * 1.55
 		weapon_model.rotation.y = PI * 0.5
 		hide_service_pistol_loose_parts(weapon_model)
-		muzzle_marker.position = Vector3(0, 0.035, -0.185)
-		casing_eject_marker.position = Vector3(0.045, 0.07, -0.035)
+		muzzle_marker.position = Vector3(0.0, 0.329, -0.165)
+		casing_eject_marker.position = Vector3(0.045, 0.30, -0.05)
 	else:
 		weapon_model.scale = Vector3.ONE * 0.86
 		weapon_model.rotation.y = PI

@@ -22,8 +22,8 @@ var enemies:Array[DungeonInfected] = []
 var enemy_spawns:Array[Dictionary] = []
 var hiding_zones:Array[AABB] = []
 var flicker_lights:Array[Dictionary] = []
-var stage_doors := {"intro": [], "blue": [], "red": [], "green": []}
-var stage_enemies := {"intro": [], "blue": [], "red": [], "green": []}
+var stage_doors := {"entrance": [], "intro": [], "blue": [], "red": [], "green": []}
+var stage_enemies := {"entrance": [], "intro": [], "blue": [], "red": [], "green": []}
 var route_gates:Dictionary = {}
 var key_room_doors:Dictionary = {}
 var levers:Dictionary = {}
@@ -251,14 +251,24 @@ func wire_existing_prison() -> void:
 				lever.set_meta("handle", hinge)
 	
 	# Portas de cela (stage_doors)
-	for s in ["intro", "blue", "red", "green"]:
+	for s in ["entrance", "intro", "blue", "red", "green"]:
+		if not stage_doors.has(s):
+			stage_doors[s] = []
 		stage_doors[s].clear()
 	for child in world_root.get_children():
 		var cname := child.name
 		if cname.begins_with("Cell_"):
-			for stage in ["intro", "blue", "red", "green"]:
-				if cname.begins_with("Cell_" + stage):
-					stage_doors[stage].append(child)
+			if cname.begins_with("Cell_intro_"):
+				if child.position.z > -80.0:
+					stage_doors["entrance"].append(child)
+				else:
+					stage_doors["intro"].append(child)
+			elif cname.begins_with("Cell_blue_"):
+				stage_doors["blue"].append(child)
+			elif cname.begins_with("Cell_red_"):
+				stage_doors["red"].append(child)
+			elif cname.begins_with("Cell_green_"):
+				stage_doors["green"].append(child)
 	# Portão da cela do machado
 	axe_door = find_child("AxeCellDoor", true, false)
 	if is_instance_valid(axe_door):
@@ -283,8 +293,8 @@ func populate_hiding_zones_and_spawns() -> void:
 	auto_release_assigned = false
 	for z in [-11.0, -25.0, -39.0, -53.0, -67.0]:
 		if z != -11.0:
-			register_cell_record(0, -1, z, "intro", z == -25.0)
-		register_cell_record(0, 1, z, "intro", z == -53.0)
+			register_cell_record(0, -1, z, "entrance", z == -25.0)
+		register_cell_record(0, 1, z, "entrance", z == -53.0)
 	for z in [-106.0, -121.0]:
 		register_cell_record(-56, -1, z, "intro", z == -121.0)
 		register_cell_record(-56, 1, z, "intro", false)
@@ -299,23 +309,27 @@ func populate_hiding_zones_and_spawns() -> void:
 
 func get_cell_door(stage: String, coord: float) -> Node3D:
 	var c_int := int(round(coord))
-	var candidates: Array[String] = [
-		"Cell_%s_%d_0" % [stage, c_int],
-		"Cell_%s_%d" % [stage, c_int],
-		"Cell_%s_%s_0" % [stage, str(coord)],
-		"Cell_%s_%s" % [stage, str(coord)],
-		"Cell_%s_%.1f_0" % [stage, coord],
-		"Cell_%s_%.1f" % [stage, coord]
-	]
+	var stage_prefixes: Array[String] = [stage]
+	if stage == "entrance":
+		stage_prefixes.append("intro")
+	var candidates: Array[String] = []
+	for st in stage_prefixes:
+		candidates.append("Cell_%s_%d_0" % [st, c_int])
+		candidates.append("Cell_%s_%d" % [st, c_int])
+		candidates.append("Cell_%s_%s_0" % [st, str(coord)])
+		candidates.append("Cell_%s_%s" % [st, str(coord)])
+		candidates.append("Cell_%s_%.1f_0" % [st, coord])
+		candidates.append("Cell_%s_%.1f" % [st, coord])
 	for cname in candidates:
 		var node = find_child(cname, true, false)
 		if node != null:
 			return node as Node3D
-	var prefix := "Cell_%s_%d" % [stage, c_int]
-	if is_instance_valid(world_root):
-		for child in world_root.get_children():
-			if child.name.begins_with(prefix):
-				return child as Node3D
+	for st in stage_prefixes:
+		var prefix := "Cell_%s_%d" % [st, c_int]
+		if is_instance_valid(world_root):
+			for child in world_root.get_children():
+				if child.name.begins_with(prefix):
+					return child as Node3D
 	return null
 
 func register_cell_record(corridor_x: float, side: int, z: float, stage: String, empty: bool) -> void:
@@ -789,7 +803,7 @@ func spawn_record(position_value:Vector3, stage:String, door:Node3D) -> void:
 		{"path": HOUND_MODEL, "kind": "hound", "scale": 0.58}
 	]
 	var variant: Dictionary = variants[enemy_spawns.size() % variants.size()]
-	var automatic:bool = stage == "intro" && !auto_release_assigned
+	var automatic:bool = (stage == "entrance" || stage == "intro") && !auto_release_assigned
 	if automatic:
 		auto_release_assigned = true
 	enemy_spawns.append({"position": position_value, "stage": stage, "path": variant.path, "kind": variant.kind, "scale": variant.scale, "door": door, "auto_release": automatic})
@@ -811,6 +825,8 @@ func spawn_infected(record:Dictionary, force_released:bool) -> DungeonInfected:
 	infected.caught_player.connect(on_player_caught)
 	infected.died.connect(on_infected_died)
 	enemies.append(infected)
+	if not stage_enemies.has(stage):
+		stage_enemies[stage] = []
 	stage_enemies[stage].append(infected)
 	return infected
 
@@ -1948,15 +1964,19 @@ func unlock_gate_manually(gate_name:String) -> void:
 
 func activate_stage(stage:String, with_sound:bool) -> void:
 	Global.game_events["dungeon_%s_lever" % stage] = true
-	open_door(key_room_doors[stage], with_sound)
-	for door in stage_doors[stage]:
-		open_door(door, with_sound)
-	for enemy in stage_enemies[stage]:
-		if is_instance_valid(enemy):
-			enemy.release_from_cell()
-	var handle:Node3D = levers[stage].get_meta("handle", null)
-	if is_instance_valid(handle):
-		create_tween().tween_property(handle, "rotation:x", 0.75, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	if key_room_doors.has(stage):
+		open_door(key_room_doors[stage], with_sound)
+	if stage_doors.has(stage):
+		for door in stage_doors[stage]:
+			open_door(door, with_sound)
+	if stage_enemies.has(stage):
+		for enemy in stage_enemies[stage]:
+			if is_instance_valid(enemy):
+				enemy.release_from_cell()
+	if levers.has(stage) and is_instance_valid(levers[stage]):
+		var handle:Node3D = levers[stage].get_meta("handle", null)
+		if is_instance_valid(handle):
+			create_tween().tween_property(handle, "rotation:x", 0.75, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	Global.save_progress("calabouco_terror")
 	update_hud()
 
@@ -2000,7 +2020,7 @@ func start_finale_cutscene() -> void:
 	if sequence_running || event_is_true("dungeon_finale_triggered"):
 		return
 	Global.game_events["dungeon_finale_triggered"] = true
-	for stage in ["intro", "blue", "red", "green"]:
+	for stage in ["entrance", "intro", "blue", "red", "green"]:
 		activate_stage(stage, false)
 	for record in enemy_spawns:
 		spawn_infected(record, true)
