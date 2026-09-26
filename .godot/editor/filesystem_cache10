@@ -299,7 +299,7 @@ sound0.wav::AudioStreamWAV::4412821191005728883::1767636736::1767636736::1::::<>
 sound1.mp3::AudioStreamMP3::2394456978190327307::1767636736::1767636736::1::::<><><>0<>0<>8522cae094c628da9a32d886aa07d7b1<>res://.godot/imported/sound1.mp3-631d84f9e51cfc2664f7d180108e8d93.mp3str::
 ::res://assets/fonts/::1790270218
 contrast.ttf::FontFile::4242287116472386449::1790270125::1790270218::1::::<><><>0<>0<>551e4b3f8d818437e52c8373b33ca9bc<>res://.godot/imported/contrast.ttf-de11ed9f140ba5c32970615019343744.fontdata::
-::res://assets/horror_creatures/::1790388387
+::res://assets/horror_creatures/::1790426705
 ATTRIBUTION.md::TextFile::-1::1790349134::0::1::::<><><>0<>0<><>::
 horror_mutant.glb::PackedScene::1886310701381571296::1790349041::1790349529::1::::<><><>0<>0<>82d847deb226e88b64eddca700baef76<>res://.godot/imported/horror_mutant.glb-f17ce17b0f39f27f5cfba188859fef46.scn::
 horror_runner.glb::PackedScene::8173427506828638935::1790340610::1790341644::1::::<><><>0<>0<>860602122b689669a375013ef81072e7<>res://.godot/imported/horror_runner.glb-99b061db4f60dafbafb9d353285ad1e2.scn::
@@ -314,7 +314,7 @@ infected_zombie_animated_InfectedCityMan_City_Man_Infected_Outfit1_Normal.png::C
 infected_zombie_Zombie.png::CompressedTexture2D::5969498701717469343::1790341644::1790367936::1::::<><><>0<>0<>3143cd39d56f12262373760042fed7b5<>res://.godot/imported/infected_zombie_Zombie.png-2efb69d86832f84e9b151f410f6c0b56.s3tc.ctex<*>res://.godot/imported/infected_zombie_Zombie.png-2efb69d86832f84e9b151f410f6c0b56.etc2.ctex::
 plague_hound.glb::PackedScene::2428048238826228607::1790340880::1790341644::1::::<><><>0<>0<>98f7589fd19666543340742a7f692dce<>res://.godot/imported/plague_hound.glb-369d350d920c7cc218e2f7b0cd4a1bac.scn::
 plague_hound_clean.glb::PackedScene::961960940414283699::1790349056::1790349529::1::::<><><>0<>0<>eeaeb8d516fc30e980b406208ef16c0c<>res://.godot/imported/plague_hound_clean.glb-a536e5ee5e48449c3e1024883300ed0c.scn::
-zombie_authored_animations.res::AnimationLibrary::6704073257469586578::1790388387::0::1::::<><><>0<>0<><>::
+zombie_authored_animations.res::AnimationLibrary::6704073257469586578::1790426705::0::1::::<><><>0<>0<><>::
 ::res://assets/images/::1767636736
 andando_direita_0.png::CompressedTexture2D::5636034720339164745::1767636736::1767636736::1::::<><><>0<>0<>f0bbeb16087c404db3e50ca690a8bfde<>res://.godot/imported/andando_direita_0.png-e2fdb8e41a91c38ee50e85f5b9187ad3.ctex::
 andando_direita_1.png::CompressedTexture2D::3442434133255923484::1767636736::1767636736::1::::<><><>0<>0<>665bbfb048014e6d811100bac7839655<>res://.godot/imported/andando_direita_1.png-e73716735b8ae669bb837dc62bbf61e0.ctex::
@@ -2906,7 +2906,7 @@ inimigo_xuruzika_attack_2.png::CompressedTexture2D::5873624034411822267::1767636
 inimigo_xuruzika_boné.png::CompressedTexture2D::1486318902601376279::1767636737::1767636737::1::::<><><>0<>0<>761548f7635e2fe85fe5eac7dc350daa<>res://.godot/imported/inimigo_xuruzika_boné.png-57920776989a6a1763f36c14e83dd7c3.ctex::
 inimigo_xuruzika_coxinha.png::CompressedTexture2D::3988653484600820395::1767636737::1767636737::1::::<><><>0<>0<>b4a3ad9ef098e95be07a6885774f8cb5<>res://.godot/imported/inimigo_xuruzika_coxinha.png-c5ef07bb2a10e2b31f9b7c28a13ec28e.ctex::
 inimigo_xuruzika_idle.png::CompressedTexture2D::7025334806152601194::1767636737::1767636737::1::::<><><>0<>0<>cf5a02ebf874667037e52d2ea7f3b27e<>res://.godot/imported/inimigo_xuruzika_idle.png-913d455bccd9916ca59339a73abb9b38.ctex::
-::res://assets/novas_imagens/maycon/::1790110368
+::res://assets/novas_imagens/maycon/::1790389828
 attack_test_2.png::CompressedTexture2D::5152137443862748910::1767636737::1767636737::1::::<><><>0<>0<>ddc647de0add6305f6485f40046538c5<>res://.godot/imported/attack_test_2.png-20f0150eff835431fad6f300899b8b4d.ctex::
 jamelao_float_1.png::CompressedTexture2D::7246125218914028550::1767636737::1767636737::1::::<><><>0<>0<>7b834fa214c96dc79104f4f4521b578f<>res://.godot/imported/jamelao_float_1.png-7919a3e5f3e22bf4f709a5aef65ade58.s3tc.ctex<*>res://.godot/imported/jamelao_float_1.png-7919a3e5f3e22bf4f709a5aef65ade58.etc2.ctex::
 jamelao_float_2.png::CompressedTexture2D::8253271576412160764::1767636737::1767636737::1::::<><><>0<>0<>7a5124fdae29340f0e68aa55efd5d7ec<>res://.godot/imported/jamelao_float_2.png-b9aac39689d47bb11afb1cc12656c239.s3tc.ctex<*>res://.godot/imported/jamelao_float_2.png-b9aac39689d47bb11afb1cc12656c239.etc2.ctex::
@@ -3877,7 +3877,7 @@ two_layers_fps_mode.tscn::PackedScene::-1::1770925139::0::1::::<><><>0<>0<><>::
 ::res://scenes/3D/::1790388313
 blood.tscn::PackedScene::3378112629565214641::1790123747::0::1::::<><><>0<>0<><>::uid://b6xclp8odu70a::::res://scripts/3D/blood.gd
 bullets.tscn::PackedScene::1053247965064024194::1770494548::0::1::::<><><>0<>0<><>::uid://lr74moi08s8w::::res://scripts/3D/bullets.gd<>uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3<>uid://b3fd11n6arqyd::::res://assets/novas_imagens/3d_battle/bullets.png<>uid://bwxswwjvm1rsh::::res://scripts/3D/bounce_item.gd
-calabouco_terror.tscn::PackedScene::1867929426671437033::1790388121::0::1::::<><><>0<>0<><>::uid://cm6qqcib286a6::::res://scripts/3D/dungeon_prison.gd<>uid://bysc8ns18xmwv::::res://scenes/3D/pause_3d.tscn
+calabouco_terror.tscn::PackedScene::1867929426671437033::1790426412::0::1::::<><><>0<>0<><>::uid://cm6qqcib286a6::::res://scripts/3D/dungeon_prison.gd<>uid://bysc8ns18xmwv::::res://scenes/3D/pause_3d.tscn
 castelo_3d.tscn::PackedScene::2193107508504318551::1769800933::0::1::::<><><>0<>0<><>::uid://d12tsbs23bhs0::::res://scripts/3D/character_body_3d.gd
 cenario_3d_after_castle_berore_seco_boss.tscn::PackedScene::5078396539918530815::1771524339::0::1::::<><><>0<>0<><>::uid://b538p200u57lv::::res://assets/novos_audios/final_cabelo_mistery.mp3<>uid://c58hvspwv25xf::::res://assets/novas_imagens/3d_cenarios/textura_chao_caminho_das_pegras.png<>uid://c5do17jvoskfm::::res://scenes/3D/maycon_3d.tscn<>uid://ineuj4du7712::::res://scripts/3D/terrain_3d_berore_seco_boss.gd<>uid://mds23lx1p4c3::::res://assets/novas_imagens/3d_cenarios/arvores/arvore_dark_2.png<>uid://dm5oint7ylr5x::::res://assets/novas_imagens/3d_cenarios/arvores/arvore_dark_1.png<>uid://pag3tfoc4qyk::::res://scenes/3D/bullets.tscn<>uid://b1y2e2cvtlgas::::res://scenes/3D/torcha_3d.tscn<>uid://dlqycyx4v715r::::res://scenes/3D/inimigo_3d/inimigo_1_first_3d_battle.tscn<>uid://ccq7i7c6to5yt::::res://scenes/3D/inimigo_3d/inimigo_2_first_3d_battle.tscn<>uid://poibc18m5nnx::::res://assets/novos_audios/respaw.mp3<>uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3<>uid://clwe6bwguowon::::res://assets/novos_audios/hurt_sound_3d.mp3<>uid://7yq1nl8wo04o::::res://scenes/3D/gpu_particles_3d.gd<>uid://bysc8ns18xmwv::::res://scenes/3D/pause_3d.tscn<>uid://bwxswwjvm1rsh::::res://scripts/3D/bounce_item.gd<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn<>uid://c71odhu3buit::::res://assets/novas_imagens/3d_battle/arma_3d.png<>uid://c1f464or8gmd0::::res://assets/modelo_3d/maycon/maycon_base_3d.obj
 cenario_3d_bofore_castle_1.tscn::PackedScene::291623993297119319::1770925669::0::1::::<><><>0<>0<><>::uid://nkjnek3wm5yp::::res://scripts/3D/cenario_3d_bofore_castle_1.gd<>uid://c5do17jvoskfm::::res://scenes/3D/maycon_3d.tscn<>uid://df08t0n8ym22n::::res://assets/novos_audios/sangue_fill_effect.mp3<>uid://boqyn3fvgnhwl::::res://assets/novas_imagens/3d_cenarios/textura_chao_barro.png<>uid://b538p200u57lv::::res://assets/novos_audios/final_cabelo_mistery.mp3<>uid://b1y2e2cvtlgas::::res://scenes/3D/torcha_3d.tscn<>uid://btl22s5pwrpe0::::res://assets/novos_audios/sliding.mp3<>uid://c0jpqp6ih1ob0::::res://assets/novos_audios/subindo_escada.mp3<>uid://bysc8ns18xmwv::::res://scenes/3D/pause_3d.tscn<>uid://b4nuieuqfk5wl::::res://assets/novas_imagens/buttons/360_A.png<>uid://casgjkx6xefuq::::res://assets/novas_imagens/3d_cenarios/escada.png<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn<>uid://dqid02yacbfn5::::res://assets/novas_imagens/buttons/Blank_White_Enter.png<>uid://bu87adwoqopfd::::res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png<>uid://dx3v12ochwfux::::res://assets/modelo_3d/objects/ladder.obj<>uid://c7ojmg3ah36ew::::res://scenes/3D/lamp.tscn<>uid://b8tlxjtxlay3i::::res://scenes/3D/gas.tscn
@@ -3949,7 +3949,7 @@ fase_1_before_castle_2.gd::GDScript::3133076191879326939::1768258387::0::1::::<>
 fase_1_before_castle_3.gd::GDScript::6184730094203413863::1790264236::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_4.gd::GDScript::2154952988607779227::1790177896::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_castle_1.gd::GDScript::102494842549205663::1769783164::0::1::::<>Sprite2D<><>0<>0<><>::
-fase_1_castle_2.gd::GDScript::3502049742876632077::1790389235::0::1::::<>Sprite2D<><>0<>0<><>::
+fase_1_castle_2.gd::GDScript::3502049742876632077::1790392159::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_castle_3.gd::GDScript::285430353212092801::1770986867::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_castle_no_fire_1.gd::GDScript::5670764743540065835::1770227375::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_castle_no_fire_2.gd::GDScript::4824505999164797345::1768258449::0::1::::<>Sprite2D<><>0<>0<><>::
@@ -3958,7 +3958,7 @@ fase_1_outside_castle_again_no_fire_2.gd::GDScript::6243358031740958106::1790020
 fase_1_outside_castle_again_no_fire_3.gd::GDScript::1824109410800073102::1790094775::0::1::::<>Sprite2D<><>0<>0<><>::
 game.gd::GDScript::676883979450412678::1789995246::0::1::::<>Node2D<><>0<>0<><>::
 game_songs.gd::GDScript::614287363896591786::1790190803::0::1::::<>Node2D<><>0<>0<><>::
-Global.gd::GDScript::2969336717215221737::1790389138::0::1::::<>Node<><>0<>0<><>::
+Global.gd::GDScript::2969336717215221737::1790392172::0::1::::<>Node<><>0<>0<><>::
 hp.gd::GDScript::5708940543160946882::1790260951::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 intro_batalha_frozen_effect.gd::GDScript::6657063382709979058::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 intro_game.gd::GDScript::1191826035399765642::1790262447::0::1::::<>VideoStreamPlayer<><>0<>0<><>::
@@ -3992,10 +3992,10 @@ bullets.gd::GDScript::809167085934815576::1770925133::0::1::::<>Area3D<><>0<>0<>
 cenario_3d_bofore_castle_1.gd::GDScript::933668639934223735::1790256765::0::1::::<>Node3D<><>0<>0<><>::
 character_body_3d.gd::GDScript::9041096033774661569::1790130008::0::1::::<>CharacterBody3D<><>0<>0<><>::
 dungeon_giant_zombie.gd::GDScript::408991823400523981::1790389754::0::1::::DungeonGiantZombie<>Node3D<><>0<>1<><>::
-dungeon_infected.gd::GDScript::3648851865426708569::1790389693::0::1::::DungeonInfected<>CharacterBody3D<><>0<>0<><>::
-dungeon_main_monster.gd::GDScript::7669060581581853465::1790389738::0::1::::DungeonMainMonster<>CharacterBody3D<><>0<>0<><>::
-dungeon_player.gd::GDScript::7907898859989045673::1790389463::0::1::::DungeonPlayer<>CharacterBody3D<><>0<>0<><>::
-dungeon_prison.gd::GDScript::5680103363493170547::1790389631::0::1::::<>Node3D<><>0<>0<><>::
+dungeon_infected.gd::GDScript::3648851865426708569::1790423144::0::1::::DungeonInfected<>CharacterBody3D<><>0<>0<><>::
+dungeon_main_monster.gd::GDScript::7669060581581853465::1790393587::0::1::::DungeonMainMonster<>CharacterBody3D<><>0<>0<><>::
+dungeon_player.gd::GDScript::7907898859989045673::1790428089::0::1::::DungeonPlayer<>CharacterBody3D<><>0<>0<><>::
+dungeon_prison.gd::GDScript::5680103363493170547::1790428130::0::1::::<>Node3D<><>0<>0<><>::
 fellas_chase.gd::GDScript::4676541764410775153::1790128991::0::1::::<>Node3D<><>0<>0<><>::
 gas.gd::GDScript::5586480109356844290::1770239842::0::1::::<>Area3D<><>0<>0<><>::
 import_collision_gen.gd::GDScript::-1::1770925133::0::1::::<>EditorScenePostImport<><>0<>1<><>::
@@ -4051,9 +4051,8 @@ terrain3d-01_00.res::Terrain3DRegion::4979166056605722663::1770136386::0::1::::<
 terrain3d_00-01.res::Terrain3DRegion::5019486532651089028::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00-02.res::Terrain3DRegion::3854885546111145601::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00_00.res::Terrain3DRegion::4948174298051947078::1770136386::0::1::::<><><>0<>0<><>::
-::res://tests/::1790389821
+::res://tests/::1790427933
 inspect_head_bones.gd::GDScript::2178062246225173415::1790366592::0::1::::<>SceneTree<><>0<>0<><>::
-test_all_adjustments.gd::GDScript::2444647093450508550::1790389821::0::1::::<>SceneTree<><>0<>0<><>::
 verify_maycon_fp_body.gd::GDScript::6710687674176764627::1790365829::0::1::::<>SceneTree<><>0<>0<><>::
 ::res://translations/::1790384325
 game_text.csv::Translation::1292654866392114924::1790383621::1790383698::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
