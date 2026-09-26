@@ -1377,10 +1377,6 @@ size = Vector3(0.16, 0.13, 7)
 [sub_resource type="BoxShape3D" id="BoxShape3D_5lpdw"]
 size = Vector3(0.35, 4.3, 7)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dirt"]
-albedo_color = Color(0.18, 0.13, 0.045, 1)
-roughness = 0.95
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yqkvp"]
 albedo_texture = ExtResource("32_crate_diff")
 roughness = 0.85
@@ -6307,6 +6303,10 @@ material = SubResource("StandardMaterial3D_2ock2")
 top_radius = 1.4
 bottom_radius = 1.7
 height = 0.025
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dirt"]
+albedo_color = Color(0.18, 0.13, 0.045, 1)
+roughness = 0.95
 
 [sub_resource type="SphereMesh" id="SphereMesh_k0yfc"]
 material = SubResource("StandardMaterial3D_dirt")
@@ -12445,30 +12445,6 @@ light_color = Color(0.72, 0.86, 1, 1)
 light_energy = 3.0
 omni_range = 4.0
 
-[node name="PistolTestPickup" type="Node3D" parent="PrisonArchitecture" unique_id=1126522456]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 0.62, -2.2)
-
-[node name="service_pistol_4k" parent="PrisonArchitecture/PistolTestPickup" unique_id=920978585 instance=ExtResource("7_ao8gx")]
-transform = Transform3D(-9.397949e-08, 0, 2.15, 0, 2.15, 0, -2.15, 0, -9.397949e-08, 0, 0, 0)
-
-[node name="@OmniLight3D@1672" type="OmniLight3D" parent="PrisonArchitecture/PistolTestPickup" unique_id=2024081835]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
-light_color = Color(1, 0.48, 0.08, 1)
-light_energy = 3.0
-omni_range = 4.5
-
-[node name="MachinegunTestPickup" type="Node3D" parent="PrisonArchitecture" unique_id=268005141]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 0.62, -2.2)
-
-[node name="SMG" parent="PrisonArchitecture/MachinegunTestPickup" unique_id=734352138 instance=ExtResource("8_fn87q")]
-transform = Transform3D(-0.95, 0, -8.305164e-08, 0, 0.95, 0, 8.305164e-08, 0, -0.95, 0, 0, 0)
-
-[node name="@OmniLight3D@1673" type="OmniLight3D" parent="PrisonArchitecture/MachinegunTestPickup" unique_id=1082113953]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
-light_color = Color(1, 0.48, 0.08, 1)
-light_energy = 3.0
-omni_range = 4.5
-
 [node name="PistolPickup" type="Node3D" parent="PrisonArchitecture" unique_id=136726038]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, 0.62, -125)
 
@@ -12722,7 +12698,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -91)
 script = ExtResource("16_pcdql")
 
 [node name="GiantZombie_0" type="Node3D" parent="." unique_id=592209886]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, -1.2, -147.5)
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -56, -22.247913, -147.5)
 script = ExtResource("21_hwyl5")
 zone_center = Vector3(-56, 0, -140)
 zone_half = Vector3(6, 3, 5.5)
@@ -12735,7 +12711,7 @@ stream = ExtResource("22_m3wx5")
 volume_db = 2.0
 
 [node name="GiantZombie_1" type="Node3D" parent="." unique_id=783065659]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, -1.2, -147.5)
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 56, -21.867176, -147.5)
 script = ExtResource("21_hwyl5")
 zone_center = Vector3(56, 0, -140)
 zone_half = Vector3(6, 3, 5.5)
