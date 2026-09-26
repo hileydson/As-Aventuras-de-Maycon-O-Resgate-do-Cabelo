@@ -114,8 +114,8 @@ func _ready() -> void:
 	var reveal := create_tween()
 	reveal.tween_property(fade_rect, "color:a", 0.0, 2.8).set_trans(Tween.TRANS_SINE)
 	reveal.parallel().tween_property(menu_panel, "modulate:a", 1.0, 3.6).set_trans(Tween.TRANS_SINE)
-	if is_instance_valid(btn_new_game):
-		btn_new_game.grab_focus.call_deferred()
+	if is_instance_valid(btn_load):
+		btn_load.grab_focus.call_deferred()
 
 
 func _process(delta: float) -> void:
@@ -724,12 +724,12 @@ func _build_interface() -> void:
 	buttons.name = "Buttons"
 	buttons.add_theme_constant_override("separation", 8)
 	stack_main.add_child(buttons)
-	btn_new_game = _menu_button("MENU_NEW_GAME", "NewGame")
-	buttons.add_child(btn_new_game)
-	btn_new_game.pressed.connect(_on_new_game_pressed)
 	btn_load = _menu_button("MENU_LOAD", "Load")
 	buttons.add_child(btn_load)
 	btn_load.pressed.connect(_on_load_pressed)
+	btn_new_game = _menu_button("MENU_NEW_GAME", "NewGame")
+	buttons.add_child(btn_new_game)
+	btn_new_game.pressed.connect(_on_new_game_pressed)
 	var settings := _menu_button("MENU_SETTINGS", "Settings")
 	buttons.add_child(settings)
 	settings.pressed.connect(_on_settings_pressed)
@@ -737,14 +737,14 @@ func _build_interface() -> void:
 	buttons.add_child(exit_button)
 	exit_button.pressed.connect(_on_exit_pressed)
 
-	btn_new_game.focus_neighbor_top = exit_button.get_path()
-	btn_new_game.focus_neighbor_bottom = btn_load.get_path()
-	btn_load.focus_neighbor_top = btn_new_game.get_path()
-	btn_load.focus_neighbor_bottom = settings.get_path()
-	settings.focus_neighbor_top = btn_load.get_path()
+	btn_load.focus_neighbor_top = exit_button.get_path()
+	btn_load.focus_neighbor_bottom = btn_new_game.get_path()
+	btn_new_game.focus_neighbor_top = btn_load.get_path()
+	btn_new_game.focus_neighbor_bottom = settings.get_path()
+	settings.focus_neighbor_top = btn_new_game.get_path()
 	settings.focus_neighbor_bottom = exit_button.get_path()
 	exit_button.focus_neighbor_top = settings.get_path()
-	exit_button.focus_neighbor_bottom = btn_new_game.get_path()
+	exit_button.focus_neighbor_bottom = btn_load.get_path()
 
 	# 2. Slot selection submenu stack
 	stack_slots = VBoxContainer.new()
@@ -1105,8 +1105,8 @@ func _show_main_menu() -> void:
 	stack_main.visible = true
 	stack_slots.visible = false
 	stack_slot_actions.visible = false
-	if is_instance_valid(btn_new_game):
-		btn_new_game.grab_focus.call_deferred()
+	if is_instance_valid(btn_load):
+		btn_load.grab_focus.call_deferred()
 
 
 func _show_slots_menu(mode: String = "load") -> void:

@@ -56,6 +56,8 @@ var zombie_rest:Dictionary = {}   # bone_name -> Quaternion de descanso
 var zombie_phase:float = 0.0
 var zombie_move_amt:float = 0.0   # 0 parado .. 1 andando (suavizado)
 var zombie_reach:float = 0.0      # 0 .. 1 (bracos esticados para agarrar)
+var skeleton:Skeleton3D
+var active_bone_recoils:Array[Dictionary] = []
 
 func setup(target:DungeonPlayer, owner_dungeon:Node, model_path:String, initially_released:bool, trigger_distance:float, kind:String = "zombie", scale_value:float = 1.0) -> void:
 	player = target
@@ -136,6 +138,7 @@ func build_body(model_path:String) -> void:
 			# usadas também pelo zumbi gigante. zombie_skel fica nulo de propósito para o
 			# fluxo normal de animação (idle/walk/attack) assumir no lugar do rig procedural.
 			var z_skel := model_root.find_child("Skeleton3D", true, false) as Skeleton3D
+			skeleton = z_skel
 			var z_anim := model_root.find_child("AnimationPlayer", true, false) as AnimationPlayer
 			if is_instance_valid(z_anim) && is_instance_valid(z_skel):
 				if z_anim.has_animation_library(""):
@@ -540,7 +543,57 @@ func can_see_player() -> bool:
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
 	return hit.is_empty() || hit.get("collider") == player
 
-func take_damage(amount:int, weapon_type:String = "pistol") -> void:
+func _process(delta: float) -> void:
+	_update_bone_recoils(delta)
+
+func trigger_bone_recoil(hit_pos: Vector3, hit_dir: Vector3) -> void:
+	if !is_instance_valid(skeleton) or skeleton.get_bone_count() == 0:
+		return
+	var hit_skel_pos := skeleton.to_local(hit_pos)
+	var closest_bone := -1
+	var min_dist_sq := 999999.0
+	for i in range(skeleton.get_bone_count()):
+		var bone_pos := skeleton.get_bone_global_pose(i).origin
+		var d_sq := hit_skel_pos.distance_squared_to(bone_pos)
+		if d_sq < min_dist_sq:
+			min_dist_sq = d_sq
+			closest_bone = i
+	if closest_bone == -1:
+		return
+	var local_hit_dir := (skeleton.global_transform.basis.inverse() * hit_dir).normalized()
+	var kick_axis := local_hit_dir.cross(Vector3.UP).normalized()
+	if kick_axis.length_squared() < 0.01:
+		kick_axis = Vector3.RIGHT
+	var rot_kick := Quaternion(kick_axis, deg_to_rad(randf_range(16.0, 26.0)))
+	var pos_kick := local_hit_dir * 0.16
+	active_bone_recoils.append({
+		"bone": closest_bone,
+		"pos_offset": pos_kick,
+		"rot_offset": rot_kick,
+		"elapsed": 0.0,
+		"duration": 0.28
+	})
+
+func _update_bone_recoils(delta: float) -> void:
+	if active_bone_recoils.is_empty() or !is_instance_valid(skeleton):
+		return
+	for i in range(active_bone_recoils.size() - 1, -1, -1):
+		var recoil: Dictionary = active_bone_recoils[i]
+		recoil.elapsed += delta
+		var t: float = recoil.elapsed / recoil.duration
+		if t >= 1.0:
+			active_bone_recoils.remove_at(i)
+			continue
+		var weight: float = (1.0 - t) * (1.0 - t)
+		var b_idx: int = recoil.bone
+		if b_idx < skeleton.get_bone_count():
+			var cur_pos := skeleton.get_bone_pose_position(b_idx)
+			skeleton.set_bone_pose_position(b_idx, cur_pos + recoil.pos_offset * weight)
+			var cur_rot := skeleton.get_bone_pose_rotation(b_idx)
+			var add_rot := Quaternion.IDENTITY.slerp(recoil.rot_offset, weight)
+			skeleton.set_bone_pose_rotation(b_idx, cur_rot * add_rot)
+
+func take_damage(amount:int, weapon_type:String = "pistol", hit_pos:Vector3 = Vector3.ZERO, hit_dir:Vector3 = Vector3.ZERO) -> void:
 	if dead:
 		return
 	health -= amount
@@ -548,10 +601,21 @@ func take_damage(amount:int, weapon_type:String = "pistol") -> void:
 	if is_instance_valid(pain_audio):
 		pain_audio.pitch_scale = randf_range(0.9, 1.15)
 		pain_audio.play()
-	if is_instance_valid(animator):
-		# Pequena reação de hit ou recuo
-		var tween := create_tween()
-		tween.tween_property(self, "global_position", global_position - global_transform.basis.z * 0.25, 0.1)
+	
+	# Empurra o inimigo para trás com o impacto do tiro
+	var knock_dir := hit_dir.normalized() if hit_dir != Vector3.ZERO else -global_transform.basis.z
+	var knock_force: float = 4.2 if weapon_type == "pistol" else 3.2
+	velocity += knock_dir * knock_force
+	global_position += knock_dir * (0.16 if weapon_type == "pistol" else 0.11)
+	
+	# Recuo da parte específica do rig atingida pelo tiro
+	if hit_pos != Vector3.ZERO:
+		trigger_bone_recoil(hit_pos, knock_dir)
+	elif is_instance_valid(skeleton) and skeleton.get_bone_count() > 0:
+		var spine_bone := skeleton.find_bone("CityDeadOutfit_Spine1")
+		if spine_bone != -1:
+			trigger_bone_recoil(skeleton.to_global(skeleton.get_bone_global_pose(spine_bone).origin), knock_dir)
+	
 	if health <= 0:
 		dead = true
 		velocity = Vector3.ZERO

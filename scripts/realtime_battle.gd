@@ -2891,6 +2891,8 @@ func defeat_enemy() -> void:
 			Global.inimigos_mortos["Fase1BeforeCastle_/root/Fase1BeforeCastle/Inimigos/inimigo_boss_seco"] = true
 			Global.inimigos_mortos["fase_1_outside_castle_again_no_fire_2_/root/fase_1_outside_castle_again_no_fire_2/fase_1_before_castle/Inimigos/inimigo_boss_seco"] = true
 		Global.realtime_enemy_respawns.erase(Global.realtime_enemy_spawn_id)
+	if enemy_id == "1" && Global.realtime_return_scene.ends_with("fase_1_castle_2.tscn"):
+		Global.game_events["camilita_defeated"] = true
 	enemy.visible = false
 	enemy_bar.visible = false
 	enemy_name_label.visible = false

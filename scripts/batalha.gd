@@ -141,6 +141,10 @@ func victory()->void:
 	Global.back_to_main_camera = true
 	Global.battle_started = false
 	get_tree().paused = false
+	if !Global.realtime_enemy_spawn_id.is_empty():
+		Global.inimigos_mortos[Global.realtime_enemy_spawn_id] = true
+	if Global.battle_next_enemy == "1" or (current_enemy != null and current_enemy.name.contains("camilita")) or (get_tree().current_scene != null and get_tree().current_scene.name == "fase_1_castle_2"):
+		Global.game_events["camilita_defeated"] = true
 	victory_label.visible = false
 	you_died_label.visible = false
 	victory_sound.stop()

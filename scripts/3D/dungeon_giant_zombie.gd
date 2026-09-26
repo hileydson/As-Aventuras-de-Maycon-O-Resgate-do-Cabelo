@@ -360,3 +360,8 @@ func play_maycon_scream() -> void:
 
 func _valid() -> bool:
 	return is_instance_valid(self) and is_instance_valid(player) and is_instance_valid(dungeon)
+
+func take_damage(_amount:int, _weapon_type:String = "pistol", _hit_pos:Vector3 = Vector3.ZERO, _hit_dir:Vector3 = Vector3.ZERO) -> void:
+	if is_instance_valid(growl_audio) and not growl_audio.is_playing():
+		growl_audio.pitch_scale = randf_range(0.85, 1.1)
+		growl_audio.play()

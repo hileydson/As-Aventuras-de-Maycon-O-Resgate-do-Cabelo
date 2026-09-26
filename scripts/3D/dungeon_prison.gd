@@ -1921,7 +1921,7 @@ func open_door(door:Node3D, with_sound:bool) -> void:
 				gate_iron_sound.global_position = door.global_position
 				gate_iron_sound.pitch_scale = randf_range(0.95, 1.05)
 				gate_iron_sound.play()
-	create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN_OUT).tween_property(door, "position:y", 5.2, 1.15)
+	create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT).tween_property(door, "position:y", 5.2, 5.8)
 
 func start_finale_cutscene() -> void:
 	if sequence_running || event_is_true("dungeon_finale_triggered"):
@@ -2023,11 +2023,13 @@ func on_player_fired(origin:Vector3, direction:Vector3) -> void:
 	query.exclude = [player.get_rid()]
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
 	if !hit.is_empty():
-		if hit.collider is DungeonMainMonster:
-			hit.collider.take_damage(2 if player.weapon_mode == "pistol" else 1, player.weapon_mode)
+		var damage_amount: int = 2 if player.weapon_mode == "pistol" else 1
+		var hit_collider = hit.collider
+		if hit_collider is DungeonMainMonster or hit_collider is DungeonInfected:
+			hit_collider.take_damage(damage_amount, player.weapon_mode, hit.position, direction)
 			spawn_blood_hit(hit.position, direction)
-		elif hit.collider is DungeonInfected:
-			hit.collider.take_damage(2 if player.weapon_mode == "pistol" else 1, player.weapon_mode)
+		elif hit_collider.has_method("take_damage"):
+			hit_collider.take_damage(damage_amount, player.weapon_mode, hit.position, direction)
 			spawn_blood_hit(hit.position, direction)
 
 func spawn_ammo_drop(pos:Vector3, weapon_type:String) -> void:
@@ -2068,22 +2070,23 @@ func blood_fade_ramp() -> Gradient:
 func spawn_blood_hit(hit_position:Vector3, direction:Vector3) -> void:
 	var particles := CPUParticles3D.new()
 	particles.position = hit_position
-	particles.amount = 90
-	particles.lifetime = 0.75
+	particles.amount = 110
+	particles.lifetime = 0.85
 	particles.one_shot = true
-	particles.explosiveness = 0.92
-	particles.direction = direction
-	particles.spread = 42
-	particles.initial_velocity_min = 3.2
-	particles.initial_velocity_max = 9.5
-	particles.gravity = Vector3(0, -13.0, 0)
-	particles.scale_amount_min = 0.55
-	particles.scale_amount_max = 1.6
+	particles.explosiveness = 0.95
+	# Espirrar para trás (na direção de onde veio o tiro) e para os lados
+	particles.direction = (-direction * 0.75 + Vector3.UP * 0.35).normalized()
+	particles.spread = 55.0
+	particles.initial_velocity_min = 3.8
+	particles.initial_velocity_max = 10.5
+	particles.gravity = Vector3(0, -14.0, 0)
+	particles.scale_amount_min = 0.65
+	particles.scale_amount_max = 2.2
 	particles.color_ramp = blood_fade_ramp()
 	particles.particle_flag_align_y = true
 	var mesh := SphereMesh.new()
-	mesh.radius = 0.011
-	mesh.height = 0.1
+	mesh.radius = 0.013
+	mesh.height = 0.12
 	mesh.material = blood_material
 	particles.mesh = mesh
 	add_child(particles)
@@ -2317,8 +2320,12 @@ func update_main_monster_grab() -> void:
 	if !main_monster_grab_active || !is_instance_valid(player) || !is_instance_valid(main_monster_grabber) || !is_instance_valid(main_monster_grab_anchor):
 		return
 	player.global_position = main_monster_grab_anchor.global_position - Vector3.UP * 1.32
-	player.look_at(main_monster_grabber.global_position + Vector3.UP * 2.05, Vector3.UP)
-	player.head.rotation.x = -0.12
+	var target_look := main_monster_grabber.global_position + Vector3.UP * 2.05
+	var diff := target_look - player.global_position
+	player.rotation.y = atan2(-diff.x, -diff.z)
+	player.rotation.x = 0.0
+	player.rotation.z = 0.0
+	player.head.rotation.x = clampf(atan2(diff.y, maxf(0.001, Vector2(diff.x, diff.z).length())), -1.2, 1.2)
 
 func end_main_monster_grab(monster:DungeonMainMonster) -> void:
 	if !main_monster_grab_active || monster != main_monster_grabber:
@@ -2336,12 +2343,18 @@ func end_main_monster_grab(monster:DungeonMainMonster) -> void:
 	player.collision_mask = 1
 	player.set_physics_process(true)
 	player.controls_enabled = true
+	player.rotation.x = 0.0
+	player.rotation.z = 0.0
+	player.head.position.y = player.base_head_y
+	player.head.position.z = player.base_head_z
+	player.head.rotation.z = 0.0
 	player.apply_knockback(throw_direction.normalized() * 10.5 + Vector3.UP * 5.6, 0.92)
 	player.shake_camera(0.14, 0.92)
 	show_main_monster_blood(1.0)
 	var grab_damage:float = maxf(1.0, player.current_hp * 0.85)
 	var died := player.take_damage(grab_damage)
 	sequence_running = false
+	update_hud()
 	if died:
 		restart_after_caught(null)
 
@@ -2425,11 +2438,14 @@ func begin_giant_grab(giant:DungeonGiantZombie, anchor:Marker3D) -> bool:
 func update_giant_grab() -> void:
 	if !giant_grab_active || !is_instance_valid(player) || !is_instance_valid(giant_grab_anchor):
 		return
-	# O player fica preso na mão do zumbi, acompanhando o balanço
 	player.global_position = giant_grab_anchor.global_position
 	if is_instance_valid(giant_grabber):
-		player.look_at(giant_grabber.global_position + Vector3.UP * 3.2, Vector3.UP)
-		player.head.rotation.x = -0.08
+		var target_look := giant_grabber.global_position + Vector3.UP * 3.2
+		var diff := target_look - player.global_position
+		player.rotation.y = atan2(-diff.x, -diff.z)
+		player.rotation.x = 0.0
+		player.rotation.z = 0.0
+		player.head.rotation.x = clampf(atan2(diff.y, maxf(0.001, Vector2(diff.x, diff.z).length())), -1.2, 1.2)
 
 func giant_grab_bleed(intensity:float) -> void:
 	# Jato de sangue 3D + mancha vermelha na tela (sem recarregar a cena ainda)
@@ -2481,14 +2497,24 @@ func update_infected_grab() -> void:
 			player.collision_mask = 1
 			player.set_physics_process(true)
 			player.controls_enabled = true
+			player.rotation.x = 0.0
+			player.rotation.z = 0.0
+			player.head.position.y = player.base_head_y
+			player.head.position.z = player.base_head_z
+			player.head.rotation.z = 0.0
 		infected_grab_active = false
 		infected_grab_anchor = null
 		infected_grabber = null
 		sequence_running = false
+		update_hud()
 		return
 	player.global_position = infected_grab_anchor.global_position - Vector3.UP * 1.1
-	player.look_at(infected_grabber.global_position + Vector3.UP * 1.4, Vector3.UP)
-	player.head.rotation.x = -0.1
+	var target_look := infected_grabber.global_position + Vector3.UP * 1.4
+	var diff := target_look - player.global_position
+	player.rotation.y = atan2(-diff.x, -diff.z)
+	player.rotation.x = 0.0
+	player.rotation.z = 0.0
+	player.head.rotation.x = clampf(atan2(diff.y, maxf(0.001, Vector2(diff.x, diff.z).length())), -1.2, 1.2)
 
 func end_infected_grab(infected:DungeonInfected) -> void:
 	# Solta arremessando o player com dano forte (com som e timing próprios).
@@ -2507,12 +2533,18 @@ func end_infected_grab(infected:DungeonInfected) -> void:
 	player.collision_mask = 1
 	player.set_physics_process(true)
 	player.controls_enabled = true
+	player.rotation.x = 0.0
+	player.rotation.z = 0.0
+	player.head.position.y = player.base_head_y
+	player.head.position.z = player.base_head_z
+	player.head.rotation.z = 0.0
 	player.apply_knockback(throw_direction.normalized() * 9.0 + Vector3.UP * 4.8, 0.85)
 	player.shake_camera(0.12, 0.8)
 	show_infected_grab_blood(0.9)
 	var grab_damage:float = maxf(1.0, player.current_hp * 0.7)
 	var died := player.take_damage(grab_damage)
 	sequence_running = false
+	update_hud()
 	if died:
 		restart_after_caught(infected)
 

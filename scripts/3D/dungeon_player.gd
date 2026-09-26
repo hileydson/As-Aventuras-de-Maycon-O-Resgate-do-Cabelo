@@ -8,10 +8,14 @@ const SMG_ALBEDO:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_Defau
 const SMG_NORMAL:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Normal.png")
 const SMG_METALLIC:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Metallic.png")
 const SMG_ROUGHNESS:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Roughness.png")
-const PISTOL_REST_POSITION := Vector3(0.24, -0.22, -0.42)
+const PISTOL_REST_POSITION := Vector3(0.24, -0.27, -0.34)
 const PISTOL_REST_ROTATION := Vector3(-0.035, 0.06, -0.025)
-const SMG_REST_POSITION := Vector3(0.25, -0.23, -0.44)
+const SMG_REST_POSITION := Vector3(0.25, -0.23, -0.35)
 const SMG_REST_ROTATION := Vector3(-0.03, 0.05, -0.02)
+
+var weapon_bob_time:float = 0.0
+var weapon_recoil_offset:Vector3 = Vector3.ZERO
+var weapon_recoil_rot_x:float = 0.0
 
 # Pose de mira (delta a partir do repouso, em graus) para levantar os braços à frente da câmera.
 const RIGHT_ARM_AIM_EULER := Vector3(100.0, 0.0, 0.0)
@@ -100,7 +104,7 @@ func _ready() -> void:
 	muzzle_light.visible = false
 	step_audio = AudioStreamPlayer.new()
 	step_audio.stream = STEP_SOUND
-	step_audio.volume_db = -18.0
+	step_audio.volume_db = -8.5
 	add_child(step_audio)
 	
 	reload_audio = AudioStreamPlayer.new()
@@ -196,6 +200,34 @@ func _physics_process(delta:float) -> void:
 	else:
 		head.position.y = lerpf(head.position.y, base_head_y, delta * 8.0)
 		head.position.z = lerpf(head.position.z, base_head_z, delta * 8.0)
+
+	# Weapon Bobbing (andando vs correndo)
+	if is_instance_valid(gun_view) && has_gun:
+		var rest_pos := get_weapon_rest_position()
+		var rest_rot := get_weapon_rest_rotation()
+		if moving:
+			var bob_freq: float = 11.5 if is_sprinting else 7.5
+			var bob_x_amp: float = 0.016 if is_sprinting else 0.007
+			var bob_y_amp: float = 0.014 if is_sprinting else 0.0055
+			var bob_rot_z: float = 0.032 if is_sprinting else 0.012
+			weapon_bob_time += delta * bob_freq
+			var target_pos := rest_pos + Vector3(
+				cos(weapon_bob_time * 0.5) * bob_x_amp,
+				sin(weapon_bob_time) * bob_y_amp,
+				0.0
+			) + weapon_recoil_offset
+			var target_rot := rest_rot + Vector3(
+				sin(weapon_bob_time) * (bob_y_amp * 0.4) + weapon_recoil_rot_x,
+				0.0,
+				cos(weapon_bob_time * 0.5) * bob_rot_z
+			)
+			gun_view.position = gun_view.position.lerp(target_pos, delta * 12.0)
+			gun_view.rotation = gun_view.rotation.lerp(target_rot, delta * 12.0)
+		else:
+			var target_pos := rest_pos + weapon_recoil_offset
+			var target_rot := rest_rot + Vector3(weapon_recoil_rot_x, 0.0, 0.0)
+			gun_view.position = gun_view.position.lerp(target_pos, delta * 8.0)
+			gun_view.rotation = gun_view.rotation.lerp(target_rot, delta * 8.0)
 	var look := Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	if look.length() > 0.12:
 		rotate_y(-look.x * joy_sensitivity * delta)
@@ -498,13 +530,11 @@ func fire() -> void:
 	camera.rotation.z = randf_range(-0.012, 0.012)
 	create_tween().tween_property(camera, "rotation:z", 0.0, 0.07)
 	if is_instance_valid(gun_view):
-		var rest_position := get_weapon_rest_position()
-		var rest_rotation := get_weapon_rest_rotation()
-		gun_view.position = rest_position + Vector3(0, 0.02, 0.06)
-		gun_view.rotation.x = rest_rotation.x - 0.055
+		weapon_recoil_offset = Vector3(0, 0.02, 0.06)
+		weapon_recoil_rot_x = -0.055
 		var recoil := create_tween().set_parallel()
-		recoil.tween_property(gun_view, "position", rest_position, 0.085).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		recoil.tween_property(gun_view, "rotation:x", rest_rotation.x, 0.09).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		recoil.tween_property(self, "weapon_recoil_offset", Vector3.ZERO, 0.085).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		recoil.tween_property(self, "weapon_recoil_rot_x", 0.0, 0.09).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		
 	if get_current_clip() == 0 && get_current_reserve() > 0:
 		start_reload()
@@ -548,6 +578,11 @@ func update_view_gun() -> void:
 		apply_smg_material(weapon_model)
 		muzzle_marker.position = Vector3(0, 0.035, -0.34)
 		casing_eject_marker.position = Vector3(0.07, 0.075, -0.08)
+	
+	# Desativar sombra projetada das armas em primeira pessoa (evita sombras gigantes à frente)
+	for mesh in weapon_model.find_children("*", "MeshInstance3D", true, false):
+		(mesh as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		
 	gun_view.position = get_weapon_rest_position()
 	gun_view.rotation = get_weapon_rest_rotation()
 

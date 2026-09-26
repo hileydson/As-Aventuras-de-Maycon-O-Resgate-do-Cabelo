@@ -61,7 +61,13 @@ func _process(delta: float) -> void:
 	else:
 		axe_area.visible = false
 	
-	if Global.battle_started == false && played_axe==false && !inimigos.has_node("inimigo_camilita") && Global.maycon_itens["axe"]==false && Global.game_events["gilhotina_broken"]==false:
+	var camilita_is_dead: bool = bool(Global.game_events.get("camilita_defeated", false)) or Global.inimigos_mortos.has("fase_1_castle_2_/root/fase_1_castle_2/Fase1BeforeCastle/Inimigos/inimigo_camilita")
+	if camilita_is_dead && inimigos.has_node("inimigo_camilita"):
+		var camilita_node = inimigos.get_node("inimigo_camilita")
+		if is_instance_valid(camilita_node):
+			camilita_node.queue_free()
+	
+	if Global.battle_started == false && played_axe == false && camilita_is_dead && Global.maycon_itens["axe"] == false && Global.game_events["gilhotina_broken"] == false && !in_axe_cutscene && !Global.back_to_fase && !Global.dungeon_return_pending && !Global.axe_cutscene_return_valid:
 		played_axe = true
 		animacoes.play("axe_fall")
 		

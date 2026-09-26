@@ -24,6 +24,7 @@ var animator:AnimationPlayer
 var skeleton:Skeleton3D
 var grab_attachment:BoneAttachment3D
 var grab_anchor:Marker3D
+var active_bone_recoils:Array[Dictionary] = []
 
 var state:String = "patrol"
 var active_hunt:bool = false
@@ -322,7 +323,57 @@ func process_temporary_defeat(delta:float) -> void:
 		play_animation("Rage_1", false, 1.05)
 		play_roar()
 
-func take_damage(amount:int, _weapon_type:String = "pistol") -> void:
+func _process(delta: float) -> void:
+	_update_bone_recoils(delta)
+
+func trigger_bone_recoil(hit_pos: Vector3, hit_dir: Vector3) -> void:
+	if !is_instance_valid(skeleton) or skeleton.get_bone_count() == 0:
+		return
+	var hit_skel_pos := skeleton.to_local(hit_pos)
+	var closest_bone := -1
+	var min_dist_sq := 999999.0
+	for i in range(skeleton.get_bone_count()):
+		var bone_pos := skeleton.get_bone_global_pose(i).origin
+		var d_sq := hit_skel_pos.distance_squared_to(bone_pos)
+		if d_sq < min_dist_sq:
+			min_dist_sq = d_sq
+			closest_bone = i
+	if closest_bone == -1:
+		return
+	var local_hit_dir := (skeleton.global_transform.basis.inverse() * hit_dir).normalized()
+	var kick_axis := local_hit_dir.cross(Vector3.UP).normalized()
+	if kick_axis.length_squared() < 0.01:
+		kick_axis = Vector3.RIGHT
+	var rot_kick := Quaternion(kick_axis, deg_to_rad(randf_range(14.0, 22.0)))
+	var pos_kick := local_hit_dir * 0.14
+	active_bone_recoils.append({
+		"bone": closest_bone,
+		"pos_offset": pos_kick,
+		"rot_offset": rot_kick,
+		"elapsed": 0.0,
+		"duration": 0.28
+	})
+
+func _update_bone_recoils(delta: float) -> void:
+	if active_bone_recoils.is_empty() or !is_instance_valid(skeleton):
+		return
+	for i in range(active_bone_recoils.size() - 1, -1, -1):
+		var recoil: Dictionary = active_bone_recoils[i]
+		recoil.elapsed += delta
+		var t: float = recoil.elapsed / recoil.duration
+		if t >= 1.0:
+			active_bone_recoils.remove_at(i)
+			continue
+		var weight: float = (1.0 - t) * (1.0 - t)
+		var b_idx: int = recoil.bone
+		if b_idx < skeleton.get_bone_count():
+			var cur_pos := skeleton.get_bone_pose_position(b_idx)
+			skeleton.set_bone_pose_position(b_idx, cur_pos + recoil.pos_offset * weight)
+			var cur_rot := skeleton.get_bone_pose_rotation(b_idx)
+			var add_rot := Quaternion.IDENTITY.slerp(recoil.rot_offset, weight)
+			skeleton.set_bone_pose_rotation(b_idx, cur_rot * add_rot)
+
+func take_damage(amount:int, weapon_type:String = "pistol", hit_pos:Vector3 = Vector3.ZERO, hit_dir:Vector3 = Vector3.ZERO) -> void:
 	if state == "down":
 		return
 	damage_pressure += amount
@@ -330,6 +381,13 @@ func take_damage(amount:int, _weapon_type:String = "pistol") -> void:
 	if is_instance_valid(pain_audio):
 		pain_audio.pitch_scale = randf_range(0.78, 0.96)
 		pain_audio.play()
+	
+	# Empurra o monstro fisicamente para trás
+	var knock_dir := hit_dir.normalized() if hit_dir != Vector3.ZERO else -global_transform.basis.z
+	global_position += knock_dir * (0.13 if weapon_type == "pistol" else 0.09)
+	if hit_pos != Vector3.ZERO:
+		trigger_bone_recoil(hit_pos, knock_dir)
+
 	if damage_pressure >= TEMPORARY_DEFEAT_DAMAGE:
 		enter_temporary_defeat()
 		return
