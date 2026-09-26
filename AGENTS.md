@@ -38,6 +38,7 @@ Nunca apague a pasta `.godot` nem qualquer outra pasta sem permissão. Essas pas
 - `scenes/` contém as cenas e os objetos personalizados.
 - `scripts/` contém os scripts do jogo.
 - Shaders devem permanecer na organização já adotada pelo projeto, inclusive quando estiverem dentro de addons ou recursos específicos.
+- **Sempre que precisar criar um novo shader, verificar primeiro se existe um equivalente bom em <https://godotshaders.com/>; reutilizar é preferível a recriar.**
 - Preserve sempre a estrutura atual do projeto.
 
 ## 5. Textos e tradução

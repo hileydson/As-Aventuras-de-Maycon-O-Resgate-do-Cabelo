@@ -2,6 +2,16 @@ extends Node3D
 
 const MAYCON_SCENE = preload("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
 const MAYCON_MENU_ANIMATIONS = preload("res://assets/novas_imagens/3d_enemies/menu_maycon_animations.res")
+const MAYCON_LOOK_FORWARD_TEXTURE = preload("res://assets/novas_imagens/maycon/jamelao_float_1.png")
+const MAYCON_WALK_TEXTURES = [
+	preload("res://assets/images/andando_direita_1.png"),
+	preload("res://assets/images/andando_direita_2.png"),
+	preload("res://assets/images/andando_direita_3.png"),
+	preload("res://assets/images/andando_direita_4.png"),
+	preload("res://assets/images/andando_direita_5.png"),
+	preload("res://assets/images/andando_direita_6.png"),
+	preload("res://assets/images/andando_direita_7.png"),
+]
 const MENU_FONT = preload("res://assets/fonts/contrast.ttf")
 const SKY_SHADER = preload("res://scenes/3D/menu_night_sky.gdshader")
 const WATER_SHADER = preload("res://scenes/3D/menu_ocean.gdshader")
@@ -32,6 +42,7 @@ const TAKE_POV := 2
 
 var elapsed := 0.0
 var maycon: Node3D
+var maycon_sprite: AnimatedSprite3D
 var maycon_animation: AnimationPlayer
 var maycon_skeleton: Skeleton3D
 var maycon_head_bone := -1
@@ -193,23 +204,22 @@ func _build_world() -> void:
 	maycon.name = "MayconCinematic"
 	maycon.position = Vector3(-15, 0.08, 2.7)
 	add_child(maycon)
-	var model := MAYCON_SCENE.instantiate()
-	model.name = "MayconModel"
-	_adjust_maycon_materials(model)
-	maycon.add_child(model)
-	maycon_animation = model.find_child("AnimationPlayer", true, false) as AnimationPlayer
-	maycon_skeleton = model.find_child("Skeleton3D", true, false) as Skeleton3D
-	if maycon_skeleton:
-		maycon_head_bone = maycon_skeleton.find_bone("Head")
-	if maycon_animation:
-		if not maycon_animation.has_animation("Walking"):
-			if maycon_animation.get_animation_library_list().has(""):
-				maycon_animation.remove_animation_library("")
-			maycon_animation.add_animation_library("", MAYCON_MENU_ANIMATIONS)
-		maycon_animation.get_animation("Walking").loop_mode = Animation.LOOP_LINEAR
-		maycon_animation.get_animation("Idle").loop_mode = Animation.LOOP_LINEAR
-		maycon_animation.play("Walking")
-		maycon_animation.speed_scale = 0.78
+	var sprite_frames := SpriteFrames.new()
+	sprite_frames.add_animation("look_forward")
+	sprite_frames.set_animation_loop("look_forward", true)
+	sprite_frames.add_frame("look_forward", MAYCON_LOOK_FORWARD_TEXTURE)
+	sprite_frames.add_animation("walk")
+	sprite_frames.set_animation_loop("walk", true)
+	for texture in MAYCON_WALK_TEXTURES:
+		sprite_frames.add_frame("walk", texture, 0.51)
+	maycon_sprite = AnimatedSprite3D.new()
+	maycon_sprite.name = "MayconModel"
+	maycon_sprite.sprite_frames = sprite_frames
+	maycon_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	maycon_sprite.pixel_size = 0.01
+	maycon_sprite.position.y = 0.74
+	maycon_sprite.play("look_forward")
+	maycon.add_child(maycon_sprite)
 	camera = Camera3D.new()
 	camera.name = "CinematicCamera"
 	camera.fov = 57.0
@@ -490,12 +500,12 @@ func _update_cinematic(time: float, delta: float) -> void:
 	var moon_direction := MOON_POSITION - maycon.global_position
 	var moon_yaw := atan2(moon_direction.x, moon_direction.z)
 	maycon.rotation.y = lerp_angle(maycon.rotation.y, moon_yaw, smoothstep(walk_end, walk_end + TURN_DURATION, time))
-	if walking and maycon_animation and maycon_animation.current_animation != "Idle":
-		maycon_animation.play("Idle", 0.9)
+	if walking and maycon_sprite and maycon_sprite.animation != &"walk":
+		maycon_sprite.play("walk")
 		if sand_steps:
 			sand_steps.play()
-	elif not walking and maycon_animation and maycon_animation.current_animation != "Walking":
-		maycon_animation.play("Walking", 1.6)
+	elif not walking and maycon_sprite and maycon_sprite.animation != &"look_forward":
+		maycon_sprite.play("look_forward")
 		if sand_steps:
 			sand_steps.stop()
 	_update_moon_gaze(time, walk_end, moon_direction)
