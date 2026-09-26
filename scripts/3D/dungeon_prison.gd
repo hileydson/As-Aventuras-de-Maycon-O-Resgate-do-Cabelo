@@ -60,6 +60,11 @@ var ambience:AudioStreamPlayer
 var gun_sound:AudioStreamPlayer
 var pickup_sound:AudioStreamPlayer
 var gate_sound:AudioStreamPlayer3D
+var gate_iron_sound:AudioStreamPlayer3D
+var gate_squeaky_sound:AudioStreamPlayer3D
+var gate_heavy_sound:AudioStreamPlayer3D
+var gate_unlock_sound:AudioStreamPlayer3D
+var zombie_grab_sound:AudioStreamPlayer
 var monster_damage_sound:AudioStreamPlayer
 var current_interaction := ""
 var sequence_running := false
@@ -139,6 +144,9 @@ func colored_material(color:Color, metallic:float, roughness:float) -> StandardM
 	return material
 
 func build_environment() -> void:
+	if has_node("PrisonArchitecture"):
+		world_root = get_node("PrisonArchitecture") as Node3D
+		return
 	var node := WorldEnvironment.new()
 	var environment := Environment.new()
 	environment.background_mode = Environment.BG_COLOR
@@ -159,6 +167,9 @@ func build_environment() -> void:
 	add_child(world_root)
 
 func build_prison() -> void:
+	if is_instance_valid(world_root) and world_root.get_child_count() > 0:
+		wire_existing_prison()
+		return
 	build_corridor_z("Entrance", 0, -39, 22, 90)
 	build_hub()
 	build_corridor_x("OpenTurn", -37, -94, 38, 22)
@@ -194,6 +205,100 @@ func build_prison() -> void:
 	build_debris()
 	for fixture in [Vector3(0, 4.15, -8), Vector3(0, 4.15, -36), Vector3(0, 4.15, -70), Vector3(-35, 4.15, -94), Vector3(-56, 4.15, -118), Vector3(35, 4.15, -94), Vector3(56, 4.15, -118), Vector3(-30, 4.15, -164), Vector3(30, 4.15, -164)]:
 		build_flickering_fixture(fixture, int(absf(fixture.x + fixture.z)))
+
+func wire_existing_prison() -> void:
+	# Portões principais (Route Gates)
+	route_gates["blue"] = find_child("BlueRouteGate", true, false)
+	route_gates["red"] = find_child("RedRouteGate", true, false)
+	route_gates["green"] = find_child("GreenRouteGate", true, false)
+	
+	# Portões das salas das chaves
+	key_room_doors["intro"] = find_child("BlueKeyRoom", true, false)
+	if is_instance_valid(key_room_doors["intro"]):
+		key_room_doors["intro"].set_meta("is_key_room", true)
+	key_room_doors["blue"] = find_child("RedKeyRoom", true, false)
+	if is_instance_valid(key_room_doors["blue"]):
+		key_room_doors["blue"].set_meta("is_key_room", true)
+	key_room_doors["red"] = find_child("GreenKeyRoom", true, false)
+	if is_instance_valid(key_room_doors["red"]):
+		key_room_doors["red"].set_meta("is_key_room", true)
+	key_room_doors["green"] = find_child("FinalKeyRoom", true, false)
+	if is_instance_valid(key_room_doors["green"]):
+		key_room_doors["green"].set_meta("is_key_room", true)
+	
+	# Alavancas
+	levers["intro"] = find_child("Lever_intro", true, false)
+	levers["blue"] = find_child("Lever_blue", true, false)
+	levers["red"] = find_child("Lever_red", true, false)
+	levers["green"] = find_child("Lever_green", true, false)
+	for k in levers.keys():
+		var lever: Node3D = levers[k]
+		if is_instance_valid(lever):
+			var hinge := lever.find_child("Hinge", true, false)
+			if hinge:
+				lever.set_meta("handle", hinge)
+	
+	# Portas de cela (stage_doors)
+	for s in ["intro", "blue", "red", "green"]:
+		stage_doors[s].clear()
+	for child in world_root.get_children():
+		var cname := child.name
+		if cname.begins_with("Cell_"):
+			for stage in ["intro", "blue", "red", "green"]:
+				if cname.begins_with("Cell_" + stage):
+					stage_doors[stage].append(child)
+					break
+
+	# Lâmpadas piscantes
+	flicker_lights.clear()
+	for fixture in world_root.find_children("BrokenFixture*", "Node3D", true, false):
+		var light := fixture.find_child("OmniLight3D", true, false) as OmniLight3D
+		if light:
+			var seed_val := int(absf(fixture.position.x + fixture.position.z))
+			flicker_lights.append({"light": light, "base": light.light_energy, "phase": seed_val * 0.31})
+
+	# Spawns de inimigos nas celas e esconderijos
+	populate_hiding_zones_and_spawns()
+
+func populate_hiding_zones_and_spawns() -> void:
+	hiding_zones.clear()
+	enemy_spawns.clear()
+	auto_release_assigned = false
+	for z in [-11.0, -25.0, -39.0, -53.0, -67.0]:
+		if z != -11.0:
+			register_cell_record(0, -1, z, "intro", z == -25.0)
+		register_cell_record(0, 1, z, "intro", z == -53.0)
+	for z in [-106.0, -121.0]:
+		register_cell_record(-56, -1, z, "intro", z == -121.0)
+		register_cell_record(-56, 1, z, "intro", false)
+		register_cell_record(56, -1, z, "blue", false)
+		register_cell_record(56, 1, z, "blue", z == -106.0)
+	for x in [-43.0, -28.0]:
+		register_cell_record_x(x, -164, -1, "red", false)
+		register_cell_record_x(x, -164, 1, "red", x == -28.0)
+	for x in [28.0, 43.0]:
+		register_cell_record_x(x, -164, -1, "green", x == 28.0)
+		register_cell_record_x(x, -164, 1, "green", false)
+
+func register_cell_record(corridor_x: float, side: int, z: float, stage: String, empty: bool) -> void:
+	var center_x := corridor_x + side * 8.0
+	var front_x := corridor_x + side * 5.25
+	var door_name := "Cell_%s_%s" % [stage, str(z)]
+	var door := find_child(door_name, true, false) as Node3D
+	if empty:
+		hiding_zones.append(AABB(Vector3(minf(front_x, center_x) - 0.5, -0.2, z - 3), Vector3(absf(center_x - front_x) + 1, 2.8, 6)))
+	elif door != null:
+		spawn_record(Vector3(center_x, 0, z), stage, door)
+
+func register_cell_record_x(x: float, corridor_z: float, side: int, stage: String, empty: bool) -> void:
+	var center_z := corridor_z + side * 8.0
+	var front_z := corridor_z + side * 5.25
+	var door_name := "Cell_%s_%s" % [stage, str(x)]
+	var door := find_child(door_name, true, false) as Node3D
+	if empty:
+		hiding_zones.append(AABB(Vector3(x - 3, -0.2, minf(front_z, center_z) - 0.5), Vector3(6, 2.8, absf(center_z - front_z) + 1)))
+	elif door != null:
+		spawn_record(Vector3(x, 0, center_z), stage, door)
 
 func build_hub() -> void:
 	create_box("HubFloor", Vector3(0, -0.25, -94), Vector3(36, 0.5, 28), floor_material, true, world_root)
@@ -291,6 +396,7 @@ func build_key_rooms() -> void:
 	create_box("OpenWingGateWallR", Vector3(-48.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
 	# Grade central azulada (tranca a sala onde fica a Chave Azul)
 	key_room_doors["intro"] = build_gate("BlueKeyRoom", Vector3(-56, 0, -135), 8.2, "z", Color(0.15, 0.45, 1.0))
+	key_room_doors["intro"].set_meta("is_key_room", true)
 	# Alavanca na frente da grade, apoiada no chão
 	levers["intro"] = build_lever(Vector3(-50.5, 0, -132.5), "intro", 0.0)
 
@@ -302,6 +408,7 @@ func build_key_rooms() -> void:
 	create_box("BlueWingGateWallR", Vector3(63.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
 	# Grade central vermelha (tranca a sala onde fica a Chave Vermelha)
 	key_room_doors["blue"] = build_gate("RedKeyRoom", Vector3(56, 0, -135), 8.2, "z", Color(1.0, 0.05, 0.02))
+	key_room_doors["blue"].set_meta("is_key_room", true)
 	# Alavanca na frente da grade, apoiada no chão
 	levers["blue"] = build_lever(Vector3(50.5, 0, -132.5), "blue", 0.0)
 
@@ -313,6 +420,7 @@ func build_key_rooms() -> void:
 	create_box("RedWingGateWallS", Vector3(-45, 2.15, -156.5), Vector3(0.6, 4.8, 7.2), stone_material, true, world_root)
 	# Grade central verde (tranca a sala onde fica a Chave Verde)
 	key_room_doors["red"] = build_gate("GreenKeyRoom", Vector3(-45, 0, -164), 8.2, "x", Color(0.05, 1.0, 0.2))
+	key_room_doors["red"].set_meta("is_key_room", true)
 	# Alavanca na frente da grade, apoiada no chão
 	levers["red"] = build_lever(Vector3(-42.5, 0, -158.5), "red", PI * 0.5)
 
@@ -324,6 +432,7 @@ func build_key_rooms() -> void:
 	create_box("GreenWingGateWallS", Vector3(45, 2.15, -156.5), Vector3(0.6, 4.8, 7.2), stone_material, true, world_root)
 	# Grade central (tranca a sala onde fica a Chave da Cela)
 	key_room_doors["green"] = build_gate("FinalKeyRoom", Vector3(45, 0, -164), 8.2, "x", Color(0.9, 0.8, 0.52))
+	key_room_doors["green"].set_meta("is_key_room", true)
 	# Alavanca na frente da grade, apoiada no chão
 	levers["green"] = build_lever(Vector3(42.5, 0, -158.5), "green", -PI * 0.5)
 
@@ -478,30 +587,41 @@ func build_mosquitoes(position_value:Vector3) -> void:
 	world_root.add_child(particles)
 
 func build_player() -> void:
+	var spawn_pos := Vector3(0, 8, 3.2)
+	var spawn_rot := Vector3.ZERO
+	var spawn_marker := find_child("PlayerSpawn", true, false) as Marker3D
+	if spawn_marker:
+		spawn_pos = spawn_marker.position
+		spawn_rot = spawn_marker.rotation
 	player = PLAYER_SCENE.instantiate() as DungeonPlayer
-	player.position = Vector3(0, 8, 3.2)
+	player.name = "DungeonPlayer"
+	player.position = spawn_pos
+	player.rotation = spawn_rot
 	add_child(player)
 	player.interact_pressed.connect(on_interact_pressed)
 	player.fired.connect(on_player_fired)
 	player.flashlight_toggled.connect(func(_enabled:bool): update_hud())
 
 func build_pickups() -> void:
+	if find_child("AxeCellDoor", true, false) != null or find_child("FlashlightPickup", true, false) != null:
+		wire_existing_pickups()
+		return
 	pickups["flashlight"] = build_flashlight(Vector3(0.2, 0.45, -2.5))
 
 	# TESTE: duas armas extras logo no início da fase para validar as mãos do modelo 3D.
 	# Não substituem as armas originais (que continuam nos corredores).
-	pickups["pistol_test"] = build_gun(Vector3(-1.4, 0.62, -2.2), false)
-	pickups["machinegun_test"] = build_gun(Vector3(1.4, 0.62, -2.2), true)
+	pickups["pistol_test"] = build_gun(Vector3(-1.4, 0.62, -2.2), false, "PistolTestPickup")
+	pickups["machinegun_test"] = build_gun(Vector3(1.4, 0.62, -2.2), true, "MachinegunTestPickup")
 
 	# Caminho aberto de início (OpenWing): pistola no corredor e chave azul dentro da cela
-	pickups["pistol"] = build_gun(Vector3(-56.0, 0.62, -125.0), false)
+	pickups["pistol"] = build_gun(Vector3(-56.0, 0.62, -125.0), false, "PistolPickup")
 	pickups["blue_key"] = build_key(Vector3(-56.0, 0.65, -140.0), Color(0.12, 0.4, 1.0), "BlueKey")
 
 	# Passagem azul (BlueWing): chave vermelha dentro da cela
 	pickups["red_key"] = build_key(Vector3(56.0, 0.65, -140.0), Color(1.0, 0.05, 0.02), "RedKey")
 
 	# Passagem vermelha (RedWing): metralhadora no corredor e chave verde dentro da cela
-	pickups["machinegun"] = build_gun(Vector3(-32.0, 0.62, -164.0), true)
+	pickups["machinegun"] = build_gun(Vector3(-32.0, 0.62, -164.0), true, "SMGPickup")
 	pickups["green_key"] = build_key(Vector3(-49.5, 0.65, -164.0), Color(0.05, 1.0, 0.2), "GreenKey")
 
 	# Passagem verde (GreenWing): chave da cela do machado dentro da cela
@@ -510,22 +630,40 @@ func build_pickups() -> void:
 	axe_door = build_gate("AxeCellDoor", Vector3(-5.25, 0, -7), 7.0, "x", Color(0.95, 0.02, 0.01))
 	axe_pickup = build_axe(Vector3(-8.2, 0.72, -7))
 	trampoline = Node3D.new()
+	trampoline.name = "Trampoline"
 	trampoline.position = Vector3(0, 0, 3.5)
 	world_root.add_child(trampoline)
 	instantiate_model("res://assets/kenney/platformer_3d/spring.glb", Vector3.ZERO, Vector3.ONE * 1.8, trampoline)
 	build_light(Vector3(0, 0.7, 0), Color(0.15, 0.45, 1), 2.8, 5, trampoline)
 
+func wire_existing_pickups() -> void:
+	pickups["flashlight"] = find_child("FlashlightPickup", true, false)
+	pickups["pistol_test"] = find_child("PistolTestPickup", true, false)
+	pickups["machinegun_test"] = find_child("MachinegunTestPickup", true, false)
+	pickups["pistol"] = find_child("PistolPickup", true, false)
+	if pickups["pistol"] == null:
+		pickups["pistol"] = find_child("ServicePistolPickup", true, false)
+	pickups["blue_key"] = find_child("BlueKey", true, false)
+	pickups["red_key"] = find_child("RedKey", true, false)
+	pickups["machinegun"] = find_child("SMGPickup", true, false)
+	pickups["green_key"] = find_child("GreenKey", true, false)
+	pickups["cell_key"] = find_child("CellKey", true, false)
+	axe_door = find_child("AxeCellDoor", true, false)
+	axe_pickup = find_child("AxePickup", true, false)
+	trampoline = find_child("Trampoline", true, false)
+
 func build_flashlight(position_value:Vector3) -> Node3D:
 	var pickup := Node3D.new()
+	pickup.name = "FlashlightPickup"
 	pickup.position = position_value
 	world_root.add_child(pickup)
 	instantiate_model("res://assets/kenney/graveyard_kit/lantern-glass.glb", Vector3.ZERO, Vector3.ONE * 1.7, pickup)
 	build_light(Vector3.ZERO, Color(0.72, 0.86, 1), 3, 4, pickup)
 	return pickup
 
-func build_gun(position_value:Vector3, machinegun:bool) -> Node3D:
+func build_gun(position_value:Vector3, machinegun:bool, custom_name:String = "") -> Node3D:
 	var gun := Node3D.new()
-	gun.name = "SMGPickup" if machinegun else "ServicePistolPickup"
+	gun.name = custom_name if custom_name != "" else ("SMGPickup" if machinegun else "ServicePistolPickup")
 	gun.position = position_value
 	world_root.add_child(gun)
 	var model := instantiate_model(SMG_PATH if machinegun else SERVICE_PISTOL_PATH, Vector3.ZERO, Vector3.ONE * (0.95 if machinegun else 2.15), gun)
@@ -576,6 +714,7 @@ func build_key(position_value:Vector3, color:Color, node_name:String) -> Node3D:
 
 func build_axe(position_value:Vector3) -> Node3D:
 	var axe := Node3D.new()
+	axe.name = "AxePickup"
 	axe.position = position_value
 	world_root.add_child(axe)
 	create_box("Handle", Vector3(0, 0.35, 0), Vector3(0.12, 1.3, 0.12), rotten_material, false, axe)
@@ -601,12 +740,7 @@ func instantiate_model(path:String, position_value:Vector3, scale_value:Vector3,
 	return model
 
 func spawn_record(position_value:Vector3, stage:String, door:Node3D) -> void:
-	var variants := [
-		{"path": ZOMBIE_MODEL, "kind": "zombie", "scale": 1.35},
-		{"path": HOUND_MODEL, "kind": "hound", "scale": 0.85},
-		{"path": RUNNER_MODEL, "kind": "mutant", "scale": 0.85}
-	]
-	var variant:Dictionary = variants[enemy_spawns.size() % variants.size()]
+	var variant := {"path": ZOMBIE_MODEL, "kind": "zombie", "scale": 1.35}
 	var automatic:bool = stage == "intro" && !auto_release_assigned
 	if automatic:
 		auto_release_assigned = true
@@ -633,6 +767,11 @@ func spawn_infected(record:Dictionary, force_released:bool) -> DungeonInfected:
 	return infected
 
 func build_main_monster() -> void:
+	var existing = find_child("AnimMonsterStalker", true, false) as DungeonMainMonster
+	if existing != null:
+		main_monster = existing
+		main_monster.setup(player, self)
+		return
 	main_monster = DungeonMainMonster.new()
 	main_monster.name = "AnimMonsterStalker"
 	main_monster.position = Vector3(0, 0.05, -91)
@@ -654,15 +793,18 @@ func build_giant_opening_z(node_name:String, center_x:float, z:float, total_widt
 	create_box(node_name + "VoidFloor", Vector3(center_x, -1.5, z - 3.6), Vector3(total_width + 8.0, 0.5, 7.0), void_mat, false, world_root)
 
 func build_giant_zombies() -> void:
-	# Temporariamente desabilitado para testes a pedido do usuario
-	return
-	# Zumbis GIGANTES do lado de fora do mapa, na escuridão, olhando para dentro por uma
-	# abertura no fundo das salas das chaves: um no caminho aberto do início (Chave Azul)
-	# e outro no caminho azul (Chave Vermelha). Quando o player entra na sala para pegar
-	# a chave, o gigante fica olhando, se prepara e enfia a mão pela abertura.
+	giant_zombies.clear()
+	var found_giants = find_children("*", "DungeonGiantZombie", true, false)
+	if not found_giants.is_empty():
+		for g in found_giants:
+			var giant := g as DungeonGiantZombie
+			giant.setup(player, self)
+			giant_zombies.append(giant)
+		return
+
+	# Fallback se não existirem zumbis gigantes na cena:
 	var configs := [
 		{
-			# Caminho aberto do início — atrás da sala da Chave Azul (z = -144, x = -56)
 			"body_pos": Vector3(-56, -1.2, -147.5),
 			"face_dir": Vector3(0, 0, 1),
 			"zone_center": Vector3(-56, 0, -140),
@@ -670,7 +812,6 @@ func build_giant_zombies() -> void:
 			"scale": 3.0
 		},
 		{
-			# Caminho azul — atrás da sala da Chave Vermelha (z = -144, x = 56)
 			"body_pos": Vector3(56, -1.2, -147.5),
 			"face_dir": Vector3(0, 0, 1),
 			"zone_center": Vector3(56, 0, -140),
@@ -1046,29 +1187,66 @@ func make_label(font_size:int, color:Color, alignment:HorizontalAlignment) -> La
 	return label
 
 func build_audio() -> void:
-	ambience = AudioStreamPlayer.new()
-	ambience.name = "DungeonAmbience"
-	ambience.bus = "Master"
-	var ambience_stream := load("res://assets/novos_audios/calabouco_terror/dungeon_ambience_pixabay.mp3") as AudioStreamMP3
-	if ambience_stream:
-		ambience_stream.loop = true
-	ambience.stream = ambience_stream
-	ambience.volume_db = -2.5
-	ambience.autoplay = true
-	ambience.finished.connect(func():
-		if is_instance_valid(ambience) && is_inside_tree():
-			ambience.play()
-	)
-	add_child(ambience)
-	ambience.play()
-	print("[Dungeon] Som ambiente iniciado com volume: ", ambience.volume_db, " dB (stream: ", ambience_stream, ")")
-	gun_sound = make_audio("res://assets/novos_audios/gun_shot.mp3", -5)
-	pickup_sound = make_audio("res://assets/novos_audios/gun_load.mp3", -7)
-	monster_damage_sound = make_audio("res://assets/novos_audios/sangue_fill_effect.mp3", -1.5)
-	gate_sound = AudioStreamPlayer3D.new()
-	gate_sound.stream = load("res://assets/novos_audios/metal_batendo.mp3")
-	gate_sound.max_distance = 30
-	add_child(gate_sound)
+	ambience = find_child("DungeonAmbience", true, false) as AudioStreamPlayer
+	if ambience == null:
+		ambience = AudioStreamPlayer.new()
+		ambience.name = "DungeonAmbience"
+		ambience.bus = "Master"
+		var ambience_stream := load("res://assets/novos_audios/calabouco_terror/dungeon_ambience_pixabay.mp3") as AudioStreamMP3
+		if ambience_stream:
+			ambience_stream.loop = true
+		ambience.stream = ambience_stream
+		ambience.volume_db = -2.5
+		ambience.autoplay = true
+		ambience.finished.connect(func():
+			if is_instance_valid(ambience) && is_inside_tree():
+				ambience.play()
+		)
+		add_child(ambience)
+		ambience.play()
+		print("[Dungeon] Som ambiente iniciado com volume: ", ambience.volume_db, " dB (stream: ", ambience_stream, ")")
+	if gun_sound == null:
+		gun_sound = make_audio("res://assets/novos_audios/gun_shot.mp3", -5)
+	if pickup_sound == null:
+		pickup_sound = make_audio("res://assets/novos_audios/gun_load.mp3", -7)
+	if monster_damage_sound == null:
+		monster_damage_sound = make_audio("res://assets/novos_audios/sangue_fill_effect.mp3", -1.5)
+	if gate_sound == null:
+		gate_sound = AudioStreamPlayer3D.new()
+		gate_sound.name = "GateSound"
+		gate_sound.stream = load("res://assets/novos_audios/metal_batendo.mp3")
+		gate_sound.max_distance = 30
+		add_child(gate_sound)
+	if gate_iron_sound == null:
+		gate_iron_sound = AudioStreamPlayer3D.new()
+		gate_iron_sound.name = "GateIronSound"
+		gate_iron_sound.stream = load("res://assets/novos_audios/calabouco_terror/gate_opening_iron.mp3")
+		gate_iron_sound.volume_db = 0.0
+		gate_iron_sound.max_distance = 36
+		add_child(gate_iron_sound)
+	if gate_squeaky_sound == null:
+		gate_squeaky_sound = AudioStreamPlayer3D.new()
+		gate_squeaky_sound.name = "GateSqueakySound"
+		gate_squeaky_sound.stream = load("res://assets/novos_audios/calabouco_terror/gate_squeaky.mp3")
+		gate_squeaky_sound.volume_db = 1.0
+		gate_squeaky_sound.max_distance = 36
+		add_child(gate_squeaky_sound)
+	if gate_heavy_sound == null:
+		gate_heavy_sound = AudioStreamPlayer3D.new()
+		gate_heavy_sound.name = "GateHeavySound"
+		gate_heavy_sound.stream = load("res://assets/novos_audios/calabouco_terror/gate_opening_heavy.mp3")
+		gate_heavy_sound.volume_db = 0.5
+		gate_heavy_sound.max_distance = 36
+		add_child(gate_heavy_sound)
+	if gate_unlock_sound == null:
+		gate_unlock_sound = AudioStreamPlayer3D.new()
+		gate_unlock_sound.name = "GateUnlockSound"
+		gate_unlock_sound.stream = load("res://assets/novos_audios/calabouco_terror/gate_unlock_heavy.mp3")
+		gate_unlock_sound.volume_db = 2.0
+		gate_unlock_sound.max_distance = 36
+		add_child(gate_unlock_sound)
+	if zombie_grab_sound == null:
+		zombie_grab_sound = make_audio("res://assets/novos_audios/calabouco_terror/zombie_growl_pixabay.mp3", 1.0)
 
 func make_audio(path:String, volume:float) -> AudioStreamPlayer:
 	var audio := AudioStreamPlayer.new()
@@ -1362,7 +1540,7 @@ func start_intro_cutscene() -> void:
 	player.camera.current = true
 	cutscene_cam.queue_free()
 	maycon_dummy.queue_free()
-	player.set_body_visible(true)
+	player.set_body_visible(false)
 	
 	Global.game_events["dungeon_intro_cutscene_seen"] = true
 	Global.save_progress("calabouco_terror")
@@ -1681,7 +1859,10 @@ func on_interact_pressed() -> void:
 		return_to_castle()
 
 func unlock_gate_manually(gate_name:String) -> void:
-	pickup_sound.play()
+	if is_instance_valid(gate_unlock_sound):
+		gate_unlock_sound.global_position = player.global_position
+		gate_unlock_sound.pitch_scale = randf_range(0.97, 1.03)
+		gate_unlock_sound.play()
 	if gate_name == "axe":
 		Global.game_events["dungeon_axe_door_open"] = true
 		Global.game_events["dungeon_cell_key_used"] = true
@@ -1723,8 +1904,23 @@ func open_door(door:Node3D, with_sound:bool) -> void:
 	if door == axe_door:
 		Global.game_events["dungeon_axe_door_open"] = true
 	if with_sound:
-		gate_sound.global_position = door.global_position
-		gate_sound.play()
+		var is_key_door:bool = door.get_meta("is_key_room", false)
+		if is_key_door:
+			# Portão onde estão as chaves: tocar squeaky + heavy opening ao mesmo tempo
+			if is_instance_valid(gate_squeaky_sound):
+				gate_squeaky_sound.global_position = door.global_position
+				gate_squeaky_sound.pitch_scale = randf_range(0.96, 1.04)
+				gate_squeaky_sound.play()
+			if is_instance_valid(gate_heavy_sound):
+				gate_heavy_sound.global_position = door.global_position
+				gate_heavy_sound.pitch_scale = randf_range(0.96, 1.04)
+				gate_heavy_sound.play()
+		else:
+			# Qualquer outro portão (que não seja o portão onde está a chave)
+			if is_instance_valid(gate_iron_sound):
+				gate_iron_sound.global_position = door.global_position
+				gate_iron_sound.pitch_scale = randf_range(0.95, 1.05)
+				gate_iron_sound.play()
 	create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN_OUT).tween_property(door, "position:y", 5.2, 1.15)
 
 func start_finale_cutscene() -> void:
@@ -2152,9 +2348,49 @@ func end_main_monster_grab(monster:DungeonMainMonster) -> void:
 func show_main_monster_blood(intensity:float) -> void:
 	monster_damage_serial += 1
 	var current_serial:int = monster_damage_serial
-	if is_instance_valid(monster_damage_sound):
-		monster_damage_sound.pitch_scale = randf_range(0.86, 1.04)
-		monster_damage_sound.play()
+	var sound_delay := randf_range(0.0, 0.08)
+	if sound_delay > 0.01:
+		get_tree().create_timer(sound_delay).timeout.connect(func():
+			if current_serial == monster_damage_serial and is_instance_valid(monster_damage_sound):
+				monster_damage_sound.pitch_scale = randf_range(0.78, 0.98)
+				monster_damage_sound.play()
+		)
+	else:
+		if is_instance_valid(monster_damage_sound):
+			monster_damage_sound.pitch_scale = randf_range(0.78, 0.98)
+			monster_damage_sound.play()
+	spawn_blood_spurt(player.camera.global_position + player.camera_forward() * 0.38)
+	blood_overlay.visible = true
+	for child in blood_overlay.get_children():
+		child.modulate.a = 0.0
+		var target_alpha:float = randf_range(0.42, 0.82) * intensity
+		create_tween().tween_property(child, "modulate:a", target_alpha, randf_range(0.05, 0.2)).set_delay(randf_range(0.0, 0.22))
+	await get_tree().create_timer(0.8 + intensity * 0.45).timeout
+	if current_serial != monster_damage_serial:
+		return
+	var fade := create_tween().set_parallel()
+	for child in blood_overlay.get_children():
+		fade.tween_property(child, "modulate:a", 0.0, 0.65)
+	await fade.finished
+	if current_serial == monster_damage_serial:
+		blood_overlay.visible = false
+
+func show_infected_grab_blood(intensity:float) -> void:
+	monster_damage_serial += 1
+	var current_serial:int = monster_damage_serial
+	var sound_delay := randf_range(0.06, 0.24)
+	get_tree().create_timer(sound_delay).timeout.connect(func():
+		if current_serial != monster_damage_serial:
+			return
+		if is_instance_valid(zombie_grab_sound):
+			zombie_grab_sound.pitch_scale = randf_range(0.85, 1.25)
+			zombie_grab_sound.volume_db = randf_range(-1.0, 1.5)
+			zombie_grab_sound.play()
+		if is_instance_valid(monster_damage_sound):
+			monster_damage_sound.pitch_scale = randf_range(1.08, 1.32)
+			monster_damage_sound.volume_db = randf_range(-3.5, -0.5)
+			monster_damage_sound.play()
+	)
 	spawn_blood_spurt(player.camera.global_position + player.camera_forward() * 0.38)
 	blood_overlay.visible = true
 	for child in blood_overlay.get_children():
@@ -2219,7 +2455,7 @@ func finish_giant_grab_kill(giant:DungeonGiantZombie) -> void:
 	restart_after_caught(null)
 
 func begin_infected_grab(infected:DungeonInfected, anchor:Marker3D) -> bool:
-	# Zumbi pequeno agarra e segura o player na mão (igual o monstro principal).
+	# Zumbi pequeno agarra e segura o player na mão (com som e timing próprios).
 	if Global.debug_dungeon_invincible || sequence_running || !is_instance_valid(infected) || !is_instance_valid(anchor):
 		return false
 	infected_grab_active = true
@@ -2232,7 +2468,7 @@ func begin_infected_grab(infected:DungeonInfected, anchor:Marker3D) -> bool:
 	player.collision_mask = 0
 	player.set_physics_process(false)
 	player.shake_camera(0.05, 0.4)
-	show_main_monster_blood(0.5)
+	show_infected_grab_blood(0.5)
 	return true
 
 func update_infected_grab() -> void:
@@ -2255,7 +2491,7 @@ func update_infected_grab() -> void:
 	player.head.rotation.x = -0.1
 
 func end_infected_grab(infected:DungeonInfected) -> void:
-	# Solta arremessando o player com dano forte (igual o monstro principal).
+	# Solta arremessando o player com dano forte (com som e timing próprios).
 	if !infected_grab_active || infected != infected_grabber:
 		return
 	var release_position := player.global_position
@@ -2273,7 +2509,7 @@ func end_infected_grab(infected:DungeonInfected) -> void:
 	player.controls_enabled = true
 	player.apply_knockback(throw_direction.normalized() * 9.0 + Vector3.UP * 4.8, 0.85)
 	player.shake_camera(0.12, 0.8)
-	show_main_monster_blood(0.9)
+	show_infected_grab_blood(0.9)
 	var grab_damage:float = maxf(1.0, player.current_hp * 0.7)
 	var died := player.take_damage(grab_damage)
 	sequence_running = false

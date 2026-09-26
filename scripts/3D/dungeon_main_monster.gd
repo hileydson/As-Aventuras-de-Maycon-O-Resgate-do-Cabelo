@@ -34,6 +34,8 @@ var action_elapsed:float = 0.0
 var attack_number:int = 0
 var attack_impact_done:bool = false
 var grab_active:bool = false
+var grab_impact_time:float = 0.72
+var grab_release_time:float = 1.95
 var attack_cooldown:float = 2.0
 var rest_timer:float = 0.0
 var down_timer:float = 0.0
@@ -250,10 +252,12 @@ func start_random_attack(_player_distance:float) -> void:
 	state = "attack"
 	action_elapsed = 0.0
 	attack_impact_done = false
+	grab_impact_time = randf_range(0.66, 0.78)
+	grab_release_time = randf_range(1.85, 2.22)
 	velocity.x = 0.0
 	velocity.z = 0.0
 	attack_audio.stream = ATTACK_2
-	attack_audio.pitch_scale = randf_range(0.88, 1.05)
+	attack_audio.pitch_scale = randf_range(0.82, 0.98)
 	attack_audio.play()
 	action_timer = play_animation("Attack_%d" % attack_number, false, 1.0)
 	if action_timer <= 0.0:
@@ -265,11 +269,11 @@ func process_attack(delta:float) -> void:
 	action_timer -= delta
 	action_elapsed += delta
 	look_at_horizontal(player.global_position)
-	if !attack_impact_done && action_elapsed >= 0.72:
+	if !attack_impact_done && action_elapsed >= grab_impact_time:
 		attack_impact_done = true
 		if global_position.distance_to(player.global_position) <= 3.25:
 			grab_active = bool(dungeon.call("begin_main_monster_grab", self, grab_anchor))
-	if grab_active && (action_elapsed >= 1.95 || action_timer <= 0.15):
+	if grab_active && (action_elapsed >= grab_release_time || action_timer <= 0.15):
 		dungeon.call("end_main_monster_grab", self)
 		grab_active = false
 	if action_timer <= 0.0:

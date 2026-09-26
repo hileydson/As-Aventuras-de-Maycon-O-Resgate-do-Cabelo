@@ -18,7 +18,7 @@ const LIBRARY_PATH := "res://assets/horror_creatures/zombie_authored_animations.
 static func load_or_build(skel:Skeleton3D) -> AnimationLibrary:
 	if ResourceLoader.exists(LIBRARY_PATH):
 		var saved := ResourceLoader.load(LIBRARY_PATH) as AnimationLibrary
-		if saved:
+		if saved and saved.has_animation("hold_structure"):
 			return saved
 	var lib := build_library(skel)
 	ResourceSaver.save(lib, LIBRARY_PATH)
@@ -35,6 +35,7 @@ static func build_library(skel:Skeleton3D, skel_path:String = SKEL_PATH) -> Anim
 	lib.add_animation("prepare", _prepare(rest, skel_path))
 	lib.add_animation("attack", _attack(rest, skel_path))
 	lib.add_animation("grab", _grab(rest, skel_path))
+	lib.add_animation("hold_structure", _hold_structure(rest, skel_path))
 	return lib
 
 static func _rest_map(skel:Skeleton3D) -> Dictionary:
@@ -240,4 +241,22 @@ static func _grab(rest:Dictionary, skel_path:String) -> Animation:
 		})
 		frames.append([t, pose])
 	_build(a, rest, skel_path, frames)
+	return a
+
+static func _hold_structure(rest:Dictionary, skel_path:String) -> Animation:
+	# Segurando a parede/estrutura com as duas mãos gigantes apoiadas para frente
+	var a := Animation.new()
+	a.length = 1.0
+	a.loop_mode = Animation.LOOP_LINEAR
+	var pose := _apply(_stance(), {
+		"Spine": Vector3(0.2, 0, 0), "Spine1": Vector3(0.12, 0, 0),
+		"Neck": Vector3(-0.08, 0, 0), "Head": Vector3(-0.15, 0, 0),
+		"LeftArm": Vector3(1.25, 0.15, 0.5), "RightArm": Vector3(1.25, -0.15, -0.5),
+		"LeftForeArm": Vector3(0.4, 0, 0.15), "RightForeArm": Vector3(0.4, 0, -0.15),
+		"LeftHand": Vector3(0.25, 0, 0.1), "RightHand": Vector3(0.25, 0, -0.1),
+	})
+	_build(a, rest, skel_path, [
+		[0.0, pose],
+		[1.0, pose],
+	])
 	return a

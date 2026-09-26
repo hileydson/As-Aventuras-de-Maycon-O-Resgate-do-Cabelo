@@ -93,7 +93,7 @@ var gfx_shadow_atlas_size:int = 4096
 var gfx_glow_override:int = -1 # -1 = respeita o valor original da cena, 0 = forçar desligado, 1 = forçar ligado
 var gfx_ssao_override:int = -1
 var gfx_msaa_2d:int = 2 # padrão 4x
-var gfx_texture_filter_2d:int = 0
+var gfx_texture_filter_2d:int = 1
 
 var _gfx_defaults_captured:bool = false
 var _gfx_defaults:Dictionary = {}
@@ -258,7 +258,7 @@ func _apply_graphics_settings_from_dict(d:Dictionary) -> void:
 func restore_graphics_defaults_2d() -> void:
 	capture_graphics_defaults()
 	apply_gfx_msaa_2d(_gfx_defaults.get("msaa_2d", 2))
-	apply_gfx_texture_filter_2d(_gfx_defaults.get("texture_filter_2d", 0))
+	apply_gfx_texture_filter_2d(_gfx_defaults.get("texture_filter_2d", 1))
 
 func save_to_player_savegame() -> void:
 	_ensure_legacy_save_migration()

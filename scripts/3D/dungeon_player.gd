@@ -8,14 +8,10 @@ const SMG_ALBEDO:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_Defau
 const SMG_NORMAL:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Normal.png")
 const SMG_METALLIC:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Metallic.png")
 const SMG_ROUGHNESS:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Roughness.png")
-const PISTOL_REST_POSITION := Vector3(0.29, -0.49, -0.26)
-const SMG_REST_POSITION := Vector3(0.27, -0.22, -0.42)
-
-# Encaixe da arma na mão direita do modelo 3D (espaço local da mão, escala já compensada).
-const PISTOL_HAND_OFFSET := Vector3(0.14, 0.04, -0.08)
-const PISTOL_HAND_ROTATION := Vector3(0.0, 0.0, 0.0)
-const SMG_HAND_OFFSET := Vector3(0.14, 0.04, -0.08)
-const SMG_HAND_ROTATION := Vector3(0.0, 0.0, 0.0)
+const PISTOL_REST_POSITION := Vector3(0.24, -0.22, -0.42)
+const PISTOL_REST_ROTATION := Vector3(-0.035, 0.06, -0.025)
+const SMG_REST_POSITION := Vector3(0.25, -0.23, -0.44)
+const SMG_REST_ROTATION := Vector3(-0.03, 0.05, -0.02)
 
 # Pose de mira (delta a partir do repouso, em graus) para levantar os braços à frente da câmera.
 const RIGHT_ARM_AIM_EULER := Vector3(100.0, 0.0, 0.0)
@@ -503,11 +499,12 @@ func fire() -> void:
 	create_tween().tween_property(camera, "rotation:z", 0.0, 0.07)
 	if is_instance_valid(gun_view):
 		var rest_position := get_weapon_rest_position()
-		gun_view.position = rest_position + Vector3(0, 0.025, 0.1)
-		gun_view.rotation.x = -0.055
+		var rest_rotation := get_weapon_rest_rotation()
+		gun_view.position = rest_position + Vector3(0, 0.02, 0.06)
+		gun_view.rotation.x = rest_rotation.x - 0.055
 		var recoil := create_tween().set_parallel()
 		recoil.tween_property(gun_view, "position", rest_position, 0.085).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		recoil.tween_property(gun_view, "rotation:x", 0.0, 0.09).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		recoil.tween_property(gun_view, "rotation:x", rest_rotation.x, 0.09).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		
 	if get_current_clip() == 0 && get_current_reserve() > 0:
 		start_reload()
@@ -526,20 +523,8 @@ func build_view_gun() -> void:
 	gun_view.add_child(casing_eject_marker)
 	update_view_gun()
 
-# Cria o encaixe da arma. Se o esqueleto do Maycon existir, prende na mão direita
-# (BoneAttachment3D) e compensa a escala do modelo para que a arma fique em metros.
-# Caso contrário, cai de volta para o modelo preso à câmera.
+# Encaixe da arma na câmera para visualização FPS clássica
 func _create_weapon_mount() -> Node3D:
-	if is_instance_valid(maycon_skeleton):
-		var idx := maycon_skeleton.find_bone("RightHand")
-		if idx != -1:
-			# Node3D simples (não BoneAttachment3D): mantém o transform que definimos em
-			# _apply_aim_pose. Um BoneAttachment sobrescreveria com a pose crua do osso no render.
-			var mount := Node3D.new()
-			mount.name = "RightHandWeaponMount"
-			maycon_skeleton.add_child(mount)
-			right_hand_mount = mount
-			return mount
 	return camera
 
 func update_view_gun() -> void:
@@ -547,13 +532,7 @@ func update_view_gun() -> void:
 		return
 	if is_instance_valid(weapon_model):
 		weapon_model.queue_free()
-	# Compensa a escala global do esqueleto para a arma sair em metros dentro da mão.
-	if is_instance_valid(right_hand_mount) && is_instance_valid(maycon_skeleton):
-		var skel_scale := maycon_skeleton.global_transform.basis.get_scale()
-		gun_view.scale = Vector3(
-			1.0 / maxf(skel_scale.x, 0.0001),
-			1.0 / maxf(skel_scale.y, 0.0001),
-			1.0 / maxf(skel_scale.z, 0.0001))
+	gun_view.scale = Vector3.ONE
 	weapon_model = (SERVICE_PISTOL_MODEL if weapon_mode == "pistol" else SMG_MODEL).instantiate() as Node3D
 	weapon_model.name = "ServicePistolModel" if weapon_mode == "pistol" else "SMGModel"
 	gun_view.add_child(weapon_model)
@@ -569,42 +548,23 @@ func update_view_gun() -> void:
 		apply_smg_material(weapon_model)
 		muzzle_marker.position = Vector3(0, 0.035, -0.34)
 		casing_eject_marker.position = Vector3(0.07, 0.075, -0.08)
-	if is_instance_valid(right_hand_mount):
-		# Preso à mão: o deslocamento é aplicado em metros na origem do encaixe (ver _apply_aim_pose).
-		gun_view.position = Vector3.ZERO
-		gun_view.rotation = get_weapon_rest_rotation()
-	else:
-		gun_view.position = get_weapon_rest_position()
-		gun_view.rotation = Vector3.ZERO
+	gun_view.position = get_weapon_rest_position()
+	gun_view.rotation = get_weapon_rest_rotation()
 
 func get_weapon_rest_position() -> Vector3:
-	if is_instance_valid(right_hand_mount):
-		return PISTOL_HAND_OFFSET if weapon_mode == "pistol" else SMG_HAND_OFFSET
 	return PISTOL_REST_POSITION if weapon_mode == "pistol" else SMG_REST_POSITION
 
 func get_weapon_rest_rotation() -> Vector3:
-	if is_instance_valid(right_hand_mount):
-		return PISTOL_HAND_ROTATION if weapon_mode == "pistol" else SMG_HAND_ROTATION
-	return Vector3.ZERO
+	return PISTOL_REST_ROTATION if weapon_mode == "pistol" else SMG_REST_ROTATION
 
-# Levanta os braços do modelo numa pose de mira, por cima da animação, quando armado.
+# Levanta os braços do modelo numa pose de mira, por cima da animação, quando armado e corpo visível.
 func _apply_aim_pose() -> void:
-	if !is_instance_valid(maycon_skeleton) || !has_gun:
+	if !is_instance_valid(maycon_skeleton) || !has_gun || !is_instance_valid(maycon_body) || !maycon_body.visible:
 		return
 	_pose_bone(right_arm_bone, RIGHT_ARM_AIM_EULER)
 	_pose_bone(right_forearm_bone, RIGHT_FOREARM_AIM_EULER)
 	_pose_bone(left_arm_bone, LEFT_ARM_AIM_EULER)
 	_pose_bone(left_forearm_bone, LEFT_FOREARM_AIM_EULER)
-	# Posiciona a arma na mão direita (já com a pose de mira aplicada), mas orienta-a
-	# para onde a câmera olha (mira coerente) e aplica o deslocamento fino de enquadramento
-	# em metros no espaço da câmera. Usamos um Node3D comum (ver _create_weapon_mount).
-	if is_instance_valid(right_hand_mount) && right_hand_bone != -1:
-		right_hand_mount.transform = maycon_skeleton.get_bone_global_pose(right_hand_bone)
-		var gt := right_hand_mount.global_transform
-		var cam_basis := camera.global_transform.basis.orthonormalized()
-		gt.origin += cam_basis * get_weapon_rest_position()
-		gt.basis = cam_basis.scaled(maycon_skeleton.global_transform.basis.get_scale())
-		right_hand_mount.global_transform = gt
 
 func _pose_bone(idx:int, euler_deg:Vector3) -> void:
 	if idx == -1:
@@ -677,6 +637,7 @@ func build_maycon_body() -> void:
 	maycon_body.name = "MayconBody"
 	maycon_body.rotation.y = PI
 	maycon_body.position = Vector3(0, 0, 0)
+	maycon_body.visible = false
 	_adjust_maycon_materials(maycon_body)
 	add_child(maycon_body)
 	
@@ -776,7 +737,7 @@ func _play_maycon_animation(anim_name:String) -> void:
 		maycon_anim.play(anim_name, blend)
 
 func _update_maycon_animations(_delta:float, moving:bool, running:bool, input_vector:Vector2) -> void:
-	if !is_instance_valid(maycon_anim):
+	if !is_instance_valid(maycon_body) or !maycon_body.visible or !is_instance_valid(maycon_anim):
 		return
 	if !is_on_floor():
 		_play_maycon_animation("Air_Flail")

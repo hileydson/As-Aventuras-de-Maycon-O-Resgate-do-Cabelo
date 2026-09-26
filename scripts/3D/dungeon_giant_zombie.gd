@@ -1,13 +1,11 @@
+@tool
 class_name DungeonGiantZombie
 extends Node3D
 
 # Zumbi GIGANTE que fica do lado de fora do mapa, na escuridão, olhando para dentro
-# do cenário por uma abertura na parede. Usa o modelo real infected_zombie_animated
-# (mesmo dos outros infectados) porém em escala gigante, e é animado por um
-# AnimationPlayer com animações de verdade (geradas por ZombieAnimationFactory e
-# salvas em .res para edição). Quando o player passa, ele fica olhando, se prepara
-# (aguarda um instante), depois ataca enfiando a mão. Se agarrar, balança o player e
-# o mata espirrando sangue.
+# do cenário por uma abertura na parede, ou segurando a estrutura do calabouço.
+# Usa o modelo real infected_zombie_animated em escala gigante, animado por AnimationPlayer
+# com suporte a edição manual no viewport 3D da Godot e no Inspector.
 
 const ZOMBIE_MODEL := preload("res://assets/horror_creatures/infected_zombie_animated.glb")
 
@@ -19,76 +17,150 @@ const WALL_HIT := preload("res://assets/novos_audios/metal_batendo.mp3")
 const WALL_HIT_HEAVY := preload("res://assets/novos_audios/calabouco_terror/dungeon_fall_impact.wav")
 const MAYCON_SCREAM := preload("res://assets/novos_audios/maycon_falling_fase_1.mp3")
 
-var player:DungeonPlayer
-var dungeon:Node
+@export_group("Configurações do Zumbi Gigante")
+@export var is_decorative_only: bool = false
+@export var active_attack: bool = true
+@export var model_scale: float = 3.0:
+	set(val):
+		model_scale = val
+		if is_instance_valid(model_root):
+			model_root.scale = Vector3.ONE * model_scale
+@export_enum("watch", "prepare", "attack", "grab", "hold_structure", "idle") var default_pose: String = "watch":
+	set(val):
+		default_pose = val
+		if is_instance_valid(animator) and animator.has_animation(val):
+			animator.play(val)
+
+@export_group("Zona de Ataque")
+@export var zone_center: Vector3 = Vector3.ZERO
+@export var zone_half: Vector3 = Vector3(6, 3, 6)
+
+var player: DungeonPlayer
+var dungeon: Node
 
 # Configuração de posicionamento (mundo)
-var face_dir:Vector3 = Vector3.FORWARD
-var zone_center:Vector3 = Vector3.ZERO
-var zone_half:Vector3 = Vector3(6, 3, 6)
-var model_scale:float = 2.4
+var face_dir: Vector3 = Vector3.FORWARD
 
 # Nós
-var model_root:Node3D
-var skel:Skeleton3D
-var animator:AnimationPlayer
-var grab_attachment:BoneAttachment3D
-var grab_anchor:Marker3D
-var eye_lights:Array[OmniLight3D] = []
+var model_root: Node3D
+var skel: Skeleton3D
+var animator: AnimationPlayer
+var grab_attachment: BoneAttachment3D
+var grab_anchor: Marker3D
+var eye_lights: Array[OmniLight3D] = []
 
 # Áudio
-var growl_audio:AudioStreamPlayer3D
-var roar_audio:AudioStreamPlayer3D
-var impact_audio:AudioStreamPlayer3D
-var scream_audio:AudioStreamPlayer
+var growl_audio: AudioStreamPlayer3D
+var roar_audio: AudioStreamPlayer3D
+var impact_audio: AudioStreamPlayer3D
+var scream_audio: AudioStreamPlayer
 
 # Estado
-var busy:bool = false
-var state:String = "watch"
-var cooldown:float = 0.0
-var growl_cooldown:float = 0.0
-var phase:float = 0.0
+var busy: bool = false
+var state: String = "watch"
+var cooldown: float = 0.0
+var growl_cooldown: float = 0.0
+var phase: float = 0.0
 
-const CONSIDER_TIME:float = 0.9    # fica olhando um instante antes de decidir
-const TELEGRAPH_TIME:float = 1.4   # tempo que o player tem para sair enquanto ele se prepara
-const STRIKE_DELAY:float = 0.3     # momento do impacto dentro da animação de ataque
-const GRAB_RADIUS:float = 3.2
-const REST_COOLDOWN:float = 4.0
+const CONSIDER_TIME: float = 0.9    # fica olhando um instante antes de decidir
+const TELEGRAPH_TIME: float = 1.4   # tempo que o player tem para sair enquanto ele se prepara
+const STRIKE_DELAY: float = 0.3     # momento do impacto dentro da animação de ataque
+const GRAB_RADIUS: float = 3.2
+const REST_COOLDOWN: float = 4.0
 
-func setup(target:DungeonPlayer, owner_dungeon:Node, config:Dictionary) -> void:
+func _ready() -> void:
+	ensure_body()
+	if Engine.is_editor_hint():
+		set_physics_process(false)
+		if is_instance_valid(animator) and animator.has_animation(default_pose):
+			animator.play(default_pose)
+		return
+	
+	build_audio()
+	if is_decorative_only or not active_attack:
+		set_physics_process(false)
+		if is_instance_valid(animator) and animator.has_animation(default_pose):
+			animator.play(default_pose)
+
+func ensure_body() -> void:
+	if is_instance_valid(model_root):
+		return
+	var existing = find_child("infected_zombie_animated", false, false) as Node3D
+	if existing != null:
+		model_root = existing
+		model_root.scale = Vector3.ONE * model_scale
+		skel = model_root.find_child("Skeleton3D", true, false) as Skeleton3D
+		animator = model_root.find_child("AnimationPlayer", true, false) as AnimationPlayer
+		if animator == null:
+			animator = AnimationPlayer.new()
+			animator.name = "AnimationPlayer"
+			model_root.add_child(animator)
+			if is_instance_valid(skel):
+				animator.add_animation_library("", ZombieAnimationFactory.load_or_build(skel))
+		elif not animator.has_animation_library(""):
+			if is_instance_valid(skel):
+				animator.add_animation_library("", ZombieAnimationFactory.load_or_build(skel))
+		elif not animator.has_animation("hold_structure"):
+			animator.remove_animation_library("")
+			if is_instance_valid(skel):
+				animator.add_animation_library("", ZombieAnimationFactory.load_or_build(skel))
+		if is_instance_valid(animator) and animator.has_animation(default_pose):
+			animator.play(default_pose)
+		setup_grab_anchor()
+		setup_eye_glow()
+	else:
+		build_body()
+
+func setup(target: DungeonPlayer, owner_dungeon: Node, config: Dictionary = {}) -> void:
 	player = target
 	dungeon = owner_dungeon
-	position = config.get("body_pos", Vector3.ZERO)
-	face_dir = (config.get("face_dir", Vector3.FORWARD) as Vector3).normalized()
-	zone_center = config.get("zone_center", position)
-	zone_half = config.get("zone_half", Vector3(6, 3, 6))
-	model_scale = config.get("scale", 2.4)
-	# A frente do modelo (+Z local) aponta para dentro do cenário
-	rotation.y = atan2(face_dir.x, face_dir.z)
-	build_body()
-	build_audio()
+	if not config.is_empty():
+		if position == Vector3.ZERO and config.has("body_pos"):
+			position = config.get("body_pos", position)
+			face_dir = (config.get("face_dir", face_dir) as Vector3).normalized()
+			rotation.y = atan2(face_dir.x, face_dir.z)
+		if zone_center == Vector3.ZERO:
+			zone_center = config.get("zone_center", position)
+		if zone_half == Vector3(6, 3, 6):
+			zone_half = config.get("zone_half", zone_half)
+		if config.has("scale"):
+			model_scale = config.get("scale", model_scale)
+	elif zone_center == Vector3.ZERO:
+		zone_center = position
+	ensure_body()
+	if growl_audio == null and not Engine.is_editor_hint():
+		build_audio()
+	if is_decorative_only or not active_attack:
+		set_physics_process(false)
+		if is_instance_valid(animator) and animator.has_animation(default_pose):
+			animator.play(default_pose)
 
 func build_body() -> void:
+	if is_instance_valid(model_root):
+		return
 	model_root = ZOMBIE_MODEL.instantiate() as Node3D
+	model_root.name = "infected_zombie_animated"
 	model_root.scale = Vector3.ONE * model_scale
 	add_child(model_root)
 	skel = model_root.find_child("Skeleton3D", true, false) as Skeleton3D
 
-	# Descarta o AnimationPlayer do glb (animações achatadas) e cria um novo com
-	# animações reais e editáveis.
 	var old_player := model_root.find_child("AnimationPlayer", true, false)
 	if is_instance_valid(old_player):
 		old_player.queue_free()
 	animator = AnimationPlayer.new()
 	animator.name = "AnimationPlayer"
 	model_root.add_child(animator)
-	animator.add_animation_library("", ZombieAnimationFactory.load_or_build(skel))
-	animator.play("watch")
+	if is_instance_valid(skel) and not animator.has_animation_library(""):
+		animator.add_animation_library("", ZombieAnimationFactory.load_or_build(skel))
+	if animator.has_animation(default_pose):
+		animator.play(default_pose)
 
 	setup_grab_anchor()
 	setup_eye_glow()
 
 func setup_grab_anchor() -> void:
+	if find_child("GrabAnchor", true, false) != null:
+		return
 	grab_attachment = BoneAttachment3D.new()
 	grab_attachment.name = "GrabHandAttachment"
 	if is_instance_valid(skel):
@@ -104,6 +176,8 @@ func setup_grab_anchor() -> void:
 func setup_eye_glow() -> void:
 	if not is_instance_valid(skel):
 		return
+	if skel.find_child("HeadGlow", true, false) != null:
+		return
 	var head_att := BoneAttachment3D.new()
 	head_att.name = "HeadGlow"
 	head_att.bone_name = &"CityDeadOutfit_Head"
@@ -118,6 +192,8 @@ func setup_eye_glow() -> void:
 		eye_lights.append(eye)
 
 func build_audio() -> void:
+	if is_instance_valid(growl_audio):
+		return
 	growl_audio = make_audio_3d(ZOMBIE_GROWL, -2.0, 45.0)
 	roar_audio = make_audio_3d(ZOMBIE_ROAR, 0.0, 52.0)
 	impact_audio = make_audio_3d(WALL_HIT, 3.0, 46.0)
@@ -142,7 +218,11 @@ func make_audio_3d(stream:AudioStream, volume_db:float, max_distance:float) -> A
 	return audio
 
 func _physics_process(delta:float) -> void:
-	if !is_instance_valid(player):
+	if Engine.is_editor_hint():
+		return
+	if is_decorative_only or not active_attack:
+		return
+	if !is_instance_valid(player) or !is_instance_valid(dungeon):
 		return
 	phase += delta
 	growl_cooldown = maxf(0.0, growl_cooldown - delta)
@@ -163,13 +243,19 @@ func _physics_process(delta:float) -> void:
 			growl_audio.play()
 
 func player_in_zone() -> bool:
+	if !is_instance_valid(player):
+		return false
 	var p := player.global_position
-	return absf(p.x - zone_center.x) <= zone_half.x \
-		and absf(p.z - zone_center.z) <= zone_half.z \
-		and absf(p.y - zone_center.y) <= zone_half.y + 2.0
+	var check_center = zone_center if zone_center != Vector3.ZERO else global_position
+	return absf(p.x - check_center.x) <= zone_half.x \
+		and absf(p.z - check_center.z) <= zone_half.z \
+		and absf(p.y - check_center.y) <= zone_half.y + 2.0
 
 func player_near() -> bool:
-	return player.global_position.distance_to(zone_center) <= zone_half.length() + 12.0
+	if !is_instance_valid(player):
+		return false
+	var check_center = zone_center if zone_center != Vector3.ZERO else global_position
+	return player.global_position.distance_to(check_center) <= zone_half.length() + 12.0
 
 func attempt_grab() -> void:
 	busy = true

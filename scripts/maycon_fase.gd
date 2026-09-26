@@ -28,6 +28,7 @@ var SPEED:float = SPEED_DEFAULT
 
 const JUMP_VELOCITY = -400.0
 var DOUBLE_JUMP_COUNT = 0
+var is_jumping = false
 var attack = false
 
 func pause()->void:
@@ -39,6 +40,7 @@ func jump(is_colliding_area2d:bool)->void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !is_colliding_area2d:
 		sound_jump.play()
 		Input.start_joy_vibration(0, 0.2, 0.2, 0.1)
+		is_jumping = true
 		animated_sprite_2d.play("jump_right")
 		velocity.y = JUMP_VELOCITY
 		
@@ -49,12 +51,10 @@ func double_jump(is_colliding_area2d:bool)->void:
 			sound_double_jump.play()
 			Input.start_joy_vibration(0, 0.2, 0.2, 0.2)
 			velocity.y = JUMP_VELOCITY+50
+			is_jumping = false
 			animated_sprite_2d.play("double_jump")
 			DOUBLE_JUMP_COUNT = DOUBLE_JUMP_COUNT+1
-	
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		DOUBLE_JUMP_COUNT = 0
-		
+
 func _physics_process(delta: float) -> void:
 	
 	if get_node(".").visible == false:
@@ -67,6 +67,11 @@ func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
+		run_ghost_timer = 0.0
+		run_dust_timer = 0.0
+	else:
+		is_jumping = false
+		DOUBLE_JUMP_COUNT = 0
 		
 	# attack kick
 	if Input.is_action_pressed("key_q") : #&& !Input.is_action_pressed("key_down")
@@ -80,23 +85,23 @@ func _physics_process(delta: float) -> void:
 			kick.play()
 			animated_sprite_2d.play("attack_kick")
 	
-	# down
-	#if Input.is_action_pressed("key_down") && !Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right"):
-	#	if animated_sprite_2d.animation != "key_down":
-	#		animated_sprite_2d.play("down")
-
-	
+	var is_colliding_area2d:bool = $area2d.get_overlapping_areas().size() > 0
+	# handles double jump 
+	double_jump(is_colliding_area2d)
+	# handles jump.
+	jump(is_colliding_area2d)
 	
 	# ANIMACAO DE ANDAR PROS LADOS	
-	if (Input.is_action_pressed("ui_left") || Input.is_action_pressed("ui_right")) && !Input.is_action_just_pressed("ui_accept"):	
-		if is_on_floor() && animated_sprite_2d.animation != "attack_punch" && animated_sprite_2d.animation != "attack_kick" :
+	if (Input.is_action_pressed("ui_left") || Input.is_action_pressed("ui_right")):	
+		if is_on_floor() and !is_jumping and animated_sprite_2d.animation != "attack_punch" and animated_sprite_2d.animation != "attack_kick":
 	
 			if Input.is_action_pressed("run"):
 				if !run.is_playing():
 					run.play()
 				if SPEED != SPEED_RUN:
 					SPEED = SPEED_RUN
-				animated_sprite_2d.play("run")
+				if animated_sprite_2d.animation != "run":
+					animated_sprite_2d.play("run")
 				
 				run_ghost_timer -= delta
 				if run_ghost_timer <= 0.0:
@@ -114,15 +119,15 @@ func _physics_process(delta: float) -> void:
 					sound_walk.play()
 				if SPEED != SPEED_DEFAULT:
 					SPEED = SPEED_DEFAULT
-				animated_sprite_2d.play("right")
+				if animated_sprite_2d.animation != "right":
+					animated_sprite_2d.play("right")
 
-	if (!Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right")) && !Input.is_action_pressed("ui_accept") && is_on_floor() && animated_sprite_2d.animation != "attack_punch" && animated_sprite_2d.animation != "attack_kick" && animated_sprite_2d.animation != "down" : 
+	if (!Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right")) and is_on_floor() and !is_jumping and animated_sprite_2d.animation != "attack_punch" and animated_sprite_2d.animation != "attack_kick" and animated_sprite_2d.animation != "down": 
 			run_ghost_timer = 0.0
 			run_dust_timer = 0.0
-			animated_sprite_2d.play("idle_right")
-	#ANIMACAO IDLE
-	#if !Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right") && !Input.is_action_just_pressed("ui_accept")  && !Input.is_action_just_pressed("key_q") && !Input.is_action_just_pressed("key_w") && is_on_floor():		
-	if !animated_sprite_2d.is_playing():
+			if animated_sprite_2d.animation != "idle_right":
+				animated_sprite_2d.play("idle_right")
+	if is_on_floor() and !is_jumping and !animated_sprite_2d.is_playing():
 		animated_sprite_2d.play("idle_right")
 		
 
@@ -150,13 +155,6 @@ func _physics_process(delta: float) -> void:
 			
 
 	move_and_slide()
-	
-	var is_colliding_area2d:bool = $area2d.get_overlapping_areas().size()>0
-	
-	# handles double jump 
-	double_jump(is_colliding_area2d)
-	# handles jump.
-	jump(is_colliding_area2d)
 	
 	# --- NOVA LÓGICA DE IMPACTO ---
 	# 1. Primeiro, pegamos qualquer colisão do movimento normal
@@ -232,6 +230,8 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 
 
 func _on_animated_sprite_2d_animation_finished() -> void:
+	if not is_on_floor():
+		return
 	animated_sprite_2d.play("idle_right")
 
 

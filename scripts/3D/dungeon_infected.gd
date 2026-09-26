@@ -421,18 +421,20 @@ func do_zombie_grab() -> void:
 	# Avança a mão em direção ao player, agarra e SEGURA, depois solta arremessando.
 	play_animation_by_names(["attack", "walk"])
 	create_tween().tween_property(self, "global_position", global_position + (player.global_position - global_position).normalized() * 0.35, 0.2)
-	await get_tree().create_timer(0.22).timeout
+	var windup := randf_range(0.18, 0.32)
+	await get_tree().create_timer(windup).timeout
 	if dead || !is_instance_valid(player):
 		return
 	if !bool(dungeon.call("begin_infected_grab", self, grab_anchor)):
 		recover_from_attack(1.0)
 		return
 	play_animation_by_names(["grab", "attack"])
-	await get_tree().create_timer(1.5).timeout
+	var hold_dur := randf_range(1.15, 1.65)
+	await get_tree().create_timer(hold_dur).timeout
 	# Solta sempre (mesmo morrendo) para o player nunca ficar preso
 	dungeon.call("end_infected_grab", self)
 	if !dead:
-		recover_from_attack(1.2)
+		recover_from_attack(randf_range(1.0, 1.4))
 
 func recover_from_attack(recovery_time:float = 1.3) -> void:
 	if dead:
