@@ -1651,9 +1651,10 @@ func resolve_player_hit_minions(kick:bool, is_special:bool = false) -> bool:
 		var facing_ok = distance.x * player_facing >= 0.0
 		if absf(distance.x) <= (155.0 if kick else 125.0) && absf(distance.y) <= 65.0 && facing_ok:
 			hit_any = true
-			var damage = (18.0 if kick else 12.0) + minf(combo * 1.2, 8.0)
+			var base_damage = (18.0 if kick else 12.0) + minf(combo * 1.2, 8.0)
+			var damage = base_damage if kick else base_damage * 0.5
 			if is_special:
-				damage += 35.0
+				damage += 35.0 if kick else 17.5
 			minion.hp = maxf(0.0, minion.hp - damage)
 
 			if minion.get("hit_streak_timer", 0.0) > 0.0:
@@ -2608,10 +2609,11 @@ func resolve_player_hit(kick:bool) -> void:
 
 	if hit_enemy:
 		var enemy_was_attacking = enemy_attack_time > 0.0
-		var damage = (19.0 if kick else 13.0) + minf(combo * 1.5, 10.0)
+		var base_damage = (19.0 if kick else 13.0) + minf(combo * 1.5, 10.0)
+		var damage = base_damage if kick else base_damage * 0.5
 		var base_push = (28.0 if kick else 18.0)
 		if is_special:
-			damage += 32.0
+			damage += 32.0 if kick else 16.0
 			base_push = 165.0
 			spawn_blood(enemy_position + Vector2(0, -45), 24, player_facing)
 			spawn_special_finisher_effect(enemy_position + Vector2(0, -42), player_facing)
