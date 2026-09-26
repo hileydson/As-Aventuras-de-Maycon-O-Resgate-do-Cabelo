@@ -10,6 +10,7 @@ const SMG_METALLIC:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_Def
 const SMG_ROUGHNESS:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Roughness.png")
 const PISTOL_REST_POSITION := Vector3(0.29, -0.49, -0.26)
 const SMG_REST_POSITION := Vector3(0.27, -0.22, -0.42)
+const HAND_SKIN_COLOR := Color(0.62, 0.46, 0.37)
 const MAYCON_MODEL:PackedScene = preload("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
 const MAYCON_AIR_FLAIL:Resource = preload("res://assets/novas_imagens/3d_enemies/maycon_air_flail.res")
 
@@ -42,8 +43,11 @@ var controls_enabled:bool = true
 var fire_cooldown:float = 0.0
 var head_bob_time:float = 0.0
 var base_head_y:float = 1.58
+var base_head_z:float = -0.20
 var gun_view:Node3D
 var weapon_model:Node3D
+var right_hand:Node3D
+var left_hand:Node3D
 var muzzle_marker:Marker3D
 var casing_eject_marker:Marker3D
 var step_audio:AudioStreamPlayer
@@ -51,7 +55,7 @@ var step_timer:float = 0.0
 var maycon_body:Node3D
 var maycon_anim:AnimationPlayer
 var maycon_skeleton:Skeleton3D
-var head_bone_idx:int = -1
+var head_bone_indices:Array[int] = []
 
 var pistol_clip:int = 4
 var pistol_reserve:int = 8
@@ -177,8 +181,10 @@ func _physics_process(delta:float) -> void:
 	if moving:
 		head_bob_time += delta * (11.0 if is_sprinting else 8.0)
 		head.position.y = base_head_y + sin(head_bob_time) * 0.035
+		head.position.z = base_head_z
 	else:
 		head.position.y = lerpf(head.position.y, base_head_y, delta * 8.0)
+		head.position.z = lerpf(head.position.z, base_head_z, delta * 8.0)
 	var look := Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	if look.length() > 0.12:
 		rotate_y(-look.x * joy_sensitivity * delta)
@@ -503,6 +509,12 @@ func build_view_gun() -> void:
 	casing_eject_marker = Marker3D.new()
 	casing_eject_marker.name = "CasingEjectMarker"
 	gun_view.add_child(casing_eject_marker)
+	right_hand = _build_hand(false)
+	right_hand.name = "RightHand"
+	gun_view.add_child(right_hand)
+	left_hand = _build_hand(true)
+	left_hand.name = "LeftHand"
+	gun_view.add_child(left_hand)
 	update_view_gun()
 
 func update_view_gun() -> void:
@@ -519,17 +531,84 @@ func update_view_gun() -> void:
 		hide_service_pistol_loose_parts(weapon_model)
 		muzzle_marker.position = Vector3(0, 0.035, -0.185)
 		casing_eject_marker.position = Vector3(0.045, 0.07, -0.035)
+		_pose_hands_pistol()
 	else:
 		weapon_model.scale = Vector3.ONE * 0.86
 		weapon_model.rotation.y = PI
 		apply_smg_material(weapon_model)
 		muzzle_marker.position = Vector3(0, 0.035, -0.34)
 		casing_eject_marker.position = Vector3(0.07, 0.075, -0.08)
+		_pose_hands_smg()
 	gun_view.position = get_weapon_rest_position()
 	gun_view.rotation = Vector3.ZERO
 
 func get_weapon_rest_position() -> Vector3:
 	return PISTOL_REST_POSITION if weapon_mode == "pistol" else SMG_REST_POSITION
+
+# Constrói uma mão simplificada (punho fechado + antebraço) para segurar a arma.
+# mirror=true gera a mão esquerda espelhada no eixo X.
+func _build_hand(mirror:bool) -> Node3D:
+	var hand := Node3D.new()
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = HAND_SKIN_COLOR
+	mat.roughness = 0.72
+	mat.metallic = 0.0
+	mat.metallic_specular = 0.2
+	# leve auto-iluminação para a pele permanecer legível no calabouço escuro
+	mat.emission_enabled = true
+	mat.emission = HAND_SKIN_COLOR
+	mat.emission_energy_multiplier = 0.22
+	var sx := -1.0 if mirror else 1.0
+	# palma
+	_add_hand_part(hand, mat, Vector3(0.0, 0.0, 0.0), Vector3(0.052, 0.09, 0.04), Vector3.ZERO)
+	# dedos enrolados na frente do cabo (em direção ao cano, -Z)
+	for fy in [0.031, 0.011, -0.009, -0.029]:
+		_add_hand_part(hand, mat, Vector3(0.004 * sx, fy, -0.032), Vector3(0.05, 0.017, 0.032), Vector3(deg_to_rad(20), 0, 0))
+	# polegar na lateral, cruzando por cima
+	_add_hand_part(hand, mat, Vector3(0.03 * sx, 0.03, -0.006), Vector3(0.02, 0.052, 0.028), Vector3(deg_to_rad(-28), 0, deg_to_rad(22) * sx))
+	# antebraço recuando em direção à câmera (+Z) e levemente para baixo
+	var arm := MeshInstance3D.new()
+	var cap := CapsuleMesh.new()
+	cap.radius = 0.031
+	cap.height = 0.17
+	arm.mesh = cap
+	arm.material_override = mat
+	arm.position = Vector3(0.0, -0.035, 0.092)
+	arm.rotation = Vector3(deg_to_rad(82), 0, 0)
+	hand.add_child(arm)
+	return hand
+
+func _add_hand_part(parent:Node3D, mat:Material, pos:Vector3, size:Vector3, rot:Vector3) -> void:
+	var mi := MeshInstance3D.new()
+	var box := BoxMesh.new()
+	box.size = size
+	mi.mesh = box
+	mi.material_override = mat
+	mi.position = pos
+	mi.rotation = rot
+	parent.add_child(mi)
+
+# Posiciona as mãos segurando a pistola (empunhadura com as duas mãos).
+func _pose_hands_pistol() -> void:
+	if !is_instance_valid(right_hand) || !is_instance_valid(left_hand):
+		return
+	right_hand.position = Vector3(0.0, -0.055, -0.01)
+	right_hand.rotation = Vector3(deg_to_rad(-10), 0, 0)
+	right_hand.visible = true
+	left_hand.position = Vector3(-0.028, -0.078, -0.028)
+	left_hand.rotation = Vector3(deg_to_rad(-10), deg_to_rad(18), deg_to_rad(12))
+	left_hand.visible = true
+
+# Posiciona as mãos segurando a metralhadora (mão no cabo + mão no guarda-mão).
+func _pose_hands_smg() -> void:
+	if !is_instance_valid(right_hand) || !is_instance_valid(left_hand):
+		return
+	right_hand.position = Vector3(0.0, -0.06, 0.0)
+	right_hand.rotation = Vector3(deg_to_rad(-8), 0, 0)
+	right_hand.visible = true
+	left_hand.position = Vector3(-0.005, -0.03, -0.205)
+	left_hand.rotation = Vector3(deg_to_rad(12), 0, 0)
+	left_hand.visible = true
 
 func hide_service_pistol_loose_parts(model:Node3D) -> void:
 	for node_name in ["service_pistol_bullet", "service_pistol_magazine_loaded"]:
@@ -621,36 +700,63 @@ func build_maycon_body() -> void:
 		maycon_skeleton = c as Skeleton3D
 		break
 	if is_instance_valid(maycon_skeleton):
-		head_bone_idx = maycon_skeleton.find_bone("Head")
-		if head_bone_idx != -1:
-			maycon_skeleton.set_bone_pose_scale(head_bone_idx, Vector3.ZERO)
+		head_bone_indices.clear()
+		for b_name in ["neck", "Head", "head_end", "headfront"]:
+			var b_idx := maycon_skeleton.find_bone(b_name)
+			if b_idx != -1:
+				head_bone_indices.append(b_idx)
+				maycon_skeleton.set_bone_pose_scale(b_idx, Vector3.ZERO)
 	
 	_play_maycon_animation("Walking")
 
 func _adjust_maycon_materials(root_node: Node) -> void:
+	var decap_shader := Shader.new()
+	decap_shader.code = """
+shader_type spatial;
+render_mode cull_back;
+
+uniform sampler2D albedo_texture : source_color, filter_linear_mipmap;
+uniform float cutoff_y = 1.34;
+
+varying float v_y;
+
+void vertex() {
+	v_y = VERTEX.y;
+	if (v_y > cutoff_y) {
+		VERTEX = vec3(0.0, -100.0, 0.0);
+	}
+}
+
+void fragment() {
+	if (v_y > cutoff_y) {
+		discard;
+	}
+	vec4 col = texture(albedo_texture, UV);
+	ALBEDO = col.rgb;
+	METALLIC = 0.0;
+	ROUGHNESS = 0.85;
+	SPECULAR = 0.25;
+}
+"""
 	for mesh in root_node.find_children("*", "MeshInstance3D", true, false):
 		var mi := mesh as MeshInstance3D
 		if not mi:
 			continue
+		var tex: Texture2D = null
 		if mi.material_override is BaseMaterial3D:
-			var mat = mi.material_override.duplicate() as BaseMaterial3D
-			mat.metallic = 0.0
-			mat.roughness = 0.85
-			mat.metallic_specular = 0.25
-			mat.emission_enabled = false
-			mi.material_override = mat
-		if mi.mesh:
-			for s in range(mi.mesh.get_surface_count()):
-				var mat = mi.get_surface_override_material(s)
-				if not mat:
-					mat = mi.mesh.surface_get_material(s)
-				if mat is BaseMaterial3D:
-					var dup = mat.duplicate() as BaseMaterial3D
-					dup.metallic = 0.0
-					dup.roughness = 0.85
-					dup.metallic_specular = 0.25
-					dup.emission_enabled = false
-					mi.set_surface_override_material(s, dup)
+			tex = (mi.material_override as BaseMaterial3D).albedo_texture
+		elif mi.mesh && mi.mesh.get_surface_count() > 0:
+			var mat = mi.mesh.surface_get_material(0)
+			if mat is BaseMaterial3D:
+				tex = (mat as BaseMaterial3D).albedo_texture
+		if !tex:
+			tex = load("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations_texture_0.png")
+		
+		var s_mat := ShaderMaterial.new()
+		s_mat.shader = decap_shader
+		s_mat.set_shader_parameter("albedo_texture", tex)
+		s_mat.set_shader_parameter("cutoff_y", 1.34)
+		mi.material_override = s_mat
 
 func _play_maycon_animation(anim_name:String) -> void:
 	if is_instance_valid(maycon_anim) and maycon_anim.has_animation(anim_name) and (maycon_anim.current_animation != anim_name or not maycon_anim.is_playing()):
@@ -678,8 +784,9 @@ func _update_maycon_animations(_delta:float, moving:bool, running:bool, input_ve
 		_play_maycon_animation("Walking")
 		maycon_anim.speed_scale = 1.0
 	
-	if is_instance_valid(maycon_skeleton) and head_bone_idx != -1:
-		maycon_skeleton.set_bone_pose_scale(head_bone_idx, Vector3.ZERO)
+	if is_instance_valid(maycon_skeleton):
+		for b_idx in head_bone_indices:
+			maycon_skeleton.set_bone_pose_scale(b_idx, Vector3.ZERO)
 
 func set_body_visible(val:bool) -> void:
 	if is_instance_valid(maycon_body):

@@ -47,12 +47,16 @@ var health_bar:ProgressBar
 var health_label:Label
 var stamina_bar:ProgressBar
 var stamina_label:Label
+var last_player_hp:float = 100.0
+var life_shake_tween:Tween
+var life_bleed_tween:Tween
 var notice_label:Label
 var notice_timer:float = 0.0
 var active_ammo_drops:Array[Node3D] = []
 var fade_overlay:ColorRect
 var blood_overlay:Control
 var inventory_bar:HBoxContainer
+var ambience:AudioStreamPlayer
 var gun_sound:AudioStreamPlayer
 var pickup_sound:AudioStreamPlayer
 var gate_sound:AudioStreamPlayer3D
@@ -72,6 +76,10 @@ var main_monster_grab_active:bool = false
 var main_monster_grab_anchor:Marker3D
 var main_monster_grabber:DungeonMainMonster
 var monster_damage_serial:int = 0
+var giant_zombies:Array[DungeonGiantZombie] = []
+var giant_grab_active:bool = false
+var giant_grab_anchor:Marker3D
+var giant_grabber:DungeonGiantZombie
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -81,8 +89,16 @@ func _ready() -> void:
 	build_prison()
 	build_player()
 	build_pickups()
+	# Cutscene em primeira pessoa do machado caindo do teto e escorregando até a cela.
+	# Roda logo após o machado cair no buraco em fase_1_castle_2 e depois volta para lá.
+	if Global.axe_cutscene_pending:
+		Global.axe_cutscene_pending = false
+		build_cutscene_overlay()
+		start_axe_drop_cutscene()
+		return
 	build_infected_population()
 	build_main_monster()
+	build_giant_zombies()
 	build_hud()
 	build_audio()
 	apply_saved_state()
@@ -264,8 +280,9 @@ func build_cell_x(x:float, corridor_z:float, side:int, stage:String, empty:bool)
 
 func build_key_rooms() -> void:
 	# --- 1. ALA INTRO (Caminho aberto do início: contém a Chave Azul) ---
-	# Fechamento do fundo do corredor OpenWing (z = -144)
-	create_box("OpenWingEndWall", Vector3(-56, 2.15, -144), Vector3(22.6, 4.8, 0.6), stone_material, true, world_root)
+	# Fundo do corredor OpenWing (z = -144) com uma ABERTURA por onde o zumbi gigante
+	# do lado de fora do mapa espreita para dentro.
+	build_giant_opening_z("OpenWingEndWall", -56, -144, 22.6)
 	# Paredes da divisória frontal (z = -135) que selam de parede a parede
 	create_box("OpenWingGateWallL", Vector3(-63.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
 	create_box("OpenWingGateWallR", Vector3(-48.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
@@ -275,8 +292,8 @@ func build_key_rooms() -> void:
 	levers["intro"] = build_lever(Vector3(-50.5, 0, -132.5), "intro", 0.0)
 
 	# --- 2. ALA AZUL (Portão Azul no Hub: contém a Chave Vermelha) ---
-	# Fechamento do fundo do corredor BlueWing (z = -144)
-	create_box("BlueWingEndWall", Vector3(56, 2.15, -144), Vector3(22.6, 4.8, 0.6), stone_material, true, world_root)
+	# Fundo do corredor BlueWing (z = -144) com ABERTURA para o segundo zumbi gigante.
+	build_giant_opening_z("BlueWingEndWall", 56, -144, 22.6)
 	# Paredes da divisória frontal (z = -135)
 	create_box("BlueWingGateWallL", Vector3(48.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
 	create_box("BlueWingGateWallR", Vector3(63.5, 2.15, -135), Vector3(7.2, 4.8, 0.6), stone_material, true, world_root)
@@ -614,6 +631,52 @@ func build_main_monster() -> void:
 	add_child(main_monster)
 	main_monster.setup(player, self)
 
+func build_giant_opening_z(node_name:String, center_x:float, z:float, total_width:float) -> void:
+	# Constrói o fundo de um corredor (parede em Z) com uma grande ABERTURA central por
+	# onde o zumbi gigante, do lado de fora do mapa, espreita para dentro. Além da
+	# abertura fica um fundo escuro (void) para o gigante emergir da escuridão.
+	var gap := 11.0
+	var side := (total_width - gap) * 0.5
+	var side_off := gap * 0.5 + side * 0.5
+	create_box(node_name + "L", Vector3(center_x - side_off, 2.15, z), Vector3(side, 4.8, 0.6), stone_material, true, world_root)
+	create_box(node_name + "R", Vector3(center_x + side_off, 2.15, z), Vector3(side, 4.8, 0.6), stone_material, true, world_root)
+	create_box(node_name + "Top", Vector3(center_x, 4.4, z), Vector3(gap, 0.45, 0.6), stone_material, true, world_root)
+	var void_mat := colored_material(Color(0.0006, 0.0006, 0.0012), 0.0, 1.0)
+	create_box(node_name + "Void", Vector3(center_x, 3.0, z - 7.0), Vector3(total_width + 8.0, 13.0, 0.5), void_mat, false, world_root)
+	create_box(node_name + "VoidFloor", Vector3(center_x, -1.5, z - 3.6), Vector3(total_width + 8.0, 0.5, 7.0), void_mat, false, world_root)
+
+func build_giant_zombies() -> void:
+	# Temporariamente desabilitado para testes a pedido do usuario
+	return
+	# Zumbis GIGANTES do lado de fora do mapa, na escuridão, olhando para dentro por uma
+	# abertura no fundo das salas das chaves: um no caminho aberto do início (Chave Azul)
+	# e outro no caminho azul (Chave Vermelha). Quando o player entra na sala para pegar
+	# a chave, o gigante fica olhando, se prepara e enfia a mão pela abertura.
+	var configs := [
+		{
+			# Caminho aberto do início — atrás da sala da Chave Azul (z = -144, x = -56)
+			"body_pos": Vector3(-56, -1.2, -147.5),
+			"face_dir": Vector3(0, 0, 1),
+			"zone_center": Vector3(-56, 0, -140),
+			"zone_half": Vector3(6, 3, 5.5),
+			"scale": 3.0
+		},
+		{
+			# Caminho azul — atrás da sala da Chave Vermelha (z = -144, x = 56)
+			"body_pos": Vector3(56, -1.2, -147.5),
+			"face_dir": Vector3(0, 0, 1),
+			"zone_center": Vector3(56, 0, -140),
+			"zone_half": Vector3(6, 3, 5.5),
+			"scale": 3.0
+		}
+	]
+	for i in configs.size():
+		var giant := DungeonGiantZombie.new()
+		giant.name = "GiantZombie_%d" % i
+		add_child(giant)
+		giant.setup(player, self, configs[i])
+		giant_zombies.append(giant)
+
 func build_hud() -> void:
 	var hud := CanvasLayer.new()
 	hud.name = "DungeonHUD"
@@ -627,21 +690,25 @@ func build_hud() -> void:
 	objective_label = make_label(20, Color(0.78, 0.86, 0.83), HORIZONTAL_ALIGNMENT_LEFT)
 	objective_label.position = Vector2(28, 24)
 	objective_label.size = Vector2(940, 40)
+	objective_label.visible = false
 	hud.add_child(objective_label)
 	help_label = make_label(17, Color(0.65, 0.72, 0.7), HORIZONTAL_ALIGNMENT_LEFT)
 	help_label.position = Vector2(28, 58)
 	help_label.size = Vector2(940, 35)
 	help_label.text = tr("DUNGEON_MOVE_HINT")
+	help_label.visible = false
 	hud.add_child(help_label)
 	flashlight_label = make_label(18, Color(0.7, 0.84, 0.95), HORIZONTAL_ALIGNMENT_RIGHT)
 	flashlight_label.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	flashlight_label.position = Vector2(-510, 28)
 	flashlight_label.size = Vector2(480, 35)
+	flashlight_label.visible = false
 	hud.add_child(flashlight_label)
 	weapon_label = make_label(18, Color(1, 0.62, 0.26), HORIZONTAL_ALIGNMENT_RIGHT)
 	weapon_label.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	weapon_label.position = Vector2(-510, 64)
 	weapon_label.size = Vector2(480, 35)
+	weapon_label.visible = false
 	hud.add_child(weapon_label)
 	prompt_label = make_label(24, Color(0.95, 0.86, 0.52), HORIZONTAL_ALIGNMENT_CENTER)
 	prompt_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
@@ -842,56 +909,69 @@ func build_status_hud(hud:CanvasLayer) -> void:
 	health_bar.value = player.current_hp
 	
 	var hp_bg := StyleBoxFlat.new()
-	hp_bg.bg_color = Color(0.02, 0.025, 0.035, 0.92)
-	hp_bg.border_color = Color(0.52, 0.56, 0.62, 0.7)
-	hp_bg.set_border_width_all(2)
-	hp_bg.set_corner_radius_all(6)
+	hp_bg.bg_color = Color(0.014, 0.016, 0.02, 0.92)
+	hp_bg.border_color = Color(0.24, 0.25, 0.28, 0.5)
+	hp_bg.set_border_width_all(1)
+	hp_bg.set_corner_radius_all(4)
 	
 	var hp_fill := StyleBoxFlat.new()
-	# Vermelho menos claro (tom denso e escuro de sangue carmesim/vinho)
-	hp_fill.bg_color = Color(0.52, 0.07, 0.11)
-	hp_fill.set_corner_radius_all(5)
+	# Vermelho escuro desaturado / vinho sóbrio (menos vibrante)
+	hp_fill.bg_color = Color(0.38, 0.08, 0.10)
+	hp_fill.set_corner_radius_all(3)
 	
 	health_bar.add_theme_stylebox_override("background", hp_bg)
 	health_bar.add_theme_stylebox_override("fill", hp_fill)
 	status_hud.add_child(health_bar)
 	
-	health_label = make_label(12, Color(0.96, 0.88, 0.9), HORIZONTAL_ALIGNMENT_CENTER)
+	# Texto único no centro da barra de vida: VIDA
+	health_label = make_label(11, Color(0.85, 0.82, 0.82, 0.88), HORIZONTAL_ALIGNMENT_CENTER)
 	health_label.position = Vector2(0, 0)
 	health_label.size = Vector2(220, 22)
 	health_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	health_label.text = "%s %d%%" % [tr("DUNGEON_HP_LABEL"), int(player.current_hp)]
+	health_label.text = tr("DUNGEON_HP_LABEL")
 	status_hud.add_child(health_label)
+	
+	# Emissor de pingos de sangue ao levar dano
+	var life_blood_drips := CPUParticles2D.new()
+	life_blood_drips.name = "LifeBloodDrips"
+	life_blood_drips.position = Vector2(110, 22)
+	life_blood_drips.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	life_blood_drips.emission_rect_extents = Vector2(105, 1)
+	life_blood_drips.direction = Vector2(0, 1)
+	life_blood_drips.spread = 12.0
+	life_blood_drips.gravity = Vector2(0, 160)
+	life_blood_drips.initial_velocity_min = 15.0
+	life_blood_drips.initial_velocity_max = 42.0
+	life_blood_drips.scale_amount_min = 2.0
+	life_blood_drips.scale_amount_max = 3.5
+	life_blood_drips.color = Color(0.38, 0.05, 0.07, 0.95)
+	life_blood_drips.lifetime = 0.75
+	life_blood_drips.emitting = false
+	status_hud.add_child(life_blood_drips)
 	
 	# --- BARRA DE ESTAMINA ---
 	stamina_bar = ProgressBar.new()
 	stamina_bar.name = "StaminaBar"
 	stamina_bar.position = Vector2(0, 26)
-	stamina_bar.size = Vector2(220, 14)
+	stamina_bar.size = Vector2(220, 12)
 	stamina_bar.show_percentage = false
 	stamina_bar.max_value = player.max_stamina
 	stamina_bar.value = player.current_stamina
 	
 	var st_bg := StyleBoxFlat.new()
-	st_bg.bg_color = Color(0.015, 0.02, 0.025, 0.9)
-	st_bg.border_color = Color(0.38, 0.44, 0.48, 0.55)
+	st_bg.bg_color = Color(0.012, 0.014, 0.016, 0.88)
+	st_bg.border_color = Color(0.2, 0.22, 0.24, 0.42)
 	st_bg.set_border_width_all(1)
-	st_bg.set_corner_radius_all(4)
+	st_bg.set_corner_radius_all(3)
 	
 	var st_fill := StyleBoxFlat.new()
-	st_fill.bg_color = Color(0.18, 0.62, 0.38) # Verde esmeralda de estamina
-	st_fill.set_corner_radius_all(3)
+	# Verde musgo/oliva apagado e sóbrio (menos vibrante)
+	st_fill.bg_color = Color(0.16, 0.32, 0.22)
+	st_fill.set_corner_radius_all(2)
 	
 	stamina_bar.add_theme_stylebox_override("background", st_bg)
 	stamina_bar.add_theme_stylebox_override("fill", st_fill)
 	status_hud.add_child(stamina_bar)
-	
-	stamina_label = make_label(10, Color(0.85, 0.95, 0.9), HORIZONTAL_ALIGNMENT_CENTER)
-	stamina_label.position = Vector2(0, 26)
-	stamina_label.size = Vector2(220, 14)
-	stamina_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	stamina_label.text = tr("DUNGEON_STAMINA_LABEL")
-	status_hud.add_child(stamina_label)
 	
 	player.hp_changed.connect(on_player_hp_changed)
 	player.stamina_changed.connect(on_player_stamina_changed)
@@ -902,19 +982,44 @@ func on_player_hp_changed(current:float, max_val:float) -> void:
 		health_bar.max_value = max_val
 		create_tween().tween_property(health_bar, "value", current, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	if is_instance_valid(health_label):
-		var pct := int(round((current / maxf(1.0, max_val)) * 100.0))
-		health_label.text = "%s %d%%" % [tr("DUNGEON_HP_LABEL"), pct]
-		if pct <= 25:
-			health_label.modulate = Color(1.0, 0.35, 0.35, 1.0)
-		else:
-			health_label.modulate = Color(1.0, 1.0, 1.0, 1.0)
+		health_label.text = tr("DUNGEON_HP_LABEL")
+	
+	if current < last_player_hp:
+		trigger_life_damage_fx()
+	last_player_hp = current
+
+func trigger_life_damage_fx() -> void:
+	if !is_instance_valid(status_hud) || !is_instance_valid(health_bar):
+		return
+	var base_pos := Vector2(24, -74)
+	if life_shake_tween and life_shake_tween.is_valid():
+		life_shake_tween.kill()
+	life_shake_tween = create_tween()
+	for i in range(8):
+		var offset := Vector2(randf_range(-4.5, 4.5), randf_range(-3.0, 3.0))
+		life_shake_tween.tween_property(status_hud, "position", base_pos + offset, 0.035)
+	life_shake_tween.tween_property(status_hud, "position", base_pos, 0.05)
+	
+	var blood_particles:CPUParticles2D = status_hud.get_node_or_null("LifeBloodDrips")
+	if is_instance_valid(blood_particles):
+		blood_particles.emitting = true
+		get_tree().create_timer(1.35).timeout.connect(func():
+			if is_instance_valid(blood_particles):
+				blood_particles.emitting = false
+		)
+	
+	if life_bleed_tween and life_bleed_tween.is_valid():
+		life_bleed_tween.kill()
+	life_bleed_tween = create_tween()
+	life_bleed_tween.tween_property(health_bar, "modulate", Color(1.5, 0.45, 0.45, 1.0), 0.08)
+	life_bleed_tween.tween_property(health_bar, "modulate", Color(1.0, 1.0, 1.0, 1.0), 1.25)
 
 func on_player_stamina_changed(current:float, max_val:float) -> void:
 	if is_instance_valid(stamina_bar):
 		stamina_bar.max_value = max_val
 		stamina_bar.value = current
 		if current <= 0.0 or !player.can_sprint:
-			stamina_bar.modulate = Color(1.0, 0.45, 0.45, 0.85)
+			stamina_bar.modulate = Color(1.0, 0.55, 0.55, 0.75)
 			if is_instance_valid(sprint_hud):
 				sprint_hud.modulate = Color(1.0, 0.5, 0.5, 0.6)
 		else:
@@ -933,15 +1038,22 @@ func make_label(font_size:int, color:Color, alignment:HorizontalAlignment) -> La
 	return label
 
 func build_audio() -> void:
-	var ambience := AudioStreamPlayer.new()
-	var ambience_stream:AudioStream = load("res://assets/novos_audios/calabouco_terror/dungeon_ambience_pixabay.mp3")
+	ambience = AudioStreamPlayer.new()
+	ambience.name = "DungeonAmbience"
+	ambience.bus = "Master"
+	var ambience_stream := load("res://assets/novos_audios/calabouco_terror/dungeon_ambience_pixabay.mp3") as AudioStreamMP3
 	if ambience_stream:
-		ambience_stream = ambience_stream.duplicate()
-		ambience_stream.set("loop", true)
+		ambience_stream.loop = true
 	ambience.stream = ambience_stream
-	ambience.volume_db = -1.5
+	ambience.volume_db = 8.0
+	ambience.autoplay = true
+	ambience.finished.connect(func():
+		if is_instance_valid(ambience) && is_inside_tree():
+			ambience.play()
+	)
 	add_child(ambience)
 	ambience.play()
+	print("[Dungeon] Som ambiente iniciado com volume: ", ambience.volume_db, " dB (stream: ", ambience_stream, ")")
 	gun_sound = make_audio("res://assets/novos_audios/gun_shot.mp3", -5)
 	pickup_sound = make_audio("res://assets/novos_audios/gun_load.mp3", -7)
 	monster_damage_sound = make_audio("res://assets/novos_audios/sangue_fill_effect.mp3", -1.5)
@@ -992,6 +1104,108 @@ func start_arrival() -> void:
 	player.controls_enabled = true
 	sequence_running = false
 	fade_overlay.visible = false
+
+# Overlay mínimo (só o fade) usado na cutscene do machado, sem montar o HUD de gameplay.
+func build_cutscene_overlay() -> void:
+	var layer := CanvasLayer.new()
+	layer.name = "AxeCutsceneOverlay"
+	add_child(layer)
+	fade_overlay = ColorRect.new()
+	fade_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	fade_overlay.color = Color(0, 0, 0, 1)
+	fade_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade_overlay.z_index = 100
+	layer.add_child(fade_overlay)
+
+# Cutscene em primeira pessoa: a câmera acompanha o machado caindo do teto (pelo buraco
+# onde o Maycon cai), escorregando pelo chão e entrando na cela onde ele fica. No fim faz
+# fade out e volta para fase_1_castle_2. O player não controla nada durante a cutscene.
+func start_axe_drop_cutscene() -> void:
+	sequence_running = true
+	if is_instance_valid(player):
+		player.controls_enabled = false
+		player.process_mode = Node.PROCESS_MODE_DISABLED
+		player.set_body_visible(false)
+	# Esconde o machado estático da cela; a cutscene anima um machado dedicado idêntico
+	if is_instance_valid(axe_pickup):
+		axe_pickup.visible = false
+
+	var hole_center := Vector3(0.0, 4.6, 3.5)
+	var floor_landing := Vector3(0.0, 0.3, 3.4)
+	var cell_rest := Vector3(-8.3, 0.2, -7.0)
+
+	# Machado da cutscene (mesma geometria do machado da cela), começando lá no alto do buraco
+	var axe := build_axe(Vector3(hole_center.x, 8.2, hole_center.z))
+	axe.rotation = Vector3.ZERO
+
+	# Câmera em primeira pessoa que acompanha o machado
+	var cam := Camera3D.new()
+	add_child(cam)
+	cam.current = true
+	cam.global_position = axe.global_position + Vector3(0.0, 1.4, 1.8)
+	cam.look_at(axe.global_position + Vector3(0, -1.2, -0.6), Vector3.UP)
+
+	fade_overlay.visible = true
+	fade_overlay.color = Color(0, 0, 0, 1)
+
+	var prev_pos := axe.global_position
+
+	# --- Fase 1: queda do teto pelo buraco onde o Maycon cai ---
+	var fall := create_tween()
+	fall.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fall.tween_property(axe, "position", floor_landing, 0.75)
+	fall.parallel().tween_property(axe, "rotation", Vector3(0, 0, PI * 0.5), 0.75)
+	fall.parallel().tween_property(fade_overlay, "color:a", 0.0, 0.45)
+	while fall.is_running():
+		await get_tree().process_frame
+		_follow_axe_camera(cam, axe, prev_pos, true)
+		prev_pos = axe.global_position
+
+	# Impacto no chão
+	var land_sound := AudioStreamPlayer.new()
+	land_sound.stream = FALL_IMPACT_SOUND
+	land_sound.volume_db = 3.0
+	add_child(land_sound)
+	land_sound.play()
+	spawn_dust_landing(Vector3(floor_landing.x, 0.05, floor_landing.z))
+
+	# --- Fase 2: escorrega pelo chão e entra na cela onde o machado fica ---
+	var slide := create_tween()
+	slide.set_trans(Tween.TRANS_SINE)
+	slide.tween_property(axe, "position", Vector3(-1.5, 0.22, -5.5), 0.55).set_ease(Tween.EASE_OUT)
+	slide.tween_property(axe, "position", Vector3(-5.4, 0.2, -7.0), 0.4)
+	slide.tween_property(axe, "position", cell_rest, 0.55).set_ease(Tween.EASE_OUT)
+	while slide.is_running():
+		await get_tree().process_frame
+		_follow_axe_camera(cam, axe, prev_pos, false)
+		prev_pos = axe.global_position
+
+	await get_tree().create_timer(0.7).timeout
+
+	# --- Fade out e retorno para fase_1_castle_2 de onde estava ---
+	await create_tween().tween_property(fade_overlay, "color:a", 1.0, 0.8).finished
+	Global.axe_cutscene_return_valid = true
+	Global.dungeon_return_pending = false
+	Global.back_to_fase = false
+	get_tree().change_scene_to_file("res://scenes/fase_1_castle_2.tscn")
+
+func _follow_axe_camera(cam:Camera3D, axe:Node3D, prev_pos:Vector3, falling:bool) -> void:
+	if !is_instance_valid(cam) || !is_instance_valid(axe):
+		return
+	var current := axe.global_position
+	if falling:
+		# POV da queda: câmera acompanha o machado de cima em 3/4, mostrando o chão que se aproxima
+		cam.global_position = current + Vector3(0.0, 1.4, 1.8)
+		cam.look_at(current + Vector3(0, -1.2, -0.6), Vector3.UP)
+	else:
+		# POV do deslize: câmera baixa, logo atrás do machado, correndo na direção do movimento
+		var forward := current - prev_pos
+		forward.y = 0.0
+		if forward.length() < 0.001:
+			forward = Vector3(0, 0, -1)
+		forward = forward.normalized()
+		cam.global_position = current - forward * 1.5 + Vector3(0, 0.85, 0)
+		cam.look_at(current + forward * 2.0 + Vector3(0, 0.1, 0), Vector3.UP)
 
 func start_intro_cutscene() -> void:
 	sequence_running = true
@@ -1225,6 +1439,7 @@ func spawn_dust_landing(pos:Vector3) -> void:
 func _process(delta:float) -> void:
 	elapsed += delta
 	update_main_monster_grab()
+	update_giant_grab()
 	if is_instance_valid(crosshair_label):
 		var should_show_crosshair: bool = !sequence_running && is_instance_valid(player) && player.controls_enabled
 		if crosshair_label.visible != should_show_crosshair:
@@ -1480,25 +1695,13 @@ func start_finale_cutscene() -> void:
 func update_hud() -> void:
 	if !is_instance_valid(objective_label):
 		return
-	if !player.has_flashlight:
-		objective_label.text = tr("DUNGEON_OBJECTIVE_FLASHLIGHT")
-	elif !event_is_true("dungeon_blue_key_taken"):
-		objective_label.text = tr("DUNGEON_OBJECTIVE_BLUE_KEY")
-	elif !event_is_true("dungeon_red_key_taken"):
-		objective_label.text = tr("DUNGEON_OBJECTIVE_RED_KEY")
-	elif !event_is_true("dungeon_green_key_taken"):
-		objective_label.text = tr("DUNGEON_OBJECTIVE_GREEN_KEY")
-	elif !event_is_true("dungeon_key_taken"):
-		objective_label.text = tr("DUNGEON_OBJECTIVE_CELL_KEY")
-	elif !has_axe_event():
-		objective_label.text = tr("DUNGEON_OBJECTIVE_AXE")
-	else:
-		objective_label.text = tr("DUNGEON_OBJECTIVE_ESCAPE")
-		
-	flashlight_label.text = tr("DUNGEON_FLASHLIGHT_ON") if player.flashlight_on else tr("DUNGEON_FLASHLIGHT_OFF")
-	if !player.has_flashlight:
-		flashlight_label.text = ""
-	weapon_label.text = tr("DUNGEON_MACHINEGUN_READY") if player.weapon_mode == "machinegun" else (tr("DUNGEON_PISTOL_READY") if player.weapon_mode == "pistol" else "")
+	objective_label.visible = false
+	if is_instance_valid(help_label):
+		help_label.visible = false
+	if is_instance_valid(flashlight_label):
+		flashlight_label.visible = false
+	if is_instance_valid(weapon_label):
+		weapon_label.visible = false
 	
 	if is_instance_valid(ammo_label):
 		if player.has_gun:
@@ -1549,8 +1752,7 @@ func update_hud() -> void:
 		health_bar.max_value = player.max_hp
 		health_bar.value = player.current_hp
 	if is_instance_valid(health_label):
-		var pct := int(round((player.current_hp / maxf(1.0, player.max_hp)) * 100.0))
-		health_label.text = "%s %d%%" % [tr("DUNGEON_HP_LABEL"), pct]
+		health_label.text = tr("DUNGEON_HP_LABEL")
 	if is_instance_valid(stamina_bar):
 		stamina_bar.max_value = player.max_stamina
 		stamina_bar.value = player.current_stamina
@@ -1913,6 +2115,53 @@ func show_main_monster_blood(intensity:float) -> void:
 	await fade.finished
 	if current_serial == monster_damage_serial:
 		blood_overlay.visible = false
+
+func begin_giant_grab(giant:DungeonGiantZombie, anchor:Marker3D) -> bool:
+	if Global.debug_dungeon_invincible || sequence_running || !is_instance_valid(giant) || !is_instance_valid(anchor):
+		return false
+	giant_grab_active = true
+	giant_grabber = giant
+	giant_grab_anchor = anchor
+	sequence_running = true
+	player.controls_enabled = false
+	player.velocity = Vector3.ZERO
+	player.collision_layer = 0
+	player.collision_mask = 0
+	player.set_physics_process(false)
+	player.shake_camera(0.06, 0.4)
+	return true
+
+func update_giant_grab() -> void:
+	if !giant_grab_active || !is_instance_valid(player) || !is_instance_valid(giant_grab_anchor):
+		return
+	# O player fica preso na mão do zumbi, acompanhando o balanço
+	player.global_position = giant_grab_anchor.global_position
+	if is_instance_valid(giant_grabber):
+		player.look_at(giant_grabber.global_position + Vector3.UP * 3.2, Vector3.UP)
+		player.head.rotation.x = -0.08
+
+func giant_grab_bleed(intensity:float) -> void:
+	# Jato de sangue 3D + mancha vermelha na tela (sem recarregar a cena ainda)
+	spawn_blood_spurt(player.camera.global_position + player.camera_forward() * 0.4)
+	flash_blood_damage_overlay(intensity)
+
+func giant_wall_impact(intensity:float) -> void:
+	# Batida contra a parede: tremor forte de câmera, sangue e mancha na tela
+	if is_instance_valid(player):
+		player.shake_camera(0.18, 0.42)
+	spawn_blood_spurt(player.camera.global_position + player.camera_forward() * 0.4)
+	if is_instance_valid(monster_damage_sound):
+		monster_damage_sound.pitch_scale = randf_range(0.82, 1.02)
+		monster_damage_sound.play()
+	flash_blood_damage_overlay(intensity)
+
+func finish_giant_grab_kill(giant:DungeonGiantZombie) -> void:
+	if giant != giant_grabber:
+		return
+	giant_grab_active = false
+	giant_grab_anchor = null
+	giant_grabber = null
+	restart_after_caught(null)
 
 func on_infected_died(infected:DungeonInfected) -> void:
 	enemies.erase(infected)

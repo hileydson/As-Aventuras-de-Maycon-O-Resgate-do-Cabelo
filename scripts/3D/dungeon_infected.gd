@@ -129,16 +129,20 @@ func build_body(model_path:String) -> void:
 			if teeth_node:
 				teeth_node.material_override = teeth_mat
 		if enemy_kind == "zombie":
-			model_root.rotation.x = PI * 0.5
-			setup_zombie_rig()
+			model_root.rotation.y = PI
+			# O glb do zumbi vem com animações "achatadas" (T-pose). Trocamos a biblioteca
+			# do AnimationPlayer pelas animações reais e editáveis (ZombieAnimationFactory),
+			# usadas também pelo zumbi gigante. zombie_skel fica nulo de propósito para o
+			# fluxo normal de animação (idle/walk/attack) assumir no lugar do rig procedural.
+			var z_skel := model_root.find_child("Skeleton3D", true, false) as Skeleton3D
+			var z_anim := model_root.find_child("AnimationPlayer", true, false) as AnimationPlayer
+			if is_instance_valid(z_anim) && is_instance_valid(z_skel):
+				if z_anim.has_animation_library(""):
+					z_anim.remove_animation_library("")
+				z_anim.add_animation_library("", ZombieAnimationFactory.load_or_build(z_skel))
 		animator = model_root.find_child("AnimationPlayer", true, false) as AnimationPlayer
 		if animator:
-			if enemy_kind == "zombie" && is_instance_valid(zombie_skel):
-				# O glb do zumbi só tem pose T (sem animação real); usamos rig procedural.
-				animator.active = false
-				animator.stop()
-			else:
-				play_idle_animation()
+			play_idle_animation()
 	else:
 		var mesh_instance := MeshInstance3D.new()
 		var capsule_mesh := CapsuleMesh.new()

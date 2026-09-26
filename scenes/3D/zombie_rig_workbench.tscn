@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://dksfb2sbbt71g"]
+
+[ext_resource type="PackedScene" uid="uid://ea18fdqgaio7" path="res://assets/horror_creatures/infected_zombie_animated.glb" id="1_model"]
+[ext_resource type="AnimationLibrary" path="res://assets/horror_creatures/zombie_authored_animations.res" id="2_lib"]
+
+[node name="ZombieRigWorkbench" type="Node3D"]
+
+[node name="infected_zombie_animated" parent="." instance=ExtResource("1_model")]
+
+[node name="RigPlayer" type="AnimationPlayer" parent="infected_zombie_animated"]
+libraries = {
+&"": ExtResource("2_lib")
+}
