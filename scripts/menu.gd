@@ -3,6 +3,11 @@ extends Node3D
 const MAYCON_SCENE = preload("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
 const MAYCON_MENU_ANIMATIONS = preload("res://assets/novas_imagens/3d_enemies/menu_maycon_animations.res")
 const MAYCON_LOOK_FORWARD_TEXTURE = preload("res://assets/novas_imagens/maycon/jamelao_float_1.png")
+const MAYCON_SPRITE_PIXEL_SIZE := 0.01
+const MAYCON_SPRITE_SCALE := 1.4
+const MAYCON_LOOK_FORWARD_CONTENT_HEIGHT := 136.0
+const MAYCON_WALK_CONTENT_HEIGHT := 95.0
+const MAYCON_WALK_ANIMATION_SPEED := 3.5
 const MAYCON_WALK_TEXTURES = [
 	preload("res://assets/images/andando_direita_1.png"),
 	preload("res://assets/images/andando_direita_2.png"),
@@ -210,16 +215,16 @@ func _build_world() -> void:
 	sprite_frames.add_frame("look_forward", MAYCON_LOOK_FORWARD_TEXTURE)
 	sprite_frames.add_animation("walk")
 	sprite_frames.set_animation_loop("walk", true)
+	sprite_frames.set_animation_speed("walk", MAYCON_WALK_ANIMATION_SPEED)
 	for texture in MAYCON_WALK_TEXTURES:
 		sprite_frames.add_frame("walk", texture, 0.51)
 	maycon_sprite = AnimatedSprite3D.new()
 	maycon_sprite.name = "MayconModel"
 	maycon_sprite.sprite_frames = sprite_frames
 	maycon_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	maycon_sprite.pixel_size = 0.01
-	maycon_sprite.position.y = 0.74
-	maycon_sprite.play("look_forward")
+	maycon_sprite.pixel_size = MAYCON_SPRITE_PIXEL_SIZE
 	maycon.add_child(maycon_sprite)
+	_set_maycon_pose(&"look_forward")
 	camera = Camera3D.new()
 	camera.name = "CinematicCamera"
 	camera.fov = 57.0
@@ -233,6 +238,15 @@ func _build_world() -> void:
 		take_camera.current = false
 		add_child(take_camera)
 		take_cameras.append(take_camera)
+
+
+func _set_maycon_pose(animation_name: StringName) -> void:
+	maycon_sprite.play(animation_name)
+	var scale_factor := MAYCON_SPRITE_SCALE
+	if animation_name == &"walk":
+		scale_factor *= MAYCON_LOOK_FORWARD_CONTENT_HEIGHT / MAYCON_WALK_CONTENT_HEIGHT
+	maycon_sprite.scale = Vector3.ONE * scale_factor
+	maycon_sprite.position.y = 0.74 * scale_factor
 
 
 func _adjust_maycon_materials(root: Node) -> void:
@@ -501,11 +515,11 @@ func _update_cinematic(time: float, delta: float) -> void:
 	var moon_yaw := atan2(moon_direction.x, moon_direction.z)
 	maycon.rotation.y = lerp_angle(maycon.rotation.y, moon_yaw, smoothstep(walk_end, walk_end + TURN_DURATION, time))
 	if walking and maycon_sprite and maycon_sprite.animation != &"walk":
-		maycon_sprite.play("walk")
+		_set_maycon_pose(&"walk")
 		if sand_steps:
 			sand_steps.play()
 	elif not walking and maycon_sprite and maycon_sprite.animation != &"look_forward":
-		maycon_sprite.play("look_forward")
+		_set_maycon_pose(&"look_forward")
 		if sand_steps:
 			sand_steps.stop()
 	_update_moon_gaze(time, walk_end, moon_direction)
