@@ -74,6 +74,7 @@ var floor_material:StandardMaterial3D
 var iron_material:StandardMaterial3D
 var wet_material:StandardMaterial3D
 var rotten_material:StandardMaterial3D
+var crate_material:StandardMaterial3D
 var blood_material:StandardMaterial3D
 var flesh_material:StandardMaterial3D
 var auto_release_assigned:bool = false
@@ -130,6 +131,19 @@ func build_materials() -> void:
 	iron_material = colored_material(Color(0.045, 0.052, 0.049), 0.94, 0.42)
 	wet_material = colored_material(Color(0.025, 0.045, 0.04), 0.18, 0.2)
 	rotten_material = colored_material(Color(0.18, 0.13, 0.045), 0.0, 1.0)
+	crate_material = StandardMaterial3D.new()
+	crate_material.albedo_texture = load("res://assets/polyhaven/endless_well/wooden_crate_01/textures/wooden_crate_01_diff_1k.jpg")
+	crate_material.normal_enabled = true
+	crate_material.normal_texture = load("res://assets/polyhaven/endless_well/wooden_crate_01/textures/wooden_crate_01_nor_gl_1k.jpg")
+	var arm_tex = load("res://assets/polyhaven/endless_well/wooden_crate_01/textures/wooden_crate_01_arm_1k.jpg")
+	if arm_tex:
+		crate_material.roughness_texture = arm_tex
+		crate_material.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
+		crate_material.ao_enabled = true
+		crate_material.ao_texture = arm_tex
+	crate_material.roughness = 0.85
+	crate_material.uv1_triplanar = true
+	crate_material.uv1_triplanar_sharpness = 8.0
 	blood_material = colored_material(Color(0.34, 0.004, 0.006), 0.0, 0.22)
 	blood_material.clearcoat_enabled = true
 	blood_material.clearcoat = 0.85
@@ -255,20 +269,30 @@ func wire_existing_prison() -> void:
 		if not stage_doors.has(s):
 			stage_doors[s] = []
 		stage_doors[s].clear()
+	var special_names := [
+		"BlueRouteGate", "RedRouteGate", "GreenRouteGate",
+		"BlueKeyRoom", "RedKeyRoom", "GreenKeyRoom", "FinalKeyRoom",
+		"AxeCellDoor"
+	]
 	for child in world_root.get_children():
-		var cname := child.name
-		if cname.begins_with("Cell_"):
-			if cname.begins_with("Cell_intro_"):
-				if child.position.z > -80.0:
-					stage_doors["entrance"].append(child)
-				else:
-					stage_doors["intro"].append(child)
-			elif cname.begins_with("Cell_blue_"):
-				stage_doors["blue"].append(child)
-			elif cname.begins_with("Cell_red_"):
-				stage_doors["red"].append(child)
-			elif cname.begins_with("Cell_green_"):
-				stage_doors["green"].append(child)
+		if !(child is Node3D) || special_names.has(child.name):
+			continue
+		if child.find_child("SolidGateBarrier", true, false) == null:
+			continue
+		var pos: Vector3 = child.position
+		var st := ""
+		if pos.z > -80.0:
+			st = "entrance"
+		elif pos.x < -30.0 and pos.z <= -80.0 and pos.z > -145.0:
+			st = "intro"
+		elif pos.x > 30.0 and pos.z <= -80.0 and pos.z > -145.0:
+			st = "blue"
+		elif pos.x < -10.0 and pos.z <= -145.0:
+			st = "red"
+		elif pos.x > 10.0 and pos.z <= -145.0:
+			st = "green"
+		if st != "" and not stage_doors[st].has(child):
+			stage_doors[st].append(child)
 	# Portão da cela do machado
 	axe_door = find_child("AxeCellDoor", true, false)
 	if is_instance_valid(axe_door):
@@ -283,6 +307,15 @@ func wire_existing_prison() -> void:
 		if light:
 			var seed_val := int(absf(fixture.position.x + fixture.position.z))
 			flicker_lights.append({"light": light, "base": light.light_energy, "phase": seed_val * 0.31})
+
+	# Aplicar textura de caixa de madeira nos esconderijos e coberturas dos corredores
+	for child in world_root.get_children():
+		var cname := child.name
+		if cname.begins_with("CorridorCover") || cname.begins_with("CellCover") || cname.begins_with("@StaticBody3D@162") || cname.begins_with("@StaticBody3D@163"):
+			for mi in child.find_children("*", "MeshInstance3D", true, false):
+				var mesh_inst := mi as MeshInstance3D
+				if is_instance_valid(mesh_inst) && mesh_inst.mesh is BoxMesh:
+					mesh_inst.material_override = crate_material
 
 	# Spawns de inimigos nas celas e esconderijos
 	populate_hiding_zones_and_spawns()
@@ -306,6 +339,27 @@ func populate_hiding_zones_and_spawns() -> void:
 	for x in [28.0, 43.0]:
 		register_cell_record_x(x, -164, -1, "green", x == 28.0)
 		register_cell_record_x(x, -164, 1, "green", false)
+
+func get_cell_door_at_pos(pos: Vector3, stage: String = "") -> Node3D:
+	if !is_instance_valid(world_root):
+		return null
+	var special_names := [
+		"BlueRouteGate", "RedRouteGate", "GreenRouteGate",
+		"BlueKeyRoom", "RedKeyRoom", "GreenKeyRoom", "FinalKeyRoom",
+		"AxeCellDoor"
+	]
+	var best_node: Node3D = null
+	var best_dist: float = 1.8
+	for child in world_root.get_children():
+		if !(child is Node3D) || special_names.has(child.name):
+			continue
+		if child.find_child("SolidGateBarrier", true, false) == null:
+			continue
+		var d := Vector2(child.position.x, child.position.z).distance_to(Vector2(pos.x, pos.z))
+		if d < best_dist:
+			best_dist = d
+			best_node = child as Node3D
+	return best_node
 
 func get_cell_door(stage: String, coord: float) -> Node3D:
 	var c_int := int(round(coord))
@@ -335,7 +389,9 @@ func get_cell_door(stage: String, coord: float) -> Node3D:
 func register_cell_record(corridor_x: float, side: int, z: float, stage: String, empty: bool) -> void:
 	var center_x := corridor_x + side * 8.0
 	var front_x := corridor_x + side * 5.25
-	var door := get_cell_door(stage, z)
+	var door := get_cell_door_at_pos(Vector3(front_x, 0, z), stage)
+	if door == null:
+		door = get_cell_door(stage, z)
 	if empty:
 		hiding_zones.append(AABB(Vector3(minf(front_x, center_x) - 0.5, -0.2, z - 3), Vector3(absf(center_x - front_x) + 1, 2.8, 6)))
 	elif door != null:
@@ -346,7 +402,9 @@ func register_cell_record(corridor_x: float, side: int, z: float, stage: String,
 func register_cell_record_x(x: float, corridor_z: float, side: int, stage: String, empty: bool) -> void:
 	var center_z := corridor_z + side * 8.0
 	var front_z := corridor_z + side * 5.25
-	var door := get_cell_door(stage, x)
+	var door := get_cell_door_at_pos(Vector3(x, 0, front_z), stage)
+	if door == null:
+		door = get_cell_door(stage, x)
 	if empty:
 		hiding_zones.append(AABB(Vector3(x - 3, -0.2, minf(front_z, center_z) - 0.5), Vector3(6, 2.8, absf(center_z - front_z) + 1)))
 	elif door != null:
@@ -422,7 +480,7 @@ func build_cell_z(corridor_x:float, side:int, z:float, stage:String, empty:bool)
 	var door := build_gate("Cell_%s_%s" % [stage, str(z)], Vector3(front_x, 0, z), 7.0, "x", Color(0.32, 0.09, 0.05), false)
 	if empty:
 		hiding_zones.append(AABB(Vector3(minf(front_x, center_x) - 0.5, -0.2, z - 3), Vector3(absf(center_x - front_x) + 1, 2.8, 6)))
-		create_box("CellCover", Vector3(center_x, 0.8, z), Vector3(1.8, 1.6, 2.4), rotten_material, true, world_root)
+		create_box("CellCover", Vector3(center_x, 0.8, z), Vector3(1.8, 1.6, 2.4), crate_material, true, world_root)
 	else:
 		stage_doors[stage].append(door)
 		spawn_record(Vector3(center_x, 0, z), stage, door)
@@ -435,7 +493,7 @@ func build_cell_x(x:float, corridor_z:float, side:int, stage:String, empty:bool)
 	var door := build_gate("Cell_%s_%s" % [stage, str(x)], Vector3(x, 0, front_z), 7.0, "z", Color(0.32, 0.09, 0.05), false)
 	if empty:
 		hiding_zones.append(AABB(Vector3(x - 3, -0.2, minf(front_z, center_z) - 0.5), Vector3(6, 2.8, absf(center_z - front_z) + 1)))
-		create_box("CellCover", Vector3(x, 0.8, center_z), Vector3(2.4, 1.6, 1.8), rotten_material, true, world_root)
+		create_box("CellCover", Vector3(x, 0.8, center_z), Vector3(2.4, 1.6, 1.8), crate_material, true, world_root)
 	else:
 		stage_doors[stage].append(door)
 		spawn_record(Vector3(x, 0, center_z), stage, door)
@@ -620,7 +678,7 @@ func build_debris() -> void:
 			world_root.add_child(lump)
 		build_mosquitoes(p + Vector3.UP * 0.4)
 	for p in [Vector3(-4, 0.85, -32), Vector3(4, 0.85, -61), Vector3(-42, 0.85, -94), Vector3(-56, 0.85, -128), Vector3(43, 0.85, -94), Vector3(56, 0.85, -112), Vector3(-24, 0.85, -164), Vector3(24, 0.85, -164)]:
-		create_box("CorridorCover", p, Vector3(2.4, 1.7, 2.2), rotten_material, true, world_root)
+		create_box("CorridorCover", p, Vector3(2.4, 1.7, 2.2), crate_material, true, world_root)
 
 func build_mosquitoes(position_value:Vector3) -> void:
 	var particles := CPUParticles3D.new()
@@ -1830,6 +1888,12 @@ func check_automatic_pickups() -> void:
 	if is_instance_valid(axe_pickup) && event_is_true("dungeon_axe_door_open") && player.global_position.distance_to(axe_pickup.global_position) < 1.7:
 		collect_axe()
 
+func open_all_stage_doors(stage: String, with_sound: bool = true) -> void:
+	if stage_doors.has(stage):
+		for door in stage_doors[stage]:
+			if is_instance_valid(door):
+				open_door(door, with_sound)
+
 func collect_pickup(pickup_name:String) -> void:
 	if !pickups.has(pickup_name):
 		return
@@ -1846,6 +1910,7 @@ func collect_pickup(pickup_name:String) -> void:
 			show_pickup_notice(tr("DUNGEON_ITEM_FLASHLIGHT"))
 		"blue_key":
 			Global.game_events["dungeon_blue_key_taken"] = true
+			open_all_stage_doors("intro", true)
 			show_pickup_notice(tr("DUNGEON_ITEM_BLUE_KEY"))
 		"pistol":
 			Global.game_events["dungeon_pistol_taken"] = true
@@ -1853,12 +1918,17 @@ func collect_pickup(pickup_name:String) -> void:
 			show_pickup_notice(tr("DUNGEON_ITEM_PISTOL"))
 		"red_key":
 			Global.game_events["dungeon_red_key_taken"] = true
+			open_all_stage_doors("blue", true)
 			show_pickup_notice(tr("DUNGEON_ITEM_RED_KEY"))
 		"green_key":
 			Global.game_events["dungeon_green_key_taken"] = true
+			open_all_stage_doors("red", true)
 			show_pickup_notice(tr("DUNGEON_ITEM_GREEN_KEY"))
 		"cell_key":
 			Global.game_events["dungeon_key_taken"] = true
+			open_all_stage_doors("green", true)
+			if is_instance_valid(main_monster):
+				main_monster.trigger_enrage_hunt()
 			show_pickup_notice(tr("DUNGEON_ITEM_CELL_KEY"))
 		"machinegun":
 			Global.game_events["dungeon_gun_taken"] = true
@@ -1966,9 +2036,7 @@ func activate_stage(stage:String, with_sound:bool) -> void:
 	Global.game_events["dungeon_%s_lever" % stage] = true
 	if key_room_doors.has(stage):
 		open_door(key_room_doors[stage], with_sound)
-	if stage_doors.has(stage):
-		for door in stage_doors[stage]:
-			open_door(door, with_sound)
+	open_all_stage_doors(stage, with_sound)
 	if stage_enemies.has(stage):
 		for enemy in stage_enemies[stage]:
 			if is_instance_valid(enemy):

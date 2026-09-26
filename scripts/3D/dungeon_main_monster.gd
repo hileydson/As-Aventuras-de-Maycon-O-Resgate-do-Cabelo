@@ -48,6 +48,126 @@ var patrol_target_index:int = 0
 var patrol_points:Array[Vector3] = []
 var patrol_links:Dictionary = {}
 
+var enraged_hunt:bool = false
+const TRAMPOLINE_CORRIDOR_LIMIT_Z:float = -74.0
+
+const NAV_NODES: Array[Vector3] = [
+	Vector3(0, 0, -94),     # 0: Hub Centro
+	Vector3(0, 0, -80),     # 1: Hub Norte (Entrada Corredor Trampolim)
+	Vector3(0, 0, -53),     # 2: Trampolim Meio
+	Vector3(0, 0, -25),     # 3: Trampolim Perto
+	Vector3(0, 0, 3.5),     # 4: Trampolim
+	Vector3(-18, 0, -94),   # 5: Hub Oeste (Saída para Intro)
+	Vector3(-56, 0, -94),   # 6: Curva Intro
+	Vector3(-56, 0, -118),  # 7: Intro Meio
+	Vector3(-56, 0, -135),  # 8: Cela da Chave Azul
+	Vector3(18, 0, -94),    # 9: Hub Leste (Saída para Blue)
+	Vector3(56, 0, -94),    # 10: Curva Blue
+	Vector3(56, 0, -118),   # 11: Blue Meio
+	Vector3(56, 0, -135),   # 12: Cela da Chave Vermelha
+	Vector3(-7, 0, -108),   # 13: Hub Sul-Oeste (Entrada Red)
+	Vector3(-7, 0, -164),   # 14: Curva Red
+	Vector3(-30, 0, -164),  # 15: Red Meio
+	Vector3(-45, 0, -164),  # 16: Cela da Chave Verde
+	Vector3(7, 0, -108),    # 17: Hub Sul-Leste (Entrada Green)
+	Vector3(7, 0, -164),    # 18: Curva Green
+	Vector3(30, 0, -164),   # 19: Green Meio
+	Vector3(45, 0, -164)    # 20: Cela da Chave Final (chave da cela)
+]
+
+const NAV_LINKS: Dictionary = {
+	0: [1, 5, 9, 13, 17],
+	1: [0, 2],
+	2: [1, 3],
+	3: [2, 4],
+	4: [3],
+	5: [0, 6],
+	6: [5, 7],
+	7: [6, 8],
+	8: [7],
+	9: [0, 10],
+	10: [9, 11],
+	11: [10, 12],
+	12: [11],
+	13: [0, 14],
+	14: [13, 15],
+	15: [14, 16],
+	16: [15],
+	17: [0, 18],
+	18: [17, 19],
+	19: [18, 20],
+	20: [19]
+}
+
+func has_cell_key() -> bool:
+	return bool(Global.game_events.get("dungeon_key_taken", false))
+
+func trigger_enrage_hunt() -> void:
+	enraged_hunt = true
+	active_hunt = true
+	if state == "down" || state == "rest":
+		state = "patrol"
+		down_timer = 0.0
+		damage_pressure = 0
+	play_roar()
+
+func get_closest_nav_node(pos: Vector3, allow_trampoline: bool = true) -> int:
+	var best_idx: int = 0
+	var best_dist: float = INF
+	for i in range(NAV_NODES.size()):
+		if !allow_trampoline && i in [1, 2, 3, 4]:
+			continue
+		var d := pos.distance_squared_to(NAV_NODES[i])
+		if d < best_dist:
+			best_dist = d
+			best_idx = i
+	return best_idx
+
+func find_nav_path(start_node: int, goal_node: int, allow_trampoline: bool = true) -> Array[int]:
+	if start_node == goal_node:
+		return [start_node]
+	var queue: Array[int] = [start_node]
+	var parent: Dictionary = {start_node: -1}
+	var visited: Dictionary = {start_node: true}
+	var found: bool = false
+	while !queue.is_empty():
+		var curr := queue.pop_front() as int
+		if curr == goal_node:
+			found = true
+			break
+		var neighbors: Array = NAV_LINKS.get(curr, [])
+		for next_node in neighbors:
+			var n_int := int(next_node)
+			if !allow_trampoline && n_int in [1, 2, 3, 4]:
+				continue
+			if !visited.has(n_int):
+				visited[n_int] = true
+				parent[n_int] = curr
+				queue.append(n_int)
+	if !found:
+		return [start_node]
+	var path: Array[int] = []
+	var step: int = goal_node
+	while step != -1:
+		path.append(step)
+		step = parent.get(step, -1)
+	path.reverse()
+	return path
+
+func get_next_nav_waypoint(from_pos: Vector3, to_pos: Vector3) -> Vector3:
+	var allow_tramp: bool = enraged_hunt || has_cell_key()
+	var start_node := get_closest_nav_node(from_pos, allow_tramp)
+	var goal_node := get_closest_nav_node(to_pos, allow_tramp)
+	if start_node == goal_node:
+		return to_pos
+	var path := find_nav_path(start_node, goal_node, allow_tramp)
+	if path.size() < 2:
+		return to_pos
+	var next_node := path[1]
+	if from_pos.distance_to(NAV_NODES[start_node]) > 2.2:
+		return NAV_NODES[start_node]
+	return NAV_NODES[next_node]
+
 var step_audio:AudioStreamPlayer3D
 var pain_audio:AudioStreamPlayer3D
 var roar_audio:AudioStreamPlayer3D
@@ -58,7 +178,10 @@ func setup(target:DungeonPlayer, owner_dungeon:Node) -> void:
 	dungeon = owner_dungeon
 	build_body()
 	build_patrol_graph()
-	play_animation("Walk", true, 0.82)
+	if has_cell_key():
+		trigger_enrage_hunt()
+	else:
+		play_animation("Walk", true, 0.82)
 
 func build_body() -> void:
 	for child in get_children():
@@ -132,14 +255,20 @@ func make_audio(stream:AudioStream, volume_db:float, max_distance:float) -> Audi
 
 func build_patrol_graph() -> void:
 	patrol_points = [
-		Vector3(0, 0, -92), Vector3(0, 0, -70), Vector3(0, 0, -47), Vector3(0, 0, -22),
+		Vector3(0, 0, -92), Vector3(-12, 0, -92), Vector3(12, 0, -92),
 		Vector3(-31, 0, -94), Vector3(-56, 0, -94), Vector3(-56, 0, -118),
 		Vector3(31, 0, -94), Vector3(56, 0, -94), Vector3(56, 0, -118)
 	]
 	patrol_links = {
-		0: [1, 4, 7], 1: [0, 2], 2: [1, 3], 3: [2],
-		4: [0, 5], 5: [4, 6], 6: [5],
-		7: [0, 8], 8: [7, 9], 9: [8]
+		0: [1, 2, 3, 6],
+		1: [0, 3],
+		2: [0, 6],
+		3: [0, 1, 4],
+		4: [3, 5],
+		5: [4],
+		6: [0, 2, 7],
+		7: [6, 8],
+		8: [7]
 	}
 	patrol_index = closest_patrol_index(global_position)
 	choose_next_patrol_target()
@@ -155,7 +284,11 @@ func closest_patrol_index(position_value:Vector3) -> int:
 	return best_index
 
 func choose_next_patrol_target() -> void:
-	var choices:Array = patrol_links.get(patrol_index, [0])
+	var choices:Array = patrol_links.get(patrol_index, [0]).duplicate()
+	if !bool(Global.game_events.get("dungeon_blue_gate_open", false)):
+		choices = choices.filter(func(idx): return int(idx) < 6)
+	if choices.is_empty():
+		choices = [0]
 	patrol_target_index = int(choices.pick_random())
 	patrol_timeout = 16.0
 
@@ -167,6 +300,9 @@ func _physics_process(delta:float) -> void:
 	else:
 		velocity.y = -0.2
 	attack_cooldown = maxf(0.0, attack_cooldown - delta)
+
+	if !enraged_hunt && has_cell_key():
+		trigger_enrage_hunt()
 
 	if state == "down":
 		process_temporary_defeat(delta)
@@ -189,30 +325,53 @@ func _physics_process(delta:float) -> void:
 	to_player.y = 0.0
 	var player_distance := to_player.length()
 	var player_hidden:bool = bool(dungeon.call("is_player_hidden"))
-	if !active_hunt && !player_hidden && player_distance <= ACTIVATION_DISTANCE && can_see_player():
+	var player_in_trampoline:bool = player.global_position.z > TRAMPOLINE_CORRIDOR_LIMIT_Z
+
+	if enraged_hunt:
 		active_hunt = true
-		play_roar()
-	if active_hunt && (player_hidden || player_distance >= DISENGAGE_DISTANCE):
-		active_hunt = false
-		patrol_index = closest_patrol_index(global_position)
-		choose_next_patrol_target()
+	else:
+		if !active_hunt && !player_hidden && !player_in_trampoline && player_distance <= ACTIVATION_DISTANCE && can_see_player():
+			active_hunt = true
+			play_roar()
+		if active_hunt && (player_hidden || player_in_trampoline || player_distance >= DISENGAGE_DISTANCE):
+			active_hunt = false
+			patrol_index = closest_patrol_index(global_position)
+			choose_next_patrol_target()
 
 	if active_hunt:
 		process_chase(to_player, player_distance)
 	else:
 		process_patrol(delta)
+
+	if !enraged_hunt && !has_cell_key():
+		if global_position.z > TRAMPOLINE_CORRIDOR_LIMIT_Z:
+			global_position.z = TRAMPOLINE_CORRIDOR_LIMIT_Z
+			velocity.z = minf(velocity.z, 0.0)
+
 	move_and_slide()
+
+	if !enraged_hunt && !has_cell_key():
+		if global_position.z > TRAMPOLINE_CORRIDOR_LIMIT_Z:
+			global_position.z = TRAMPOLINE_CORRIDOR_LIMIT_Z
+
 	update_steps(delta, Vector2(velocity.x, velocity.z).length(), active_hunt)
 
 func process_chase(to_player:Vector3, player_distance:float) -> void:
-	look_at_horizontal(player.global_position)
 	if player_distance <= 2.75 && attack_cooldown <= 0.0:
 		start_random_attack(player_distance)
 		return
-	var direction := to_player.normalized()
-	velocity.x = direction.x * CHASE_SPEED
-	velocity.z = direction.z * CHASE_SPEED
-	play_animation("Run", true, 0.92)
+	var move_target: Vector3 = player.global_position
+	if !can_see_player():
+		move_target = get_next_nav_waypoint(global_position, player.global_position)
+	look_at_horizontal(move_target)
+	var move_dir := move_target - global_position
+	move_dir.y = 0.0
+	if move_dir.length_squared() > 0.001:
+		move_dir = move_dir.normalized()
+	var current_chase_speed := CHASE_SPEED * (1.12 if enraged_hunt else 1.0)
+	velocity.x = move_dir.x * current_chase_speed
+	velocity.z = move_dir.z * current_chase_speed
+	play_animation("Run", true, 0.95)
 
 func process_patrol(delta:float) -> void:
 	patrol_timeout -= delta
@@ -237,11 +396,16 @@ func process_patrol(delta:float) -> void:
 	play_animation("Walk", true, 0.82)
 
 func process_rest(delta:float) -> void:
+	if enraged_hunt:
+		state = "patrol"
+		active_hunt = true
+		return
 	velocity.x = 0.0
 	velocity.z = 0.0
 	rest_timer -= delta
 	var distance := global_position.distance_to(player.global_position)
-	if distance <= ACTIVATION_DISTANCE && !bool(dungeon.call("is_player_hidden")) && can_see_player():
+	var player_in_trampoline:bool = player.global_position.z > TRAMPOLINE_CORRIDOR_LIMIT_Z
+	if distance <= ACTIVATION_DISTANCE && !player_in_trampoline && !bool(dungeon.call("is_player_hidden")) && can_see_player():
 		state = "patrol"
 		active_hunt = true
 		play_roar()
@@ -436,6 +600,10 @@ func update_steps(delta:float, movement_speed:float, chasing:bool) -> void:
 	step_timer = 0.48 if chasing else 0.72
 
 func can_see_player() -> bool:
+	if !is_instance_valid(player):
+		return false
+	if !enraged_hunt && !has_cell_key() && player.global_position.z > TRAMPOLINE_CORRIDOR_LIMIT_Z:
+		return false
 	var eye := global_position + Vector3.UP * 2.15
 	var target := player.global_position + Vector3.UP * 1.05
 	var query := PhysicsRayQueryParameters3D.create(eye, target)
