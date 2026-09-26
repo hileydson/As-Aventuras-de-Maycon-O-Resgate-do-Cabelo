@@ -376,6 +376,9 @@ var enemy_base_scale:float = 1.0
 
 var player_attack_time:float = 0.0
 var player_attack_move_dir := Vector2.ZERO
+var player_attack_duration:float = 0.0
+var player_is_kick:bool = false
+var punch_buffer_time:float = 0.0
 var player_facing:float = 1.0
 var player_invulnerability:float = 0.0
 var dodge_time:float = 0.0
@@ -1933,18 +1936,22 @@ func build_action_buttons_hud() -> void:
 
 	action_row_punch.gui_input.connect(func(event:InputEvent):
 		if event is InputEventMouseButton && event.pressed && event.button_index == MOUSE_BUTTON_LEFT:
-			if player_attack_time <= 0.0 && dodge_time <= 0.0 && !battle_paused && intro_time <= 0.0 && !player_dead:
+			if can_player_punch():
 				start_player_attack(false)
+			elif !player_is_kick && player_attack_time > 0.0:
+				punch_buffer_time = 0.18
 	)
 	action_row_kick.gui_input.connect(func(event:InputEvent):
 		if event is InputEventMouseButton && event.pressed && event.button_index == MOUSE_BUTTON_LEFT:
-			if player_attack_time <= 0.0 && dodge_time <= 0.0 && !battle_paused && intro_time <= 0.0 && !player_dead:
+			if can_player_kick():
 				start_player_attack(true)
 	)
 	action_row_dash.gui_input.connect(func(event:InputEvent):
 		if event is InputEventMouseButton && event.pressed && event.button_index == MOUSE_BUTTON_LEFT:
 			if dodge_cooldown <= 0.0 && !battle_paused && intro_time <= 0.0 && !player_dead:
 				player_attack_time = 0.0
+				player_attack_duration = 0.0
+				punch_buffer_time = 0.0
 				start_dodge()
 	)
 
@@ -2191,19 +2198,38 @@ func toggle_battle_pause() -> void:
 		if child is AudioStreamPlayer:
 			child.stream_paused = battle_paused
 
+func can_player_punch() -> bool:
+	if battle_paused || intro_time > 0.0 || leaving || player_dead || dodge_time > 0.0 || player_dash_active:
+		return false
+	if player_attack_time <= 0.0:
+		return true
+	# Permite desferir o proximo soco a partir da metade da animacao do soco atual
+	if !player_is_kick && player_attack_duration > 0.0 && player_attack_time <= (player_attack_duration * 0.5):
+		return true
+	return false
+
+func can_player_kick() -> bool:
+	if battle_paused || intro_time > 0.0 || leaving || player_dead || dodge_time > 0.0 || player_dash_active:
+		return false
+	return player_attack_time <= 0.0
+
 func _unhandled_input(event:InputEvent) -> void:
 	if battle_paused || intro_time > 0.0 || leaving || player_dead:
 		return
 	if event is InputEventMouseButton && event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			if player_attack_time <= 0.0 && dodge_time <= 0.0:
+			if can_player_punch():
 				start_player_attack(false)
+			elif !player_is_kick && player_attack_time > 0.0:
+				punch_buffer_time = 0.18
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
-			if player_attack_time <= 0.0 && dodge_time <= 0.0:
+			if can_player_kick():
 				start_player_attack(true)
 		elif event.button_index == MOUSE_BUTTON_MIDDLE:
 			if dodge_cooldown <= 0.0:
 				player_attack_time = 0.0
+				player_attack_duration = 0.0
+				punch_buffer_time = 0.0
 				start_dodge()
 
 func update_player(delta:float) -> void:
@@ -2223,8 +2249,26 @@ func update_player(delta:float) -> void:
 	# CANCELAMENTO IMEDIATO: Apertar Dash (ui_accept ou run) interrompe QUALQUER acao atual (soco, chute, etc)
 	if (Input.is_action_just_pressed("ui_accept") || Input.is_action_just_pressed("run")) && dodge_cooldown <= 0.0:
 		player_attack_time = 0.0
+		player_attack_duration = 0.0
+		punch_buffer_time = 0.0
 		start_dodge()
 		return
+
+	# Checagem de comandos de ataque (Soco / Chute)
+	if Input.is_action_just_pressed("key_q"):
+		if can_player_punch():
+			start_player_attack(false)
+		elif !player_is_kick && player_attack_time > 0.0:
+			punch_buffer_time = 0.18
+
+	if punch_buffer_time > 0.0:
+		punch_buffer_time = maxf(0.0, punch_buffer_time - delta)
+		if can_player_punch():
+			punch_buffer_time = 0.0
+			start_player_attack(false)
+
+	if Input.is_action_just_pressed("key_w") && can_player_kick():
+		start_player_attack(true)
 
 	if dodge_time > 0.0:
 		player_position += dodge_direction * 610.0 * delta
@@ -2235,20 +2279,15 @@ func update_player(delta:float) -> void:
 			dodge_ghost_timer = 0.04
 			spawn_player_ghost()
 	elif player_attack_time <= 0.0:
-		if Input.is_action_just_pressed("key_q"):
-			start_player_attack(false)
-		elif Input.is_action_just_pressed("key_w"):
-			start_player_attack(true)
+		var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		if direction.length() > 0.1:
+			player_position += direction.normalized() * PLAYER_SPEED * delta
+			if absf(direction.x) > 0.05:
+				player_facing = signf(direction.x)
+				player.flip_h = player_facing < 0.0
+			play_if_changed(player, "right")
 		else:
-			var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-			if direction.length() > 0.1:
-				player_position += direction.normalized() * PLAYER_SPEED * delta
-				if absf(direction.x) > 0.05:
-					player_facing = signf(direction.x)
-					player.flip_h = player_facing < 0.0
-				play_if_changed(player, "right")
-			else:
-				play_if_changed(player, "idle_right")
+			play_if_changed(player, "idle_right")
 	else:
 		# Durante soco ou chute, Maycon nao para totalmente: continua se deslocando levemente na direcao em que estava indo
 		var attack_input = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
@@ -2262,6 +2301,8 @@ func update_player(delta:float) -> void:
 func start_dodge() -> void:
 	action_dash_flash = 1.0
 	player_attack_time = 0.0
+	player_attack_duration = 0.0
+	punch_buffer_time = 0.0
 	player_attack_move_dir = Vector2.ZERO
 	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if input_direction.length() < 0.1:
@@ -2291,6 +2332,8 @@ func start_player_power_dash(use_kick:bool = false) -> void:
 	player_dash_trail_segments.clear()
 	player_dash_ghost_timer = 0.0
 	player_attack_time = 0.0
+	player_attack_duration = 0.0
+	punch_buffer_time = 0.0
 	player_attack_move_dir = Vector2.ZERO
 	dodge_time = 0.0
 
@@ -2513,6 +2556,9 @@ func start_player_attack(kick:bool) -> void:
 		action_punch_flash = 1.0
 	var attack_name = "attack_kick" if kick else "attack_punch"
 	player_attack_time = get_sprite_animation_duration(player, attack_name, 0.32, 0.75)
+	player_attack_duration = player_attack_time
+	player_is_kick = kick
+	punch_buffer_time = 0.0
 	var input_facing = Input.get_axis("ui_left", "ui_right")
 	if absf(input_facing) > 0.05:
 		player_facing = signf(input_facing)
@@ -2522,9 +2568,11 @@ func start_player_attack(kick:bool) -> void:
 		player_attack_move_dir = move_vector.normalized()
 	else:
 		player_attack_move_dir = Vector2(player_facing, 0.0) * 0.45
+	player.stop()
+	player.frame = 0
 	player.play(attack_name)
 	var attack_sound = kick_sound if kick else punch_sound
-	attack_sound.pitch_scale = randf_range(0.94, 1.06)
+	attack_sound.pitch_scale = randf_range(0.96, 1.12) if !kick else randf_range(0.94, 1.06)
 	attack_sound.play()
 	spawn_impact(player_position + Vector2(60.0 * player_facing, -35), Color("ffd166"), player_facing)
 	resolve_player_hit(kick)
@@ -2865,6 +2913,8 @@ func damage_player(damage:float, hit_direction:float) -> void:
 	Global.realtime_hp = player_hp
 	player_invulnerability = 0.82
 	player_attack_time = 0.0
+	player_attack_duration = 0.0
+	punch_buffer_time = 0.0
 	player_attack_move_dir = Vector2.ZERO
 	player_position.x += hit_direction * 54.0
 	player_position.x = clampf(player_position.x, 150.0, ARENA_WIDTH - 80.0 if exit_open else 2130.0)

@@ -348,7 +348,7 @@ DUNGEON_WEAPON_READY,METRALHADORA • Segure tiro para disparar,MACHINE GUN • 
 DUNGEON_PROMPT_FLASHLIGHT,[E / A] PEGAR LANTERNA,[E / A] TAKE FLASHLIGHT,[E / A] TOMAR LINTERNA,[E / A] 拿起手电筒
 DUNGEON_PROMPT_GUN,[E / A] PEGAR METRALHADORA,[E / A] TAKE MACHINE GUN,[E / A] TOMAR AMETRALLADORA,[E / A] 拿起机枪
 DUNGEON_PROMPT_KEY,[E / A] PEGAR CHAVE DA CELA,[E / A] TAKE CELL KEY,[E / A] TOMAR LLAVE DE LA CELDA,[E / A] 拿起牢房钥匙
-DUNGEON_PROMPT_OPEN_CELL,[E / A] ABRIR A CELA DO MACHADO,[E / A] OPEN THE AXE CELL,[E / A] ABRIR LA CELDA DEL HACHA,[E / A] 打开斧头牢房
+DUNGEON_PROMPT_OPEN_CELL,Abrir portão?,Open gate?,¿Abrir portón?,开门？
 DUNGEON_CELL_LOCKED,A cela está trancada. A chave está no fim da prisão.,The cell is locked. The key is at the end of the prison.,La celda está cerrada. La llave está al final de la prisión.,牢房上锁了。钥匙在监狱尽头。
 DUNGEON_PROMPT_AXE,[E / A] RECUPERAR O MACHADO,[E / A] RECOVER THE AXE,[E / A] RECUPERAR EL HACHA,[E / A] 取回斧头
 DUNGEON_PROMPT_TRAMPOLINE,[E / A] PULAR E VOLTAR AO CASTELO,[E / A] JUMP BACK TO THE CASTLE,[E / A] SALTAR Y VOLVER AL CASTILLO,[E / A] 跳回城堡
@@ -380,10 +380,11 @@ DUNGEON_RELOAD_PROMPT,R / X: Recarregar,R / X: Reload,R / X: Recargar,R / X: 换
 DUNGEON_RELOADING,Recarregando...,Reloading...,Recargando...,换弹中...
 DUNGEON_AMMO_PISTOL_DROPPED,+4 Balas de Pistola,+4 Pistol Ammo,+4 Balas de Pistola,+4 手枪子弹
 DUNGEON_AMMO_MG_DROPPED,+15 Balas de Metralhadora,+15 Machine Gun Ammo,+15 Balas de Ametralladora,+15 机枪子弹
-DUNGEON_PROMPT_UNLOCK_BLUE,[E / A] USAR CHAVE AZUL E DESTRANCAR,[E / A] USE BLUE KEY TO UNLOCK,[E / A] USAR LLAVE AZUL Y DESBLOQUEAR,[E / A] 使用蓝钥匙开门
-DUNGEON_PROMPT_UNLOCK_RED,[E / A] USAR CHAVE VERMELHA E DESTRANCAR,[E / A] USE RED KEY TO UNLOCK,[E / A] USAR LLAVE ROJA Y DESBLOQUEAR,[E / A] 使用红钥匙开门
-DUNGEON_PROMPT_UNLOCK_GREEN,[E / A] USAR CHAVE VERDE E DESTRANCAR,[E / A] USE GREEN KEY TO UNLOCK,[E / A] USAR LLAVE VERDE Y DESBLOQUEAR,[E / A] 使用绿钥匙开门
-DUNGEON_PROMPT_UNLOCK_AXE,[E / A] USAR CHAVE DA CELA E DESTRANCAR,[E / A] USE CELL KEY TO UNLOCK,[E / A] USAR LLAVE DE CELDA Y DESBLOQUEAR,[E / A] 使用牢房钥匙开门
+DUNGEON_PROMPT_UNLOCK_BLUE,Abrir portão?,Open gate?,¿Abrir portón?,开门？
+DUNGEON_PROMPT_UNLOCK_RED,Abrir portão?,Open gate?,¿Abrir portón?,开门？
+DUNGEON_PROMPT_UNLOCK_GREEN,Abrir portão?,Open gate?,¿Abrir portón?,开门？
+DUNGEON_PROMPT_UNLOCK_AXE,Abrir portão?,Open gate?,¿Abrir portón?,开门？
+DUNGEON_GATE_OPENED,Portão aberto!,Gate opened!,¡Portón abierto!,大门已打开！
 DUNGEON_GATE_LOCKED_BLUE,Portão Azul Trancado (Requer Chave Azul),Blue Gate Locked (Requires Blue Key),Portón Azul Cerrado (Requiere Llave Azul),蓝色大门已锁（需要蓝钥匙）
 DUNGEON_GATE_LOCKED_RED,Portão Vermelho Trancado (Requer Chave Vermelha),Red Gate Locked (Requires Red Key),Portón Rojo Cerrado (Requiere Llave Roja),红色大门已锁（需要红钥匙）
 DUNGEON_GATE_LOCKED_GREEN,Portão Verde Trancado (Requer Chave Verde),Green Gate Locked (Requires Green Key),Portón Verde Cerrado (Requiere Llave Verde),绿色大门已锁（需要绿钥匙）

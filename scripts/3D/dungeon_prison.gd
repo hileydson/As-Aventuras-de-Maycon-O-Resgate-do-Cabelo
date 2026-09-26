@@ -2023,12 +2023,12 @@ func unlock_gate_manually(gate_name:String) -> void:
 		Global.game_events["dungeon_axe_door_open"] = true
 		Global.game_events["dungeon_cell_key_used"] = true
 		open_door(axe_door, true)
-		show_pickup_notice(tr("DUNGEON_PROMPT_OPEN_CELL"))
+		show_pickup_notice(tr("DUNGEON_GATE_OPENED"))
 	elif gate_name in route_gates:
 		Global.game_events["dungeon_%s_gate_open" % gate_name] = true
 		Global.game_events["dungeon_%s_key_used" % gate_name] = true
 		open_door(route_gates[gate_name], true)
-		show_pickup_notice(tr("DUNGEON_PROMPT_UNLOCK_" + gate_name.to_upper()))
+		show_pickup_notice(tr("DUNGEON_GATE_OPENED"))
 	Global.save_progress("calabouco_terror")
 	update_hud()
 

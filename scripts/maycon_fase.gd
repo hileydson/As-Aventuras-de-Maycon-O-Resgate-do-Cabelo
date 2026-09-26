@@ -73,9 +73,24 @@ func _physics_process(delta: float) -> void:
 		is_jumping = false
 		DOUBLE_JUMP_COUNT = 0
 		
-	# attack kick
-	if Input.is_action_pressed("key_q") : #&& !Input.is_action_pressed("key_down")
+	# attack punch
+	if Input.is_action_just_pressed("key_q"):
+		var can_punch = false
 		if animated_sprite_2d.animation != "attack_punch":
+			can_punch = true
+		elif animated_sprite_2d.sprite_frames:
+			var punch_frames = animated_sprite_2d.sprite_frames.get_frame_count("attack_punch")
+			if animated_sprite_2d.frame >= int(punch_frames / 2):
+				can_punch = true
+		if can_punch:
+			punch.pitch_scale = randf_range(0.96, 1.10)
+			punch.play()
+			animated_sprite_2d.stop()
+			animated_sprite_2d.frame = 0
+			animated_sprite_2d.play("attack_punch")
+	elif Input.is_action_pressed("key_q"):
+		if animated_sprite_2d.animation != "attack_punch":
+			punch.pitch_scale = 1.0
 			punch.play()
 			animated_sprite_2d.play("attack_punch")
 		
