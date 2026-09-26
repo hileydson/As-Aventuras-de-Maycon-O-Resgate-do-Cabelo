@@ -8,7 +8,7 @@ const SMG_ALBEDO:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_Defau
 const SMG_NORMAL:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Normal.png")
 const SMG_METALLIC:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Metallic.png")
 const SMG_ROUGHNESS:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Roughness.png")
-const PISTOL_REST_POSITION := Vector3(0.24, -0.27, -0.34)
+const PISTOL_REST_POSITION := Vector3(0.09, -0.48, -0.20)
 const PISTOL_REST_ROTATION := Vector3(-0.035, 0.06, -0.025)
 const SMG_REST_POSITION := Vector3(0.25, -0.23, -0.35)
 const SMG_REST_ROTATION := Vector3(-0.03, 0.05, -0.02)
@@ -377,9 +377,14 @@ func start_reload() -> void:
 		var rest_pos:Vector3 = get_weapon_rest_position()
 		var target_down:Vector3 = rest_pos + Vector3(0, -0.28, 0.12)
 		var t := create_tween()
-		t.tween_property(gun_view, "position", target_down, dur * 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		t.tween_interval(dur * 0.15)
-		t.tween_property(gun_view, "position", rest_pos, dur * 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		if is_instance_valid(t):
+			var tw1 = t.tween_property(gun_view, "position", target_down, dur * 0.45)
+			if tw1:
+				tw1.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			t.tween_interval(dur * 0.15)
+			var tw2 = t.tween_property(gun_view, "position", rest_pos, dur * 0.4)
+			if tw2:
+				tw2.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		
 	await get_tree().create_timer(dur).timeout
 	if !is_reloading:
@@ -532,9 +537,15 @@ func fire() -> void:
 	if is_instance_valid(gun_view):
 		weapon_recoil_offset = Vector3(0, 0.02, 0.06)
 		weapon_recoil_rot_x = -0.055
-		var recoil := create_tween().set_parallel()
-		recoil.tween_property(self, "weapon_recoil_offset", Vector3.ZERO, 0.085).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		recoil.tween_property(self, "weapon_recoil_rot_x", 0.0, 0.09).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		var recoil := create_tween()
+		if is_instance_valid(recoil):
+			recoil.set_parallel(true)
+			var tw1 = recoil.tween_property(self, "weapon_recoil_offset", Vector3.ZERO, 0.085)
+			if tw1:
+				tw1.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			var tw2 = recoil.tween_property(self, "weapon_recoil_rot_x", 0.0, 0.09)
+			if tw2:
+				tw2.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		
 	if get_current_clip() == 0 && get_current_reserve() > 0:
 		start_reload()

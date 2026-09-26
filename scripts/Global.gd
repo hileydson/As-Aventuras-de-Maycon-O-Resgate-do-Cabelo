@@ -615,6 +615,9 @@ func load_progress(slot: int = -1)->void:
 			maycon_itens = save_array["maycon_itens"]
 			game_events = game_events_default.duplicate()
 			game_events.merge(save_array["game_events"], true)
+			var has_axe: bool = bool(maycon_itens.get("axe", false)) or bool(game_events.get("axe_taken", false)) or bool(game_events.get("dungeon_axe_taken", false))
+			if !has_axe and !bool(game_events.get("camilita_defeated", false)):
+				game_events["gilhotina_broken"] = false
 			inimigos_mortos = save_array["inimigos_mortos"]
 			if save_array.has("aim_assist_strength"):
 				aim_assist_strength = float(save_array["aim_assist_strength"])

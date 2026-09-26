@@ -14,8 +14,8 @@ const PATROL_SPEED:float = 1.75
 const CHASE_SPEED:float = 3.0
 const ACTIVATION_DISTANCE:float = 16.0
 const DISENGAGE_DISTANCE:float = 27.0
-const TEMPORARY_DEFEAT_DAMAGE:int = 8
-const TEMPORARY_DEFEAT_SECONDS:float = 60.0
+const TEMPORARY_DEFEAT_DAMAGE:int = 16
+const TEMPORARY_DEFEAT_SECONDS:float = 5.0
 
 var player:DungeonPlayer
 var dungeon:Node
@@ -61,6 +61,9 @@ func setup(target:DungeonPlayer, owner_dungeon:Node) -> void:
 	play_animation("Walk", true, 0.82)
 
 func build_body() -> void:
+	for child in get_children():
+		child.queue_free()
+
 	var collision := CollisionShape3D.new()
 	var capsule := CapsuleShape3D.new()
 	capsule.radius = 0.72
@@ -290,6 +293,7 @@ func process_hit(delta:float) -> void:
 	action_timer -= delta
 	if action_timer <= 0.0:
 		state = "patrol"
+		active_hunt = true
 
 func enter_temporary_defeat() -> void:
 	if grab_active:
@@ -362,16 +366,18 @@ func _update_bone_recoils(delta: float) -> void:
 		recoil.elapsed += delta
 		var t: float = recoil.elapsed / recoil.duration
 		if t >= 1.0:
+			var b_idx: int = recoil.bone
+			if b_idx < skeleton.get_bone_count():
+				skeleton.set_bone_pose_position(b_idx, Vector3.ZERO)
+				skeleton.set_bone_pose_rotation(b_idx, Quaternion.IDENTITY)
 			active_bone_recoils.remove_at(i)
 			continue
 		var weight: float = (1.0 - t) * (1.0 - t)
 		var b_idx: int = recoil.bone
 		if b_idx < skeleton.get_bone_count():
-			var cur_pos := skeleton.get_bone_pose_position(b_idx)
-			skeleton.set_bone_pose_position(b_idx, cur_pos + recoil.pos_offset * weight)
-			var cur_rot := skeleton.get_bone_pose_rotation(b_idx)
+			skeleton.set_bone_pose_position(b_idx, recoil.pos_offset * weight)
 			var add_rot := Quaternion.IDENTITY.slerp(recoil.rot_offset, weight)
-			skeleton.set_bone_pose_rotation(b_idx, cur_rot * add_rot)
+			skeleton.set_bone_pose_rotation(b_idx, add_rot)
 
 func take_damage(amount:int, weapon_type:String = "pistol", hit_pos:Vector3 = Vector3.ZERO, hit_dir:Vector3 = Vector3.ZERO) -> void:
 	if state == "down":
@@ -398,9 +404,8 @@ func take_damage(amount:int, weapon_type:String = "pistol", hit_pos:Vector3 = Ve
 	active_hunt = true
 	velocity.x = 0.0
 	velocity.z = 0.0
-	action_timer = play_animation("hit_%d" % hit_cycle, false, 1.0)
-	if action_timer <= 0.0:
-		action_timer = 1.03
+	var anim_dur := play_animation("hit_%d" % hit_cycle, false, 1.35)
+	action_timer = minf(anim_dur if anim_dur > 0.0 else 0.45, 0.55)
 
 func play_animation(animation_name:String, loop:bool, speed_scale:float) -> float:
 	if !is_instance_valid(animator) || !animator.has_animation(animation_name):

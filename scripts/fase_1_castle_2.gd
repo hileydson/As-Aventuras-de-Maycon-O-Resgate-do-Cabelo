@@ -47,8 +47,19 @@ func _ready() -> void:
 		animacoes.play("maycon_back_to_fase")
 		await get_tree().create_timer(1.0).timeout
 	
-	played_axe = Global.maycon_itens["axe"] || bool(Global.game_events.get("dungeon_unlocked", false))
-	aconteceu_animacao_axe = bool(Global.game_events.get("dungeon_unlocked", false))
+	var axe_already_collected: bool = bool(Global.maycon_itens.get("axe", false)) or bool(Global.game_events.get("axe_taken", false)) or bool(Global.game_events.get("dungeon_axe_taken", false))
+	var dungeon_already_unlocked: bool = bool(Global.game_events.get("dungeon_unlocked", false))
+	
+	if dungeon_already_unlocked or axe_already_collected:
+		played_axe = true
+		aconteceu_animacao_axe = true
+		axe_area.position = Vector2(-480, 1100)
+		axe_area.visible = false
+	else:
+		played_axe = false
+		aconteceu_animacao_axe = false
+		axe_area.position = Vector2(-2, -36)
+		axe_area.visible = true
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -56,10 +67,16 @@ func _process(delta: float) -> void:
 	# Durante a transição para a cutscene do machado o player não controla nada
 	if in_axe_cutscene:
 		return
-	if Global.maycon_itens["axe"]==false && Global.game_events["gilhotina_broken"]==false:
+	
+	var axe_already_collected: bool = bool(Global.maycon_itens.get("axe", false)) or bool(Global.game_events.get("axe_taken", false)) or bool(Global.game_events.get("dungeon_axe_taken", false))
+	var dungeon_already_unlocked: bool = bool(Global.game_events.get("dungeon_unlocked", false))
+	
+	if animacoes.current_animation == "axe_fall":
 		axe_area.visible = true
-	else:
+	elif dungeon_already_unlocked or axe_already_collected:
 		axe_area.visible = false
+	else:
+		axe_area.visible = true
 	
 	var camilita_is_dead: bool = bool(Global.game_events.get("camilita_defeated", false)) or Global.inimigos_mortos.has("fase_1_castle_2_/root/fase_1_castle_2/Fase1BeforeCastle/Inimigos/inimigo_camilita")
 	if camilita_is_dead && inimigos.has_node("inimigo_camilita"):
@@ -67,8 +84,10 @@ func _process(delta: float) -> void:
 		if is_instance_valid(camilita_node):
 			camilita_node.queue_free()
 	
-	if Global.battle_started == false && played_axe == false && camilita_is_dead && Global.maycon_itens["axe"] == false && Global.game_events["gilhotina_broken"] == false && !in_axe_cutscene && !Global.back_to_fase && !Global.dungeon_return_pending && !Global.axe_cutscene_return_valid:
+	if !Global.battle_started and !played_axe and camilita_is_dead and !axe_already_collected and !dungeon_already_unlocked and !in_axe_cutscene and !Global.back_to_fase and !Global.dungeon_return_pending and !Global.axe_cutscene_return_valid:
 		played_axe = true
+		axe_area.position = Vector2(-2, -36)
+		axe_area.visible = true
 		animacoes.play("axe_fall")
 		
 	

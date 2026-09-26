@@ -626,8 +626,13 @@ func take_damage(amount:int, weapon_type:String = "pistol", hit_pos:Vector3 = Ve
 		if is_instance_valid(dungeon) && dungeon.has_method("spawn_ammo_drop"):
 			dungeon.call("spawn_ammo_drop", global_position + Vector3.UP * 0.35, weapon_type)
 		died.emit(self)
-		var tween := create_tween().set_parallel()
-		tween.tween_property(model_root, "scale", Vector3.ZERO, 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-		tween.tween_property(self, "rotation:y", rotation.y + randf_range(-0.6, 0.6), 0.2)
-		await tween.finished
+		var tween := create_tween()
+		if is_instance_valid(tween):
+			tween.set_parallel(true)
+			if is_instance_valid(model_root):
+				var tw1 = tween.tween_property(model_root, "scale", Vector3.ZERO, 0.2)
+				if tw1:
+					tw1.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+			tween.tween_property(self, "rotation:y", rotation.y + randf_range(-0.6, 0.6), 0.2)
+			await tween.finished
 		queue_free()
