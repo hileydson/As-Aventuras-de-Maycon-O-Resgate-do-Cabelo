@@ -113,6 +113,7 @@ func _ready() -> void:
 	_montar_hud()
 	_montar_pausa()
 	_atualizar_camera(true)
+	_preparar_grito()
 	musica.play()
 	_manter_em_loop(musica)
 	_manter_em_loop(vento)
@@ -120,6 +121,16 @@ func _ready() -> void:
 	var fade_in := create_tween().bind_node(fade_rect)
 	fade_in.tween_property(fade_rect, "modulate:a", 0.0, 1.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	fade_in.tween_callback(_liberar_controle)
+
+
+# O mp3 do grito termina com uma explosão; em loop só o trecho do grito toca,
+# e o fade de volume encerra antes de chegar nela (igual à entrada do poço infinito)
+func _preparar_grito() -> void:
+	var trilha:AudioStream = som_grito.stream
+	if trilha is AudioStreamMP3:
+		var copia:AudioStreamMP3 = trilha.duplicate()
+		copia.loop = true
+		som_grito.stream = copia
 
 
 func _manter_em_loop(player:AudioStreamPlayer) -> void:
@@ -847,7 +858,12 @@ func _queda_no_infinito() -> void:
 	camera.h_offset = 0.0
 	camera.v_offset = 0.0
 	tremor = 0.0
+	som_grito.volume_db = 0.0
 	som_grito.play()
+	var grito_out := create_tween().bind_node(som_grito)
+	grito_out.tween_interval(2.6)
+	grito_out.tween_property(som_grito, "volume_db", -40.0, 1.6)
+	grito_out.tween_callback(som_grito.stop)
 	var escurecer := create_tween().bind_node(self)
 	escurecer.tween_method(func(p:float):
 		if ambiente:
@@ -887,7 +903,12 @@ func _derrota() -> void:
 		return
 	death_in_progress = true
 	controle_liberado = false
+	som_grito.volume_db = 0.0
 	som_grito.play()
+	var grito_morte := create_tween().bind_node(som_grito)
+	grito_morte.tween_interval(1.1)
+	grito_morte.tween_property(som_grito, "volume_db", -40.0, 1.2)
+	grito_morte.tween_callback(som_grito.stop)
 	som_explosao.play()
 	tremor = 1.6
 	blood_overlay.call("flash")

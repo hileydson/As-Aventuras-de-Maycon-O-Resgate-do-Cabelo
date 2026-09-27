@@ -6,6 +6,7 @@ extends Node3D
 # anterior, até que a câmera lenta acaba e o fade out cobre a batida dos dois.
 
 const VENTO_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
+const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
 const PROXIMA_CENA = "res://scenes/3D/aviao_interior.tscn"
 
 # Duração de cada corte de câmera, sempre menor que o anterior (12,4s no total)
@@ -13,7 +14,7 @@ const CORTES := [2.30, 1.95, 1.60, 1.30, 1.05, 0.85, 0.68, 0.54, 0.42, 0.33, 0.2
 const FATOR_SLOW_MOTION := 0.26
 const DURACAO_FADE_IN := 1.4
 const DURACAO_RETOMADA := 1.15   # tempo em que o slow motion volta ao normal
-const DURACAO_FADE_OUT := 0.6
+const DURACAO_FADE_OUT := 2.6
 const TEMPO_MUNDO_TOTAL := 4.1   # segundos "reais" da queda, esticados pelo slow motion
 
 # Pontos inicial e final de cada personagem no espaço do mundo
@@ -69,6 +70,10 @@ var giro_maycon:float = 0.0
 var linhas_maycon:MultiMeshInstance3D
 var linhas_aviao:MultiMeshInstance3D
 
+# Campos exigidos pelo menu de pausa compartilhado das fases 3D
+var exit_started:bool = false
+var death_in_progress:bool = false
+
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -76,13 +81,25 @@ func _ready() -> void:
 	_montar_aviao()
 	_montar_maycon()
 	_montar_vento()
+	_montar_pausa()
 	_posicionar_mundo(0.0)
 	_trocar_corte()
 	_atualizar_cameras()
 	# Fade in normal, vindo do branco que fechou a fase anterior
 	var fade_in := create_tween().bind_node(fade_rect)
 	fade_in.tween_property(fade_rect, "modulate:a", 0.0, DURACAO_FADE_IN).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_preparar_grito()
 	grito.play()
+
+
+# O mp3 do grito tem uma explosão no fim; em loop o trecho do grito cobre a queda
+# inteira sem nunca chegar nela (mesma solução usada na entrada do poço infinito)
+func _preparar_grito() -> void:
+	var trilha:AudioStream = grito.stream
+	if trilha is AudioStreamMP3:
+		var copia:AudioStreamMP3 = trilha.duplicate()
+		copia.loop = true
+		grito.stream = copia
 
 
 func _montar_aviao() -> void:
@@ -112,6 +129,28 @@ func _montar_maycon() -> void:
 	luz.position = Vector3(1.8, 1.9, 2.6)
 	maycon.add_child(luz)
 	maycon.position = MAYCON_INICIO
+
+
+func _montar_pausa() -> void:
+	var pausa := CanvasLayer.new()
+	pausa.name = "PauseFofo"
+	pausa.set_script(PAUSE_SCRIPT)
+	add_child(pausa)
+
+
+func exit_to_menu() -> void:
+	if exit_started:
+		return
+	exit_started = true
+	saida_iniciada = true
+	get_tree().paused = false
+	fade_rect.color = Color.BLACK
+	var fade_out := create_tween().bind_node(fade_rect)
+	fade_out.tween_property(fade_rect, "modulate:a", 1.0, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	await fade_out.finished
+	Global.back_to_main_camera = true
+	Global.save_progress("fase_aviao")
+	get_tree().change_scene_to_file.call_deferred("res://scenes/menu.tscn")
 
 
 # Riscos finos de vento: subindo junto do Maycon em queda e correndo para trás
@@ -156,7 +195,9 @@ func _process(delta:float) -> void:
 		tempo_retomada = minf(tempo_retomada + delta, DURACAO_RETOMADA)
 		var t := tempo_retomada / DURACAO_RETOMADA
 		fator = lerpf(FATOR_SLOW_MOTION, 1.0, pow(t, 1.35))
-	tempo_mundo = minf(tempo_mundo + delta * fator, TEMPO_MUNDO_TOTAL)
+	# O avião segue passando por baixo durante o clarão, então o tempo corre um
+	# pouco além do encontro; quem trava é só a queda do Maycon
+	tempo_mundo = minf(tempo_mundo + delta * fator, TEMPO_MUNDO_TOTAL * 1.4)
 	if maycon_animation:
 		maycon_animation.speed_scale = maxf(fator * 2.2, 0.08)
 	# O vento também entra e sai da câmera lenta junto com a cena
@@ -169,14 +210,15 @@ func _process(delta:float) -> void:
 	_posicionar_mundo(tempo_mundo / TEMPO_MUNDO_TOTAL)
 	_atualizar_cortes(delta)
 	_atualizar_cameras()
-	if cortes_terminados and not saida_iniciada and tempo_retomada >= DURACAO_RETOMADA * 0.35:
+	# Deixa ver a câmera lenta acabando antes de começar o clarão de transição
+	if cortes_terminados and not saida_iniciada and tempo_retomada >= 0.45:
 		_encerrar()
 
 
 func _posicionar_mundo(progresso:float) -> void:
-	var p := clampf(progresso, 0.0, 1.0)
-	# Queda acelerada pela gravidade
-	var queda := pow(p, 1.75)
+	var p := maxf(progresso, 0.0)
+	# Queda acelerada pela gravidade, parando um fio antes de encostar no avião
+	var queda := pow(minf(p, 0.99), 1.75)
 	maycon.position = MAYCON_INICIO.lerp(MAYCON_FIM, queda)
 	giro_maycon += get_process_delta_time() * (0.6 + p * 2.4)
 	# Virado para as câmeras, que ficam na frente dele durante a queda
@@ -262,8 +304,8 @@ func _encerrar() -> void:
 	saida_iniciada = true
 	# Fade out antes do Maycon se chocar com o avião
 	var fade_out := create_tween().bind_node(fade_rect)
-	fade_out.tween_property(fade_rect, "modulate:a", 1.0, DURACAO_FADE_OUT).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fade_out.tween_property(fade_rect, "modulate:a", 1.0, DURACAO_FADE_OUT).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	var som_out := create_tween().bind_node(grito)
-	som_out.tween_property(grito, "volume_db", -40.0, DURACAO_FADE_OUT)
+	som_out.tween_property(grito, "volume_db", -40.0, DURACAO_FADE_OUT * 0.85)
 	await fade_out.finished
 	get_tree().change_scene_to_file.call_deferred(PROXIMA_CENA)

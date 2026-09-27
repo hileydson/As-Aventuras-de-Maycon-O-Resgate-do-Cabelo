@@ -8,7 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="6_explosao"]
 [ext_resource type="AudioStream" uid="uid://bhcvqv63n0fh8" path="res://assets/novos_audios/metal_batendo.mp3" id="7_metal"]
 [ext_resource type="AudioStream" uid="uid://clwe6bwguowon" path="res://assets/novos_audios/hurt_sound_3d.mp3" id="8_dano"]
-[ext_resource type="AudioStream" uid="uid://kg00ua8r8lwq" path="res://assets/novos_audios/maycon_falling_fase_1.mp3" id="9_grito"]
+[ext_resource type="AudioStream" uid="uid://bhfn5sghu2ngt" path="res://assets/novos_audios/maycon_falling_fase_1_transition.mp3" id="9_grito"]
 [ext_resource type="AudioStream" uid="uid://barhr1sntfpf6" path="res://assets/novos_audios/gun_load.mp3" id="10_engate"]
 
 [sub_resource type="Environment" id="Environment_ceu"]

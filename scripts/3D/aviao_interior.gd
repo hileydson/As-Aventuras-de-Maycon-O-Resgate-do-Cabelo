@@ -23,6 +23,7 @@ const FILEIRAS := 13
 const ESPACO_FILEIRA := 2.4
 
 const VENTO_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
+const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
 
 const Z_BURACO := 16.2
 const SAIDA_BURACO := Vector3(0.0, 5.2, Z_BURACO)
@@ -33,7 +34,7 @@ const ANIM_ANDANDO := "Idle"
 const ANIM_PARADO := "Walking"
 
 const VELOCIDADE_MAYCON := 4.2
-const DURACAO_FADE_IN := 1.1
+const DURACAO_FADE_IN := 2.6
 const DURACAO_FADE_OUT := 1.0
 
 @onready var cabine:Node3D = $Cabine
@@ -51,6 +52,10 @@ var linhas_buraco:MultiMeshInstance3D
 var tralhas:Array[Dictionary] = []
 var tempo_tralha:float = 0.0
 var controle_liberado:bool = false
+
+# Campos exigidos pelo menu de pausa compartilhado das fases 3D
+var exit_started:bool = false
+var death_in_progress:bool = false
 var entrando_na_cabine:bool = false
 var tempo:float = 0.0
 var tempo_passo:float = 0.0
@@ -61,6 +66,7 @@ func _ready() -> void:
 	_montar_cabine()
 	_montar_maycon()
 	_posicionar_camera(true)
+	_montar_pausa()
 	_manter_em_loop($Vento)
 	_manter_em_loop($Motor)
 	dica.text = tr("AVIAO_INTERIOR_DICA")
@@ -73,6 +79,28 @@ func _ready() -> void:
 	dica_tw.tween_property(dica, "modulate:a", 1.0, 0.6)
 	dica_tw.tween_interval(4.5)
 	dica_tw.tween_property(dica, "modulate:a", 0.0, 0.8)
+
+
+func _montar_pausa() -> void:
+	var pausa := CanvasLayer.new()
+	pausa.name = "PauseFofo"
+	pausa.set_script(PAUSE_SCRIPT)
+	add_child(pausa)
+
+
+func exit_to_menu() -> void:
+	if exit_started:
+		return
+	exit_started = true
+	controle_liberado = false
+	get_tree().paused = false
+	fade_rect.color = Color.BLACK
+	var fade_out := create_tween().bind_node(fade_rect)
+	fade_out.tween_property(fade_rect, "modulate:a", 1.0, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	await fade_out.finished
+	Global.back_to_main_camera = true
+	Global.save_progress("fase_aviao")
+	get_tree().change_scene_to_file.call_deferred("res://scenes/menu.tscn")
 
 
 func _manter_em_loop(player:AudioStreamPlayer) -> void:
@@ -534,7 +562,7 @@ func _posicionar_camera(imediato:bool) -> void:
 # ---------------------------------------------------------------- saída
 
 func _ao_entrar_na_cabine(body:Node3D) -> void:
-	if entrando_na_cabine or body != maycon:
+	if entrando_na_cabine or exit_started or body != maycon:
 		return
 	entrando_na_cabine = true
 	controle_liberado = false

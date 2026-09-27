@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/3D/aviao_queda_cutscene.gd" id="1_cut"]
-[ext_resource type="AudioStream" uid="uid://kg00ua8r8lwq" path="res://assets/novos_audios/maycon_falling_fase_1.mp3" id="2_grito"]
+[ext_resource type="AudioStream" uid="uid://bhfn5sghu2ngt" path="res://assets/novos_audios/maycon_falling_fase_1_transition.mp3" id="2_grito"]
 [ext_resource type="AudioStream" uid="uid://cgbaylimr110j" path="res://assets/novos_audios/cidade_intro_wind.mp3" id="3_vento"]
 [ext_resource type="AudioStream" uid="uid://c21fjct4a2rfb" path="res://assets/novos_audios/modo_acelerando.mp3" id="4_motor"]
 
