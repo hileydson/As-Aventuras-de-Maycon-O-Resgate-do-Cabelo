@@ -22,6 +22,16 @@ const PRIMEIRA_FILEIRA_Z := 15.0
 const FILEIRAS := 13
 const ESPACO_FILEIRA := 2.4
 
+const VENTO_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
+
+const Z_BURACO := 16.2
+const SAIDA_BURACO := Vector3(0.0, 5.2, Z_BURACO)
+const INTERVALO_TRALHA := 0.38
+
+# As animações do Maycon estão trocadas de propósito nesta cena
+const ANIM_ANDANDO := "Idle"
+const ANIM_PARADO := "Walking"
+
 const VELOCIDADE_MAYCON := 4.2
 const DURACAO_FADE_IN := 1.1
 const DURACAO_FADE_OUT := 1.0
@@ -36,6 +46,10 @@ var maycon:CharacterBody3D
 var maycon_visual:Node3D
 var maycon_animation:AnimationPlayer
 var porta_cabine:Area3D
+var buraco:Node3D
+var linhas_buraco:MultiMeshInstance3D
+var tralhas:Array[Dictionary] = []
+var tempo_tralha:float = 0.0
 var controle_liberado:bool = false
 var entrando_na_cabine:bool = false
 var tempo:float = 0.0
@@ -80,6 +94,7 @@ func _montar_cabine() -> void:
 	_montar_janelas()
 	_montar_luzes()
 	_montar_anteparo_e_cabine_de_comando()
+	_montar_buraco_no_teto()
 	_montar_colisoes()
 
 
@@ -262,6 +277,143 @@ func _montar_anteparo_e_cabine_de_comando() -> void:
 	cabine.add_child(porta_cabine)
 
 
+# Buraco rasgado no teto, bem em cima de onde o Maycon caiu dentro do avião
+func _montar_buraco_no_teto() -> void:
+	buraco = Node3D.new()
+	buraco.name = "BuracoNoTeto"
+	buraco.position = Vector3(0.0, 0.0, Z_BURACO)
+	cabine.add_child(buraco)
+
+	# Céu aberto visto por dentro
+	var ceu := StandardMaterial3D.new()
+	ceu.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ceu.albedo_color = AviaoModelo.SKY_COLOR
+	ceu.emission_enabled = true
+	ceu.emission = Color(1.0, 1.0, 1.0)
+	ceu.emission_energy_multiplier = 2.4
+	var abertura := QuadMesh.new()
+	abertura.size = Vector2(1.55, 2.6)
+	var mi_ceu := MeshInstance3D.new()
+	mi_ceu.name = "CeuAberto"
+	mi_ceu.mesh = abertura
+	mi_ceu.material_override = ceu
+	mi_ceu.position = Vector3(0.0, 3.12, 0.0)
+	mi_ceu.rotation = Vector3(deg_to_rad(90.0), 0.0, 0.0)
+	buraco.add_child(mi_ceu)
+
+	# Chapas retorcidas na borda do rasgo
+	var metal := StandardMaterial3D.new()
+	metal.albedo_color = Color(0.72, 0.73, 0.76)
+	metal.metallic = 0.7
+	metal.roughness = 0.45
+	for i in range(16):
+		var angulo := float(i) / 16.0 * TAU
+		var lasca := BoxMesh.new()
+		lasca.size = Vector3(randf_range(0.14, 0.32), 0.05, randf_range(0.25, 0.6))
+		var mi := MeshInstance3D.new()
+		mi.name = "Lasca"
+		mi.mesh = lasca
+		mi.material_override = metal
+		mi.position = Vector3(cos(angulo) * 0.82, 3.06 - absf(cos(angulo)) * 0.16, sin(angulo) * 1.35)
+		mi.rotation = Vector3(randf_range(-0.7, -0.15), angulo, randf_range(-0.5, 0.5))
+		buraco.add_child(mi)
+
+	# Feixe de luz entrando pelo rasgo
+	var feixe_mat := StandardMaterial3D.new()
+	feixe_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	feixe_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	feixe_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	feixe_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	feixe_mat.albedo_color = Color(0.85, 0.93, 1.0, 0.05)
+	var feixe := CylinderMesh.new()
+	feixe.top_radius = 0.75
+	feixe.bottom_radius = 1.7
+	feixe.height = 3.1
+	feixe.radial_segments = 16
+	feixe.material = feixe_mat
+	var mi_feixe := MeshInstance3D.new()
+	mi_feixe.name = "FeixeDeLuz"
+	mi_feixe.mesh = feixe
+	mi_feixe.position = Vector3(0.0, 1.55, 0.0)
+	buraco.add_child(mi_feixe)
+
+	var luz := OmniLight3D.new()
+	luz.name = "LuzDoBuraco"
+	luz.light_color = Color(0.9, 0.95, 1.0)
+	luz.light_energy = 3.4
+	luz.omni_range = 9.0
+	luz.position = Vector3(0.0, 2.9, 0.0)
+	buraco.add_child(luz)
+
+	# Vento entrando e subindo pelo rasgo
+	linhas_buraco = MultiMeshInstance3D.new()
+	linhas_buraco.name = "VentoDoBuraco"
+	linhas_buraco.set_script(VENTO_SCRIPT)
+	linhas_buraco.quantidade = 70
+	linhas_buraco.alcance_z = 6.0
+	linhas_buraco.z_limite = 4.4
+	linhas_buraco.raio_min = 0.05
+	linhas_buraco.raio_max = 1.15
+	linhas_buraco.achatamento = 1.25
+	linhas_buraco.velocidade = 13.0
+	linhas_buraco.espessura = 0.022
+	linhas_buraco.comprimento_min = 0.5
+	linhas_buraco.comprimento_max = 1.9
+	linhas_buraco.alpha_min = 0.12
+	linhas_buraco.alpha_max = 0.4
+	# Girado para os riscos subirem em direção ao céu
+	linhas_buraco.rotation.x = deg_to_rad(-90.0)
+	linhas_buraco.position = Vector3(0.0, 0.2, 0.0)
+	buraco.add_child(linhas_buraco)
+
+
+# A cabine está furada, então a tralha solta vai sendo sugada pelo buraco
+func _soltar_tralha() -> void:
+	var item:Node3D
+	if randf() < 0.18:
+		item = AviaoModelo.criar_poltrona()
+		item.scale = Vector3.ONE * 0.7
+	else:
+		item = AviaoModelo.criar_tralha(randf_range(0.45, 1.05))
+	cabine.add_child(item)
+	var inicio := Vector3(
+		randf_range(-1.9, 1.9),
+		randf_range(0.15, 1.5),
+		Z_BURACO + randf_range(-11.0, 3.5)
+	)
+	item.position = inicio
+	tralhas.append({
+		"no": item,
+		"inicio": inicio,
+		"t": 0.0,
+		"dur": randf_range(1.0, 2.1),
+		"giro": Vector3(randf_range(-7.0, 7.0), randf_range(-7.0, 7.0), randf_range(-7.0, 7.0))
+	})
+
+
+func _atualizar_tralhas(delta:float) -> void:
+	tempo_tralha -= delta
+	if tempo_tralha <= 0.0:
+		tempo_tralha = INTERVALO_TRALHA * randf_range(0.6, 1.5)
+		_soltar_tralha()
+	var restantes:Array[Dictionary] = []
+	for tralha in tralhas:
+		var no:Node3D = tralha["no"]
+		if not is_instance_valid(no):
+			continue
+		var t := float(tralha["t"]) + delta / float(tralha["dur"])
+		tralha["t"] = t
+		if t >= 1.0:
+			no.queue_free()
+			continue
+		# Sugado cada vez mais rápido em direção ao rasgo
+		var avanco := pow(t, 2.1)
+		no.position = Vector3(tralha["inicio"]).lerp(SAIDA_BURACO, avanco)
+		no.rotation += Vector3(tralha["giro"]) * delta
+		restantes.append(tralha)
+	tralhas = restantes
+
+
 func _montar_colisoes() -> void:
 	var corpo := StaticBody3D.new()
 	corpo.name = "ColisoesCabine"
@@ -301,7 +453,7 @@ func _montar_maycon() -> void:
 	maycon_animation = maycon_visual.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	maycon.position = Vector3(0.0, 0.05, Z_FUNDO - 1.0)
 	add_child(maycon)
-	_tocar_animacao("Idle")
+	_tocar_animacao(ANIM_PARADO)
 
 
 func _tocar_animacao(nome:String) -> void:
@@ -314,6 +466,7 @@ func _tocar_animacao(nome:String) -> void:
 
 func _physics_process(delta:float) -> void:
 	tempo += delta
+	_atualizar_tralhas(delta)
 	if entrando_na_cabine or not controle_liberado:
 		if is_instance_valid(maycon):
 			maycon.velocity = Vector3.ZERO
@@ -334,10 +487,10 @@ func _physics_process(delta:float) -> void:
 		maycon.velocity.y = 0.0
 	if direcao.length_squared() > 0.01:
 		maycon_visual.rotation.y = lerp_angle(maycon_visual.rotation.y, atan2(direcao.x, direcao.z), minf(delta * 11.0, 1.0))
-		_tocar_animacao("Walking")
+		_tocar_animacao(ANIM_ANDANDO)
 		_atualizar_passos(delta)
 	else:
-		_tocar_animacao("Idle")
+		_tocar_animacao(ANIM_PARADO)
 		tempo_passo = 0.0
 	_posicionar_camera(false)
 
@@ -353,7 +506,15 @@ func _atualizar_passos(delta:float) -> void:
 func _posicionar_camera(imediato:bool) -> void:
 	if not is_instance_valid(maycon):
 		return
-	var balanco := Vector3(sin(tempo * 1.7) * 0.035, sin(tempo * 2.3) * 0.028, 0.0)
+	# Balanço constante de avião em voo, com alguns solavancos de turbulência
+	var balanco := Vector3(
+		sin(tempo * 1.7) * 0.075 + sin(tempo * 5.9) * 0.022,
+		sin(tempo * 2.3) * 0.06 + cos(tempo * 7.3) * 0.018,
+		0.0
+	)
+	var solavanco := maxf(sin(tempo * 0.41) - 0.85, 0.0) * 1.6
+	balanco.y += sin(tempo * 23.0) * 0.09 * solavanco
+	balanco.x += cos(tempo * 19.0) * 0.07 * solavanco
 	if entrando_na_cabine:
 		# Dentro da cabine de comando a câmera fica de lado, vendo o Maycon entrar
 		var posto := Vector3(1.55, 1.5, Z_POSTO_PILOTO + 0.1) + balanco
@@ -367,6 +528,7 @@ func _posicionar_camera(imediato:bool) -> void:
 	else:
 		camera.global_position = camera.global_position.lerp(desejada, 0.22)
 	camera.look_at(maycon.global_position + Vector3(0.0, 1.12, -2.4), Vector3.UP)
+	camera.rotation.z = sin(tempo * 1.9) * 0.02 + sin(tempo * 6.7) * 0.006 + sin(tempo * 17.0) * 0.012 * solavanco
 
 
 # ---------------------------------------------------------------- saída
@@ -377,7 +539,7 @@ func _ao_entrar_na_cabine(body:Node3D) -> void:
 	entrando_na_cabine = true
 	controle_liberado = false
 	maycon.velocity = Vector3.ZERO
-	_tocar_animacao("Walking")
+	_tocar_animacao(ANIM_ANDANDO)
 	var dica_tw := create_tween().bind_node(dica)
 	dica_tw.tween_property(dica, "modulate:a", 0.0, 0.3)
 
@@ -390,7 +552,7 @@ func _ao_entrar_na_cabine(body:Node3D) -> void:
 	giro.tween_interval(0.9)
 	giro.tween_property(maycon_visual, "rotation:y", PI + 0.35, 0.9)
 	await caminhada.finished
-	_tocar_animacao("Idle")
+	_tocar_animacao(ANIM_PARADO)
 	await get_tree().create_timer(0.45).timeout
 
 	var fade_out := create_tween().bind_node(fade_rect)

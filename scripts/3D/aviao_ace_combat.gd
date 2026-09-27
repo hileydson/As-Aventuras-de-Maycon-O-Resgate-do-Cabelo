@@ -35,6 +35,11 @@ const RAIO_BALA_LIPS := 21.0
 const DANO_LANCHE := 18.0
 const VELOCIDADE_LANCHE := 58.0
 const RAIO_LANCHE := 6.0
+const TAMANHO_LANCHE := 13.0
+
+# Buraco por onde o Maycon entrou, no alto da fuselagem
+const BURACO_LOCAL := Vector3(0.0, 1.78, 2.2)
+const INTERVALO_DETRITO := 0.5
 
 @onready var aviao:Node3D = $Aviao
 @onready var camera:Camera3D = $Camera3D
@@ -82,6 +87,9 @@ var tremor:float = 0.0
 var armas_prontas:bool = false
 var controle_liberado:bool = false
 var lado_do_tiro:int = 0
+var buraco_aviao:Node3D
+var detritos:Array[Dictionary] = []
+var tempo_detrito:float = 0.0
 var desfecho_em_andamento:bool = false
 
 # Campos exigidos pelo menu de pausa compartilhado da fase 3D
@@ -134,10 +142,141 @@ func _montar_aviao() -> void:
 		arma.scale = Vector3(0.01, 0.01, 0.01)
 		aviao.add_child(arma)
 		metralhadoras.append(arma)
+	_montar_buraco_da_fuselagem()
 	linhas_vento = MultiMeshInstance3D.new()
 	linhas_vento.name = "LinhasDeVento"
 	linhas_vento.set_script(VENTO_SCRIPT)
 	add_child(linhas_vento)
+
+
+# O rombo que o Maycon abriu ao cair em cima do avião: fica escancarado no alto
+# da fuselagem, soltando a tralha da cabine no vento.
+func _montar_buraco_da_fuselagem() -> void:
+	buraco_aviao = Node3D.new()
+	buraco_aviao.name = "BuracoDaFuselagem"
+	buraco_aviao.position = BURACO_LOCAL
+	aviao.add_child(buraco_aviao)
+
+	# Vão escuro, olhando para dentro da cabine
+	var vao := StandardMaterial3D.new()
+	vao.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	vao.albedo_color = Color(0.05, 0.05, 0.07)
+	var abertura := QuadMesh.new()
+	abertura.size = Vector2(2.0, 3.2)
+	var mi_vao := MeshInstance3D.new()
+	mi_vao.name = "Vao"
+	mi_vao.mesh = abertura
+	mi_vao.material_override = vao
+	mi_vao.rotation = Vector3(deg_to_rad(-90.0), 0.0, 0.0)
+	buraco_aviao.add_child(mi_vao)
+
+	# Chapas arrancadas na borda
+	var metal := StandardMaterial3D.new()
+	metal.albedo_color = Color(0.78, 0.79, 0.82)
+	metal.metallic = 0.75
+	metal.roughness = 0.4
+	for i in range(14):
+		var angulo := float(i) / 14.0 * TAU
+		var lasca := BoxMesh.new()
+		lasca.size = Vector3(randf_range(0.16, 0.36), 0.05, randf_range(0.3, 0.75))
+		var mi := MeshInstance3D.new()
+		mi.name = "Lasca"
+		mi.mesh = lasca
+		mi.material_override = metal
+		mi.position = Vector3(cos(angulo) * 1.08, randf_range(0.02, 0.2), sin(angulo) * 1.72)
+		mi.rotation = Vector3(randf_range(0.15, 0.8), angulo, randf_range(-0.5, 0.5))
+		buraco_aviao.add_child(mi)
+
+	# Fumaça arrastada para trás pelo vento, denunciando o rombo
+	var processo := ParticleProcessMaterial.new()
+	processo.direction = Vector3(0.0, 0.45, 1.0)
+	processo.spread = 14.0
+	processo.initial_velocity_min = 28.0
+	processo.initial_velocity_max = 46.0
+	processo.gravity = Vector3(0.0, -2.0, 0.0)
+	processo.scale_min = 0.25
+	processo.scale_max = 1.15
+	processo.color = Color(0.9, 0.91, 0.94, 0.16)
+	var nuvem := QuadMesh.new()
+	nuvem.size = Vector2(2.0, 2.0)
+	var nuvem_mat := StandardMaterial3D.new()
+	nuvem_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	nuvem_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	nuvem_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	nuvem_mat.vertex_color_use_as_albedo = true
+	nuvem_mat.albedo_color = Color(0.92, 0.93, 0.96, 1.0)
+	nuvem_mat.albedo_texture = _textura_de_nuvem()
+	nuvem_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	nuvem.material = nuvem_mat
+	var fumaca := GPUParticles3D.new()
+	fumaca.name = "FumacaDoBuraco"
+	fumaca.amount = 30
+	fumaca.lifetime = 1.0
+	fumaca.local_coords = false
+	fumaca.process_material = processo
+	fumaca.draw_pass_1 = nuvem
+	fumaca.position = Vector3(0.0, 0.25, 0.4)
+	buraco_aviao.add_child(fumaca)
+
+
+# Baforada redonda e suave, em vez do quadrado duro do QuadMesh
+func _textura_de_nuvem() -> GradientTexture2D:
+	var degrade := Gradient.new()
+	degrade.set_color(0, Color(1.0, 1.0, 1.0, 0.85))
+	degrade.set_color(1, Color(1.0, 1.0, 1.0, 0.0))
+	var textura := GradientTexture2D.new()
+	textura.gradient = degrade
+	textura.fill = GradientTexture2D.FILL_RADIAL
+	textura.fill_from = Vector2(0.5, 0.5)
+	textura.fill_to = Vector2(1.0, 0.5)
+	textura.width = 64
+	textura.height = 64
+	return textura
+
+
+func _soltar_detrito() -> void:
+	if not is_instance_valid(buraco_aviao):
+		return
+	var item:Node3D
+	if randf() < 0.32:
+		item = AviaoModelo.criar_poltrona()
+		item.scale = Vector3.ONE * 2.0
+	else:
+		item = AviaoModelo.criar_tralha(randf_range(1.2, 2.6))
+	efeitos.add_child(item)
+	item.global_position = buraco_aviao.global_position + Vector3(randf_range(-0.5, 0.5), 0.2, randf_range(-0.8, 0.8))
+	detritos.append({
+		"no": item,
+		"vel": Vector3(randf_range(-4.0, 4.0), randf_range(6.0, 13.0), randf_range(26.0, 44.0)),
+		"giro": Vector3(randf_range(-8.0, 8.0), randf_range(-8.0, 8.0), randf_range(-8.0, 8.0)),
+		"vida": 3.0
+	})
+
+
+func _atualizar_detritos(delta:float) -> void:
+	tempo_detrito -= delta
+	if tempo_detrito <= 0.0:
+		tempo_detrito = INTERVALO_DETRITO * randf_range(0.5, 1.6)
+		_soltar_detrito()
+	var restantes:Array[Dictionary] = []
+	for detrito in detritos:
+		var no:Node3D = detrito["no"]
+		if not is_instance_valid(no):
+			continue
+		var vel:Vector3 = detrito["vel"]
+		# O vento de frente joga tudo para trás e para baixo
+		vel.z += 46.0 * delta
+		vel.y -= 9.0 * delta
+		detrito["vel"] = vel
+		no.global_position += vel * delta
+		no.rotation += Vector3(detrito["giro"]) * delta
+		detrito["vida"] = float(detrito["vida"]) - delta
+		# Some antes de passar por cima da câmera, para não tapar a tela
+		if float(detrito["vida"]) <= 0.0 or no.global_position.z > camera.global_position.z - 8.0:
+			no.queue_free()
+			continue
+		restantes.append(detrito)
+	detritos = restantes
 
 
 func _montar_lips() -> void:
@@ -331,6 +470,7 @@ func _process(delta:float) -> void:
 	_atualizar_tiro(delta)
 	_atualizar_balas(delta)
 	_atualizar_lanches(delta)
+	_atualizar_detritos(delta)
 	_atualizar_ataques_do_lips(delta)
 	if tremor > 0.0:
 		tremor = maxf(0.0, tremor - delta * 1.6)
@@ -489,31 +629,47 @@ func _atualizar_ataques_do_lips(delta:float) -> void:
 
 
 func _lancar_lanche() -> void:
-	var lanche := Sprite3D.new()
-	lanche.name = "LancheGigante"
-	lanche.texture = LANCHE_TEXTURE
-	lanche.pixel_size = 0.03
-	lanche.shaded = false
-	lanche.double_sided = true
-	lanche.transparent = true
+	# O Lips cospe a coxinha do Xuruzika e também vários outros lanches gigantes
+	var lanche:Node3D
+	var billboard := randf() < 0.25
+	if billboard:
+		var sprite := Sprite3D.new()
+		sprite.name = "CoxinhaGigante"
+		sprite.texture = LANCHE_TEXTURE
+		sprite.pixel_size = 0.03
+		sprite.shaded = false
+		sprite.double_sided = true
+		sprite.transparent = true
+		lanche = sprite
+	else:
+		lanche = AviaoModelo.criar_lanche(TAMANHO_LANCHE)
 	lanches_no.add_child(lanche)
 	lanche.global_position = lips.boca_global()
 	var mira_lanche := aviao.global_position + Vector3(randf_range(-7.0, 7.0), randf_range(-5.0, 5.0), 0.0)
 	var direcao := (mira_lanche - lanche.global_position).normalized()
-	lanches.append({"no": lanche, "dir": direcao, "giro": randf_range(-2.6, 2.6)})
+	lanches.append({
+		"no": lanche,
+		"dir": direcao,
+		"giro": randf_range(-2.6, 2.6),
+		"billboard": billboard,
+		"giro3d": Vector3(randf_range(-2.4, 2.4), randf_range(-2.4, 2.4), randf_range(-2.4, 2.4))
+	})
 	lips.gritar()
 
 
 func _atualizar_lanches(delta:float) -> void:
 	var restantes:Array[Dictionary] = []
 	for lanche in lanches:
-		var no:Sprite3D = lanche["no"]
+		var no:Node3D = lanche["no"]
 		if not is_instance_valid(no):
 			continue
 		no.global_position += Vector3(lanche["dir"]) * VELOCIDADE_LANCHE * delta
-		# Sempre de frente para a câmera, girando enquanto voa
-		no.look_at(no.global_position + (no.global_position - camera.global_position), Vector3.UP)
-		no.rotate_object_local(Vector3(0.0, 0.0, 1.0), float(lanche["giro"]) * delta)
+		if bool(lanche["billboard"]):
+			# A coxinha é um sprite: fica sempre de frente para a câmera, girando
+			no.look_at(no.global_position + (no.global_position - camera.global_position), Vector3.UP)
+			no.rotate_object_local(Vector3(0.0, 0.0, 1.0), float(lanche["giro"]) * delta)
+		else:
+			no.rotation += Vector3(lanche["giro3d"]) * delta
 		if no.global_position.distance_to(aviao.global_position) <= RAIO_LANCHE:
 			_levar_lanchada(no.global_position)
 			no.queue_free()

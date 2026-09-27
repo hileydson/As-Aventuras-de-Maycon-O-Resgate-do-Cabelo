@@ -5,6 +5,7 @@ extends Node3D
 # As câmeras alternam entre o avião e o Maycon, cada corte mais rápido que o
 # anterior, até que a câmera lenta acaba e o fade out cobre a batida dos dois.
 
+const VENTO_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
 const PROXIMA_CENA = "res://scenes/3D/aviao_interior.tscn"
 
 # Duração de cada corte de câmera, sempre menor que o anterior (12,4s no total)
@@ -65,6 +66,8 @@ var cortes_terminados:bool = false
 var tempo_retomada:float = 0.0
 var saida_iniciada:bool = false
 var giro_maycon:float = 0.0
+var linhas_maycon:MultiMeshInstance3D
+var linhas_aviao:MultiMeshInstance3D
 
 
 func _ready() -> void:
@@ -72,6 +75,7 @@ func _ready() -> void:
 	sol.rotation = Vector3(deg_to_rad(-48.0), deg_to_rad(38.0), 0.0)
 	_montar_aviao()
 	_montar_maycon()
+	_montar_vento()
 	_posicionar_mundo(0.0)
 	_trocar_corte()
 	_atualizar_cameras()
@@ -110,6 +114,40 @@ func _montar_maycon() -> void:
 	maycon.position = MAYCON_INICIO
 
 
+# Riscos finos de vento: subindo junto do Maycon em queda e correndo para trás
+# junto do avião, igual aos do combate aéreo
+func _montar_vento() -> void:
+	linhas_maycon = MultiMeshInstance3D.new()
+	linhas_maycon.name = "VentoDaQueda"
+	linhas_maycon.set_script(VENTO_SCRIPT)
+	linhas_maycon.quantidade = 170
+	linhas_maycon.alcance_z = 42.0
+	linhas_maycon.z_limite = 20.0
+	linhas_maycon.raio_min = 0.9
+	linhas_maycon.raio_max = 7.5
+	linhas_maycon.achatamento = 1.0
+	linhas_maycon.velocidade = 78.0
+	linhas_maycon.espessura = 0.03
+	linhas_maycon.comprimento_min = 1.6
+	linhas_maycon.comprimento_max = 5.5
+	linhas_maycon.alpha_min = 0.22
+	linhas_maycon.alpha_max = 0.6
+	# Girado para os riscos subirem, já que o Maycon está despencando
+	linhas_maycon.rotation.x = deg_to_rad(-90.0)
+	add_child(linhas_maycon)
+
+	linhas_aviao = MultiMeshInstance3D.new()
+	linhas_aviao.name = "VentoDoAviao"
+	linhas_aviao.set_script(VENTO_SCRIPT)
+	linhas_aviao.quantidade = 130
+	linhas_aviao.alcance_z = 260.0
+	linhas_aviao.z_limite = 34.0
+	linhas_aviao.raio_min = 6.0
+	linhas_aviao.raio_max = 46.0
+	linhas_aviao.velocidade = 210.0
+	add_child(linhas_aviao)
+
+
 func _process(delta:float) -> void:
 	tempo_cena += delta
 	var fator := FATOR_SLOW_MOTION
@@ -121,6 +159,13 @@ func _process(delta:float) -> void:
 	tempo_mundo = minf(tempo_mundo + delta * fator, TEMPO_MUNDO_TOTAL)
 	if maycon_animation:
 		maycon_animation.speed_scale = maxf(fator * 2.2, 0.08)
+	# O vento também entra e sai da câmera lenta junto com a cena
+	if is_instance_valid(linhas_maycon):
+		linhas_maycon.escala_tempo = fator
+		linhas_maycon.position = maycon.position
+	if is_instance_valid(linhas_aviao):
+		linhas_aviao.escala_tempo = fator
+		linhas_aviao.position = aviao.position
 	_posicionar_mundo(tempo_mundo / TEMPO_MUNDO_TOTAL)
 	_atualizar_cortes(delta)
 	_atualizar_cameras()

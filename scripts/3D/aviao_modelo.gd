@@ -10,6 +10,35 @@ const PLANE_MESH = preload("res://assets/modelo_3d/ace_combat/airplane_v2_L2.123
 const GUN_SCENE = preload("res://assets/modelo_3d/ace_combat/ScrapGatlingGun.gltf")
 const MAYCON_MODEL = preload("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
 const MAYCON_AIR_FLAIL = preload("res://assets/novas_imagens/3d_enemies/maycon_air_flail.res")
+const TEX_ASSENTO = preload("res://assets/polyhaven/aviao_interior/seat_fabric_diff_1k.jpg")
+const TEX_ASSENTO_NORMAL = preload("res://assets/polyhaven/aviao_interior/seat_fabric_normal_1k.jpg")
+
+# Lanches gigantes que o Lips arremessa (Kenney Food Kit, CC0)
+const LANCHES:Array[PackedScene] = [
+	preload("res://assets/kenney/food_kit/burger-cheese-double.glb"),
+	preload("res://assets/kenney/food_kit/hot-dog.glb"),
+	preload("res://assets/kenney/food_kit/pizza.glb"),
+	preload("res://assets/kenney/food_kit/fries.glb"),
+	preload("res://assets/kenney/food_kit/donut-sprinkles.glb"),
+	preload("res://assets/kenney/food_kit/sandwich.glb"),
+	preload("res://assets/kenney/food_kit/taco.glb"),
+	preload("res://assets/kenney/food_kit/sub.glb"),
+	preload("res://assets/kenney/food_kit/cake.glb"),
+	preload("res://assets/kenney/food_kit/turkey.glb"),
+	preload("res://assets/kenney/food_kit/corn-dog.glb"),
+	preload("res://assets/kenney/food_kit/soda.glb"),
+	preload("res://assets/kenney/food_kit/ice-cream-cne.glb")
+]
+
+# Tralha solta da cabine, que é sugada pelo buraco do avião
+const TRALHA_CABINE:Array[PackedScene] = [
+	preload("res://assets/polyhaven/aviao_interior/korean_fire_extinguisher_01/korean_fire_extinguisher_01_1k.gltf"),
+	preload("res://assets/polyhaven/aviao_interior/vintage_suitcase/vintage_suitcase_1k.gltf"),
+	preload("res://assets/kenney/food_kit/bag.glb"),
+	preload("res://assets/kenney/food_kit/cup.glb"),
+	preload("res://assets/kenney/food_kit/soda-can.glb"),
+	preload("res://assets/kenney/food_kit/carton.glb")
+]
 
 const PLANE_SCALE = 0.02
 # Centraliza a fuselagem na origem do nó (eixo do tubo fica em z=183 no OBJ original)
@@ -119,6 +148,83 @@ static func ajustar_materiais_maycon(root:Node) -> void:
 					mi.set_surface_override_material(s, dup)
 
 
+# Instancia um modelo já centrado na origem e redimensionado para caber em
+# `tamanho_alvo` na maior dimensão, independente da escala original do pacote.
+static func criar_objeto(cena:PackedScene, tamanho_alvo:float, nome:String = "Objeto") -> Node3D:
+	var holder := Node3D.new()
+	holder.name = nome
+	var modelo:Node3D = cena.instantiate()
+	var caixa:AABB = _aabb_local(modelo)
+	var maior := maxf(maxf(caixa.size.x, caixa.size.y), caixa.size.z)
+	var fator := 1.0 if maior < 0.0001 else tamanho_alvo / maior
+	modelo.position = -caixa.get_center()
+	var escala := Node3D.new()
+	escala.name = "Escala"
+	escala.scale = Vector3.ONE * fator
+	escala.add_child(modelo)
+	holder.add_child(escala)
+	return holder
+
+
+static func criar_lanche(tamanho_alvo:float) -> Node3D:
+	var cena:PackedScene = LANCHES[randi() % LANCHES.size()]
+	return criar_objeto(cena, tamanho_alvo, "LancheGigante")
+
+
+static func criar_tralha(tamanho_alvo:float) -> Node3D:
+	var cena:PackedScene = TRALHA_CABINE[randi() % TRALHA_CABINE.size()]
+	return criar_objeto(cena, tamanho_alvo, "TralhaDaCabine")
+
+
+static func material_tecido_assento() -> StandardMaterial3D:
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = TEX_ASSENTO
+	mat.normal_enabled = true
+	mat.normal_texture = TEX_ASSENTO_NORMAL
+	mat.uv1_scale = Vector3(2.0, 2.0, 1.0)
+	mat.albedo_color = Color(0.62, 0.68, 0.85)
+	mat.roughness = 0.85
+	mat.metallic = 0.0
+	return mat
+
+
+static func material_plastico_cabine() -> StandardMaterial3D:
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.16, 0.17, 0.2)
+	mat.roughness = 0.6
+	return mat
+
+
+# Poltrona simples de avião, usada tanto na cabine quanto nos destroços que
+# saem voando pelo buraco durante o combate aéreo.
+static func criar_poltrona(tecido:Material = null, plastico:Material = null) -> Node3D:
+	if tecido == null:
+		tecido = material_tecido_assento()
+	if plastico == null:
+		plastico = material_plastico_cabine()
+	var poltrona := Node3D.new()
+	poltrona.name = "Poltrona"
+	_caixa_simples(poltrona, "Assento", Vector3(0.56, 0.16, 0.54), Vector3(0.0, 0.45, 0.0), tecido)
+	_caixa_simples(poltrona, "Encosto", Vector3(0.56, 0.72, 0.14), Vector3(0.0, 0.83, 0.29), tecido)
+	_caixa_simples(poltrona, "Apoio", Vector3(0.6, 0.12, 0.2), Vector3(0.0, 1.16, 0.29), tecido)
+	_caixa_simples(poltrona, "Pe", Vector3(0.12, 0.38, 0.4), Vector3(0.0, 0.18, 0.05), plastico)
+	for lado:float in [-1.0, 1.0]:
+		_caixa_simples(poltrona, "Braco", Vector3(0.07, 0.08, 0.46), Vector3(lado * 0.3, 0.62, 0.02), plastico)
+	return poltrona
+
+
+static func _caixa_simples(pai:Node3D, nome:String, tamanho:Vector3, posicao:Vector3, material:Material) -> MeshInstance3D:
+	var mesh := BoxMesh.new()
+	mesh.size = tamanho
+	var mi := MeshInstance3D.new()
+	mi.name = nome
+	mi.mesh = mesh
+	mi.position = posicao
+	mi.material_override = material
+	pai.add_child(mi)
+	return mi
+
+
 static func criar_ambiente_ceu(densidade_neblina:float = 0.004) -> Environment:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_COLOR
@@ -154,7 +260,11 @@ static func _e_peca_da_metralhadora(nome:String) -> bool:
 static func _aabb_local(root:Node3D) -> AABB:
 	var total := AABB()
 	var primeiro := true
-	for node in root.find_children("*", "MeshInstance3D", true, false):
+	var malhas:Array[Node] = root.find_children("*", "MeshInstance3D", true, false)
+	# Alguns glTF de uma malha só são importados com a própria raiz sendo o mesh
+	if root is MeshInstance3D:
+		malhas.append(root)
+	for node in malhas:
 		var mi := node as MeshInstance3D
 		if not mi or not mi.mesh:
 			continue
