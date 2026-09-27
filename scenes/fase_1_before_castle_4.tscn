@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://b5uspfqhsepac"]
+[gd_scene load_steps=76 format=3 uid="uid://b5uspfqhsepac"]
 
 [ext_resource type="Texture2D" uid="uid://1i0426wllk8o" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_4.png" id="1_gv3vu"]
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_vi3cd"]
@@ -15,6 +15,9 @@
 [ext_resource type="Texture2D" uid="uid://dxieyw0cpujpk" path="res://assets/novas_imagens/effects/Pixel fire/fire asset red floored/Group 4 - 1/Group 4 - 1.png" id="11_nosu4"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="12_fjlh3"]
 [ext_resource type="PackedScene" uid="uid://chpqi8ryj0b1g" path="res://scenes/bloco.tscn" id="14_d2dfm"]
+[ext_resource type="Texture2D" uid="uid://bs67ndmklpp1b" path="res://assets/novas_imagens/maycon/maycon_falling.png" id="20_queda"]
+[ext_resource type="Texture2D" uid="uid://drf85jfsrrmkk" path="res://assets/novas_imagens/effects/smoke_animation.png" id="21_poeira"]
+[ext_resource type="AudioStream" uid="uid://kg00ua8r8lwq" path="res://assets/novos_audios/maycon_falling_fase_1.mp3" id="22_gritoqueda"]
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -41,27 +44,285 @@ length = 4.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("maycon_fase:visible")
+tracks/0/path = NodePath("maycon_falling:animation")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
+"times": PackedFloat32Array(0.93333334),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"falling"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("maycon_falling:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.96666664, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-1513, -799), Vector2(-1513, 232)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("maycon_fase:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
 "times": PackedFloat32Array(0.1, 2.8),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
 }
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("maycon_fase:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("maycon_falling:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.1, 2.7666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("maycon_falling")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1.6666666),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": ["on_ground"],
+"method": &"play"
+}]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("maycon_fase:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
 "times": PackedFloat32Array(0.7, 2.7666667),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(-1469, 169), Vector2(-1469, 169)]
+"values": [Vector2(-1528.9998, 181), Vector2(-1528.9998, 181)]
 }
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("MayconFallingFase4")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.13333334),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("smoke:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0.033333335, 2, 3.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/8/type = "method"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("smoke")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(2.1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"default"],
+"method": &"play"
+}]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("maycon_fase")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(2.7, 3.6),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"pause"
+}, {
+"args": [],
+"method": &"unpause"
+}]
+}
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4c6yjk"]
+atlas = ExtResource("20_queda")
+region = Rect2(156, 0, 156, 177)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q426g4g"]
+atlas = ExtResource("20_queda")
+region = Rect2(0, 0, 156, 177)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q40x3b6"]
+atlas = ExtResource("20_queda")
+region = Rect2(0, 177, 156, 177)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4wkoui"]
+atlas = ExtResource("20_queda")
+region = Rect2(312, 0, 156, 177)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4mxoto"]
+atlas = ExtResource("20_queda")
+region = Rect2(312, 177, 156, 177)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4eynw3"]
+atlas = ExtResource("20_queda")
+region = Rect2(156, 177, 156, 177)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4v5dpv"]
+atlas = ExtResource("20_queda")
+region = Rect2(0, 354, 156, 177)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4xit4y"]
+atlas = ExtResource("20_queda")
+region = Rect2(156, 354, 156, 177)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4gn6wi"]
+atlas = ExtResource("21_poeira")
+region = Rect2(408, 204, 204, 204)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4rn1vd"]
+atlas = ExtResource("21_poeira")
+region = Rect2(204, 204, 204, 204)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4n1ahb"]
+atlas = ExtResource("21_poeira")
+region = Rect2(0, 204, 204, 204)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4ivltl"]
+atlas = ExtResource("21_poeira")
+region = Rect2(0, 0, 204, 204)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4avwlo"]
+atlas = ExtResource("21_poeira")
+region = Rect2(204, 0, 204, 204)
+
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4cm2i2"]
+atlas = ExtResource("21_poeira")
+region = Rect2(408, 0, 204, 204)
+
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_queda4"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q4c6yjk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q426g4g")
+}],
+"loop": false,
+"name": &"falling",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_q40x3b6")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_q4wkoui")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_q4mxoto")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_q4eynw3")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_q4v5dpv")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_q4xit4y")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_q4wkoui")
+}, {
+"duration": 0.81,
+"texture": SubResource("AtlasTexture_q40x3b6")
+}],
+"loop": false,
+"name": &"on_ground",
+"speed": 5.0
+}]
+
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_poeira4"]
+animations = [{
+"frames": [{
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_q4gn6wi")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_q4rn1vd")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_q4n1ahb")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_q4ivltl")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_q4avwlo")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_q4cm2i2")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_q4n1ahb")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_q4rn1vd")
+}, {
+"duration": 1.01,
+"texture": SubResource("AtlasTexture_q4gn6wi")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]
+
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ahm46"]
 _data = {
@@ -324,6 +585,26 @@ script = ExtResource("2_gv3vu")
 libraries = {
 &"": SubResource("AnimationLibrary_ahm46")
 }
+
+[node name="MayconFallingFase4" type="AudioStreamPlayer" parent="Fase1BeforeCastle"]
+stream = ExtResource("22_gritoqueda")
+volume_db = -7.548
+pitch_scale = 1.13
+
+[node name="maycon_falling" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+visible = false
+position = Vector2(-1513, -799)
+scale = Vector2(1.4807692, 1.7266952)
+sprite_frames = SubResource("SpriteFrames_queda4")
+animation = &"on_ground"
+
+[node name="smoke" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+visible = false
+position = Vector2(-1491, 347)
+scale = Vector2(0.8857415, 0.6866642)
+sprite_frames = SubResource("SpriteFrames_poeira4")
+frame = 3
+frame_progress = 1.0
 
 [node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("3_dlb6u")]
 light_mask = 512

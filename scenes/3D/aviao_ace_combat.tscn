@@ -1,0 +1,96 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/3D/aviao_ace_combat.gd" id="1_ace"]
+[ext_resource type="AudioStream" uid="uid://d23jsbvra6ofb" path="res://assets/novos_audios/3d_first_battle_seco.mp3" id="2_musica"]
+[ext_resource type="AudioStream" uid="uid://cgbaylimr110j" path="res://assets/novos_audios/cidade_intro_wind.mp3" id="3_vento"]
+[ext_resource type="AudioStream" uid="uid://c21fjct4a2rfb" path="res://assets/novos_audios/modo_acelerando.mp3" id="4_motor"]
+[ext_resource type="AudioStream" uid="uid://dxlxhstdapo76" path="res://assets/novos_audios/gun_shot.mp3" id="5_tiro"]
+[ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="6_explosao"]
+[ext_resource type="AudioStream" uid="uid://bhcvqv63n0fh8" path="res://assets/novos_audios/metal_batendo.mp3" id="7_metal"]
+[ext_resource type="AudioStream" uid="uid://clwe6bwguowon" path="res://assets/novos_audios/hurt_sound_3d.mp3" id="8_dano"]
+[ext_resource type="AudioStream" uid="uid://kg00ua8r8lwq" path="res://assets/novos_audios/maycon_falling_fase_1.mp3" id="9_grito"]
+[ext_resource type="AudioStream" uid="uid://barhr1sntfpf6" path="res://assets/novos_audios/gun_load.mp3" id="10_engate"]
+
+[sub_resource type="Environment" id="Environment_ceu"]
+background_mode = 1
+background_color = Color(0.5686275, 0.78431374, 0.90588236, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.8784314, 0.9019608, 0.9372549, 1)
+ambient_light_energy = 0.72
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.55
+glow_bloom = 0.12
+fog_enabled = true
+fog_light_color = Color(0.65882355, 0.8156863, 0.9019608, 1)
+fog_density = 0.0016
+
+[node name="aviao_ace_combat" type="Node3D"]
+script = ExtResource("1_ace")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ceu")
+
+[node name="Sol" type="DirectionalLight3D" parent="."]
+light_color = Color(1, 0.97, 0.9, 1)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="Aviao" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+current = true
+fov = 68.0
+far = 3000.0
+
+[node name="Projeteis" type="Node3D" parent="."]
+
+[node name="Lanches" type="Node3D" parent="."]
+
+[node name="Efeitos" type="Node3D" parent="."]
+
+[node name="Musica" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_musica")
+volume_db = -9.0
+
+[node name="Vento" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_vento")
+volume_db = -8.0
+autoplay = true
+
+[node name="Motor" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_motor")
+volume_db = -13.0
+pitch_scale = 0.8
+autoplay = true
+
+[node name="Tiro" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_tiro")
+volume_db = -10.0
+
+[node name="Explosao" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_explosao")
+
+[node name="Impacto" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_metal")
+volume_db = -2.0
+
+[node name="Dano" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_dano")
+
+[node name="Grito" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_grito")
+
+[node name="Engate" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_engate")
+volume_db = -4.0
+
+[node name="Fade" type="CanvasLayer" parent="."]
+layer = 30
+
+[node name="FadeRect" type="ColorRect" parent="Fade"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(1, 1, 1, 1)

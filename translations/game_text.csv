@@ -317,6 +317,7 @@ FASE_NAME_FASE_1,Bela Aurora (Parte 1),Bela Aurora (Part 1),Bela Aurora (Parte 1
 FASE_NAME_FASE_2,Bela Aurora (Parte 2),Bela Aurora (Part 2),Bela Aurora (Parte 2),贝拉奥罗拉 (第2部分)
 FASE_NAME_FASE_3,Caminho do Castelo,Castle Path,Camino del Castillo,城堡小径
 FASE_NAME_FASE_3D_PLATFORM,Super Maycon Brother,Super Maycon Brother,Super Maycon Brother,超级麦肯兄弟
+FASE_NAME_FASE_AVIAO,Céu do Lips,Lips' Sky,Cielo de Lips,利普斯的天空
 FASE_NAME_FASE_4,Posto Estrela da Serra,Estrela da Serra Gas Station,Gasolinera Estrela da Serra,塞拉之星加油站
 FASE_NAME_CASTELO_1,Castelo do Seco (Entrada),Seco Castle (Entrance),Castillo de Seco (Entrada),塞科城堡 (入口)
 FASE_NAME_CASTELO_2,Castelo do Seco (Salão),Seco Castle (Hall),Castillo de Seco (Salón),塞科城堡 (大厅)
@@ -393,3 +394,10 @@ DUNGEON_RUN_ACTION,Correr,Run,Correr,奔跑
 DUNGEON_HP_LABEL,VIDA,HEALTH,VIDA,生命值
 DUNGEON_STAMINA_LABEL,ESTAMINA,STAMINA,ESTAMINA,耐力
 DUNGEON_TITLE_CUTSCENE,Calabouço Podre do Cacete,Damn Rotten Dungeon,Maldito Calabozo Podrido,该死的腐烂地牢
+AVIAO_INTERIOR_DICA,Use as setas para andar até a cabine de comando,Use the arrow keys to walk to the cockpit,Usa las flechas para caminar hasta la cabina,使用方向键走向驾驶舱
+AVIAO_HUD_PILOTAR,Setas / WASD: pilotar,Arrows / WASD: fly,Flechas / WASD: pilotar,方向键 / WASD：驾驶
+AVIAO_HUD_ATIRAR,Clique / RT: metralhadoras,Click / RT: machine guns,Clic / RT: ametralladoras,点击 / RT：机枪
+AVIAO_HUD_TRAVADO,NA MIRA,LOCKED,EN LA MIRA,已锁定
+AVIAO_AVISO_ARMAS,Metralhadoras armadas!,Machine guns armed!,¡Ametralladoras armadas!,机枪已就位！
+AVIAO_AVISO_LIPS,O Lips gigante apareceu!,The giant Lips has shown up!,¡Apareció el Lips gigante!,巨大的利普斯出现了！
+AVIAO_AVISO_ABATIDO,Lips abatido!,Lips is down!,¡Lips abatido!,利普斯被击落了！

@@ -1,0 +1,70 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/3D/aviao_queda_cutscene.gd" id="1_cut"]
+[ext_resource type="AudioStream" uid="uid://kg00ua8r8lwq" path="res://assets/novos_audios/maycon_falling_fase_1.mp3" id="2_grito"]
+[ext_resource type="AudioStream" uid="uid://cgbaylimr110j" path="res://assets/novos_audios/cidade_intro_wind.mp3" id="3_vento"]
+[ext_resource type="AudioStream" uid="uid://c21fjct4a2rfb" path="res://assets/novos_audios/modo_acelerando.mp3" id="4_motor"]
+
+[sub_resource type="Environment" id="Environment_ceu"]
+background_mode = 1
+background_color = Color(0.5686275, 0.78431374, 0.90588236, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.8784314, 0.9019608, 0.9372549, 1)
+ambient_light_energy = 0.72
+tonemap_mode = 2
+fog_enabled = true
+fog_light_color = Color(0.65882355, 0.8156863, 0.9019608, 1)
+fog_density = 0.0025
+
+[node name="aviao_queda_cutscene" type="Node3D"]
+script = ExtResource("1_cut")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ceu")
+
+[node name="Sol" type="DirectionalLight3D" parent="."]
+light_color = Color(1, 0.97, 0.9, 1)
+light_energy = 1.15
+shadow_enabled = true
+
+[node name="Aviao" type="Node3D" parent="."]
+
+[node name="MotorAviao" type="AudioStreamPlayer3D" parent="Aviao"]
+stream = ExtResource("4_motor")
+volume_db = -4.0
+pitch_scale = 0.6
+unit_size = 60.0
+max_db = 2.0
+autoplay = true
+
+[node name="Maycon" type="Node3D" parent="."]
+
+[node name="CamAviao" type="Camera3D" parent="."]
+current = true
+fov = 64.0
+far = 2000.0
+
+[node name="CamMaycon" type="Camera3D" parent="."]
+fov = 58.0
+far = 2000.0
+
+[node name="Grito" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_grito")
+volume_db = 1.0
+pitch_scale = 0.45
+
+[node name="Vento" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_vento")
+volume_db = -10.0
+pitch_scale = 0.7
+autoplay = true
+
+[node name="Fade" type="CanvasLayer" parent="."]
+layer = 30
+
+[node name="FadeRect" type="ColorRect" parent="Fade"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(1, 1, 1, 1)

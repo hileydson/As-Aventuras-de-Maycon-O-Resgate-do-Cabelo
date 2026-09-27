@@ -323,6 +323,7 @@ func get_fase_friendly_name(fase_key: String) -> String:
 		"fase_2": "FASE_NAME_FASE_2",
 		"fase_3": "FASE_NAME_FASE_3",
 		"fase_3d_platform": "FASE_NAME_FASE_3D_PLATFORM",
+		"fase_aviao": "FASE_NAME_FASE_AVIAO",
 		"fase_4": "FASE_NAME_FASE_4",
 		"castelo_1": "FASE_NAME_CASTELO_1",
 		"castelo_2": "FASE_NAME_CASTELO_2",
@@ -640,6 +641,8 @@ func load_progress(slot: int = -1)->void:
 				get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
 			elif last_fase == "fase_3d_platform":
 				get_tree().change_scene_to_file("res://scenes/3D/maycon_platform_3d.tscn")
+			elif last_fase == "fase_aviao":
+				get_tree().change_scene_to_file("res://scenes/3D/aviao_ace_combat.tscn")
 			elif last_fase == "fase_4":
 				GameSongs.play_song(1)
 				get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn")

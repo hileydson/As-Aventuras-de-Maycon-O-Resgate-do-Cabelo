@@ -16,8 +16,9 @@ func _ready() -> void:
 	_block_return_to_previous_stage()
 	if Global.platform_arrival_pending:
 		Global.platform_arrival_pending = false
-		maycon_fase.position.y -= 185.0
 		maycon_fase.velocity = Vector2.ZERO
+		# Volta do combate aéreo caindo do céu e levantando poeira, igual à fase 1
+		animacoes.play("maycon_falling")
 	
 	GameSongs.play_song(1)
 	

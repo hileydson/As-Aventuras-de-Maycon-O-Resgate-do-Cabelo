@@ -1728,9 +1728,10 @@ func _exit_stage() -> void:
 	get_tree().paused = false
 	maycon.control_enabled = false
 	await _fade_out()
-	Global.platform_arrival_pending = true
-	Global.save_progress("fase_4")
-	get_tree().change_scene_to_file.call_deferred("res://scenes/fase_1_before_castle_4.tscn")
+	GameSongs.stop(1)
+	# O buraco da seta agora cai na cutscene da queda em cima do avião
+	Global.save_progress("fase_aviao")
+	get_tree().change_scene_to_file.call_deferred("res://scenes/3D/aviao_queda_cutscene.tscn")
 
 func exit_to_menu() -> void:
 	if exit_started:
