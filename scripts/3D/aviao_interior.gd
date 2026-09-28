@@ -38,6 +38,11 @@ const ANIM_LEVANTAR := "RunFast"
 
 const VELOCIDADE_MAYCON := 4.2
 const DURACAO_BALANCO := 1.5
+const ATRASO_POEIRA := 1.4
+const PLATO_POEIRA := 4.0
+const SUMICO_POEIRA := 9.0
+# A poeira nunca some de vez: o avião está furado e continua levantando pó
+const POEIRA_RESIDUAL := 0.62
 const DURACAO_FADE_IN := 8.5
 const DURACAO_FADE_OUT := 1.0
 
@@ -53,6 +58,7 @@ var maycon_animation:AnimationPlayer
 var porta_cabine:Area3D
 var buraco:Node3D
 var linhas_buraco:MultiMeshInstance3D
+var poeira:GPUParticles3D
 var tralhas:Array[Dictionary] = []
 var tempo_tralha:float = 0.0
 var controle_liberado:bool = false
@@ -78,6 +84,7 @@ func _ready() -> void:
 	process_priority = 10
 	_montar_cabine()
 	_montar_maycon()
+	_montar_poeira_da_queda()
 	_posicionar_camera(true)
 	_montar_pausa()
 	_manter_em_loop($Vento)
@@ -118,6 +125,118 @@ func _balancar_a_cabeca() -> void:
 	balanco_cabeca = 0.0
 	await get_tree().create_timer(DURACAO_BALANCO).timeout
 	balanco_cabeca = -1.0
+
+
+# Maycon acabou de despencar pelo teto, então a cabine abre com a poeira do
+# tombo subindo para todo lado. A nuvem fica um tempo forte, afrouxa um pouco e
+# continua no ar até ele assumir os controles.
+func _montar_poeira_da_queda() -> void:
+	var nuvem := QuadMesh.new()
+	nuvem.size = Vector2(1.1, 1.1)
+	var nuvem_mat := StandardMaterial3D.new()
+	nuvem_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	nuvem_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	nuvem_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	nuvem_mat.vertex_color_use_as_albedo = true
+	nuvem_mat.albedo_color = Color(1.0, 1.0, 1.0, 1.0)
+	nuvem_mat.albedo_texture = _textura_de_poeira()
+	nuvem_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	nuvem.material = nuvem_mat
+
+	var processo := ParticleProcessMaterial.new()
+	processo.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	processo.emission_box_extents = Vector3(1.85, 0.2, 3.4)
+	processo.direction = Vector3(0.0, 1.0, 0.0)
+	processo.spread = 78.0
+	processo.initial_velocity_min = 1.6
+	processo.initial_velocity_max = 5.0
+	# Sobe devagar em vez de cair, como poeira levantada num ambiente fechado
+	processo.gravity = Vector3(0.0, 0.3, 0.0)
+	processo.damping_min = 1.4
+	processo.damping_max = 3.2
+	processo.scale_min = 0.4
+	processo.scale_max = 1.7
+	processo.angle_min = -180.0
+	processo.angle_max = 180.0
+	processo.angular_velocity_min = -35.0
+	processo.angular_velocity_max = 35.0
+	processo.color = Color(0.78, 0.6, 0.33, 0.42)
+	processo.alpha_curve = _curva_da_poeira()
+
+	poeira = GPUParticles3D.new()
+	poeira.name = "PoeiraDaQueda"
+	poeira.amount = 130
+	poeira.lifetime = 3.4
+	poeira.local_coords = false
+	poeira.process_material = processo
+	poeira.draw_pass_1 = nuvem
+	poeira.position = Vector3(0.0, 0.3, Z_FUNDO - 1.2)
+	# Sem coordenadas locais a caixa padrão é pequena demais e a nuvem some
+	# assim que os grãos se afastam do emissor
+	poeira.visibility_aabb = AABB(Vector3(-6.0, -1.5, -9.0), Vector3(12.0, 8.0, 18.0))
+	cabine.add_child(poeira)
+
+	# Fica cheia enquanto o fade in revela a cabine, depois afrouxa um pouco e
+	# segue assim o resto do trecho dentro do avião
+	var sumir := create_tween().bind_node(poeira)
+	sumir.tween_interval(PLATO_POEIRA)
+	sumir.tween_property(poeira, "amount_ratio", POEIRA_RESIDUAL, SUMICO_POEIRA).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	_estourar_poeira(nuvem, processo)
+
+
+# Baforada larga do impacto, que espalha a poeira de uma vez
+func _estourar_poeira(nuvem:Mesh, base:ParticleProcessMaterial) -> void:
+	var processo := base.duplicate() as ParticleProcessMaterial
+	processo.spread = 90.0
+	processo.direction = Vector3(0.0, 0.55, 0.0)
+	processo.initial_velocity_min = 4.0
+	processo.initial_velocity_max = 11.0
+	var estouro := GPUParticles3D.new()
+	estouro.name = "PoeiraDoImpacto"
+	estouro.amount = 170
+	estouro.lifetime = 3.2
+	estouro.one_shot = true
+	estouro.explosiveness = 0.92
+	estouro.local_coords = false
+	estouro.process_material = processo
+	estouro.draw_pass_1 = nuvem
+	estouro.position = Vector3(0.0, 0.3, Z_FUNDO - 1.2)
+	estouro.visibility_aabb = AABB(Vector3(-9.0, -1.5, -12.0), Vector3(18.0, 10.0, 24.0))
+	estouro.emitting = false
+	cabine.add_child(estouro)
+	# Espera a tela clarear um pouco, senão o estouro acontece atrás do fade
+	var soltar := create_tween().bind_node(estouro)
+	soltar.tween_interval(ATRASO_POEIRA)
+	soltar.tween_callback(func() -> void: estouro.emitting = true)
+	soltar.tween_interval(estouro.lifetime + 1.0)
+	soltar.tween_callback(estouro.queue_free)
+
+
+# Grão de poeira nasce fraco, engrossa e se desfaz aos poucos até virar nada
+func _curva_da_poeira() -> CurveTexture:
+	var curva := Curve.new()
+	curva.add_point(Vector2(0.0, 0.0))
+	curva.add_point(Vector2(0.18, 1.0))
+	curva.add_point(Vector2(1.0, 0.0))
+	var textura := CurveTexture.new()
+	textura.curve = curva
+	return textura
+
+
+# Baforada redonda e suave, em vez do quadrado duro do QuadMesh
+func _textura_de_poeira() -> GradientTexture2D:
+	var degrade := Gradient.new()
+	degrade.set_color(0, Color(1.0, 1.0, 1.0, 0.8))
+	degrade.set_color(1, Color(1.0, 1.0, 1.0, 0.0))
+	var textura := GradientTexture2D.new()
+	textura.gradient = degrade
+	textura.fill = GradientTexture2D.FILL_RADIAL
+	textura.fill_from = Vector2(0.5, 0.5)
+	textura.fill_to = Vector2(1.0, 0.5)
+	textura.width = 64
+	textura.height = 64
+	return textura
 
 
 func _montar_pausa() -> void:
