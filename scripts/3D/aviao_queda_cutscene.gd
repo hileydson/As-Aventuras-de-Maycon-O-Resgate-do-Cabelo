@@ -285,11 +285,13 @@ func _ajustar_volume_do_grito(no_maycon:bool) -> void:
 	volume_grito_tw = create_tween().bind_node(grito)
 	if no_maycon:
 		grito.stream_paused = false
+		# Se a faixa tiver acabado, recomeça: nenhum take pode ficar sem o grito
 		if not grito.playing:
 			grito.play()
-		volume_grito_tw.tween_property(grito, "volume_db", GRITO_PERTO_DB, 0.12)
+		# Rampa curtíssima: os últimos cortes duram menos de 0,2s
+		volume_grito_tw.tween_property(grito, "volume_db", GRITO_PERTO_DB, 0.04)
 	else:
-		volume_grito_tw.tween_property(grito, "volume_db", GRITO_LONGE_DB, 0.12)
+		volume_grito_tw.tween_property(grito, "volume_db", GRITO_LONGE_DB, 0.04)
 		volume_grito_tw.tween_callback(func():
 			if is_instance_valid(grito) and not saida_iniciada:
 				grito.stream_paused = true)

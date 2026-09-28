@@ -24,6 +24,7 @@ const ESPACO_FILEIRA := 2.4
 
 const VENTO_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
 const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
+const SOM_SUCCAO = preload("res://assets/novos_audios/seco_kick_dimensional_whoosh_pixabay.mp3")
 
 const Z_BURACO := 16.2
 const SAIDA_BURACO := Vector3(0.0, 5.2, Z_BURACO)
@@ -36,7 +37,7 @@ const ANIM_LEVANTAR := "RunFast"
 
 const VELOCIDADE_MAYCON := 4.2
 const DURACAO_BALANCO := 1.5
-const DURACAO_FADE_IN := 5.0
+const DURACAO_FADE_IN := 8.5
 const DURACAO_FADE_OUT := 1.0
 
 @onready var cabine:Node3D = $Cabine
@@ -64,6 +65,7 @@ var osso_cabeca:int = -1
 var balanco_cabeca:float = -1.0
 var caminhando_para_cabine:bool = false
 var passos_no_par:int = 0
+var succao:AudioStreamPlayer3D
 var entrando_na_cabine:bool = false
 var tempo:float = 0.0
 var tempo_passo:float = 0.0
@@ -435,6 +437,16 @@ func _montar_buraco_no_teto() -> void:
 	linhas_buraco.position = Vector3(0.0, 0.2, 0.0)
 	buraco.add_child(linhas_buraco)
 
+	# Sopro da despressurização puxando tudo para fora
+	succao = AudioStreamPlayer3D.new()
+	succao.name = "SomDaSuccao"
+	succao.stream = SOM_SUCCAO
+	succao.volume_db = -6.0
+	succao.unit_size = 9.0
+	succao.max_db = 0.0
+	succao.position = Vector3(0.0, 2.4, 0.0)
+	buraco.add_child(succao)
+
 
 # A cabine está furada, então a tralha solta vai sendo sugada pelo buraco
 func _soltar_tralha() -> void:
@@ -451,6 +463,9 @@ func _soltar_tralha() -> void:
 		Z_BURACO + randf_range(-11.0, 3.5)
 	)
 	item.position = inicio
+	if is_instance_valid(succao) and randf() < 0.65:
+		succao.pitch_scale = randf_range(0.75, 1.25)
+		succao.play()
 	tralhas.append({
 		"no": item,
 		"inicio": inicio,
@@ -596,7 +611,7 @@ func _atualizar_passos(delta:float) -> void:
 		passos_no_par += 1
 		if passos_no_par >= 2:
 			passos_no_par = 0
-			tempo_passo = 0.95
+			tempo_passo = 0.78
 		else:
 			tempo_passo = 0.36
 		passo.pitch_scale = randf_range(0.92, 1.06)

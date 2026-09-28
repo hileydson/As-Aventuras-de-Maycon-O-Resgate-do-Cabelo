@@ -49,10 +49,11 @@ const PLANE_BODY_OFFSET_Y = -3.66
 # Medidas já convertidas para o espaço do Godot, usadas para posicionar armas e câmeras
 const PLANE_LENGTH = 30.0
 const PLANE_WINGSPAN = 31.6
-const WING_GUN_LOCAL = Vector3(9.2, -3.05, 3.2)
+const WING_GUN_LOCAL = Vector3(9.2, -2.62, 3.2)
 
-# A gatling sai do glTF apontando para (0.958, 0, -0.286); este yaw alinha o cano ao -Z
-const GUN_FORWARD_YAW_DEG = 73.383
+# Com o RotationHelper zerado, o cano da gatling sai apontando para +Y (para
+# cima). Este pitch deita a arma para a boca ficar no -Z, que é a frente do avião.
+const GUN_FORWARD_PITCH_DEG = -90.0
 const GUN_KEEP_PREFIXES = ["Gun_", "Motor", "DriveShaft"]
 
 # Céu azul idêntico ao da fase do Super Maycon Brother
@@ -93,12 +94,12 @@ static func criar_metralhadora(comprimento_alvo:float = 2.4) -> Node3D:
 
 	var pivot := Node3D.new()
 	pivot.name = "Pivot"
-	pivot.rotation.y = deg_to_rad(GUN_FORWARD_YAW_DEG)
+	pivot.rotation.x = deg_to_rad(GUN_FORWARD_PITCH_DEG)
 	pivot.add_child(gun_root)
 
 	# A caixa real das peças restantes define a escala e o centro da arma.
 	# A escala fica num nó interno para o holder continuar livre para animações.
-	var caixa:AABB = Transform3D(Basis(Vector3.UP, pivot.rotation.y), Vector3.ZERO) * _aabb_local(gun_root)
+	var caixa:AABB = Transform3D(Basis(Vector3.RIGHT, pivot.rotation.x), Vector3.ZERO) * _aabb_local(gun_root)
 	var fator := 1.0
 	if caixa.size.z > 0.001:
 		fator = comprimento_alvo / caixa.size.z

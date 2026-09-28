@@ -31,7 +31,7 @@ const CAMERA_ALVO := Vector3(0.0, 6.5, -80.0)
 const INTERVALO_TIRO := 0.07
 const VELOCIDADE_BALA := 430.0
 const VIDA_BALA := 1.0
-const DANO_BALA := 1.15
+const DANO_BALA := 0.38
 const RAIO_BALA_LIPS := 21.0
 
 const DANO_LANCHE := 18.0
@@ -46,7 +46,7 @@ const INTERVALO_DETRITO := 0.5
 # Gotas de sangue do Lips que voam para trás e podem sujar o avião
 const VELOCIDADE_GOTA := 95.0
 const RAIO_GOTA := 9.0
-const MAX_MANCHAS := 26
+const COR_DO_SANGUE := Color(0.42, 0.03, 0.05)
 
 @onready var aviao:Node3D = $Aviao
 @onready var camera:Camera3D = $Camera3D
@@ -100,8 +100,8 @@ var buraco_aviao:Node3D
 var detritos:Array[Dictionary] = []
 var tempo_detrito:float = 0.0
 var gotas_de_sangue:Array[Dictionary] = []
-var manchas_no_aviao:Array[MeshInstance3D] = []
-var textura_mancha:GradientTexture2D
+var materiais_do_aviao:Array[BaseMaterial3D] = []
+var sujeira_do_aviao:Array[float] = []
 var desfecho_em_andamento:bool = false
 
 # Campos exigidos pelo menu de pausa compartilhado da fase 3D
@@ -165,6 +165,7 @@ func _montar_aviao() -> void:
 		arma.scale = Vector3(0.01, 0.01, 0.01)
 		aviao.add_child(arma)
 		metralhadoras.append(arma)
+	_preparar_pintura_do_aviao()
 	_montar_buraco_da_fuselagem()
 	linhas_vento = MultiMeshInstance3D.new()
 	linhas_vento.name = "LinhasDeVento"
@@ -351,49 +352,37 @@ func _atualizar_gotas(delta:float) -> void:
 	gotas_de_sangue = restantes
 
 
+# O avião é curvo, então decalque plano fica estranho. Em vez disso a própria
+# pintura vai ficando vermelha nas partes onde o sangue bate.
 func _manchar_aviao(ponto:Vector3) -> void:
-	if textura_mancha == null:
-		textura_mancha = _textura_de_mancha()
-	var mancha := MeshInstance3D.new()
-	mancha.name = "ManchaDeSangue"
-	var quadro := QuadMesh.new()
-	quadro.size = Vector2(1.0, 1.0) * randf_range(2.6, 5.4)
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.albedo_color = Color(0.36, 0.004, 0.025, 1.0)
-	mat.albedo_texture = textura_mancha
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	quadro.material = mat
-	mancha.mesh = quadro
-	aviao.add_child(mancha)
-	# Assenta em cima da asa/fuselagem, virada para cima
+	if materiais_do_aviao.is_empty():
+		return
 	var local:Vector3 = aviao.to_local(ponto)
-	local.x = clampf(local.x, -14.0, 14.0)
-	local.z = clampf(local.z, -12.0, 12.0)
-	local.y = 1.9 if absf(local.x) < 2.2 else -1.9
-	mancha.position = local
-	mancha.rotation = Vector3(deg_to_rad(-90.0), randf_range(0.0, TAU), 0.0)
-	manchas_no_aviao.append(mancha)
-	if manchas_no_aviao.size() > MAX_MANCHAS:
-		var velha:MeshInstance3D = manchas_no_aviao.pop_front()
-		if is_instance_valid(velha):
-			velha.queue_free()
+	# Perto do eixo é fuselagem, mais para fora são as asas
+	var indice := 0 if absf(local.x) < 4.0 else 1
+	indice = mini(indice, materiais_do_aviao.size() - 1)
+	sujeira_do_aviao[indice] = minf(float(sujeira_do_aviao[indice]) + 0.05, 0.9)
+	var mat:BaseMaterial3D = materiais_do_aviao[indice]
+	if is_instance_valid(mat):
+		mat.albedo_color = Color.WHITE.lerp(COR_DO_SANGUE, float(sujeira_do_aviao[indice]))
 
 
-func _textura_de_mancha() -> GradientTexture2D:
-	var degrade := Gradient.new()
-	degrade.set_color(0, Color(1.0, 1.0, 1.0, 1.0))
-	degrade.add_point(0.78, Color(1.0, 1.0, 1.0, 1.0))
-	degrade.set_color(1, Color(1.0, 1.0, 1.0, 0.0))
-	var textura := GradientTexture2D.new()
-	textura.gradient = degrade
-	textura.fill = GradientTexture2D.FILL_RADIAL
-	textura.fill_from = Vector2(0.5, 0.5)
-	textura.fill_to = Vector2(1.0, 0.5)
-	textura.width = 64
-	textura.height = 64
-	return textura
+# Duplica os materiais do avião para poder sujá-los sem mexer no recurso original
+func _preparar_pintura_do_aviao() -> void:
+	for node in aviao.find_children("*", "MeshInstance3D", true, false):
+		var mi := node as MeshInstance3D
+		if not mi or not mi.mesh:
+			continue
+		for i in range(mi.mesh.get_surface_count()):
+			var origem = mi.get_surface_override_material(i)
+			if not origem:
+				origem = mi.mesh.surface_get_material(i)
+			if origem is BaseMaterial3D:
+				var copia = origem.duplicate() as BaseMaterial3D
+				mi.set_surface_override_material(i, copia)
+				materiais_do_aviao.append(copia)
+				sujeira_do_aviao.append(0.0)
+		break
 
 
 func _montar_lips() -> void:
@@ -1022,6 +1011,12 @@ func _queda_no_infinito() -> void:
 		if ambiente:
 			ambiente.background_color = AviaoModelo.SKY_COLOR.lerp(Color(0.02, 0.02, 0.05), p)
 			ambiente.fog_light_color = AviaoModelo.SKY_FOG_COLOR.lerp(Color(0.05, 0.04, 0.08), p)
+			ambiente.ambient_light_energy = lerpf(0.72, 0.0, p)
+		# O Maycon apaga junto com o céu, senão fica iluminado sobre o breu
+		if is_instance_valid(luz):
+			luz.light_energy = lerpf(3.2, 0.0, p)
+		if is_instance_valid(sol):
+			sol.light_energy = lerpf(1.2, 0.0, p)
 	, 0.0, 1.0, 3.4)
 	var queda := create_tween().bind_node(maycon)
 	queda.tween_method(func(p:float):
@@ -1032,14 +1027,14 @@ func _queda_no_infinito() -> void:
 		camera.position = maycon.position + Vector3(0.0, 5.0, 7.0)
 		camera.look_at(maycon.position, Vector3.UP)
 	, 0.0, 1.0, 3.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	await queda.finished
+	await get_tree().create_timer(2.6).timeout
 	_voltar_para_o_2d()
 
 
 func _voltar_para_o_2d() -> void:
 	fade_rect.color = Color.BLACK
 	var fade_out := create_tween().bind_node(fade_rect)
-	fade_out.tween_property(fade_rect, "modulate:a", 1.0, 1.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fade_out.tween_property(fade_rect, "modulate:a", 1.0, 1.8).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await fade_out.finished
 	if Global.battle_mode == Global.battle_mode_realtime:
 		Global.realtime_hp = maxf(vida, 1.0)
