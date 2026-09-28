@@ -34,16 +34,6 @@ func _on_ready() -> void:
 		
 		
 		
-		await get_tree().create_timer(2.0).timeout
-		fade.get_node("Transition").play("fade_in")
-		msg_block.visible = true
-		msg_block.text = tr("SECO_CASTLE_2")
-		
-		await get_tree().create_timer(2.0).timeout		
-		fade.get_node("Transition").play("fade_out")
-		await get_tree().create_timer(1.0).timeout
-		
-		
 		animacoes.play("seco_first_scene_castle")
 		
 		

@@ -3,6 +3,7 @@ extends Node2D
 
 @onready var layer: TextureRect = $canvas/layer
 @onready var axe: AnimatedSprite2D = $canvas/layer/axe
+@onready var canvas: CanvasLayer = $canvas
 var realtime_hp_bar:ProgressBar
 var realtime_hp_label:Label
 
@@ -16,6 +17,9 @@ func _process(delta: float) -> void:
 		layer.visible = false
 	else:
 		layer.visible = true
+		var platform_player = get_tree().current_scene.find_child("maycon_fase", true, false)
+		if !Global.battle_started && platform_player && platform_player.visible && platform_player.process_mode != Node.PROCESS_MODE_DISABLED:
+			canvas.visible = true
 	
 	if Global.maycon_itens["axe"] && Global.battle_started == false:
 		axe.visible = true
@@ -31,6 +35,10 @@ func _process(delta: float) -> void:
 		realtime_hp_label.visible = realtime
 		realtime_hp_bar.value = Global.realtime_hp
 		realtime_hp_label.text = tr("BATTLE_HP_LABEL")
+
+func restore_gameplay_hud() -> void:
+	canvas.visible = true
+	layer.visible = true
 
 func build_realtime_hp_display() -> void:
 	realtime_hp_bar = ProgressBar.new()

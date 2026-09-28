@@ -121,12 +121,12 @@ func _physics_process(delta: float) -> void:
 				
 				run_ghost_timer -= delta
 				if run_ghost_timer <= 0.0:
-					run_ghost_timer = 0.045
+					run_ghost_timer = 0.028
 					_spawn_run_ghost()
 				
 				run_dust_timer -= delta
 				if run_dust_timer <= 0.0:
-					run_dust_timer = 0.075
+					run_dust_timer = 0.05
 					_spawn_run_dust()
 			else:
 				run_ghost_timer = 0.0
@@ -286,6 +286,24 @@ func _spawn_run_ghost() -> void:
 	tw.tween_property(ghost, "scale", ghost.scale * 0.96, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tw.chain().tween_callback(ghost.queue_free)
 
+	# Um segundo vulto sobre o Maycon deixa o rastro visível também dentro do sprite.
+	var foreground_ghost = Sprite2D.new()
+	foreground_ghost.texture = cur_tex
+	foreground_ghost.centered = animated_sprite_2d.centered
+	foreground_ghost.offset = animated_sprite_2d.offset
+	foreground_ghost.flip_h = animated_sprite_2d.flip_h
+	foreground_ghost.z_index = z_index + 2
+	target_parent.add_child(foreground_ghost)
+	foreground_ghost.global_position = animated_sprite_2d.global_position + Vector2(0.0, -6.0)
+	foreground_ghost.global_scale = animated_sprite_2d.global_scale * 0.99
+	foreground_ghost.global_rotation = animated_sprite_2d.global_rotation
+	foreground_ghost.modulate = Color(1.0, 0.76, 0.4, 0.36)
+	var foreground_tw = foreground_ghost.create_tween()
+	foreground_tw.set_parallel(true)
+	foreground_tw.tween_property(foreground_ghost, "modulate", Color(1.0, 0.36, 0.2, 0.0), 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	foreground_tw.tween_property(foreground_ghost, "scale", foreground_ghost.scale * 1.04, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	foreground_tw.chain().tween_callback(foreground_ghost.queue_free)
+
 
 func _spawn_run_dust() -> void:
 	var target_parent = get_parent()
@@ -299,7 +317,7 @@ func _spawn_run_dust() -> void:
 	puff.global_position = feet_pos
 	
 	# Efeito complementar de linhas de vento/velocidade atrás do corpo
-	if randf() < 0.65:
+	if randf() < 0.9:
 		var streak_pos = to_global(Vector2(-facing * 8.0, randf_range(12.0, 38.0)))
 		var streak = RunSpeedStreak.new(facing, randf_range(28.0, 48.0))
 		target_parent.add_child(streak)
@@ -355,4 +373,3 @@ class RunSpeedStreak extends Node2D:
 		
 	func _draw() -> void:
 		draw_line(Vector2.ZERO, Vector2(-facing * length, 0.0), Color(1.0, 1.0, 1.0, alpha), 2.2)
-

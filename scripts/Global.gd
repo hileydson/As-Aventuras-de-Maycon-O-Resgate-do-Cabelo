@@ -787,7 +787,7 @@ func register_enemy_encounter(enemy_spawn_id:String) -> void:
 func schedule_realtime_enemy_respawn() -> void:
 	if battle_mode != battle_mode_realtime || realtime_enemy_spawn_id.is_empty():
 		return
-	if realtime_enemy_id == "1" && realtime_return_scene.ends_with("fase_1_castle_2.tscn") && realtime_enemy_spawn_id.contains("inimigo_camilita"):
+	if is_no_respawn_castle_route(realtime_return_scene):
 		inimigos_mortos[realtime_enemy_spawn_id] = true
 		realtime_enemy_respawns.erase(realtime_enemy_spawn_id)
 		realtime_enemy_spawn_id = ""
@@ -797,6 +797,9 @@ func schedule_realtime_enemy_respawn() -> void:
 		return
 	realtime_enemy_respawns[realtime_enemy_spawn_id] = Time.get_ticks_msec() + int(realtime_enemy_respawn_seconds * 1000.0)
 	realtime_enemy_spawn_id = ""
+
+func is_no_respawn_castle_route(scene_path:String) -> bool:
+	return scene_path.ends_with("fase_1_castle_2.tscn") || scene_path.ends_with("fase_1_castle_3.tscn") || scene_path.ends_with("fase_1_castle_no_fire_1.tscn")
 
 func prepare_realtime_enemy_respawn(enemy:CanvasItem, enemy_spawn_id:String) -> void:
 	if battle_mode != battle_mode_realtime || !realtime_enemy_respawns.has(enemy_spawn_id):
@@ -843,6 +846,9 @@ func restore_realtime_player_position() -> void:
 		var player_camera = player_node.find_child("Camera2D", true, false)
 		if player_camera is Camera2D:
 			player_camera.make_current()
+		var gameplay_hud = get_tree().current_scene.find_child("maycon_itens", true, false)
+		if gameplay_hud and gameplay_hud.has_method("restore_gameplay_hud"):
+			gameplay_hud.restore_gameplay_hud()
 		realtime_restore_frames -= 1
 		if realtime_restore_frames <= 0:
 			realtime_restore_pending = false
