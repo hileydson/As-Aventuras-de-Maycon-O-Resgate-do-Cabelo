@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bdmpm2b3ny4k2"]
 
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_4xbjm"]
-[ext_resource type="Texture2D" uid="uid://b6c6gorildkq4" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_1.png" id="1_isgjk"]
+[ext_resource type="Texture2D" uid="uid://b20ectj45ayt5" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_1_paralax.png" id="1_isgjk"]
 [ext_resource type="Script" uid="uid://bpwcs2a6d8j8" path="res://scripts/fase_1_castle_1.gd" id="2_isgjk"]
 [ext_resource type="Texture2D" uid="uid://xy15l3nye50p" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/web.png" id="3_6qwlc"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="3_pkp6y"]
@@ -18,6 +18,9 @@
 [ext_resource type="PackedScene" uid="uid://143260dknkmv" path="res://scenes/inimigos/cabelo.tscn" id="10_3ej27"]
 [ext_resource type="AudioStream" uid="uid://ds2yyaaf2s8cj" path="res://assets/novos_audios/running.mp3" id="10_cf614"]
 [ext_resource type="PackedScene" uid="uid://ct4euwv2ox56v" path="res://scenes/sangue_fill_scene.tscn" id="18_5dcdm"]
+[ext_resource type="Shader" uid="uid://c6eelrgo3e7vy" path="res://scenes/fase_1_before_castle_1_dynamic_background.gdshader" id="sky_dynamic_background"]
+[ext_resource type="Shader" uid="uid://f8f54lfnqp5y" path="res://scenes/fase_1_before_castle_1_clouds.gdshader" id="sky_clouds"]
+[ext_resource type="Shader" uid="uid://dytv70uo3y83j" path="res://scenes/fase_1_before_castle_1_mountains.gdshader" id="sky_mountains"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_th65o"]
 atlas = ExtResource("3_6qwlc")
@@ -325,8 +328,87 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_bg"]
+shader = ExtResource("sky_dynamic_background")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_far_mountains"]
+shader = ExtResource("sky_mountains")
+shader_parameter/mountain_color = Color(0.085, 0.025, 0.045, 1)
+shader_parameter/rim_color = Color(0.34, 0.04, 0.015, 1)
+shader_parameter/horizon = 0.48
+shader_parameter/mountain_height = 0.19
+shader_parameter/peak_count = 9.0
+shader_parameter/seed = 12.1
+shader_parameter/opacity = 0.68
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_near_mountains"]
+shader = ExtResource("sky_mountains")
+shader_parameter/mountain_color = Color(0.035, 0.012, 0.024, 1)
+shader_parameter/rim_color = Color(0.48, 0.055, 0.012, 1)
+shader_parameter/horizon = 0.61
+shader_parameter/mountain_height = 0.27
+shader_parameter/peak_count = 6.5
+shader_parameter/seed = 18.9
+shader_parameter/opacity = 0.82
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_clouds"]
+shader = ExtResource("sky_clouds")
+
 [node name="castelo_1" type="Node2D" unique_id=1071050568]
 process_mode = 1
+
+[node name="DynamicFireBackground" type="Parallax2D" parent="."]
+z_index = -30
+scroll_scale = Vector2(0.5, 1)
+
+[node name="FireSky" type="ColorRect" parent="DynamicFireBackground"]
+material = SubResource("ShaderMaterial_sky_bg")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="FarMountains" type="Parallax2D" parent="."]
+z_index = -29
+scroll_scale = Vector2(0.58, 1)
+
+[node name="MountainRange" type="ColorRect" parent="FarMountains"]
+material = SubResource("ShaderMaterial_sky_far_mountains")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="NearMountains" type="Parallax2D" parent="."]
+z_index = -27
+scroll_scale = Vector2(0.68, 1)
+
+[node name="MountainRange" type="ColorRect" parent="NearMountains"]
+material = SubResource("ShaderMaterial_sky_near_mountains")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="DynamicClouds" type="Parallax2D" parent="."]
+z_index = -25
+scroll_scale = Vector2(0.62, 1)
+
+[node name="CloudField" type="ColorRect" parent="DynamicClouds"]
+material = SubResource("ShaderMaterial_sky_clouds")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="BurntForestForeground" type="Parallax2D" parent="."]
+z_index = -10
+
+[node name="Foreground" type="Sprite2D" parent="BurntForestForeground"]
+position = Vector2(1586, 683)
+scale = Vector2(1.6534447, 1.637028)
+texture = ExtResource("1_isgjk")
+
 
 [node name="maycon_itens" parent="." unique_id=209748336 instance=ExtResource("1_4xbjm")]
 position = Vector2(1586, 683)
@@ -334,7 +416,6 @@ position = Vector2(1586, 683)
 [node name="Fase1BeforeCastle" type="Sprite2D" parent="." unique_id=415392086]
 process_mode = 1
 position = Vector2(1586, 683)
-texture = ExtResource("1_isgjk")
 script = ExtResource("2_isgjk")
 
 [node name="teia4" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1529111155]

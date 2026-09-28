@@ -8,8 +8,8 @@ extends Sprite2D
 @onready var mk_dudun: AudioStreamPlayer = $MkDudun
 @onready var caixa_to_carry: RigidBody2D = $"../caixa_to_carry"
 
-var texture_no_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire.png")
-var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3.png")
+var texture_no_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire_paralax.png")
+var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3_paralax.png")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

@@ -1,6 +1,6 @@
-[gd_scene load_steps=72 format=3 uid="uid://dmratg4yp57fk"]
+[gd_scene load_steps=80 format=3 uid="uid://dmratg4yp57fk"]
 
-[ext_resource type="Texture2D" uid="uid://dkde0mifvly5i" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_1.png" id="1_nnpcb"]
+[ext_resource type="Texture2D" uid="uid://daiuev2s4dsgh" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_1_paralax.png" id="1_nnpcb"]
 [ext_resource type="AudioStream" uid="uid://dm0y08bfijfeo" path="res://assets/novos_audios/barulho_gilhotina.mp3" id="1_ssjau"]
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_yvup1"]
 [ext_resource type="Script" uid="uid://u67qivon285c" path="res://scripts/fase_1_outside_castle_again_no_fire_1.gd" id="2_s4wqb"]
@@ -17,6 +17,10 @@
 [ext_resource type="AudioStream" uid="uid://bhcvqv63n0fh8" path="res://assets/novos_audios/metal_batendo.mp3" id="8_ghhu0"]
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="12_yvup1"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="14_dro78"]
+[ext_resource type="Shader" path="res://scenes/fase_1_dark_sky_background.gdshader" id="sky_dynamic_background"]
+[ext_resource type="Shader" uid="uid://f8f54lfnqp5y" path="res://scenes/fase_1_before_castle_1_clouds.gdshader" id="sky_clouds"]
+[ext_resource type="Shader" uid="uid://dytv70uo3y83j" path="res://scenes/fase_1_before_castle_1_mountains.gdshader" id="sky_mountains"]
+[ext_resource type="Texture2D" uid="uid://cng7cklydpdnk" path="res://assets/novas_imagens/cenarios/in_use/fase_1/arvores.png" id="sky_parallax_trees"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vk5ux"]
 atlas = ExtResource("5_yvup1")
@@ -522,8 +526,96 @@ size = Vector2(400.40625, 136)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s4wqb"]
 size = Vector2(404.20313, 136)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_bg"]
+shader = ExtResource("sky_dynamic_background")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_far_mountains"]
+shader = ExtResource("sky_mountains")
+shader_parameter/mountain_color = Color(0.02, 0.035, 0.06, 1)
+shader_parameter/rim_color = Color(0.06, 0.10, 0.16, 1)
+shader_parameter/horizon = 0.48
+shader_parameter/mountain_height = 0.19
+shader_parameter/peak_count = 9.0
+shader_parameter/seed = 9.4
+shader_parameter/opacity = 0.68
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_near_mountains"]
+shader = ExtResource("sky_mountains")
+shader_parameter/mountain_color = Color(0.01, 0.018, 0.035, 1)
+shader_parameter/rim_color = Color(0.04, 0.07, 0.12, 1)
+shader_parameter/horizon = 0.61
+shader_parameter/mountain_height = 0.27
+shader_parameter/peak_count = 6.5
+shader_parameter/seed = 27.1
+shader_parameter/opacity = 0.82
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_clouds"]
+shader = ExtResource("sky_clouds")
+
 [node name="outside_castelo_1" type="Node2D"]
 process_mode = 1
+
+[node name="DynamicDarkBackground" type="Parallax2D" parent="."]
+z_index = -30
+scroll_scale = Vector2(0.5, 1)
+
+[node name="DarkSky" type="ColorRect" parent="DynamicDarkBackground"]
+material = SubResource("ShaderMaterial_sky_bg")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="FarMountains" type="Parallax2D" parent="."]
+z_index = -29
+scroll_scale = Vector2(0.58, 1)
+
+[node name="MountainRange" type="ColorRect" parent="FarMountains"]
+material = SubResource("ShaderMaterial_sky_far_mountains")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="NearMountains" type="Parallax2D" parent="."]
+z_index = -27
+scroll_scale = Vector2(0.68, 1)
+
+[node name="MountainRange" type="ColorRect" parent="NearMountains"]
+material = SubResource("ShaderMaterial_sky_near_mountains")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="DynamicClouds" type="Parallax2D" parent="."]
+z_index = -25
+scroll_scale = Vector2(0.62, 1)
+
+[node name="CloudField" type="ColorRect" parent="DynamicClouds"]
+material = SubResource("ShaderMaterial_sky_clouds")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="DistantBurntTrees" type="Parallax2D" parent="."]
+z_index = -20
+scroll_scale = Vector2(0.75, 1)
+
+[node name="Trees" type="Sprite2D" parent="DistantBurntTrees"]
+position = Vector2(1436, 877)
+scale = Vector2(1.5683334, 1.6935166)
+texture = ExtResource("sky_parallax_trees")
+
+[node name="BurntForestForeground" type="Parallax2D" parent="."]
+z_index = -10
+
+[node name="Foreground" type="Sprite2D" parent="BurntForestForeground"]
+position = Vector2(1586, 683)
+scale = Vector2(1.6491411, 1.6410256)
+texture = ExtResource("1_nnpcb")
+
 
 [node name="BarulhoGilhotina" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_ssjau")
@@ -536,7 +628,6 @@ parameters/looping = true
 [node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
 process_mode = 1
 position = Vector2(1586, 683)
-texture = ExtResource("1_nnpcb")
 script = ExtResource("2_s4wqb")
 
 [node name="Camera_temp" type="Camera2D" parent="Fase1BeforeCastle"]

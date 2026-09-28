@@ -1,9 +1,9 @@
-[gd_scene load_steps=57 format=3 uid="uid://yicge48108e0"]
+[gd_scene format=3 uid="uid://yicge48108e0"]
 
 [ext_resource type="Script" uid="uid://jv5gempkmtvq" path="res://scripts/game.gd" id="1_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://fyyoe5vf3xm1" path="res://scenes/maycon.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="2_dinhu"]
-[ext_resource type="Texture2D" uid="uid://is2q46phf50g" path="res://assets/novas_imagens/cenarios/in_use/animacoes/prologo_bela_pixel.png" id="2_kvuet"]
+[ext_resource type="Texture2D" uid="uid://c3e3acxdt4g4r" path="res://assets/novas_imagens/cenarios/pracinha_bela_V2.png" id="2_kvuet"]
 [ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="3_dinhu"]
 [ext_resource type="AudioStream" uid="uid://b6sqah10naev0" path="res://assets/novos_audios/mk_dudun.mp3" id="3_gee14"]
 [ext_resource type="PackedScene" uid="uid://dvl0rk52qgvxa" path="res://scenes/inimigos/inimigo_seco.tscn" id="3_lnu2h"]
@@ -17,6 +17,9 @@
 [ext_resource type="Texture2D" uid="uid://hd7ihpk8l2bg" path="res://assets/novas_imagens/effects/Pixel Holy Spell/01.png" id="14_trtic"]
 [ext_resource type="Texture2D" uid="uid://dg1fnlmoadjti" path="res://assets/novas_imagens/inimigos/seco/olindao_tripa_maior.png" id="15_ir15t"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="17_rysoc"]
+[ext_resource type="Texture2D" uid="uid://ol83hbgvhkv3" path="res://assets/novas_imagens/cenarios/pracinha_bela_V2_paralax.png" id="18_paralax"]
+[ext_resource type="Shader" uid="uid://c6or0uk4e0ggi" path="res://scenes/day_sky_sun_background.gdshader" id="19_day_sky"]
+[ext_resource type="Shader" uid="uid://c0usjj50so0rh" path="res://scenes/day_sunlight_overlay.gdshader" id="20_day_sunlight"]
 
 [sub_resource type="Animation" id="Animation_gee14"]
 length = 0.001
@@ -93,6 +96,21 @@ _data = {
 &"semi_fade_out": SubResource("Animation_7g71p"),
 &"zoom_out": SubResource("Animation_vtaks")
 }
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_day_sky"]
+shader = ExtResource("19_day_sky")
+shader_parameter/sun_position = Vector2(0.38, 0.44)
+shader_parameter/sky_top_color = Color(0.24, 0.54, 0.9, 1)
+shader_parameter/sky_horizon_color = Color(0.72, 0.87, 0.99, 1)
+shader_parameter/sun_core_color = Color(1, 0.99, 0.95, 1)
+shader_parameter/sun_glow_color = Color(1, 0.92, 0.68, 1)
+shader_parameter/sun_flare_color = Color(1, 0.84, 0.52, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_day_sunlight"]
+shader = ExtResource("20_day_sunlight")
+shader_parameter/sun_origin = Vector2(0.38, 0.44)
+shader_parameter/sun_light_color = Color(1, 0.93, 0.75, 1)
+shader_parameter/sun_intensity = 0.22
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_uwrxv"]
 
@@ -328,18 +346,16 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node2D" unique_id=167425754]
 position = Vector2(308.99997, 348.99997)
 scale = Vector2(1.1134915, 1.3669924)
 script = ExtResource("1_lbhrr")
 
-[node name="Transition" type="AnimationPlayer" parent="."]
+[node name="Transition" type="AnimationPlayer" parent="." unique_id=1577533454]
 reset_on_save = false
-libraries = {
-&"": SubResource("AnimationLibrary_bnd43")
-}
+libraries/ = SubResource("AnimationLibrary_bnd43")
 
-[node name="ColorRect" type="ColorRect" parent="Transition"]
+[node name="ColorRect" type="ColorRect" parent="Transition" unique_id=1337816803]
 self_modulate = Color(0, 0, 0, 0)
 anchors_preset = -1
 anchor_right = 0.01263647
@@ -352,52 +368,88 @@ scale = Vector2(29.162046, 16.396467)
 color = Color(0, 0, 0, 1)
 metadata/_edit_use_anchors_ = true
 
-[node name="PracinhaBela" type="Sprite2D" parent="."]
+[node name="DynamicDaySky" type="Parallax2D" parent="." unique_id=1327010757]
+z_index = -30
+scroll_scale = Vector2(0.2, 1)
+
+[node name="DaySky" type="ColorRect" parent="DynamicDaySky" unique_id=1017568990]
+material = SubResource("ShaderMaterial_day_sky")
+offset_left = -1600.0
+offset_top = -650.0
+offset_right = 3600.0
+offset_bottom = 350.0
+mouse_filter = 2
+
+[node name="DistantTownParallax" type="Parallax2D" parent="." unique_id=441529180]
+z_index = -20
+scale = Vector2(0.6407702, 0.79517096)
+scroll_scale = Vector2(0.8, 1)
+scroll_offset = Vector2(-38.617237, -118.508354)
+
+[node name="DistantTown" type="Sprite2D" parent="DistantTownParallax" unique_id=1182547350]
 position = Vector2(324.51547, -66.12781)
-scale = Vector2(0.37853828, 0.27715936)
+scale = Vector2(0.88, 0.3858)
+texture = ExtResource("18_paralax")
+
+[node name="PracinhaBela" type="Sprite2D" parent="." unique_id=1074778785]
+z_index = -10
+position = Vector2(324.51547, -66.12781)
+scale = Vector2(0.7806, 0.3638)
 texture = ExtResource("2_kvuet")
 
-[node name="Explosao" type="AudioStreamPlayer" parent="."]
+[node name="SunlightOverlay" type="Parallax2D" parent="." unique_id=733241611]
+z_index = -5
+scroll_scale = Vector2(0.35, 1)
+
+[node name="Sunlight" type="ColorRect" parent="SunlightOverlay" unique_id=1400700068]
+material = SubResource("ShaderMaterial_day_sunlight")
+offset_left = -1600.0
+offset_top = -650.0
+offset_right = 3600.0
+offset_bottom = 350.0
+mouse_filter = 2
+
+[node name="Explosao" type="AudioStreamPlayer" parent="." unique_id=405858913]
 stream = ExtResource("3_dinhu")
 volume_db = -6.5
 
-[node name="FireCracling" type="AudioStreamPlayer" parent="."]
+[node name="FireCracling" type="AudioStreamPlayer" parent="." unique_id=799777859]
 stream = ExtResource("4_kvuet")
 volume_db = -8.357
 autoplay = true
 parameters/looping = true
 
-[node name="MkDudun" type="AudioStreamPlayer" parent="."]
+[node name="MkDudun" type="AudioStreamPlayer" parent="." unique_id=1480443381]
 stream = ExtResource("3_gee14")
 pitch_scale = 0.72
 
-[node name="ScarySmile" type="AudioStreamPlayer" parent="."]
+[node name="ScarySmile" type="AudioStreamPlayer" parent="." unique_id=1869195254]
 stream = ExtResource("4_0tnpc")
 autoplay = true
 parameters/looping = true
 
-[node name="chao" type="StaticBody2D" parent="."]
+[node name="chao" type="StaticBody2D" parent="." unique_id=1422192667]
 position = Vector2(-12.573052, 59.985718)
 scale = Vector2(-2.4855595, 0.92934257)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="chao"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="chao" unique_id=250902156]
 position = Vector2(10, 62)
 shape = SubResource("WorldBoundaryShape2D_uwrxv")
 
-[node name="wall_left" type="StaticBody2D" parent="."]
+[node name="wall_left" type="StaticBody2D" parent="." unique_id=1937728757]
 position = Vector2(-13, 48.999996)
 scale = Vector2(-2.4855595, 0.92934257)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="wall_left"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="wall_left" unique_id=1189648657]
 position = Vector2(102.5926, 79.62619)
 shape = SubResource("SegmentShape2D_p57ef")
 
-[node name="Maycon" parent="." instance=ExtResource("1_uwrxv")]
+[node name="Maycon" parent="." unique_id=357775746 instance=ExtResource("1_uwrxv")]
 position = Vector2(-193.0863, 40.96587)
 scale = Vector2(1.3133289, 1.0431619)
 slide_on_ceiling = false
 
-[node name="Camera2D" type="Camera2D" parent="Maycon"]
+[node name="Camera2D" type="Camera2D" parent="Maycon" unique_id=1016856960]
 position = Vector2(458.8409, -94.67078)
 offset = Vector2(-320, 10)
 zoom = Vector2(1.4, 1.4)
@@ -412,54 +464,54 @@ drag_left_margin = 0.09
 drag_right_margin = 0.09
 editor_draw_drag_margin = true
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="." unique_id=111653628]
 position = Vector2(248.76709, 50.47581)
 rotation = 3.1415925
 scale = Vector2(2.4855595, -0.92934257)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1183074650]
 position = Vector2(-84.08569, 69.941895)
 scale = Vector2(1, 0.99999994)
 shape = SubResource("SegmentShape2D_u5sy4")
 
-[node name="Area2_portal" type="Area2D" parent="."]
+[node name="Area2_portal" type="Area2D" parent="." unique_id=1100524145]
 position = Vector2(287.38434, 46.818146)
 rotation = 3.1415925
 scale = Vector2(2.4855595, -0.92934257)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2_portal"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2_portal" unique_id=756305869]
 position = Vector2(-177.42484, 75.32214)
 scale = Vector2(1, 0.99999994)
 shape = SubResource("SegmentShape2D_u5sy4")
 
-[node name="Inimigo_seco" parent="." instance=ExtResource("3_lnu2h")]
+[node name="Inimigo_seco" parent="." unique_id=736109979 instance=ExtResource("3_lnu2h")]
 position = Vector2(765.1608, -29.2613)
 scale = Vector2(-1.259191, 1.0362632)
 
-[node name="explosao_portal2" parent="." instance=ExtResource("6_vtaks")]
+[node name="explosao_portal2" parent="." unique_id=36733374 instance=ExtResource("6_vtaks")]
 position = Vector2(741.8107, 57.059586)
 scale = Vector2(24.778183, 23.184599)
 
-[node name="explosao_portal" parent="." instance=ExtResource("6_vtaks")]
+[node name="explosao_portal" parent="." unique_id=644270476 instance=ExtResource("6_vtaks")]
 position = Vector2(741.81067, 57.059586)
 scale = Vector2(24.778183, 23.184597)
 
-[node name="JamelaoSong" type="AudioStreamPlayer" parent="."]
+[node name="JamelaoSong" type="AudioStreamPlayer" parent="." unique_id=1317185481]
 stream = ExtResource("5_iywne")
 volume_db = -11.927
 
-[node name="song_1" type="AudioStreamPlayer" parent="."]
+[node name="song_1" type="AudioStreamPlayer" parent="." unique_id=1924167042]
 stream = ExtResource("6_p57ef")
 volume_db = -20.991
 
-[node name="balao_conversa" type="AnimatedSprite2D" parent="."]
+[node name="balao_conversa" type="AnimatedSprite2D" parent="." unique_id=879343259]
 visible = false
 position = Vector2(531.6611, -98.75693)
 scale = Vector2(0.91626143, 0.5547844)
 sprite_frames = SubResource("SpriteFrames_js0lu")
 flip_h = true
 
-[node name="text" type="Label" parent="balao_conversa"]
+[node name="text" type="Label" parent="balao_conversa" unique_id=60746636]
 offset_left = -97.03523
 offset_top = -42.194866
 offset_right = 54.554733
@@ -467,7 +519,7 @@ offset_bottom = 3.2900581
 text = "Mensagem de teste!"
 label_settings = SubResource("LabelSettings_0tnpc")
 
-[node name="msg_box" type="ColorRect" parent="."]
+[node name="msg_box" type="ColorRect" parent="." unique_id=1757273946]
 visible = false
 offset_left = 462.50912
 offset_top = -81.93167
@@ -475,85 +527,85 @@ offset_right = 650.50916
 offset_bottom = -33.93167
 color = Color(0.8373672, 0.85090065, 0.85082674, 0.68235296)
 
-[node name="Node2D" parent="." instance=ExtResource("10_kvpfn")]
+[node name="Node2D" parent="." unique_id=846986471 instance=ExtResource("10_kvpfn")]
 
-[node name="Pause" parent="." instance=ExtResource("2_dinhu")]
+[node name="Pause" parent="." unique_id=2060285992 instance=ExtResource("2_dinhu")]
 offset_left = 441.85345
 offset_top = 542.79755
 offset_right = 441.85345
 offset_bottom = 542.79755
 scale = Vector2(0.90349585, 0.7392154)
 
-[node name="fires_above_seco" type="Node2D" parent="."]
+[node name="fires_above_seco" type="Node2D" parent="." unique_id=992894807]
 
-[node name="fire_above_seco" type="AnimatedSprite2D" parent="fires_above_seco"]
+[node name="fire_above_seco" type="AnimatedSprite2D" parent="fires_above_seco" unique_id=667081766]
 position = Vector2(686.13007, -100.95151)
 scale = Vector2(1.770396, 1.3242917)
 sprite_frames = SubResource("SpriteFrames_bhx41")
 autoplay = "default"
 frame_progress = 0.55617845
 
-[node name="fire_above_seco2" type="AnimatedSprite2D" parent="fires_above_seco"]
+[node name="fire_above_seco2" type="AnimatedSprite2D" parent="fires_above_seco" unique_id=966002935]
 position = Vector2(735.52423, -122.16597)
 scale = Vector2(1.770396, 1.3242917)
 sprite_frames = SubResource("SpriteFrames_bhx41")
 autoplay = "default"
 frame_progress = 0.47550967
 
-[node name="fire_above_seco3" type="AnimatedSprite2D" parent="fires_above_seco"]
+[node name="fire_above_seco3" type="AnimatedSprite2D" parent="fires_above_seco" unique_id=754675796]
 position = Vector2(821.73956, -86.32088)
 scale = Vector2(1.770396, 1.3242917)
 sprite_frames = SubResource("SpriteFrames_bhx41")
 autoplay = "default"
 frame_progress = 0.47550967
 
-[node name="fire_above_seco4" type="AnimatedSprite2D" parent="fires_above_seco"]
+[node name="fire_above_seco4" type="AnimatedSprite2D" parent="fires_above_seco" unique_id=1057841402]
 position = Vector2(853.1722, -35.11354)
 scale = Vector2(1.770396, 1.3242917)
 sprite_frames = SubResource("SpriteFrames_bhx41")
 autoplay = "default"
 frame_progress = 0.47550967
 
-[node name="fire_above_seco5" type="AnimatedSprite2D" parent="fires_above_seco"]
+[node name="fire_above_seco5" type="AnimatedSprite2D" parent="fires_above_seco" unique_id=482321758]
 position = Vector2(846.8857, 37.30818)
 scale = Vector2(1.770396, 1.3242917)
 sprite_frames = SubResource("SpriteFrames_bhx41")
 autoplay = "default"
 frame_progress = 0.47550967
 
-[node name="fire_above_seco6" type="AnimatedSprite2D" parent="fires_above_seco"]
+[node name="fire_above_seco6" type="AnimatedSprite2D" parent="fires_above_seco" unique_id=1057927431]
 position = Vector2(737.3204, -72.42175)
 scale = Vector2(1.770396, 1.3242917)
 sprite_frames = SubResource("SpriteFrames_bhx41")
 autoplay = "default"
 frame_progress = 0.47550967
 
-[node name="fire_above_seco7" type="AnimatedSprite2D" parent="fires_above_seco"]
+[node name="fire_above_seco7" type="AnimatedSprite2D" parent="fires_above_seco" unique_id=468519479]
 position = Vector2(671.76086, -60.717224)
 scale = Vector2(1.770396, 1.3242917)
 sprite_frames = SubResource("SpriteFrames_bhx41")
 autoplay = "default"
 frame_progress = 0.47550967
 
-[node name="fire_above_seco8" type="AnimatedSprite2D" parent="fires_above_seco"]
+[node name="fire_above_seco8" type="AnimatedSprite2D" parent="fires_above_seco" unique_id=1808059902]
 position = Vector2(647.51276, -23.409042)
 scale = Vector2(1.770396, 1.3242917)
 sprite_frames = SubResource("SpriteFrames_bhx41")
 autoplay = "default"
 frame_progress = 0.47550967
 
-[node name="fire_above_seco9" type="AnimatedSprite2D" parent="fires_above_seco"]
+[node name="fire_above_seco9" type="AnimatedSprite2D" parent="fires_above_seco" unique_id=336463098]
 position = Vector2(730.13574, -92.17313)
 scale = Vector2(1.770396, 1.3242917)
 sprite_frames = SubResource("SpriteFrames_bhx41")
 autoplay = "default"
 frame_progress = 0.47550967
 
-[node name="node_logo_seco" type="Node2D" parent="."]
+[node name="node_logo_seco" type="Node2D" parent="." unique_id=1534797226]
 visible = false
 position = Vector2(94.29799, -40.23429)
 
-[node name="back_fundo_logo" type="ColorRect" parent="node_logo_seco"]
+[node name="back_fundo_logo" type="ColorRect" parent="node_logo_seco" unique_id=271647574]
 visible = false
 offset_left = 290.07855
 offset_top = -149.96423
@@ -561,119 +613,119 @@ offset_right = 648.4109
 offset_bottom = 84.85782
 color = Color(0.13365835, 0.12171512, 0, 1)
 
-[node name="logo_inimigo_seco" type="AnimatedSprite2D" parent="node_logo_seco"]
+[node name="logo_inimigo_seco" type="AnimatedSprite2D" parent="node_logo_seco" unique_id=342516708]
 position = Vector2(438.93466, 1.0973072)
 scale = Vector2(4.0960326, 1.9548874)
 sprite_frames = SubResource("SpriteFrames_qouja")
 frame = 6
 frame_progress = 1.0
 
-[node name="smoke25" type="AnimatedSprite2D" parent="."]
+[node name="smoke25" type="AnimatedSprite2D" parent="." unique_id=1144842352]
 position = Vector2(592.7302, 137.52823)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke26" type="AnimatedSprite2D" parent="."]
+[node name="smoke26" type="AnimatedSprite2D" parent="." unique_id=821761295]
 position = Vector2(615.1822, 133.87056)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke27" type="AnimatedSprite2D" parent="."]
+[node name="smoke27" type="AnimatedSprite2D" parent="." unique_id=1925452846]
 position = Vector2(661.88196, 138.25975)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke28" type="AnimatedSprite2D" parent="."]
+[node name="smoke28" type="AnimatedSprite2D" parent="." unique_id=1029801693]
 position = Vector2(706.7859, 128.74982)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke29" type="AnimatedSprite2D" parent="."]
+[node name="smoke29" type="AnimatedSprite2D" parent="." unique_id=1926764673]
 position = Vector2(765.1607, 127.28675)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke30" type="AnimatedSprite2D" parent="."]
+[node name="smoke30" type="AnimatedSprite2D" parent="." unique_id=1207351680]
 position = Vector2(729.2378, 138.25975)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke31" type="AnimatedSprite2D" parent="."]
+[node name="smoke31" type="AnimatedSprite2D" parent="." unique_id=1628897315]
 position = Vector2(790.3068, 133.87056)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke32" type="AnimatedSprite2D" parent="."]
+[node name="smoke32" type="AnimatedSprite2D" parent="." unique_id=980776602]
 position = Vector2(829.82227, 128.0183)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke33" type="AnimatedSprite2D" parent="."]
+[node name="smoke33" type="AnimatedSprite2D" parent="." unique_id=1672840349]
 position = Vector2(853.17224, 119.971436)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke34" type="AnimatedSprite2D" parent="."]
+[node name="smoke34" type="AnimatedSprite2D" parent="." unique_id=1016827272]
 position = Vector2(868.4395, 107.53538)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke35" type="AnimatedSprite2D" parent="."]
+[node name="smoke35" type="AnimatedSprite2D" parent="." unique_id=1405074873]
 position = Vector2(889.99335, 94.36778)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke36" type="AnimatedSprite2D" parent="."]
+[node name="smoke36" type="AnimatedSprite2D" parent="." unique_id=1149485713]
 position = Vector2(918.73175, 86.32092)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke37" type="AnimatedSprite2D" parent="."]
+[node name="smoke37" type="AnimatedSprite2D" parent="." unique_id=1866291014]
 position = Vector2(916.9356, 50.47581)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke38" type="AnimatedSprite2D" parent="."]
+[node name="smoke38" type="AnimatedSprite2D" parent="." unique_id=1460333620]
 position = Vector2(915.13947, 21.214493)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="smoke39" type="AnimatedSprite2D" parent="."]
+[node name="smoke39" type="AnimatedSprite2D" parent="." unique_id=824706241]
 position = Vector2(915.13947, 21.214493)
 rotation = 0.025717258
 scale = Vector2(3.3046715, 2.903217)
 sprite_frames = SubResource("SpriteFrames_ssvqc")
 autoplay = "default"
 
-[node name="mark_balao_seco" type="Marker2D" parent="." groups=["balao_conversa"]]
+[node name="mark_balao_seco" type="Marker2D" parent="." unique_id=1419641219 groups=["balao_conversa"]]
 position = Vector2(511.00528, -110.461464)
 
 [connection signal="body_entered" from="Area2D" to="Maycon" method="_on_area_2d_body_entered"]

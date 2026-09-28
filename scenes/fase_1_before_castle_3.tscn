@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://w6ofyplymeea"]
 
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_1ljjb"]
-[ext_resource type="Texture2D" uid="uid://qpa3u3o25j1m" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_3.png" id="1_vjg2b"]
+[ext_resource type="Texture2D" uid="uid://t1bsfdgx7i3o" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_3_paralax.png" id="1_vjg2b"]
 [ext_resource type="Script" uid="uid://cud6uo2ykclj0" path="res://scripts/fase_1_before_castle_3.gd" id="2_vjg2b"]
 [ext_resource type="PackedScene" uid="uid://dvs2lwybcbwt2" path="res://scenes/maycon_fase.tscn" id="3_3dovv"]
 [ext_resource type="PackedScene" uid="uid://brgahg4b0gy80" path="res://scenes/inimigos/inimigo_camilita.tscn" id="4_e7uvt"]
@@ -15,6 +15,36 @@
 [ext_resource type="Texture2D" uid="uid://cldr3pb1hha2p" path="res://assets/novas_imagens/cenarios/metade_bloqueio_passagem.png" id="13_2rg5i"]
 [ext_resource type="Texture2D" uid="uid://d3y21yi0f8kgy" path="res://assets/novas_imagens/cenarios/bloqueio_passagem.png" id="14_0r645"]
 [ext_resource type="PackedScene" uid="uid://dep6dmg0ng8e0" path="res://scenes/inimigos/inimigo_boss_seco.tscn" id="15_dg1pv"]
+[ext_resource type="Shader" uid="uid://f8f54lfnqp5y" path="res://scenes/fase_1_before_castle_1_clouds.gdshader" id="sky_clouds"]
+[ext_resource type="Shader" uid="uid://c6eelrgo3e7vy" path="res://scenes/fase_1_before_castle_1_dynamic_background.gdshader" id="sky_dynamic_background"]
+[ext_resource type="Shader" uid="uid://dytv70uo3y83j" path="res://scenes/fase_1_before_castle_1_mountains.gdshader" id="sky_mountains"]
+[ext_resource type="Texture2D" uid="uid://cng7cklydpdnk" path="res://assets/novas_imagens/cenarios/in_use/fase_1/arvores.png" id="sky_parallax_trees"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_bg"]
+shader = ExtResource("sky_dynamic_background")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_far_mountains"]
+shader = ExtResource("sky_mountains")
+shader_parameter/mountain_color = Color(0.085, 0.025, 0.045, 1)
+shader_parameter/rim_color = Color(0.34, 0.04, 0.015, 1)
+shader_parameter/horizon = 0.48
+shader_parameter/mountain_height = 0.19
+shader_parameter/peak_count = 9.0
+shader_parameter/seed = 14.2
+shader_parameter/opacity = 0.68
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_near_mountains"]
+shader = ExtResource("sky_mountains")
+shader_parameter/mountain_color = Color(0.035, 0.012, 0.024, 1)
+shader_parameter/rim_color = Color(0.48, 0.055, 0.012, 1)
+shader_parameter/horizon = 0.61
+shader_parameter/mountain_height = 0.27
+shader_parameter/peak_count = 6.5
+shader_parameter/seed = 29.5
+shader_parameter/opacity = 0.82
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_clouds"]
+shader = ExtResource("sky_clouds")
 
 [sub_resource type="Animation" id="Animation_wwvab"]
 length = 0.001
@@ -244,6 +274,67 @@ size = Vector2(284, 102)
 [node name="fase_3" type="Node2D" unique_id=237769819]
 process_mode = 1
 
+[node name="DynamicFireBackground" type="Parallax2D" parent="." unique_id=823192406]
+z_index = -30
+scroll_scale = Vector2(0.5, 1)
+
+[node name="FireSky" type="ColorRect" parent="DynamicFireBackground" unique_id=852857613]
+material = SubResource("ShaderMaterial_sky_bg")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="FarMountains" type="Parallax2D" parent="." unique_id=1076537941]
+z_index = -29
+scroll_scale = Vector2(0.58, 1)
+
+[node name="MountainRange" type="ColorRect" parent="FarMountains" unique_id=1262521730]
+material = SubResource("ShaderMaterial_sky_far_mountains")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="NearMountains" type="Parallax2D" parent="." unique_id=205214551]
+z_index = -27
+scroll_scale = Vector2(0.68, 1)
+
+[node name="MountainRange" type="ColorRect" parent="NearMountains" unique_id=508910204]
+material = SubResource("ShaderMaterial_sky_near_mountains")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="DynamicClouds" type="Parallax2D" parent="." unique_id=1020667691]
+z_index = -25
+scroll_scale = Vector2(0.62, 1)
+
+[node name="CloudField" type="ColorRect" parent="DynamicClouds" unique_id=1653433593]
+material = SubResource("ShaderMaterial_sky_clouds")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="DistantBurntTrees" type="Parallax2D" parent="." unique_id=1814833062]
+z_index = -20
+scroll_scale = Vector2(0.75, 1)
+
+[node name="Trees" type="Sprite2D" parent="DistantBurntTrees" unique_id=998762589]
+position = Vector2(1436, 877)
+scale = Vector2(1.5683334, 1.6935166)
+texture = ExtResource("sky_parallax_trees")
+
+[node name="BurntForestForeground" type="Parallax2D" parent="." unique_id=388087010]
+z_index = -10
+
+[node name="Foreground" type="Sprite2D" parent="BurntForestForeground" unique_id=414929866]
+position = Vector2(1586, 683)
+scale = Vector2(1.6474259, 1.6430318)
+texture = ExtResource("1_vjg2b")
+
 [node name="back_from_slum" type="Marker2D" parent="." unique_id=293795852]
 position = Vector2(2128, 907)
 
@@ -251,43 +342,55 @@ position = Vector2(2128, 907)
 position = Vector2(1586, 683)
 
 [node name="Fase1BeforeCastle3" type="Sprite2D" parent="." unique_id=1932326557]
-position = Vector2(4138, 444)
+position = Vector2(2516.0002, -685.9999)
 rotation = 1.5766972
 scale = Vector2(0.6956875, 1.4516056)
 texture = ExtResource("1_vjg2b")
 
 [node name="Fase1BeforeCastle4" type="Sprite2D" parent="." unique_id=1251402583]
-position = Vector2(4131, 2521.9998)
-rotation = 1.5766972
+position = Vector2(2362, 2246)
+rotation = 3.157076
 scale = Vector2(0.6956875, 1.4516056)
 texture = ExtResource("1_vjg2b")
 
 [node name="Fase1BeforeCastle5" type="Sprite2D" parent="." unique_id=1046450710]
-position = Vector2(2038.0002, 2289)
+position = Vector2(3227.9998, 1894)
 rotation = -3.1183167
 scale = Vector2(0.69568753, 1.4516056)
 texture = ExtResource("1_vjg2b")
 
 [node name="Fase1BeforeCastle6" type="Sprite2D" parent="." unique_id=305240187]
-position = Vector2(2062.9998, -960.99976)
+position = Vector2(2408.0002, -230)
 rotation = -3.1329777
 scale = Vector2(0.6956875, 1.4516056)
 texture = ExtResource("1_vjg2b")
 
 [node name="Fase1BeforeCastle7" type="Sprite2D" parent="." unique_id=644236140]
-position = Vector2(4277, -1037)
-rotation = -3.1329777
-scale = Vector2(0.6956875, 1.4516056)
+position = Vector2(2985.8604, -694.8926)
+rotation = -4.7116237
+scale = Vector2(0.6382804, 1.4359155)
 texture = ExtResource("1_vjg2b")
 
 [node name="Fase1BeforeCastle8" type="Sprite2D" parent="." unique_id=892056075]
-position = Vector2(4702.0005, 903.9999)
-rotation = 0.0011951287
+position = Vector2(2722.0002, -694.9999)
+rotation = -1.5274309
+scale = Vector2(0.6956875, 1.4516056)
+texture = ExtResource("1_vjg2b")
+
+[node name="Fase1BeforeCastle10" type="Sprite2D" parent="." unique_id=1351868107]
+position = Vector2(2961, -667)
+rotation = -1.5274309
+scale = Vector2(0.6956875, 1.4516056)
+texture = ExtResource("1_vjg2b")
+
+[node name="Fase1BeforeCastle11" type="Sprite2D" parent="." unique_id=588838248]
+position = Vector2(2827.9998, -832.00006)
+rotation = -1.5274309
 scale = Vector2(0.6956875, 1.4516056)
 texture = ExtResource("1_vjg2b")
 
 [node name="Fase1BeforeCastle9" type="Sprite2D" parent="." unique_id=2129153070]
-position = Vector2(1719, 2264)
+position = Vector2(2206, 1947.0002)
 rotation = -3.1379333
 scale = Vector2(0.6956875, 1.4516057)
 texture = ExtResource("1_vjg2b")
@@ -295,7 +398,6 @@ texture = ExtResource("1_vjg2b")
 [node name="Fase1BeforeCastle" type="Sprite2D" parent="." unique_id=1510336538]
 process_mode = 1
 position = Vector2(1586, 683)
-texture = ExtResource("1_vjg2b")
 script = ExtResource("2_vjg2b")
 
 [node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle" unique_id=371239633]

@@ -13,8 +13,8 @@ extends Sprite2D
 @onready var canvas_layer: CanvasLayer = $CanvasLayer
 @onready var caixa_to_carry: RigidBody2D = $caixa_to_carry
 
-var texture_no_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire.png")
-var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3.png")
+var texture_no_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire_paralax.png")
+var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3_paralax.png")
 
 var temp_canvas_layer_fogo = canvas_layer
 var portal_funcionar:bool = true
@@ -42,7 +42,11 @@ func _ready() -> void:
 	if Global.back_to_fase == true:
 		Global.battle_background = "2"
 		Global.back_to_fase = false
-		fase_1_before_castle.texture = texture_no_fire
+		var foreground = get_node_or_null("../BurntForestForeground/Foreground")
+		if foreground:
+			foreground.texture = texture_no_fire
+		else:
+			fase_1_before_castle.texture = texture_no_fire
 		animacoes.play("maycon_back_to_fase")
 		await get_tree().create_timer(1.0).timeout
 
