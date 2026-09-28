@@ -34,7 +34,8 @@ const ANIM_ANDANDO := "Idle"
 const ANIM_PARADO := "Walking"
 
 const VELOCIDADE_MAYCON := 4.2
-const DURACAO_FADE_IN := 2.6
+const DURACAO_BALANCO := 1.5
+const DURACAO_FADE_IN := 5.0
 const DURACAO_FADE_OUT := 1.0
 
 @onready var cabine:Node3D = $Cabine
@@ -56,6 +57,11 @@ var controle_liberado:bool = false
 # Campos exigidos pelo menu de pausa compartilhado das fases 3D
 var exit_started:bool = false
 var death_in_progress:bool = false
+
+var esqueleto:Skeleton3D
+var osso_cabeca:int = -1
+var balanco_cabeca:float = -1.0
+var caminhando_para_cabine:bool = false
 var entrando_na_cabine:bool = false
 var tempo:float = 0.0
 var tempo_passo:float = 0.0
@@ -63,6 +69,8 @@ var tempo_passo:float = 0.0
 
 func _ready() -> void:
 	get_tree().paused = false
+	# Roda depois do AnimationPlayer, senão o balanço da cabeça é sobrescrito
+	process_priority = 10
 	_montar_cabine()
 	_montar_maycon()
 	_posicionar_camera(true)
@@ -73,12 +81,39 @@ func _ready() -> void:
 	dica.modulate.a = 0.0
 	var fade_in := create_tween().bind_node(fade_rect)
 	fade_in.tween_property(fade_rect, "modulate:a", 0.0, DURACAO_FADE_IN).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	fade_in.tween_callback(func(): controle_liberado = true)
+	_abertura()
+
+
+# Maycon acorda caído no chão da cabine, se levanta e balança a cabeça tonto
+# antes de o jogador assumir o controle
+func _abertura() -> void:
+	await get_tree().create_timer(DURACAO_FADE_IN * 0.5).timeout
+	await _levantar_do_chao()
+	await _balancar_a_cabeca()
+	controle_liberado = true
 	var dica_tw := create_tween().bind_node(dica)
-	dica_tw.tween_interval(DURACAO_FADE_IN)
 	dica_tw.tween_property(dica, "modulate:a", 1.0, 0.6)
 	dica_tw.tween_interval(4.5)
 	dica_tw.tween_property(dica, "modulate:a", 0.0, 0.8)
+
+
+func _levantar_do_chao() -> void:
+	if maycon_animation == null or not maycon_animation.has_animation("Dead"):
+		return
+	# A animação de cair tocada ao contrário vira a de levantar
+	maycon_animation.play_backwards("Dead")
+	await get_tree().create_timer(maycon_animation.get_animation("Dead").length + 0.15).timeout
+	maycon_animation.speed_scale = 1.0
+	_tocar_animacao(ANIM_PARADO)
+
+
+func _balancar_a_cabeca() -> void:
+	if osso_cabeca < 0:
+		await get_tree().create_timer(0.6).timeout
+		return
+	balanco_cabeca = 0.0
+	await get_tree().create_timer(DURACAO_BALANCO).timeout
+	balanco_cabeca = -1.0
 
 
 func _montar_pausa() -> void:
@@ -484,9 +519,19 @@ func _montar_maycon() -> void:
 	maycon_visual.rotation.y = PI
 	maycon.add_child(maycon_visual)
 	maycon_animation = maycon_visual.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	var esqueletos:Array[Node] = maycon_visual.find_children("*", "Skeleton3D", true, false)
+	if not esqueletos.is_empty():
+		esqueleto = esqueletos[0] as Skeleton3D
+		osso_cabeca = esqueleto.find_bone("Head")
 	maycon.position = Vector3(0.0, 0.05, Z_FUNDO - 1.0)
 	add_child(maycon)
-	_tocar_animacao(ANIM_PARADO)
+	# Começa caído no chão, no último quadro da animação de queda
+	if maycon_animation and maycon_animation.has_animation("Dead"):
+		maycon_animation.play("Dead")
+		maycon_animation.seek(maycon_animation.get_animation("Dead").length, true)
+		maycon_animation.pause()
+	else:
+		_tocar_animacao(ANIM_PARADO)
 
 
 func _tocar_animacao(nome:String) -> void:
@@ -497,12 +542,26 @@ func _tocar_animacao(nome:String) -> void:
 	maycon_animation.play(nome, 0.25)
 
 
+func _process(delta:float) -> void:
+	if balanco_cabeca < 0.0 or osso_cabeca < 0 or not is_instance_valid(esqueleto):
+		return
+	balanco_cabeca += delta
+	# Nega com a cabeça, perdendo força até parar
+	var forca := 1.0 - clampf(balanco_cabeca / DURACAO_BALANCO, 0.0, 1.0)
+	var angulo := sin(balanco_cabeca * 13.0) * 0.42 * forca
+	var pose := esqueleto.get_bone_pose_rotation(osso_cabeca)
+	esqueleto.set_bone_pose_rotation(osso_cabeca, pose * Quaternion(Vector3.UP, angulo))
+
+
 func _physics_process(delta:float) -> void:
 	tempo += delta
 	_atualizar_tralhas(delta)
 	if entrando_na_cabine or not controle_liberado:
 		if is_instance_valid(maycon):
 			maycon.velocity = Vector3.ZERO
+		# As animações do modelo não são em loop, então precisam ser reativadas
+		if entrando_na_cabine:
+			_tocar_animacao(ANIM_ANDANDO if caminhando_para_cabine else ANIM_PARADO)
 		_posicionar_camera(false)
 		return
 	var entrada := Vector2(
@@ -531,7 +590,7 @@ func _physics_process(delta:float) -> void:
 func _atualizar_passos(delta:float) -> void:
 	tempo_passo -= delta
 	if tempo_passo <= 0.0:
-		tempo_passo = 0.42
+		tempo_passo = 0.62
 		passo.pitch_scale = randf_range(0.92, 1.06)
 		passo.play()
 
@@ -572,6 +631,7 @@ func _ao_entrar_na_cabine(body:Node3D) -> void:
 	entrando_na_cabine = true
 	controle_liberado = false
 	maycon.velocity = Vector3.ZERO
+	caminhando_para_cabine = true
 	_tocar_animacao(ANIM_ANDANDO)
 	var dica_tw := create_tween().bind_node(dica)
 	dica_tw.tween_property(dica, "modulate:a", 0.0, 0.3)
@@ -585,6 +645,7 @@ func _ao_entrar_na_cabine(body:Node3D) -> void:
 	giro.tween_interval(0.9)
 	giro.tween_property(maycon_visual, "rotation:y", PI + 0.35, 0.9)
 	await caminhada.finished
+	caminhando_para_cabine = false
 	_tocar_animacao(ANIM_PARADO)
 	await get_tree().create_timer(0.45).timeout
 

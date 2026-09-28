@@ -16,6 +16,7 @@ const LIMITE_Y := 19.0
 
 signal vida_alterada(atual:float, maxima:float)
 signal derrotado()
+signal jorro_de_sangue(ponto:Vector3)
 
 var vida_maxima:float = 130.0
 var vida:float = 130.0
@@ -103,7 +104,7 @@ func receber_dano(quantidade:float, ponto:Vector3) -> void:
 	vida = maxf(0.0, vida - quantidade)
 	tempo_dano = 0.16
 	vida_alterada.emit(vida, vida_maxima)
-	if randf() < 0.55:
+	if randf() < 0.4:
 		_espirrar_sangue(ponto)
 	if randf() < 0.08 and not grunt_audio.playing:
 		grunt_audio.pitch_scale = randf_range(0.5, 0.7)
@@ -118,12 +119,30 @@ func receber_dano(quantidade:float, ponto:Vector3) -> void:
 
 func _espirrar_sangue(ponto:Vector3) -> void:
 	var sangue := BLOOD_SCENE.instantiate()
-	sangue.scale = Vector3.ONE * randf_range(6.0, 11.0)
+	sangue.scale = Vector3.ONE * randf_range(16.0, 28.0)
 	get_parent().add_child(sangue)
 	sangue.global_position = ponto
-	get_tree().create_timer(2.2).timeout.connect(func():
+	# Jorra para trás, empurrado pelo vento, e dura bem mais do que o padrão
+	var particulas := sangue.get_node_or_null("GPUParticles3D") as GPUParticles3D
+	if particulas:
+		particulas.amount = 220
+		particulas.lifetime = 2.6
+		particulas.local_coords = false
+		var processo := particulas.process_material as ParticleProcessMaterial
+		if processo:
+			processo = processo.duplicate() as ParticleProcessMaterial
+			processo.direction = Vector3(0.0, 0.5, 1.0)
+			processo.spread = 42.0
+			processo.initial_velocity_min = 26.0
+			processo.initial_velocity_max = 62.0
+			processo.gravity = Vector3(0.0, -9.0, 0.0)
+			processo.scale_min = 0.5
+			processo.scale_max = 1.8
+			particulas.process_material = processo
+	get_tree().create_timer(4.5).timeout.connect(func():
 		if is_instance_valid(sangue):
 			sangue.queue_free())
+	jorro_de_sangue.emit(ponto)
 
 
 func boca_global() -> Vector3:

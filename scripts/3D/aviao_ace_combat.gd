@@ -42,6 +42,11 @@ const TAMANHO_LANCHE := 13.0
 const BURACO_LOCAL := Vector3(0.0, 1.78, 2.2)
 const INTERVALO_DETRITO := 0.5
 
+# Gotas de sangue do Lips que voam para trás e podem sujar o avião
+const VELOCIDADE_GOTA := 95.0
+const RAIO_GOTA := 9.0
+const MAX_MANCHAS := 26
+
 @onready var aviao:Node3D = $Aviao
 @onready var camera:Camera3D = $Camera3D
 @onready var projeteis:Node3D = $Projeteis
@@ -93,6 +98,9 @@ var lado_do_tiro:int = 0
 var buraco_aviao:Node3D
 var detritos:Array[Dictionary] = []
 var tempo_detrito:float = 0.0
+var gotas_de_sangue:Array[Dictionary] = []
+var manchas_no_aviao:Array[MeshInstance3D] = []
+var textura_mancha:GradientTexture2D
 var desfecho_em_andamento:bool = false
 
 # Campos exigidos pelo menu de pausa compartilhado da fase 3D
@@ -297,6 +305,96 @@ func _atualizar_detritos(delta:float) -> void:
 	detritos = restantes
 
 
+# Cada porrada no Lips manda um punhado de gotas em direção ao avião; as que
+# acertam ficam grudadas na fuselagem até o fim da fase.
+func _ao_jorrar_sangue(ponto:Vector3) -> void:
+	for i in range(randi_range(2, 4)):
+		var gota := MeshInstance3D.new()
+		var bolha := SphereMesh.new()
+		bolha.radius = randf_range(0.35, 0.95)
+		bolha.height = bolha.radius * 2.0
+		bolha.radial_segments = 8
+		bolha.rings = 4
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.albedo_color = Color(0.5, 0.01, 0.045)
+		bolha.material = mat
+		gota.mesh = bolha
+		efeitos.add_child(gota)
+		gota.global_position = ponto + Vector3(randf_range(-4.0, 4.0), randf_range(-4.0, 4.0), randf_range(-4.0, 4.0))
+		var alvo := aviao.global_position + Vector3(randf_range(-16.0, 16.0), randf_range(-6.0, 6.0), randf_range(-8.0, 8.0))
+		gotas_de_sangue.append({
+			"no": gota,
+			"dir": (alvo - gota.global_position).normalized(),
+			"vida": 3.2
+		})
+
+
+func _atualizar_gotas(delta:float) -> void:
+	var restantes:Array[Dictionary] = []
+	for gota in gotas_de_sangue:
+		var no:MeshInstance3D = gota["no"]
+		if not is_instance_valid(no):
+			continue
+		var anterior := no.global_position
+		no.global_position = anterior + Vector3(gota["dir"]) * VELOCIDADE_GOTA * delta
+		gota["vida"] = float(gota["vida"]) - delta
+		if _segmento_acerta(anterior, no.global_position, aviao.global_position, RAIO_GOTA):
+			_manchar_aviao(no.global_position)
+			no.queue_free()
+			continue
+		if float(gota["vida"]) <= 0.0 or no.global_position.z > camera.global_position.z:
+			no.queue_free()
+			continue
+		restantes.append(gota)
+	gotas_de_sangue = restantes
+
+
+func _manchar_aviao(ponto:Vector3) -> void:
+	if textura_mancha == null:
+		textura_mancha = _textura_de_mancha()
+	var mancha := MeshInstance3D.new()
+	mancha.name = "ManchaDeSangue"
+	var quadro := QuadMesh.new()
+	quadro.size = Vector2(1.0, 1.0) * randf_range(2.6, 5.4)
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.albedo_color = Color(0.36, 0.004, 0.025, 1.0)
+	mat.albedo_texture = textura_mancha
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	quadro.material = mat
+	mancha.mesh = quadro
+	aviao.add_child(mancha)
+	# Assenta em cima da asa/fuselagem, virada para cima
+	var local:Vector3 = aviao.to_local(ponto)
+	local.x = clampf(local.x, -14.0, 14.0)
+	local.z = clampf(local.z, -12.0, 12.0)
+	local.y = 1.9 if absf(local.x) < 2.2 else -1.9
+	mancha.position = local
+	mancha.rotation = Vector3(deg_to_rad(-90.0), randf_range(0.0, TAU), 0.0)
+	manchas_no_aviao.append(mancha)
+	if manchas_no_aviao.size() > MAX_MANCHAS:
+		var velha:MeshInstance3D = manchas_no_aviao.pop_front()
+		if is_instance_valid(velha):
+			velha.queue_free()
+
+
+func _textura_de_mancha() -> GradientTexture2D:
+	var degrade := Gradient.new()
+	degrade.set_color(0, Color(1.0, 1.0, 1.0, 1.0))
+	degrade.add_point(0.78, Color(1.0, 1.0, 1.0, 1.0))
+	degrade.set_color(1, Color(1.0, 1.0, 1.0, 0.0))
+	var textura := GradientTexture2D.new()
+	textura.gradient = degrade
+	textura.fill = GradientTexture2D.FILL_RADIAL
+	textura.fill_from = Vector2(0.5, 0.5)
+	textura.fill_to = Vector2(1.0, 0.5)
+	textura.width = 64
+	textura.height = 64
+	return textura
+
+
 func _montar_lips() -> void:
 	lips = Node3D.new()
 	lips.name = "LipsGigante"
@@ -305,6 +403,7 @@ func _montar_lips() -> void:
 	lips.position = Vector3(0.0, 0.0, -300.0)
 	lips.vida_alterada.connect(_ao_mudar_vida_do_lips)
 	lips.derrotado.connect(_ao_derrotar_lips)
+	lips.jorro_de_sangue.connect(_ao_jorrar_sangue)
 
 
 func _montar_hud() -> void:
@@ -529,6 +628,7 @@ func _process(delta:float) -> void:
 	_atualizar_balas(delta)
 	_atualizar_lanches(delta)
 	_atualizar_detritos(delta)
+	_atualizar_gotas(delta)
 	_atualizar_ataques_do_lips(delta)
 	if tremor > 0.0:
 		tremor = maxf(0.0, tremor - delta * 1.6)
@@ -905,11 +1005,13 @@ func _queda_no_infinito() -> void:
 	camera.h_offset = 0.0
 	camera.v_offset = 0.0
 	tremor = 0.0
+	# Grito em câmera lenta cobrindo a queda inteira (o mp3 está em loop)
 	som_grito.volume_db = 0.0
+	som_grito.pitch_scale = 0.5
 	som_grito.play()
 	var grito_out := create_tween().bind_node(som_grito)
-	grito_out.tween_interval(2.6)
-	grito_out.tween_property(som_grito, "volume_db", -40.0, 1.6)
+	grito_out.tween_interval(3.9)
+	grito_out.tween_property(som_grito, "volume_db", -40.0, 1.3)
 	grito_out.tween_callback(som_grito.stop)
 	var escurecer := create_tween().bind_node(self)
 	escurecer.tween_method(func(p:float):

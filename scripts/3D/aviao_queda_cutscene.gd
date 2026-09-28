@@ -15,6 +15,9 @@ const FATOR_SLOW_MOTION := 0.26
 const DURACAO_FADE_IN := 1.4
 const DURACAO_RETOMADA := 1.15   # tempo em que o slow motion volta ao normal
 const DURACAO_FADE_OUT := 2.6
+# Volume do grito conforme a câmera do corte: alto no Maycon, mudo no avião
+const GRITO_PERTO_DB := 1.0
+const GRITO_LONGE_DB := -42.0
 const TEMPO_MUNDO_TOTAL := 4.1   # segundos "reais" da queda, esticados pelo slow motion
 
 # Pontos inicial e final de cada personagem no espaço do mundo
@@ -67,6 +70,7 @@ var cortes_terminados:bool = false
 var tempo_retomada:float = 0.0
 var saida_iniciada:bool = false
 var giro_maycon:float = 0.0
+var volume_grito_tw:Tween
 var linhas_maycon:MultiMeshInstance3D
 var linhas_aviao:MultiMeshInstance3D
 
@@ -256,14 +260,26 @@ func _trocar_corte() -> void:
 	corte_atual += 1
 	tempo_no_corte = 0.0
 	# Cortes pares mostram o avião chegando, ímpares o Maycon caindo
-	if corte_atual % 2 == 0:
-		enquadramento_aviao = (enquadramento_aviao + 1) % ENQUADRAMENTOS_AVIAO.size()
-		cam_aviao.fov = float(ENQUADRAMENTOS_AVIAO[enquadramento_aviao]["fov"])
-		cam_aviao.make_current()
-	else:
+	var no_maycon := corte_atual % 2 == 1
+	if no_maycon:
 		enquadramento_maycon = (enquadramento_maycon + 1) % ENQUADRAMENTOS_MAYCON.size()
 		cam_maycon.fov = float(ENQUADRAMENTOS_MAYCON[enquadramento_maycon]["fov"])
 		cam_maycon.make_current()
+	else:
+		enquadramento_aviao = (enquadramento_aviao + 1) % ENQUADRAMENTOS_AVIAO.size()
+		cam_aviao.fov = float(ENQUADRAMENTOS_AVIAO[enquadramento_aviao]["fov"])
+		cam_aviao.make_current()
+	_ajustar_volume_do_grito(no_maycon)
+
+
+# O grito só se ouve nos cortes em que a câmera está no Maycon, em todos eles
+func _ajustar_volume_do_grito(no_maycon:bool) -> void:
+	if saida_iniciada or not is_instance_valid(grito):
+		return
+	if volume_grito_tw and volume_grito_tw.is_valid():
+		volume_grito_tw.kill()
+	volume_grito_tw = create_tween().bind_node(grito)
+	volume_grito_tw.tween_property(grito, "volume_db", GRITO_PERTO_DB if no_maycon else GRITO_LONGE_DB, 0.12)
 
 
 func _atualizar_cameras() -> void:
@@ -307,6 +323,8 @@ func _encerrar() -> void:
 	# Fade out antes do Maycon se chocar com o avião
 	var fade_out := create_tween().bind_node(fade_rect)
 	fade_out.tween_property(fade_rect, "modulate:a", 1.0, DURACAO_FADE_OUT).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	if volume_grito_tw and volume_grito_tw.is_valid():
+		volume_grito_tw.kill()
 	var som_out := create_tween().bind_node(grito)
 	som_out.tween_property(grito, "volume_db", -40.0, DURACAO_FADE_OUT * 0.85)
 	await fade_out.finished
