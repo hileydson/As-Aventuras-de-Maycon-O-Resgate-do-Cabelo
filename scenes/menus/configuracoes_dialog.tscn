@@ -92,6 +92,26 @@ theme_override_font_sizes/font_size = 13
 text = "Altera a dificuldade das batalhas e fases. Pode ser modificada a qualquer momento."
 autowrap_mode = 2
 
+[node name="BattleModeSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BattleModeTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/BattleModeSection"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_y8q2z")
+theme_override_font_sizes/font_size = 18
+text = "Modo de Batalha"
+
+[node name="BattleModeOption" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/BattleModeSection"]
+layout_mode = 2
+
+[node name="BattleModeDesc" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/BattleModeSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.85)
+theme_override_font_sizes/font_size = 13
+text = "Define o sistema usado ao iniciar a próxima batalha. Pode ser modificado a qualquer momento."
+autowrap_mode = 2
+
 [node name="AimAssistSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer" unique_id=1476640918]
 layout_mode = 2
 theme_override_constants/separation = 8

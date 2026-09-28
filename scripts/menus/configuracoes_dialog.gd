@@ -9,6 +9,9 @@ signal closed
 @onready var difficulty_title: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/DifficultySection/DifficultyTitle
 @onready var difficulty_option: OptionButton = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/DifficultySection/DifficultyOption
 @onready var difficulty_desc: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/DifficultySection/DifficultyDesc
+@onready var battle_mode_title: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/BattleModeSection/BattleModeTitle
+@onready var battle_mode_option: OptionButton = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/BattleModeSection/BattleModeOption
+@onready var battle_mode_desc: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/BattleModeSection/BattleModeDesc
 @onready var aim_title: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection/AimTitle
 @onready var aim_slider: HSlider = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection/HBoxContainer/AimSlider
 @onready var aim_value_label: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/AimAssistSection/HBoxContainer/AimValueLabel
@@ -55,6 +58,7 @@ func _ready() -> void:
 		graphics3d_scroll.follow_focus = true
 	aim_slider.value_changed.connect(_on_aim_slider_value_changed)
 	difficulty_option.item_selected.connect(_on_difficulty_selected)
+	battle_mode_option.item_selected.connect(_on_battle_mode_selected)
 	btn_close.pressed.connect(_on_close_pressed)
 	tab_container.tab_changed.connect(_on_tab_changed)
 	_connect_graphics_signals()
@@ -65,10 +69,18 @@ func _setup_gameplay_options() -> void:
 	difficulty_option.add_item(tr("DIFFICULTY_NORMAL"), 0)
 	difficulty_option.add_item(tr("DIFFICULTY_EASY"), 1)
 	difficulty_option.select(1 if Global.is_easy_mode() else 0)
+	battle_mode_option.clear()
+	battle_mode_option.add_item(tr("SETTINGS_BATTLE_MODE_REALTIME"), 0)
+	battle_mode_option.add_item(tr("SETTINGS_BATTLE_MODE_STRATEGIC"), 1)
+	battle_mode_option.select(1 if Global.battle_mode == Global.battle_mode_strategic else 0)
 
 func _on_difficulty_selected(idx: int) -> void:
 	var new_diff := Global.DIFFICULTY_EASY if idx == 1 else Global.DIFFICULTY_NORMAL
 	Global.set_difficulty(new_diff)
+
+func _on_battle_mode_selected(idx: int) -> void:
+	var mode := Global.battle_mode_strategic if idx == 1 else Global.battle_mode_realtime
+	Global.set_battle_mode(mode)
 
 func _setup_graphics_options() -> void:
 	msaa3d_option.clear()
@@ -220,8 +232,10 @@ func _switch_tab(idx: int) -> void:
 func _on_tab_changed(tab_idx: int) -> void:
 	if tab_idx == 0:
 		difficulty_option.grab_focus()
-		difficulty_option.focus_neighbor_bottom = aim_slider.get_path()
-		aim_slider.focus_neighbor_top = difficulty_option.get_path()
+		difficulty_option.focus_neighbor_bottom = battle_mode_option.get_path()
+		battle_mode_option.focus_neighbor_top = difficulty_option.get_path()
+		battle_mode_option.focus_neighbor_bottom = aim_slider.get_path()
+		aim_slider.focus_neighbor_top = battle_mode_option.get_path()
 		btn_close.focus_neighbor_top = aim_slider.get_path()
 	elif tab_idx == 1:
 		msaa3d_option.grab_focus()
@@ -255,6 +269,8 @@ func update_language() -> void:
 	aim_desc.text = tr("SETTINGS_AIM_ASSIST_DESC")
 	difficulty_title.text = tr("SETTINGS_DIFFICULTY")
 	difficulty_desc.text = tr("SETTINGS_DIFFICULTY_DESC")
+	battle_mode_title.text = tr("SETTINGS_BATTLE_MODE")
+	battle_mode_desc.text = tr("SETTINGS_BATTLE_MODE_DESC")
 	_setup_gameplay_options()
 	debug_title.text = tr("SETTINGS_GAME_EVENTS")
 	btn_close.text = tr("SETTINGS_CLOSE")

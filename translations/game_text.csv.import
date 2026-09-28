@@ -15,5 +15,3 @@ dest_files=["res://translations/game_text.pt.translation", "res://translations/g
 
 compress=1
 delimiter=0
-unescape_keys=false
-unescape_translations=true

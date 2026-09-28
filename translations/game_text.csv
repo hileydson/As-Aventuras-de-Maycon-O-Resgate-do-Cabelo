@@ -29,7 +29,12 @@ MENU_MAP,MAPA,MAP,MAPA,地图
 MENU_OK,OK,OK,OK,确定
 SETTINGS_TITLE,Configurações,Settings,Configuración,设置
 SETTINGS_GAMEPLAY,Gameplay,Gameplay,Jugabilidad,游戏设置
+SETTINGS_BATTLE_MODE,Modo de Batalha,Battle Mode,Modo de Batalla,战斗模式
+SETTINGS_BATTLE_MODE_REALTIME,Tempo Real,Real Time,Tiempo Real,即时
+SETTINGS_BATTLE_MODE_STRATEGIC,Estratégico,Strategic,Estratégico,策略回合
+SETTINGS_BATTLE_MODE_DESC,Define o sistema usado ao iniciar a próxima batalha. Pode ser modificado a qualquer momento.,Sets the system used when the next battle begins. It can be changed at any time.,Define el sistema usado al iniciar la próxima batalla. Se puede modificar en cualquier momento.,设定下一场战斗开始时使用的系统。可随时更改。
 SETTINGS_DEBUG,Debug,Debug,Depuración,调试
+SETTINGS_DEBUG_MODE_ON,DEBUG MODE ON,DEBUG MODE ON,DEBUG MODE ON,DEBUG MODE ON
 SETTINGS_AIM_ASSIST,Assistente de Mira,Aim Assist,Asistencia de Apuntado,瞄准辅助
 SETTINGS_AIM_DESC,Ajusta a intensidade da atração e assistência de mira no combate 3D.,Adjusts aim magnetism and shot assist strength in 3D combat.,Ajusta la intensidad de atracción y asistencia de disparo en combate 3D.,调整3D战斗中的瞄准吸附与射击辅助强度。
 SETTINGS_AIM_ASSIST_DESC,Ajusta a intensidade da atração e assistência de mira no combate 3D.,Adjusts aim magnetism and shot assist strength in 3D combat.,Ajusta la intensidad de atracción y asistencia de disparo en combate 3D.,调整3D战斗中的瞄准吸附与射击辅助强度。
@@ -233,25 +238,25 @@ Após usar os 3 ataques terá que aguardar um instante até poder atacar novamen
 
 Após usar as 6 defesas também terá que aguardar um instante.
 
-Você terá 3 vidas, caso morra, terá que voltar ao início do Stage.","You will have 3 attacks (punch or kick) and 6 defenses (jump).
+Você terá 3 vidas; caso morra, voltará ao último save.","You will have 3 attacks (punch or kick) and 6 defenses (jump).
 
 After using 3 attacks you will have to wait a moment before attacking again.
 
 After using 6 defenses you will also have to wait a moment.
 
-You will have 3 lives, if you die, you will have to return to the beginning of the Stage.","Tendrás 3 ataques (puñetazo o patada) y 6 defensas (salto).
+You will have 3 lives; if you die, you will return to the last save.","Tendrás 3 ataques (puñetazo o patada) y 6 defensas (salto).
 
 Tras usar los 3 ataques tendrás que esperar un momento para volver a atacar.
 
 Tras usar las 6 defensas también tendrás que esperar un momento.
 
-Tendrás 3 vidas, si mueres, tendrás que volver al inicio del Nivel.","你拥有3次攻击（出拳或飞踢）和6次防御（跳跃）机会。
+Tendrás 3 vidas; si mueres, volverás al último guardado.","你拥有3次攻击（出拳或飞踢）和6次防御（跳跃）机会。
 
 用完3次攻击后需要稍作等待方可再次攻击。
 
 用完6次防御后同样需要等待片刻。
 
-你共有3条生命，如果阵亡则必须重返关卡起点。"
+你共有3条生命；如果阵亡，将返回最近的存档点。"
 BOSS_INTRO_OLINDAO,OLINDÃO,OLINDÃO,OLINDÃO,奥林当
 BOSS_INTRO_TRIPA,TRIPA,TRIPA,TRIPA,大肚
 BOSS_INTRO_MAIOR,MAIOR,MAIOR,MAIOR,汉

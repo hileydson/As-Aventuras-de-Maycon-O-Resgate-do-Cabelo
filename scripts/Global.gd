@@ -69,17 +69,17 @@ var maycon_hp_count:int = 0
 var maycon_itens_default = {axe=false}
 var game_stage_1_events_died_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=true, first_battle=false, before_prologo=false, passagem_pestilenta_feita=false, camilita_defeated=false,
-dungeon_unlocked=false, dungeon_axe_cutscene_seen=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
+dungeon_unlocked=false, dungeon_axe_cutscene_seen=false, dungeon_axe_cutscene_played=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
 var game_stage_outside_1_events_died_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=true, gilhotina_broken=true, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=true, first_battle=false, before_prologo=false, passagem_pestilenta_feita=false, camilita_defeated=true,
-dungeon_unlocked=true, dungeon_axe_cutscene_seen=true, dungeon_flashlight_taken=true, dungeon_pistol_taken=true, dungeon_gun_taken=true, dungeon_blue_key_taken=true, dungeon_red_key_taken=true, dungeon_green_key_taken=true, dungeon_key_taken=true, dungeon_intro_lever=true, dungeon_blue_lever=true, dungeon_red_lever=true, dungeon_green_lever=true, dungeon_finale_triggered=true, dungeon_axe_door_open=true, dungeon_axe_taken=true}
+dungeon_unlocked=true, dungeon_axe_cutscene_seen=true, dungeon_axe_cutscene_played=true, dungeon_flashlight_taken=true, dungeon_pistol_taken=true, dungeon_gun_taken=true, dungeon_blue_key_taken=true, dungeon_red_key_taken=true, dungeon_green_key_taken=true, dungeon_key_taken=true, dungeon_intro_lever=true, dungeon_blue_lever=true, dungeon_red_lever=true, dungeon_green_lever=true, dungeon_finale_triggered=true, dungeon_axe_door_open=true, dungeon_axe_taken=true}
 var maycon_itens = {axe=false}
 var game_events_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true, passagem_pestilenta_feita=false, camilita_defeated=false,
-dungeon_unlocked=false, dungeon_axe_cutscene_seen=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
+dungeon_unlocked=false, dungeon_axe_cutscene_seen=false, dungeon_axe_cutscene_played=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
 var game_events = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true, passagem_pestilenta_feita=false, camilita_defeated=false,
-dungeon_unlocked=false, dungeon_axe_cutscene_seen=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
+dungeon_unlocked=false, dungeon_axe_cutscene_seen=false, dungeon_axe_cutscene_played=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
 var inimigos_mortos = {}
 var realtime_enemy_respawns:Dictionary = {}
 var aim_assist_strength:float = 0.6
@@ -95,7 +95,13 @@ func set_difficulty(val: String, should_save: bool = true) -> void:
 		difficulty = DIFFICULTY_NORMAL
 	if should_save:
 		save_settings()
-var show_debug_tab:bool = true
+
+func set_battle_mode(mode: String, should_save: bool = true) -> void:
+	battle_mode = battle_mode_strategic if mode == battle_mode_strategic else battle_mode_realtime
+	if should_save and has_save_slot(current_save_slot):
+		save_to_player_savegame()
+
+var show_debug_tab:bool = false
 var debug_disable_battles:bool = false
 var debug_dungeon_invincible:bool = false
 var debug_lips_um_golpe:bool = false
@@ -693,7 +699,7 @@ func load_progress(slot: int = -1)->void:
 
 func reset_dungeon_events(save_now: bool = true) -> void:
 	var dungeon_keys := [
-		"dungeon_intro_cutscene_seen", "dungeon_axe_cutscene_seen", "dungeon_unlocked", "dungeon_flashlight_taken", "dungeon_pistol_taken",
+		"dungeon_intro_cutscene_seen", "dungeon_axe_cutscene_seen", "dungeon_axe_cutscene_played", "dungeon_unlocked", "dungeon_flashlight_taken", "dungeon_pistol_taken",
 		"dungeon_gun_taken", "dungeon_blue_key_taken", "dungeon_red_key_taken",
 		"dungeon_green_key_taken", "dungeon_key_taken", "dungeon_intro_lever",
 		"dungeon_blue_lever", "dungeon_red_lever", "dungeon_green_lever",

@@ -102,7 +102,7 @@ func create_mode_card(title_text:String, description:String, accent:Color) -> Bu
 	return button
 
 func select_mode(mode:String) -> void:
-	Global.battle_mode = mode
+	Global.set_battle_mode(mode, false)
 	realtime_button.disabled = true
 	strategic_button.disabled = true
 	var tween = create_tween()

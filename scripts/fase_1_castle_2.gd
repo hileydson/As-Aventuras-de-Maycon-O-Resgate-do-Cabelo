@@ -52,8 +52,9 @@ func _ready() -> void:
 	
 	var axe_already_collected: bool = bool(Global.maycon_itens.get("axe", false)) or bool(Global.game_events.get("axe_taken", false)) or bool(Global.game_events.get("dungeon_axe_taken", false))
 	var dungeon_already_unlocked: bool = bool(Global.game_events.get("dungeon_unlocked", false))
+	var axe_cutscene_already_played: bool = bool(Global.game_events.get("dungeon_axe_cutscene_played", false))
 	
-	if dungeon_already_unlocked or axe_already_collected:
+	if dungeon_already_unlocked or axe_already_collected or axe_cutscene_already_played:
 		played_axe = true
 		aconteceu_animacao_axe = true
 		axe_area.position = Vector2(-480, 1100)
@@ -73,10 +74,11 @@ func _process(delta: float) -> void:
 	
 	var axe_already_collected: bool = bool(Global.maycon_itens.get("axe", false)) or bool(Global.game_events.get("axe_taken", false)) or bool(Global.game_events.get("dungeon_axe_taken", false))
 	var dungeon_already_unlocked: bool = bool(Global.game_events.get("dungeon_unlocked", false))
+	var axe_cutscene_already_played: bool = bool(Global.game_events.get("dungeon_axe_cutscene_played", false))
 	
 	if animacoes.current_animation == "axe_fall":
 		axe_area.visible = true
-	elif dungeon_already_unlocked or axe_already_collected:
+	elif dungeon_already_unlocked or axe_already_collected or axe_cutscene_already_played:
 		axe_area.visible = false
 	else:
 		axe_area.visible = true
@@ -87,7 +89,7 @@ func _process(delta: float) -> void:
 		if is_instance_valid(camilita_node):
 			camilita_node.queue_free()
 	
-	if !Global.battle_started and !played_axe and camilita_is_dead and !axe_already_collected and !dungeon_already_unlocked and !in_axe_cutscene and !Global.back_to_fase and !Global.dungeon_return_pending and !Global.axe_cutscene_return_valid:
+	if !Global.battle_started and !played_axe and camilita_is_dead and !axe_already_collected and !dungeon_already_unlocked and !axe_cutscene_already_played and !in_axe_cutscene and !Global.back_to_fase and !Global.dungeon_return_pending and !Global.axe_cutscene_return_valid:
 		played_axe = true
 		axe_area.position = Vector2(-2, -36)
 		axe_area.visible = true

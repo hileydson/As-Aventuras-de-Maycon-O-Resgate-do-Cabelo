@@ -100,11 +100,15 @@ func _ready() -> void:
 	build_pickups()
 	# Cutscene em primeira pessoa do machado caindo do teto e escorregando até a cela.mud
 	# Roda logo após o machado cair no buraco em fase_1_castle_2 e depois volta para lá.
-	if Global.axe_cutscene_pending:
+	if Global.axe_cutscene_pending and !event_is_true("dungeon_axe_cutscene_played"):
 		Global.axe_cutscene_pending = false
+		Global.game_events["dungeon_axe_cutscene_played"] = true
+		Global.save_progress("calabouco_terror")
 		build_cutscene_overlay()
 		start_axe_drop_cutscene()
 		return
+	elif Global.axe_cutscene_pending:
+		Global.axe_cutscene_pending = false
 	build_infected_population()
 	build_main_monster()
 	build_giant_zombies()

@@ -40,10 +40,11 @@ const MEMORY_POSITION := Vector3(27.0, 16.0, -63.0)
 const TAKE_WIDE := 0
 const TAKE_LOW := 1
 const TAKE_POV := 2
+const DEBUG_ACTIVATION_SEQUENCE: Array[StringName] = [&"ui_right", &"ui_right", &"ui_left", &"ui_left", &"ui_up", &"ui_up", &"ui_down", &"ui_down"]
 
 @export var load_from_castle_1: bool = false
 @export var load_from_outside_1: bool = false
-@export var enable_debug_tab: bool = true
+@export var enable_debug_tab: bool = false
 
 var elapsed := 0.0
 var maycon: Node3D
@@ -113,6 +114,7 @@ var overwrite_confirm_btn: Button
 var overwrite_cancel_btn: Button
 var overwrite_slot_label: Label
 var overwrite_info_label: Label
+var debug_activation_index := 0
 
 
 func _ready() -> void:
@@ -143,6 +145,7 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	_process_debug_activation_sequence(event)
 	if event.is_action_pressed("ui_cancel"):
 		if fullscreen_delete_dialog and fullscreen_delete_dialog.visible:
 			menu_sounds.play_back()
@@ -160,6 +163,51 @@ func _input(event: InputEvent) -> void:
 			menu_sounds.play_back()
 			_show_main_menu()
 			get_viewport().set_input_as_handled()
+
+func _process_debug_activation_sequence(event: InputEvent) -> void:
+	if Global.show_debug_tab or !is_instance_valid(stack_main) or !stack_main.visible:
+		return
+	if event is InputEventKey and event.echo:
+		return
+	var pressed_action := StringName()
+	for action in [&"ui_right", &"ui_left", &"ui_up", &"ui_down"]:
+		if event.is_action_pressed(action):
+			pressed_action = action
+			break
+	if pressed_action.is_empty():
+		return
+	if pressed_action == DEBUG_ACTIVATION_SEQUENCE[debug_activation_index]:
+		debug_activation_index += 1
+		if debug_activation_index == DEBUG_ACTIVATION_SEQUENCE.size():
+			debug_activation_index = 0
+			_enable_debug_mode()
+	else:
+		debug_activation_index = 1 if pressed_action == DEBUG_ACTIVATION_SEQUENCE[0] else 0
+
+func _enable_debug_mode() -> void:
+	Global.show_debug_tab = true
+	var layer := CanvasLayer.new()
+	layer.layer = 200
+	add_child(layer)
+	var message := Label.new()
+	message.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	message.position = Vector2(-500, -90)
+	message.size = Vector2(1000, 180)
+	message.text = tr("SETTINGS_DEBUG_MODE_ON")
+	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	message.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	message.add_theme_font_override("font", MENU_FONT)
+	message.add_theme_font_size_override("font_size", 96)
+	message.add_theme_color_override("font_color", Color("ffe066"))
+	message.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.95))
+	message.add_theme_constant_override("shadow_offset_x", 6)
+	message.add_theme_constant_override("shadow_offset_y", 6)
+	message.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(message)
+	var tween := create_tween()
+	tween.tween_interval(2.0)
+	tween.tween_property(message, "modulate:a", 0.0, 0.5)
+	tween.tween_callback(layer.queue_free)
 
 
 
