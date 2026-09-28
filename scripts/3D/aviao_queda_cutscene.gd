@@ -21,6 +21,7 @@ const GRITO_LONGE_DB := -42.0
 # A partir deste corte os takes ficam curtos demais para cortar o som: o grito
 # passa a rolar direto e vai ficando mais fino conforme a queda acelera
 const CORTE_GRITO_CONTINUO := 9
+const CORTE_INICIO_FADE_OUT := 6
 const GRITO_TOM_BASE := 0.45
 const GRITO_TOM_FINO := 0.92
 const TEMPO_MUNDO_TOTAL := 4.1   # segundos "reais" da queda, esticados pelo slow motion
@@ -75,6 +76,7 @@ var enquadramento_maycon:int = -1
 var cortes_terminados:bool = false
 var tempo_retomada:float = 0.0
 var saida_iniciada:bool = false
+var fade_out_iniciado:bool = false
 var giro_maycon:float = 0.0
 var volume_grito_tw:Tween
 var linhas_maycon:MultiMeshInstance3D
@@ -224,8 +226,8 @@ func _process(delta:float) -> void:
 	_posicionar_mundo(tempo_mundo / TEMPO_MUNDO_TOTAL)
 	_atualizar_cortes(delta)
 	_atualizar_cameras()
-	# Deixa ver a câmera lenta acabando antes de começar o clarão de transição
-	if cortes_terminados and not saida_iniciada and tempo_retomada >= 0.45:
+	# Ao fim da retomada do tempo, com a tela em branco total, a cena se encerra no impacto
+	if cortes_terminados and not saida_iniciada and tempo_retomada >= DURACAO_RETOMADA:
 		_encerrar()
 
 
@@ -279,6 +281,8 @@ func _trocar_corte() -> void:
 		cam_aviao.make_current()
 	_ajustar_volume_do_grito(no_maycon)
 	_afinar_grito()
+	if corte_atual >= CORTE_INICIO_FADE_OUT and not fade_out_iniciado:
+		_iniciar_fade_out()
 
 
 # O grito só se ouve nos cortes em que a câmera está no Maycon. Nos cortes do
@@ -358,23 +362,27 @@ func _acelerar_grito() -> void:
 		tw_vento.parallel().tween_property(vento, "volume_db", -3.0, DURACAO_RETOMADA * 0.8)
 
 
+func _iniciar_fade_out() -> void:
+	fade_out_iniciado = true
+	var tempo_restante := 0.0
+	for i in range(corte_atual, CORTES.size()):
+		tempo_restante += float(CORTES[i])
+	tempo_restante += DURACAO_RETOMADA
+	var fade_out := create_tween().bind_node(fade_rect)
+	fade_out.tween_property(fade_rect, "modulate:a", 1.0, tempo_restante).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+
 func _encerrar() -> void:
 	saida_iniciada = true
-	# Fade out antes do Maycon se chocar com o avião
-	var fade_out := create_tween().bind_node(fade_rect)
-	fade_out.tween_property(fade_rect, "modulate:a", 1.0, DURACAO_FADE_OUT).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fade_rect.modulate.a = 1.0
 	if volume_grito_tw and volume_grito_tw.is_valid():
 		volume_grito_tw.kill()
-	grito.stream_paused = false
-	var som_out := create_tween().bind_node(grito)
-	som_out.tween_property(grito, "volume_db", -40.0, DURACAO_FADE_OUT * 0.85)
-	await fade_out.finished
-	# Com a tela já branca, o estrondo abafado da batida fecha a cena
 	grito.stop()
 	if is_instance_valid(vento):
 		vento.stop()
 	if is_instance_valid(motor_aviao):
 		motor_aviao.stop()
+	# Com a tela já branca, o estrondo abafado da batida fecha a cena
 	choque.play()
 	await choque.finished
 	get_tree().change_scene_to_file.call_deferred(PROXIMA_CENA)

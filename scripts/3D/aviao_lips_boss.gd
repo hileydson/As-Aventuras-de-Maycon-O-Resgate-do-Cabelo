@@ -106,7 +106,7 @@ func receber_dano(quantidade:float, ponto:Vector3) -> void:
 	vida_alterada.emit(vida, vida_maxima)
 	if randf() < 0.4:
 		_espirrar_sangue(ponto)
-	if randf() < 0.08 and not grunt_audio.playing:
+	if randf() < 0.08 and not grunt_audio.playing and not scream_audio.playing:
 		grunt_audio.pitch_scale = randf_range(0.5, 0.7)
 		grunt_audio.play()
 	if vida <= 0.0:
@@ -154,7 +154,11 @@ func boca_global() -> Vector3:
 	return global_position + Vector3(0.0, -ESCALA * 0.12, ESCALA * 0.4)
 
 
-func gritar() -> void:
+func gritar(forcar:bool = false) -> void:
+	if not is_instance_valid(scream_audio):
+		return
+	if not forcar and scream_audio.playing:
+		return
 	scream_audio.pitch_scale = randf_range(0.75, 0.95)
 	scream_audio.play()
 

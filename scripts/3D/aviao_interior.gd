@@ -40,9 +40,9 @@ const VELOCIDADE_MAYCON := 4.2
 const DURACAO_BALANCO := 1.5
 const ATRASO_POEIRA := 1.4
 const PLATO_POEIRA := 4.0
-const SUMICO_POEIRA := 9.0
-# A poeira nunca some de vez: o avião está furado e continua levantando pó
-const POEIRA_RESIDUAL := 0.62
+const SUMICO_POEIRA := 5.0
+# A poeira diminui só um pouco após o início e continua o tempo todo no avião
+const POEIRA_RESIDUAL := 0.82
 const DURACAO_FADE_IN := 8.5
 const DURACAO_FADE_OUT := 1.0
 
@@ -145,13 +145,13 @@ func _montar_poeira_da_queda() -> void:
 
 	var processo := ParticleProcessMaterial.new()
 	processo.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
-	processo.emission_box_extents = Vector3(1.85, 0.2, 3.4)
+	processo.emission_box_extents = Vector3(1.85, 0.8, 5.0)
 	processo.direction = Vector3(0.0, 1.0, 0.0)
 	processo.spread = 78.0
-	processo.initial_velocity_min = 1.6
-	processo.initial_velocity_max = 5.0
+	processo.initial_velocity_min = 1.4
+	processo.initial_velocity_max = 4.2
 	# Sobe devagar em vez de cair, como poeira levantada num ambiente fechado
-	processo.gravity = Vector3(0.0, 0.3, 0.0)
+	processo.gravity = Vector3(0.0, 0.25, 0.0)
 	processo.damping_min = 1.4
 	processo.damping_max = 3.2
 	processo.scale_min = 0.4
@@ -165,19 +165,19 @@ func _montar_poeira_da_queda() -> void:
 
 	poeira = GPUParticles3D.new()
 	poeira.name = "PoeiraDaQueda"
-	poeira.amount = 130
-	poeira.lifetime = 3.4
+	poeira.amount = 160
+	poeira.lifetime = 3.6
 	poeira.local_coords = false
 	poeira.process_material = processo
 	poeira.draw_pass_1 = nuvem
-	poeira.position = Vector3(0.0, 0.3, Z_FUNDO - 1.2)
+	poeira.position = Vector3(0.0, 0.5, Z_FUNDO - 1.2)
 	# Sem coordenadas locais a caixa padrão é pequena demais e a nuvem some
 	# assim que os grãos se afastam do emissor
-	poeira.visibility_aabb = AABB(Vector3(-6.0, -1.5, -9.0), Vector3(12.0, 8.0, 18.0))
+	poeira.visibility_aabb = AABB(Vector3(-10.0, -5.0, -30.0), Vector3(20.0, 10.0, 60.0))
 	cabine.add_child(poeira)
 
-	# Fica cheia enquanto o fade in revela a cabine, depois afrouxa um pouco e
-	# segue assim o resto do trecho dentro do avião
+	# Fica cheia enquanto o fade in revela a cabine, depois afrouxa só um pouco e
+	# segue ativa o tempo todo enquanto o jogador anda pelo avião
 	var sumir := create_tween().bind_node(poeira)
 	sumir.tween_interval(PLATO_POEIRA)
 	sumir.tween_property(poeira, "amount_ratio", POEIRA_RESIDUAL, SUMICO_POEIRA).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
@@ -694,6 +694,7 @@ func _process(delta:float) -> void:
 func _physics_process(delta:float) -> void:
 	tempo += delta
 	_atualizar_tralhas(delta)
+	_atualizar_poeira()
 	if entrando_na_cabine or not controle_liberado:
 		if is_instance_valid(maycon):
 			maycon.velocity = Vector3.ZERO
@@ -738,6 +739,11 @@ func _atualizar_passos(delta:float) -> void:
 			tempo_passo = 0.36
 		passo.pitch_scale = randf_range(0.92, 1.06)
 		passo.play()
+
+
+func _atualizar_poeira() -> void:
+	if is_instance_valid(poeira) and is_instance_valid(maycon):
+		poeira.position.z = maycon.position.z
 
 
 func _posicionar_camera(imediato:bool) -> void:
