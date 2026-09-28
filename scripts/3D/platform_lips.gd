@@ -602,7 +602,8 @@ func take_hit_from_maycon() -> void:
 	
 	hits_current_power += 1
 	hurt_invulnerable_timer = 1.2
-	hp = maxi(0, hp - 1)
+	# Opção da aba Debug: derruba o Lips com um golpe só
+	hp = 0 if Global.debug_lips_um_golpe else maxi(0, hp - 1)
 	hp_changed.emit(hp, max_hp)
 	if stage and stage.has_method("update_boss_lips_hp"):
 		stage.update_boss_lips_hp(hp, max_hp)

@@ -119,27 +119,32 @@ func receber_dano(quantidade:float, ponto:Vector3) -> void:
 
 func _espirrar_sangue(ponto:Vector3) -> void:
 	var sangue := BLOOD_SCENE.instantiate()
-	sangue.scale = Vector3.ONE * randf_range(16.0, 28.0)
-	get_parent().add_child(sangue)
-	sangue.global_position = ponto
-	# Jorra para trás, empurrado pelo vento, e dura bem mais do que o padrão
 	var particulas := sangue.get_node_or_null("GPUParticles3D") as GPUParticles3D
 	if particulas:
+		# O blood.gd padrão se apaga em 2s; aqui o jorro precisa durar bem mais,
+		# então o script é removido antes de entrar na cena e a limpeza é nossa
+		particulas.set_script(null)
 		particulas.amount = 220
-		particulas.lifetime = 2.6
+		particulas.lifetime = 4.2
 		particulas.local_coords = false
 		var processo := particulas.process_material as ParticleProcessMaterial
 		if processo:
 			processo = processo.duplicate() as ParticleProcessMaterial
+			# Jorra para trás, empurrado pelo vento, e bem mais devagar
 			processo.direction = Vector3(0.0, 0.5, 1.0)
 			processo.spread = 42.0
-			processo.initial_velocity_min = 26.0
-			processo.initial_velocity_max = 62.0
-			processo.gravity = Vector3(0.0, -9.0, 0.0)
-			processo.scale_min = 0.5
-			processo.scale_max = 1.8
+			processo.initial_velocity_min = 10.0
+			processo.initial_velocity_max = 26.0
+			processo.gravity = Vector3(0.0, -4.0, 0.0)
+			processo.scale_min = 0.9
+			processo.scale_max = 2.6
 			particulas.process_material = processo
-	get_tree().create_timer(4.5).timeout.connect(func():
+	sangue.scale = Vector3.ONE * randf_range(30.0, 48.0)
+	get_parent().add_child(sangue)
+	sangue.global_position = ponto
+	if particulas:
+		particulas.emitting = true
+	get_tree().create_timer(6.5).timeout.connect(func():
 		if is_instance_valid(sangue):
 			sangue.queue_free())
 	jorro_de_sangue.emit(ponto)

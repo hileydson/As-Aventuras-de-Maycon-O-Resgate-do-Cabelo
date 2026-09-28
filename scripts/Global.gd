@@ -84,6 +84,7 @@ var aim_assist_strength:float = 0.6
 var show_debug_tab:bool = true
 var debug_disable_battles:bool = false
 var debug_dungeon_invincible:bool = false
+var debug_lips_um_golpe:bool = false
 
 # --- Configurações gráficas (aplicadas em tempo real, ver menu Configurações) ---
 const shadow_atlas_sizes:Array[int] = [1024, 2048, 4096]
@@ -437,6 +438,7 @@ func _process(_delta: float) -> void:
 
 func reset_default_values()->void:
 	debug_dungeon_invincible = false
+	debug_lips_um_golpe = false
 	back_to_main_camera = false
 	back_to_fase = false
 	dungeon_return_pending = false

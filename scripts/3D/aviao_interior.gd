@@ -32,6 +32,7 @@ const INTERVALO_TRALHA := 0.38
 # As animações do Maycon estão trocadas de propósito nesta cena
 const ANIM_ANDANDO := "Idle"
 const ANIM_PARADO := "Walking"
+const ANIM_LEVANTAR := "RunFast"
 
 const VELOCIDADE_MAYCON := 4.2
 const DURACAO_BALANCO := 1.5
@@ -62,6 +63,7 @@ var esqueleto:Skeleton3D
 var osso_cabeca:int = -1
 var balanco_cabeca:float = -1.0
 var caminhando_para_cabine:bool = false
+var passos_no_par:int = 0
 var entrando_na_cabine:bool = false
 var tempo:float = 0.0
 var tempo_passo:float = 0.0
@@ -98,12 +100,11 @@ func _abertura() -> void:
 
 
 func _levantar_do_chao() -> void:
-	if maycon_animation == null or not maycon_animation.has_animation("Dead"):
+	if maycon_animation == null or not maycon_animation.has_animation(ANIM_LEVANTAR):
 		return
-	# A animação de cair tocada ao contrário vira a de levantar
-	maycon_animation.play_backwards("Dead")
-	await get_tree().create_timer(maycon_animation.get_animation("Dead").length + 0.15).timeout
 	maycon_animation.speed_scale = 1.0
+	maycon_animation.play(ANIM_LEVANTAR)
+	await get_tree().create_timer(maycon_animation.get_animation(ANIM_LEVANTAR).length + 0.1).timeout
 	_tocar_animacao(ANIM_PARADO)
 
 
@@ -525,10 +526,10 @@ func _montar_maycon() -> void:
 		osso_cabeca = esqueleto.find_bone("Head")
 	maycon.position = Vector3(0.0, 0.05, Z_FUNDO - 1.0)
 	add_child(maycon)
-	# Começa caído no chão, no último quadro da animação de queda
-	if maycon_animation and maycon_animation.has_animation("Dead"):
-		maycon_animation.play("Dead")
-		maycon_animation.seek(maycon_animation.get_animation("Dead").length, true)
+	# Começa caído no chão, no primeiro quadro da animação de levantar
+	if maycon_animation and maycon_animation.has_animation(ANIM_LEVANTAR):
+		maycon_animation.play(ANIM_LEVANTAR)
+		maycon_animation.seek(0.0, true)
 		maycon_animation.pause()
 	else:
 		_tocar_animacao(ANIM_PARADO)
@@ -584,13 +585,20 @@ func _physics_process(delta:float) -> void:
 	else:
 		_tocar_animacao(ANIM_PARADO)
 		tempo_passo = 0.0
+		passos_no_par = 0
 	_posicionar_camera(false)
 
 
 func _atualizar_passos(delta:float) -> void:
 	tempo_passo -= delta
 	if tempo_passo <= 0.0:
-		tempo_passo = 0.62
+		# Dois passos seguidos, um respiro, e mais dois
+		passos_no_par += 1
+		if passos_no_par >= 2:
+			passos_no_par = 0
+			tempo_passo = 0.95
+		else:
+			tempo_passo = 0.36
 		passo.pitch_scale = randf_range(0.92, 1.06)
 		passo.play()
 

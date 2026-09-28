@@ -402,3 +402,5 @@ AVIAO_AVISO_ARMAS,Metralhadoras armadas!,Machine guns armed!,¡Ametralladoras ar
 AVIAO_AVISO_LIPS,O Lips gigante apareceu!,The giant Lips has shown up!,¡Apareció el Lips gigante!,巨大的利普斯出现了！
 AVIAO_AVISO_ABATIDO,Lips abatido!,Lips is down!,¡Lips abatido!,利普斯被击落了！
 AVIAO_TITULO_FASE,Ace Tomate,Ace Tomate,Ace Tomate,Ace Tomate
+SETTINGS_DEBUG_LIPS_ONE_HIT,Lips morre com um golpe,Lips dies in one hit,Lips muere de un golpe,利普斯一击毙命
+SETTINGS_DEBUG_LIPS_ONE_HIT_DESC,Na fase Super Maycon Brother o Lips cai no primeiro acerto,In the Super Maycon Brother stage Lips goes down on the first hit,En la fase Super Maycon Brother Lips cae al primer golpe,在超级麦肯兄弟关卡中利普斯第一击就倒下

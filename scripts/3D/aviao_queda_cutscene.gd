@@ -82,6 +82,8 @@ var death_in_progress:bool = false
 func _ready() -> void:
 	get_tree().paused = false
 	sol.rotation = Vector3(deg_to_rad(-48.0), deg_to_rad(38.0), 0.0)
+	# Começa mudo: o primeiro corte é do avião, o grito entra no corte do Maycon
+	grito.volume_db = GRITO_LONGE_DB
 	_montar_aviao()
 	_montar_maycon()
 	_montar_vento()
@@ -272,14 +274,25 @@ func _trocar_corte() -> void:
 	_ajustar_volume_do_grito(no_maycon)
 
 
-# O grito só se ouve nos cortes em que a câmera está no Maycon, em todos eles
+# O grito só se ouve nos cortes em que a câmera está no Maycon. Nos cortes do
+# avião ele é pausado (e não só abaixado), senão a faixa corre em silêncio e
+# volta já no fim quando a câmera retorna para o Maycon.
 func _ajustar_volume_do_grito(no_maycon:bool) -> void:
 	if saida_iniciada or not is_instance_valid(grito):
 		return
 	if volume_grito_tw and volume_grito_tw.is_valid():
 		volume_grito_tw.kill()
 	volume_grito_tw = create_tween().bind_node(grito)
-	volume_grito_tw.tween_property(grito, "volume_db", GRITO_PERTO_DB if no_maycon else GRITO_LONGE_DB, 0.12)
+	if no_maycon:
+		grito.stream_paused = false
+		if not grito.playing:
+			grito.play()
+		volume_grito_tw.tween_property(grito, "volume_db", GRITO_PERTO_DB, 0.12)
+	else:
+		volume_grito_tw.tween_property(grito, "volume_db", GRITO_LONGE_DB, 0.12)
+		volume_grito_tw.tween_callback(func():
+			if is_instance_valid(grito) and not saida_iniciada:
+				grito.stream_paused = true)
 
 
 func _atualizar_cameras() -> void:
@@ -325,6 +338,7 @@ func _encerrar() -> void:
 	fade_out.tween_property(fade_rect, "modulate:a", 1.0, DURACAO_FADE_OUT).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	if volume_grito_tw and volume_grito_tw.is_valid():
 		volume_grito_tw.kill()
+	grito.stream_paused = false
 	var som_out := create_tween().bind_node(grito)
 	som_out.tween_property(grito, "volume_db", -40.0, DURACAO_FADE_OUT * 0.85)
 	await fade_out.finished

@@ -13,8 +13,9 @@ const BLOOD_OVERLAY_SCRIPT = preload("res://scripts/3D/platform_blood_overlay.gd
 const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
 const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 const LANCHE_TEXTURE = preload("res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_coxinha.png")
-const VITORIA_SOUND = preload("res://assets/novos_audios/victory_sound.mp3")
-const FONTE_TITULO = preload("res://assets/fonts/contrast.ttf")
+const FONTE_TITULO = preload("res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/10 Font/CyberpunkCraftpixPixel.otf")
+const BOTAO_GATILHO = preload("res://assets/novas_imagens/buttons/button_trigger.png")
+const BOTAO_MOUSE = preload("res://assets/novas_imagens/buttons/mouse_trigger.png")
 
 const PROXIMA_CENA = "res://scenes/fase_1_before_castle_4.tscn"
 
@@ -429,7 +430,7 @@ func _montar_hud() -> void:
 	painel.anchor_bottom = 1.0
 	painel.offset_left = 12.0
 	painel.offset_right = 348.0
-	painel.offset_top = -97.0
+	painel.offset_top = -62.0
 	painel.offset_bottom = -12.0
 	var estilo := StyleBoxFlat.new()
 	estilo.bg_color = Color(0.09, 0.10, 0.14, 0.8)
@@ -456,17 +457,25 @@ func _montar_hud() -> void:
 	fundo.bg_color = Color("3a1924")
 	hp_bar.add_theme_stylebox_override("background", fundo)
 	coluna.add_child(hp_bar)
-	var atalhos := HBoxContainer.new()
-	atalhos.add_theme_constant_override("separation", 6)
-	coluna.add_child(atalhos)
-	var dica_voo := Label.new()
-	dica_voo.text = tr("AVIAO_HUD_PILOTAR")
-	dica_voo.add_theme_font_size_override("font_size", 13)
-	atalhos.add_child(dica_voo)
-	var dica_tiro := Label.new()
-	dica_tiro.text = tr("AVIAO_HUD_ATIRAR")
-	dica_tiro.add_theme_font_size_override("font_size", 13)
-	atalhos.add_child(dica_tiro)
+
+	# Botões do tiro no canto inferior direito, no mesmo estilo do HUD da moto
+	var botoes_tiro := HBoxContainer.new()
+	botoes_tiro.name = "BotoesDoTiro"
+	botoes_tiro.anchor_left = 1.0
+	botoes_tiro.anchor_top = 1.0
+	botoes_tiro.anchor_right = 1.0
+	botoes_tiro.anchor_bottom = 1.0
+	botoes_tiro.offset_left = -152.0
+	botoes_tiro.offset_top = -86.0
+	botoes_tiro.offset_right = -16.0
+	botoes_tiro.offset_bottom = -16.0
+	botoes_tiro.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	botoes_tiro.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	botoes_tiro.alignment = BoxContainer.ALIGNMENT_END
+	botoes_tiro.add_theme_constant_override("separation", 8)
+	botoes_tiro.add_child(_hud_icone(BOTAO_MOUSE, Vector2(58.0, 58.0)))
+	botoes_tiro.add_child(_hud_icone(BOTAO_GATILHO, Vector2(68.0, 68.0)))
+	canvas.add_child(botoes_tiro)
 
 	var boss_painel := PanelContainer.new()
 	boss_painel.name = "BossHUD"
@@ -536,7 +545,7 @@ func _montar_hud() -> void:
 	titulo_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	titulo_label.text = tr("AVIAO_TITULO_FASE")
 	titulo_label.add_theme_font_override("font", FONTE_TITULO)
-	titulo_label.add_theme_font_size_override("font_size", 104)
+	titulo_label.add_theme_font_size_override("font_size", 116)
 	titulo_label.add_theme_color_override("font_color", Color("ff4034"))
 	titulo_label.add_theme_color_override("font_outline_color", Color("2a0503"))
 	titulo_label.add_theme_constant_override("outline_size", 22)
@@ -886,11 +895,6 @@ func _ao_derrotar_lips() -> void:
 	if is_instance_valid(boss_label):
 		boss_label.text = "☠ " + tr("PLATFORM_BOSS_DEFEATED") + " ☠"
 		boss_label.add_theme_color_override("font_color", Color("66ff88"))
-	var vitoria := AudioStreamPlayer.new()
-	vitoria.stream = VITORIA_SOUND
-	vitoria.volume_db = -6.0
-	add_child(vitoria)
-	vitoria.play()
 	_investida_final()
 
 

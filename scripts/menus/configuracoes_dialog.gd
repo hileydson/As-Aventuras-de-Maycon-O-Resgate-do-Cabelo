@@ -311,6 +311,20 @@ func _populate_debug_events() -> void:
 	debug_events_container.add_child(dungeon_invincible_check)
 	checks.append(dungeon_invincible_check)
 
+	var lips_um_golpe_check = CheckBox.new()
+	lips_um_golpe_check.text = "💋 " + tr("SETTINGS_DEBUG_LIPS_ONE_HIT")
+	lips_um_golpe_check.tooltip_text = tr("SETTINGS_DEBUG_LIPS_ONE_HIT_DESC")
+	lips_um_golpe_check.button_pressed = Global.debug_lips_um_golpe
+	lips_um_golpe_check.focus_mode = Control.FOCUS_ALL
+	lips_um_golpe_check.add_theme_color_override("font_color", Color(1.0, 0.55, 0.75))
+	lips_um_golpe_check.add_theme_color_override("font_hover_color", Color(1.0, 0.75, 0.88))
+	lips_um_golpe_check.add_theme_color_override("font_focus_color", Color(1.0, 0.75, 0.88))
+	lips_um_golpe_check.toggled.connect(func(pressed: bool):
+		Global.debug_lips_um_golpe = pressed
+	)
+	debug_events_container.add_child(lips_um_golpe_check)
+	checks.append(lips_um_golpe_check)
+
 	# Botão para resetar eventos do calabouço no save slot atual
 	var reset_dungeon_btn = Button.new()
 	reset_dungeon_btn.text = "🔄 " + tr("SETTINGS_DEBUG_RESET_DUNGEON")
