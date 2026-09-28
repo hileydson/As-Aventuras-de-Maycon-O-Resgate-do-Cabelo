@@ -40,6 +40,7 @@ const MEMORY_POSITION := Vector3(27.0, 16.0, -63.0)
 const TAKE_WIDE := 0
 const TAKE_LOW := 1
 const TAKE_POV := 2
+const INITIAL_SIDE_TAKE_END := WALK_START + 11.0
 const DEBUG_ACTIVATION_SEQUENCE: Array[StringName] = [&"ui_right", &"ui_right", &"ui_left", &"ui_left", &"ui_up", &"ui_up", &"ui_down", &"ui_down"]
 
 @export var load_from_castle_1: bool = false
@@ -54,16 +55,14 @@ var maycon_skeleton: Skeleton3D
 var maycon_head_bone := -1
 var camera: Camera3D
 var take_cameras: Array[Camera3D] = []
-var take_rng := RandomNumberGenerator.new()
-var take_order: Array[int] = []
 var current_take := TAKE_WIDE
 var previous_take := TAKE_WIDE
 var transition_start := -10.0
-var next_take_time := WALK_START + 4.5
+var next_take_time := INITIAL_SIDE_TAKE_END
 var pov_start_time := -1.0
-var pov_visit_count := 0
 var pov_gaze_order: Array[int] = [0, 1, 2]
 var pov_gaze_rate := 1.0
+var cinematic_take_step := 0
 var memory_material: ShaderMaterial
 var moon_glow_material: ShaderMaterial
 var film_material: ShaderMaterial
@@ -115,13 +114,13 @@ var overwrite_cancel_btn: Button
 var overwrite_slot_label: Label
 var overwrite_info_label: Label
 var debug_activation_index := 0
+var input_blocker: Control
 
 
 func _ready() -> void:
 	Global.load_from_castle_1 = load_from_castle_1
 	Global.load_from_outside_1 = load_from_outside_1
 	Global.show_debug_tab = enable_debug_tab
-	take_rng.randomize()
 	menu_sounds = MENU_SOUND_CONTROLLER.new()
 	add_child(menu_sounds)
 	_build_world()
@@ -145,6 +144,9 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if leaving:
+		get_viewport().set_input_as_handled()
+		return
 	_process_debug_activation_sequence(event)
 	if event.is_action_pressed("ui_cancel"):
 		if fullscreen_delete_dialog and fullscreen_delete_dialog.visible:
@@ -622,29 +624,27 @@ func _update_moon_gaze(time: float, walk_end: float, moon_direction: Vector3) ->
 
 
 func _switch_take(switch_time: float) -> void:
-	if take_order.is_empty():
-		take_order = [TAKE_WIDE, TAKE_LOW, TAKE_POV]
-		take_order.erase(current_take)
-	var next_index := take_rng.randi_range(0, take_order.size() - 1)
 	previous_take = current_take
-	current_take = take_order.pop_at(next_index)
+	var duration := 9.0
+	match cinematic_take_step:
+		0:
+			current_take = TAKE_POV
+			duration = 12.0
+		1:
+			current_take = TAKE_LOW
+			duration = 10.0
+		2:
+			current_take = TAKE_WIDE
+			duration = 9.0
+		_:
+			current_take = TAKE_LOW if previous_take == TAKE_WIDE else TAKE_WIDE
+			duration = 9.0
+	cinematic_take_step += 1
 	transition_start = switch_time
 	if current_take == TAKE_POV:
 		pov_start_time = switch_time
-		var last_order := pov_gaze_order.duplicate()
 		pov_gaze_order = [0, 1, 2]
-		if pov_visit_count > 0:
-			for i in range(pov_gaze_order.size() - 1, 0, -1):
-				var swap_index := take_rng.randi_range(0, i)
-				var previous_value := pov_gaze_order[i]
-				pov_gaze_order[i] = pov_gaze_order[swap_index]
-				pov_gaze_order[swap_index] = previous_value
-			if pov_gaze_order == last_order:
-				pov_gaze_order[0] = last_order[1]
-				pov_gaze_order[1] = last_order[0]
-		pov_gaze_rate = take_rng.randf_range(1.0, 1.12)
-		pov_visit_count += 1
-	var duration := take_rng.randf_range(11.5, 13.5) if current_take == TAKE_POV else take_rng.randf_range(7.0, 9.0)
+		pov_gaze_rate = 1.0
 	next_take_time = switch_time + duration
 
 
@@ -1591,6 +1591,7 @@ func _start_new_game_on_slot(slot: int) -> void:
 	if leaving:
 		return
 	leaving = true
+	_lock_menu_input()
 	menu_sounds.play_start()
 	Global.current_save_slot = slot
 	Global.reset_default_values()
@@ -1605,6 +1606,7 @@ func _load_selected_slot() -> void:
 	if leaving:
 		return
 	leaving = true
+	_lock_menu_input()
 	Global.current_save_slot = selected_slot
 	var transition := create_tween()
 	transition.tween_property(fade_rect, "color:a", 1.0, 1.2).set_trans(Tween.TRANS_SINE)
@@ -1614,6 +1616,18 @@ func _load_selected_slot() -> void:
 
 func _on_settings_pressed() -> void:
 	get_node("ConfiguracoesDialog").abrir()
+
+func _lock_menu_input() -> void:
+	get_viewport().gui_release_focus()
+	set_process_input(false)
+	var layer := CanvasLayer.new()
+	layer.layer = 300
+	add_child(layer)
+	input_blocker = Control.new()
+	input_blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	input_blocker.mouse_filter = Control.MOUSE_FILTER_STOP
+	input_blocker.focus_mode = Control.FOCUS_NONE
+	layer.add_child(input_blocker)
 
 
 func _on_exit_pressed() -> void:
