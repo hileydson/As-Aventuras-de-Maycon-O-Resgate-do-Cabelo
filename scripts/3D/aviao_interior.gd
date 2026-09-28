@@ -24,7 +24,8 @@ const ESPACO_FILEIRA := 2.4
 
 const VENTO_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
 const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
-const SOM_SUCCAO = preload("res://assets/novos_audios/seco_kick_dimensional_whoosh_pixabay.mp3")
+# Mesmo soco das lutas em tempo real, tocado com variações de tom
+const SOM_SUCCAO = preload("res://assets/novos_audios/punch.mp3")
 
 const Z_BURACO := 16.2
 const SAIDA_BURACO := Vector3(0.0, 5.2, Z_BURACO)
@@ -441,8 +442,10 @@ func _montar_buraco_no_teto() -> void:
 	succao = AudioStreamPlayer3D.new()
 	succao.name = "SomDaSuccao"
 	succao.stream = SOM_SUCCAO
-	succao.volume_db = -6.0
+	succao.volume_db = -4.0
 	succao.unit_size = 9.0
+	# Vários itens saem quase juntos, então as pancadas podem se sobrepor
+	succao.max_polyphony = 3
 	succao.max_db = 0.0
 	succao.position = Vector3(0.0, 2.4, 0.0)
 	buraco.add_child(succao)
@@ -464,7 +467,7 @@ func _soltar_tralha() -> void:
 	)
 	item.position = inicio
 	if is_instance_valid(succao) and randf() < 0.65:
-		succao.pitch_scale = randf_range(0.75, 1.25)
+		succao.pitch_scale = randf_range(0.55, 1.6)
 		succao.play()
 	tralhas.append({
 		"no": item,

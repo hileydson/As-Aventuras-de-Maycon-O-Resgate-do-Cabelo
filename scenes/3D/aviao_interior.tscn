@@ -39,7 +39,7 @@ autoplay = true
 
 [node name="Passo" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_passo")
-volume_db = -6.0
+volume_db = -17.0
 
 [node name="Fade" type="CanvasLayer" parent="."]
 layer = 30

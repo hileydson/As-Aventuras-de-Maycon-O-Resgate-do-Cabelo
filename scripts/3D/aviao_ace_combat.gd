@@ -35,7 +35,7 @@ const DANO_BALA := 0.38
 const RAIO_BALA_LIPS := 21.0
 
 const DANO_LANCHE := 18.0
-const VELOCIDADE_LANCHE := 58.0
+const VELOCIDADE_LANCHE := 105.0
 const RAIO_LANCHE := 6.0
 const TAMANHO_LANCHE := 13.0
 
@@ -91,7 +91,7 @@ var balas:Array[Dictionary] = []
 var lanches:Array[Dictionary] = []
 var tempo:float = 0.0
 var tempo_tiro:float = 0.0
-var tempo_ataque:float = 3.2
+var tempo_ataque:float = 1.2
 var tremor:float = 0.0
 var armas_prontas:bool = false
 var controle_liberado:bool = false
@@ -780,7 +780,7 @@ func _atualizar_ataques_do_lips(delta:float) -> void:
 	tempo_ataque -= delta
 	if tempo_ataque <= 0.0:
 		var raiva:float = 1.0 - float(lips.vida) / float(lips.vida_maxima)
-		tempo_ataque = randf_range(1.9, 3.1) - raiva * 0.9
+		tempo_ataque = randf_range(0.65, 1.25) - raiva * 0.35
 		_lancar_lanche()
 
 

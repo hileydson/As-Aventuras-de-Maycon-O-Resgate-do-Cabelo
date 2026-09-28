@@ -18,6 +18,11 @@ const DURACAO_FADE_OUT := 2.6
 # Volume do grito conforme a câmera do corte: alto no Maycon, mudo no avião
 const GRITO_PERTO_DB := 1.0
 const GRITO_LONGE_DB := -42.0
+# A partir deste corte os takes ficam curtos demais para cortar o som: o grito
+# passa a rolar direto e vai ficando mais fino conforme a queda acelera
+const CORTE_GRITO_CONTINUO := 9
+const GRITO_TOM_BASE := 0.45
+const GRITO_TOM_FINO := 0.92
 const TEMPO_MUNDO_TOTAL := 4.1   # segundos "reais" da queda, esticados pelo slow motion
 
 # Pontos inicial e final de cada personagem no espaço do mundo
@@ -272,6 +277,7 @@ func _trocar_corte() -> void:
 		cam_aviao.fov = float(ENQUADRAMENTOS_AVIAO[enquadramento_aviao]["fov"])
 		cam_aviao.make_current()
 	_ajustar_volume_do_grito(no_maycon)
+	_afinar_grito()
 
 
 # O grito só se ouve nos cortes em que a câmera está no Maycon. Nos cortes do
@@ -282,6 +288,13 @@ func _ajustar_volume_do_grito(no_maycon:bool) -> void:
 		return
 	if volume_grito_tw and volume_grito_tw.is_valid():
 		volume_grito_tw.kill()
+	if corte_atual >= CORTE_GRITO_CONTINUO:
+		# Nos cortes relâmpago o grito não é mais cortado, fica contínuo
+		grito.stream_paused = false
+		if not grito.playing:
+			grito.play()
+		grito.volume_db = GRITO_PERTO_DB
+		return
 	volume_grito_tw = create_tween().bind_node(grito)
 	if no_maycon:
 		grito.stream_paused = false
@@ -295,6 +308,17 @@ func _ajustar_volume_do_grito(no_maycon:bool) -> void:
 		volume_grito_tw.tween_callback(func():
 			if is_instance_valid(grito) and not saida_iniciada:
 				grito.stream_paused = true)
+
+
+# O grito vai afinando ao longo dos cortes rápidos, acompanhando a aceleração
+func _afinar_grito() -> void:
+	if saida_iniciada or not is_instance_valid(grito):
+		return
+	if corte_atual < CORTE_GRITO_CONTINUO:
+		return
+	var restantes := float(CORTES.size() - 1 - CORTE_GRITO_CONTINUO)
+	var avanco := 0.0 if restantes <= 0.0 else clampf(float(corte_atual - CORTE_GRITO_CONTINUO) / restantes, 0.0, 1.0)
+	grito.pitch_scale = lerpf(GRITO_TOM_BASE, GRITO_TOM_FINO, avanco)
 
 
 func _atualizar_cameras() -> void:
