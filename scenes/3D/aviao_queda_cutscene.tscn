@@ -4,6 +4,7 @@
 [ext_resource type="AudioStream" uid="uid://bhfn5sghu2ngt" path="res://assets/novos_audios/maycon_falling_fase_1_transition.mp3" id="2_grito"]
 [ext_resource type="AudioStream" uid="uid://cgbaylimr110j" path="res://assets/novos_audios/cidade_intro_wind.mp3" id="3_vento"]
 [ext_resource type="AudioStream" uid="uid://c21fjct4a2rfb" path="res://assets/novos_audios/modo_acelerando.mp3" id="4_motor"]
+[ext_resource type="AudioStream" uid="uid://coc05ikhc1xag" path="res://assets/novos_audios/explosao.mp3" id="5_choque"]
 
 [sub_resource type="Environment" id="Environment_ceu"]
 background_mode = 1
@@ -59,6 +60,10 @@ stream = ExtResource("3_vento")
 volume_db = -10.0
 pitch_scale = 0.7
 autoplay = true
+
+[node name="Choque" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_choque")
+volume_db = -15.0
 
 [node name="Fade" type="CanvasLayer" parent="." unique_id=1886099413]
 layer = 30

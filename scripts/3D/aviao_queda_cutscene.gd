@@ -59,6 +59,7 @@ const ENQUADRAMENTOS_MAYCON := [
 @onready var cam_maycon:Camera3D = $CamMaycon
 @onready var grito:AudioStreamPlayer3D = $Maycon/Grito
 @onready var vento:AudioStreamPlayer = $Vento
+@onready var choque:AudioStreamPlayer = $Choque
 @onready var motor_aviao:AudioStreamPlayer3D = $Aviao/MotorAviao
 @onready var fade_rect:ColorRect = $Fade/FadeRect
 @onready var sol:DirectionalLight3D = $Sol
@@ -289,7 +290,10 @@ func _ajustar_volume_do_grito(no_maycon:bool) -> void:
 	if volume_grito_tw and volume_grito_tw.is_valid():
 		volume_grito_tw.kill()
 	if corte_atual >= CORTE_GRITO_CONTINUO:
-		# Nos cortes relâmpago o grito não é mais cortado, fica contínuo
+		# Nos cortes relâmpago o grito não é mais cortado, fica contínuo. A
+		# atenuação por distância também sai de cena, senão ele some justamente
+		# nos takes em que a câmera está longe, colada no avião.
+		grito.attenuation_model = AudioStreamPlayer3D.ATTENUATION_DISABLED
 		grito.stream_paused = false
 		if not grito.playing:
 			grito.play()
@@ -365,4 +369,12 @@ func _encerrar() -> void:
 	var som_out := create_tween().bind_node(grito)
 	som_out.tween_property(grito, "volume_db", -40.0, DURACAO_FADE_OUT * 0.85)
 	await fade_out.finished
+	# Com a tela já branca, o estrondo abafado da batida fecha a cena
+	grito.stop()
+	if is_instance_valid(vento):
+		vento.stop()
+	if is_instance_valid(motor_aviao):
+		motor_aviao.stop()
+	choque.play()
+	await choque.finished
 	get_tree().change_scene_to_file.call_deferred(PROXIMA_CENA)

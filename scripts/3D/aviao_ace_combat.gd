@@ -935,10 +935,6 @@ func _ao_derrotar_lips() -> void:
 	controle_liberado = false
 	lips.investindo = true
 	lips.mergulhar()
-	_mostrar_aviso(tr("AVIAO_AVISO_ABATIDO"))
-	if is_instance_valid(boss_label):
-		boss_label.text = "☠ " + tr("PLATFORM_BOSS_DEFEATED") + " ☠"
-		boss_label.add_theme_color_override("font_color", Color("66ff88"))
 	_investida_final()
 
 

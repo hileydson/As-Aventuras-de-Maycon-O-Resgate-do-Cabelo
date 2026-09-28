@@ -4014,8 +4014,8 @@ secos_invader_clouds.gdshader::Shader::3319236136636404415::1790215336::0::1::::
 TESTES.tscn::PackedScene::4539221544595366990::1768225158::0::1::::<><><>0<>0<><>::uid://dvs2lwybcbwt2::::res://scenes/maycon_fase.tscn<>uid://d35e0jeya7iev::::res://scenes/caixa.tscn<>uid://chpqi8ryj0b1g::::res://scenes/bloco.tscn<>uid://c0hdoyj76p8qk::::res://scenes/coxinha.tscn
 tunel_fogo.tscn::PackedScene::4341796888319329057::1768323970::0::1::::<><><>0<>0<><>::uid://cros6010x6vuk::::res://assets/videos/caindo_tunel.ogv<>uid://defi0lubtlfmm::::res://scripts/intro_tunel.gd<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn
 two_layers_fps_mode.tscn::PackedScene::-1::1770925139::0::1::::<><><>0<>0<><>::
-::res://scenes/3D/::1790546553
-aviao_ace_combat.tscn::PackedScene::-1::1790546244::0::1::::<><><>0<>0<><>::res://scripts/3D/aviao_ace_combat.gd<>uid://d23jsbvra6ofb::::res://assets/novos_audios/3d_first_battle_seco.mp3<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://c21fjct4a2rfb::::res://assets/novos_audios/modo_acelerando.mp3<>uid://dxlxhstdapo76::::res://assets/novos_audios/gun_shot.mp3<>uid://coc05ikhc1xag::::res://assets/novos_audios/explosao.mp3<>uid://bhcvqv63n0fh8::::res://assets/novos_audios/metal_batendo.mp3<>uid://clwe6bwguowon::::res://assets/novos_audios/hurt_sound_3d.mp3<>uid://bhfn5sghu2ngt::::res://assets/novos_audios/maycon_falling_fase_1_transition.mp3<>uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3<>uid://cmjmm8d40e8b1::::res://assets/novos_audios/punch_3.mp3
+::res://scenes/3D/::1790559505
+aviao_ace_combat.tscn::PackedScene::-1::1790559505::0::1::::<><><>0<>0<><>::res://scripts/3D/aviao_ace_combat.gd<>uid://d23jsbvra6ofb::::res://assets/novos_audios/3d_first_battle_seco.mp3<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://c21fjct4a2rfb::::res://assets/novos_audios/modo_acelerando.mp3<>uid://dxlxhstdapo76::::res://assets/novos_audios/gun_shot.mp3<>uid://coc05ikhc1xag::::res://assets/novos_audios/explosao.mp3<>uid://bhcvqv63n0fh8::::res://assets/novos_audios/metal_batendo.mp3<>uid://clwe6bwguowon::::res://assets/novos_audios/hurt_sound_3d.mp3<>uid://bhfn5sghu2ngt::::res://assets/novos_audios/maycon_falling_fase_1_transition.mp3<>uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3<>uid://cmjmm8d40e8b1::::res://assets/novos_audios/punch_3.mp3<>uid://dn54ebj0ilfq8::::res://assets/novos_audios/seco_kick_dimensional_whoosh_pixabay.mp3
 aviao_interior.tscn::PackedScene::-1::1790558891::0::1::::<><><>0<>0<><>::res://scripts/3D/aviao_interior.gd<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://c21fjct4a2rfb::::res://assets/novos_audios/modo_acelerando.mp3<>uid://bemu08m6br4h::::res://assets/novos_audios/mario_part_sounds/passo.mp3
 aviao_queda_cutscene.tscn::PackedScene::1616458012599444143::1790546553::0::1::::<><><>0<>0<><>::uid://cww7hvb612kbn::::res://scripts/3D/aviao_queda_cutscene.gd<>uid://bhfn5sghu2ngt::::res://assets/novos_audios/maycon_falling_fase_1_transition.mp3<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://c21fjct4a2rfb::::res://assets/novos_audios/modo_acelerando.mp3
 blood.tscn::PackedScene::3378112629565214641::1790123747::0::1::::<><><>0<>0<><>::uid://b6xclp8odu70a::::res://scripts/3D/blood.gd
@@ -4129,13 +4129,13 @@ secos_invader_fireball.gd::GDScript::-1::1790217238::0::1::::<>Node2D<><>0<>0<><
 secos_invader_pause.gd::GDScript::-1::1790276134::0::1::::<>CanvasLayer<><>0<>0<><>::
 two_layers_fps_mode.gd::GDScript::-1::1770925133::0::1::::<>Node3D<><>0<>0<><>::
 ::res://scripts/3D/::1790558253
-aviao_ace_combat.gd::GDScript::4219815729019231845::1790558897::0::1::::<>Node3D<><>0<>0<><>::
-aviao_interior.gd::GDScript::8184049238104466502::1790559025::0::1::::<>Node3D<><>0<>0<><>::
+aviao_ace_combat.gd::GDScript::4219815729019231845::1790559556::0::1::::<>Node3D<><>0<>0<><>::
+aviao_interior.gd::GDScript::8184049238104466502::1790559462::0::1::::<>Node3D<><>0<>0<><>::
 aviao_linhas_vento.gd::GDScript::3997795787230602247::1790541307::0::1::::<>MultiMeshInstance3D<><>0<>0<><>::
 aviao_lips_boss.gd::GDScript::732009014783372569::1790558253::0::1::::<>Node3D<><>0<>0<><>::
 aviao_mira.gd::GDScript::8579319243924975796::1790535307::0::1::::<>Control<><>0<>0<><>::
 aviao_modelo.gd::GDScript::5972540130305501765::1790558294::0::1::::AviaoModelo<>RefCounted<><>0<>0<><>::
-aviao_queda_cutscene.gd::GDScript::6364368788317563887::1790558910::0::1::::<>Node3D<><>0<>0<><>::
+aviao_queda_cutscene.gd::GDScript::6364368788317563887::1790559610::0::1::::<>Node3D<><>0<>0<><>::
 blood.gd::GDScript::4609897442003693346::1770040791::0::1::::<>GPUParticles3D<><>0<>0<><>::
 bounce_item.gd::GDScript::3979189295797057439::1769874542::0::1::::<>Node3D<><>0<>0<><>::
 bullets.gd::GDScript::809167085934815576::1770925133::0::1::::<>Area3D<><>0<>0<><>::

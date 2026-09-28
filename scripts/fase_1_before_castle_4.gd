@@ -20,7 +20,9 @@ func _ready() -> void:
 		# Volta do combate aéreo caindo do céu e levantando poeira, igual à fase 1
 		animacoes.play("maycon_falling")
 	
-	GameSongs.play_song(1)
+	# A trilha já começa no fade out do combate aéreo; reiniciar aqui soa como erro
+	if not GameSongs.is_song_playing(1):
+		GameSongs.play_song(1)
 	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
