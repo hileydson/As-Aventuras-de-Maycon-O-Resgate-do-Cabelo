@@ -15,6 +15,9 @@ var in_axe_cutscene:bool = false
 var fade_layer:CanvasLayer
 var fade_rect:ColorRect
 
+var texture_no_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire_paralax.png")
+var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_2_paralax.png")
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 
@@ -219,3 +222,16 @@ func play_axe_cutscene_return() -> void:
 	await fade_from_black(1.0)
 	maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
 	in_axe_cutscene = false
+
+func _on_division_no_fire_body_exited(body: Node2D) -> void:
+	var foreground: Sprite2D = get_node_or_null("../BurntForestForeground/Foreground")
+	var foreground2: Sprite2D = get_node_or_null("../BurntForestForeground/Foreground2")
+	if foreground:
+		if foreground.texture == texture_no_fire:
+			foreground.texture = texture_with_fire
+			if foreground2:
+				foreground2.texture = texture_with_fire
+		else:
+			foreground.texture = texture_no_fire
+			if foreground2:
+				foreground2.texture = texture_no_fire

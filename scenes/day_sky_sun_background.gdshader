@@ -34,26 +34,6 @@ float fbm(vec2 value) {
 	return result;
 }
 
-float bird_shape(vec2 uv, float phase, float period, vec2 start, vec2 end, float size) {
-	float cycle = fract(TIME / period + phase);
-	vec2 current = mix(start, end, cycle);
-	vec2 diff = uv - current;
-	float horizontal_extent = size * 1.5;
-	float vertical_extent = size * 0.9;
-	if (abs(diff.x * 5.2) > horizontal_extent * 5.2 || abs(diff.y) > vertical_extent) {
-		return 0.0;
-	}
-	float wing_time = TIME * 9.0 + phase * 6.28;
-	float wing_phase = sin(wing_time);
-	float wing_offset = abs(diff.x * 5.2 / horizontal_extent);
-	float wing_arch = (1.0 - wing_offset * wing_offset) * (0.35 + 0.35 * wing_phase);
-	float wing_v = -abs(diff.x * 5.2) * (0.45 + 0.3 * wing_phase) + wing_arch * size * 0.4;
-	float body_line = length(vec2(diff.x * 2.6, diff.y + size * 0.05)) - size * 0.12;
-	float wing_line = abs(diff.y - wing_v) - size * 0.07 * (1.0 - wing_offset * 0.6);
-	float silhouette = smoothstep(size * 0.05, 0.0, min(body_line, wing_line));
-	return clamp(silhouette, 0.0, 1.0);
-}
-
 void fragment() {
 	vec2 uv = UV;
 	
@@ -115,15 +95,6 @@ void fragment() {
 	float cloud_sun_illum = clamp(1.0 - sun_dist * 1.5, 0.0, 1.0);
 	vec3 cloud_color = mix(vec3(0.96, 0.97, 1.0), vec3(1.0, 0.98, 0.92), cloud_sun_illum * 0.6);
 	sky = mix(sky, cloud_color, cloud_density);
-	
-	// 4. Distant Birds
-	float birds = 0.0;
-	birds += bird_shape(uv, 0.12, 18.0, vec2(0.25, 0.40), vec2(0.55, 0.34), 0.012);
-	birds += bird_shape(uv, 0.45, 22.0, vec2(0.20, 0.46), vec2(0.60, 0.41), 0.009);
-	birds += bird_shape(uv, 0.78, 15.0, vec2(0.52, 0.38), vec2(0.28, 0.44), 0.010);
-	
-	vec3 bird_color = mix(vec3(0.20, 0.32, 0.48), vec3(0.12, 0.18, 0.28), 0.8);
-	sky = mix(sky, bird_color, birds);
 	
 	COLOR = vec4(clamp(sky, 0.0, 1.0), 1.0);
 }

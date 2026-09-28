@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://ol83hbgvhkv3" path="res://assets/novas_imagens/cenarios/pracinha_bela_V2_paralax.png" id="18_paralax"]
 [ext_resource type="Shader" uid="uid://c6or0uk4e0ggi" path="res://scenes/day_sky_sun_background.gdshader" id="19_day_sky"]
 [ext_resource type="Shader" uid="uid://c0usjj50so0rh" path="res://scenes/day_sunlight_overlay.gdshader" id="20_day_sunlight"]
+[ext_resource type="Shader" uid="uid://ce16wlw8511oe" path="res://scenes/day_birds_overlay.gdshader" id="21_day_birds"]
 
 [sub_resource type="Animation" id="Animation_gee14"]
 length = 0.001
@@ -99,7 +100,7 @@ _data = {
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_day_sky"]
 shader = ExtResource("19_day_sky")
-shader_parameter/sun_position = Vector2(0.38, 0.44)
+shader_parameter/sun_position = Vector2(0.375, 0.495)
 shader_parameter/sky_top_color = Color(0.24, 0.54, 0.9, 1)
 shader_parameter/sky_horizon_color = Color(0.72, 0.87, 0.99, 1)
 shader_parameter/sun_core_color = Color(1, 0.99, 0.95, 1)
@@ -108,9 +109,13 @@ shader_parameter/sun_flare_color = Color(1, 0.84, 0.52, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_day_sunlight"]
 shader = ExtResource("20_day_sunlight")
-shader_parameter/sun_origin = Vector2(0.38, 0.44)
+shader_parameter/sun_origin = Vector2(0.375, 0.495)
 shader_parameter/sun_light_color = Color(1, 0.93, 0.75, 1)
 shader_parameter/sun_intensity = 0.22
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_day_birds"]
+shader = ExtResource("21_day_birds")
+shader_parameter/bird_color = Color(0.14, 0.2, 0.3, 1)
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_uwrxv"]
 
@@ -403,6 +408,18 @@ scroll_scale = Vector2(0.35, 1)
 
 [node name="Sunlight" type="ColorRect" parent="SunlightOverlay" unique_id=1400700068]
 material = SubResource("ShaderMaterial_day_sunlight")
+offset_left = -1600.0
+offset_top = -650.0
+offset_right = 3600.0
+offset_bottom = 350.0
+mouse_filter = 2
+
+[node name="BirdsOverlay" type="Parallax2D" parent="."]
+z_index = 5
+scroll_scale = Vector2(0.65, 1)
+
+[node name="Birds" type="ColorRect" parent="BirdsOverlay"]
+material = SubResource("ShaderMaterial_day_birds")
 offset_left = -1600.0
 offset_top = -650.0
 offset_right = 3600.0

@@ -43,10 +43,12 @@ func _ready() -> void:
 		Global.battle_background = "2"
 		Global.back_to_fase = false
 		var foreground = get_node_or_null("../BurntForestForeground/Foreground")
+		var foreground2 = get_node_or_null("../BurntForestForeground/Foreground2")
 		if foreground:
 			foreground.texture = texture_no_fire
-		else:
-			fase_1_before_castle.texture = texture_no_fire
+		if foreground2:
+			foreground2.texture = texture_no_fire
+		fase_1_before_castle.texture = null
 		animacoes.play("maycon_back_to_fase")
 		await get_tree().create_timer(1.0).timeout
 
@@ -107,16 +109,32 @@ func _on_division_no_fire_body_exited(body: Node2D) -> void:
 	else :
 		add_child(temp_canvas_layer_fogo)
 		
+	var foreground: Sprite2D = get_node_or_null("../BurntForestForeground/Foreground")
+	var foreground2: Sprite2D = get_node_or_null("../BurntForestForeground/Foreground2")
 	
-	if fase_1_before_castle.texture == texture_no_fire:
+	var is_no_fire: bool = false
+	if foreground and foreground.texture == texture_no_fire:
+		is_no_fire = true
+	elif fase_1_before_castle.texture == texture_no_fire:
+		is_no_fire = true
+	
+	if is_no_fire:
 		Global.battle_background = "1"
-		fase_1_before_castle.texture = texture_with_fire
+		if foreground:
+			foreground.texture = texture_with_fire
+		if foreground2:
+			foreground2.texture = texture_with_fire
+		fase_1_before_castle.texture = null
 		cabelo.visible = true
 		smoke.visible = true
 		fogos.visible = true
 	else:
 		Global.battle_background = "2"
-		fase_1_before_castle.texture = texture_no_fire
+		if foreground:
+			foreground.texture = texture_no_fire
+		if foreground2:
+			foreground2.texture = texture_no_fire
+		fase_1_before_castle.texture = null
 		cabelo.visible = false
 		smoke.visible = false
 		fogos.visible = false
