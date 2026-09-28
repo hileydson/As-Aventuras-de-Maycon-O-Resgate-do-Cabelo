@@ -16,6 +16,8 @@ const LANCHE_TEXTURE = preload("res://assets/novas_imagens/inimigos/xuruzika/ini
 const FONTE_TITULO = preload("res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/10 Font/CyberpunkCraftpixPixel.otf")
 const BOTAO_GATILHO = preload("res://assets/novas_imagens/buttons/button_trigger.png")
 const BOTAO_MOUSE = preload("res://assets/novas_imagens/buttons/mouse_trigger.png")
+const BOTAO_DASH_A = preload("res://assets/novas_imagens/buttons/360_A.png")
+const BOTAO_DASH_MOUSE = preload("res://assets/novas_imagens/buttons/mouse_right_click.png")
 
 const PROXIMA_CENA = "res://scenes/fase_1_before_castle_4.tscn"
 
@@ -25,6 +27,10 @@ const ACELERACAO := 82.0
 const VELOCIDADE_MAX := 33.0
 const AMORTECIMENTO := 4.6
 const DISTANCIA_MIRA := 160.0
+const DASH_VELOCIDADE := 96.0
+const DASH_DURACAO := 0.2
+const DASH_RECARGA := 1.2
+
 const CAMERA_OFFSET := Vector3(0.0, 12.0, 50.0)
 const CAMERA_ALVO := Vector3(0.0, 6.5, -80.0)
 
@@ -34,9 +40,9 @@ const VIDA_BALA := 1.0
 const DANO_BALA := 0.38
 const RAIO_BALA_LIPS := 21.0
 
-const DANO_LANCHE := 18.0
+const DANO_LANCHE := 10.0
 const VELOCIDADE_LANCHE := 105.0
-const RAIO_LANCHE := 6.0
+const RAIO_LANCHE := 9.0
 const TAMANHO_LANCHE := 13.0
 
 # Buraco por onde o Maycon entrou, no alto da fuselagem
@@ -65,6 +71,7 @@ const COR_DO_SANGUE := Color(0.42, 0.03, 0.05)
 @onready var som_grito:AudioStreamPlayer = $Grito
 @onready var som_engate:AudioStreamPlayer = $Engate
 @onready var som_soco:AudioStreamPlayer = $Soco
+@onready var som_dash:AudioStreamPlayer = $Dash
 var ambiente:Environment
 
 var lips:Node3D
@@ -103,6 +110,9 @@ var gotas_de_sangue:Array[Dictionary] = []
 var materiais_do_aviao:Array[BaseMaterial3D] = []
 var sujeira_do_aviao:Array[float] = []
 var desfecho_em_andamento:bool = false
+var tempo_dash:float = 0.0
+var recarga_dash:float = 0.0
+var botoes_dash:HBoxContainer
 
 # Campos exigidos pelo menu de pausa compartilhado da fase 3D
 var exit_started:bool = false
@@ -466,6 +476,24 @@ func _montar_hud() -> void:
 	botoes_tiro.add_child(_hud_icone(BOTAO_GATILHO, Vector2(68.0, 68.0)))
 	canvas.add_child(botoes_tiro)
 
+	botoes_dash = HBoxContainer.new()
+	botoes_dash.name = "BotoesDoDash"
+	botoes_dash.anchor_left = 1.0
+	botoes_dash.anchor_top = 1.0
+	botoes_dash.anchor_right = 1.0
+	botoes_dash.anchor_bottom = 1.0
+	botoes_dash.offset_left = -152.0
+	botoes_dash.offset_top = -156.0
+	botoes_dash.offset_right = -16.0
+	botoes_dash.offset_bottom = -92.0
+	botoes_dash.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	botoes_dash.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	botoes_dash.alignment = BoxContainer.ALIGNMENT_END
+	botoes_dash.add_theme_constant_override("separation", 8)
+	botoes_dash.add_child(_hud_icone(BOTAO_DASH_MOUSE, Vector2(54.0, 54.0)))
+	botoes_dash.add_child(_hud_icone(BOTAO_DASH_A, Vector2(54.0, 54.0)))
+	canvas.add_child(botoes_dash)
+
 	var boss_painel := PanelContainer.new()
 	boss_painel.name = "BossHUD"
 	boss_painel.anchor_left = 0.5
@@ -641,10 +669,12 @@ func _atualizar_voo(delta:float) -> void:
 		)
 	if entrada.length() > 1.0:
 		entrada = entrada.normalized()
-	velocidade_aviao += entrada * ACELERACAO * delta
-	if entrada.length_squared() < 0.01:
-		velocidade_aviao = velocidade_aviao.lerp(Vector2.ZERO, minf(delta * AMORTECIMENTO, 1.0))
-	velocidade_aviao = velocidade_aviao.limit_length(VELOCIDADE_MAX)
+	_atualizar_dash(delta, entrada)
+	if tempo_dash <= 0.0:
+		velocidade_aviao += entrada * ACELERACAO * delta
+		if entrada.length_squared() < 0.01:
+			velocidade_aviao = velocidade_aviao.lerp(Vector2.ZERO, minf(delta * AMORTECIMENTO, 1.0))
+		velocidade_aviao = velocidade_aviao.limit_length(VELOCIDADE_MAX)
 
 	var pos := aviao.position
 	pos.x = clampf(pos.x + velocidade_aviao.x * delta, -LIMITE_X, LIMITE_X)
@@ -662,6 +692,31 @@ func _atualizar_voo(delta:float) -> void:
 	if armas_prontas and Input.is_action_pressed("tiro"):
 		for arma in metralhadoras:
 			arma.rotate_object_local(Vector3(0.0, 0.0, 1.0), delta * 22.0)
+
+
+# Arrancada curta para escapar dos lanches, no A do controle ou botão direito
+func _atualizar_dash(delta:float, entrada:Vector2) -> void:
+	tempo_dash = maxf(0.0, tempo_dash - delta)
+	recarga_dash = maxf(0.0, recarga_dash - delta)
+	if is_instance_valid(botoes_dash):
+		botoes_dash.modulate.a = 1.0 if recarga_dash <= 0.0 else 0.32
+	if tempo_dash > 0.0 or recarga_dash > 0.0:
+		return
+	if not controle_liberado or exit_started or death_in_progress:
+		return
+	if not Input.is_action_just_pressed("dash_aviao"):
+		return
+	var direcao := entrada
+	if direcao.length_squared() < 0.01:
+		direcao = Vector2(0.0, 1.0)
+	velocidade_aviao = direcao.normalized() * DASH_VELOCIDADE
+	tempo_dash = DASH_DURACAO
+	recarga_dash = DASH_RECARGA
+	som_dash.pitch_scale = randf_range(1.1, 1.3)
+	som_dash.play()
+	var fov_tw := create_tween().bind_node(camera)
+	fov_tw.tween_property(camera, "fov", 78.0, 0.09)
+	fov_tw.tween_property(camera, "fov", 68.0, 0.3)
 
 
 func _atualizar_camera(imediato:bool) -> void:
@@ -801,7 +856,7 @@ func _lancar_lanche() -> void:
 		lanche = AviaoModelo.criar_lanche(TAMANHO_LANCHE)
 	lanches_no.add_child(lanche)
 	lanche.global_position = lips.boca_global()
-	var mira_lanche := aviao.global_position + Vector3(randf_range(-7.0, 7.0), randf_range(-5.0, 5.0), 0.0)
+	var mira_lanche := aviao.global_position + Vector3(randf_range(-5.5, 5.5), randf_range(-3.5, 3.5), 0.0)
 	var direcao := (mira_lanche - lanche.global_position).normalized()
 	lanches.append({
 		"no": lanche,

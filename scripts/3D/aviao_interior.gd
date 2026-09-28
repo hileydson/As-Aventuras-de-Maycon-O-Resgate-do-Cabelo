@@ -467,7 +467,7 @@ func _soltar_tralha() -> void:
 	)
 	item.position = inicio
 	if is_instance_valid(succao) and randf() < 0.65:
-		succao.pitch_scale = randf_range(0.55, 1.6)
+		succao.pitch_scale = randf_range(0.26, 0.55)
 		succao.play()
 	tralhas.append({
 		"no": item,

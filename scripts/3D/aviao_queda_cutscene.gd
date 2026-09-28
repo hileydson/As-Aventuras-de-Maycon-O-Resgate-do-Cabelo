@@ -36,7 +36,7 @@ const ENQUADRAMENTOS_AVIAO := [
 	{"offset": Vector3(15.0, -2.6, 15.0), "alvo": Vector3(0.0, -0.8, -5.0), "fov": 62.0},
 	{"offset": Vector3(-2.6, 1.6, -19.0), "alvo": Vector3(0.0, 0.6, 7.0), "fov": 55.0},
 	{"offset": Vector3(10.5, -4.2, 6.5), "alvo": Vector3(0.0, 0.4, -3.0), "fov": 66.0},
-	{"offset": Vector3(0.0, 7.0, 13.0), "alvo": Vector3(0.0, 26.0, -3.0), "fov": 72.0},
+	{"offset": Vector3(-10.5, -6.0, -14.0), "alvo": Vector3(0.0, 0.4, 5.0), "fov": 66.0},
 	{"offset": Vector3(-14.5, 7.5, -4.5), "alvo": Vector3(0.0, 0.0, 0.0), "fov": 58.0},
 	{"offset": Vector3(4.0, 1.2, 10.5), "alvo": Vector3(0.0, 0.5, -7.0), "fov": 50.0},
 	{"offset": Vector3(19.0, 0.6, -2.5), "alvo": Vector3(0.0, 0.0, 0.0), "fov": 60.0}
@@ -44,7 +44,7 @@ const ENQUADRAMENTOS_AVIAO := [
 
 # Enquadramentos do Maycon caindo, sempre bem próximos para mostrar o grito
 const ENQUADRAMENTOS_MAYCON := [
-	{"offset": Vector3(2.4, 0.7, 3.0), "alvo": Vector3(0.0, 0.95, 0.0), "fov": 48.0},
+	{"offset": Vector3(3.9, 1.7, 1.0), "alvo": Vector3(0.0, 0.85, 0.0), "fov": 45.0},
 	{"offset": Vector3(0.2, 5.8, 0.6), "alvo": Vector3(0.0, 0.0, 0.0), "fov": 62.0},
 	{"offset": Vector3(-1.9, -1.8, 2.6), "alvo": Vector3(0.0, 1.0, 0.0), "fov": 52.0},
 	{"offset": Vector3(0.9, 1.5, -3.1), "alvo": Vector3(0.0, 0.8, 0.0), "fov": 58.0},
@@ -327,9 +327,6 @@ func _atualizar_cameras() -> void:
 	var respiro := Vector3(sin(tempo_cena * 0.8) * 0.5, cos(tempo_cena * 0.65) * 0.35, sin(tempo_cena * 0.5) * 0.6)
 	cam_aviao.global_position = aviao.position + Vector3(quadro_aviao["offset"]) + respiro
 	var alvo_aviao:Vector3 = aviao.position + Vector3(quadro_aviao["alvo"])
-	if Vector3(quadro_aviao["alvo"]).y > 10.0:
-		# Este enquadramento olha do teto do avião para o Maycon lá em cima
-		alvo_aviao = maycon.position
 	_olhar_para(cam_aviao, alvo_aviao)
 
 	# Câmera grudada no Maycon caindo
