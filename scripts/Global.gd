@@ -342,6 +342,7 @@ func has_any_save() -> bool:
 
 func get_fase_friendly_name(fase_key: String) -> String:
 	var map := {
+		"prologo": "FASE_NAME_PROLOGUE",
 		"fase_1": "FASE_NAME_FASE_1",
 		"fase_2": "FASE_NAME_FASE_2",
 		"fase_3": "FASE_NAME_FASE_3",
@@ -662,6 +663,8 @@ func load_progress(slot: int = -1)->void:
 			if last_fase == "fase_1":
 				GameSongs.play_song(1)
 				get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_1.tscn")
+			elif last_fase == "prologo":
+				get_tree().change_scene_to_file("res://scenes/game.tscn")
 			elif last_fase == "fase_2":
 				GameSongs.play_song(1)
 				get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_2.tscn")

@@ -47,29 +47,20 @@ func _ready() -> void:
 	menu_sounds.bind_button(quit)
 	build_realtime_hp_display()
 	update_hp_display()
-	if Global.game_events["before_prologo"]==false:
-		v_box_container.visible = true
-		maycon_hp.visible = true
-	else:
-		v_box_container.visible = false
-		maycon_hp.visible = false
+	v_box_container.visible = true
+	maycon_hp.visible = true
 	
 	var p3 = tr("POWER_DASH") if Global.battle_mode == Global.battle_mode_realtime else tr("POWER_JUMP")
 	powers.text = " " + tr("POWER_PUNCH") + " \n " + tr("POWER_KICK") + " \n\n " + p3
 	close.text = tr("MENU_CLOSE")
 	settings_btn.text = tr("SETTINGS_TITLE")
 	
-	if Global.game_events["before_prologo"]:
-		quit.text = tr("MENU_EXIT")
-		pause.text = tr("MENU_CONTROLLER")
-	else:
-		quit.text = tr("MENU_SAVE_QUIT")
+	quit.text = tr("MENU_SAVE_QUIT")
 	
 	run_label.text = tr("MENU_RUN")
 	down_label.text = tr("MENU_CROUCH")
 	_setup_pause_canvas_layer()
-	if not Global.game_events["before_prologo"]:
-		_apply_modern_pause_layout(p3)
+	_apply_modern_pause_layout(p3)
 	pause_audio = AudioStreamPlayer.new()
 	pause_audio.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_audio.stream = PAUSE_SOUND
@@ -81,12 +72,8 @@ func processa_pause_unpause(play_close_sound:bool = true)->void:
 	if transition_in_progress:
 		return
 	update_hp_display()
-	if Global.game_events["before_prologo"]==false:
-		v_box_container.visible = true
-		maycon_hp.visible = true
-	else:
-		v_box_container.visible = false
-		maycon_hp.visible = false
+	v_box_container.visible = true
+	maycon_hp.visible = true
 	
 	if get_tree().paused:
 		if play_close_sound:
@@ -101,8 +88,7 @@ func processa_pause_unpause(play_close_sound:bool = true)->void:
 			if is_instance_valid(items_canvas):
 				items_canvas.visible = false
 		
-		if Global.game_events["before_prologo"]==false:
-			update_hp_display()
+		update_hp_display()
 			
 		
 		close.grab_focus()
@@ -215,8 +201,7 @@ func _apply_modern_pause_layout(third_power:String) -> void:
 		if is_instance_valid(legacy_node):
 			legacy_node.visible = false
 
-	var heading_text := tr("MENU_CONTROLLER") if Global.game_events["before_prologo"] else tr("MENU_PAUSE")
-	PAUSE_VISUAL.add_header(black_screen, heading_text, tr("MENU_PAUSE_HINT"))
+	PAUSE_VISUAL.add_header(black_screen, tr("MENU_PAUSE"), tr("MENU_PAUSE_HINT"))
 	PAUSE_VISUAL.add_side_glow(black_screen)
 	v_box_container.position = Vector2(70.0, 205.0)
 	v_box_container.size = Vector2(360.0, 210.0)

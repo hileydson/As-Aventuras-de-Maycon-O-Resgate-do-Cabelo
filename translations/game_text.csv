@@ -69,8 +69,9 @@ SETTINGS_GFX_MSAA_2D,MSAA 2D,2D MSAA,MSAA 2D,2D MSAA
 SETTINGS_GFX_MSAA_2D_DESC,Suaviza bordas de linhas e formas desenhadas na tela.,Smooths edges of lines and shapes drawn on screen.,Suaviza los bordes de líneas y formas dibujadas en pantalla.,平滑屏幕上绘制的线条和形状的边缘。
 SETTINGS_GFX_TEXTURE_FILTER,Filtro de Textura,Texture Filter,Filtro de Textura,纹理过滤
 SETTINGS_GFX_TEXTURE_FILTER_DESC,Nítido preserva o estilo original; Suave deixa os sprites mais lisos.,Sharp preserves the original style; Smooth makes sprites softer.,Nítido conserva el estilo original; Suave deja los sprites más lisos.,锐利保留原始风格;平滑让精灵更柔和。
-UI_HOLD_SKIP,SEGURE ESC / START PARA PULAR,HOLD ESC / START TO SKIP,MANTÉN ESC / START PARA SALTAR,按住 ESC / START 跳过
-STORY_SKIP_PROMPT,SEGURE ESC / START PARA PULAR,HOLD ESC / START TO SKIP,MANTÉN ESC / START PARA SALTAR,按住 ESC / START 跳过
+UI_HOLD_SKIP,SEGURE PARA PULAR,HOLD TO SKIP,MANTÉN PARA SALTAR,按住以跳过
+STORY_SKIP_PROMPT,SEGURE PARA PULAR,HOLD TO SKIP,MANTÉN PARA SALTAR,按住以跳过
+FASE_NAME_PROLOGUE,Prólogo,Prologue,Prólogo,序章
 UI_HEALTH,VIDA,HEALTH,SALUD,生命
 BATTLE_HP_LABEL,VIDA,HEALTH,SALUD,生命值
 STORY_INTRO_1,Após Cabelo ser capturado,After Cabelo has been captured,Después de que Cabelo fuera capturado,卡贝洛被抓走后

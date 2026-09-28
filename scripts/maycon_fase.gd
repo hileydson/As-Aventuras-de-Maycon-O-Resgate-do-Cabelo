@@ -73,32 +73,33 @@ func _physics_process(delta: float) -> void:
 		is_jumping = false
 		DOUBLE_JUMP_COUNT = 0
 		
-	# attack punch
-	if Input.is_action_just_pressed("key_q"):
-		var can_punch = false
-		if animated_sprite_2d.animation != "attack_punch":
-			can_punch = true
-		elif animated_sprite_2d.sprite_frames:
-			var punch_frames = animated_sprite_2d.sprite_frames.get_frame_count("attack_punch")
-			if animated_sprite_2d.frame >= int(punch_frames / 2):
+	var can_attack := !bool(Global.game_events.get("before_prologo", false))
+	if can_attack:
+		# attack punch
+		if Input.is_action_just_pressed("key_q"):
+			var can_punch = false
+			if animated_sprite_2d.animation != "attack_punch":
 				can_punch = true
-		if can_punch:
-			punch.pitch_scale = randf_range(0.96, 1.10)
-			punch.play()
-			animated_sprite_2d.stop()
-			animated_sprite_2d.frame = 0
-			animated_sprite_2d.play("attack_punch")
-	elif Input.is_action_pressed("key_q"):
-		if animated_sprite_2d.animation != "attack_punch":
-			punch.pitch_scale = 1.0
-			punch.play()
-			animated_sprite_2d.play("attack_punch")
+			elif animated_sprite_2d.sprite_frames:
+				var punch_frames = animated_sprite_2d.sprite_frames.get_frame_count("attack_punch")
+				if animated_sprite_2d.frame >= int(punch_frames / 2):
+					can_punch = true
+			if can_punch:
+				punch.pitch_scale = randf_range(0.96, 1.10)
+				punch.play()
+				animated_sprite_2d.stop()
+				animated_sprite_2d.frame = 0
+				animated_sprite_2d.play("attack_punch")
+		elif Input.is_action_pressed("key_q"):
+			if animated_sprite_2d.animation != "attack_punch":
+				punch.pitch_scale = 1.0
+				punch.play()
+				animated_sprite_2d.play("attack_punch")
 		
-	# attack punch
-	if Input.is_action_pressed("key_w") : #&& !Input.is_action_pressed("key_down")
-		if animated_sprite_2d.animation != "attack_kick":
-			kick.play()
-			animated_sprite_2d.play("attack_kick")
+		if Input.is_action_pressed("key_w"):
+			if animated_sprite_2d.animation != "attack_kick":
+				kick.play()
+				animated_sprite_2d.play("attack_kick")
 	
 	var is_colliding_area2d:bool = $area2d.get_overlapping_areas().size() > 0
 	# handles double jump 
@@ -148,7 +149,7 @@ func _physics_process(delta: float) -> void:
 
 	# 1. Variáveis de controle
 	var direction := Input.get_axis("ui_left", "ui_right")
-	var esta_golpeando = Input.is_action_pressed("key_q") or Input.is_action_pressed("key_w")
+	var esta_golpeando = can_attack and (Input.is_action_pressed("key_q") or Input.is_action_pressed("key_w"))
 
 	# 2. Lógica de Movimento (Só move se NÃO estiver golpeando)
 	if not esta_golpeando:
@@ -191,7 +192,7 @@ func _physics_process(delta: float) -> void:
 		var corpo = col_alvo.get_collider()
 		
 		# Verificação direta de Input (tente usar just_pressed para testar se registra melhor)
-		if Input.is_action_pressed("key_q") or Input.is_action_pressed("key_w"):
+		if can_attack and (Input.is_action_pressed("key_q") or Input.is_action_pressed("key_w")):
 			
 			# ACORDA o objeto (Obrigatório para RigidBody parado)
 			corpo.sleeping = false
@@ -237,6 +238,9 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	inimigo_seco.visible = false
 	msg_box.visible = false
 	explosao_portal.get_node("hp").play("explotion")
+	var prologue_scene := get_parent()
+	if prologue_scene.has_method("activate_prologue_portal"):
+		prologue_scene.activate_prologue_portal()
 	
 	transition.play("zoom_out")
 	pausePlayer = false
@@ -351,5 +355,4 @@ class RunSpeedStreak extends Node2D:
 		
 	func _draw() -> void:
 		draw_line(Vector2.ZERO, Vector2(-facing * length, 0.0), Color(1.0, 1.0, 1.0, alpha), 2.2)
-
 
