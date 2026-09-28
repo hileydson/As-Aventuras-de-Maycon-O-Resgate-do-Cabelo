@@ -394,10 +394,11 @@ DUNGEON_RUN_ACTION,Correr,Run,Correr,奔跑
 DUNGEON_HP_LABEL,VIDA,HEALTH,VIDA,生命值
 DUNGEON_STAMINA_LABEL,ESTAMINA,STAMINA,ESTAMINA,耐力
 DUNGEON_TITLE_CUTSCENE,Calabouço Podre do Cacete,Damn Rotten Dungeon,Maldito Calabozo Podrido,该死的腐烂地牢
-AVIAO_INTERIOR_DICA,Use as setas para andar até a cabine de comando,Use the arrow keys to walk to the cockpit,Usa las flechas para caminar hasta la cabina,使用方向键走向驾驶舱
+AVIAO_INTERIOR_DICA,Vá até a cabine e assuma o controle do avião,Get to the cockpit and take control of the plane,Ve a la cabina y toma el control del avión,前往驾驶舱接管飞机
 AVIAO_HUD_PILOTAR,Setas / WASD: pilotar,Arrows / WASD: fly,Flechas / WASD: pilotar,方向键 / WASD：驾驶
 AVIAO_HUD_ATIRAR,Clique / RT: metralhadoras,Click / RT: machine guns,Clic / RT: ametralladoras,点击 / RT：机枪
 AVIAO_HUD_TRAVADO,NA MIRA,LOCKED,EN LA MIRA,已锁定
 AVIAO_AVISO_ARMAS,Metralhadoras armadas!,Machine guns armed!,¡Ametralladoras armadas!,机枪已就位！
 AVIAO_AVISO_LIPS,O Lips gigante apareceu!,The giant Lips has shown up!,¡Apareció el Lips gigante!,巨大的利普斯出现了！
 AVIAO_AVISO_ABATIDO,Lips abatido!,Lips is down!,¡Lips abatido!,利普斯被击落了！
+AVIAO_TITULO_FASE,Ace Tomate,Ace Tomate,Ace Tomate,Ace Tomate

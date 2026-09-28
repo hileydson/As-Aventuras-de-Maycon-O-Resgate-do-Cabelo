@@ -13,6 +13,9 @@ const MAYCON_AIR_FLAIL = preload("res://assets/novas_imagens/3d_enemies/maycon_a
 const TEX_ASSENTO = preload("res://assets/polyhaven/aviao_interior/seat_fabric_diff_1k.jpg")
 const TEX_ASSENTO_NORMAL = preload("res://assets/polyhaven/aviao_interior/seat_fabric_normal_1k.jpg")
 
+# O tomate é a marca da fase "Ace Tomate", por isso vem separado e cai mais
+const LANCHE_TOMATE:PackedScene = preload("res://assets/kenney/food_kit/tomato.glb")
+
 # Lanches gigantes que o Lips arremessa (Kenney Food Kit, CC0)
 const LANCHES:Array[PackedScene] = [
 	preload("res://assets/kenney/food_kit/burger-cheese-double.glb"),
@@ -167,7 +170,7 @@ static func criar_objeto(cena:PackedScene, tamanho_alvo:float, nome:String = "Ob
 
 
 static func criar_lanche(tamanho_alvo:float) -> Node3D:
-	var cena:PackedScene = LANCHES[randi() % LANCHES.size()]
+	var cena:PackedScene = LANCHE_TOMATE if randf() < 0.35 else LANCHES[randi() % LANCHES.size()]
 	return criar_objeto(cena, tamanho_alvo, "LancheGigante")
 
 

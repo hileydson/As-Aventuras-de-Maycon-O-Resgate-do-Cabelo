@@ -511,7 +511,7 @@ TELA-intro-02-gif_3.png::CompressedTexture2D::5931608762705168638::1767636736::1
 TELA-intro-02-gif_4.png::CompressedTexture2D::6552295653215431946::1767636736::1767636736::1::::<><><>0<>0<>2f4b4f684b0768074461ed38ca71845f<>res://.godot/imported/TELA-intro-02-gif_4.png-bc740bfc1821c91ab634f22a971f8a4c.ctex::
 TELA-intro-03 _0.png::CompressedTexture2D::1831792066332645858::1767636736::1767636736::1::::<><><>0<>0<>dbc407605a66e9a6a47a9ab65ee6b1ec<>res://.godot/imported/TELA-intro-03 _0.png-57a5744f0cfcc4e0b1347c297ea67aa9.ctex::
 ::res://assets/kenney/::1790541192
-::res://assets/kenney/food_kit/::1790541819
+::res://assets/kenney/food_kit/::1790546183
 bag.glb::PackedScene::8844970990390585487::1790541756::1790541818::1::::<><><>0<>0<>ad0bf32aa6495e9616b335c9f48ca75c<>res://.godot/imported/bag.glb-6f86e00b1db2ba6fa603192cd07437ca.scn::uid://fgrdi35ksba4::::res://assets/kenney/food_kit/Textures/colormap.png
 burger-cheese-double.glb::PackedScene::8142073191195765015::1790541756::1790541817::1::::<><><>0<>0<>a74fc00c4ca5f3d20148f76f464052cd<>res://.godot/imported/burger-cheese-double.glb-35476a546e12dfb7dab97acbb60812ad.scn::uid://fgrdi35ksba4::::res://assets/kenney/food_kit/Textures/colormap.png
 cake.glb::PackedScene::4219674997234754947::1790541756::1790541817::1::::<><><>0<>0<>2a25e6d4e58e404f3dc9e7e55ba758e5<>res://.godot/imported/cake.glb-005c4ace7e39117e5a4edb5916ee2687.scn::uid://fgrdi35ksba4::::res://assets/kenney/food_kit/Textures/colormap.png
@@ -530,6 +530,7 @@ soda.glb::PackedScene::3175248040816603503::1790541756::1790541818::1::::<><><>0
 SOURCE.md::TextFile::-1::1790541198::0::1::::<><><>0<>0<><>::
 sub.glb::PackedScene::5955930458256278647::1790541756::1790541818::1::::<><><>0<>0<>640bb3a0779d4abe447f084e3ebd5530<>res://.godot/imported/sub.glb-f4117f0157099fb5a4cfaed317eeda71.scn::uid://fgrdi35ksba4::::res://assets/kenney/food_kit/Textures/colormap.png
 taco.glb::PackedScene::8425812187030912378::1790541756::1790541819::1::::<><><>0<>0<>ea45419a39ed589a14549c6b34387551<>res://.godot/imported/taco.glb-681b3f39d8f44113c8bc41f774186960.scn::uid://fgrdi35ksba4::::res://assets/kenney/food_kit/Textures/colormap.png
+tomato.glb::PackedScene::8212519549409787113::1790546179::1790546183::1::::<><><>0<>0<>08ba3a21989b35b2e0663f5212820378<>res://.godot/imported/tomato.glb-2ee97939ac8f943b032c6171b0549fa4.scn::uid://fgrdi35ksba4::::res://assets/kenney/food_kit/Textures/colormap.png
 turkey.glb::PackedScene::2606597672985933286::1790541756::1790541819::1::::<><><>0<>0<>f4aabdb42258b6a35f295783467c5ad5<>res://.godot/imported/turkey.glb-8fd29bf001c9e60408e429d2ec6d32c3.scn::uid://fgrdi35ksba4::::res://assets/kenney/food_kit/Textures/colormap.png
 ::res://assets/kenney/food_kit/Textures/::1790541817
 colormap.png::CompressedTexture2D::364368495791724689::1790541219::1790541817::1::::<><><>0<>0<>e3aa26c65304e853c9d6ec62d0ce4f9b<>res://.godot/imported/colormap.png-0478cce1db57166a60d6b85e72fe0c43.s3tc.ctex<*>res://.godot/imported/colormap.png-0478cce1db57166a60d6b85e72fe0c43.etc2.ctex::
@@ -4014,9 +4015,9 @@ TESTES.tscn::PackedScene::4539221544595366990::1768225158::0::1::::<><><>0<>0<><
 tunel_fogo.tscn::PackedScene::4341796888319329057::1768323970::0::1::::<><><>0<>0<><>::uid://cros6010x6vuk::::res://assets/videos/caindo_tunel.ogv<>uid://defi0lubtlfmm::::res://scripts/intro_tunel.gd<>uid://eryejsrbh53q::::res://scenes/default_transition_auto_fade_in_long.tscn
 two_layers_fps_mode.tscn::PackedScene::-1::1770925139::0::1::::<><><>0<>0<><>::
 ::res://scenes/3D/::1790534750
-aviao_ace_combat.tscn::PackedScene::-1::1790534750::0::1::::<><><>0<>0<><>::res://scripts/3D/aviao_ace_combat.gd<>uid://d23jsbvra6ofb::::res://assets/novos_audios/3d_first_battle_seco.mp3<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://c21fjct4a2rfb::::res://assets/novos_audios/modo_acelerando.mp3<>uid://dxlxhstdapo76::::res://assets/novos_audios/gun_shot.mp3<>uid://coc05ikhc1xag::::res://assets/novos_audios/explosao.mp3<>uid://bhcvqv63n0fh8::::res://assets/novos_audios/metal_batendo.mp3<>uid://clwe6bwguowon::::res://assets/novos_audios/hurt_sound_3d.mp3<>uid://kg00ua8r8lwq::::res://assets/novos_audios/maycon_falling_fase_1.mp3<>uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3
+aviao_ace_combat.tscn::PackedScene::-1::1790546244::0::1::::<><><>0<>0<><>::res://scripts/3D/aviao_ace_combat.gd<>uid://d23jsbvra6ofb::::res://assets/novos_audios/3d_first_battle_seco.mp3<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://c21fjct4a2rfb::::res://assets/novos_audios/modo_acelerando.mp3<>uid://dxlxhstdapo76::::res://assets/novos_audios/gun_shot.mp3<>uid://coc05ikhc1xag::::res://assets/novos_audios/explosao.mp3<>uid://bhcvqv63n0fh8::::res://assets/novos_audios/metal_batendo.mp3<>uid://clwe6bwguowon::::res://assets/novos_audios/hurt_sound_3d.mp3<>uid://bhfn5sghu2ngt::::res://assets/novos_audios/maycon_falling_fase_1_transition.mp3<>uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3<>uid://cmjmm8d40e8b1::::res://assets/novos_audios/punch_3.mp3
 aviao_interior.tscn::PackedScene::-1::1790534438::0::1::::<><><>0<>0<><>::res://scripts/3D/aviao_interior.gd<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://c21fjct4a2rfb::::res://assets/novos_audios/modo_acelerando.mp3<>uid://bemu08m6br4h::::res://assets/novos_audios/mario_part_sounds/passo.mp3
-aviao_queda_cutscene.tscn::PackedScene::-1::1790534412::0::1::::<><><>0<>0<><>::res://scripts/3D/aviao_queda_cutscene.gd<>uid://kg00ua8r8lwq::::res://assets/novos_audios/maycon_falling_fase_1.mp3<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://c21fjct4a2rfb::::res://assets/novos_audios/modo_acelerando.mp3
+aviao_queda_cutscene.tscn::PackedScene::-1::1790546276::0::1::::<><><>0<>0<><>::res://scripts/3D/aviao_queda_cutscene.gd<>uid://bhfn5sghu2ngt::::res://assets/novos_audios/maycon_falling_fase_1_transition.mp3<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://c21fjct4a2rfb::::res://assets/novos_audios/modo_acelerando.mp3
 blood.tscn::PackedScene::3378112629565214641::1790123747::0::1::::<><><>0<>0<><>::uid://b6xclp8odu70a::::res://scripts/3D/blood.gd
 bullets.tscn::PackedScene::1053247965064024194::1770494548::0::1::::<><><>0<>0<><>::uid://lr74moi08s8w::::res://scripts/3D/bullets.gd<>uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3<>uid://b3fd11n6arqyd::::res://assets/novas_imagens/3d_battle/bullets.png<>uid://bwxswwjvm1rsh::::res://scripts/3D/bounce_item.gd
 calabouco_terror.tscn::PackedScene::1096611725315826806::1790432752::0::1::::<><><>0<>0<><>::uid://cm6qqcib286a6::::res://scripts/3D/dungeon_prison.gd<>uid://dxwg1bxwsphi4::::res://assets/polyhaven/realtime_battle/cobblestone_floor_diff_1k.jpg<>uid://cmgq0glhjex6e::::res://assets/polyhaven/realtime_battle/cobblestone_floor_normal_1k.jpg<>uid://c5in2r00aojj7::::res://assets/polyhaven/realtime_battle/castle_wall_diff_1k.jpg<>uid://b16nsibdc18hv::::res://assets/polyhaven/realtime_battle/castle_wall_normal_1k.jpg<>uid://bflxtg7yeua21::::res://assets/kenney/graveyard_kit/lantern-glass.glb<>uid://be4hgwpdemwmh::::res://assets/modelo_3d/calabouco/service_pistol_4k.glb<>uid://tayuf7214kyc::::res://assets/modelo_3d/calabouco/SMG.fbx<>uid://be1dk6nq66lm::::res://assets/kenney/platformer_3d/spring.glb<>uid://ea18fdqgaio7::::res://assets/horror_creatures/infected_zombie_animated.glb<>uid://bhcvqv63n0fh8::::res://assets/novos_audios/metal_batendo.mp3<>uid://dlqf558om8toy::::res://assets/novos_audios/calabouco_terror/zombie_growl_pixabay.mp3<>uid://dhi7kpix64a78::::res://scripts/3D/dungeon_main_monster.gd<>uid://f3ebhek07yxp::::res://scripts/3D/dungeon_giant_zombie.gd<>uid://kg00ua8r8lwq::::res://assets/novos_audios/maycon_falling_fase_1.mp3<>uid://xhgegelcb615::::res://assets/novos_audios/calabouco_terror/dungeon_ambience_pixabay.mp3<>uid://dxlxhstdapo76::::res://assets/novos_audios/gun_shot.mp3<>uid://barhr1sntfpf6::::res://assets/novos_audios/gun_load.mp3<>uid://df08t0n8ym22n::::res://assets/novos_audios/sangue_fill_effect.mp3<>uid://oipfrgwff6hx::::res://assets/novos_audios/calabouco_terror/gate_opening_iron.mp3<>uid://drxomwjaga283::::res://assets/novos_audios/calabouco_terror/gate_squeaky.mp3<>uid://ceblec1s2a6jm::::res://assets/novos_audios/calabouco_terror/gate_opening_heavy.mp3<>uid://bog0xq7ffbr06::::res://assets/novos_audios/calabouco_terror/gate_unlock_heavy.mp3<>uid://bysc8ns18xmwv::::res://scenes/3D/pause_3d.tscn<>uid://xgys7gshl44c::::res://assets/polyhaven/endless_well/wooden_crate_01/textures/wooden_crate_01_diff_1k.jpg<>uid://cvxwqhkaghkle::::res://assets/polyhaven/endless_well/wooden_crate_01/textures/wooden_crate_01_nor_gl_1k.jpg<>uid://dasxjy5o0ahq8::::res://assets/polyhaven/endless_well/wooden_crate_01/textures/wooden_crate_01_arm_1k.jpg
@@ -4128,13 +4129,13 @@ secos_invader_fireball.gd::GDScript::-1::1790217238::0::1::::<>Node2D<><>0<>0<><
 secos_invader_pause.gd::GDScript::-1::1790276134::0::1::::<>CanvasLayer<><>0<>0<><>::
 two_layers_fps_mode.gd::GDScript::-1::1770925133::0::1::::<>Node3D<><>0<>0<><>::
 ::res://scripts/3D/::1790535600
-aviao_ace_combat.gd::GDScript::4219815729019231845::1790541943::0::1::::<>Node3D<><>0<>0<><>::
-aviao_interior.gd::GDScript::8184049238104466502::1790541517::0::1::::<>Node3D<><>0<>0<><>::
+aviao_ace_combat.gd::GDScript::4219815729019231845::1790546261::0::1::::<>Node3D<><>0<>0<><>::
+aviao_interior.gd::GDScript::8184049238104466502::1790546203::0::1::::<>Node3D<><>0<>0<><>::
 aviao_linhas_vento.gd::GDScript::3997795787230602247::1790541307::0::1::::<>MultiMeshInstance3D<><>0<>0<><>::
 aviao_lips_boss.gd::GDScript::732009014783372569::1790535600::0::1::::<>Node3D<><>0<>0<><>::
 aviao_mira.gd::GDScript::8579319243924975796::1790535307::0::1::::<>Control<><>0<>0<><>::
-aviao_modelo.gd::GDScript::5972540130305501765::1790541915::0::1::::AviaoModelo<>RefCounted<><>0<>0<><>::
-aviao_queda_cutscene.gd::GDScript::6364368788317563887::1790541972::0::1::::<>Node3D<><>0<>0<><>::
+aviao_modelo.gd::GDScript::5972540130305501765::1790546237::0::1::::AviaoModelo<>RefCounted<><>0<>0<><>::
+aviao_queda_cutscene.gd::GDScript::6364368788317563887::1790546276::0::1::::<>Node3D<><>0<>0<><>::
 blood.gd::GDScript::4609897442003693346::1770040791::0::1::::<>GPUParticles3D<><>0<>0<><>::
 bounce_item.gd::GDScript::3979189295797057439::1769874542::0::1::::<>Node3D<><>0<>0<><>::
 bullets.gd::GDScript::809167085934815576::1770925133::0::1::::<>Area3D<><>0<>0<><>::
@@ -4203,9 +4204,9 @@ terrain3d_00_00.res::Terrain3DRegion::4948174298051947078::1770136386::0::1::::<
 ::res://tests/::1790427933
 inspect_head_bones.gd::GDScript::2178062246225173415::1790366592::0::1::::<>SceneTree<><>0<>0<><>::
 verify_maycon_fp_body.gd::GDScript::6710687674176764627::1790365829::0::1::::<>SceneTree<><>0<>0<><>::
-::res://translations/::1790535095
-game_text.csv::Translation::1292654866392114924::1790535002::1790535095::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
-game_text.en.translation::OptimizedTranslation::1712006235640866847::1790535095::0::1::::<><><>0<>0<><>::
-game_text.es.translation::OptimizedTranslation::9151324834628544493::1790535095::0::1::::<><><>0<>0<><>::
-game_text.pt.translation::OptimizedTranslation::8740695643655975537::1790535095::0::1::::<><><>0<>0<><>::
-game_text.zh.translation::OptimizedTranslation::3741015231047276320::1790535095::0::1::::<><><>0<>0<><>::
+::res://translations/::1790546280
+game_text.csv::Translation::1292654866392114924::1790546267::1790546280::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
+game_text.en.translation::OptimizedTranslation::1712006235640866847::1790546280::0::1::::<><><>0<>0<><>::
+game_text.es.translation::OptimizedTranslation::9151324834628544493::1790546280::0::1::::<><><>0<>0<><>::
+game_text.pt.translation::OptimizedTranslation::8740695643655975537::1790546279::0::1::::<><><>0<>0<><>::
+game_text.zh.translation::OptimizedTranslation::3741015231047276320::1790546280::0::1::::<><><>0<>0<><>::

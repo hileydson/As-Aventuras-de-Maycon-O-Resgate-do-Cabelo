@@ -49,7 +49,7 @@ const ENQUADRAMENTOS_MAYCON := [
 @onready var maycon:Node3D = $Maycon
 @onready var cam_aviao:Camera3D = $CamAviao
 @onready var cam_maycon:Camera3D = $CamMaycon
-@onready var grito:AudioStreamPlayer = $Grito
+@onready var grito:AudioStreamPlayer3D = $Maycon/Grito
 @onready var vento:AudioStreamPlayer = $Vento
 @onready var motor_aviao:AudioStreamPlayer3D = $Aviao/MotorAviao
 @onready var fade_rect:ColorRect = $Fade/FadeRect
@@ -93,7 +93,9 @@ func _ready() -> void:
 
 
 # O mp3 do grito tem uma explosão no fim; em loop o trecho do grito cobre a queda
-# inteira sem nunca chegar nela (mesma solução usada na entrada do poço infinito)
+# inteira sem nunca chegar nela (mesma solução usada na entrada do poço infinito).
+# O som sai do próprio Maycon (3D), então só se ouve nos cortes em que a câmera
+# está perto dele.
 func _preparar_grito() -> void:
 	var trilha:AudioStream = grito.stream
 	if trilha is AudioStreamMP3:

@@ -14,6 +14,7 @@ const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
 const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 const LANCHE_TEXTURE = preload("res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_coxinha.png")
 const VITORIA_SOUND = preload("res://assets/novos_audios/victory_sound.mp3")
+const FONTE_TITULO = preload("res://assets/fonts/contrast.ttf")
 
 const PROXIMA_CENA = "res://scenes/fase_1_before_castle_4.tscn"
 
@@ -57,6 +58,7 @@ const INTERVALO_DETRITO := 0.5
 @onready var som_dano:AudioStreamPlayer = $Dano
 @onready var som_grito:AudioStreamPlayer = $Grito
 @onready var som_engate:AudioStreamPlayer = $Engate
+@onready var som_soco:AudioStreamPlayer = $Soco
 var ambiente:Environment
 
 var lips:Node3D
@@ -69,6 +71,7 @@ var boss_bar:ProgressBar
 var boss_label:Label
 var blood_overlay:Control
 var aviso_label:Label
+var titulo_label:Label
 var hud_canvas:CanvasLayer
 var aviso_tween:Tween
 
@@ -168,17 +171,21 @@ func _montar_buraco_da_fuselagem() -> void:
 	buraco_aviao.position = BURACO_LOCAL
 	aviao.add_child(buraco_aviao)
 
-	# Vão escuro, olhando para dentro da cabine
+	# Vão escuro e arredondado, acompanhando o contorno das chapas rasgadas
 	var vao := StandardMaterial3D.new()
 	vao.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	vao.albedo_color = Color(0.05, 0.05, 0.07)
-	var abertura := QuadMesh.new()
-	abertura.size = Vector2(2.0, 3.2)
+	var abertura := CylinderMesh.new()
+	abertura.top_radius = 1.0
+	abertura.bottom_radius = 1.0
+	abertura.height = 0.06
+	abertura.radial_segments = 24
+	abertura.rings = 0
 	var mi_vao := MeshInstance3D.new()
 	mi_vao.name = "Vao"
 	mi_vao.mesh = abertura
 	mi_vao.material_override = vao
-	mi_vao.rotation = Vector3(deg_to_rad(-90.0), 0.0, 0.0)
+	mi_vao.scale = Vector3(1.05, 1.0, 1.65)
 	buraco_aviao.add_child(mi_vao)
 
 	# Chapas arrancadas na borda
@@ -251,9 +258,9 @@ func _soltar_detrito() -> void:
 	var item:Node3D
 	if randf() < 0.32:
 		item = AviaoModelo.criar_poltrona()
-		item.scale = Vector3.ONE * 2.0
+		item.scale = Vector3.ONE * 0.9
 	else:
-		item = AviaoModelo.criar_tralha(randf_range(1.2, 2.6))
+		item = AviaoModelo.criar_tralha(randf_range(0.5, 1.15))
 	efeitos.add_child(item)
 	item.global_position = buraco_aviao.global_position + Vector3(randf_range(-0.5, 0.5), 0.2, randf_range(-0.8, 0.8))
 	detritos.append({
@@ -422,6 +429,21 @@ func _montar_hud() -> void:
 	aviso_label.modulate.a = 0.0
 	canvas.add_child(aviso_label)
 
+	titulo_label = Label.new()
+	titulo_label.name = "TituloDaFase"
+	titulo_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	titulo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	titulo_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	titulo_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	titulo_label.text = tr("AVIAO_TITULO_FASE")
+	titulo_label.add_theme_font_override("font", FONTE_TITULO)
+	titulo_label.add_theme_font_size_override("font_size", 104)
+	titulo_label.add_theme_color_override("font_color", Color("ff4034"))
+	titulo_label.add_theme_color_override("font_outline_color", Color("2a0503"))
+	titulo_label.add_theme_constant_override("outline_size", 22)
+	titulo_label.modulate.a = 0.0
+	canvas.add_child(titulo_label)
+
 
 func _montar_pausa() -> void:
 	var pausa := CanvasLayer.new()
@@ -442,6 +464,31 @@ func _hud_icone(textura:Texture2D, tamanho:Vector2) -> TextureRect:
 
 func _liberar_controle() -> void:
 	controle_liberado = true
+	_abrir_com_titulo()
+
+
+# Alguns segundos só voando, o título estoura no meio da tela com um soco e só
+# então as metralhadoras surgem e o Lips aparece
+func _abrir_com_titulo() -> void:
+	await get_tree().create_timer(2.6).timeout
+	if exit_started or death_in_progress:
+		return
+	som_soco.pitch_scale = 0.72
+	som_soco.play()
+	titulo_label.pivot_offset = titulo_label.size * 0.5
+	titulo_label.scale = Vector2(2.4, 2.4)
+	titulo_label.modulate.a = 1.0
+	var entrada := create_tween().bind_node(titulo_label)
+	entrada.tween_property(titulo_label, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	entrada.tween_interval(1.9)
+	entrada.tween_property(titulo_label, "modulate:a", 0.0, 0.7)
+	await get_tree().create_timer(2.5).timeout
+	if exit_started or death_in_progress:
+		return
+	_comecar_batalha()
+
+
+func _comecar_batalha() -> void:
 	_mostrar_aviso(tr("AVIAO_AVISO_ARMAS"))
 	_armar_metralhadoras()
 	# O Lips vem surgindo lá do fundo do céu

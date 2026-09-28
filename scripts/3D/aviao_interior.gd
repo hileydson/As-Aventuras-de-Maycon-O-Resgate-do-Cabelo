@@ -319,14 +319,19 @@ func _montar_buraco_no_teto() -> void:
 	ceu.emission_enabled = true
 	ceu.emission = Color(1.0, 1.0, 1.0)
 	ceu.emission_energy_multiplier = 2.4
-	var abertura := QuadMesh.new()
-	abertura.size = Vector2(1.55, 2.6)
+	# Abertura arredondada, acompanhando o contorno das chapas rasgadas
+	var abertura := CylinderMesh.new()
+	abertura.top_radius = 0.78
+	abertura.bottom_radius = 0.78
+	abertura.height = 0.06
+	abertura.radial_segments = 24
+	abertura.rings = 0
 	var mi_ceu := MeshInstance3D.new()
 	mi_ceu.name = "CeuAberto"
 	mi_ceu.mesh = abertura
 	mi_ceu.material_override = ceu
 	mi_ceu.position = Vector3(0.0, 3.12, 0.0)
-	mi_ceu.rotation = Vector3(deg_to_rad(90.0), 0.0, 0.0)
+	mi_ceu.scale = Vector3(1.0, 1.0, 1.7)
 	buraco.add_child(mi_ceu)
 
 	# Chapas retorcidas na borda do rasgo
