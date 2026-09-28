@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://ddmbod8sij2k6"]
+[gd_scene format=3 uid="uid://ddmbod8sij2k6"]
 
 [ext_resource type="Texture2D" uid="uid://mpk6pxv1a2st" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire_2.png" id="1_8led0"]
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_xwc8o"]
@@ -173,47 +173,45 @@ normal = Vector2(1, 0)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
 size = Vector2(1871, 178)
 
-[node name="castelo_no_fire_2" type="Node2D"]
+[node name="castelo_no_fire_2" type="Node2D" unique_id=1432182111]
 process_mode = 1
 
-[node name="maycon_itens" parent="." instance=ExtResource("1_xwc8o")]
+[node name="maycon_itens" parent="." unique_id=1276066828 instance=ExtResource("1_xwc8o")]
 position = Vector2(1586, 683)
 
-[node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
+[node name="Fase1BeforeCastle" type="Sprite2D" parent="." unique_id=211896681]
 process_mode = 1
 position = Vector2(1586, 683)
 texture = ExtResource("1_8led0")
 script = ExtResource("2_8led0")
 
-[node name="teia" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="teia" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1701948613]
 position = Vector2(1120.9998, -445)
 scale = Vector2(3.2083333, 4.0625)
 sprite_frames = SubResource("SpriteFrames_44bvi")
 autoplay = "default"
 
-[node name="teia2" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="teia2" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1461662481]
 position = Vector2(-244.99963, -472)
 scale = Vector2(3.2083333, 4.0625)
 sprite_frames = SubResource("SpriteFrames_44bvi")
 autoplay = "default"
 
-[node name="teia3" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="teia3" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=239266630]
 position = Vector2(-981.99994, -476)
 scale = Vector2(3.2083333, 4.0625)
 sprite_frames = SubResource("SpriteFrames_44bvi")
 autoplay = "default"
 
-[node name="MkDudun" type="AudioStreamPlayer" parent="Fase1BeforeCastle"]
+[node name="MkDudun" type="AudioStreamPlayer" parent="Fase1BeforeCastle" unique_id=1495993205]
 stream = ExtResource("3_032mh")
 volume_db = -6.71
 pitch_scale = 0.33
 
-[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle"]
-libraries = {
-&"": SubResource("AnimationLibrary_ahm46")
-}
+[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle" unique_id=1206366105]
+libraries/ = SubResource("AnimationLibrary_ahm46")
 
-[node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("4_xwc8o")]
+[node name="maycon_fase" parent="Fase1BeforeCastle" unique_id=1853662772 instance=ExtResource("4_xwc8o")]
 light_mask = 512
 visibility_layer = 524800
 position = Vector2(-1397.9999, 102)
@@ -221,7 +219,7 @@ scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
 collision_mask = 1
 
-[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase"]
+[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase" unique_id=1591219417]
 position = Vector2(11.542603, 0.47611237)
 scale = Vector2(4.6533337, 4.4133334)
 zoom = Vector2(0.5, 0.5)
@@ -230,88 +228,88 @@ limit_top = 21
 limit_right = 3155
 limit_bottom = 1349
 
-[node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
+[node name="Inimigos" type="Node" parent="Fase1BeforeCastle" unique_id=427269475]
 
-[node name="inimigo_bomba_pretti" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("5_8led0")]
+[node name="inimigo_bomba_pretti" parent="Fase1BeforeCastle/Inimigos" unique_id=1872859251 instance=ExtResource("5_8led0")]
 position = Vector2(1286.0001, 835)
 scale = Vector2(1.6156905, -1.3321537)
 
-[node name="no_monster_flask_empty" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="no_monster_flask_empty" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1696935619]
 position = Vector2(1271.9999, 216)
 scale = Vector2(6.2748766, 5.40808)
 sprite_frames = SubResource("SpriteFrames_th65o")
 autoplay = "default"
 
-[node name="smoke15" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke15" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1129444998]
 position = Vector2(1472, 545.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_o1pkn")
 autoplay = "default"
 
-[node name="smoke16" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke16" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=2055137672]
 position = Vector2(1411.9998, 618.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_o1pkn")
 autoplay = "default"
 
-[node name="smoke17" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke17" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=2018856416]
 position = Vector2(1531, 654.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_o1pkn")
 autoplay = "default"
 
-[node name="smoke18" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke18" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1349108644]
 position = Vector2(1521, 636.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_o1pkn")
 autoplay = "default"
 
-[node name="next_scene" type="Area2D" parent="."]
+[node name="next_scene" type="Area2D" parent="." unique_id=1576892142]
 position = Vector2(16, -2)
 
-[node name="next" type="CollisionShape2D" parent="next_scene"]
+[node name="next" type="CollisionShape2D" parent="next_scene" unique_id=142645689]
 position = Vector2(2026.0002, 851)
 scale = Vector2(5.559998, 2.9600005)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 
-[node name="dead_line" type="Area2D" parent="."]
+[node name="dead_line" type="Area2D" parent="." unique_id=807092717]
 light_mask = 524289
 visibility_layer = 524289
 collision_layer = 524289
 collision_mask = 524289
 
-[node name="dead" type="CollisionShape2D" parent="dead_line"]
+[node name="dead" type="CollisionShape2D" parent="dead_line" unique_id=695651775]
 light_mask = 524289
 visibility_layer = 524289
 position = Vector2(1442, 1268)
 scale = Vector2(13.518565, 10.061738)
 shape = SubResource("WorldBoundaryShape2D_7je0d")
 
-[node name="back_stage" type="Area2D" parent="."]
+[node name="back_stage" type="Area2D" parent="." unique_id=772117974]
 position = Vector2(1586, 683)
 
-[node name="back" type="CollisionShape2D" parent="back_stage"]
+[node name="back" type="CollisionShape2D" parent="back_stage" unique_id=898443658]
 position = Vector2(-1454.0001, 91)
 scale = Vector2(3.3999994, 5.44)
 shape = SubResource("WorldBoundaryShape2D_36c4s")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1828986978]
 collision_layer = 524291
 collision_mask = 524291
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=1783814099]
 position = Vector2(1078.5, 1072)
 shape = SubResource("RectangleShape2D_p1t4m")
 
-[node name="battle" parent="." instance=ExtResource("6_44bvi")]
+[node name="battle" parent="." unique_id=268168074 instance=ExtResource("6_44bvi")]
 process_mode = 0
 position = Vector2(-670, 330)
 
-[node name="Pause" parent="." instance=ExtResource("7_o1pkn")]
+[node name="Pause" parent="." unique_id=499553636 instance=ExtResource("7_o1pkn")]
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0

@@ -40,7 +40,7 @@ func efeito_camera_lenta(intensidade: float, duracao: float):
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	add_to_group("enemy_hitbox")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -55,6 +55,7 @@ func atualizar_barra():
 	tween.tween_property(barra_vida, "value", hp, 0.2)
 
 func morrer():
+	remove_from_group("enemy_hitbox")
 	
 	if Global.is_two_player_active:
 		for p in get_tree().get_nodes_in_group("player"):
@@ -62,11 +63,10 @@ func morrer():
 			
 		get_tree().get_first_node_in_group("two_layers_fps_mode").find_child("SubViewportContainer2").visible = false
 	
-	if Global.default_language != Global.language_en:
-			seco_died.text = "OLINDÃO DESVIOU!"
-			seco_died.visible = true
-			final_msg.text = " OLINDÃO FUGIU!"
-			final_msg_2.text = "  SAFADAMENTE... "
+	seco_died.text = tr("BATTLE_OLINDAO_DODGED")
+	seco_died.visible = true
+	final_msg.text = " " + tr("BATTLE_OLINDAO_FLED")
+	final_msg_2.text = "  " + tr("BATTLE_SAFADAMENTE")
 			
 	$"../../..".process_mode = Node.PROCESS_MODE_DISABLED
 	$"../../../../maycon_3d".process_mode = Node.PROCESS_MODE_DISABLED

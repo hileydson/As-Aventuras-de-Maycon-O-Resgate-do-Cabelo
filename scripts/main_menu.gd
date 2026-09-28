@@ -11,15 +11,16 @@ extends VBoxContainer
 @onready var v_box_container: VBoxContainer = $"."
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
 @onready var continue_: Button = $Continue_
+@onready var settings_btn: Button = $Settings
+@onready var configuracoes_dialog = $"../../ConfiguracoesDialog"
 @onready var as_aventuras_de_maycon: Label = $"../as_aventuras_de_maycon"
 @onready var o_resgate_do_cabelo: Label = $"../o_resgate_do_cabelo"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
-	if Global.default_language == Global.language_en:
-		as_aventuras_de_maycon.text = "The Legend of Maycon"
-		o_resgate_do_cabelo.text = "The Cabelo's Rescue"
+	as_aventuras_de_maycon.text = tr("GAME_TITLE")
+	o_resgate_do_cabelo.text = tr("GAME_SUBTITLE")
 	
 	continue_.disabled = !Global.check_load()
 	
@@ -27,10 +28,11 @@ func _ready() -> void:
 	new_game.grab_focus()
 	cabelo_sound.play()
 	
-	if Global.default_language == Global.language_en:
-		new_game.text = "New Game"
-		continue_.text = "Continue"
-		exit.text = "Exit"
+	new_game.text = tr("MENU_NEW_GAME")
+	continue_.text = tr("MENU_CONTINUE")
+	if settings_btn:
+		settings_btn.text = tr("MENU_SETTINGS")
+	exit.text = tr("MENU_EXIT")
 	
 	maycon_looking.play("idle")
 	
@@ -56,7 +58,7 @@ func _on_new_game_pressed() -> void:
 	
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout
-	get_tree().change_scene_to_file("res://scenes/intro_game.tscn")
+	get_tree().change_scene_to_file("res://scenes/battle_mode_selection.tscn")
 
 
 func _on_exit_pressed() -> void:
@@ -65,3 +67,8 @@ func _on_exit_pressed() -> void:
 
 func _on_continue__pressed() -> void:
 	Global.load_progress()
+
+
+func _on_settings_pressed() -> void:
+	if configuracoes_dialog:
+		configuracoes_dialog.abrir()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://bdmpm2b3ny4k2"]
+[gd_scene format=3 uid="uid://bdmpm2b3ny4k2"]
 
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_4xbjm"]
 [ext_resource type="Texture2D" uid="uid://b6c6gorildkq4" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_1.png" id="1_isgjk"]
@@ -325,52 +325,50 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="castelo_1" type="Node2D"]
+[node name="castelo_1" type="Node2D" unique_id=1071050568]
 process_mode = 1
 
-[node name="maycon_itens" parent="." instance=ExtResource("1_4xbjm")]
+[node name="maycon_itens" parent="." unique_id=209748336 instance=ExtResource("1_4xbjm")]
 position = Vector2(1586, 683)
 
-[node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
+[node name="Fase1BeforeCastle" type="Sprite2D" parent="." unique_id=415392086]
 process_mode = 1
 position = Vector2(1586, 683)
 texture = ExtResource("1_isgjk")
 script = ExtResource("2_isgjk")
 
-[node name="teia4" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="teia4" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1529111155]
 position = Vector2(794.99976, -474)
 scale = Vector2(3.2083333, 4.0625)
 sprite_frames = SubResource("SpriteFrames_4xbjm")
 autoplay = "default"
 frame_progress = 0.7938663
 
-[node name="teia3" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="teia3" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=345046274]
 position = Vector2(1019, -266)
 scale = Vector2(3.2083333, 4.0625)
 sprite_frames = SubResource("SpriteFrames_4xbjm")
 autoplay = "default"
 frame_progress = 0.39719716
 
-[node name="teia2" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="teia2" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1364145789]
 position = Vector2(191.00012, -337)
 scale = Vector2(3.2083333, 4.0625)
 sprite_frames = SubResource("SpriteFrames_4xbjm")
 autoplay = "default"
 frame_progress = 0.39719716
 
-[node name="teia" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="teia" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=963809217]
 position = Vector2(-776.99994, -488)
 scale = Vector2(3.2083333, 4.0625)
 sprite_frames = SubResource("SpriteFrames_4xbjm")
 autoplay = "default"
 frame_progress = 0.39719716
 
-[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle"]
-libraries = {
-&"": SubResource("AnimationLibrary_ahm46")
-}
+[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle" unique_id=347327804]
+libraries/ = SubResource("AnimationLibrary_ahm46")
 
-[node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("3_pkp6y")]
+[node name="maycon_fase" parent="Fase1BeforeCastle" unique_id=1157980100 instance=ExtResource("3_pkp6y")]
 light_mask = 512
 visibility_layer = 524800
 z_index = 1
@@ -379,7 +377,7 @@ scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
 collision_mask = 1
 
-[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase"]
+[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase" unique_id=19972849]
 position = Vector2(11.542603, 0.47611237)
 scale = Vector2(4.6533337, 4.4133334)
 zoom = Vector2(0.5, 0.5)
@@ -388,26 +386,26 @@ limit_top = 21
 limit_right = 3159
 limit_bottom = 1349
 
-[node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
+[node name="Inimigos" type="Node" parent="Fase1BeforeCastle" unique_id=695757778]
 
-[node name="inimigo_manga" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("6_htegb")]
+[node name="inimigo_manga" parent="Fase1BeforeCastle/Inimigos" unique_id=2030576665 instance=ExtResource("6_htegb")]
 position = Vector2(1647, 867.00006)
 
-[node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle"]
+[node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle" unique_id=2035812557]
 
-[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/CanvasLayer"]
+[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/CanvasLayer" unique_id=663807478]
 material = SubResource("ShaderMaterial_4xbjm")
 offset_right = 3450.0
 offset_bottom = 1605.0
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle/CanvasLayer"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle/CanvasLayer" unique_id=866581975]
 environment = SubResource("Environment_0lpkh")
 
-[node name="Camera_temp" type="Camera2D" parent="Fase1BeforeCastle"]
+[node name="Camera_temp" type="Camera2D" parent="Fase1BeforeCastle" unique_id=1977208251]
 position = Vector2(2512, -258)
 script = ExtResource("8_0lpkh")
 
-[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/Camera_temp"]
+[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/Camera_temp" unique_id=1274931684]
 z_index = -2
 offset_left = -584.0
 offset_top = -334.0
@@ -415,15 +413,17 @@ offset_right = 580.0
 offset_bottom = 327.0
 color = Color(0, 0, 0, 1)
 
-[node name="Kick" type="AudioStreamPlayer" parent="Fase1BeforeCastle/Camera_temp"]
+[node name="Kick" type="AudioStreamPlayer" parent="Fase1BeforeCastle/Camera_temp" unique_id=2030295749]
 stream = ExtResource("9_3ej27")
 
-[node name="inimigo_boss_seco" parent="Fase1BeforeCastle/Camera_temp" instance=ExtResource("9_bbiws")]
+[node name="inimigo_boss_seco" parent="Fase1BeforeCastle/Camera_temp" unique_id=1791901601 instance=ExtResource("9_bbiws")]
 z_index = 20
 position = Vector2(-695.99994, 13)
+animation = &"run"
+frame_progress = 0.0
 flip_h = true
 
-[node name="cabelo" parent="Fase1BeforeCastle/Camera_temp" instance=ExtResource("10_3ej27")]
+[node name="cabelo" parent="Fase1BeforeCastle/Camera_temp" unique_id=1101317598 instance=ExtResource("10_3ej27")]
 visible = false
 z_index = 20
 position = Vector2(-632, 48)
@@ -431,7 +431,7 @@ rotation = -2.3479953
 scale = Vector2(0.8574843, -0.73798275)
 skew = -0.016398787
 
-[node name="msg_block" type="Label" parent="Fase1BeforeCastle/Camera_temp"]
+[node name="msg_block" type="Label" parent="Fase1BeforeCastle/Camera_temp" unique_id=1959337098]
 visible = false
 z_index = 3
 offset_left = -427.0
@@ -442,72 +442,72 @@ scale = Vector2(2.9967816, 1.6456175)
 text = "TEXT...
 TEXT..."
 
-[node name="Running" type="AudioStreamPlayer" parent="Fase1BeforeCastle/Camera_temp"]
+[node name="Running" type="AudioStreamPlayer" parent="Fase1BeforeCastle/Camera_temp" unique_id=659890719]
 stream = ExtResource("10_cf614")
 
-[node name="fade" parent="Fase1BeforeCastle/Camera_temp" instance=ExtResource("9_fyo8v")]
+[node name="fade" parent="Fase1BeforeCastle/Camera_temp" unique_id=1516695610 instance=ExtResource("9_fyo8v")]
 
-[node name="next_scene" type="Area2D" parent="."]
+[node name="next_scene" type="Area2D" parent="." unique_id=219102797]
 position = Vector2(16, -2)
 
-[node name="next" type="CollisionShape2D" parent="next_scene"]
+[node name="next" type="CollisionShape2D" parent="next_scene" unique_id=2057220537]
 position = Vector2(3172.9998, 936)
 scale = Vector2(5.559998, 2.9600005)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 
-[node name="dead_line" type="Area2D" parent="."]
+[node name="dead_line" type="Area2D" parent="." unique_id=238619249]
 light_mask = 524289
 visibility_layer = 524289
 collision_layer = 524289
 collision_mask = 524289
 
-[node name="dead" type="CollisionShape2D" parent="dead_line"]
+[node name="dead" type="CollisionShape2D" parent="dead_line" unique_id=721736732]
 light_mask = 524289
 visibility_layer = 524289
 position = Vector2(1442, 1268)
 scale = Vector2(13.518565, 10.061738)
 shape = SubResource("WorldBoundaryShape2D_7je0d")
 
-[node name="back_stage" type="Area2D" parent="."]
+[node name="back_stage" type="Area2D" parent="." unique_id=315377484]
 position = Vector2(1586, 683)
 
-[node name="back" type="CollisionShape2D" parent="back_stage"]
+[node name="back" type="CollisionShape2D" parent="back_stage" unique_id=373452218]
 position = Vector2(-1446.0001, 178)
 scale = Vector2(3.3999994, 5.44)
 shape = SubResource("WorldBoundaryShape2D_36c4s")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1163119715]
 collision_layer = 524291
 collision_mask = 524291
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1105900697]
 process_mode = 4
 light_mask = 524289
 visibility_layer = 524289
 position = Vector2(351, 1090)
 shape = SubResource("RectangleShape2D_hnmna")
 
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D" unique_id=1908347038]
 process_mode = 4
 position = Vector2(2149, 1108)
 shape = SubResource("RectangleShape2D_nulh8")
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=451106984]
 position = Vector2(1307.25, 1109)
 shape = SubResource("RectangleShape2D_p1t4m")
 
-[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D" unique_id=702146335]
 position = Vector2(3044.272, 977.6126)
 rotation = -1.5738535
 shape = SubResource("RectangleShape2D_6v7in")
 
-[node name="battle" parent="." instance=ExtResource("5_6qwlc")]
+[node name="battle" parent="." unique_id=1363483367 instance=ExtResource("5_6qwlc")]
 process_mode = 0
 position = Vector2(-672, 329)
 
-[node name="auto_fade_in" parent="." instance=ExtResource("6_w4eqy")]
+[node name="auto_fade_in" parent="." unique_id=1782911787 instance=ExtResource("6_w4eqy")]
 
-[node name="Pause" parent="." instance=ExtResource("6_4xbjm")]
+[node name="Pause" parent="." unique_id=182037188 instance=ExtResource("6_4xbjm")]
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
@@ -518,103 +518,103 @@ offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[node name="fogo" type="AnimatedSprite2D" parent="."]
+[node name="fogo" type="AnimatedSprite2D" parent="." unique_id=833477932]
 position = Vector2(700, 1197)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo2" type="AnimatedSprite2D" parent="."]
+[node name="fogo2" type="AnimatedSprite2D" parent="." unique_id=691544565]
 position = Vector2(795.00006, 1335)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo3" type="AnimatedSprite2D" parent="."]
+[node name="fogo3" type="AnimatedSprite2D" parent="." unique_id=175913165]
 position = Vector2(1695, 1220)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo4" type="AnimatedSprite2D" parent="."]
+[node name="fogo4" type="AnimatedSprite2D" parent="." unique_id=1294738030]
 position = Vector2(1757, 1234)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo5" type="AnimatedSprite2D" parent="."]
+[node name="fogo5" type="AnimatedSprite2D" parent="." unique_id=1862024514]
 position = Vector2(1814.0001, 1207)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo6" type="AnimatedSprite2D" parent="."]
+[node name="fogo6" type="AnimatedSprite2D" parent="." unique_id=268677506]
 position = Vector2(1872, 1262)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo7" type="AnimatedSprite2D" parent="."]
+[node name="fogo7" type="AnimatedSprite2D" parent="." unique_id=1323410741]
 position = Vector2(2673, 1266)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo8" type="AnimatedSprite2D" parent="."]
+[node name="fogo8" type="AnimatedSprite2D" parent="." unique_id=1351133421]
 position = Vector2(2190.0002, 697)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo9" type="AnimatedSprite2D" parent="."]
+[node name="fogo9" type="AnimatedSprite2D" parent="." unique_id=232843490]
 position = Vector2(713.00037, 476.99994)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo10" type="AnimatedSprite2D" parent="."]
+[node name="fogo10" type="AnimatedSprite2D" parent="." unique_id=1474903982]
 position = Vector2(1196, 691)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo11" type="AnimatedSprite2D" parent="."]
+[node name="fogo11" type="AnimatedSprite2D" parent="." unique_id=224616286]
 position = Vector2(2899, 354)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo12" type="AnimatedSprite2D" parent="."]
+[node name="fogo12" type="AnimatedSprite2D" parent="." unique_id=1583174935]
 position = Vector2(3026.0002, 1311)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo13" type="AnimatedSprite2D" parent="."]
+[node name="fogo13" type="AnimatedSprite2D" parent="." unique_id=93881409]
 position = Vector2(3054, 1280)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo14" type="AnimatedSprite2D" parent="."]
+[node name="fogo14" type="AnimatedSprite2D" parent="." unique_id=1547966292]
 position = Vector2(3045, 1207)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo15" type="AnimatedSprite2D" parent="."]
+[node name="fogo15" type="AnimatedSprite2D" parent="." unique_id=1901229107]
 position = Vector2(3069.0002, 1190)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="fogo16" type="AnimatedSprite2D" parent="."]
+[node name="fogo16" type="AnimatedSprite2D" parent="." unique_id=533773968]
 position = Vector2(3060.0002, 1176)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_htegb")
 autoplay = "default"
 
-[node name="sangue_fill_scene" parent="." instance=ExtResource("18_5dcdm")]
+[node name="sangue_fill_scene" parent="." unique_id=639163310 instance=ExtResource("18_5dcdm")]
 position = Vector2(1186, 926)
 
 [connection signal="ready" from="Fase1BeforeCastle/Camera_temp" to="Fase1BeforeCastle/Camera_temp" method="_on_ready"]

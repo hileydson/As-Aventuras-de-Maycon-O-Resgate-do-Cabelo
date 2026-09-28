@@ -1,0 +1,74 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/3D/aviao_interior.gd" id="1_int"]
+[ext_resource type="AudioStream" uid="uid://cgbaylimr110j" path="res://assets/novos_audios/cidade_intro_wind.mp3" id="2_vento"]
+[ext_resource type="AudioStream" uid="uid://c21fjct4a2rfb" path="res://assets/novos_audios/modo_acelerando.mp3" id="3_motor"]
+[ext_resource type="AudioStream" uid="uid://bemu08m6br4h" path="res://assets/novos_audios/mario_part_sounds/passo.mp3" id="4_passo"]
+
+[sub_resource type="Environment" id="Environment_cabine"]
+background_mode = 1
+background_color = Color(0.5686275, 0.78431374, 0.90588236, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.85, 0.88, 0.94, 1)
+ambient_light_energy = 0.55
+tonemap_mode = 2
+
+[node name="aviao_interior" type="Node3D"]
+script = ExtResource("1_int")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_cabine")
+
+[node name="Cabine" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+current = true
+fov = 66.0
+
+[node name="Vento" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_vento")
+volume_db = -16.0
+pitch_scale = 0.55
+autoplay = true
+
+[node name="Motor" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_motor")
+volume_db = -20.0
+pitch_scale = 0.45
+autoplay = true
+
+[node name="Passo" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_passo")
+volume_db = -17.0
+
+[node name="Fade" type="CanvasLayer" parent="."]
+layer = 30
+
+[node name="FadeRect" type="ColorRect" parent="Fade"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="Hud" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Dica" type="Label" parent="Hud"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -84.0
+offset_right = 320.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.96, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0.06, 0.04, 0.02, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1

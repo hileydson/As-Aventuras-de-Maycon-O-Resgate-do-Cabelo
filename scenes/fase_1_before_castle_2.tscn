@@ -1,6 +1,5 @@
-[gd_scene load_steps=63 format=3 uid="uid://f8txa0404jbf"]
+[gd_scene format=3 uid="uid://f8txa0404jbf"]
 
-[ext_resource type="Texture2D" uid="uid://d4gyanjdy41sl" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_2.png" id="1_6v7in"]
 [ext_resource type="PackedScene" uid="uid://c6hkbpx4y28ce" path="res://scenes/menus/maycon_itens.tscn" id="1_54a10"]
 [ext_resource type="Script" uid="uid://bkvxkpbrw3jax" path="res://scripts/fase_1_before_castle_2.gd" id="2_6v7in"]
 [ext_resource type="PackedScene" uid="uid://c283awjq1ew2g" path="res://scenes/inimigos/inimigo_xuruzika.tscn" id="4_aybw1"]
@@ -14,6 +13,42 @@
 [ext_resource type="Texture2D" uid="uid://ctu2fq4dxgban" path="res://assets/novas_imagens/objects/dungeon-props-and-objects-asset-pack/Rotating_blades.png" id="10_8ayet"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="10_end3m"]
 [ext_resource type="PackedScene" uid="uid://c0hdoyj76p8qk" path="res://scenes/coxinha.tscn" id="11_sx1rn"]
+[ext_resource type="Texture2D" uid="uid://be1hyql8bjv3e" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_before_castle_2_paralax_1.png" id="12_parallax_front"]
+[ext_resource type="Texture2D" uid="uid://cng7cklydpdnk" path="res://assets/novas_imagens/cenarios/in_use/fase_1/arvores.png" id="13_parallax_trees"]
+[ext_resource type="Shader" uid="uid://c6eelrgo3e7vy" path="res://scenes/fase_1_before_castle_1_dynamic_background.gdshader" id="14_dynamic_background"]
+[ext_resource type="Shader" uid="uid://f8f54lfnqp5y" path="res://scenes/fase_1_before_castle_1_clouds.gdshader" id="15_clouds"]
+[ext_resource type="Shader" uid="uid://cpd8rbbi3i82v" path="res://scenes/fase_1_before_castle_1_lava_glow.gdshader" id="16_lava_glow"]
+[ext_resource type="Shader" uid="uid://dytv70uo3y83j" path="res://scenes/fase_1_before_castle_1_mountains.gdshader" id="17_mountains"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dynamic_background_fase_2"]
+shader = ExtResource("14_dynamic_background")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_far_mountains_fase_2"]
+shader = ExtResource("17_mountains")
+shader_parameter/mountain_color = Color(0.085, 0.025, 0.045, 1)
+shader_parameter/rim_color = Color(0.34, 0.04, 0.015, 1)
+shader_parameter/horizon = 0.48
+shader_parameter/mountain_height = 0.19
+shader_parameter/peak_count = 9.0
+shader_parameter/seed = 11.8
+shader_parameter/opacity = 0.68
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_near_mountains_fase_2"]
+shader = ExtResource("17_mountains")
+shader_parameter/mountain_color = Color(0.035, 0.012, 0.024, 1)
+shader_parameter/rim_color = Color(0.48, 0.055, 0.012, 1)
+shader_parameter/horizon = 0.61
+shader_parameter/mountain_height = 0.27
+shader_parameter/peak_count = 6.5
+shader_parameter/seed = 27.4
+shader_parameter/opacity = 0.82
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_clouds_fase_2"]
+shader = ExtResource("15_clouds")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lava_glow_fase_2"]
+shader = ExtResource("16_lava_glow")
+shader_parameter/foreground_texture = ExtResource("12_parallax_front")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kvuau"]
 atlas = ExtResource("10_8ayet")
@@ -337,30 +372,99 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="fase_2" type="Node2D"]
+[node name="fase_2" type="Node2D" unique_id=695525941]
 process_mode = 1
 
-[node name="maycon_itens" parent="." instance=ExtResource("1_54a10")]
+[node name="DynamicFireBackground" type="Parallax2D" parent="." unique_id=1759375519]
+z_index = -30
+scroll_scale = Vector2(0.5, 1)
+
+[node name="FireSky" type="ColorRect" parent="DynamicFireBackground" unique_id=1273076618]
+material = SubResource("ShaderMaterial_dynamic_background_fase_2")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="FarMountains" type="Parallax2D" parent="." unique_id=1298969324]
+z_index = -29
+scroll_scale = Vector2(0.58, 1)
+
+[node name="MountainRange" type="ColorRect" parent="FarMountains" unique_id=1980943384]
+material = SubResource("ShaderMaterial_far_mountains_fase_2")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="NearMountains" type="Parallax2D" parent="." unique_id=521932190]
+z_index = -27
+scroll_scale = Vector2(0.68, 1)
+
+[node name="MountainRange" type="ColorRect" parent="NearMountains" unique_id=276102969]
+material = SubResource("ShaderMaterial_near_mountains_fase_2")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="DynamicClouds" type="Parallax2D" parent="." unique_id=1665294168]
+z_index = -25
+scroll_scale = Vector2(0.62, 1)
+
+[node name="CloudField" type="ColorRect" parent="DynamicClouds" unique_id=656339295]
+material = SubResource("ShaderMaterial_clouds_fase_2")
+offset_left = -572.0
+offset_right = 3168.0
+offset_bottom = 1344.0
+mouse_filter = 2
+
+[node name="DistantBurntTrees" type="Parallax2D" parent="." unique_id=1062785237]
+z_index = -20
+scroll_scale = Vector2(0.75, 1)
+
+[node name="Trees" type="Sprite2D" parent="DistantBurntTrees" unique_id=1349637580]
+position = Vector2(1436, 877)
+scale = Vector2(1.5683334, 1.6935166)
+texture = ExtResource("13_parallax_trees")
+
+[node name="BurntForestForeground" type="Parallax2D" parent="." unique_id=1679346067]
+z_index = -10
+
+[node name="Foreground" type="Sprite2D" parent="BurntForestForeground" unique_id=1569673328]
+position = Vector2(1586, 683)
+scale = Vector2(3.09375, 3.096774)
+texture = ExtResource("12_parallax_front")
+
+[node name="LavaLight" type="Parallax2D" parent="." unique_id=1066732620]
+z_index = -5
+
+[node name="LavaGlow" type="ColorRect" parent="LavaLight" unique_id=1773013876]
+material = SubResource("ShaderMaterial_lava_glow_fase_2")
+offset_left = 2.0
+offset_top = 11.0
+offset_right = 3170.0
+offset_bottom = 1355.0
+mouse_filter = 2
+
+[node name="maycon_itens" parent="." unique_id=854988950 instance=ExtResource("1_54a10")]
 position = Vector2(1586, 683)
 
-[node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
+[node name="Fase1BeforeCastle" type="Sprite2D" parent="." unique_id=574693556]
 process_mode = 1
 position = Vector2(1586, 683)
-texture = ExtResource("1_6v7in")
 script = ExtResource("2_6v7in")
 
-[node name="rotate_blade" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="rotate_blade" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1880785677]
 position = Vector2(1162, 16)
 scale = Vector2(3.7083333, 3.9791667)
 sprite_frames = SubResource("SpriteFrames_ummj2")
 autoplay = "default"
 
-[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle"]
-libraries = {
-&"": SubResource("AnimationLibrary_ahm46")
-}
+[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle" unique_id=1978357509]
+libraries/ = SubResource("AnimationLibrary_ahm46")
 
-[node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("5_54a10")]
+[node name="maycon_fase" parent="Fase1BeforeCastle" unique_id=885013849 instance=ExtResource("5_54a10")]
 light_mask = 512
 visibility_layer = 524800
 position = Vector2(-1469, 169)
@@ -368,7 +472,7 @@ scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
 collision_mask = 5
 
-[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase"]
+[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase" unique_id=2134409631]
 position = Vector2(11.542603, 0.47611237)
 scale = Vector2(4.6533337, 4.4133334)
 zoom = Vector2(0.5, 0.5)
@@ -377,296 +481,296 @@ limit_top = 21
 limit_right = 3165
 limit_bottom = 1349
 
-[node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
+[node name="Inimigos" type="Node" parent="Fase1BeforeCastle" unique_id=112530410]
 
-[node name="inimigo_xuruzika" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("4_aybw1")]
+[node name="inimigo_xuruzika" parent="Fase1BeforeCastle/Inimigos" unique_id=1147386352 instance=ExtResource("4_aybw1")]
 position = Vector2(1005, 958.9999)
 
-[node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle"]
+[node name="CanvasLayer" type="CanvasLayer" parent="Fase1BeforeCastle" unique_id=3688762]
 
-[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/CanvasLayer"]
+[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/CanvasLayer" unique_id=1369746458]
 material = SubResource("ShaderMaterial_54a10")
 offset_right = 3450.0
 offset_bottom = 1605.0
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle/CanvasLayer"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Fase1BeforeCastle/CanvasLayer" unique_id=2055793709]
 environment = SubResource("Environment_sa00i")
 
-[node name="next_scene" type="Area2D" parent="."]
+[node name="next_scene" type="Area2D" parent="." unique_id=402379033]
 process_mode = 1
 position = Vector2(16, -2)
 
-[node name="next" type="CollisionShape2D" parent="next_scene"]
+[node name="next" type="CollisionShape2D" parent="next_scene" unique_id=568033840]
 position = Vector2(3172.9998, 936)
 scale = Vector2(5.559998, 2.9600005)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 
-[node name="dead_line" type="Area2D" parent="."]
+[node name="dead_line" type="Area2D" parent="." unique_id=2008290296]
 process_mode = 1
 light_mask = 524289
 visibility_layer = 524289
 collision_layer = 524289
 collision_mask = 524289
 
-[node name="dead" type="CollisionShape2D" parent="dead_line"]
+[node name="dead" type="CollisionShape2D" parent="dead_line" unique_id=1438128492]
 light_mask = 524289
 visibility_layer = 524289
 position = Vector2(1442, 1268)
 scale = Vector2(13.518565, 10.061738)
 shape = SubResource("WorldBoundaryShape2D_7je0d")
 
-[node name="back_stage" type="Area2D" parent="."]
+[node name="back_stage" type="Area2D" parent="." unique_id=1251165574]
 process_mode = 1
 position = Vector2(1600, 685)
 
-[node name="back" type="CollisionShape2D" parent="back_stage"]
+[node name="back" type="CollisionShape2D" parent="back_stage" unique_id=585578849]
 position = Vector2(-1591, 203)
 scale = Vector2(3.3999994, 5.44)
 shape = SubResource("SegmentShape2D_54a10")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1046923788]
 process_mode = 1
 collision_layer = 524291
 collision_mask = 524291
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1487951651]
 process_mode = 4
 light_mask = 524289
 visibility_layer = 524289
 position = Vector2(285.5, 1138)
 shape = SubResource("RectangleShape2D_54a10")
 
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D" unique_id=1493331908]
 process_mode = 4
 position = Vector2(1874, 1140)
 shape = SubResource("RectangleShape2D_nulh8")
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=553754250]
 position = Vector2(1013, 1138)
 shape = SubResource("RectangleShape2D_p1t4m")
 
-[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D" unique_id=1702282372]
 position = Vector2(2343.0002, 1091.0001)
 rotation = -1.6023498
 shape = SubResource("RectangleShape2D_6v7in")
 
-[node name="CollisionShape2D8" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D8" type="CollisionShape2D" parent="StaticBody2D" unique_id=1647361272]
 position = Vector2(2537, 919.0001)
 rotation = 0.7523961
 scale = Vector2(1, 1.2596045)
 shape = SubResource("CapsuleShape2D_nulh8")
 
-[node name="CollisionShape2D7" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D7" type="CollisionShape2D" parent="StaticBody2D" unique_id=1471094800]
 position = Vector2(2907, 791)
 rotation = -1.5731149
 shape = SubResource("CapsuleShape2D_6v7in")
 
-[node name="effects" type="Node2D" parent="."]
+[node name="effects" type="Node2D" parent="." unique_id=1556926640]
 
-[node name="fogo7" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo7" type="AnimatedSprite2D" parent="effects" unique_id=865156761]
 position = Vector2(2157, 1198)
 scale = Vector2(9.375, 7.0416665)
 sprite_frames = SubResource("SpriteFrames_2qlpt")
 autoplay = "default"
 
-[node name="fogo" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo" type="AnimatedSprite2D" parent="effects" unique_id=1442522671]
 position = Vector2(697.5, 1268.5)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.41814077
 
-[node name="fogo2" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo2" type="AnimatedSprite2D" parent="effects" unique_id=1392638925]
 position = Vector2(786, 1362.0001)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="fogo3" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo3" type="AnimatedSprite2D" parent="effects" unique_id=1032194753]
 position = Vector2(1257, 1348.0001)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="fogo4" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo4" type="AnimatedSprite2D" parent="effects" unique_id=890509064]
 position = Vector2(1387, 1363)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="fogo5" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo5" type="AnimatedSprite2D" parent="effects" unique_id=838449903]
 position = Vector2(1510, 1322.0001)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="fogo6" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo6" type="AnimatedSprite2D" parent="effects" unique_id=1796578381]
 position = Vector2(1689, 1373)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="fogo8" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo8" type="AnimatedSprite2D" parent="effects" unique_id=570579225]
 position = Vector2(2979, 1322.0001)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="fogo9" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo9" type="AnimatedSprite2D" parent="effects" unique_id=416063663]
 position = Vector2(3066, 1320)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="fogo10" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo10" type="AnimatedSprite2D" parent="effects" unique_id=773470025]
 position = Vector2(3106, 1322.0001)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="fogo11" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo11" type="AnimatedSprite2D" parent="effects" unique_id=1883457806]
 position = Vector2(3078.9998, 1241)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="fogo12" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo12" type="AnimatedSprite2D" parent="effects" unique_id=287469092]
 position = Vector2(3039.9998, 1216)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="fogo13" type="AnimatedSprite2D" parent="effects"]
+[node name="fogo13" type="AnimatedSprite2D" parent="effects" unique_id=1353253049]
 position = Vector2(3039.9998, 1216)
 scale = Vector2(6.4062505, 6.718751)
 sprite_frames = SubResource("SpriteFrames_kvuau")
 autoplay = "default"
 frame_progress = 0.7696933
 
-[node name="smoke" type="AnimatedSprite2D" parent="effects"]
+[node name="smoke" type="AnimatedSprite2D" parent="effects" unique_id=1929919335]
 position = Vector2(1800.0078, 167.5311)
 rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_5fr62")
 autoplay = "default"
 
-[node name="smoke2" type="AnimatedSprite2D" parent="effects"]
+[node name="smoke2" type="AnimatedSprite2D" parent="effects" unique_id=1112978604]
 position = Vector2(207, 164)
 rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_5fr62")
 autoplay = "default"
 
-[node name="smoke3" type="AnimatedSprite2D" parent="effects"]
+[node name="smoke3" type="AnimatedSprite2D" parent="effects" unique_id=1553272405]
 position = Vector2(784.22327, 137.38751)
 rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_5fr62")
 autoplay = "default"
 
-[node name="smoke4" type="AnimatedSprite2D" parent="effects"]
+[node name="smoke4" type="AnimatedSprite2D" parent="effects" unique_id=365986313]
 position = Vector2(833.22327, 98.38751)
 rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_5fr62")
 autoplay = "default"
 
-[node name="smoke5" type="AnimatedSprite2D" parent="effects"]
+[node name="smoke5" type="AnimatedSprite2D" parent="effects" unique_id=2089512297]
 position = Vector2(715.2232, 132.38751)
 rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_5fr62")
 autoplay = "default"
 
-[node name="smoke6" type="AnimatedSprite2D" parent="effects"]
+[node name="smoke6" type="AnimatedSprite2D" parent="effects" unique_id=388102243]
 position = Vector2(1172.2233, 102.38751)
 rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_5fr62")
 autoplay = "default"
 
-[node name="smoke7" type="AnimatedSprite2D" parent="effects"]
+[node name="smoke7" type="AnimatedSprite2D" parent="effects" unique_id=430332850]
 position = Vector2(2250.2231, 166.3875)
 rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_5fr62")
 autoplay = "default"
 
-[node name="smoke8" type="AnimatedSprite2D" parent="effects"]
+[node name="smoke8" type="AnimatedSprite2D" parent="effects" unique_id=328427026]
 position = Vector2(2777.2231, 115.38752)
 rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_5fr62")
 autoplay = "default"
 
-[node name="smoke9" type="AnimatedSprite2D" parent="effects"]
+[node name="smoke9" type="AnimatedSprite2D" parent="effects" unique_id=608960333]
 position = Vector2(2522.2231, 126.38751)
 rotation = 3.1415431
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_5fr62")
 autoplay = "default"
 
-[node name="objetos" type="Node2D" parent="."]
+[node name="objetos" type="Node2D" parent="." unique_id=1766949169]
 
-[node name="bloco" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco" parent="objetos" unique_id=1852466627 instance=ExtResource("10_5fr62")]
 position = Vector2(907, 1010)
 
-[node name="bloco2" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco2" parent="objetos" unique_id=941967098 instance=ExtResource("10_5fr62")]
 position = Vector2(904, 938)
 
-[node name="bloco3" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco3" parent="objetos" unique_id=1896054430 instance=ExtResource("10_5fr62")]
 position = Vector2(904, 868)
 
-[node name="bloco4" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco4" parent="objetos" unique_id=1358665110 instance=ExtResource("10_5fr62")]
 position = Vector2(905, 798)
 
-[node name="bloco7" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco7" parent="objetos" unique_id=1151144328 instance=ExtResource("10_5fr62")]
 position = Vector2(1118, 1010)
 
-[node name="bloco8" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco8" parent="objetos" unique_id=1116604548 instance=ExtResource("10_5fr62")]
 position = Vector2(1118, 939)
 
-[node name="bloco9" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco9" parent="objetos" unique_id=1722293888 instance=ExtResource("10_5fr62")]
 position = Vector2(1117, 869)
 
-[node name="bloco10" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco10" parent="objetos" unique_id=1558036397 instance=ExtResource("10_5fr62")]
 position = Vector2(1118, 801)
 
-[node name="bloco11" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco11" parent="objetos" unique_id=2035884930 instance=ExtResource("10_5fr62")]
 position = Vector2(904, 726)
 
-[node name="bloco12" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco12" parent="objetos" unique_id=1827659773 instance=ExtResource("10_5fr62")]
 position = Vector2(903, 653)
 
-[node name="bloco13" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco13" parent="objetos" unique_id=227296716 instance=ExtResource("10_5fr62")]
 position = Vector2(904, 583)
 
-[node name="bloco14" parent="objetos" instance=ExtResource("10_5fr62")]
+[node name="bloco14" parent="objetos" unique_id=1736224880 instance=ExtResource("10_5fr62")]
 position = Vector2(901, 511)
 
-[node name="coxinha" parent="objetos" instance=ExtResource("11_sx1rn")]
+[node name="coxinha" parent="objetos" unique_id=1797919801 instance=ExtResource("11_sx1rn")]
 position = Vector2(454, -549)
 
-[node name="coxinha2" parent="objetos" instance=ExtResource("11_sx1rn")]
+[node name="coxinha2" parent="objetos" unique_id=1994171379 instance=ExtResource("11_sx1rn")]
 position = Vector2(238, 34)
 
-[node name="coxinha3" parent="objetos" instance=ExtResource("11_sx1rn")]
+[node name="coxinha3" parent="objetos" unique_id=1392111519 instance=ExtResource("11_sx1rn")]
 position = Vector2(342, -808)
 
-[node name="battle" parent="." instance=ExtResource("8_w4kda")]
+[node name="battle" parent="." unique_id=103045565 instance=ExtResource("8_w4kda")]
 position = Vector2(-679, 333)
 
-[node name="Pause" parent="." instance=ExtResource("10_end3m")]
+[node name="Pause" parent="." unique_id=1667160107 instance=ExtResource("10_end3m")]
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0

@@ -13,8 +13,16 @@ extends Sprite2D
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
+	_block_return_to_previous_stage()
+	if Global.platform_arrival_pending:
+		Global.platform_arrival_pending = false
+		maycon_fase.velocity = Vector2.ZERO
+		# Volta do combate aéreo caindo do céu e levantando poeira, igual à fase 1
+		animacoes.play("maycon_falling")
 	
-	GameSongs.play_song(1)
+	# A trilha já começa no fade out do combate aéreo; reiniciar aqui soa como erro
+	if not GameSongs.is_song_playing(1):
+		GameSongs.play_song(1)
 	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
@@ -45,7 +53,7 @@ func load_3d()->void:
 	var scene_alive = get_tree().get_first_node_in_group("two_layers_fps_mode")
 	if scene_alive:
 		scene_alive.queue_free()
-	get_tree().change_scene_to_file("res://scenes/3D/world_3d.tscn")
+	get_tree().change_scene_to_file("res://scenes/3D/seco_boss_intro.tscn")
 
 func _on_next_scene_body_entered(body: Node2D) -> void:	
 	$"../maycon_itens".get_node("canvas").visible = false
@@ -74,7 +82,19 @@ func _on_dead_line_body_entered(body: Node2D) -> void:
 
 
 func _on_back_stage_body_entered(body: Node2D) -> void:
-	get_tree().paused = true
-	Global.back_to_fase = true
-	await get_tree().create_timer(0.3).timeout 
-	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
+	return
+
+
+func _block_return_to_previous_stage() -> void:
+	$"../back_stage".monitoring = false
+	var barrier := StaticBody2D.new()
+	barrier.name = "BloqueioRetorno"
+	barrier.position = Vector2(14.0, 850.0)
+	barrier.collision_layer = 1
+	barrier.collision_mask = 0
+	var shape := CollisionShape2D.new()
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = Vector2(32.0, 900.0)
+	shape.shape = rectangle
+	barrier.add_child(shape)
+	get_parent().add_child.call_deferred(barrier)

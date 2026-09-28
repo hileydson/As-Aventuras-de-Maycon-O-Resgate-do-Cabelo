@@ -1,7 +1,7 @@
 extends CharacterBody3D
 
 @onready var navigation_agent_3d: NavigationAgent3D = $NavigationAgent3D
-@export var velocidade = 2.2
+@export var velocidade = 1.7
 @onready var nav_agent = $NavigationAgent3D
 @onready var animated_sprite_3d: AnimatedSprite3D = $AnimatedSprite3D
 @onready var area_3d: Area3D = $Area3D

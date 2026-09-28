@@ -3,14 +3,17 @@
 [ext_resource type="Script" uid="uid://b6xclp8odu70a" path="res://scripts/3D/blood.gd" id="1_bwwsb"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jypjr"]
-direction = Vector3(1, 2, 0)
-initial_velocity_max = 3.0
-scale_min = 0.099999994
-scale_max = 0.099999994
+direction = Vector3(0, 1.2, -0.6)
+spread = 65.0
+initial_velocity_min = 4.5
+initial_velocity_max = 12.0
+gravity = Vector3(0, -16, 0)
+scale_min = 0.12
+scale_max = 0.42
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vh1g4"]
 shading_mode = 0
-albedo_color = Color(1, 0, 0, 1)
+albedo_color = Color(0.85, 0.02, 0.04, 1)
 billboard_mode = 1
 billboard_keep_scale = true
 use_point_size = true
@@ -18,16 +21,18 @@ point_size = 0.6
 
 [sub_resource type="SphereMesh" id="SphereMesh_b4lwt"]
 material = SubResource("StandardMaterial3D_vh1g4")
-radius = 0.2
-height = 0.3
-radial_segments = 364
+radius = 0.14
+height = 0.28
+radial_segments = 8
+rings = 4
 
 [node name="blood" type="Node3D"]
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
 emitting = false
-amount = 34
-amount_ratio = 0.5414
+amount = 128
+amount_ratio = 1.0
+explosiveness = 0.95
 one_shot = true
 process_material = SubResource("ParticleProcessMaterial_jypjr")
 draw_pass_1 = SubResource("SphereMesh_b4lwt")

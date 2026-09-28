@@ -40,14 +40,30 @@ func _ready() -> void:
 		await get_tree().create_timer(1.0).timeout
 
 
-	if Global.game_events["seco_break_capsule"]==false:
+	var seco_morto:bool = Global.game_events.get("seco_defeated", false)
+	if !seco_morto && is_instance_valid(inimigo_boss_seco):
+		var seco_id = get_tree().current_scene.name + "_" + str(inimigo_boss_seco.get_path())
+		if Global.inimigos_mortos.has(seco_id) or (inimigo_boss_seco.id_unico != "" and Global.inimigos_mortos.has(inimigo_boss_seco.id_unico)):
+			seco_morto = true
+
+	if seco_morto:
+		if is_instance_valid(start_seco_break_capsule):
+			start_seco_break_capsule.queue_free()
+		if is_instance_valid(inimigo_boss_seco):
+			inimigo_boss_seco.visible = false
+			inimigo_boss_seco.queue_free()
+		$smoke.visible = false
+		$ScarySmile.stop()
+		$sound_seco_capsule.stop()
+	elif Global.game_events["seco_break_capsule"]==false:
 		$smoke.visible = true
 		$ScarySmile.play()
 		$sound_seco_capsule.play()
 	else:
-		start_seco_break_capsule.queue_free()
+		if is_instance_valid(start_seco_break_capsule):
+			start_seco_break_capsule.queue_free()
 		
-		if inimigos.has_node("inimigo_boss_seco"):
+		if inimigos.has_node("inimigo_boss_seco") && !seco_morto:
 			inimigo_boss_seco.visible = true
 			inimigo_boss_seco.flip_h = true
 			$smoke.visible = false

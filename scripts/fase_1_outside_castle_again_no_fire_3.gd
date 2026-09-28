@@ -18,8 +18,7 @@ func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
 	get_tree().paused = false
 	
-	if Global.default_language == Global.language_pt_br:
-		city.text = "Cidade"
+	city.text = tr("LEVEL_CITY")
 		
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
@@ -50,10 +49,19 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	
 	#CHAMA BALAOZINHO
 	balao_ = preload("res://scenes/balao_conversa.tscn").instantiate()
-	if Global.default_language == Global.language_pt_br:
-		balao_.falas = ["...", "Como seu melhor amigo do coração!", "Venho te ajudar!", "Sei que está nessa busca pelo Cabelo!", "Confio em você Maycon!", "O Olindão largou ele em algum lugar na cidade", "Eu sabia que precisaria...", "Pegue minha moto emprestada!", "Estarei pela cidade...", "Se eu achar ele te informo!", "Boa sorte amigo!!"]
-	else:
-		balao_.falas = ["...", "As your best friend!", "I'm here to help you!", "I know you're on this quest for Cabelo!", "I trust you, Maycon!", "Olindão left him somewhere in the city", "Be careful out there!", "Take my motorcycle!", "I'll be there looking for him too!", "Good luck, my friend!!"]
+	balao_.falas = [
+		"...",
+		"DIALOGUE_CIGARRO_1",
+		"DIALOGUE_CIGARRO_2",
+		"DIALOGUE_CIGARRO_3",
+		"DIALOGUE_CIGARRO_4",
+		"DIALOGUE_CIGARRO_5",
+		"DIALOGUE_CIGARRO_6",
+		"DIALOGUE_CIGARRO_7",
+		"DIALOGUE_CIGARRO_8",
+		"DIALOGUE_CIGARRO_9",
+		"DIALOGUE_CIGARRO_10"
+	]
 	
 	#PEGAR O SINAL FINAL DE CONVERSA E FADEOUT
 	balao_.conversa_terminou.connect(terminou_ultimo_dialogo)

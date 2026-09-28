@@ -20,10 +20,8 @@ func _process(delta: float) -> void:
 
 func _on_node_2d_ready() -> void:
 	
-	#se estiver em pt altera
-	if Global.default_language == Global.language_pt_br:
-		label.text = "As Aventuras de Maycon"
-		end_demo_thanks.text = "O Resgate do Cabelo"
+	label.text = tr("GAME_TITLE")
+	end_demo_thanks.text = tr("GAME_SUBTITLE")
 	
 	#Global.reset_save_to_fase_1()
 	await get_tree().create_timer(7.0).timeout 

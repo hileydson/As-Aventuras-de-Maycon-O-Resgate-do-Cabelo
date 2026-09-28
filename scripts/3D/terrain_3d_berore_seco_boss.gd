@@ -45,8 +45,7 @@ func _ready() -> void:
 	Global.maycon_pegou_lamp_fire_3d_world = false
 	Global.maycon_pegou_arma_first_3d_battle = false
 	
-	if Global.default_language == Global.language_pt_br:
-		caminho_das_pedras.text = "Caminho das Pedras"
+	caminho_das_pedras.text = tr("LEVEL_STONE_PATH")
 	
 	await get_tree().create_timer(2.0).timeout
 	caminho_das_pedras.visible = true
@@ -64,8 +63,7 @@ func _ready() -> void:
 	respaw.start()
 
 func maycon_died(two_players:bool)->void:
-	if Global.default_language != Global.language_en:
-			you_died.text = "VOCÊ MORREU!"
+	you_died.text = tr("BATTLE_YOU_DIED_CAPS")
 	you_died.visible = true
 
 	for p in get_tree().get_nodes_in_group("player"):
@@ -121,7 +119,7 @@ func _on_respaw_timeout() -> void:
 		# Ajusta velocidade (Note que usei o nó raiz, se o script estiver nele tire o get_node)
 		var inimigo_script = novo_inimigo.get_node("CharacterBody3D")
 		if inimigo_script:
-			inimigo_script.velocidade = 7.2
+			inimigo_script.velocidade = 5.8
 
 		# --- LÓGICA DE SPAWN AO REDOR DO JOGADOR ---
 

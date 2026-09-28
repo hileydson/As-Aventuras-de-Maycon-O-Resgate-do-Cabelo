@@ -1,0 +1,117 @@
+[gd_scene format=3 uid="uid://drnnld45mtqp8"]
+
+[ext_resource type="Script" uid="uid://c7x78up7owcd5" path="res://scripts/3D/seco_boss_intro.gd" id="1_intro"]
+[ext_resource type="PackedScene" uid="uid://dqygg3h3b6qgp" path="res://assets/novas_imagens/3d_enemies/olindao_3d_animations.glb" id="2_seco"]
+[ext_resource type="FontFile" uid="uid://mqywkexvidu2" path="res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/10 Font/CyberpunkCraftpixPixel.otf" id="3_font"]
+[ext_resource type="AudioStream" uid="uid://cmjmm8d40e8b1" path="res://assets/novos_audios/punch_3.mp3" id="4_punch"]
+[ext_resource type="AudioStream" uid="uid://cgbaylimr110j" path="res://assets/novos_audios/cidade_intro_wind.mp3" id="5_suspense"]
+[ext_resource type="Shader" uid="uid://baxuptfks1jf8" path="res://scenes/3D/poco_infinito_dash_blur.gdshader" id="6_blur"]
+
+[sub_resource type="Environment" id="Environment_black"]
+background_mode = 1
+ambient_light_source = 2
+ambient_light_color = Color(0.08, 0.06, 0.06, 1)
+ambient_light_energy = 0.35
+reflected_light_source = 2
+tonemap_mode = 2
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_motion_blur"]
+shader = ExtResource("6_blur")
+shader_parameter/blur_direction = Vector2(1, -0.2)
+shader_parameter/blur_center = Vector2(0.5, 0.5)
+shader_parameter/blur_strength = 0.9
+
+[node name="seco_boss_intro" type="Node3D" unique_id=979296423]
+script = ExtResource("1_intro")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=79233787]
+environment = SubResource("Environment_black")
+
+[node name="olindao_3d_animations" parent="." unique_id=1865702301 instance=ExtResource("2_seco")]
+transform = Transform3D(2.6980104, 0, 0, 0, 4.203495, 0, 0, 0, 2.674044, 0, 0.8868408, 0)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=958160940]
+current = true
+fov = 62.0
+
+[node name="KeyLight" type="OmniLight3D" parent="." unique_id=1769617392]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 5, 5)
+light_color = Color(1, 0.65, 0.43, 1)
+light_energy = 4.0
+omni_range = 16.0
+
+[node name="FillLight" type="OmniLight3D" parent="." unique_id=1373728090]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 3, -2)
+light_color = Color(0.3, 0.43, 0.8, 1)
+light_energy = 2.0
+omni_range = 13.0
+
+[node name="Punch" type="AudioStreamPlayer" parent="." unique_id=367574269]
+stream = ExtResource("4_punch")
+
+[node name="Suspense" type="AudioStreamPlayer" parent="." unique_id=1127916824]
+stream = ExtResource("5_suspense")
+volume_db = -9.0
+pitch_scale = 0.62
+
+[node name="MotionBlur" type="CanvasLayer" parent="." unique_id=1629711121]
+layer = 4
+
+[node name="ColorRect" type="ColorRect" parent="MotionBlur" unique_id=21505270]
+material = SubResource("ShaderMaterial_motion_blur")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Titles" type="CanvasLayer" parent="." unique_id=714508586]
+layer = 5
+
+[node name="Names" type="VBoxContainer" parent="Titles" unique_id=142275879]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 190.0
+offset_bottom = -190.0
+mouse_filter = 2
+alignment = 1
+
+[node name="Olindao" type="Label" parent="Titles/Names" unique_id=309433805]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.63, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.02, 0.02, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 78
+text = "OLINDÃO"
+horizontal_alignment = 1
+
+[node name="Tripa" type="Label" parent="Titles/Names" unique_id=303557580]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.63, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.02, 0.02, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 78
+text = "TRIPA"
+horizontal_alignment = 1
+
+[node name="Maior" type="Label" parent="Titles/Names" unique_id=272149133]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.63, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.02, 0.02, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 78
+text = "MAIOR"
+horizontal_alignment = 1
+
+[node name="Fade" type="CanvasLayer" parent="." unique_id=1978406608]
+layer = 6
+
+[node name="Blackout" type="ColorRect" parent="Fade" unique_id=974888460]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

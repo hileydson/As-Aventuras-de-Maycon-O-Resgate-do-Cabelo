@@ -6,7 +6,8 @@ extends Area3D
 
 func _ready():
 	# Conecta o sinal de quando o player encosta
-	body_entered.connect(_on_body_entered)
+	if not body_entered.is_connected(_on_body_entered):
+		body_entered.connect(_on_body_entered)
 
 func _physics_process(delta):
 	# Faz a onda crescer nos eixos X e Z (horizontal)

@@ -19,12 +19,16 @@ extends CharacterBody2D
 var pausePlayer:bool = false
 var animation_1_gone = false
 
+var run_ghost_timer: float = 0.0
+var run_dust_timer: float = 0.0
+
 const SPEED_DEFAULT = 300.0
 const SPEED_RUN = 500.0
 var SPEED:float = SPEED_DEFAULT
 
 const JUMP_VELOCITY = -400.0
 var DOUBLE_JUMP_COUNT = 0
+var is_jumping = false
 var attack = false
 
 func pause()->void:
@@ -36,6 +40,7 @@ func jump(is_colliding_area2d:bool)->void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !is_colliding_area2d:
 		sound_jump.play()
 		Input.start_joy_vibration(0, 0.2, 0.2, 0.1)
+		is_jumping = true
 		animated_sprite_2d.play("jump_right")
 		velocity.y = JUMP_VELOCITY
 		
@@ -46,12 +51,10 @@ func double_jump(is_colliding_area2d:bool)->void:
 			sound_double_jump.play()
 			Input.start_joy_vibration(0, 0.2, 0.2, 0.2)
 			velocity.y = JUMP_VELOCITY+50
+			is_jumping = false
 			animated_sprite_2d.play("double_jump")
 			DOUBLE_JUMP_COUNT = DOUBLE_JUMP_COUNT+1
-	
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		DOUBLE_JUMP_COUNT = 0
-		
+
 func _physics_process(delta: float) -> void:
 	
 	if get_node(".").visible == false:
@@ -64,10 +67,30 @@ func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
+		run_ghost_timer = 0.0
+		run_dust_timer = 0.0
+	else:
+		is_jumping = false
+		DOUBLE_JUMP_COUNT = 0
 		
-	# attack kick
-	if Input.is_action_pressed("key_q") : #&& !Input.is_action_pressed("key_down")
+	# attack punch
+	if Input.is_action_just_pressed("key_q"):
+		var can_punch = false
 		if animated_sprite_2d.animation != "attack_punch":
+			can_punch = true
+		elif animated_sprite_2d.sprite_frames:
+			var punch_frames = animated_sprite_2d.sprite_frames.get_frame_count("attack_punch")
+			if animated_sprite_2d.frame >= int(punch_frames / 2):
+				can_punch = true
+		if can_punch:
+			punch.pitch_scale = randf_range(0.96, 1.10)
+			punch.play()
+			animated_sprite_2d.stop()
+			animated_sprite_2d.frame = 0
+			animated_sprite_2d.play("attack_punch")
+	elif Input.is_action_pressed("key_q"):
+		if animated_sprite_2d.animation != "attack_punch":
+			punch.pitch_scale = 1.0
 			punch.play()
 			animated_sprite_2d.play("attack_punch")
 		
@@ -77,35 +100,49 @@ func _physics_process(delta: float) -> void:
 			kick.play()
 			animated_sprite_2d.play("attack_kick")
 	
-	# down
-	#if Input.is_action_pressed("key_down") && !Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right"):
-	#	if animated_sprite_2d.animation != "key_down":
-	#		animated_sprite_2d.play("down")
-
-	
+	var is_colliding_area2d:bool = $area2d.get_overlapping_areas().size() > 0
+	# handles double jump 
+	double_jump(is_colliding_area2d)
+	# handles jump.
+	jump(is_colliding_area2d)
 	
 	# ANIMACAO DE ANDAR PROS LADOS	
-	if (Input.is_action_pressed("ui_left") || Input.is_action_pressed("ui_right")) && !Input.is_action_just_pressed("ui_accept"):	
-		if is_on_floor() && animated_sprite_2d.animation != "attack_punch" && animated_sprite_2d.animation != "attack_kick" :
+	if (Input.is_action_pressed("ui_left") || Input.is_action_pressed("ui_right")):	
+		if is_on_floor() and !is_jumping and animated_sprite_2d.animation != "attack_punch" and animated_sprite_2d.animation != "attack_kick":
 	
 			if Input.is_action_pressed("run"):
 				if !run.is_playing():
 					run.play()
 				if SPEED != SPEED_RUN:
 					SPEED = SPEED_RUN
-				animated_sprite_2d.play("run")
+				if animated_sprite_2d.animation != "run":
+					animated_sprite_2d.play("run")
+				
+				run_ghost_timer -= delta
+				if run_ghost_timer <= 0.0:
+					run_ghost_timer = 0.045
+					_spawn_run_ghost()
+				
+				run_dust_timer -= delta
+				if run_dust_timer <= 0.0:
+					run_dust_timer = 0.075
+					_spawn_run_dust()
 			else:
+				run_ghost_timer = 0.0
+				run_dust_timer = 0.0
 				if !sound_walk.is_playing():
 					sound_walk.play()
 				if SPEED != SPEED_DEFAULT:
 					SPEED = SPEED_DEFAULT
-				animated_sprite_2d.play("right")
+				if animated_sprite_2d.animation != "right":
+					animated_sprite_2d.play("right")
 
-	if (!Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right")) && !Input.is_action_pressed("ui_accept") && is_on_floor() && animated_sprite_2d.animation != "attack_punch" && animated_sprite_2d.animation != "attack_kick" && animated_sprite_2d.animation != "down" : 
-			animated_sprite_2d.play("idle_right")
-	#ANIMACAO IDLE
-	#if !Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right") && !Input.is_action_just_pressed("ui_accept")  && !Input.is_action_just_pressed("key_q") && !Input.is_action_just_pressed("key_w") && is_on_floor():		
-	if !animated_sprite_2d.is_playing():
+	if (!Input.is_action_pressed("ui_left") && !Input.is_action_pressed("ui_right")) and is_on_floor() and !is_jumping and animated_sprite_2d.animation != "attack_punch" and animated_sprite_2d.animation != "attack_kick" and animated_sprite_2d.animation != "down": 
+			run_ghost_timer = 0.0
+			run_dust_timer = 0.0
+			if animated_sprite_2d.animation != "idle_right":
+				animated_sprite_2d.play("idle_right")
+	if is_on_floor() and !is_jumping and !animated_sprite_2d.is_playing():
 		animated_sprite_2d.play("idle_right")
 		
 
@@ -133,13 +170,6 @@ func _physics_process(delta: float) -> void:
 			
 
 	move_and_slide()
-	
-	var is_colliding_area2d:bool = $area2d.get_overlapping_areas().size()>0
-	
-	# handles double jump 
-	double_jump(is_colliding_area2d)
-	# handles jump.
-	jump(is_colliding_area2d)
 	
 	# --- NOVA LÓGICA DE IMPACTO ---
 	# 1. Primeiro, pegamos qualquer colisão do movimento normal
@@ -187,40 +217,22 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	mk_dudun.play()
 	
 	
-	if(Global.default_language == Global.language_pt_br):
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Maycon seu safado!"
-		msg_box.visible = true
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Esquece o cabelo!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Levarei ele para um outro lugar..."
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "fora do mundo real!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Somente lá voce contrará ele!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Venha seu safado!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Entre! entre no fogo!!"
-		await get_tree().create_timer(3.0).timeout
-	else:
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Maycon you asshole!"
-		msg_box.visible = true
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Forget about cabelo!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Im gonna take him to another place!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "A not real one!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Only there you can rescue him!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Come on! you asshole!"
-		await get_tree().create_timer(3.0).timeout
-		msg.text = "Enter! touch the fire!!"
-		await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_1")
+	msg_box.visible = true
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_2")
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_3")
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_4")
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_5")
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_6")
+	await get_tree().create_timer(3.0).timeout
+	msg.text = tr("DIALOGUE_SECO_7")
+	await get_tree().create_timer(3.0).timeout
 		
 	inimigo_seco.visible = false
 	msg_box.visible = false
@@ -233,4 +245,111 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 
 
 func _on_animated_sprite_2d_animation_finished() -> void:
+	if not is_on_floor():
+		return
 	animated_sprite_2d.play("idle_right")
+
+
+func _spawn_run_ghost() -> void:
+	if !animated_sprite_2d or !animated_sprite_2d.sprite_frames:
+		return
+	var cur_tex = animated_sprite_2d.sprite_frames.get_frame_texture(animated_sprite_2d.animation, animated_sprite_2d.frame)
+	if !cur_tex:
+		return
+	var target_parent = get_parent()
+	if !target_parent:
+		return
+		
+	var ghost = Sprite2D.new()
+	ghost.texture = cur_tex
+	ghost.centered = animated_sprite_2d.centered
+	ghost.offset = animated_sprite_2d.offset
+	ghost.flip_h = animated_sprite_2d.flip_h
+	ghost.z_index = z_index
+	
+	target_parent.add_child(ghost)
+	target_parent.move_child(ghost, get_index())
+	
+	ghost.global_position = animated_sprite_2d.global_position
+	ghost.global_scale = animated_sprite_2d.global_scale
+	ghost.global_rotation = animated_sprite_2d.global_rotation
+	
+	# Vulto nítido de alta visibilidade com desvanecimento suave
+	ghost.modulate = Color(1.0, 1.0, 1.0, 0.82)
+	var tw = ghost.create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(ghost, "modulate", Color(1.0, 0.45, 0.35, 0.0), 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(ghost, "scale", ghost.scale * 0.96, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.chain().tween_callback(ghost.queue_free)
+
+
+func _spawn_run_dust() -> void:
+	var target_parent = get_parent()
+	if !target_parent:
+		return
+	var facing = -1.0 if animated_sprite_2d.flip_h else 1.0
+	var feet_pos = to_global(Vector2(-facing * 12.0 + randf_range(-3.0, 3.0), 50.0))
+	var puff = RunDustPuff.new(Vector2(-facing * randf_range(35.0, 75.0), randf_range(-18.0, -6.0)))
+	target_parent.add_child(puff)
+	target_parent.move_child(puff, get_index())
+	puff.global_position = feet_pos
+	
+	# Efeito complementar de linhas de vento/velocidade atrás do corpo
+	if randf() < 0.65:
+		var streak_pos = to_global(Vector2(-facing * 8.0, randf_range(12.0, 38.0)))
+		var streak = RunSpeedStreak.new(facing, randf_range(28.0, 48.0))
+		target_parent.add_child(streak)
+		target_parent.move_child(streak, get_index())
+		streak.global_position = streak_pos
+
+
+class RunDustPuff extends Node2D:
+	var velocity: Vector2
+	var radius: float = 6.0
+	var max_radius: float = 18.0
+	var alpha: float = 0.85
+	
+	func _init(vel: Vector2) -> void:
+		velocity = vel
+		z_index = 0
+		
+	func _ready() -> void:
+		var tw = create_tween().set_parallel(true)
+		tw.tween_property(self, "radius", max_radius, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw.tween_property(self, "alpha", 0.0, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.chain().tween_callback(queue_free)
+		
+	func _process(delta: float) -> void:
+		global_position += velocity * delta
+		velocity *= maxf(0.0, 1.0 - delta * 3.5)
+		queue_redraw()
+		
+	func _draw() -> void:
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.3, 0.75))
+		draw_circle(Vector2.ZERO, radius, Color(0.92, 0.90, 0.85, alpha * 0.75))
+		draw_circle(Vector2.ZERO, radius * 0.55, Color(1.0, 1.0, 1.0, alpha * 0.9))
+
+
+class RunSpeedStreak extends Node2D:
+	var length: float
+	var alpha: float = 0.75
+	var facing: float
+	
+	func _init(p_facing: float, p_length: float = 35.0) -> void:
+		facing = p_facing
+		length = p_length
+		z_index = 0
+		
+	func _ready() -> void:
+		var tw = create_tween().set_parallel(true)
+		tw.tween_property(self, "length", length * 1.5, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw.tween_property(self, "alpha", 0.0, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.chain().tween_callback(queue_free)
+		
+	func _process(_delta: float) -> void:
+		queue_redraw()
+		
+	func _draw() -> void:
+		draw_line(Vector2.ZERO, Vector2(-facing * length, 0.0), Color(1.0, 1.0, 1.0, alpha), 2.2)
+
+

@@ -16,9 +16,8 @@ var fim_cenario_3d:bool = false
 func _ready() -> void:
 	GameSongs.stop(1)
 	
-	if Global.default_language == Global.language_pt_br:
-		label_3d.text = "SEU IDIOTA!"
-		msg_prompt.text = "subir as escadas?"
+	label_3d.text = tr("LABEL_YOU_SUCK")
+	msg_prompt.text = tr("PROMPT_CLIMB_STAIRS")
 	
 	var player = get_tree().get_first_node_in_group("player")
 	player.get_node("hud_canvas").get_node("maycon_hp").visible = false
@@ -26,13 +25,13 @@ func _ready() -> void:
 	
 	sliding.play()
 	await get_tree().create_timer(2.1).timeout
+	Global.finish_well_entry_scream(0.3)
 	sangue_fill_effect.play()
 	sliding.stop()
 	Input.start_joy_vibration(0,0.5, 0.7, 0.3)
 	get_tree().get_first_node_in_group("player").aplicar_shake(0.9)
 	
-	if Global.default_language == Global.language_pt_br:
-		passagem_pestilenta.text = "Passagem Pestilenta"
+	passagem_pestilenta.text = tr("LEVEL_PESTILENT_PASSAGE")
 	
 	await get_tree().create_timer(2.0).timeout
 	passagem_pestilenta.visible = true
@@ -49,7 +48,7 @@ func _process(delta: float) -> void:
 	else:
 		player.get_node("hud_canvas").get_node("control_lamp").visible = false
 	
-	if prompt.visible:
+	if prompt.visible && !fim_cenario_3d:
 		if Input.is_action_pressed("ui_accept"):
 			if pause_3d:
 				pause_3d.queue_free()
@@ -63,6 +62,8 @@ func _process(delta: float) -> void:
 			Global.fade_out_sound(subindo_escada, 4.0)
 			await get_tree().create_timer(3.0).timeout
 			Global.from_slum = true
+			Global.game_events["passagem_pestilenta_feita"] = true
+			Global.save_progress("fase_3")
 			get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_3.tscn")
 
 
@@ -74,3 +75,6 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 func _on_area_3d_body_exited(body: Node3D) -> void:
 	if body is CharacterBody3D:
 		prompt.visible = false
+
+func _exit_tree() -> void:
+	Global.finish_well_entry_scream(0.1)
