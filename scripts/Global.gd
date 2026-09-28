@@ -6,6 +6,8 @@ const language_es = "es"
 const language_zh = "zh"
 const battle_mode_realtime = "realtime"
 const battle_mode_strategic = "strategic"
+const DIFFICULTY_NORMAL = "normal"
+const DIFFICULTY_EASY = "easy"
 const realtime_enemy_respawn_seconds:float = 75.0
 const WELL_ENTRY_SCREAM:AudioStreamMP3 = preload("res://assets/novos_audios/maycon_falling_fase_1_transition.mp3")
 
@@ -81,6 +83,18 @@ dungeon_unlocked=false, dungeon_axe_cutscene_seen=false, dungeon_flashlight_take
 var inimigos_mortos = {}
 var realtime_enemy_respawns:Dictionary = {}
 var aim_assist_strength:float = 0.6
+var difficulty:String = DIFFICULTY_NORMAL
+
+func is_easy_mode() -> bool:
+	return difficulty == DIFFICULTY_EASY
+
+func set_difficulty(val: String, should_save: bool = true) -> void:
+	if val == DIFFICULTY_EASY:
+		difficulty = DIFFICULTY_EASY
+	else:
+		difficulty = DIFFICULTY_NORMAL
+	if should_save:
+		save_settings()
 var show_debug_tab:bool = true
 var debug_disable_battles:bool = false
 var debug_dungeon_invincible:bool = false
@@ -126,6 +140,7 @@ func _ready() -> void:
 func save_settings() -> void:
 	var config = ConfigFile.new()
 	config.set_value("gameplay", "aim_assist_strength", aim_assist_strength)
+	config.set_value("gameplay", "difficulty", difficulty)
 	config.set_value("gameplay", "language", default_language)
 	config.set_value("debug", "game_events", game_events)
 	config.set_value("graphics", "msaa_3d", gfx_msaa_3d)
@@ -274,6 +289,7 @@ func save_to_player_savegame() -> void:
 			if data is Dictionary:
 				data["game_events"] = game_events.duplicate()
 				data["aim_assist_strength"] = aim_assist_strength
+				data["difficulty"] = difficulty
 				data["default_language"] = default_language
 				data["graphics_settings"] = _graphics_settings_to_dict()
 				data["save_timestamp"] = Time.get_datetime_string_from_system()
@@ -392,6 +408,7 @@ func get_slot_info(slot: int) -> Dictionary:
 		"date": date_str,
 		"hp": float(data.get("realtime_hp", realtime_hp_max)),
 		"battle_mode": str(data.get("battle_mode", battle_mode_realtime)),
+		"difficulty": str(data.get("difficulty", DIFFICULTY_NORMAL)),
 		"pentagrams": int(data.get("platform_pentagrams", 0))
 	}
 
@@ -414,6 +431,7 @@ func load_settings() -> void:
 	var err = config.load("user://settings.cfg")
 	if err == OK:
 		aim_assist_strength = float(config.get_value("gameplay", "aim_assist_strength", 0.6))
+		difficulty = str(config.get_value("gameplay", "difficulty", DIFFICULTY_NORMAL))
 		var saved_lang = str(config.get_value("gameplay", "language", default_language))
 		set_game_language(saved_lang, false)
 		if config.has_section_key("debug", "game_events"):
@@ -466,6 +484,7 @@ func reset_default_values()->void:
 	realtime_restore_frames = 0
 	last_fase = "fase_1"
 	block_pause_before_prologo = false
+	difficulty = DIFFICULTY_NORMAL
 
 	seco_danos_first_3d_battle = 0
 	maycon_pegou_lamp_3d_world = false
@@ -529,6 +548,7 @@ func save_progress(fase:String)->void:
 	save_array = {}
 	save_array["maycon_hp_count"] = maycon_hp_count
 	save_array["battle_mode"] = battle_mode
+	save_array["difficulty"] = difficulty
 	save_array["realtime_hp"] = realtime_hp
 	save_array["default_language"] = default_language
 	save_array["maycon_itens"] = maycon_itens
@@ -631,6 +651,7 @@ func load_progress(slot: int = -1)->void:
 			platform_pentagram_collected = save_array.get("platform_pentagram_collected", {})
 			maycon_hp_count = save_array["maycon_hp_count"]
 			battle_mode = save_array.get("battle_mode", battle_mode_realtime)
+			difficulty = str(save_array.get("difficulty", DIFFICULTY_NORMAL))
 			realtime_hp = clampf(float(save_array.get("realtime_hp", realtime_hp_max)), 0.0, realtime_hp_max)
 			if last_fase == "fase_1":
 				GameSongs.play_song(1)

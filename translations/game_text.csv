@@ -404,3 +404,14 @@ AVIAO_AVISO_ABATIDO,Lips abatido!,Lips is down!,¡Lips abatido!,利普斯被击�
 AVIAO_TITULO_FASE,Ace Tomate,Ace Tomate,Ace Tomate,Ace Tomate
 SETTINGS_DEBUG_LIPS_ONE_HIT,Lips morre com um golpe,Lips dies in one hit,Lips muere de un golpe,利普斯一击毙命
 SETTINGS_DEBUG_LIPS_ONE_HIT_DESC,Na fase Super Maycon Brother o Lips cai no primeiro acerto,In the Super Maycon Brother stage Lips goes down on the first hit,En la fase Super Maycon Brother Lips cae al primer golpe,在超级麦肯兄弟关卡中利普斯第一击就倒下
+DIFFICULTY_SELECTION_TITLE,ESCOLHA A DIFICULDADE,CHOOSE DIFFICULTY,ELIGE LA DIFICULTAD,选择难度
+DIFFICULTY_SELECTION_SUBTITLE,Você pode alterar a qualquer momento no menu de configurações.,You can change it at any time in the settings menu.,Puedes cambiarlo en cualquier momento en el menú de ajustes.,您可以随时在设置菜单中进行更改。
+DIFFICULTY_NORMAL_TITLE,NORMAL  •  PADRÃO,NORMAL  •  DEFAULT,NORMAL  •  ESTÁNDAR,普通  •  默认
+DIFFICULTY_NORMAL_DESC,"A experiência original do jogo com o nível de desafio padrão em todas as fases.","The original game experience with standard challenge across all stages.","La experiencia original del juego con el nivel de desafío estándar en todas las fases.",原汁原味的游戏体验，所有关卡均为标准难度挑战。
+DIFFICULTY_EASY_TITLE,FÁCIL,EASY,FÁCIL,简单
+DIFFICULTY_EASY_DESC,"Inimigos com menos vida, menos dano no calabouço e chefes mais acessíveis para uma jornada mais tranquila.","Enemies with less health, less dungeon damage, and more accessible bosses for a smoother journey.","Enemigos con menos vida, menos daño en la mazmorra y jefes más accesibles para una aventura más tranquila.",敌人生命值更低、地牢伤害降低、Boss更易击败，带来更轻松的冒险旅程。
+DIFFICULTY_SELECTION_HINT,Setas/analógico para escolher  •  Enter/A para confirmar,Arrows/stick to choose  •  Enter/A to confirm,Flechas/palanca para elegir  •  Enter/A para confirmar,方向键/摇杆选择  •  Enter/A 确认
+SETTINGS_DIFFICULTY,Dificuldade do Jogo,Game Difficulty,Dificultad del Juego,游戏难度
+SETTINGS_DIFFICULTY_DESC,Altera a dificuldade das batalhas e fases. Pode ser modificada a qualquer momento.,Changes the difficulty of battles and stages. Can be modified at any time.,Cambia la dificultad de las batallas y fases. Se puede modificar en cualquier momento.,更改战斗和关卡的难度。可随时调整。
+DIFFICULTY_NORMAL,Normal,Normal,Normal,普通
+DIFFICULTY_EASY,Fácil,Easy,Fácil,简单

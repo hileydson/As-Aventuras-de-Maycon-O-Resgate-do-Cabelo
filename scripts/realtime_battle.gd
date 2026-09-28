@@ -518,7 +518,7 @@ func build_fighters() -> void:
 
 	var stats:Dictionary = ENEMY_STATS[enemy_id]
 	enemy_name = stats.name
-	enemy_max_hp = stats.hp
+	enemy_max_hp = stats.hp * 0.75 if Global.is_easy_mode() else stats.hp
 	enemy_hp = enemy_max_hp
 	enemy_speed = stats.speed
 	enemy_damage = stats.damage
@@ -735,7 +735,7 @@ func spawn_minions() -> void:
 		if absf(spawn_x - player_position.x) < 220.0:
 			spawn_x = clampf(player_position.x + signf(enemy_position.x - player_position.x) * randf_range(280.0, 480.0), 220.0, ARENA_WIDTH - 220.0)
 		var spawn_y = clampf(randf_range(MIN_Y + 15.0, MAX_Y - 15.0), MIN_Y, MAX_Y)
-		var minion_hp = randf_range(variant.hp_min, variant.hp_max)
+		var minion_hp = randf_range(variant.hp_min, variant.hp_max) * (0.75 if Global.is_easy_mode() else 1.0)
 		var minion_key = "MINION_" + variant.id.to_upper()
 		var minion_name = tr(minion_key)
 		if minion_name == minion_key:
@@ -881,7 +881,7 @@ func spawn_battle_dogs(count:int) -> void:
 
 		sprite.flip_h = dog_facing < 0.0
 
-		var dog_hp = randf_range(variant.hp_min, variant.hp_max)
+		var dog_hp = randf_range(variant.hp_min, variant.hp_max) * (0.75 if Global.is_easy_mode() else 1.0)
 		var dog_data:Dictionary = {
 			"sprite":sprite,
 			"position":Vector2(spawn_x, spawn_y),

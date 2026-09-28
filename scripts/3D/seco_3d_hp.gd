@@ -11,7 +11,8 @@ extends Area3D
 var hp:int = 100
 
 func receber_dano(dano:int)->void:
-	hp -= dano
+	var dano_aplicado: int = dano * 2 if Global.is_easy_mode() else dano
+	hp -= dano_aplicado
 	#hp -= 90 # TESTE
 	
 	# 0.2 de velocidade (bem lento) por 0.3 segundos reais

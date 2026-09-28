@@ -38,6 +38,9 @@ var fase_y:float = 0.0
 
 
 func _ready() -> void:
+	if Global.is_easy_mode():
+		vida_maxima = 65.0
+		vida = 65.0
 	modelo = MODEL.instantiate()
 	modelo.name = "LipsModelo"
 	modelo.scale = Vector3.ONE * ESCALA
@@ -101,6 +104,9 @@ func _process(delta:float) -> void:
 func receber_dano(quantidade:float, ponto:Vector3) -> void:
 	if abatido:
 		return
+	if Global.is_easy_mode() and vida_maxima > 65.0:
+		vida_maxima = 65.0
+		vida = minf(vida, 65.0)
 	vida = maxf(0.0, vida - quantidade)
 	tempo_dano = 0.16
 	vida_alterada.emit(vida, vida_maxima)

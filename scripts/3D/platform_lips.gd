@@ -74,6 +74,9 @@ func setup(owner_stage: Node3D, player: CharacterBody3D, initial_hub: int = 3) -
 	current_hub_index = initial_hub
 
 func _ready() -> void:
+	if Global.is_easy_mode():
+		max_hp = 1
+		hp = 1
 	# 1. Instantiate 3D Rigged Model
 	model = MODEL.instantiate()
 	model.name = "LipsRiggedModel"
@@ -602,8 +605,8 @@ func take_hit_from_maycon() -> void:
 	
 	hits_current_power += 1
 	hurt_invulnerable_timer = 1.2
-	# Opção da aba Debug: derruba o Lips com um golpe só
-	hp = 0 if Global.debug_lips_um_golpe else maxi(0, hp - 1)
+	# Opção da aba Debug ou Modo Fácil: derruba o Lips com um golpe só
+	hp = 0 if (Global.debug_lips_um_golpe or Global.is_easy_mode()) else maxi(0, hp - 1)
 	hp_changed.emit(hp, max_hp)
 	if stage and stage.has_method("update_boss_lips_hp"):
 		stage.update_boss_lips_hp(hp, max_hp)

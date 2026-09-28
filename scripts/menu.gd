@@ -1550,7 +1550,7 @@ func _start_new_game_on_slot(slot: int) -> void:
 	var transition := create_tween()
 	transition.tween_property(fade_rect, "color:a", 1.0, 1.7).set_trans(Tween.TRANS_SINE)
 	await transition.finished
-	get_tree().change_scene_to_file("res://scenes/battle_mode_selection.tscn")
+	get_tree().change_scene_to_file("res://scenes/difficulty_selection.tscn")
 
 
 func _load_selected_slot() -> void:

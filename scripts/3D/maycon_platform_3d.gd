@@ -1051,6 +1051,7 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 func update_boss_lips_hp(current_hp: int, _max_hp: int) -> void:
 	if not is_instance_valid(boss_hp_bar):
 		return
+	boss_hp_bar.max_value = float(_max_hp)
 	var hp_tw := create_tween().bind_node(boss_hp_bar)
 	hp_tw.tween_property(boss_hp_bar, "value", float(current_hp), 0.35).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
@@ -2217,8 +2218,8 @@ func _build_hud() -> void:
 	boss_hp_bar = ProgressBar.new()
 	boss_hp_bar.custom_minimum_size = Vector2(400.0, 14.0)
 	boss_hp_bar.show_percentage = false
-	boss_hp_bar.max_value = 4.0
-	boss_hp_bar.value = 4.0
+	boss_hp_bar.max_value = 1.0 if Global.is_easy_mode() else 4.0
+	boss_hp_bar.value = boss_hp_bar.max_value
 	var boss_fill := StyleBoxFlat.new()
 	boss_fill.bg_color = Color("c71a36")
 	boss_fill.set_corner_radius_all(3)

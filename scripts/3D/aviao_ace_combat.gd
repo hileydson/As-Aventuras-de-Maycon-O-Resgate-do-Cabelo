@@ -925,6 +925,7 @@ func _ajustar_vida(nova:float) -> void:
 
 func _ao_mudar_vida_do_lips(atual:float, _maxima:float) -> void:
 	if is_instance_valid(boss_bar):
+		boss_bar.max_value = _maxima
 		boss_bar.value = atual
 
 

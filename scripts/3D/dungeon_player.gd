@@ -683,6 +683,8 @@ func take_damage(amount:float) -> bool:
 	if damage_immune_timer > 0.0 || current_hp <= 0.0:
 		return false
 	damage_immune_timer = 0.45
+	if Global.is_easy_mode():
+		amount *= 0.40
 	current_hp = maxf(0.0, current_hp - amount)
 	hp_changed.emit(current_hp, max_hp)
 	shake_camera(0.08, 0.42)

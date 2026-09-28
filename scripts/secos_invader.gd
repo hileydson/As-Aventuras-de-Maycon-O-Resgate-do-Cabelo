@@ -431,6 +431,8 @@ func _update_bullets(delta:float, progress:float) -> void:
 
 
 func _take_hit(damage:float) -> void:
+	if Global.is_easy_mode():
+		damage *= 0.5
 	health = maxf(0.0, health - damage)
 	if Global.battle_mode == Global.battle_mode_realtime:
 		Global.realtime_hp = health
