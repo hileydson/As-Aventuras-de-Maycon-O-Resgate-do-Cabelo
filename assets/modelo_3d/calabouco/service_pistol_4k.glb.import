@@ -39,10 +39,16 @@ materials/extract_format=0
 materials/extract_path=""
 _subresources={
 "nodes": {
+"PATH:service_pistol_bullet": {
+"import/skip_import": true
+},
 "PATH:service_pistol_hammer_a": {
 "import/skip_import": true
 },
 "PATH:service_pistol_magazine_empty": {
+"import/skip_import": true
+},
+"PATH:service_pistol_magazine_loaded": {
 "import/skip_import": true
 },
 "PATH:service_pistol_pistol_a": {

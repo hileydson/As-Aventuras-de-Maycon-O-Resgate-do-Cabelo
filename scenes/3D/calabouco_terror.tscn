@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://pvhbglw0wl5o"]
+[gd_scene format=4 uid="uid://pvhbglw0wl5o"]
 
 [ext_resource type="Script" uid="uid://cm6qqcib286a6" path="res://scripts/3D/dungeon_prison.gd" id="1_mc0pa"]
 [ext_resource type="Texture2D" uid="uid://dxwg1bxwsphi4" path="res://assets/polyhaven/realtime_battle/cobblestone_floor_diff_1k.jpg" id="2_ljbud"]
@@ -22,6 +22,7 @@
 [ext_resource type="AudioStream" uid="uid://oipfrgwff6hx" path="res://assets/novos_audios/calabouco_terror/gate_opening_iron.mp3" id="27_coa34"]
 [ext_resource type="AudioStream" uid="uid://drxomwjaga283" path="res://assets/novos_audios/calabouco_terror/gate_squeaky.mp3" id="28_aafko"]
 [ext_resource type="PackedScene" uid="uid://cg1vpuw3fai5q" path="res://scenes/3D/inimigo_3d/palhaco.tscn" id="28_uo1pw"]
+[ext_resource type="Script" uid="uid://cxo8my4a0spjp" path="res://scripts/3D/cenario/cortina_circo.gd" id="29_1ccii"]
 [ext_resource type="AudioStream" uid="uid://ceblec1s2a6jm" path="res://assets/novos_audios/calabouco_terror/gate_opening_heavy.mp3" id="29_ajay1"]
 [ext_resource type="AudioStream" uid="uid://bog0xq7ffbr06" path="res://assets/novos_audios/calabouco_terror/gate_unlock_heavy.mp3" id="30_3mf4b"]
 [ext_resource type="PackedScene" uid="uid://bysc8ns18xmwv" path="res://scenes/3D/pause_3d.tscn" id="31_ghj5p"]
@@ -6751,6 +6752,41 @@ size = Vector3(0.12, 1.3, 0.12)
 material = SubResource("StandardMaterial3D_u148f")
 size = Vector3(0.62, 0.55, 0.12)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ccii"]
+cull_mode = 2
+vertex_color_use_as_albedo = true
+roughness = 0.85
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_3perg"]
+_surfaces = [{
+"aabb": AABB(-1.5, 0, -0.16, 1.5, 3.6, 0.32),
+"attribute_data": PackedByteArray("iQ8U/8mZK//JmSv/iQ8U/8mZK/+JDxT/yZkr/4kPFP+JDxT/yZkr/4kPFP/JmSv/iQ8U/8mZK//JmSv/iQ8U/8mZK/+JDxT/yZkr/4kPFP+JDxT/yZkr/4kPFP/JmSv/iQ8U/8mZK//JmSv/iQ8U/8mZK/+JDxT/yZkr/4kPFP+JDxT/yZkr/4kPFP/JmSv/iQ8U/8mZK//JmSv/iQ8U/8mZK/+JDxT/yZkr/4kPFP+JDxT/yZkr/4kPFP/JmSv/"),
+"format": 34359738383,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 48,
+"vertex_data": PackedByteArray("AAAAgAAAAAAK1yM+AABAvgAAAAAK1yO+AABAvmZmZkAK1yO+AAAAgAAAAAAK1yM+AABAvmZmZkAK1yO+AAAAgGZmZkAK1yM+AABAvgAAAAAK1yO+AADAvgAAAAAK1yM+AADAvmZmZkAK1yM+AABAvgAAAAAK1yO+AADAvmZmZkAK1yM+AABAvmZmZkAK1yO+AADAvgAAAAAK1yM+AAAQvwAAAAAK1yO+AAAQv2ZmZkAK1yO+AADAvgAAAAAK1yM+AAAQv2ZmZkAK1yO+AADAvmZmZkAK1yM+AAAQvwAAAAAK1yO+AABAvwAAAAAK1yM+AABAv2ZmZkAK1yM+AAAQvwAAAAAK1yO+AABAv2ZmZkAK1yM+AAAQv2ZmZkAK1yO+AABAvwAAAAAK1yM+AABwvwAAAAAK1yO+AABwv2ZmZkAK1yO+AABAvwAAAAAK1yM+AABwv2ZmZkAK1yO+AABAv2ZmZkAK1yM+AABwvwAAAAAK1yO+AACQvwAAAAAK1yM+AACQv2ZmZkAK1yM+AABwvwAAAAAK1yO+AACQv2ZmZkAK1yM+AABwv2ZmZkAK1yO+AACQvwAAAAAK1yM+AACovwAAAAAK1yO+AACov2ZmZkAK1yO+AACQvwAAAAAK1yM+AACov2ZmZkAK1yO+AACQv2ZmZkAK1yM+AACovwAAAAAK1yO+AADAvwAAAAAK1yM+AADAv2ZmZkAK1yM+AACovwAAAAAK1yO+AADAv2ZmZkAK1yM+AACov2ZmZkAK1yO+//9Jr9+mm7T//0mv36abtP//Sa/fppu0//9Jr9+mm7T//0mv36abtP//Sa/fppu0AABJrx9Zm7QAAEmvH1mbtAAASa8fWZu0AABJrx9Zm7QAAEmvH1mbtAAASa8fWZu0//9Jr9+mm7T//0mv36abtP//Sa/fppu0//9Jr9+mm7T//0mv36abtP//Sa/fppu0AABJrx9Zm7QAAEmvH1mbtAAASa8fWZu0AABJrx9Zm7QAAEmvH1mbtAAASa8fWZu0//9Jr9+mm7T//0mv36abtP//Sa/fppu0//9Jr9+mm7T//0mv36abtP//Sa/fppu0AABJrx9Zm7QAAEmvH1mbtAAASa8fWZu0AABJrx9Zm7QAAEmvH1mbtAAASa8fWZu0//9Jr9+mm7T//0mv36abtP//Sa/fppu0//9Jr9+mm7T//0mv36abtP//Sa/fppu0AABJrx9Zm7QAAEmvH1mbtAAASa8fWZu0AABJrx9Zm7QAAEmvH1mbtAAASa8fWZu0")
+}]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_blclo"]
+cull_mode = 2
+vertex_color_use_as_albedo = true
+roughness = 0.85
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_mc0pa"]
+_surfaces = [{
+"aabb": AABB(0, 0, -0.16, 1.5, 3.6, 0.32),
+"attribute_data": PackedByteArray("iQ8U/8mZK//JmSv/iQ8U/8mZK/+JDxT/yZkr/4kPFP+JDxT/yZkr/4kPFP/JmSv/iQ8U/8mZK//JmSv/iQ8U/8mZK/+JDxT/yZkr/4kPFP+JDxT/yZkr/4kPFP/JmSv/iQ8U/8mZK//JmSv/iQ8U/8mZK/+JDxT/yZkr/4kPFP+JDxT/yZkr/4kPFP/JmSv/iQ8U/8mZK//JmSv/iQ8U/8mZK/+JDxT/yZkr/4kPFP+JDxT/yZkr/4kPFP/JmSv/"),
+"format": 34359738383,
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 48,
+"vertex_data": PackedByteArray("AAAAAAAAAAAK1yM+AABAPgAAAAAK1yO+AABAPmZmZkAK1yO+AAAAAAAAAAAK1yM+AABAPmZmZkAK1yO+AAAAAGZmZkAK1yM+AABAPgAAAAAK1yO+AADAPgAAAAAK1yM+AADAPmZmZkAK1yM+AABAPgAAAAAK1yO+AADAPmZmZkAK1yM+AABAPmZmZkAK1yO+AADAPgAAAAAK1yM+AAAQPwAAAAAK1yO+AAAQP2ZmZkAK1yO+AADAPgAAAAAK1yM+AAAQP2ZmZkAK1yO+AADAPmZmZkAK1yM+AAAQPwAAAAAK1yO+AABAPwAAAAAK1yM+AABAP2ZmZkAK1yM+AAAQPwAAAAAK1yO+AABAP2ZmZkAK1yM+AAAQP2ZmZkAK1yO+AABAPwAAAAAK1yM+AABwPwAAAAAK1yO+AABwP2ZmZkAK1yO+AABAPwAAAAAK1yM+AABwP2ZmZkAK1yO+AABAP2ZmZkAK1yM+AABwPwAAAAAK1yO+AACQPwAAAAAK1yM+AACQP2ZmZkAK1yM+AABwPwAAAAAK1yO+AACQP2ZmZkAK1yM+AABwP2ZmZkAK1yO+AACQPwAAAAAK1yM+AACoPwAAAAAK1yO+AACoP2ZmZkAK1yO+AACQPwAAAAAK1yM+AACoP2ZmZkAK1yO+AACQP2ZmZkAK1yM+AACoPwAAAAAK1yO+AADAPwAAAAAK1yM+AADAP2ZmZkAK1yM+AACoPwAAAAAK1yO+AADAP2ZmZkAK1yM+AACoP2ZmZkAK1yO+tND/fx9Zm7S00P9/H1mbtLTQ/38fWZu0tND/fx9Zm7S00P9/H1mbtLTQ/38fWZu0Si//f9+mm7RKL/9/36abtEov/3/fppu0Si//f9+mm7RKL/9/36abtEov/3/fppu0tND/fx9Zm7S00P9/H1mbtLTQ/38fWZu0tND/fx9Zm7S00P9/H1mbtLTQ/38fWZu0Si//f9+mm7RKL/9/36abtEov/3/fppu0Si//f9+mm7RKL/9/36abtEov/3/fppu0tND/fx9Zm7S00P9/H1mbtLTQ/38fWZu0tND/fx9Zm7S00P9/H1mbtLTQ/38fWZu0Si//f9+mm7RKL/9/36abtEov/3/fppu0Si//f9+mm7RKL/9/36abtEov/3/fppu0tND/fx9Zm7S00P9/H1mbtLTQ/38fWZu0tND/fx9Zm7S00P9/H1mbtLTQ/38fWZu0Si//f9+mm7RKL/9/36abtEov/3/fppu0Si//f9+mm7RKL/9/36abtEov/3/fppu0")
+}]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1ccii"]
+size = Vector3(3.5, 3.5, 1.5)
+
 [node name="CalaboucoTerror" type="Node3D" unique_id=1662903359]
 script = ExtResource("1_mc0pa")
 
@@ -12449,7 +12485,7 @@ omni_range = 4.0
 [node name="PistolPickup" type="Node3D" parent="PrisonArchitecture" unique_id=136726038]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, 0.62, -125)
 
-[node name="service_pistol_4k" parent="PrisonArchitecture/PistolPickup" unique_id=612549905 instance=ExtResource("7_ao8gx")]
+[node name="service_pistol_4k" parent="PrisonArchitecture/PistolPickup" unique_id=1048231528 instance=ExtResource("7_ao8gx")]
 transform = Transform3D(-9.397949e-08, 0, 2.15, 0, 2.15, 0, -2.15, 0, -9.397949e-08, 0, 0, 0)
 
 [node name="@OmniLight3D@1674" type="OmniLight3D" parent="PrisonArchitecture/PistolPickup" unique_id=1216621283]
@@ -12790,10 +12826,32 @@ stream = ExtResource("22_m3wx5")
 volume_db = 2.0
 
 [node name="palhaco_1" parent="." unique_id=959748196 instance=ExtResource("28_uo1pw")]
-transform = Transform3D(-6.224892, 0, -5.025009, 0, 8, 0, 5.025009, 0, -6.224892, 64.087036, 1.1105957, -86.81369)
+transform = Transform3D(-10.893561, 0, -8.793766, 0, 14, 0, 8.793766, 0, -10.893561, 66.030396, -5.4754333, -84.42331)
 
 [node name="palhaco_2" parent="." unique_id=991447964 instance=ExtResource("28_uo1pw")]
-transform = Transform3D(7.9420586, 0, 0.9610962, 0, 8, 0, -0.9610962, 0, 7.9420586, -0.99212646, 1.1105957, -177.40927)
+transform = Transform3D(9.927573, 0, 1.2013704, 0, 10, 0, -1.2013704, 0, 9.927573, -0.21655273, -1.0945435, -173.50456)
+numero_palhaco = 2
 
 [node name="palhaco_3" parent="." unique_id=2045935428 instance=ExtResource("28_uo1pw")]
-transform = Transform3D(-4.969183, 0, 6.269547, 0, 8, 0, -6.269547, 0, -4.969183, -63.40387, 1.1105957, -88.14316)
+transform = Transform3D(-6.21148, 0, 7.836933, 0, 10, 0, -7.836933, 0, -6.21148, -63.40387, -0.80651855, -88.14316)
+numero_palhaco = 3
+
+[node name="CortinaCirco" type="Node3D" parent="palhaco_3" unique_id=584432109]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, -0.18)
+script = ExtResource("29_1ccii")
+cor_a = Color(0.54, 0.06, 0.08, 1)
+cor_b = Color(0.79, 0.6, 0.17, 1)
+
+[node name="PainelEsquerdo" type="MeshInstance3D" parent="palhaco_3/CortinaCirco" unique_id=1480187337]
+material_override = SubResource("StandardMaterial3D_1ccii")
+mesh = SubResource("ArrayMesh_3perg")
+
+[node name="PainelDireito" type="MeshInstance3D" parent="palhaco_3/CortinaCirco" unique_id=1816644490]
+material_override = SubResource("StandardMaterial3D_blclo")
+mesh = SubResource("ArrayMesh_mc0pa")
+
+[node name="AreaGatilho" type="Area3D" parent="palhaco_3/CortinaCirco" unique_id=921333469]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="palhaco_3/CortinaCirco/AreaGatilho" unique_id=916207426]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0.8)
+shape = SubResource("BoxShape3D_1ccii")

@@ -372,7 +372,7 @@ DUNGEON_OBJECTIVE_BLUE_KEY,OBJETIVO: siga a rota aberta e acione a alavanca da c
 DUNGEON_OBJECTIVE_RED_KEY,OBJETIVO: use o portão azul e procure a chave vermelha,OBJECTIVE: pass the blue gate and find the red key,OBJETIVO: cruza el portón azul y busca la llave roja,目标：穿过蓝色大门并寻找红钥匙
 DUNGEON_OBJECTIVE_GREEN_KEY,OBJETIVO: atravesse o portão vermelho e encontre a chave verde,OBJECTIVE: cross the red gate and find the green key,OBJETIVO: atraviesa el portón rojo y encuentra la llave verde,目标：穿过红色大门并找到绿钥匙
 DUNGEON_OBJECTIVE_CELL_KEY,OBJETIVO: entre no caminho verde e encontre a chave da cela,OBJECTIVE: enter the green route and find the cell key,OBJETIVO: entra en el camino verde y encuentra la llave de la celda,目标：进入绿色路线并找到牢房钥匙
-DUNGEON_PROMPT_LEVER,[E / A] PUXAR ALAVANCA — TODAS AS CELAS DESTA ALA SERÃO ABERTAS,[E / A] PULL LEVER — ALL CELLS IN THIS WING WILL OPEN,[E / A] TIRAR DE LA PALANCA — SE ABRIRÁN TODAS LAS CELDAS DE ESTA ALA,[E / A] 拉下拉杆——本区所有牢房都会打开
+DUNGEON_PROMPT_LEVER,Puxar alavanca?,Pull lever?,¿Tirar de la palanca?,拉下拉杆？
 DUNGEON_PISTOL_READY,PISTOLA • Clique esquerdo / gatilho para atirar,PISTOL • Left click / trigger to fire,PISTOLA • Clic izquierdo / gatillo para disparar,手枪 • 左键 / 扳机射击
 DUNGEON_MACHINEGUN_READY,METRALHADORA • Segure o disparo,MACHINE GUN • Hold to fire,AMETRALLADORA • Mantén para disparar,机枪 • 按住射击
 DUNGEON_ITEM_FLASHLIGHT,Lanterna,Flashlight,Linterna,手电筒

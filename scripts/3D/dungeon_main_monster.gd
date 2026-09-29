@@ -2,7 +2,7 @@ class_name DungeonMainMonster
 extends CharacterBody3D
 
 const MODEL:PackedScene = preload("res://assets/modelo_3d/calabouco/Anim_Monster_1.glb")
-const STEP_SOUND:AudioStream = preload("res://assets/novos_audios/calabouco_terror/dungeon_fall_impact.wav")
+const STEP_SOUND:AudioStream = preload("res://assets/novos_audios/calabouco_terror/monster_heavy_step.ogg")
 const PAIN_SOUND:AudioStream = preload("res://assets/novos_audios/calabouco_terror/zombie_pain_1.wav")
 const ROAR_1:AudioStream = preload("res://assets/novos_audios/calabouco_terror/monster_roar_1.wav")
 const ROAR_2:AudioStream = preload("res://assets/novos_audios/calabouco_terror/monster_roar_2.wav")

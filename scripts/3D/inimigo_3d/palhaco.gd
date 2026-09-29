@@ -1,0 +1,143 @@
+extends Node3D
+
+@export var angulo_maximo_cabeca_graus: float = 25.0
+@export var velocidade_rotacao_cabeca: float = 3.0
+@export var velocidade_rotacao_olhos: float = 8.0
+@export var distancia_maxima_deteccao: float = 25.0
+
+@export var numero_palhaco: int = 1
+@export var som_eventual_intervalo_min: float = 8.0
+@export var som_eventual_intervalo_max: float = 30.0
+
+const PASTA_AUDIOS := "res://assets/novos_audios/calabouco_terror/"
+
+@onready var olho_esquerdo: Node3D = $"palhaco_olho/sclera cornea2"
+@onready var olho_direito: Node3D = $"palhaco_olho2/sclera cornea2"
+@onready var cabeca: Node3D = $palhaco_olho
+
+var player: Node3D = null
+var rotacao_base_y: float
+
+# Orientação (global, com escala) de cada olho exatamente como foi deixada
+# no editor — com a íris virada para frente. Nunca é alterada depois:
+# cada frame partimos sempre dela, então o olho nunca perde essa referência.
+var basis_repouso_olho_esquerdo: Basis
+var basis_repouso_olho_direito: Basis
+
+# Direção (mundo) para onde a íris aponta em repouso: a mesma direção que
+# o palhaço encara ao nascer. É a partir dela que medimos o quanto o olho
+# precisa girar para encarar o player.
+var direcao_neutra_mundo: Vector3
+
+# Rotação extra (só isso, sem escala) aplicada sobre a orientação de
+# repouso para o olho acompanhar o player, suavizada quadro a quadro.
+var quat_delta_olho_esquerdo := Quaternion.IDENTITY
+var quat_delta_olho_direito := Quaternion.IDENTITY
+
+func _ready() -> void:
+	rotacao_base_y = rotation.y
+	direcao_neutra_mundo = global_transform.basis.z.normalized()
+
+	basis_repouso_olho_esquerdo = olho_esquerdo.global_transform.basis
+	basis_repouso_olho_direito = olho_direito.global_transform.basis
+
+	_configurar_audio()
+
+	await get_tree().physics_frame
+	player = _buscar_player_mais_proximo()
+
+func _configurar_audio() -> void:
+	var riso_stream: AudioStream = load(PASTA_AUDIOS + "palhaco_%d_riso.mp3" % numero_palhaco)
+	if riso_stream:
+		if riso_stream is AudioStreamMP3:
+			riso_stream.loop = true
+		var audio_riso := _criar_audio_da_cabeca(riso_stream, -1.0, 40.0)
+		audio_riso.play()
+
+	var eventual_stream: AudioStream = load(PASTA_AUDIOS + "palhaco_%d_eventual.mp3" % numero_palhaco)
+	if eventual_stream:
+		var audio_eventual := _criar_audio_da_cabeca(eventual_stream, 0.0, 42.0)
+		_tocar_som_eventual_em_loop(audio_eventual)
+
+func _criar_audio_da_cabeca(stream: AudioStream, volume_db: float, max_distance: float) -> AudioStreamPlayer3D:
+	var audio := AudioStreamPlayer3D.new()
+	audio.stream = stream
+	audio.volume_db = volume_db
+	audio.max_distance = max_distance
+	audio.unit_size = 6.0
+	cabeca.add_child(audio)
+	return audio
+
+func _tocar_som_eventual_em_loop(audio: AudioStreamPlayer3D) -> void:
+	while is_instance_valid(audio):
+		await get_tree().create_timer(randf_range(som_eventual_intervalo_min, som_eventual_intervalo_max)).timeout
+		if is_instance_valid(audio):
+			audio.play()
+
+func _physics_process(delta: float) -> void:
+	player = _buscar_player_mais_proximo()
+
+	if not player:
+		return
+
+	if global_position.distance_to(player.global_position) > distancia_maxima_deteccao:
+		return
+
+	_girar_cabeca_para_player(delta)
+	quat_delta_olho_esquerdo = _olho_seguir_player(olho_esquerdo, basis_repouso_olho_esquerdo, quat_delta_olho_esquerdo, delta)
+	quat_delta_olho_direito = _olho_seguir_player(olho_direito, basis_repouso_olho_direito, quat_delta_olho_direito, delta)
+
+func _buscar_player_mais_proximo() -> Node3D:
+	# Cenas padrão colocam o player no grupo "player" (suporte a multiplayer)
+	var players = get_tree().get_nodes_in_group("player")
+	if players.size() > 0:
+		var alvo = players[0]
+		var menor_distancia = global_position.distance_to(alvo.global_position)
+		for p in players:
+			var d = global_position.distance_to(p.global_position)
+			if d < menor_distancia:
+				menor_distancia = d
+				alvo = p
+		return alvo
+
+	# O Calabouço Terror usa o DungeonPlayer, que não fica no grupo "player"
+	var dungeon_players = get_tree().root.find_children("*", "DungeonPlayer", true, false)
+	if dungeon_players.size() > 0:
+		return dungeon_players[0]
+
+	return null
+
+func _girar_cabeca_para_player(delta: float) -> void:
+	var alvo_horizontal = Vector3(player.global_position.x, global_position.y, player.global_position.z)
+	if global_position.distance_to(alvo_horizontal) < 0.01:
+		return
+
+	var transform_olhando = Transform3D(Basis(), global_position).looking_at(alvo_horizontal, Vector3.UP)
+	var angulo_desejado = transform_olhando.basis.get_euler().y
+
+	var angulo_maximo_rad = deg_to_rad(angulo_maximo_cabeca_graus)
+	var diferenca = wrapf(angulo_desejado - rotacao_base_y, -PI, PI)
+	diferenca = clamp(diferenca, -angulo_maximo_rad, angulo_maximo_rad)
+
+	var angulo_alvo = rotacao_base_y + diferenca
+	rotation.y = lerp_angle(rotation.y, angulo_alvo, velocidade_rotacao_cabeca * delta)
+
+func _olho_seguir_player(olho: Node3D, basis_repouso: Basis, quat_delta_atual: Quaternion, delta: float) -> Quaternion:
+	var para_player = player.global_position - olho.global_position
+	if para_player.length() < 0.01:
+		return quat_delta_atual
+	var alvo_dir = para_player.normalized()
+
+	# Rotação mínima que leva a direção de repouso (íris pra frente) até a
+	# direção do player. Aplicada sobre a basis de repouso (que já tem a
+	# escala certa), preserva exatamente a orientação que foi montada no
+	# editor — só gira, nunca desloca nem distorce o olho.
+	var quat_delta_alvo = Quaternion(direcao_neutra_mundo, alvo_dir)
+	var peso = min(velocidade_rotacao_olhos * delta, 1.0)
+	var nova_quat_delta = quat_delta_atual.slerp(quat_delta_alvo, peso)
+
+	var basis_alvo_mundo = Basis(nova_quat_delta) * basis_repouso
+	var basis_pai_mundo = olho.get_parent().global_transform.basis
+	olho.transform.basis = basis_pai_mundo.inverse() * basis_alvo_mundo
+
+	return nova_quat_delta

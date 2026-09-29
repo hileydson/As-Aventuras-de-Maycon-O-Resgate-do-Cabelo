@@ -1,6 +1,7 @@
 [gd_scene format=4 uid="uid://cg1vpuw3fai5q"]
 
 [ext_resource type="PackedScene" uid="uid://br5iur5a7lw68" path="res://assets/modelo_3d/calabouco/palhaco.glb" id="1_uu55u"]
+[ext_resource type="Script" uid="uid://bebfh5yu6gvco" path="res://scripts/3D/inimigo_3d/palhaco.gd" id="2_4wqvm"]
 [ext_resource type="PackedScene" uid="uid://dbm2rbvwmjv2e" path="res://assets/modelo_3d/calabouco/palhaco_olho.glb" id="2_51m2u"]
 [ext_resource type="Material" uid="uid://bpi2tr8t2phxv" path="res://assets/modelo_3d/calabouco/palhaco_olho_sclera_mat.tres" id="3_m15dn"]
 [ext_resource type="Material" uid="uid://48xxj5u8mi0y" path="res://assets/modelo_3d/calabouco/palhaco_olho_iris_mat.tres" id="4_4wqvm"]
@@ -75,11 +76,12 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_l46p4")
 
 [node name="palhaco" unique_id=959748196 instance=ExtResource("1_uu55u")]
+script = ExtResource("2_4wqvm")
 
 [node name="palhaco_olho" parent="." index="1" unique_id=1707203313 instance=ExtResource("2_51m2u")]
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0.388, -9.738, -0.213)
 
-[node name="sclera cornea2" type="MeshInstance3D" parent="palhaco_olho" index="1" unique_id=972270812]
+[node name="sclera cornea2" type="MeshInstance3D" parent="palhaco_olho" index="0" unique_id=972270812]
 transform = Transform3D(0.008055895, 0.0016976405, -6.145726e-11, 0, -4.3160947e-10, -0.008177663, -0.0014059786, 0.009727041, -3.5213424e-10, -0.018482173, 0.984, 0.08406494)
 mesh = SubResource("ArrayMesh_a6w4l")
 skeleton = NodePath("")
@@ -89,8 +91,8 @@ surface_material_override/1 = ExtResource("4_4wqvm")
 [node name="palhaco_olho2" parent="." index="2" unique_id=1681096324 instance=ExtResource("2_51m2u")]
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0.388, -9.738, -0.213)
 
-[node name="sclera cornea2" type="MeshInstance3D" parent="palhaco_olho2" index="1" unique_id=1936798349]
-transform = Transform3D(0.008177652, -1.7233499e-05, 6.2387985e-13, 0, -4.3160947e-10, -0.008177663, 1.427271e-05, 0.009874058, -3.5745648e-10, -0.057570614, 0.984, 0.087043464)
+[node name="sclera cornea2" type="MeshInstance3D" parent="palhaco_olho2" index="0" unique_id=1936798349]
+transform = Transform3D(0.008177652, -1.72335e-05, 6.238799e-13, 0, -4.3160944e-10, -0.008177663, 1.4272712e-05, 0.009874058, -3.5745645e-10, -0.057570614, 0.984, 0.087043464)
 mesh = SubResource("ArrayMesh_a6w4l")
 skeleton = NodePath("")
 surface_material_override/0 = ExtResource("3_m15dn")
