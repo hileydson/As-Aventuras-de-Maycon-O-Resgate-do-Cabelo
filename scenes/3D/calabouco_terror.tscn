@@ -21,6 +21,7 @@
 [ext_resource type="AudioStream" uid="uid://df08t0n8ym22n" path="res://assets/novos_audios/sangue_fill_effect.mp3" id="26_kxk1w"]
 [ext_resource type="AudioStream" uid="uid://oipfrgwff6hx" path="res://assets/novos_audios/calabouco_terror/gate_opening_iron.mp3" id="27_coa34"]
 [ext_resource type="AudioStream" uid="uid://drxomwjaga283" path="res://assets/novos_audios/calabouco_terror/gate_squeaky.mp3" id="28_aafko"]
+[ext_resource type="PackedScene" uid="uid://cg1vpuw3fai5q" path="res://scenes/3D/inimigo_3d/palhaco.tscn" id="28_uo1pw"]
 [ext_resource type="AudioStream" uid="uid://ceblec1s2a6jm" path="res://assets/novos_audios/calabouco_terror/gate_opening_heavy.mp3" id="29_ajay1"]
 [ext_resource type="AudioStream" uid="uid://bog0xq7ffbr06" path="res://assets/novos_audios/calabouco_terror/gate_unlock_heavy.mp3" id="30_3mf4b"]
 [ext_resource type="PackedScene" uid="uid://bysc8ns18xmwv" path="res://scenes/3D/pause_3d.tscn" id="31_ghj5p"]
@@ -12787,3 +12788,12 @@ transform = Transform3D(3.2, 0, 0, 0, 3.2, 0, 0, 0, 3.2, 0, 0, 0)
 [node name="@AudioStreamPlayer@2022" type="AudioStreamPlayer" parent="GiantZombie_HoldingStructure" unique_id=1756300111]
 stream = ExtResource("22_m3wx5")
 volume_db = 2.0
+
+[node name="palhaco_1" parent="." unique_id=959748196 instance=ExtResource("28_uo1pw")]
+transform = Transform3D(-6.224892, 0, -5.025009, 0, 8, 0, 5.025009, 0, -6.224892, 64.087036, 1.1105957, -86.81369)
+
+[node name="palhaco_2" parent="." unique_id=991447964 instance=ExtResource("28_uo1pw")]
+transform = Transform3D(7.9420586, 0, 0.9610962, 0, 8, 0, -0.9610962, 0, 7.9420586, -0.99212646, 1.1105957, -177.40927)
+
+[node name="palhaco_3" parent="." unique_id=2045935428 instance=ExtResource("28_uo1pw")]
+transform = Transform3D(-4.969183, 0, 6.269547, 0, 8, 0, -6.269547, 0, -4.969183, -63.40387, 1.1105957, -88.14316)

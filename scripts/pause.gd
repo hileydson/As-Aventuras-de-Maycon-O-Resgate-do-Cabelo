@@ -40,6 +40,7 @@ var transition_in_progress:bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	menu_sounds = MENU_SOUND_CONTROLLER.new()
 	add_child(menu_sounds)
 	menu_sounds.bind_button(close, "back")
@@ -110,6 +111,13 @@ func processa_pause_unpause(play_close_sound:bool = true)->void:
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_cancel") && (!Global.battle_started) && !Global.block_pause_before_prologo:
 		processa_pause_unpause()
+
+func _input(event: InputEvent) -> void:
+	if not get_tree().paused or not (pause_layer and pause_layer.visible) or transition_in_progress:
+		return
+	if is_instance_valid(configuracoes_dialog) and configuracoes_dialog.visible:
+		return
+	Global.check_debug_activation(event)
 			
 
 func _on_close_pressed() -> void:

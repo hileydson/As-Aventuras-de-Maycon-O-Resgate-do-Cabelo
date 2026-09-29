@@ -62,7 +62,16 @@ func _ready() -> void:
 	btn_close.pressed.connect(_on_close_pressed)
 	tab_container.tab_changed.connect(_on_tab_changed)
 	_connect_graphics_signals()
+	Global.debug_mode_activated.connect(_on_global_debug_mode_activated)
 	update_language()
+
+func _on_global_debug_mode_activated() -> void:
+	if not is_inside_tree():
+		return
+	var debug_idx = _debug_tab_index()
+	if debug_idx > 0:
+		tab_container.set_tab_hidden(debug_idx, false)
+	_populate_debug_events()
 
 func _setup_gameplay_options() -> void:
 	difficulty_option.clear()
@@ -147,6 +156,8 @@ func _refresh_graphics_2d_ui() -> void:
 
 func _input(event: InputEvent) -> void:
 	if not visible:
+		return
+	if Global.check_debug_activation(event):
 		return
 	if event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed):
 		get_viewport().set_input_as_handled()

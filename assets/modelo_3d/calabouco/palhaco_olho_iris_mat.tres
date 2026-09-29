@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://48xxj5u8mi0y"]
+
+[ext_resource type="Texture2D" uid="uid://cgimmsufhm3fm" path="res://assets/modelo_3d/calabouco/palhaco_olho_iris_basecolor.png" id="1_q7jqf"]
+
+[resource]
+albedo_texture = ExtResource("1_q7jqf")
+metallic = 0.69545454
+roughness = 0.22272727

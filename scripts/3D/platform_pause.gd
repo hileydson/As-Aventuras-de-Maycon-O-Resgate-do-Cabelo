@@ -40,6 +40,13 @@ func _ready() -> void:
 	_build_panel()
 	panel.visible = false
 
+func _input(event: InputEvent) -> void:
+	if not (is_instance_valid(panel) and panel.visible):
+		return
+	if is_instance_valid(configuracoes_dialog) and configuracoes_dialog.visible:
+		return
+	Global.check_debug_activation(event)
+
 func _unhandled_input(event:InputEvent) -> void:
 	if is_instance_valid(configuracoes_dialog) and configuracoes_dialog.visible:
 		return

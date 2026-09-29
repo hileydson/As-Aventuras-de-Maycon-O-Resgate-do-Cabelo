@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bpi2tr8t2phxv"]
+
+[ext_resource type="Texture2D" uid="uid://dnleb0wkpqct0" path="res://assets/modelo_3d/calabouco/palhaco_olho_sclera_basecolor.png" id="1_i5fdp"]
+
+[resource]
+albedo_texture = ExtResource("1_i5fdp")
+roughness = 0.095454544

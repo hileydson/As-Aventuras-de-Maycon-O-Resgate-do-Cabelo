@@ -35,6 +35,13 @@ func _process(delta: float) -> void:
 	if (Input.is_action_just_pressed("ui_cancel") and !Input.is_joy_button_pressed(1, JOY_BUTTON_START)) or (Input.is_action_just_pressed("ui_cancel") and Input.is_joy_button_pressed(1, JOY_BUTTON_START) and Global.is_two_player_active):
 		processa_pause_unpause()
 
+func _input(event: InputEvent) -> void:
+	if not get_tree().paused or not (is_instance_valid(control) and control.visible):
+		return
+	if is_instance_valid(configuracoes_dialog) and configuracoes_dialog.visible:
+		return
+	Global.check_debug_activation(event)
+
 
 
 

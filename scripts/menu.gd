@@ -120,7 +120,8 @@ var input_blocker: Control
 func _ready() -> void:
 	Global.load_from_castle_1 = load_from_castle_1
 	Global.load_from_outside_1 = load_from_outside_1
-	Global.show_debug_tab = enable_debug_tab
+	if enable_debug_tab:
+		Global.show_debug_tab = true
 	menu_sounds = MENU_SOUND_CONTROLLER.new()
 	add_child(menu_sounds)
 	_build_world()
@@ -169,47 +170,10 @@ func _input(event: InputEvent) -> void:
 func _process_debug_activation_sequence(event: InputEvent) -> void:
 	if Global.show_debug_tab or !is_instance_valid(stack_main) or !stack_main.visible:
 		return
-	if event is InputEventKey and event.echo:
-		return
-	var pressed_action := StringName()
-	for action in [&"ui_right", &"ui_left", &"ui_up", &"ui_down"]:
-		if event.is_action_pressed(action):
-			pressed_action = action
-			break
-	if pressed_action.is_empty():
-		return
-	if pressed_action == DEBUG_ACTIVATION_SEQUENCE[debug_activation_index]:
-		debug_activation_index += 1
-		if debug_activation_index == DEBUG_ACTIVATION_SEQUENCE.size():
-			debug_activation_index = 0
-			_enable_debug_mode()
-	else:
-		debug_activation_index = 1 if pressed_action == DEBUG_ACTIVATION_SEQUENCE[0] else 0
+	Global.check_debug_activation(event)
 
 func _enable_debug_mode() -> void:
-	Global.show_debug_tab = true
-	var layer := CanvasLayer.new()
-	layer.layer = 200
-	add_child(layer)
-	var message := Label.new()
-	message.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	message.position = Vector2(-500, -90)
-	message.size = Vector2(1000, 180)
-	message.text = tr("SETTINGS_DEBUG_MODE_ON")
-	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	message.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	message.add_theme_font_override("font", MENU_FONT)
-	message.add_theme_font_size_override("font_size", 96)
-	message.add_theme_color_override("font_color", Color("ffe066"))
-	message.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.95))
-	message.add_theme_constant_override("shadow_offset_x", 6)
-	message.add_theme_constant_override("shadow_offset_y", 6)
-	message.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	layer.add_child(message)
-	var tween := create_tween()
-	tween.tween_interval(2.0)
-	tween.tween_property(message, "modulate:a", 0.0, 0.5)
-	tween.tween_callback(layer.queue_free)
+	Global.enable_debug_mode()
 
 
 

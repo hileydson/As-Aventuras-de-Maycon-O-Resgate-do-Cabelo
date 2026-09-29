@@ -102,10 +102,80 @@ func set_battle_mode(mode: String, should_save: bool = true) -> void:
 	if should_save and has_save_slot(current_save_slot):
 		save_to_player_savegame()
 
+signal debug_mode_activated
+
+const DEBUG_ACTIVATION_SEQUENCE: Array[StringName] = [
+	&"ui_right", &"ui_right", &"ui_left", &"ui_left", &"ui_up", &"ui_up", &"ui_down", &"ui_down"
+]
+const DEBUG_FONT: FontFile = preload("res://assets/fonts/contrast.ttf")
+var debug_activation_index: int = 0
+
 var show_debug_tab:bool = false
 var debug_disable_battles:bool = false
 var debug_dungeon_invincible:bool = false
 var debug_lips_um_golpe:bool = false
+
+func check_debug_activation(event: InputEvent) -> bool:
+	if show_debug_tab:
+		return false
+	if event is InputEventKey and event.echo:
+		return false
+	var pressed_action := StringName()
+	for action in [&"ui_right", &"ui_left", &"ui_up", &"ui_down"]:
+		if event.is_action_pressed(action):
+			pressed_action = action
+			break
+	if pressed_action.is_empty():
+		return false
+	if pressed_action == DEBUG_ACTIVATION_SEQUENCE[debug_activation_index]:
+		debug_activation_index += 1
+		if debug_activation_index == DEBUG_ACTIVATION_SEQUENCE.size():
+			debug_activation_index = 0
+			enable_debug_mode()
+			return true
+	else:
+		debug_activation_index = 1 if pressed_action == DEBUG_ACTIVATION_SEQUENCE[0] else 0
+	return false
+
+func enable_debug_mode() -> void:
+	if show_debug_tab:
+		return
+	show_debug_tab = true
+	debug_mode_activated.emit()
+	_show_debug_mode_toast.call_deferred()
+
+func _show_debug_mode_toast() -> void:
+	var tree := get_tree()
+	if not tree or not tree.root:
+		return
+	
+	var layer := CanvasLayer.new()
+	layer.layer = 250
+	layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	tree.root.add_child(layer)
+	
+	var message := Label.new()
+	message.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	message.position = Vector2(-500, -90)
+	message.size = Vector2(1000, 180)
+	message.text = tr("SETTINGS_DEBUG_MODE_ON")
+	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	message.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	if DEBUG_FONT:
+		message.add_theme_font_override("font", DEBUG_FONT)
+	message.add_theme_font_size_override("font_size", 96)
+	message.add_theme_color_override("font_color", Color("ffe066"))
+	message.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.95))
+	message.add_theme_constant_override("shadow_offset_x", 6)
+	message.add_theme_constant_override("shadow_offset_y", 6)
+	message.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(message)
+	
+	var tween := layer.create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.tween_interval(2.0)
+	tween.tween_property(message, "modulate:a", 0.0, 0.5)
+	tween.tween_callback(layer.queue_free)
+
 
 # --- Configurações gráficas (aplicadas em tempo real, ver menu Configurações) ---
 const shadow_atlas_sizes:Array[int] = [1024, 2048, 4096]
