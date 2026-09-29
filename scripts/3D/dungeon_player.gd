@@ -645,10 +645,10 @@ func _deg_vec(euler_deg:Vector3) -> Vector3:
 	return Vector3(deg_to_rad(euler_deg.x), deg_to_rad(euler_deg.y), deg_to_rad(euler_deg.z))
 
 func hide_service_pistol_loose_parts(model:Node3D) -> void:
-	for node_name in ["service_pistol_bullet", "service_pistol_magazine_loaded"]:
-		var loose_part := model.find_child(node_name, true, false) as Node3D
-		if is_instance_valid(loose_part):
-			loose_part.visible = false
+	for loose_part in model.find_children("*", "Node3D", true, false):
+		var part_name := loose_part.name.to_lower()
+		if "bullet" in part_name || "magazine" in part_name || "pente" in part_name:
+			(loose_part as Node3D).visible = false
 
 func apply_smg_material(model:Node3D) -> void:
 	var material := StandardMaterial3D.new()

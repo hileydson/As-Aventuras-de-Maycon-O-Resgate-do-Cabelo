@@ -59,6 +59,8 @@ var inventory_bar:HBoxContainer
 var ambience:AudioStreamPlayer
 var gun_sound:AudioStreamPlayer
 var pickup_sound:AudioStreamPlayer
+var key_pickup_sound:AudioStreamPlayer
+var trampoline_sound:AudioStreamPlayer
 var gate_sound:AudioStreamPlayer3D
 var gate_iron_sound:AudioStreamPlayer3D
 var gate_squeaky_sound:AudioStreamPlayer3D
@@ -111,6 +113,7 @@ func _ready() -> void:
 		Global.axe_cutscene_pending = false
 	build_infected_population()
 	build_main_monster()
+	build_green_cell_monster()
 	build_giant_zombies()
 	build_hud()
 	build_audio()
@@ -792,10 +795,7 @@ func build_gun(position_value:Vector3, machinegun:bool, custom_name:String = "")
 		if machinegun:
 			apply_pickup_smg_material(model)
 		else:
-			for node_name in ["service_pistol_bullet", "service_pistol_magazine_loaded"]:
-				var loose_part := model.find_child(node_name, true, false) as Node3D
-				if is_instance_valid(loose_part):
-					loose_part.visible = false
+			hide_service_pistol_loose_parts(model)
 	build_light(Vector3(0, 0.3, 0), Color(1, 0.48, 0.08), 3, 4.5, gun)
 	return gun
 
@@ -810,6 +810,12 @@ func apply_pickup_smg_material(model:Node3D) -> void:
 	material.roughness_texture = SMG_ROUGHNESS
 	for mesh in model.find_children("*", "MeshInstance3D", true, false):
 		(mesh as MeshInstance3D).material_override = material
+
+func hide_service_pistol_loose_parts(model:Node3D) -> void:
+	for loose_part in model.find_children("*", "Node3D", true, false):
+		var part_name := loose_part.name.to_lower()
+		if "bullet" in part_name || "magazine" in part_name || "pente" in part_name:
+			(loose_part as Node3D).visible = false
 
 func build_key(position_value:Vector3, color:Color, node_name:String) -> Node3D:
 	var key := Node3D.new()
@@ -903,6 +909,19 @@ func build_main_monster() -> void:
 	main_monster.position = Vector3(0, 0.05, -91)
 	add_child(main_monster)
 	main_monster.setup(player, self)
+
+func build_green_cell_monster() -> void:
+	if find_child("GreenCellAnimMonster", true, false) != null:
+		return
+	var cell_monster := DungeonMainMonster.new()
+	cell_monster.name = "GreenCellAnimMonster"
+	cell_monster.position = Vector3(49.5, 0.05, -164.0)
+	cell_monster.rotation.y = -PI * 0.5
+	add_child(cell_monster)
+	cell_monster.setup(player, self)
+	cell_monster.set_physics_process(false)
+	if is_instance_valid(cell_monster.animator) && cell_monster.animator.has_animation("Walk"):
+		cell_monster.animator.play("Walk", 0.2)
 
 func build_giant_opening_z(node_name:String, center_x:float, z:float, total_width:float) -> void:
 	# Constrói o fundo de um corredor (parede em Z) com uma grande ABERTURA central por
@@ -1343,6 +1362,10 @@ func build_audio() -> void:
 		gun_sound = make_audio("res://assets/novos_audios/gun_shot.mp3", -5)
 	if pickup_sound == null:
 		pickup_sound = make_audio("res://assets/novos_audios/gun_load.mp3", -7)
+	if key_pickup_sound == null:
+		key_pickup_sound = make_audio("res://assets/novos_audios/ui_menu_move.wav", -4)
+	if trampoline_sound == null:
+		trampoline_sound = make_audio("res://assets/novos_audios/maycon_platform_landing.mp3", -1.5)
 	if monster_damage_sound == null:
 		monster_damage_sound = make_audio("res://assets/novos_audios/sangue_fill_effect.mp3", -1.5)
 	if gate_sound == null:
@@ -1407,6 +1430,8 @@ func apply_saved_state() -> void:
 	for stage in ["intro", "blue", "red", "green"]:
 		if event_is_true("dungeon_%s_lever" % stage) || event_is_true("dungeon_finale_triggered"):
 			activate_stage(stage, false)
+	if event_is_true("dungeon_green_key_taken"):
+		open_all_cells(false)
 	if event_is_true("dungeon_axe_door_open") || has_axe_event():
 		open_door(axe_door, false)
 	if has_axe_event() && is_instance_valid(axe_pickup):
@@ -1898,6 +1923,13 @@ func open_all_stage_doors(stage: String, with_sound: bool = true) -> void:
 			if is_instance_valid(door):
 				open_door(door, with_sound)
 
+func open_all_cells(with_sound: bool = true) -> void:
+	for stage in stage_doors:
+		open_all_stage_doors(stage, with_sound)
+	for door in key_room_doors.values():
+		if is_instance_valid(door):
+			open_door(door, with_sound)
+
 func collect_pickup(pickup_name:String) -> void:
 	if !pickups.has(pickup_name):
 		return
@@ -1905,7 +1937,11 @@ func collect_pickup(pickup_name:String) -> void:
 	if !is_instance_valid(pickup):
 		pickups.erase(pickup_name)
 		return
-	pickup_sound.play()
+	var is_key_item := pickup_name in ["blue_key", "red_key", "green_key", "cell_key"]
+	if is_key_item && is_instance_valid(key_pickup_sound):
+		key_pickup_sound.play()
+	else:
+		pickup_sound.play()
 	match pickup_name:
 		"flashlight":
 			Global.game_events["dungeon_flashlight_taken"] = true
@@ -1926,11 +1962,11 @@ func collect_pickup(pickup_name:String) -> void:
 			show_pickup_notice(tr("DUNGEON_ITEM_RED_KEY"))
 		"green_key":
 			Global.game_events["dungeon_green_key_taken"] = true
-			open_all_stage_doors("red", true)
+			open_all_cells(true)
 			show_pickup_notice(tr("DUNGEON_ITEM_GREEN_KEY"))
 		"cell_key":
 			Global.game_events["dungeon_key_taken"] = true
-			open_all_stage_doors("green", true)
+			open_all_cells(true)
 			if is_instance_valid(main_monster):
 				main_monster.trigger_enrage_hunt()
 			show_pickup_notice(tr("DUNGEON_ITEM_CELL_KEY"))
@@ -1955,7 +1991,8 @@ func collect_axe() -> void:
 	Global.maycon_itens["axe"] = true
 	Global.game_events["axe_taken"] = true
 	Global.game_events["dungeon_axe_taken"] = true
-	pickup_sound.play()
+	if is_instance_valid(key_pickup_sound):
+		key_pickup_sound.play()
 	axe_pickup.queue_free()
 	axe_pickup = null
 	show_pickup_notice(tr("DUNGEON_ITEM_AXE"))
@@ -2728,6 +2765,9 @@ func is_player_hidden() -> bool:
 func return_to_castle() -> void:
 	sequence_running = true
 	player.controls_enabled = false
+	if is_instance_valid(trampoline_sound):
+		trampoline_sound.pitch_scale = randf_range(0.96, 1.04)
+		trampoline_sound.play()
 	player.look_at(trampoline.global_position + Vector3.UP * 0.6, Vector3.UP)
 	await create_tween().tween_property(player.head, "rotation:x", -0.45, 0.45).finished
 	var jump := create_tween().set_trans(Tween.TRANS_QUAD)

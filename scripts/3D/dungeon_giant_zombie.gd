@@ -47,6 +47,7 @@ var skel: Skeleton3D
 var animator: AnimationPlayer
 var grab_attachment: BoneAttachment3D
 var grab_anchor: Marker3D
+var head_attachment: BoneAttachment3D
 var eye_lights: Array[OmniLight3D] = []
 
 # Áudio
@@ -60,6 +61,7 @@ var busy: bool = false
 var state: String = "watch"
 var cooldown: float = 0.0
 var growl_cooldown: float = 0.0
+var head_contact_cooldown: float = 0.0
 var phase: float = 0.0
 
 const CONSIDER_TIME: float = 0.9    # fica olhando um instante antes de decidir
@@ -178,17 +180,17 @@ func setup_eye_glow() -> void:
 		return
 	if skel.find_child("HeadGlow", true, false) != null:
 		return
-	var head_att := BoneAttachment3D.new()
-	head_att.name = "HeadGlow"
-	head_att.bone_name = &"CityDeadOutfit_Head"
-	skel.add_child(head_att)
+	head_attachment = BoneAttachment3D.new()
+	head_attachment.name = "HeadGlow"
+	head_attachment.bone_name = &"CityDeadOutfit_Head"
+	skel.add_child(head_attachment)
 	for sx in [-0.06, 0.06]:
 		var eye := OmniLight3D.new()
 		eye.light_color = Color(1.0, 0.06, 0.02)
 		eye.light_energy = 2.6
 		eye.omni_range = 4.0
 		eye.position = Vector3(sx, 0.06, 0.1)
-		head_att.add_child(eye)
+		head_attachment.add_child(eye)
 		eye_lights.append(eye)
 
 func build_audio() -> void:
@@ -227,9 +229,11 @@ func _physics_process(delta:float) -> void:
 	phase += delta
 	growl_cooldown = maxf(0.0, growl_cooldown - delta)
 	cooldown = maxf(0.0, cooldown - delta)
+	head_contact_cooldown = maxf(0.0, head_contact_cooldown - delta)
 	for light in eye_lights:
 		if is_instance_valid(light):
 			light.light_energy = 2.2 + absf(sin(phase * 2.1)) * 1.5
+	_check_head_contact()
 
 	if busy:
 		return
@@ -241,6 +245,27 @@ func _physics_process(delta:float) -> void:
 		if is_instance_valid(growl_audio):
 			growl_audio.pitch_scale = randf_range(0.72, 0.9)
 			growl_audio.play()
+
+func _check_head_contact() -> void:
+	if head_contact_cooldown > 0.0 || !is_instance_valid(head_attachment):
+		return
+	var contact_point := head_attachment.global_position
+	var player_head := player.global_position + Vector3.UP * 1.0
+	if contact_point.distance_to(player_head) > 2.15:
+		return
+	var knockback := player.global_position - contact_point
+	knockback.y = 0.0
+	if knockback.length_squared() < 0.01:
+		knockback = -global_transform.basis.z
+	head_contact_cooldown = 1.15
+	if is_instance_valid(impact_audio):
+		impact_audio.stream = WALL_HIT_HEAVY
+		impact_audio.pitch_scale = randf_range(0.82, 0.96)
+		impact_audio.play()
+	player.apply_knockback(knockback.normalized() * 13.0 + Vector3.UP * 4.5, 0.78)
+	player.shake_camera(0.16, 0.55)
+	dungeon.call("flash_blood_damage_overlay", 0.7)
+	player.take_damage(player.max_hp * 0.25)
 
 func player_in_zone() -> bool:
 	if !is_instance_valid(player):
