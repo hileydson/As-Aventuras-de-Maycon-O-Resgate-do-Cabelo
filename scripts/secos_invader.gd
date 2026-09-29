@@ -14,6 +14,7 @@ const PAUSE_SCRIPT:Script = preload("res://scripts/secos_invader_pause.gd")
 const DASH_SOUND:AudioStream = preload("res://assets/novos_audios/sliding.mp3")
 const DASH_GAMEPAD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/360_A.png")
 const DASH_KEYBOARD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png")
+const HUD_FONT:Font = preload("res://assets/fonts/contrast.ttf")
 
 var screen:Vector2
 var maycon:AnimatedSprite2D
@@ -36,6 +37,9 @@ var fireball:Node2D
 var pause_controller:CanvasLayer
 var hp_bar:ProgressBar
 var timeline:ProgressBar
+var health_card:PanelContainer
+var dash_card:PanelContainer
+var timeline_card:PanelContainer
 var health:float
 var max_health:float
 var starting_health:float
@@ -173,98 +177,146 @@ func _build_ui() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 92)
+	title.add_theme_font_override("font", HUD_FONT)
 	title.add_theme_color_override("font_color", Color(0.92, 0.85, 1.0))
 	title.add_theme_color_override("font_shadow_color", Color(0.6, 0.05, 0.9))
+	title.add_theme_color_override("font_outline_color", Color(0.08, 0.01, 0.13, 0.95))
 	title.add_theme_constant_override("shadow_offset_x", 4)
 	title.add_theme_constant_override("shadow_offset_y", 4)
+	title.add_theme_constant_override("outline_size", 9)
 	title.position = Vector2(0.0, screen.y * 0.5 - 75.0)
 	title.size = Vector2(screen.x, 150.0)
 	title.modulate.a = 0.0
 	hud.add_child(title)
+	health_card = PanelContainer.new()
+	health_card.position = Vector2(20.0, 18.0)
+	health_card.size = Vector2(268.0, 76.0)
+	health_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	health_card.add_theme_stylebox_override("panel", _hud_card_style(Color(0.95, 0.16, 0.32, 0.72)))
+	health_card.visible = false
+	hud.add_child(health_card)
 	hp_label = Label.new()
 	hp_label.text = tr("UI_HEALTH")
-	hp_label.position = Vector2(20.0, 11.0)
-	hp_label.add_theme_font_size_override("font_size", 16)
+	hp_label.position = Vector2(16.0, 8.0)
+	hp_label.size = Vector2(230.0, 22.0)
+	hp_label.add_theme_font_override("font", HUD_FONT)
+	hp_label.add_theme_font_size_override("font_size", 17)
+	hp_label.add_theme_color_override("font_color", Color("ffd5df"))
+	hp_label.add_theme_color_override("font_outline_color", Color("31030e"))
+	hp_label.add_theme_constant_override("outline_size", 4)
 	hp_label.visible = false
-	hud.add_child(hp_label)
+	health_card.add_child(hp_label)
 	hp_bar = ProgressBar.new()
-	hp_bar.position = Vector2(20.0, 38.0)
-	hp_bar.size = Vector2(132.0, 12.0)
+	hp_bar.position = Vector2(16.0, 40.0)
+	hp_bar.size = Vector2(236.0, 19.0)
 	hp_bar.max_value = max_health
 	hp_bar.show_percentage = false
 	var hp_background:StyleBoxFlat = StyleBoxFlat.new()
-	hp_background.bg_color = Color(0.08, 0.02, 0.06, 0.9)
-	hp_background.border_color = Color(0.75, 0.11, 0.16)
+	hp_background.bg_color = Color(0.035, 0.008, 0.025, 0.94)
+	hp_background.border_color = Color(0.95, 0.16, 0.32, 0.82)
 	hp_background.set_border_width_all(2)
+	hp_background.set_corner_radius_all(7)
 	hp_bar.add_theme_stylebox_override("background", hp_background)
 	var hp_fill:StyleBoxFlat = StyleBoxFlat.new()
-	hp_fill.bg_color = Color(0.72, 0.015, 0.06)
+	hp_fill.bg_color = Color("df174d")
+	hp_fill.set_corner_radius_all(5)
 	hp_bar.add_theme_stylebox_override("fill", hp_fill)
 	hp_bar.visible = false
-	hud.add_child(hp_bar)
+	health_card.add_child(hp_bar)
+	dash_card = PanelContainer.new()
+	dash_card.position = Vector2(302.0, 18.0)
+	dash_card.size = Vector2(192.0, 76.0)
+	dash_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dash_card.add_theme_stylebox_override("panel", _hud_card_style(Color(0.34, 0.72, 1.0, 0.74)))
+	dash_card.visible = false
+	hud.add_child(dash_card)
 	dash_button = Button.new()
-	dash_button.position = Vector2(165.0, 17.0)
-	dash_button.size = Vector2(124.0, 32.0)
+	dash_button.position = Vector2(10.0, 18.0)
+	dash_button.size = Vector2(172.0, 40.0)
 	dash_button.clip_contents = true
 	dash_button.visible = false
 	dash_button.pressed.connect(_try_dash)
-	hud.add_child(dash_button)
+	_style_dash_button(dash_button)
+	dash_card.add_child(dash_button)
 	var gamepad_icon:Sprite2D = Sprite2D.new()
 	gamepad_icon.texture = DASH_GAMEPAD_ICON
-	gamepad_icon.position = Vector2(16.0, 16.0)
-	gamepad_icon.scale = Vector2(0.22, 0.22)
+	gamepad_icon.position = Vector2(18.0, 20.0)
+	gamepad_icon.scale = Vector2(0.28, 0.28)
 	dash_button.add_child(gamepad_icon)
 	var separator:Label = Label.new()
 	separator.text = "/"
-	separator.position = Vector2(29.0, 8.0)
-	separator.add_theme_font_size_override("font_size", 11)
+	separator.position = Vector2(35.0, 11.0)
+	separator.add_theme_font_override("font", HUD_FONT)
+	separator.add_theme_font_size_override("font_size", 13)
 	separator.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dash_button.add_child(separator)
 	var keyboard_icon:Sprite2D = Sprite2D.new()
 	keyboard_icon.texture = DASH_KEYBOARD_ICON
-	keyboard_icon.position = Vector2(57.0, 16.0)
-	keyboard_icon.scale = Vector2(0.38, 0.38)
+	keyboard_icon.position = Vector2(68.0, 20.0)
+	keyboard_icon.scale = Vector2(0.48, 0.48)
 	dash_button.add_child(keyboard_icon)
 	var keyboard_label:Label = Label.new()
 	keyboard_label.text = tr("SECO_INVADER_SPACE_KEY")
-	keyboard_label.position = Vector2(38.0, 11.0)
-	keyboard_label.size = Vector2(38.0, 11.0)
+	keyboard_label.position = Vector2(43.0, 14.0)
+	keyboard_label.size = Vector2(50.0, 12.0)
 	keyboard_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	keyboard_label.add_theme_font_size_override("font_size", 7)
+	keyboard_label.add_theme_font_override("font", HUD_FONT)
+	keyboard_label.add_theme_font_size_override("font_size", 8)
 	keyboard_label.add_theme_color_override("font_color", Color(0.15, 0.15, 0.17))
 	keyboard_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dash_button.add_child(keyboard_label)
 	var dash_label:Label = Label.new()
 	dash_label.text = tr("POWER_DASH")
-	dash_label.position = Vector2(81.0, 7.0)
-	dash_label.add_theme_font_size_override("font_size", 11)
+	dash_label.position = Vector2(105.0, 10.0)
+	dash_label.add_theme_font_override("font", HUD_FONT)
+	dash_label.add_theme_font_size_override("font_size", 14)
+	dash_label.add_theme_color_override("font_color", Color("c8efff"))
 	dash_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dash_button.add_child(dash_label)
 	timeline = ProgressBar.new()
-	timeline.position = Vector2(screen.x - 43.0, 76.0)
-	timeline.size = Vector2(13.0, screen.y - 145.0)
+	timeline_card = PanelContainer.new()
+	timeline_card.position = Vector2(screen.x - 72.0, 70.0)
+	timeline_card.size = Vector2(52.0, screen.y - 145.0)
+	timeline_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	timeline_card.add_theme_stylebox_override("panel", _hud_card_style(Color(0.35, 0.75, 1.0, 0.65)))
+	timeline_card.visible = false
+	hud.add_child(timeline_card)
+	timeline.position = Vector2(18.0, 12.0)
+	timeline.size = Vector2(16.0, timeline_card.size.y - 24.0)
 	timeline.fill_mode = ProgressBar.FILL_BOTTOM_TO_TOP
 	timeline.show_percentage = false
 	var timeline_background:StyleBoxFlat = StyleBoxFlat.new()
-	timeline_background.bg_color = Color(0.06, 0.08, 0.15, 0.85)
+	timeline_background.bg_color = Color(0.025, 0.04, 0.09, 0.92)
+	timeline_background.set_corner_radius_all(8)
 	timeline.add_theme_stylebox_override("background", timeline_background)
 	var timeline_fill:StyleBoxFlat = StyleBoxFlat.new()
-	timeline_fill.bg_color = Color(0.34, 0.62, 1.0)
+	timeline_fill.bg_color = Color("44b7ff")
+	timeline_fill.set_corner_radius_all(6)
 	timeline.add_theme_stylebox_override("fill", timeline_fill)
 	timeline.visible = false
-	hud.add_child(timeline)
+	timeline_card.add_child(timeline)
 	finish_label = Label.new()
 	finish_label.text = tr("SECO_INVADER_END")
-	finish_label.position = Vector2(screen.x - 145.0, 45.0)
-	finish_label.size = Vector2(105.0, 25.0)
+	finish_label.position = Vector2(screen.x - 178.0, 34.0)
+	finish_label.size = Vector2(140.0, 26.0)
 	finish_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	finish_label.add_theme_font_override("font", HUD_FONT)
+	finish_label.add_theme_font_size_override("font_size", 15)
+	finish_label.add_theme_color_override("font_color", Color("93ddff"))
+	finish_label.add_theme_color_override("font_outline_color", Color("061225"))
+	finish_label.add_theme_constant_override("outline_size", 4)
 	finish_label.visible = false
 	hud.add_child(finish_label)
 	start_label = Label.new()
 	start_label.text = tr("SECO_INVADER_START")
-	start_label.position = Vector2(screen.x - 145.0, screen.y - 57.0)
-	start_label.size = Vector2(105.0, 25.0)
+	start_label.position = Vector2(screen.x - 178.0, screen.y - 44.0)
+	start_label.size = Vector2(140.0, 26.0)
 	start_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	start_label.add_theme_font_override("font", HUD_FONT)
+	start_label.add_theme_font_size_override("font_size", 15)
+	start_label.add_theme_color_override("font_color", Color("93ddff"))
+	start_label.add_theme_color_override("font_outline_color", Color("061225"))
+	start_label.add_theme_constant_override("outline_size", 4)
 	start_label.visible = false
 	hud.add_child(start_label)
 	transition_black = ColorRect.new()
@@ -272,6 +324,32 @@ func _build_ui() -> void:
 	transition_black.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	transition_black.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud.add_child(transition_black)
+
+func _hud_card_style(border_color:Color) -> StyleBoxFlat:
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.015, 0.02, 0.07, 0.88)
+	style.border_color = border_color
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(10)
+	style.shadow_color = Color(0.0, 0.0, 0.0, 0.7)
+	style.shadow_size = 6
+	style.shadow_offset = Vector2(2.0, 3.0)
+	return style
+
+func _style_dash_button(button:Button) -> void:
+	button.add_theme_font_override("font", HUD_FONT)
+	for state in ["normal", "hover", "pressed", "focus"]:
+		var style = StyleBoxFlat.new()
+		style.bg_color = Color(0.03, 0.13, 0.27, 0.92)
+		style.border_color = Color(0.34, 0.72, 1.0, 0.82)
+		style.set_border_width_all(1)
+		style.set_corner_radius_all(7)
+		if state == "hover" || state == "focus":
+			style.bg_color = Color(0.06, 0.28, 0.5, 0.98)
+			style.border_color = Color("b9efff")
+		elif state == "pressed":
+			style.bg_color = Color(0.1, 0.4, 0.66, 1.0)
+		button.add_theme_stylebox_override(state, style)
 
 
 func _sound(stream:AudioStream, volume:float) -> AudioStreamPlayer:
@@ -322,6 +400,9 @@ func _update_intro(delta:float) -> void:
 		hp_bar.visible = true
 		dash_button.visible = true
 		timeline.visible = true
+		health_card.visible = true
+		dash_card.visible = true
+		timeline_card.visible = true
 		start_label.visible = true
 		finish_label.visible = true
 		music.play()

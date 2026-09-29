@@ -4143,7 +4143,7 @@ realtime_battle_foreground.gd::GDScript::2882700291306978348::1790563197::0::1::
 realtime_battle_specials.gd::GDScript::594959556313240947::1790563197::0::1::::<>Node2D<><>0<>0<><>::
 sangue_fill.gd::GDScript::6760165581029737568::1790638943::0::1::::<>Area2D<><>0<>0<><>::
 seco.gd::GDScript::1005395561379310119::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
-secos_invader.gd::GDScript::6531996241197983491::1790631195::0::1::::<>Node2D<><>0<>0<><>::
+secos_invader.gd::GDScript::6531996241197983491::1790641152::0::1::::<>Node2D<><>0<>0<><>::
 secos_invader_fireball.gd::GDScript::7217228280048919060::1790563197::0::1::::<>Node2D<><>0<>0<><>::
 secos_invader_pause.gd::GDScript::1826916351561181416::1790563197::0::1::::<>CanvasLayer<><>0<>0<><>::
 two_layers_fps_mode.gd::GDScript::-1::1770925133::0::1::::<>Node3D<><>0<>0<><>::
