@@ -429,3 +429,18 @@ SETTINGS_DIFFICULTY,Dificuldade do Jogo,Game Difficulty,Dificultad del Juego,游
 SETTINGS_DIFFICULTY_DESC,Altera a dificuldade das batalhas e fases. Pode ser modificada a qualquer momento.,Changes the difficulty of battles and stages. Can be modified at any time.,Cambia la dificultad de las batallas y fases. Se puede modificar en cualquier momento.,更改战斗和关卡的难度。可随时调整。
 DIFFICULTY_NORMAL,Normal,Normal,Normal,普通
 DIFFICULTY_EASY,Fácil,Easy,Fácil,简单
+SETTINGS_DEBUG_TRAVEL,Debug-travel,Debug Travel,Viaje debug,调试旅行
+SETTINGS_DEBUG_TRAVEL_TITLE,Viagem direta para fases,Direct stage travel,Viaje directo a fases,直接关卡旅行
+SETTINGS_DEBUG_TRAVEL_DESC,"Abre a cena escolhida imediatamente, ignorando totalmente o progresso e os pré-requisitos da campanha.","Opens the selected scene immediately, completely ignoring campaign progress and prerequisites.","Abre la escena elegida inmediatamente, ignorando por completo el progreso y los requisitos de la campaña.",立即打开所选场景，完全忽略战役进度和前置条件。
+DEBUG_TRAVEL_PROLOGUE,PRÓLOGO,PROLOGUE,PRÓLOGO,序章
+DEBUG_TRAVEL_INFINITE_WELL,POÇO INFINITO,INFINITE WELL,POZO INFINITO,无限之井
+DEBUG_TRAVEL_PESTILENT_PASSAGE,PASSAGEM PESTILENTA,PESTILENT PASSAGE,PASAJE PESTILENTE,恶臭通道
+DEBUG_TRAVEL_SECOS_INVADER,SECOS INVADER,SECOS INVADER,SECOS INVADER,塞科入侵者
+DEBUG_TRAVEL_SUPER_MAYCON,SUPER MAYCON BROTHER,SUPER MAYCON BROTHER,SUPER MAYCON BROTHER,超级麦肯兄弟
+DEBUG_TRAVEL_PLANE_FALL,QUEDA NO AVIÃO,PLANE FALL,CAÍDA EN EL AVIÓN,坠落飞机
+DEBUG_TRAVEL_ACE_TOMATE,ACE TOMATE,ACE TOMATE,ACE TOMATE,ACE TOMATE
+DEBUG_TRAVEL_SECO_FIGHT_1,LUTA CONTRA SECO 1 (3D),FIGHT AGAINST SECO 1 (3D),LUCHA CONTRA SECO 1 (3D),对战塞科 1（3D）
+DEBUG_TRAVEL_HORROR_DUNGEON,CALABOUÇO TERROR,HORROR DUNGEON,CALABOZO DEL TERROR,恐怖地牢
+DEBUG_TRAVEL_STONE_STREET,RUA DAS PEDRAS,STONE STREET,CALLE DE LAS PIEDRAS,石头街
+DEBUG_TRAVEL_SECO_FIGHT_2,LUTA CONTRA SECO 2 (2D),FIGHT AGAINST SECO 2 (2D),LUCHA CONTRA SECO 2 (2D),对战塞科 2（2D）
+DEBUG_TRAVEL_LOST_CITY,CIDADE PERDIDA,LOST CITY,CIUDAD PERDIDA,失落之城

@@ -2,6 +2,21 @@ extends CanvasLayer
 
 signal closed
 
+const DEBUG_TRAVEL_DESTINATIONS := [
+	{"label": "DEBUG_TRAVEL_PROLOGUE", "scene": "res://scenes/game.tscn"},
+	{"label": "DEBUG_TRAVEL_INFINITE_WELL", "scene": "res://scenes/3D/poco_infinito.tscn"},
+	{"label": "DEBUG_TRAVEL_PESTILENT_PASSAGE", "scene": "res://scenes/3D/cenario_3d_bofore_castle_1.tscn"},
+	{"label": "DEBUG_TRAVEL_SECOS_INVADER", "scene": "res://scenes/secos_invader.tscn"},
+	{"label": "DEBUG_TRAVEL_SUPER_MAYCON", "scene": "res://scenes/3D/maycon_platform_3d.tscn"},
+	{"label": "DEBUG_TRAVEL_PLANE_FALL", "scene": "res://scenes/3D/aviao_queda_cutscene.tscn"},
+	{"label": "DEBUG_TRAVEL_ACE_TOMATE", "scene": "res://scenes/3D/aviao_ace_combat.tscn"},
+	{"label": "DEBUG_TRAVEL_SECO_FIGHT_1", "scene": "res://scenes/3D/world_3d.tscn"},
+	{"label": "DEBUG_TRAVEL_HORROR_DUNGEON", "scene": "res://scenes/3D/calabouco_terror.tscn"},
+	{"label": "DEBUG_TRAVEL_STONE_STREET", "scene": "res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn"},
+	{"label": "DEBUG_TRAVEL_SECO_FIGHT_2", "scene": "res://scenes/fase_1_outside_castle_again_no_fire_2.tscn"},
+	{"label": "DEBUG_TRAVEL_LOST_CITY", "scene": "res://scenes/3D/last_fight_before_end.tscn"},
+]
+
 @onready var backdrop: ColorRect = $Backdrop
 @onready var panel: PanelContainer = $PanelContainer
 @onready var title_label: Label = $PanelContainer/MarginContainer/VBoxContainer/Header/TitleLabel
@@ -19,6 +34,12 @@ signal closed
 @onready var debug_title: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer/DebugTitle
 @onready var scroll_container: ScrollContainer = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer/ScrollContainer
 @onready var debug_events_container: VBoxContainer = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug/VBoxContainer/ScrollContainer/DebugEventsContainer
+@onready var debug_tab: MarginContainer = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Debug
+@onready var debug_travel_tab: MarginContainer = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/DebugTravel
+@onready var debug_travel_title: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/DebugTravel/VBoxContainer/DebugTravelTitle
+@onready var debug_travel_desc: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/DebugTravel/VBoxContainer/DebugTravelDesc
+@onready var debug_travel_scroll: ScrollContainer = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/DebugTravel/VBoxContainer/ScrollContainer
+@onready var debug_travel_container: VBoxContainer = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/DebugTravel/VBoxContainer/ScrollContainer/DebugTravelContainer
 @onready var btn_close: Button = $PanelContainer/MarginContainer/VBoxContainer/Footer/BtnClose
 
 @onready var graphics3d_scroll: ScrollContainer = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Graphics3D/ScrollContainer
@@ -48,12 +69,15 @@ signal closed
 
 var _previous_focus_control: Control = null
 var _last_focused_debug_check: Control = null
+var _last_focused_debug_travel_button: Control = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 	if scroll_container:
 		scroll_container.follow_focus = true
+	if debug_travel_scroll:
+		debug_travel_scroll.follow_focus = true
 	if graphics3d_scroll:
 		graphics3d_scroll.follow_focus = true
 	aim_slider.value_changed.connect(_on_aim_slider_value_changed)
@@ -69,8 +93,11 @@ func _on_global_debug_mode_activated() -> void:
 	if not is_inside_tree():
 		return
 	var debug_idx = _debug_tab_index()
-	if debug_idx > 0:
+	if debug_idx >= 0:
 		tab_container.set_tab_hidden(debug_idx, false)
+	var debug_travel_idx = _debug_travel_tab_index()
+	if debug_travel_idx >= 0:
+		tab_container.set_tab_hidden(debug_travel_idx, false)
 	_populate_debug_events()
 
 func _setup_gameplay_options() -> void:
@@ -185,10 +212,15 @@ func _get_active_scroll_container() -> ScrollContainer:
 		return graphics3d_scroll
 	if tab_container.current_tab == _debug_tab_index():
 		return scroll_container
+	if tab_container.current_tab == _debug_travel_tab_index():
+		return debug_travel_scroll
 	return null
 
 func _debug_tab_index() -> int:
-	return tab_container.get_tab_count() - 1
+	return debug_tab.get_index()
+
+func _debug_travel_tab_index() -> int:
+	return debug_travel_tab.get_index()
 
 func _get_visible_tab_indices() -> Array:
 	var result: Array = []
@@ -231,8 +263,11 @@ func fechar() -> void:
 func setup_tabs() -> void:
 	var has_debug = Global.show_debug_tab
 	var debug_idx = _debug_tab_index()
-	if debug_idx > 0:
+	if debug_idx >= 0:
 		tab_container.set_tab_hidden(debug_idx, not has_debug)
+	var debug_travel_idx = _debug_travel_tab_index()
+	if debug_travel_idx >= 0:
+		tab_container.set_tab_hidden(debug_travel_idx, not has_debug)
 	tab_container.current_tab = 0
 
 func _switch_tab(idx: int) -> void:
@@ -267,6 +302,18 @@ func _on_tab_changed(tab_idx: int) -> void:
 			var last = debug_events_container.get_child(debug_events_container.get_child_count() - 1) as Control
 			if is_instance_valid(last):
 				btn_close.focus_neighbor_top = last.get_path()
+	elif tab_idx == _debug_travel_tab_index():
+		btn_close.focus_neighbor_top = NodePath("")
+		if is_instance_valid(_last_focused_debug_travel_button) and _last_focused_debug_travel_button.is_inside_tree():
+			_last_focused_debug_travel_button.grab_focus()
+		elif debug_travel_container.get_child_count() > 0:
+			var first = debug_travel_container.get_child(0) as Control
+			if is_instance_valid(first):
+				first.grab_focus()
+		if debug_travel_container.get_child_count() > 0:
+			var last = debug_travel_container.get_child(debug_travel_container.get_child_count() - 1) as Control
+			if is_instance_valid(last):
+				btn_close.focus_neighbor_top = last.get_path()
 
 func update_language() -> void:
 	title_label.text = tr("SETTINGS_TITLE")
@@ -274,8 +321,11 @@ func update_language() -> void:
 	tab_container.set_tab_title(1, tr("SETTINGS_GRAPHICS_3D"))
 	tab_container.set_tab_title(2, tr("SETTINGS_GRAPHICS_2D"))
 	var debug_idx := _debug_tab_index()
-	if debug_idx > 0:
+	if debug_idx >= 0:
 		tab_container.set_tab_title(debug_idx, tr("SETTINGS_DEBUG"))
+	var debug_travel_idx := _debug_travel_tab_index()
+	if debug_travel_idx >= 0:
+		tab_container.set_tab_title(debug_travel_idx, tr("SETTINGS_DEBUG_TRAVEL"))
 	aim_title.text = tr("SETTINGS_AIM_ASSIST")
 	aim_desc.text = tr("SETTINGS_AIM_ASSIST_DESC")
 	difficulty_title.text = tr("SETTINGS_DIFFICULTY")
@@ -284,6 +334,9 @@ func update_language() -> void:
 	battle_mode_desc.text = tr("SETTINGS_BATTLE_MODE_DESC")
 	_setup_gameplay_options()
 	debug_title.text = tr("SETTINGS_GAME_EVENTS")
+	debug_travel_title.text = tr("SETTINGS_DEBUG_TRAVEL_TITLE")
+	debug_travel_desc.text = tr("SETTINGS_DEBUG_TRAVEL_DESC")
+	_populate_debug_travel()
 	btn_close.text = tr("SETTINGS_CLOSE")
 	_update_aim_label(aim_slider.value)
 
@@ -470,6 +523,43 @@ func _populate_debug_events() -> void:
 
 	if checks.size() > 0:
 		btn_close.focus_neighbor_top = checks[checks.size() - 1].get_path()
+
+func _populate_debug_travel() -> void:
+	for child in debug_travel_container.get_children():
+		child.free()
+
+	var buttons: Array[Control] = []
+	for destination in DEBUG_TRAVEL_DESTINATIONS:
+		var button := Button.new()
+		button.text = tr(String(destination["label"]))
+		button.focus_mode = Control.FOCUS_ALL
+		button.custom_minimum_size.y = 34.0
+		button.pressed.connect(_travel_to_debug_scene.bind(String(destination["scene"])))
+		debug_travel_container.add_child(button)
+		buttons.append(button)
+
+	for i in range(buttons.size()):
+		var button := buttons[i]
+		button.focus_neighbor_top = buttons[maxi(0, i - 1)].get_path()
+		button.focus_neighbor_bottom = buttons[i + 1].get_path() if i < buttons.size() - 1 else btn_close.get_path()
+		button.focus_neighbor_left = button.get_path()
+		button.focus_neighbor_right = button.get_path()
+		button.focus_entered.connect(func():
+			_last_focused_debug_travel_button = button
+			_scroll_debug_travel_to_control(button)
+		)
+
+func _travel_to_debug_scene(scene_path: String) -> void:
+	if not ResourceLoader.exists(scene_path):
+		push_error("Debug travel scene not found: " + scene_path)
+		return
+	Engine.time_scale = 1.0
+	get_tree().paused = false
+	get_tree().change_scene_to_file(scene_path)
+
+func _scroll_debug_travel_to_control(ctrl: Control) -> void:
+	if is_instance_valid(debug_travel_scroll) and is_instance_valid(ctrl):
+		debug_travel_scroll.ensure_control_visible.call_deferred(ctrl)
 
 func _scroll_to_control(ctrl: Control) -> void:
 	if not is_instance_valid(scroll_container) or not is_instance_valid(ctrl):

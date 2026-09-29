@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dbicvg8ismuhi" path="res://assets/novas_imagens/maycon/jamelao_float_1.png" id="3_q3404"]
 [ext_resource type="Texture2D" uid="uid://fjql0fxruscu" path="res://assets/novas_imagens/3d_cenarios/lua.png" id="5_igx7d"]
 [ext_resource type="Texture2D" uid="uid://jpruwl1kxn8m" path="res://assets/novas_imagens/cabelo/cabelo_idle.png" id="7_p8iuc"]
-[ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="8_biole"]
+[ext_resource type="PackedScene" uid="uid://jw0dy6pjaowh" path="res://scenes/default_transition_fade_in.tscn" id="8_biole"]
 [ext_resource type="PackedScene" path="res://scenes/3D/pause_3d_moto_cidade.tscn" id="8_q3404"]
 [ext_resource type="Texture2D" uid="uid://dgp6h015l1dye" path="res://assets/novas_imagens/objects/interrogacao.png" id="9_qiu4f"]
 [ext_resource type="Texture2D" uid="uid://b7ukdc2kwsyj2" path="res://assets/novas_imagens/cigarro/cigarro.png" id="9_ut78q"]
