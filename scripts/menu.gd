@@ -40,7 +40,7 @@ const MEMORY_POSITION := Vector3(27.0, 16.0, -63.0)
 const TAKE_WIDE := 0
 const TAKE_LOW := 1
 const TAKE_POV := 2
-const INITIAL_SIDE_TAKE_END := WALK_START + 11.0
+const INITIAL_SIDE_TAKE_END := WALK_START + 3.0
 const DEBUG_ACTIVATION_SEQUENCE: Array[StringName] = [&"ui_right", &"ui_right", &"ui_left", &"ui_left", &"ui_up", &"ui_up", &"ui_down", &"ui_down"]
 
 @export var load_from_castle_1: bool = false
@@ -628,12 +628,15 @@ func _switch_take(switch_time: float) -> void:
 	var duration := 9.0
 	match cinematic_take_step:
 		0:
+			current_take = TAKE_LOW
+			duration = 3.0
+		1:
 			current_take = TAKE_POV
 			duration = 12.0
-		1:
-			current_take = TAKE_LOW
-			duration = 10.0
 		2:
+			current_take = TAKE_LOW
+			duration = 3.0
+		3:
 			current_take = TAKE_WIDE
 			duration = 9.0
 		_:
