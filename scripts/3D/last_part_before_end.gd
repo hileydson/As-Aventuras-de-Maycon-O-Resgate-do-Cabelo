@@ -4,6 +4,7 @@ const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 const THUG_PAIN_SOUND_1 = preload("res://assets/novos_audios/DS_pain.mp3")
 const THUG_PAIN_SOUND_2 = preload("res://assets/novos_audios/doom_pain.mp3")
 const THUG_PAIN_SOUND_3 = preload("res://assets/novos_audios/seco_scream.mp3")
+const GUN_SOUND = preload("res://assets/novos_audios/gun_shot.mp3")
 const STAGE_INFORMANT := 0
 const STAGE_FELLAS := 1
 const STAGE_DISMOUNT := 2
@@ -23,6 +24,14 @@ const PENTAGRAM_SPOTS: Array[Vector3] = [
 	Vector3(120.0, -7.08, 560.0),   # 6. Esquina Sudeste
 	Vector3(-480.0, -7.08, 200.0),  # 7. Rodovia Oeste Norte
 	Vector3(-250.0, -7.08, -50.0),  # 8. Avenida Norte Central
+	Vector3(-560.0, -7.08, 640.0),
+	Vector3(-120.0, -7.08, 720.0),
+	Vector3(-560.0, -7.08, 300.0),
+	Vector3(-110.0, -7.08, 270.0),
+	Vector3(120.0, -7.08, 350.0),
+	Vector3(-390.0, -7.08, 40.0),
+	Vector3(80.0, -7.08, -120.0),
+	Vector3(320.0, -7.08, 480.0),
 ]
 
 @onready var maycon_3d: Node3D = $maycon_3d
@@ -67,17 +76,25 @@ var chase_start_rotation:Vector3
 var chase_start_camera_rotation:Vector3
 var chase_restart_in_progress:bool = false
 var city_pentagrams: Array[Node3D] = []
+var chase_member_health:Array[int] = []
+var city_minimap:Control
+var city_minimap_camera:Camera3D
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
 	player.motorcycle_chase_died.connect(restart_chase_after_death)
 	player.get_node("chuva").process_mode = Node.PROCESS_MODE_PAUSABLE
 	player.set_rain(true)
+	$cutscene/ColorRect.visible = false
+	var start_overlay := fade.get_node("Transition/ColorRect") as ColorRect
+	start_overlay.visible = false
+	fade.get_node("Transition").stop()
 	fellas_original_scale = fellas.scale
 	for member in [$lipao/iago, $lipao/luks, $lipao/tony]:
 		fellas_member_original_positions[member] = member.position
 	configure_fellas_billboards()
 	build_objective_ui()
+	build_city_minimap()
 	objective_ui.visible = false
 	set_story_stage(STAGE_INFORMANT)
 	player.get_node("hud_canvas/maycon_hp").visible = false
@@ -146,6 +163,62 @@ func build_objective_ui() -> void:
 	objective_label.add_theme_color_override("font_outline_color", Color(0.05, 0.02, 0.01, 0.95))
 	objective_label.add_theme_constant_override("outline_size", 7)
 	objective_ui.add_child(objective_label)
+
+func build_city_minimap() -> void:
+	city_minimap = Control.new()
+	city_minimap.name = "CityMinimap"
+	city_minimap.position = Vector2(16.0, 16.0)
+	city_minimap.size = Vector2(180.0, 180.0)
+	city_minimap.clip_contents = true
+	city_minimap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var layer := CanvasLayer.new()
+	layer.layer = 88
+	add_child(layer)
+	layer.add_child(city_minimap)
+	var background := ColorRect.new()
+	background.color = Color("20262d")
+	background.size = city_minimap.size
+	city_minimap.add_child(background)
+	var viewport_container := SubViewportContainer.new()
+	viewport_container.position = Vector2(3.0, 3.0)
+	viewport_container.size = city_minimap.size - Vector2(6.0, 6.0)
+	viewport_container.stretch = true
+	viewport_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	city_minimap.add_child(viewport_container)
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(174, 174)
+	viewport.world_3d = get_world_3d()
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	viewport_container.add_child(viewport)
+	city_minimap_camera = Camera3D.new()
+	city_minimap_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	city_minimap_camera.cull_mask = 1
+	city_minimap_camera.size = 360.0
+	city_minimap_camera.near = 0.5
+	city_minimap_camera.far = 260.0
+	viewport.add_child(city_minimap_camera)
+	city_minimap_camera.make_current()
+	var player_marker := Polygon2D.new()
+	player_marker.polygon = PackedVector2Array([Vector2(90.0, 72.0), Vector2(82.0, 92.0), Vector2(98.0, 92.0)])
+	player_marker.color = Color("54e6ff")
+	city_minimap.add_child(player_marker)
+	var frame := Panel.new()
+	frame.size = city_minimap.size
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var frame_style := StyleBoxFlat.new()
+	frame_style.bg_color = Color.TRANSPARENT
+	frame_style.border_color = Color("e3b065")
+	frame_style.set_border_width_all(2)
+	frame.add_theme_stylebox_override("panel", frame_style)
+	city_minimap.add_child(frame)
+
+func _process(_delta:float) -> void:
+	if !is_instance_valid(city_minimap) || !is_instance_valid(city_minimap_camera) || !is_instance_valid(player):
+		return
+	city_minimap.visible = stage != STAGE_CHASE
+	if city_minimap.visible:
+		city_minimap_camera.global_position = player.global_position + Vector3(0.0, 105.0, 0.0)
+		city_minimap_camera.global_basis = Basis(Vector3.UP, player.rotation.y) * Basis(Vector3.RIGHT, -PI * 0.5)
 
 func build_wood_debug_ui() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -431,6 +504,7 @@ func begin_pickup_cutscene() -> void:
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout
 	player.dismount_final_game()
+	player.set_wood_melee_mode(true)
 	player.velocity = Vector3.ZERO
 	player.process_mode = Node.PROCESS_MODE_DISABLED
 	loose_wood = create_wood_prop()
@@ -676,8 +750,10 @@ func finish_fight() -> void:
 	await get_tree().create_timer(0.7).timeout
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout
+	await show_chase_briefing()
 	if is_instance_valid(weapon_root):
 		weapon_root.queue_free()
+	player.set_wood_melee_mode(false)
 	player.mount_final_game()
 	player.global_position = fellas.global_position + Vector3(0.0, 0.0, 18.0)
 	player.rotation = motorcycle_rotation_before_dismount
@@ -698,7 +774,7 @@ func finish_fight() -> void:
 	Global.in_cutscene = false
 	fellas_chase.combat_enabled = true
 
-func start_chase_round() -> void:
+func start_chase_round(saved_health:Array[int] = []) -> void:
 	player.danos_count = 0
 	player.danos_count_limit = 10
 	player.motorcycle_chase_death_emitted = false
@@ -708,7 +784,7 @@ func start_chase_round() -> void:
 	fellas_chase.name = "FellasChase"
 	add_child(fellas_chase)
 	fellas_chase.all_escaped.connect(finish_chase, CONNECT_ONE_SHOT)
-	fellas_chase.start_chase(player)
+	fellas_chase.start_chase(player, saved_health)
 	player.maycon_hp.visible = false
 
 func restart_chase_after_death() -> void:
@@ -722,6 +798,7 @@ func restart_chase_after_death() -> void:
 	fellas_chase.finished = true
 	fellas_chase.hud.visible = false
 	fellas_chase.battle_music.stop()
+	chase_member_health = fellas_chase.get_member_health()
 	player.set_motorcycle_chase(false)
 	var transition:AnimationPlayer = fade.get_node("Transition")
 	transition.play("fade_out")
@@ -754,7 +831,7 @@ func restart_chase_after_death() -> void:
 	player.velocity = Vector3.ZERO
 	set_story_stage(STAGE_CHASE)
 	objective_ui.visible = true
-	start_chase_round()
+	start_chase_round(chase_member_health)
 	for item in city_pentagrams:
 		if is_instance_valid(item) and item.has_method("respawn"):
 			item.respawn()
@@ -765,6 +842,34 @@ func restart_chase_after_death() -> void:
 	Global.in_cutscene = false
 	fellas_chase.combat_enabled = true
 	chase_restart_in_progress = false
+
+func show_chase_briefing() -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 125
+	add_child(layer)
+	var message := Label.new()
+	message.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	message.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	message.add_theme_font_size_override("font_size", 34)
+	message.add_theme_color_override("font_color", Color("f4e7d1"))
+	message.add_theme_color_override("font_outline_color", Color.BLACK)
+	message.add_theme_constant_override("outline_size", 9)
+	layer.add_child(message)
+	message.text = tr("CITY_CHASE_BRIEFING_1")
+	await get_tree().create_timer(2.4).timeout
+	message.text = tr("CITY_CHASE_BRIEFING_2")
+	await get_tree().create_timer(2.2).timeout
+	var shots := AudioStreamPlayer.new()
+	shots.stream = GUN_SOUND
+	shots.volume_db = -2.0
+	layer.add_child(shots)
+	for _shot in 3:
+		shots.play()
+		await get_tree().create_timer(0.22).timeout
+	await get_tree().create_timer(0.35).timeout
+	layer.queue_free()
 
 func finish_chase() -> void:
 	Global.in_cutscene = true

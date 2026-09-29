@@ -88,7 +88,9 @@ var motorcycle_lean:float = 0.0
 var motorcycle_lean_accel:float = 0.0
 var motorcycle_turn_accel:float = 0.0
 var motorcycle_steer_dir:float = 0.0
+var motorcycle_reverse_brake_time:float = 0.0
 var blood_damage_overlay:Control
+var wood_melee_mode:bool = false
 
 
 @export var SPRINT_SPEED = 9.0  # Velocidade ao correr
@@ -126,6 +128,7 @@ func set_final_game()->void:
 
 func set_motorcycle_chase(active:bool) -> void:
 	motorcycle_chase = active
+	motorcycle_reverse_brake_time = 0.0
 	metralhadora_moto.visible = active
 	motorcycle_shoot_buttons.visible = active
 	if !active:
@@ -218,6 +221,12 @@ func set_motorcycle_chase(active:bool) -> void:
 		build_motorcycle_muzzle_overlay()
 	if active and is_instance_valid(motorcycle_effect_root):
 		motorcycle_effect_root.visible = true
+
+func set_wood_melee_mode(active:bool) -> void:
+	wood_melee_mode = active
+	if active:
+		control_gun.visible = false
+		hud_gun_buttons.visible = false
 
 func build_motorcycle_muzzle_overlay() -> void:
 	motorcycle_screen_flash = ColorRect.new()
@@ -662,7 +671,7 @@ func _physics_process(delta):
 			remove_bullets_from_gun()
 	
 	# Controle visual da arma
-	if Global.maycon_pegou_arma_first_3d_battle and !on_moto:
+	if Global.maycon_pegou_arma_first_3d_battle and !on_moto and !wood_melee_mode:
 		control_gun.visible = true
 		hud_gun_buttons.visible = true
 	else:
@@ -690,13 +699,15 @@ func _physics_process(delta):
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 			mouse_turn = clampf(Input.get_last_mouse_velocity().x * MOUSE_SENSITIVITY * 0.18, -0.80, 0.80)
 
-		# Giro suave e mais lento da moto/câmera
-		var target_turn := clampf(-turn_input * 0.78 - mouse_turn, -0.80, 0.80)
-		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, 2.2 * delta)
+		# A perseguição libera uma direção mais ágil; fora dela a moto continua suave.
+		var turn_limit:float = 1.28 if motorcycle_chase else 0.80
+		var turn_acceleration:float = 4.6 if motorcycle_chase else 2.2
+		var target_turn := clampf(-turn_input * turn_limit - mouse_turn, -turn_limit, turn_limit)
+		motorcycle_turn_speed = move_toward(motorcycle_turn_speed, target_turn, turn_acceleration * delta)
 		rotate_y(motorcycle_turn_speed * delta)
 
 		# Inclinação mais lenta e suave do sprite da moto e roll da câmera
-		var max_lean_angle: float = 0.14
+		var max_lean_angle: float = 0.22 if motorcycle_chase else 0.14
 		var target_lean: float = turn_input * max_lean_angle
 		motorcycle_lean = move_toward(motorcycle_lean, target_lean, 0.85 * delta)
 
@@ -761,13 +772,23 @@ func _physics_process(delta):
 			if !moto_acelerando.is_playing():moto_acelerando.play()
 			Input.start_joy_vibration(device_id, 0.2, 0.1, 0.1)
 		elif re_moto:
-			# RÉ (Mais devagar, até 10)
-			var target_vel = -forward_dir * 10.0
-			velocity.x = move_toward(velocity.x, target_vel.x, 6.0 * delta)
-			velocity.z = move_toward(velocity.z, target_vel.z, 6.0 * delta)
-			if !moto_re.is_playing():moto_re.play()
-			Input.start_joy_vibration(device_id, 0.08, 0.1, 0.1)
+			var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+			if motorcycle_chase and horizontal_speed > 0.75:
+				# Durante a perseguição, a ré freia antes de engatar.
+				motorcycle_reverse_brake_time = 0.0
+				velocity.x = move_toward(velocity.x, 0, 18.0 * delta)
+				velocity.z = move_toward(velocity.z, 0, 18.0 * delta)
+				moto_re.stop()
+			else:
+				motorcycle_reverse_brake_time += delta
+				if !motorcycle_chase or motorcycle_reverse_brake_time >= 0.24:
+					var target_vel = -forward_dir * 10.0
+					velocity.x = move_toward(velocity.x, target_vel.x, 6.0 * delta)
+					velocity.z = move_toward(velocity.z, target_vel.z, 6.0 * delta)
+					if !moto_re.is_playing():moto_re.play()
+					Input.start_joy_vibration(device_id, 0.08, 0.1, 0.1)
 		else:
+			motorcycle_reverse_brake_time = 0.0
 			# DESACELERAÇÃO (Fricção)
 			velocity.x = move_toward(velocity.x, 0, 8.0 * delta)
 			velocity.z = move_toward(velocity.z, 0, 8.0 * delta)

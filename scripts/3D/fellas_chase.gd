@@ -29,7 +29,7 @@ var finished:bool = false
 var combat_enabled:bool = false
 var last_escape_position:Vector3
 
-func start_chase(chase_player:CharacterBody3D) -> void:
+func start_chase(chase_player:CharacterBody3D, saved_health:Array[int] = []) -> void:
 	player = chase_player
 	var names := ["Lips", "Iago", "Luqs", "Tony"]
 	var textures := [
@@ -92,8 +92,9 @@ func start_chase(chase_player:CharacterBody3D) -> void:
 		pain.max_distance = 65.0
 		pain.unit_size = 7.0
 		sprite.add_child(pain)
+		var initial_hp:int = clampi(saved_health[index] if index < saved_health.size() else MAX_HP, 0, MAX_HP)
 		members.append({"sprite":sprite, "marker":marker, "engine":engine, "gun":gun, "pain":pain,
-			"textures":member_textures, "hp":MAX_HP, "active":false, "escaped":false,
+			"textures":member_textures, "hp":initial_hp, "active":false, "escaped":initial_hp <= 0,
 			"heading":Vector3(sin(angle), 0.0, cos(angle)), "target":Vector3.ZERO,
 			"turn_timer":0.0, "shot_timer":randf_range(0.8, 1.6), "shot_state":0,
 			"shot_delay":0.0, "burst_remaining":0, "aim_direction":Vector3.ZERO,
@@ -105,6 +106,10 @@ func start_chase(chase_player:CharacterBody3D) -> void:
 			"hp_text":hud.get_node("Margin/HBox/Enemy%d/HPText" % index),
 			"cross":hud.get_node("Margin/HBox/Enemy%d/Cross" % index),
 			"minimap_label":minimap_markers[index]})
+		var member_bar:ProgressBar = hud.get_node("Margin/HBox/Enemy%d/HP" % index)
+		var member_hp_text:Label = hud.get_node("Margin/HBox/Enemy%d/HPText" % index)
+		member_bar.value = initial_hp
+		member_hp_text.text = "%d/%d" % [initial_hp, MAX_HP]
 	update_minimap()
 	battle_music = AudioStreamPlayer.new()
 	battle_music.stream = BATTLE_SONG.duplicate()
@@ -359,6 +364,12 @@ func set_map_visible(open:bool) -> void:
 	for member in members:
 		var marker:Sprite3D = member["marker"]
 		marker.visible = open and !member["escaped"]
+
+func get_member_health() -> Array[int]:
+	var health:Array[int] = []
+	for member in members:
+		health.append(int(member["hp"]))
+	return health
 
 func _physics_process(delta:float) -> void:
 	if finished or !is_instance_valid(player):
@@ -650,10 +661,10 @@ func on_player_fire() -> void:
 	# "se ver que esta levando muito dano corre pra frente e vai pra outro lugar do mapa, mas nao faça isso sempre, faça isso de sair mais rapido e ir para outro lugar do mapa eventualmente"
 	closest["recent_hits"] += 1
 	closest["hit_streak_timer"] = 2.6
-	if closest["recent_hits"] >= 3 and closest["flee_cooldown"] <= 0.0:
-		if randf() < 0.75 or closest["recent_hits"] >= 4:
-			closest["flee_timer"] = randf_range(4.2, 5.8)
-			closest["flee_cooldown"] = randf_range(9.0, 15.0)
+	if closest["recent_hits"] >= 4 and closest["flee_cooldown"] <= 0.0:
+		if randf() < 0.28 or closest["recent_hits"] >= 6:
+			closest["flee_timer"] = randf_range(3.6, 5.0)
+			closest["flee_cooldown"] = randf_range(18.0, 28.0)
 			closest["recent_hits"] = 0
 			var turn_angle := deg_to_rad(randf_range(65.0, 85.0) * (-1.0 if randf() < 0.5 else 1.0))
 			var flee_heading := (closest["heading"] as Vector3).rotated(Vector3.UP, turn_angle).normalized()
