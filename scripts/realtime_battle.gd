@@ -450,6 +450,8 @@ var player_dash_trail_segments:Array[Dictionary] = []
 var player_dash_particles:Array[Dictionary] = []
 var player_dash_ghost_timer:float = 0.0
 var player_dash_sound:AudioStreamPlayer
+var seco_second_phase:bool = false
+var seco_dog_respawn_timer:float = 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -479,8 +481,12 @@ func _ready() -> void:
 	Global.battle_started = true
 	status_label.text = tr("BATTLE_DEFEAT_AND_ADVANCE") % enemy_name.to_upper()
 	set_world_audio_paused(true)
-	battle_song.play()
+	if enemy_id != "1001":
+		battle_song.play()
 	start_entry_sequence()
+	if !Global.realtime_controls_hint_seen:
+		Global.realtime_controls_hint_seen = true
+		call_deferred("show_action_buttons_intro")
 	print("BATTLE STARTED: Enemy %s (HP %d/%d) - Minions spawned: %d" % [enemy_name, int(enemy_hp), int(enemy_max_hp), minions.size()])
 	for m in minions:
 		print("  -> Minion: %s (%s) HP: %.1f Speed: %.1f Damage: %.1f Style: %s Scale: %.2f" % [m.name, m.variant, m.hp, m.speed, m.damage, m.style, m.base_scale])
@@ -518,7 +524,7 @@ func build_fighters() -> void:
 
 	var stats:Dictionary = ENEMY_STATS[enemy_id]
 	enemy_name = stats.name
-	enemy_max_hp = stats.hp * 0.75 if Global.is_easy_mode() else stats.hp
+	enemy_max_hp = stats.hp * (0.75 if Global.is_easy_mode() else 1.25)
 	enemy_hp = enemy_max_hp
 	enemy_speed = stats.speed
 	enemy_damage = stats.damage
@@ -735,7 +741,7 @@ func spawn_minions() -> void:
 		if absf(spawn_x - player_position.x) < 220.0:
 			spawn_x = clampf(player_position.x + signf(enemy_position.x - player_position.x) * randf_range(280.0, 480.0), 220.0, ARENA_WIDTH - 220.0)
 		var spawn_y = clampf(randf_range(MIN_Y + 15.0, MAX_Y - 15.0), MIN_Y, MAX_Y)
-		var minion_hp = randf_range(variant.hp_min, variant.hp_max) * (0.75 if Global.is_easy_mode() else 1.0)
+		var minion_hp = randf_range(variant.hp_min, variant.hp_max) * (0.75 if Global.is_easy_mode() else 1.25)
 		var minion_key = "MINION_" + variant.id.to_upper()
 		var minion_name = tr(minion_key)
 		if minion_name == minion_key:
@@ -788,7 +794,7 @@ func spawn_minions() -> void:
 		minions.append(minion_data)
 
 func can_spawn_dogs() -> bool:
-	return enemy_id != "1" && enemy_id != "4"
+	return seco_second_phase || (enemy_id != "1" && enemy_id != "4")
 
 func spawn_hound_alert_popup(world_pos:Vector2, text_to_show:String) -> void:
 	var label = Label.new()
@@ -813,6 +819,16 @@ func spawn_hound_alert_popup(world_pos:Vector2, text_to_show:String) -> void:
 
 func update_dog_spawners(delta:float) -> void:
 	if !can_spawn_dogs() || enemy_dead || player_dead || intro_time > 0.0:
+		return
+	if seco_second_phase:
+		seco_dog_respawn_timer = maxf(0.0, seco_dog_respawn_timer - delta)
+		var alive_dogs = 0
+		for minion in minions:
+			if !minion.dead && minion.get("is_dog", false):
+				alive_dogs += 1
+		if alive_dogs <= 1 && seco_dog_respawn_timer <= 0.0:
+			spawn_battle_dogs(2)
+			seco_dog_respawn_timer = 4.5
 		return
 	if dogs_wave_spawned:
 		return
@@ -881,7 +897,7 @@ func spawn_battle_dogs(count:int) -> void:
 
 		sprite.flip_h = dog_facing < 0.0
 
-		var dog_hp = randf_range(variant.hp_min, variant.hp_max) * (0.75 if Global.is_easy_mode() else 1.0)
+		var dog_hp = randf_range(variant.hp_min, variant.hp_max) * (0.75 if Global.is_easy_mode() else 1.25)
 		var dog_data:Dictionary = {
 			"sprite":sprite,
 			"position":Vector2(spawn_x, spawn_y),
@@ -1709,7 +1725,7 @@ func resolve_player_hit_minions(kick:bool, is_special:bool = false) -> bool:
 						minion.recovery_time = 0.45
 						minion.cooldown = randf_range(2.5, 4.0)
 						minion.flash_modulate = null
-			if minion_hit_sound:
+			if kick && minion_hit_sound:
 				minion_hit_sound.pitch_scale = 0.7 if is_special else randf_range(0.85, 1.15)
 				minion_hit_sound.play()
 			if minion.hp <= 0.0:
@@ -1902,10 +1918,11 @@ func build_action_buttons_hud() -> void:
 	if !hud_canvas:
 		return
 	action_buttons_panel = PanelContainer.new()
-	action_buttons_panel.position = Vector2(938, 498)
+	action_buttons_panel.position = Vector2(477, 340)
 	action_buttons_panel.size = Vector2(198, 134)
 	action_buttons_panel.z_index = 120
 	action_buttons_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+	action_buttons_panel.visible = false
 
 	var panel_box = StyleBoxFlat.new()
 	panel_box.bg_color = Color(0.015, 0.025, 0.05, 0.82)
@@ -1960,7 +1977,25 @@ func build_action_buttons_hud() -> void:
 	vbox.add_child(action_row_kick)
 	vbox.add_child(action_row_dash)
 	action_buttons_panel.add_child(vbox)
-	hud_canvas.add_child(action_buttons_panel)
+	pause_overlay.add_child(action_buttons_panel)
+
+func show_action_buttons_intro() -> void:
+	if !action_buttons_panel || !pause_overlay:
+		return
+	action_buttons_panel.reparent(hud_canvas)
+	action_buttons_panel.position = Vector2(477, 285)
+	action_buttons_panel.modulate.a = 0.0
+	action_buttons_panel.visible = true
+	var tween = create_tween().set_parallel(true)
+	tween.tween_property(action_buttons_panel, "modulate:a", 1.0, 0.3).set_delay(1.0)
+	tween.tween_property(action_buttons_panel, "position:y", 300.0, 0.45).set_delay(1.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(action_buttons_panel, "modulate:a", 0.0, 0.35).set_delay(4.2)
+	await tween.finished
+	if is_instance_valid(action_buttons_panel):
+		action_buttons_panel.reparent(pause_overlay)
+		action_buttons_panel.position = Vector2(477, 340)
+		action_buttons_panel.modulate.a = 1.0
+		action_buttons_panel.visible = false
 
 func _create_action_row(action_text:String, label_color:Color, key_tex:Texture2D, mouse_tex:Texture2D, pad_tex:Texture2D, is_space:bool) -> PanelContainer:
 	var row = PanelContainer.new()
@@ -2189,6 +2224,8 @@ func _process(delta:float) -> void:
 func toggle_battle_pause() -> void:
 	battle_paused = !battle_paused
 	pause_overlay.visible = battle_paused
+	if action_buttons_panel && action_buttons_panel.get_parent() == pause_overlay:
+		action_buttons_panel.visible = battle_paused
 	if battle_paused:
 		var pause_audio := pause_overlay.get_node_or_null("PauseAudio") as AudioStreamPlayer
 		if is_instance_valid(pause_audio):
@@ -2573,7 +2610,7 @@ func start_player_attack(kick:bool) -> void:
 	player.frame = 0
 	player.play(attack_name)
 	var attack_sound = kick_sound if kick else punch_sound
-	attack_sound.pitch_scale = randf_range(0.96, 1.12) if !kick else randf_range(0.94, 1.06)
+	attack_sound.pitch_scale = randf_range(1.24, 1.42) if !kick else randf_range(0.94, 1.06)
 	attack_sound.play()
 	spawn_impact(player_position + Vector2(60.0 * player_facing, -35), Color("ffd166"), player_facing)
 	resolve_player_hit(kick)
@@ -2631,12 +2668,16 @@ func resolve_player_hit(kick:bool) -> void:
 		if !enemy_was_attacking:
 			enemy.play("pain")
 		enemy_pressure += 2 if kick else 1
-		hit_sound.pitch_scale = 0.72 if is_special else randf_range(0.9, 1.13)
-		hit_sound.play()
+		if kick:
+			hit_sound.pitch_scale = 0.72 if is_special else randf_range(0.9, 1.13)
+			hit_sound.play()
 		if enemy_hp <= 0.0:
 			defeat_enemy()
 
 	var hit_minions = resolve_player_hit_minions(kick, is_special)
+	if !kick && (hit_enemy || hit_minions):
+		hit_sound.pitch_scale = 0.72 if is_special else randf_range(0.9, 1.13)
+		hit_sound.play()
 
 	# Atualizacao do texto de combo no HUD superior
 	combo_label.text = ("%d HITS!\n%s" % [combo, tr("BATTLE_SPECIAL")]) if is_special else ("%d HIT\nCOMBO" % combo)
@@ -2932,6 +2973,9 @@ func damage_player(damage:float, hit_direction:float) -> void:
 		lose_battle()
 
 func defeat_enemy() -> void:
+	if enemy_id == "1001" && !seco_second_phase:
+		start_seco_second_phase()
+		return
 	enemy_dead = true
 	enemy_hit_pending = false
 	clear_power_projectiles()
@@ -2952,7 +2996,7 @@ func defeat_enemy() -> void:
 	enemy_death_sound.play()
 	if enemy_id != "1001":
 		victory_sound.play()
-	Engine.time_scale = 0.24
+	Engine.time_scale = 0.16 if enemy_id == "1001" else 0.24
 	restore_normal_time_after_explosion()
 	spawn_blood_explosion(enemy_position + Vector2(0, -45), 96)
 	for index in range(7):
@@ -2962,9 +3006,75 @@ func defeat_enemy() -> void:
 		s_pos.y = clampf(s_pos.y, MIN_Y + 12.0, MAX_Y + 15.0)
 		stains.append({"position":s_pos, "radius":randf_range(16.0, 34.0), "alpha":randf_range(0.68, 0.94)})
 	shake(22.0, 0.72)
-	enemy_explosion_time = 0.92
+	enemy_explosion_time = 1.5 if enemy_id == "1001" else 0.92
 	status_label.text = tr("BATTLE_BLOOD_EXPLOSION")
+	if enemy_id == "1001":
+		show_final_seco_victory()
 	defeat_all_minions()
+
+func start_seco_second_phase() -> void:
+	seco_second_phase = true
+	seco_dog_respawn_timer = 0.45
+	enemy_hp = enemy_max_hp * 0.75
+	enemy_attack_time = 0.0
+	enemy_attack_hit_time = 0.0
+	enemy_hit_pending = false
+	enemy_cooldown = 1.4
+	enemy_power_cooldown = 2.4
+	enemy_behavior = "retreat"
+	enemy_behavior_time = 1.1
+	clear_power_projectiles()
+	defeat_all_minions()
+	enemy.play("pain")
+	status_label.text = tr("BATTLE_SECO_REVIVED")
+	show_seco_revival_effect()
+	shake(20.0, 0.85)
+
+func show_seco_revival_effect() -> void:
+	var effect = Control.new()
+	effect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	effect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	effect.z_index = 2300
+	hud_canvas.add_child(effect)
+	var flash = ColorRect.new()
+	flash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	flash.color = Color(0.08, 0.55, 1.0, 0.0)
+	effect.add_child(flash)
+	var flash_tween = create_tween()
+	flash_tween.tween_property(flash, "color:a", 0.72, 0.18)
+	flash_tween.tween_property(flash, "color:a", 0.0, 1.15)
+	for index in range(96):
+		var particle = ColorRect.new()
+		var size_value = randf_range(3.0, 11.0)
+		particle.size = Vector2(size_value, size_value)
+		particle.position = Vector2(576.0, 324.0)
+		particle.color = Color("6ee7ff") if index % 3 else Color.WHITE
+		particle.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		effect.add_child(particle)
+		var target = Vector2(randf_range(-25.0, 1175.0), randf_range(-25.0, 675.0))
+		var particle_tween = create_tween().set_parallel(true)
+		particle_tween.tween_property(particle, "position", target, randf_range(0.65, 1.45)).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		particle_tween.tween_property(particle, "modulate:a", 0.0, randf_range(0.6, 1.25)).set_delay(0.28)
+	flash_tween.chain().tween_callback(effect.queue_free)
+
+func show_final_seco_victory() -> void:
+	var victory_label = Label.new()
+	victory_label.set_anchors_preset(Control.PRESET_CENTER)
+	victory_label.position = Vector2(-420, -62)
+	victory_label.size = Vector2(840, 124)
+	victory_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	victory_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	victory_label.text = tr("BATTLE_YOU_WIN")
+	victory_label.add_theme_font_size_override("font_size", 76)
+	victory_label.add_theme_color_override("font_color", Color("c8f7ff"))
+	victory_label.add_theme_color_override("font_outline_color", Color("123a72"))
+	victory_label.add_theme_constant_override("outline_size", 12)
+	victory_label.z_index = 2400
+	victory_label.modulate.a = 0.0
+	hud_canvas.add_child(victory_label)
+	var tween = create_tween().set_parallel(true)
+	tween.tween_property(victory_label, "modulate:a", 1.0, 0.55)
+	tween.tween_property(victory_label, "scale", Vector2(1.1, 1.1), 0.55).from(Vector2(0.55, 0.55)).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func update_enemy_explosion(delta:float) -> void:
 	if exit_open:
@@ -2977,7 +3087,7 @@ func update_enemy_explosion(delta:float) -> void:
 		status_label.text = tr("BATTLE_PATH_CLEARED")
 
 func restore_normal_time_after_explosion() -> void:
-	await get_tree().create_timer(1.15, true, false, true).timeout
+	await get_tree().create_timer(3.2 if enemy_id == "1001" else 1.15, true, false, true).timeout
 	Engine.time_scale = 1.0
 
 func lose_battle() -> void:

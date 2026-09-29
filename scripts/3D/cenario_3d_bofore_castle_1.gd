@@ -15,11 +15,17 @@ var fim_cenario_3d:bool = false
 
 func _ready() -> void:
 	GameSongs.stop(1)
+	# As paredes já possuem colisores manuais. Desabilita os duplicados gerados
+	# pelos CSGs, que criavam degraus invisíveis e prendiam o jogador nas quinas.
+	for wall in $paredes.get_children():
+		if wall is CSGBox3D:
+			wall.use_collision = false
 	
 	label_3d.text = tr("LABEL_YOU_SUCK")
 	msg_prompt.text = tr("PROMPT_CLIMB_STAIRS")
 	
 	var player = get_tree().get_first_node_in_group("player")
+	player.safe_margin = 0.06
 	player.get_node("hud_canvas").get_node("maycon_hp").visible = false
 	player.get_node("hud_canvas").get_node("control_gun").visible = false
 	

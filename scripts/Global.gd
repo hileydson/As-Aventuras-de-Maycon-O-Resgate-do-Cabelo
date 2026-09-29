@@ -47,6 +47,7 @@ var realtime_return_player_position:Vector2 = Vector2.ZERO
 var realtime_return_position_valid:bool = false
 var realtime_restore_pending:bool = false
 var realtime_restore_frames:int = 0
+var realtime_controls_hint_seen:bool = false
 var last_fase = "fase_1"
 var block_pause_before_prologo = false
 #var before_prologo:bool = false #TESTE - correto eh TRUE

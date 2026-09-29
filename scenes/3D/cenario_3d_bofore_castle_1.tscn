@@ -42,11 +42,15 @@ albedo_color = Color(0.504789, 0.27394813, 4.813075e-08, 1)
 albedo_texture = ExtResource("2_axo0a")
 uv1_scale = Vector3(5, 5, 5)
 uv1_triplanar = true
+uv1_world_triplanar = true
+uv1_triplanar_sharpness = 1.4
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_axo0a"]
 albedo_texture = ExtResource("2_axo0a")
 uv1_scale = Vector3(5, 5, 5)
 uv1_triplanar = true
+uv1_world_triplanar = true
+uv1_triplanar_sharpness = 1.4
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_yiv82"]
 size = Vector3(0.09413147, 1, 0.7709961)
