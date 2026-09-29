@@ -347,9 +347,6 @@ func _bake_elevated_areas(geometry: Node3D) -> void:
 		var balcony := hub + Vector3(side * 11.0, 4.1, -4.0)
 		_bake_platform(balcony, Vector2(7.0, 7.0), "grass", hub_elev)
 		_bake_asset("star", balcony + Vector3.UP * 1.1, 1.6, 0.0, hub_elev)
-		for step in range(2):
-			var overlook := hub + Vector3(side * (13.0 + float(step) * 4.1), 4.1 - float(step) * 0.7, -4.0 - float(step) * 3.3)
-			_bake_platform(overlook, Vector2(3.4, 3.4), "stone", hub_elev)
 
 func _bake_finish(geometry: Node3D, root: Node3D) -> void:
 	var finish_group := Node3D.new()

@@ -11,15 +11,16 @@ var played:bool = false
 func _ready() -> void:
 	heal_hint = Label.new()
 	heal_hint.text = tr("BLOOD_FIRE_HEAL_HINT")
-	heal_hint.position = Vector2(-150.0, -72.0)
-	heal_hint.size = Vector2(300.0, 44.0)
+	heal_hint.position = sangue_sprite.position + Vector2(-220.0, -136.0)
+	heal_hint.size = Vector2(440.0, 76.0)
 	heal_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	heal_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	heal_hint.add_theme_font_size_override("font_size", 17)
+	heal_hint.add_theme_font_size_override("font_size", 28)
 	heal_hint.add_theme_color_override("font_color", Color("ffd4a3"))
 	heal_hint.add_theme_color_override("font_shadow_color", Color(0.08, 0.01, 0.0, 0.95))
 	heal_hint.add_theme_constant_override("shadow_offset_x", 2)
 	heal_hint.add_theme_constant_override("shadow_offset_y", 2)
+	heal_hint.z_index = 4
 	heal_hint.visible = false
 	add_child(heal_hint)
 

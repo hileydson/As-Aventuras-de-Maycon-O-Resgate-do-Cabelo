@@ -279,6 +279,7 @@ func _build_all_procedural() -> void:
 func _bind_baked_scene() -> void:
 	geometry = $Cenario
 	_remove_embedded_hub_blocks()
+	_remove_elevated_stone_overlooks()
 	_build_distant_skyline()
 
 	hazards = get_node_or_null("Armadilhas")
@@ -371,6 +372,25 @@ func _remove_embedded_hub_blocks() -> void:
 		for child in hub.get_children():
 			if child.scene_file_path.ends_with("block-grass-large.glb"):
 				child.queue_free()
+
+func _remove_elevated_stone_overlooks() -> void:
+	var elevated_areas := geometry.get_node_or_null("AreasElevadas")
+	if not elevated_areas:
+		return
+	for hub_index in range(1, HUBS.size() - 1):
+		var hub: Vector3 = HUBS[hub_index]
+		var side := -1.0 if hub.x < 0.0 else 1.0
+		var overlap_platforms := [
+			hub + Vector3(side * 13.0, 4.1, -4.0),
+			hub + Vector3(side * 17.1, 3.4, -7.3),
+		]
+		for elevated_hub in elevated_areas.get_children():
+			for child in elevated_hub.get_children():
+				for top in overlap_platforms:
+					var base_position: Vector3 = top - Vector3.UP * 0.75
+					var surface_position: Vector3 = top + Vector3.UP * 0.09
+					if child.global_position.distance_to(base_position) < 0.05 or child.global_position.distance_to(surface_position) < 0.05:
+						child.queue_free()
 
 func _build_distant_skyline() -> void:
 	if has_node("DistantCitySkyline"):
@@ -564,9 +584,6 @@ func _build_elevated_areas() -> void:
 		var balcony := hub + Vector3(side * 11.0, 4.1, -4.0)
 		_platform(balcony, Vector2(7.0, 7.0), "grass")
 		_asset("star", balcony + Vector3.UP * 1.1, 1.6)
-		for step in range(2):
-			var overlook := hub + Vector3(side * (13.0 + float(step) * 4.1), 4.1 - float(step) * 0.7, -4.0 - float(step) * 3.3)
-			_platform(overlook, Vector2(3.4, 3.4), "stone")
 
 func _build_finish() -> void:
 	# The final flag surrounds a real opening; only the side and end caps are solid.

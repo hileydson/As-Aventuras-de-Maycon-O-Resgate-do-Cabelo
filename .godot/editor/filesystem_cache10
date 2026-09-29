@@ -4141,7 +4141,7 @@ realtime_battle_background.gd::GDScript::3540749457985720226::1790640200::0::1::
 realtime_battle_blood_drop.gd::GDScript::4138522092762905264::1790563197::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_foreground.gd::GDScript::2882700291306978348::1790563197::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle_specials.gd::GDScript::594959556313240947::1790563197::0::1::::<>Node2D<><>0<>0<><>::
-sangue_fill.gd::GDScript::6760165581029737568::1790638943::0::1::::<>Area2D<><>0<>0<><>::
+sangue_fill.gd::GDScript::6760165581029737568::1790644682::0::1::::<>Area2D<><>0<>0<><>::
 seco.gd::GDScript::1005395561379310119::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 secos_invader.gd::GDScript::6531996241197983491::1790643900::0::1::::<>Node2D<><>0<>0<><>::
 secos_invader_fireball.gd::GDScript::7217228280048919060::1790563197::0::1::::<>Node2D<><>0<>0<><>::
@@ -4172,7 +4172,7 @@ inimigo_3d_default.gd::GDScript::8339874909618318337::1790630253::0::1::::<>Char
 inimigo_bomba_pretti_3d.gd::GDScript::1560456019525848244::1769970166::0::1::::<>CharacterBody3D<><>0<>0<><>::
 lamp.gd::GDScript::7790728560667219145::1770063258::0::1::::<>Area3D<><>0<>0<><>::
 last_part_before_end.gd::GDScript::5006405053871241004::1790642074::0::1::::<>Node3D<><>0<>0<><>::
-maycon_platform_3d.gd::GDScript::1218032320144234282::1790641542::0::1::::<>Node3D<><>0<>0<><>::
+maycon_platform_3d.gd::GDScript::1218032320144234282::1790644181::0::1::::<>Node3D<><>0<>0<><>::
 object_3d.gd::GDScript::9078826269963351129::1769912058::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d.gd::GDScript::7171831727451377016::1790563197::0::1::::<>Node3D<><>0<>0<><>::
 pause_3d_moto_cidade.gd::GDScript::6726714682699407671::1790563197::0::1::::<>Node3D<><>0<>0<><>::
@@ -4209,7 +4209,7 @@ inimigo_xuruzika.gd::GDScript::3730474420872568580::1790563197::0::1::::<>Animat
 ::res://scripts/menus/::1790563197
 configuracoes_dialog.gd::GDScript::5435864756212849056::1790637545::0::1::::<>CanvasLayer<><>0<>0<><>::
 ::res://scripts/tools/::1790563197
-bake_platform_scene.gd::GDScript::5181919851487842878::1790641525::0::1::::<>SceneTree<><>0<>1<><>::
+bake_platform_scene.gd::GDScript::5181919851487842878::1790644158::0::1::::<>SceneTree<><>0<>1<><>::
 ::res://scripts/ui/::1790563197
 menu_sound_controller.gd::GDScript::2657661350508022770::1790563197::0::1::::<>Node<><>0<>0<><>::
 pause_visual.gd::GDScript::416433903312413180::1790563197::0::1::::PauseVisual<>RefCounted<><>0<>0<><>::
