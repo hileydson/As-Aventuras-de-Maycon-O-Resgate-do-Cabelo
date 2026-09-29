@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1790711499
+::res://::1790711646
 AGENTS.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
 export_presets.cfg::TextFile::-1::1790563197::0::1::::<><><>0<>0<><>::
@@ -695,8 +695,8 @@ palhaco_normal.png::CompressedTexture2D::7662784965246944601::1790694032::179069
 palhaco_olho.glb::PackedScene::7255893231047367798::1790695292::1790695391::1::::<><><>0<>0<>0b7832919163462c5745927ce15549d8<>res://.godot/imported/palhaco_olho.glb-16cdf0bb62da35c2eacd7f2b09448e46.scn::uid://cnbpadf3pwayf::::res://assets/modelo_3d/calabouco/palhaco_olho_palhaco_olho_sclera_basecolor.png<>uid://bc8cd2rhmtwj0::::res://assets/modelo_3d/calabouco/palhaco_olho_palhaco_olho_iris_basecolor.png
 palhaco_olho_iris_basecolor.png::CompressedTexture2D::5211240461240357526::1790695228::1790695418::1::::<><><>0<>0<>2253e82e8791fbc5f53b5c06460b6c09<>res://.godot/imported/palhaco_olho_iris_basecolor.png-ec9bb19c7f0b136a1e4d57fc156cff55.s3tc.ctex<*>res://.godot/imported/palhaco_olho_iris_basecolor.png-ec9bb19c7f0b136a1e4d57fc156cff55.etc2.ctex::
 palhaco_olho_iris_mat.tres::StandardMaterial3D::2105039015487926138::1790695417::0::1::::<><><>0<>0<><>::uid://cgimmsufhm3fm::::res://assets/modelo_3d/calabouco/palhaco_olho_iris_basecolor.png
-palhaco_olho_palhaco_olho_iris_basecolor.png::CompressedTexture2D::3244755639555792730::1790696166::1790696172::1::::<><><>0<>0<>96236290013dfefaad1054519c2ce81e<>res://.godot/imported/palhaco_olho_palhaco_olho_iris_basecolor.png-59ffbfe28e400eee5b1f40481357a0d6.ctex::
-palhaco_olho_palhaco_olho_sclera_basecolor.png::CompressedTexture2D::1782246431456797980::1790696166::1790696172::1::::<><><>0<>0<>58a497bae7f5c3de34fb64a94d32ed73<>res://.godot/imported/palhaco_olho_palhaco_olho_sclera_basecolor.png-b699c23e53b4d85b8cdf9ee30ccf7db6.ctex::
+palhaco_olho_palhaco_olho_iris_basecolor.png::CompressedTexture2D::3244755639555792730::1790696166::1790711661::1::::<><><>0<>0<>52007c8f402710bf9bedb2827cab6b14<>res://.godot/imported/palhaco_olho_palhaco_olho_iris_basecolor.png-59ffbfe28e400eee5b1f40481357a0d6.s3tc.ctex<*>res://.godot/imported/palhaco_olho_palhaco_olho_iris_basecolor.png-59ffbfe28e400eee5b1f40481357a0d6.etc2.ctex::
+palhaco_olho_palhaco_olho_sclera_basecolor.png::CompressedTexture2D::1782246431456797980::1790696166::1790711661::1::::<><><>0<>0<>689930291e5a7eb5b855ead1b92b36e9<>res://.godot/imported/palhaco_olho_palhaco_olho_sclera_basecolor.png-b699c23e53b4d85b8cdf9ee30ccf7db6.s3tc.ctex<*>res://.godot/imported/palhaco_olho_palhaco_olho_sclera_basecolor.png-b699c23e53b4d85b8cdf9ee30ccf7db6.etc2.ctex::
 palhaco_olho_sclera_basecolor.png::CompressedTexture2D::8094671174977834327::1790695203::1790695417::1::::<><><>0<>0<>747474bab54558bd75606162137ab630<>res://.godot/imported/palhaco_olho_sclera_basecolor.png-faf5530d5b13889a126f9e0ede28cd44.s3tc.ctex<*>res://.godot/imported/palhaco_olho_sclera_basecolor.png-faf5530d5b13889a126f9e0ede28cd44.etc2.ctex::
 palhaco_olho_sclera_mat.tres::StandardMaterial3D::3457442593960403335::1790695416::0::1::::<><><>0<>0<><>::uid://dnleb0wkpqct0::::res://assets/modelo_3d/calabouco/palhaco_olho_sclera_basecolor.png
 service_pistol_4k.glb::PackedScene::2727479925653677239::1790563197::1790700020::1::::<><><>0<>0<>639ecaeb79305b6509290c7728a9ad2a<>res://.godot/imported/service_pistol_4k.glb-300228342101fdacdb18bcf918a81819.scn::uid://bylf2e380fx1p::::res://assets/modelo_3d/calabouco/service_pistol_4k_service_pistol_diff_4k.jpg<>uid://01okg8prhvtc::::res://assets/modelo_3d/calabouco/service_pistol_4k_service_pistol_metal-service_pistol_rough.png<>uid://2nouwwtb5p6j::::res://assets/modelo_3d/calabouco/service_pistol_4k_service_pistol_nor_gl.png
@@ -4248,7 +4248,7 @@ terrain3d_00_00.res::Terrain3DRegion::4948174298051947078::1770136386::0::1::::<
 ::res://tests/::1790693723
 inspect_head_bones.gd::GDScript::2178062246225173415::1790563197::0::1::::<>SceneTree<><>0<>0<><>::
 verify_maycon_fp_body.gd::GDScript::6710687674176764627::1790563197::0::1::::<>SceneTree<><>0<>0<><>::
-::res://translations/::1790711319
+::res://translations/::1790711544
 game_text.csv::Translation::1292654866392114924::1790711310::1790711544::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
 game_text.en.translation::OptimizedTranslation::1712006235640866847::1790711544::0::1::::<><><>0<>0<><>::
 game_text.es.translation::OptimizedTranslation::9151324834628544493::1790711544::0::1::::<><><>0<>0<><>::

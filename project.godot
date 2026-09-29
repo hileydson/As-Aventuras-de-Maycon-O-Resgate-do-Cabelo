@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="As Aventuras de Maycon"
-config/version="4.2"
+config/version="5.5"
 run/main_scene="uid://myxkcfyi401t"
 config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/show_image=false
@@ -32,6 +32,7 @@ _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [display]
 
+window/size/mode=3
 window/stretch/mode="viewport"
 window/version="4.2"
 
