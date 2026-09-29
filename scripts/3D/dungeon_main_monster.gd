@@ -216,7 +216,7 @@ func build_body() -> void:
 		grab_anchor.position = Vector3(0.45, 2.0, -0.9)
 		add_child(grab_anchor)
 
-	step_audio = make_audio(STEP_SOUND, -4.0, 30.0, 9.0)
+	step_audio = make_audio(STEP_SOUND, 1.5, 30.0, 11.0)
 	pain_audio = make_audio(PAIN_SOUND, 2.0, 30.0, 9.0)
 	roar_audio = make_audio(ROAR_1, 2.0, 38.0, 10.0)
 	attack_audio = make_audio(ATTACK_1, -2.0, 34.0)

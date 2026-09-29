@@ -89,7 +89,7 @@ surface_material_override/0 = ExtResource("3_m15dn")
 surface_material_override/1 = ExtResource("4_4wqvm")
 
 [node name="palhaco_olho2" parent="." index="2" unique_id=1681096324 instance=ExtResource("2_51m2u")]
-transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0.388, -9.738, -0.213)
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0.388, -9.738, -0.283)
 
 [node name="sclera cornea2" type="MeshInstance3D" parent="palhaco_olho2" index="0" unique_id=1936798349]
 transform = Transform3D(0.008177652, -1.72335e-05, 6.238799e-13, 0, -4.3160944e-10, -0.008177663, 1.4272712e-05, 0.009874058, -3.5745645e-10, -0.057570614, 0.984, 0.087043464)

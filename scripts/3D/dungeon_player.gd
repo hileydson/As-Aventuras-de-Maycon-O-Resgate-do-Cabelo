@@ -113,9 +113,8 @@ func _ready() -> void:
 	add_child(reload_audio)
 	
 	dry_fire_audio = AudioStreamPlayer.new()
-	dry_fire_audio.stream = load("res://assets/novos_audios/pause_sfxr.wav")
-	dry_fire_audio.volume_db = -6.0
-	dry_fire_audio.pitch_scale = 1.8
+	dry_fire_audio.stream = load("res://assets/novos_audios/gun_dry_fire_click.mp3")
+	dry_fire_audio.volume_db = -4.0
 	add_child(dry_fire_audio)
 	
 	build_flashlight_reflection()
