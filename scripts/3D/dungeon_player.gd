@@ -27,7 +27,6 @@ const MAYCON_AIR_FLAIL:Resource = preload("res://assets/novas_imagens/3d_enemies
 
 signal interact_pressed
 signal fired(origin:Vector3, direction:Vector3)
-signal flashlight_toggled(enabled:bool)
 signal ammo_changed(current:int, reserve:int, weapon_name:String)
 signal reload_started
 signal reload_finished
@@ -132,9 +131,7 @@ func _unhandled_input(event:InputEvent) -> void:
 	var is_pressed_event:bool = (event is InputEventKey || event is InputEventMouseButton || event is InputEventJoypadButton) && event.pressed
 	if !is_pressed_event || event.is_echo():
 		return
-	if (event is InputEventMouseButton && event.button_index == MOUSE_BUTTON_RIGHT) || (event is InputEventJoypadButton && event.button_index == JOY_BUTTON_Y):
-		toggle_flashlight()
-	elif (event is InputEventKey && event.physical_keycode == KEY_E) || (event is InputEventJoypadButton && event.button_index == JOY_BUTTON_A):
+	if (event is InputEventKey && event.physical_keycode == KEY_E) || (event is InputEventJoypadButton && event.button_index == JOY_BUTTON_A):
 		interact_pressed.emit()
 	elif (event is InputEventKey && event.physical_keycode == KEY_R) || (event is InputEventJoypadButton && (event.button_index == JOY_BUTTON_B || event.button_index == JOY_BUTTON_X)):
 		start_reload()
@@ -246,8 +243,7 @@ func is_sprint_pressed() -> bool:
 
 func set_flashlight_available(value:bool) -> void:
 	has_flashlight = value
-	if !value:
-		flashlight_on = false
+	flashlight_on = value
 	flashlight.visible = flashlight_on
 	flashlight_spill.visible = flashlight_on
 
@@ -266,14 +262,6 @@ func set_weapon(mode:String) -> void:
 		gun_view.visible = has_gun
 		update_view_gun()
 	ammo_changed.emit(get_current_clip(), get_current_reserve(), weapon_mode)
-
-func toggle_flashlight() -> void:
-	if !has_flashlight:
-		return
-	flashlight_on = !flashlight_on
-	flashlight.visible = flashlight_on
-	flashlight_spill.visible = flashlight_on
-	flashlight_toggled.emit(flashlight_on)
 
 func build_flashlight_reflection() -> void:
 	var overlay_layer := CanvasLayer.new()

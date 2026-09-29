@@ -83,12 +83,12 @@ func _configurar_audio() -> void:
 	if riso_stream:
 		if riso_stream is AudioStreamMP3:
 			riso_stream.loop = true
-		var audio_riso := _criar_audio(riso_stream, -1.0, 40.0)
+		var audio_riso := _criar_audio(riso_stream, 9.0, 40.0)
 		audio_riso.play()
 
 	var eventual_stream: AudioStream = load(PASTA_AUDIOS + "palhaco_%d_eventual.mp3" % numero_palhaco)
 	if eventual_stream:
-		var audio_eventual := _criar_audio(eventual_stream, 0.0, 42.0)
+		var audio_eventual := _criar_audio(eventual_stream, 10.0, 42.0)
 		_tocar_som_eventual_em_loop(audio_eventual)
 
 # O áudio fica na raiz, e não nos nós dos olhos: a origem de palhaco_olho tem um
@@ -100,7 +100,7 @@ func _criar_audio(stream: AudioStream, volume_db: float, max_distance: float) ->
 	audio.stream = stream
 	audio.volume_db = volume_db
 	audio.max_distance = max_distance
-	audio.unit_size = 6.0
+	audio.unit_size = 12.0
 	add_child(audio)
 	return audio
 

@@ -719,7 +719,6 @@ func build_player() -> void:
 	add_child(player)
 	player.interact_pressed.connect(on_interact_pressed)
 	player.fired.connect(on_player_fired)
-	player.flashlight_toggled.connect(func(_enabled:bool): update_hud())
 
 func build_pickups() -> void:
 	if find_child("AxeCellDoor", true, false) != null or find_child("FlashlightPickup", true, false) != null:
@@ -1946,7 +1945,6 @@ func collect_pickup(pickup_name:String) -> void:
 		"flashlight":
 			Global.game_events["dungeon_flashlight_taken"] = true
 			player.set_flashlight_available(true)
-			player.toggle_flashlight()
 			show_pickup_notice(tr("DUNGEON_ITEM_FLASHLIGHT"))
 		"blue_key":
 			Global.game_events["dungeon_blue_key_taken"] = true
