@@ -24,6 +24,14 @@ var rotacao_base_y: float
 var basis_repouso_olho_esquerdo: Basis
 var basis_repouso_olho_direito: Basis
 
+# A malha da bolinha do olho não é centralizada na origem do nó (o centro
+# geométrico real fica deslocado dentro do mesh). Girar em torno da origem
+# do nó faz a bola "sair do lugar" — por isso giramos em torno do centro
+# verdadeiro da esfera, guardado aqui em coordenadas do mundo (fixo).
+var centro_local_olho: Vector3
+var centro_mundo_olho_esquerdo: Vector3
+var centro_mundo_olho_direito: Vector3
+
 # Direção (mundo) para onde a íris aponta em repouso: a mesma direção que
 # o palhaço encara ao nascer. É a partir dela que medimos o quanto o olho
 # precisa girar para encarar o player.
@@ -40,6 +48,10 @@ func _ready() -> void:
 
 	basis_repouso_olho_esquerdo = olho_esquerdo.global_transform.basis
 	basis_repouso_olho_direito = olho_direito.global_transform.basis
+
+	centro_local_olho = (olho_esquerdo as MeshInstance3D).mesh.get_aabb().get_center()
+	centro_mundo_olho_esquerdo = olho_esquerdo.global_transform * centro_local_olho
+	centro_mundo_olho_direito = olho_direito.global_transform * centro_local_olho
 
 	_configurar_audio()
 
@@ -84,8 +96,8 @@ func _physics_process(delta: float) -> void:
 		return
 
 	_girar_cabeca_para_player(delta)
-	quat_delta_olho_esquerdo = _olho_seguir_player(olho_esquerdo, basis_repouso_olho_esquerdo, quat_delta_olho_esquerdo, delta)
-	quat_delta_olho_direito = _olho_seguir_player(olho_direito, basis_repouso_olho_direito, quat_delta_olho_direito, delta)
+	quat_delta_olho_esquerdo = _olho_seguir_player(olho_esquerdo, basis_repouso_olho_esquerdo, centro_mundo_olho_esquerdo, quat_delta_olho_esquerdo, delta)
+	quat_delta_olho_direito = _olho_seguir_player(olho_direito, basis_repouso_olho_direito, centro_mundo_olho_direito, quat_delta_olho_direito, delta)
 
 func _buscar_player_mais_proximo() -> Node3D:
 	# Cenas padrão colocam o player no grupo "player" (suporte a multiplayer)
@@ -122,8 +134,8 @@ func _girar_cabeca_para_player(delta: float) -> void:
 	var angulo_alvo = rotacao_base_y + diferenca
 	rotation.y = lerp_angle(rotation.y, angulo_alvo, velocidade_rotacao_cabeca * delta)
 
-func _olho_seguir_player(olho: Node3D, basis_repouso: Basis, quat_delta_atual: Quaternion, delta: float) -> Quaternion:
-	var para_player = player.global_position - olho.global_position
+func _olho_seguir_player(olho: Node3D, basis_repouso: Basis, centro_mundo: Vector3, quat_delta_atual: Quaternion, delta: float) -> Quaternion:
+	var para_player = player.global_position - centro_mundo
 	if para_player.length() < 0.01:
 		return quat_delta_atual
 	var alvo_dir = para_player.normalized()
@@ -137,7 +149,16 @@ func _olho_seguir_player(olho: Node3D, basis_repouso: Basis, quat_delta_atual: Q
 	var nova_quat_delta = quat_delta_atual.slerp(quat_delta_alvo, peso)
 
 	var basis_alvo_mundo = Basis(nova_quat_delta) * basis_repouso
-	var basis_pai_mundo = olho.get_parent().global_transform.basis
-	olho.transform.basis = basis_pai_mundo.inverse() * basis_alvo_mundo
+	var pai_global = olho.get_parent().global_transform
+	var nova_basis_local = pai_global.basis.inverse() * basis_alvo_mundo
+
+	# A malha não é centralizada na origem do nó: para o centro real da
+	# esfera continuar exatamente no mesmo ponto do mundo (centro_mundo)
+	# depois de girar, recalculamos a posição local a partir dele, em vez
+	# de simplesmente deixar a origem do nó como está.
+	var centro_pai_local = pai_global.affine_inverse() * centro_mundo
+	var nova_origem_local = centro_pai_local - nova_basis_local * centro_local_olho
+
+	olho.transform = Transform3D(nova_basis_local, nova_origem_local)
 
 	return nova_quat_delta

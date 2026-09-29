@@ -216,9 +216,9 @@ func build_body() -> void:
 		grab_anchor.position = Vector3(0.45, 2.0, -0.9)
 		add_child(grab_anchor)
 
-	step_audio = make_audio(STEP_SOUND, -11.0, 30.0)
-	pain_audio = make_audio(PAIN_SOUND, -3.5, 30.0)
-	roar_audio = make_audio(ROAR_1, -2.0, 38.0)
+	step_audio = make_audio(STEP_SOUND, -4.0, 30.0, 9.0)
+	pain_audio = make_audio(PAIN_SOUND, 2.0, 30.0, 9.0)
+	roar_audio = make_audio(ROAR_1, 2.0, 38.0, 10.0)
 	attack_audio = make_audio(ATTACK_1, -2.0, 34.0)
 
 func apply_horror_materials() -> void:
@@ -244,12 +244,12 @@ func apply_horror_materials() -> void:
 	if is_instance_valid(eyes_mesh):
 		eyes_mesh.material_override = eye_material
 
-func make_audio(stream:AudioStream, volume_db:float, max_distance:float) -> AudioStreamPlayer3D:
+func make_audio(stream:AudioStream, volume_db:float, max_distance:float, unit_size:float = 5.0) -> AudioStreamPlayer3D:
 	var audio := AudioStreamPlayer3D.new()
 	audio.stream = stream
 	audio.volume_db = volume_db
 	audio.max_distance = max_distance
-	audio.unit_size = 5.0
+	audio.unit_size = unit_size
 	add_child(audio)
 	return audio
 
