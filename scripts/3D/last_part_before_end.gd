@@ -14,6 +14,9 @@ const STAGE_CABELO := 5
 const STAGE_CHASE := 6
 const FELLAS_CHASE_SCRIPT = preload("res://scripts/3D/fellas_chase.gd")
 const PENTAGRAM_ITEM_SCRIPT = preload("res://scripts/3D/pentagram_item_3d.gd")
+const MINIMAP_QUESTION_TEXTURE = preload("res://assets/novas_imagens/objects/interrogacao.png")
+const CITY_MINIMAP_SIZE := 180.0
+const CITY_MINIMAP_WORLD_SIZE := 360.0
 
 const PENTAGRAM_SPOTS: Array[Vector3] = [
 	Vector3(-410.0, -7.08, 730.0),  # 1. Reta de largada da perseguição (direto à frente na visão)
@@ -79,6 +82,9 @@ var city_pentagrams: Array[Node3D] = []
 var chase_member_health:Array[int] = []
 var city_minimap:Control
 var city_minimap_camera:Camera3D
+var city_minimap_markers:Array[Dictionary] = []
+var city_intro_finished:bool = false
+var city_minimap_pause_hidden:bool = false
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
@@ -108,6 +114,7 @@ func _ready() -> void:
 
 func start_wood_pickup_test() -> void:
 	cutscene_inicio.stop()
+	city_intro_finished = true
 	maycon_3d.process_mode = Node.PROCESS_MODE_INHERIT
 	luz_mapa.visible = false
 	player.set_final_game()
@@ -168,15 +175,16 @@ func build_city_minimap() -> void:
 	city_minimap = Control.new()
 	city_minimap.name = "CityMinimap"
 	city_minimap.position = Vector2(16.0, 16.0)
-	city_minimap.size = Vector2(180.0, 180.0)
+	city_minimap.size = Vector2.ONE * CITY_MINIMAP_SIZE
 	city_minimap.clip_contents = true
 	city_minimap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	city_minimap.visible = false
 	var layer := CanvasLayer.new()
 	layer.layer = 88
 	add_child(layer)
 	layer.add_child(city_minimap)
 	var background := ColorRect.new()
-	background.color = Color("20262d")
+	background.color = Color("3a424b")
 	background.size = city_minimap.size
 	city_minimap.add_child(background)
 	var viewport_container := SubViewportContainer.new()
@@ -193,15 +201,26 @@ func build_city_minimap() -> void:
 	city_minimap_camera = Camera3D.new()
 	city_minimap_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	city_minimap_camera.cull_mask = 1
-	city_minimap_camera.size = 360.0
+	city_minimap_camera.size = CITY_MINIMAP_WORLD_SIZE
 	city_minimap_camera.near = 0.5
 	city_minimap_camera.far = 260.0
 	viewport.add_child(city_minimap_camera)
 	city_minimap_camera.make_current()
+	var light_tint := ColorRect.new()
+	light_tint.color = Color(0.56, 0.53, 0.46, 0.56)
+	light_tint.size = city_minimap.size
+	light_tint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var tint_material := CanvasItemMaterial.new()
+	tint_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	light_tint.material = tint_material
+	city_minimap.add_child(light_tint)
 	var player_marker := Polygon2D.new()
 	player_marker.polygon = PackedVector2Array([Vector2(90.0, 72.0), Vector2(82.0, 92.0), Vector2(98.0, 92.0)])
 	player_marker.color = Color("54e6ff")
 	city_minimap.add_child(player_marker)
+	_add_city_minimap_marker(informant, [STAGE_INFORMANT])
+	_add_city_minimap_marker(fellas, [STAGE_FELLAS, STAGE_DISMOUNT, STAGE_FIGHT, STAGE_SURRENDER])
+	_add_city_minimap_marker(cabelo, [STAGE_CABELO])
 	var frame := Panel.new()
 	frame.size = city_minimap.size
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -212,13 +231,51 @@ func build_city_minimap() -> void:
 	frame.add_theme_stylebox_override("panel", frame_style)
 	city_minimap.add_child(frame)
 
+func _add_city_minimap_marker(target:Node3D, visible_stages:Array) -> void:
+	var marker := TextureRect.new()
+	marker.texture = MINIMAP_QUESTION_TEXTURE
+	marker.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	marker.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	marker.size = Vector2(24.0, 32.0)
+	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	marker.modulate = Color(1.0, 0.86, 0.28)
+	city_minimap.add_child(marker)
+	city_minimap_markers.append({"target": target, "icon": marker, "stages": visible_stages})
+
+func set_city_minimap_pause_hidden(hidden:bool) -> void:
+	city_minimap_pause_hidden = hidden
+	if is_instance_valid(city_minimap) && hidden:
+		city_minimap.visible = false
+
+func _city_minimap_should_be_visible() -> bool:
+	return city_intro_finished && !city_minimap_pause_hidden && !get_tree().paused && stage != STAGE_CHASE && !Global.in_cutscene && !is_instance_valid(balao_)
+
+func _update_city_minimap_markers() -> void:
+	var center := Vector2.ONE * CITY_MINIMAP_SIZE * 0.5
+	var pixels_per_meter := (CITY_MINIMAP_SIZE - 6.0) / CITY_MINIMAP_WORLD_SIZE
+	var edge := CITY_MINIMAP_SIZE * 0.5 - 21.0
+	for data in city_minimap_markers:
+		var marker:TextureRect = data["icon"]
+		var target:Node3D = data["target"]
+		marker.visible = is_instance_valid(target) && target.visible && stage in data["stages"]
+		if !marker.visible:
+			continue
+		var relative:Vector3 = player.global_basis.inverse() * (target.global_position - player.global_position)
+		var offset := Vector2(relative.x, relative.z) * pixels_per_meter
+		var distance_to_edge := maxf(absf(offset.x), absf(offset.y))
+		if distance_to_edge > edge:
+			offset *= edge / distance_to_edge
+		marker.position = center + offset - marker.size * 0.5
+		marker.scale = Vector2.ONE * (1.0 + sin(Time.get_ticks_msec() * 0.006) * 0.08)
+
 func _process(_delta:float) -> void:
 	if !is_instance_valid(city_minimap) || !is_instance_valid(city_minimap_camera) || !is_instance_valid(player):
 		return
-	city_minimap.visible = stage != STAGE_CHASE
+	city_minimap.visible = _city_minimap_should_be_visible()
 	if city_minimap.visible:
 		city_minimap_camera.global_position = player.global_position + Vector3(0.0, 105.0, 0.0)
 		city_minimap_camera.global_basis = Basis(Vector3.UP, player.rotation.y) * Basis(Vector3.RIGHT, -PI * 0.5)
+		_update_city_minimap_markers()
 
 func build_wood_debug_ui() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -423,6 +480,7 @@ func _on_area_3d_body_entered(body:Node3D) -> void:
 func _on_cutscene_inicio_animation_finished(anim_name:StringName) -> void:
 	if anim_name != "intro_mapa":
 		return
+	city_intro_finished = true
 	maycon_3d.process_mode = Node.PROCESS_MODE_INHERIT
 	luz_mapa.visible = false
 	fade.get_node("Transition").play("fade_in")

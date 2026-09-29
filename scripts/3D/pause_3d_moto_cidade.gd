@@ -72,6 +72,8 @@ func processa_pause_unpause()->void:
 			$"../maycon_3d/CharacterBody3D/mapa_maycon".visible = false
 			if get_parent().has_method("update_map_objectives"):
 				get_parent().update_map_objectives(false)
+		if get_parent().has_method("set_city_minimap_pause_hidden"):
+			get_parent().set_city_minimap_pause_hidden(false)
 		
 		if $camera_pause:
 			$camera_pause.current = false	
@@ -80,6 +82,8 @@ func processa_pause_unpause()->void:
 		control.visible = false
 		get_tree().paused = false
 	else:
+		if get_parent().has_method("set_city_minimap_pause_hidden"):
+			get_parent().set_city_minimap_pause_hidden(true)
 		if player:
 			player.get_node("hud_canvas").get_node("control_moto").visible = false
 			$"../maycon_3d/CharacterBody3D/mapa_maycon".visible = true

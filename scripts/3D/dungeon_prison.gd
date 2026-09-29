@@ -1430,7 +1430,9 @@ func apply_saved_state() -> void:
 		if event_is_true("dungeon_%s_lever" % stage) || event_is_true("dungeon_finale_triggered"):
 			activate_stage(stage, false)
 	if event_is_true("dungeon_green_key_taken"):
-		open_all_cells(false)
+		open_all_stage_doors("red", false)
+	if event_is_true("dungeon_key_taken"):
+		open_all_stage_doors("green", false)
 	if event_is_true("dungeon_axe_door_open") || has_axe_event():
 		open_door(axe_door, false)
 	if has_axe_event() && is_instance_valid(axe_pickup):
@@ -1960,11 +1962,11 @@ func collect_pickup(pickup_name:String) -> void:
 			show_pickup_notice(tr("DUNGEON_ITEM_RED_KEY"))
 		"green_key":
 			Global.game_events["dungeon_green_key_taken"] = true
-			open_all_cells(true)
+			open_all_stage_doors("red", true)
 			show_pickup_notice(tr("DUNGEON_ITEM_GREEN_KEY"))
 		"cell_key":
 			Global.game_events["dungeon_key_taken"] = true
-			open_all_cells(true)
+			open_all_stage_doors("green", true)
 			if is_instance_valid(main_monster):
 				main_monster.trigger_enrage_hunt()
 			show_pickup_notice(tr("DUNGEON_ITEM_CELL_KEY"))
