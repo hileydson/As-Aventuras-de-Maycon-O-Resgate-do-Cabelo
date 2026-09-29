@@ -27,6 +27,7 @@ var max_hp: int = 4
 var hp: int = 4
 var hurt_invulnerable_timer: float = 0.0
 var is_defeated: bool = false
+var cutscene_active: bool = false
 var hits_current_power: int = 0
 const MAX_HITS_PER_POWER: int = 2
 
@@ -317,6 +318,8 @@ func _build_smoke_effects() -> void:
 	air_trail_particles.emitting = false
 
 func _physics_process(delta: float) -> void:
+	if cutscene_active:
+		return
 	if is_defeated:
 		if model and not model.visible:
 			model.visible = true
@@ -352,6 +355,16 @@ func _physics_process(delta: float) -> void:
 			_process_flop(delta)
 		State.GET_UP:
 			_process_get_up(delta)
+
+func begin_death_cutscene() -> void:
+	cutscene_active = true
+	hurt_invulnerable_timer = 0.0
+	if is_instance_valid(target_indicator):
+		target_indicator.visible = false
+	if is_instance_valid(bottom_smoke_particles):
+		bottom_smoke_particles.emitting = false
+	if is_instance_valid(air_trail_particles):
+		air_trail_particles.emitting = false
 
 func _process_sit(delta: float) -> void:
 	state_timer -= delta

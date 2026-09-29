@@ -190,11 +190,11 @@ func _bake_environment(root: Node3D) -> void:
 	var pillars := Node3D.new()
 	pillars.name = "DistantPillars"
 	root.add_child(pillars)
-	for i in range(34):
-		var z := 55.0 - float(i) * 8.0
+	for i in range(48):
+		var z := 60.0 - float(i) * 7.5
 		for side in [-1.0, 1.0]:
-			var height := 8.0 + float((i * 7) % 9)
-			var pillar := _box_node(Vector3(side * (77.0 + float((i * 3) % 9)), -9.0 + height * 0.5, z), Vector3(8.0 + float(i % 3) * 3.0, height, 8.0), "stone_dark", false)
+			var height := 11.0 + float((i * 7) % 12) * 1.7
+			var pillar := _box_node(Vector3(side * (92.0 + float((i * 3) % 12)), -10.0 + height * 0.5, z), Vector3(10.0 + float(i % 4) * 3.0, height, 10.0 + float(i % 3) * 3.0), "stone_dark", false)
 			pillar.name = "Pilar_%d_%s" % [i, "L" if side < 0 else "R"]
 			pillars.add_child(pillar)
 
@@ -293,9 +293,6 @@ func _bake_hubs_and_routes(geometry: Node3D, hazards: Node3D, root: Node3D) -> v
 		hub_node.name = "Hub_%d" % i
 		hubs_group.add_child(hub_node)
 		_bake_platform(hub, size, "grass", hub_node)
-		for side in [-1.0, 1.0]:
-			for corner in [-1.0, 1.0]:
-				_bake_asset("block-grass-large", hub + Vector3(side * (size.x * 0.5 - 1.2), -0.2, corner * (size.y * 0.5 - 1.0)), 1.2, float(i) * 0.4, hub_node)
 
 	var routes_group := Node3D.new()
 	routes_group.name = "Rotas"

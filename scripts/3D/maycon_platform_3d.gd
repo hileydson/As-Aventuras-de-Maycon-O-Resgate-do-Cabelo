@@ -255,6 +255,7 @@ func _build_all_procedural() -> void:
 	geometry.name = "Cenario"
 	add_child(geometry)
 	_build_clouds()
+	_build_distant_skyline()
 	enemies = Node3D.new()
 	enemies.name = "Inimigos"
 	add_child(enemies)
@@ -277,6 +278,8 @@ func _build_all_procedural() -> void:
 
 func _bind_baked_scene() -> void:
 	geometry = $Cenario
+	_remove_embedded_hub_blocks()
+	_build_distant_skyline()
 
 	hazards = get_node_or_null("Armadilhas")
 	if not hazards:
@@ -359,6 +362,54 @@ func _bind_baked_scene() -> void:
 				var idx := child.name.replace("MaoEsmagadora_", "").to_int()
 				if child.has_method("setup"):
 					child.setup(self, maycon, idx)
+
+func _remove_embedded_hub_blocks() -> void:
+	var hubs := geometry.get_node_or_null("Hubs")
+	if not hubs:
+		return
+	for hub in hubs.get_children():
+		for child in hub.get_children():
+			if child.scene_file_path.ends_with("block-grass-large.glb"):
+				child.queue_free()
+
+func _build_distant_skyline() -> void:
+	if has_node("DistantCitySkyline"):
+		return
+	var skyline := Node3D.new()
+	skyline.name = "DistantCitySkyline"
+	add_child(skyline)
+
+	var window_material := StandardMaterial3D.new()
+	window_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	window_material.albedo_color = Color("8fd9e8")
+	window_material.emission_enabled = true
+	window_material.emission = Color("4ba7c0")
+	window_material.emission_energy_multiplier = 0.55
+
+	for side in [-1.0, 1.0]:
+		for index in range(26):
+			var z := 54.0 - float(index) * 10.5
+			var layer := float(index % 3)
+			var width := 10.0 + float((index * 5) % 7) * 1.8
+			var depth := 9.0 + float((index * 3) % 5) * 2.2
+			var height := 13.0 + float((index * 11) % 12) * 1.9
+			var x: float = side * (94.0 + layer * 17.0 + float((index * 7) % 6) * 2.4)
+			var building := MeshInstance3D.new()
+			var building_mesh := BoxMesh.new()
+			building_mesh.size = Vector3(width, height, depth)
+			building.mesh = building_mesh
+			building.material_override = materials["stone_dark"]
+			building.position = Vector3(x, -10.0 + height * 0.5, z)
+			skyline.add_child(building)
+
+			for row in range(2, int(height / 4.0)):
+				var window := MeshInstance3D.new()
+				var window_mesh := BoxMesh.new()
+				window_mesh.size = Vector3(2.0, 1.1, 0.12)
+				window.mesh = window_mesh
+				window.material_override = window_material
+				window.position = building.position + Vector3(-side * (width * 0.5 + 0.08), -height * 0.5 + float(row) * 3.2, 0.0)
+				skyline.add_child(window)
 
 func _build_environment() -> void:
 	var environment := Environment.new()
@@ -471,9 +522,6 @@ func _build_hubs_and_routes() -> void:
 		var hub:Vector3 = HUBS[i]
 		var size := Vector2(23.0, 20.0) if i == 0 or i == HUBS.size() - 1 else Vector2(19.0, 17.0)
 		_platform(hub, size)
-		for side in [-1.0, 1.0]:
-			for corner in [-1.0, 1.0]:
-				_asset("block-grass-large", hub + Vector3(side * (size.x * 0.5 - 1.2), -0.2, corner * (size.y * 0.5 - 1.0)), 1.2, float(i) * 0.4)
 	for route_index in range(ROUTES.size()):
 		var route:Vector2i = ROUTES[route_index]
 		var start:Vector3 = HUBS[route.x]
@@ -830,6 +878,8 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 	if cutscene_running:
 		return
 	cutscene_running = true
+	if lips_boss.has_method("begin_death_cutscene"):
+		lips_boss.call("begin_death_cutscene")
 
 	# 0. Imediatamente zerar contador de pentagramas e retirar o poder do pentagrama
 	Global.platform_pentagrams = 0
@@ -887,7 +937,7 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 		boss_name_label.add_theme_color_override("font_color", Color("66ff88"))
 
 	var p_start: Vector3 = lips_boss.global_position
-	var p_barrier: Vector3 = Vector3(0.0, 3.8, -193.2)
+	var p_barrier: Vector3 = Vector3(p_start.x, p_start.y, -193.2)
 
 	# 4. MEGA EXPLOSÃO no momento do impacto fatal (motivo de ser arremessado pra tão longe!)
 	_spawn_death_blast(p_start + Vector3(0.0, 1.4, 0.0))
@@ -925,23 +975,13 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 	if is_instance_valid(lips_boss) and "model" in lips_boss and is_instance_valid(lips_boss.model):
 		lips_boss.model.visible = true
 
-	# 6. Arremesso Lento do Lips impulsionado pela explosão em direção à cerca de madeira
+	# 6. Lips segue reto até a cerca, sem arco nem rotações que criem um segundo visual.
 	var flight_duration := 3.4
 	var flight_tw := create_tween()
 	flight_tw.tween_method(func(prog: float):
 		if not is_instance_valid(lips_boss):
 			return
-		var px := lerpf(p_start.x, p_barrier.x, prog)
-		var pz := lerpf(p_start.z, p_barrier.z, prog)
-		var base_y := lerpf(p_start.y, p_barrier.y, prog)
-		var arc_peak := maxf(p_start.y, 4.0) + 5.5
-		var py := base_y + sin(prog * PI) * arc_peak
-		lips_boss.global_position = Vector3(px, py, pz)
-
-		# Rotação lenta no ar
-		lips_boss.rotation.x = prog * TAU * 1.5
-		lips_boss.rotation.y += 0.03
-		lips_boss.rotation.z = sin(prog * TAU) * 0.45
+		lips_boss.global_position = p_start.lerp(p_barrier, prog)
 
 		# Câmera acompanha o Lips
 		if is_instance_valid(cutscene_cam):
@@ -964,6 +1004,7 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 	if is_instance_valid(lips_boss):
 		lips_boss.global_position = p_barrier
 
+	Engine.time_scale = 0.28
 	open_wooden_barrier()
 
 	# Tremor na câmera pelo impacto na cerca
@@ -974,6 +1015,8 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 			shake_tw.parallel().tween_property(cutscene_cam, "v_offset", randf_range(-0.5, 0.5), 0.03)
 		shake_tw.tween_property(cutscene_cam, "h_offset", 0.0, 0.05)
 		shake_tw.parallel().tween_property(cutscene_cam, "v_offset", 0.0, 0.05)
+	await get_tree().create_timer(0.7, true, false, true).timeout
+	Engine.time_scale = 1.0
 
 	# 8. CONTINUAÇÃO RUMO AO INFINITO: Lips não desvia nem cai no buraco da seta, continua voando pra frente no horizonte infinito!
 	if is_instance_valid(cutscene_cam):
@@ -983,10 +1026,6 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 	if is_instance_valid(lips_boss):
 		var infinite_tw := create_tween().set_parallel(true)
 		infinite_tw.tween_property(lips_boss, "global_position:z", -520.0, 2.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		infinite_tw.tween_property(lips_boss, "global_position:y", 14.0, 2.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		infinite_tw.tween_property(lips_boss, "global_position:x", 0.0, 2.4)
-		infinite_tw.tween_property(lips_boss, "rotation:x", lips_boss.rotation.x + 16.0, 2.4)
-		infinite_tw.tween_property(lips_boss, "rotation:z", lips_boss.rotation.z + 8.0, 2.4)
 		infinite_tw.tween_property(lips_boss, "scale", Vector3.ONE * 0.05, 2.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		if is_instance_valid(lips_boss) and lips_boss.get("scream_audio") != null:
 			var s_aud: AudioStreamPlayer3D = lips_boss.scream_audio
