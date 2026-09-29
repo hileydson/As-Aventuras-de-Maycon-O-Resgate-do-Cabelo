@@ -18,7 +18,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4o8hq"]
-size = Vector2(113, 67.375)
+size = Vector2(56.5, 33.6875)
 
 [node name="RigidBody2D" type="RigidBody2D"]
 collision_layer = 2
@@ -26,10 +26,11 @@ collision_mask = 6
 mass = 0.327
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(4.000002, -55.000004)
-scale = Vector2(9.7578125, 6.773438)
+position = Vector2(2, -27.5)
+scale = Vector2(4.87890625, 3.386719)
 sprite_frames = SubResource("SpriteFrames_0wrhj")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(4, 1)
+position = Vector2(2, 0.5)
 shape = SubResource("RectangleShape2D_4o8hq")
+

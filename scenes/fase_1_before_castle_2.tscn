@@ -723,40 +723,40 @@ autoplay = "default"
 [node name="objetos" type="Node2D" parent="." unique_id=1766949169]
 
 [node name="bloco" parent="objetos" unique_id=1852466627 instance=ExtResource("10_5fr62")]
-position = Vector2(907, 1010)
+position = Vector2(907, 1027)
 
 [node name="bloco2" parent="objetos" unique_id=941967098 instance=ExtResource("10_5fr62")]
-position = Vector2(904, 938)
+position = Vector2(904, 993)
 
 [node name="bloco3" parent="objetos" unique_id=1896054430 instance=ExtResource("10_5fr62")]
-position = Vector2(904, 868)
+position = Vector2(904, 959)
 
 [node name="bloco4" parent="objetos" unique_id=1358665110 instance=ExtResource("10_5fr62")]
-position = Vector2(905, 798)
+position = Vector2(905, 925)
 
 [node name="bloco7" parent="objetos" unique_id=1151144328 instance=ExtResource("10_5fr62")]
-position = Vector2(1118, 1010)
+position = Vector2(1118, 1027)
 
 [node name="bloco8" parent="objetos" unique_id=1116604548 instance=ExtResource("10_5fr62")]
-position = Vector2(1118, 939)
+position = Vector2(1118, 993)
 
 [node name="bloco9" parent="objetos" unique_id=1722293888 instance=ExtResource("10_5fr62")]
-position = Vector2(1117, 869)
+position = Vector2(1117, 959)
 
 [node name="bloco10" parent="objetos" unique_id=1558036397 instance=ExtResource("10_5fr62")]
-position = Vector2(1118, 801)
+position = Vector2(1118, 925)
 
 [node name="bloco11" parent="objetos" unique_id=2035884930 instance=ExtResource("10_5fr62")]
-position = Vector2(904, 726)
+position = Vector2(904, 891)
 
 [node name="bloco12" parent="objetos" unique_id=1827659773 instance=ExtResource("10_5fr62")]
-position = Vector2(903, 653)
+position = Vector2(903, 857)
 
 [node name="bloco13" parent="objetos" unique_id=227296716 instance=ExtResource("10_5fr62")]
-position = Vector2(904, 583)
+position = Vector2(904, 823)
 
 [node name="bloco14" parent="objetos" unique_id=1736224880 instance=ExtResource("10_5fr62")]
-position = Vector2(901, 511)
+position = Vector2(901, 789)
 
 [node name="coxinha" parent="objetos" unique_id=1797919801 instance=ExtResource("11_sx1rn")]
 position = Vector2(454, -549)
