@@ -1,6 +1,6 @@
 extends Node2D
 
-const PORTAL_RADIUS := 86.0
+const PORTAL_RADIUS := 116.0
 
 var intensity := 0.35
 var active := false
@@ -9,11 +9,12 @@ var embers: Array[Dictionary] = []
 var portal_light: PointLight2D
 var outer_fire: CPUParticles2D
 var inner_fire: CPUParticles2D
+var spark_fire: CPUParticles2D
 
 func _ready() -> void:
 	_build_particles()
 	_build_light()
-	for index in range(72):
+	for index in range(150):
 		var angle := TAU * float(index) / 72.0
 		embers.append({
 			"angle": angle,
@@ -27,10 +28,12 @@ func _ready() -> void:
 func activate() -> void:
 	active = true
 	intensity = 1.0
-	outer_fire.amount = 170
-	inner_fire.amount = 120
+	outer_fire.amount = 260
+	inner_fire.amount = 170
+	spark_fire.amount = 140
 	outer_fire.restart()
 	inner_fire.restart()
+	spark_fire.restart()
 	_apply_intensity()
 
 func _process(delta: float) -> void:
@@ -41,16 +44,26 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func _build_particles() -> void:
-	outer_fire = _create_fire_particles(Color(1.0, 0.18, 0.015, 0.86), PORTAL_RADIUS, 90)
+	outer_fire = _create_fire_particles(Color(1.0, 0.18, 0.015, 0.86), PORTAL_RADIUS, 150)
 	outer_fire.name = "OuterFireParticles"
 	add_child(outer_fire)
-	inner_fire = _create_fire_particles(Color(1.0, 0.70, 0.10, 0.90), PORTAL_RADIUS * 0.66, 55)
+	inner_fire = _create_fire_particles(Color(1.0, 0.70, 0.10, 0.90), PORTAL_RADIUS * 0.66, 95)
 	inner_fire.name = "InnerFireParticles"
 	inner_fire.initial_velocity_min = 38.0
 	inner_fire.initial_velocity_max = 104.0
 	inner_fire.scale_amount_min = 0.45
 	inner_fire.scale_amount_max = 1.2
 	add_child(inner_fire)
+	spark_fire = _create_fire_particles(Color(1.0, 0.9, 0.36, 0.95), PORTAL_RADIUS * 0.9, 65)
+	spark_fire.name = "PortalSparks"
+	spark_fire.lifetime = 1.8
+	spark_fire.direction = Vector2(0, -1)
+	spark_fire.spread = 72.0
+	spark_fire.initial_velocity_min = 80.0
+	spark_fire.initial_velocity_max = 180.0
+	spark_fire.scale_amount_min = 0.3
+	spark_fire.scale_amount_max = 0.8
+	add_child(spark_fire)
 
 func _create_fire_particles(particle_color: Color, radius: float, amount: int) -> CPUParticles2D:
 	var particles := CPUParticles2D.new()
@@ -75,8 +88,8 @@ func _build_light() -> void:
 	portal_light.name = "PortalFireLight"
 	portal_light.texture = _create_light_texture()
 	portal_light.color = Color(1.0, 0.22, 0.035)
-	portal_light.energy = 0.55
-	portal_light.texture_scale = 1.45
+	portal_light.energy = 0.8
+	portal_light.texture_scale = 1.8
 	portal_light.z_index = 1
 	add_child(portal_light)
 
@@ -100,18 +113,18 @@ func _apply_intensity() -> void:
 	if !is_instance_valid(portal_light):
 		return
 	var pulse := 0.9 + sin(elapsed * 8.0) * 0.1
-	portal_light.energy = (0.36 + intensity * 1.55) * pulse
-	portal_light.texture_scale = 1.1 + intensity * 0.72
+	portal_light.energy = (0.52 + intensity * 2.15) * pulse
+	portal_light.texture_scale = 1.35 + intensity * 0.95
 
 func _draw() -> void:
 	var pulse := 1.0 + sin(elapsed * 5.0) * 0.035
 	var radius := PORTAL_RADIUS * (0.72 + intensity * 0.28) * pulse
-	draw_circle(Vector2.ZERO, radius * 1.08, Color(0.55, 0.01, 0.0, 0.10 + intensity * 0.14))
-	draw_circle(Vector2.ZERO, radius * 0.78, Color(0.08, 0.0, 0.02, 0.54))
-	for ring in range(4):
-		var ring_radius := radius - ring * 10.0 + sin(elapsed * (3.0 + ring) + ring) * 3.0
-		var ring_color := Color(1.0, 0.15 + ring * 0.09, 0.015, 0.28 + intensity * 0.12)
-		draw_arc(Vector2.ZERO, ring_radius, elapsed * (0.45 + ring * 0.08), TAU + elapsed * (0.45 + ring * 0.08), 64, ring_color, 2.0 + intensity * 2.0)
+	draw_circle(Vector2.ZERO, radius * 1.1, Color(0.55, 0.01, 0.0, 0.08 + intensity * 0.12))
+	draw_circle(Vector2.ZERO, radius * 0.8, Color(0.08, 0.0, 0.02, 0.64))
+	for ring in range(6):
+		var ring_radius := radius - ring * 12.0 + sin(elapsed * (3.0 + ring) + ring) * 3.0
+		var ring_color := Color(1.0, 0.15 + ring * 0.09, 0.015, 0.25 + intensity * 0.13)
+		draw_arc(Vector2.ZERO, ring_radius, elapsed * (0.45 + ring * 0.08), TAU + elapsed * (0.45 + ring * 0.08), 72, ring_color, 2.0 + intensity * 2.4)
 	for ember in embers:
 		var angle := float(ember["angle"]) + elapsed * float(ember["speed"])
 		var ember_radius := float(ember["radius"]) + sin(elapsed * 2.5 + float(ember["offset"])) * 12.0

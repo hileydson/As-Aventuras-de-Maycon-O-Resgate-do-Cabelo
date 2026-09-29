@@ -1,5 +1,7 @@
 keys,pt,en,es,zh
 UI_SELECT_LANGUAGE,Selecione o Idioma,Select Language,Selecciona el Idioma,选择语言
+UI_LANGUAGE_HINT,Escolha como deseja viver esta aventura.,Choose how you want to experience this adventure.,Elige cómo quieres vivir esta aventura.,选择您希望如何体验这场冒险。
+UI_LANGUAGE_NAVIGATION,"Use o teclado, controle ou mouse para continuar.","Use keyboard, controller, or mouse to continue.","Usa el teclado, mando o ratón para continuar.",使用键盘、手柄或鼠标继续。
 UI_LANG_PT,Português,Português,Português,Português
 UI_LANG_EN,English,English,English,English
 UI_LANG_ES,Español,Español,Español,Español

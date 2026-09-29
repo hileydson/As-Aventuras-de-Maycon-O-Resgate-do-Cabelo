@@ -55,31 +55,33 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		
-	# attack
-	if Input.is_action_just_pressed("key_w"):
-		var can_punch = false
-		if animated_sprite_2d.animation != "attack_punch":
-			can_punch = true
-		elif animated_sprite_2d.sprite_frames:
-			var punch_frames = animated_sprite_2d.sprite_frames.get_frame_count("attack_punch")
-			if animated_sprite_2d.frame >= int(punch_frames / 2):
+	# O Maycon da cena game fica sem combate durante todo o prólogo.
+	var can_attack := !bool(Global.game_events.get("before_prologo", false))
+	if can_attack:
+		if Input.is_action_just_pressed("key_w"):
+			var can_punch = false
+			if animated_sprite_2d.animation != "attack_punch":
 				can_punch = true
-		if can_punch:
-			punch.pitch_scale = randf_range(0.96, 1.10)
-			punch.play()
-			animated_sprite_2d.stop()
-			animated_sprite_2d.frame = 0
-			animated_sprite_2d.play("attack_punch")
-	elif Input.is_action_pressed("key_w"):
-		if animated_sprite_2d.animation != "attack_punch":
-			punch.pitch_scale = 1.0
-			punch.play()
-			animated_sprite_2d.play("attack_punch")
+			elif animated_sprite_2d.sprite_frames:
+				var punch_frames = animated_sprite_2d.sprite_frames.get_frame_count("attack_punch")
+				if animated_sprite_2d.frame >= int(punch_frames / 2):
+					can_punch = true
+			if can_punch:
+				punch.pitch_scale = randf_range(0.96, 1.10)
+				punch.play()
+				animated_sprite_2d.stop()
+				animated_sprite_2d.frame = 0
+				animated_sprite_2d.play("attack_punch")
+		elif Input.is_action_pressed("key_w"):
+			if animated_sprite_2d.animation != "attack_punch":
+				punch.pitch_scale = 1.0
+				punch.play()
+				animated_sprite_2d.play("attack_punch")
 		
-	if Input.is_action_pressed("key_q"):
-		if animated_sprite_2d.animation != "attack_kick":
-			kick.play()
-			animated_sprite_2d.play("attack_kick")
+		if Input.is_action_pressed("key_q"):
+			if animated_sprite_2d.animation != "attack_kick":
+				kick.play()
+				animated_sprite_2d.play("attack_kick")
 
 	# handles double jump 
 	double_jump()
@@ -161,8 +163,10 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 func conversa_terminou()->void:
 	inimigo_seco.visible = false
 	balao_conversa.visible = false
-	explosao_portal.get_node("hp").play("explotion")
 	explosao.play()
+	var prologue_scene := get_parent()
+	if prologue_scene.has_method("activate_prologue_portal"):
+		prologue_scene.activate_prologue_portal()
 	
 	transition.play("zoom_out")
 	pausePlayer = false

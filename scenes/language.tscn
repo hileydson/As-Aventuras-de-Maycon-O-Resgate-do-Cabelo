@@ -1,63 +1,210 @@
-[gd_scene load_steps=3 format=3 uid="uid://myxkcfyi401t"]
+[gd_scene format=3 uid="uid://myxkcfyi401t"]
 
 [ext_resource type="Script" uid="uid://c8keb5qyq1fp2" path="res://scripts/language_selection.gd" id="1_pfgvu"]
 [ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="1_yrgbr"]
 
-[node name="Language" type="Control"]
+[sub_resource type="Gradient" id="Gradient_background"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.0156863, 0.027451, 0.0941176, 1, 0.0470588, 0.0941176, 0.211765, 1, 0.188235, 0.0431373, 0.270588, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture_background"]
+gradient = SubResource("Gradient_background")
+width = 1920
+height = 1080
+fill_to = Vector2(1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
+bg_color = Color(0.0431373, 0.0705882, 0.156863, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.482353, 0.764706, 1, 0.28)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 28
+shadow_offset = Vector2(0, 14)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_card_normal"]
+content_margin_left = 24.0
+content_margin_right = 24.0
+bg_color = Color(0.101961, 0.145098, 0.27451, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.517647, 0.658824, 0.937255, 0.2)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_card_pressed"]
+bg_color = Color(0.0745098, 0.490196, 0.690196, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.788235, 0.94902, 1, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_card_hover"]
+bg_color = Color(0.137255, 0.227451, 0.407843, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.337255, 0.878431, 1, 0.95)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.14902, 0.760784, 1, 0.28)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_card_focus"]
+bg_color = Color(0.117647, 0.203922, 0.372549, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.945098, 0.784314, 0.27451, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="Language" type="Control" unique_id=243169987]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -687.0
-offset_top = -252.0
-offset_right = -687.0
-offset_bottom = -252.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="auto_fade_in" parent="." instance=ExtResource("1_yrgbr")]
+[node name="Background" type="TextureRect" parent="." unique_id=792241545]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 90.0
+offset_bottom = 51.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture_background")
+expand_mode = 1
+stretch_mode = 6
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(-54, -147)
+[node name="auto_fade_in" parent="." unique_id=1185009248 instance=ExtResource("1_yrgbr")]
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D"]
-custom_minimum_size = Vector2(20, 0)
-offset_left = -75.0
-offset_top = -80.0
-offset_right = 80.0
-offset_bottom = 95.0
+[node name="Camera2D" type="Camera2D" parent="." unique_id=834615467]
+position = Vector2(640, 360)
+
+[node name="Panel" type="Panel" parent="Camera2D" unique_id=794028708]
+offset_left = -410.0
+offset_top = -290.0
+offset_right = 410.0
+offset_bottom = 290.0
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D" unique_id=2126702319]
+offset_left = -340.0
+offset_top = -105.0
+offset_right = 340.0
+offset_bottom = 240.0
+theme_override_constants/separation = 14
 alignment = 1
 script = ExtResource("1_pfgvu")
 
-[node name="Portugues" type="Button" parent="Camera2D/VBoxContainer"]
+[node name="Portugues" type="Button" parent="Camera2D/VBoxContainer" unique_id=225326280]
+custom_minimum_size = Vector2(0, 68)
 layout_mode = 2
-text = "Português"
+theme_override_colors/font_color = Color(0.917647, 0.964706, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBox_card_normal")
+theme_override_styles/pressed = SubResource("StyleBox_card_pressed")
+theme_override_styles/hover = SubResource("StyleBox_card_hover")
+theme_override_styles/focus = SubResource("StyleBox_card_focus")
+text = "UI_LANG_PT"
 
-[node name="Ingles" type="Button" parent="Camera2D/VBoxContainer"]
+[node name="Ingles" type="Button" parent="Camera2D/VBoxContainer" unique_id=679943435]
+custom_minimum_size = Vector2(0, 68)
 layout_mode = 2
-text = "English"
+theme_override_colors/font_color = Color(0.917647, 0.964706, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBox_card_normal")
+theme_override_styles/pressed = SubResource("StyleBox_card_pressed")
+theme_override_styles/hover = SubResource("StyleBox_card_hover")
+theme_override_styles/focus = SubResource("StyleBox_card_focus")
+text = "UI_LANG_EN"
 
-[node name="Espanhol" type="Button" parent="Camera2D/VBoxContainer"]
+[node name="Espanhol" type="Button" parent="Camera2D/VBoxContainer" unique_id=1251883263]
+custom_minimum_size = Vector2(0, 68)
 layout_mode = 2
-text = "Español"
+theme_override_colors/font_color = Color(0.917647, 0.964706, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBox_card_normal")
+theme_override_styles/pressed = SubResource("StyleBox_card_pressed")
+theme_override_styles/hover = SubResource("StyleBox_card_hover")
+theme_override_styles/focus = SubResource("StyleBox_card_focus")
+text = "UI_LANG_ES"
 
-[node name="Chines" type="Button" parent="Camera2D/VBoxContainer"]
+[node name="Chines" type="Button" parent="Camera2D/VBoxContainer" unique_id=1385688508]
+custom_minimum_size = Vector2(0, 68)
 layout_mode = 2
-text = "中文"
+theme_override_colors/font_color = Color(0.917647, 0.964706, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBox_card_normal")
+theme_override_styles/pressed = SubResource("StyleBox_card_pressed")
+theme_override_styles/hover = SubResource("StyleBox_card_hover")
+theme_override_styles/focus = SubResource("StyleBox_card_focus")
+text = "UI_LANG_ZH"
 
-[node name="Language" type="Label" parent="Camera2D"]
-offset_left = -114.0
-offset_top = -145.0
-offset_right = 32.0
-offset_bottom = -122.0
-scale = Vector2(1.5690881, 1.890431)
+[node name="Language" type="Label" parent="Camera2D" unique_id=825097511]
+offset_left = -340.0
+offset_top = -220.0
+offset_right = 340.0
+offset_bottom = -160.0
+theme_override_colors/font_color = Color(0.952941, 0.980392, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.0431373, 0.113725, 0.254902, 0.85)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 42
 text = "UI_SELECT_LANGUAGE"
+horizontal_alignment = 1
 
-[connection signal="button_down" from="Camera2D/VBoxContainer/Portugues" to="Camera2D/VBoxContainer" method="_on_portugues_button_down"]
+[node name="Hint" type="Label" parent="Camera2D" unique_id=492345360]
+offset_left = -340.0
+offset_top = -150.0
+offset_right = 340.0
+offset_bottom = -115.0
+theme_override_colors/font_color = Color(0.670588, 0.745098, 0.898039, 1)
+theme_override_font_sizes/font_size = 18
+text = "UI_LANGUAGE_HINT"
+horizontal_alignment = 1
+
+[node name="Footer" type="Label" parent="Camera2D" unique_id=2139256912]
+offset_left = -340.0
+offset_top = 245.0
+offset_right = 340.0
+offset_bottom = 275.0
+theme_override_colors/font_color = Color(0.447059, 0.54902, 0.721569, 1)
+theme_override_font_sizes/font_size = 14
+text = "UI_LANGUAGE_NAVIGATION"
+horizontal_alignment = 1
+
 [connection signal="pressed" from="Camera2D/VBoxContainer/Portugues" to="Camera2D/VBoxContainer" method="_on_portugues_button_down"]
-[connection signal="button_down" from="Camera2D/VBoxContainer/Ingles" to="Camera2D/VBoxContainer" method="_on_ingles_button_down"]
 [connection signal="pressed" from="Camera2D/VBoxContainer/Ingles" to="Camera2D/VBoxContainer" method="_on_ingles_button_down"]
-[connection signal="button_down" from="Camera2D/VBoxContainer/Espanhol" to="Camera2D/VBoxContainer" method="_on_espanhol_button_down"]
 [connection signal="pressed" from="Camera2D/VBoxContainer/Espanhol" to="Camera2D/VBoxContainer" method="_on_espanhol_button_down"]
-[connection signal="button_down" from="Camera2D/VBoxContainer/Chines" to="Camera2D/VBoxContainer" method="_on_chines_button_down"]
 [connection signal="pressed" from="Camera2D/VBoxContainer/Chines" to="Camera2D/VBoxContainer" method="_on_chines_button_down"]
