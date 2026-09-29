@@ -14,3 +14,4 @@ The following audio files are used in the Castle Dungeon (calabouco_terror):
 - `monster_roar_1.wav`, `monster_roar_2.wav`, `monster_scream_1.wav`, `monster_scream_2.wav`, `zombie_pain_1.wav`, `zombie_growl_2.wav`, `rat_snarl_1.wav`, `rat_attack_1.wav`:
   From "Monster Sound Pack, Volume 1" by Ogrebane — https://opengameart.org/content/monster-sound-pack-volume-1
 - `monster_heavy_step.ogg` (originally `stomp_01.ogg`): From "80 CC0 creture SFX #2" by rubberduck — https://opengameart.org/content/80-cc0-creture-sfx-2
+- `giant_head_slam.ogg` (originally `bfh1_falling_04.ogg`): From "75 CC0 breaking / falling / hit sfx" by rubberduck — https://opengameart.org/content/75-cc0-breaking-falling-hit-sfx

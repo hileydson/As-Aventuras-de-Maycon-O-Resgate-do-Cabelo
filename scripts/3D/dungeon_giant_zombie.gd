@@ -14,7 +14,7 @@ const ZOMBIE_ROAR := preload("res://assets/novos_audios/calabouco_terror/monster
 const ZOMBIE_ROAR_2 := preload("res://assets/novos_audios/calabouco_terror/monster_roar_2.wav")
 const ZOMBIE_SCREAM := preload("res://assets/novos_audios/calabouco_terror/monster_scream_1.wav")
 const WALL_HIT := preload("res://assets/novos_audios/metal_batendo.mp3")
-const WALL_HIT_HEAVY := preload("res://assets/novos_audios/calabouco_terror/dungeon_fall_impact.wav")
+const WALL_HIT_HEAVY := preload("res://assets/novos_audios/calabouco_terror/giant_head_slam.ogg")
 const MAYCON_SCREAM := preload("res://assets/novos_audios/maycon_falling_fase_1.mp3")
 
 @export_group("Configurações do Zumbi Gigante")
@@ -67,8 +67,20 @@ var phase: float = 0.0
 const CONSIDER_TIME: float = 0.9    # fica olhando um instante antes de decidir
 const TELEGRAPH_TIME: float = 1.4   # tempo que o player tem para sair enquanto ele se prepara
 const STRIKE_DELAY: float = 0.3     # momento do impacto dentro da animação de ataque
-const GRAB_RADIUS: float = 3.2
+const GRAB_RADIUS: float = 3.8
+const GRAB_WINDOW: float = 0.55     # a mão continua podendo agarrar durante todo o golpe
 const REST_COOLDOWN: float = 4.0
+
+# A cabeça é gigante (o modelo roda em ~15x), então o alcance precisa acompanhar.
+const HEAD_CONTACT_RADIUS: float = 3.4
+const HEAD_DUST_MAX_Y: float = 2.6      # só levanta poeira quando a cabeça está rente ao chão
+const HEAD_DUST_MIN_SPEED: float = 4.0  # e só quando está varrendo, não parada balançando
+const HEAD_DUST_MIN_STEP: float = 1.8   # espaçamento entre as marcas de poeira do rastro
+
+var previous_head_position: Vector3 = Vector3.ZERO
+var has_previous_head_position: bool = false
+var last_dust_position: Vector3 = Vector3.ZERO
+var has_last_dust_position: bool = false
 
 func _ready() -> void:
 	ensure_body()
@@ -233,7 +245,7 @@ func _physics_process(delta:float) -> void:
 	for light in eye_lights:
 		if is_instance_valid(light):
 			light.light_energy = 2.2 + absf(sin(phase * 2.1)) * 1.5
-	_check_head_contact()
+	_track_head(delta)
 
 	if busy:
 		return
@@ -246,12 +258,35 @@ func _physics_process(delta:float) -> void:
 			growl_audio.pitch_scale = randf_range(0.72, 0.9)
 			growl_audio.play()
 
-func _check_head_contact() -> void:
-	if head_contact_cooldown > 0.0 || !is_instance_valid(head_attachment):
+func _track_head(delta:float) -> void:
+	if !is_instance_valid(head_attachment):
 		return
-	var contact_point := head_attachment.global_position
+	var head_now := head_attachment.global_position
+	var head_before := previous_head_position if has_previous_head_position else head_now
+	previous_head_position = head_now
+	has_previous_head_position = true
+	var head_speed := head_before.distance_to(head_now) / maxf(delta, 0.0001)
+	_check_head_contact(head_before, head_now)
+	_spread_head_ground_dust(head_now, head_speed)
+
+func _spread_head_ground_dust(head_now:Vector3, head_speed:float) -> void:
+	if head_now.y > HEAD_DUST_MAX_Y || head_speed < HEAD_DUST_MIN_SPEED:
+		return
+	if has_last_dust_position && last_dust_position.distance_to(head_now) < HEAD_DUST_MIN_STEP:
+		return
+	last_dust_position = head_now
+	has_last_dust_position = true
+	dungeon.call("spawn_dust_landing", Vector3(head_now.x, 0.05, head_now.z))
+
+# Testa o trecho que a cabeça percorreu no quadro, e não só onde ela parou: no
+# golpe ela desce rápido demais e antes passava direto pelo player entre dois
+# quadros de física, sem registrar nada.
+func _check_head_contact(head_before:Vector3, head_now:Vector3) -> void:
+	if head_contact_cooldown > 0.0:
+		return
 	var player_head := player.global_position + Vector3.UP * 1.0
-	if contact_point.distance_to(player_head) > 2.15:
+	var contact_point := Geometry3D.get_closest_point_to_segment(player_head, head_before, head_now)
+	if contact_point.distance_to(player_head) > HEAD_CONTACT_RADIUS:
 		return
 	var knockback := player.global_position - contact_point
 	knockback.y = 0.0
@@ -325,7 +360,20 @@ func attempt_grab() -> void:
 	if not _valid():
 		return
 
-	if player_in_zone() and grab_anchor.global_position.distance_to(player.global_position + Vector3.UP * 0.9) <= GRAB_RADIUS:
+	# A mão fica "quente" durante todo o golpe: antes isso era testado num único
+	# quadro, então o player podia estar bem na frente e mesmo assim escapar.
+	var reached := false
+	var window := GRAB_WINDOW
+	while window > 0.0:
+		if player_in_zone() and grab_anchor.global_position.distance_to(player.global_position + Vector3.UP * 0.9) <= GRAB_RADIUS:
+			reached = true
+			break
+		await get_tree().physics_frame
+		if not _valid():
+			return
+		window -= get_physics_process_delta_time()
+
+	if reached:
 		await do_grab_kill()
 	else:
 		# Errou: fecha a mão no vazio, recua e entra em cooldown
