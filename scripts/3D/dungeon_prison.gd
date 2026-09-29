@@ -919,9 +919,9 @@ func build_green_cell_monster() -> void:
 	cell_monster.rotation.y = -PI * 0.5
 	add_child(cell_monster)
 	cell_monster.setup(player, self)
-	cell_monster.set_physics_process(false)
-	if is_instance_valid(cell_monster.animator) && cell_monster.animator.has_animation("Walk"):
-		cell_monster.animator.play("Walk", 0.2)
+	# Cela da Chave da Cela: entre a divisória (x = 45) e o fundo do GreenWing (x = 53),
+	# ocupando toda a largura do corredor (z = -175 a -153), com folga para o corpo dele.
+	cell_monster.setup_cell_guard(Vector3(49.0, 0, -164.0), Vector3(2.6, 0, 9.4))
 
 func build_giant_opening_z(node_name:String, center_x:float, z:float, total_width:float) -> void:
 	# Constrói o fundo de um corredor (parede em Z) com uma grande ABERTURA central por

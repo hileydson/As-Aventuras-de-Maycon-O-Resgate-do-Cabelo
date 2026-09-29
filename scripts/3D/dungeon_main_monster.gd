@@ -51,6 +51,14 @@ var patrol_links:Dictionary = {}
 var enraged_hunt:bool = false
 const TRAMPOLINE_CORRIDOR_LIMIT_Z:float = -74.0
 
+# Monstro preso numa cela: vagueia só dentro dela e ignora o player até a chave
+# da cela ser pega — aí entra em enrage e passa a caçar sem limite de distância.
+var cell_guard:bool = false
+var cell_center:Vector3 = Vector3.ZERO
+var cell_half:Vector3 = Vector3.ZERO
+var cell_wander_target:Vector3 = Vector3.ZERO
+var cell_wander_timeout:float = 0.0
+
 const NAV_NODES: Array[Vector3] = [
 	Vector3(0, 0, -94),     # 0: Hub Centro
 	Vector3(0, 0, -80),     # 1: Hub Norte (Entrada Corredor Trampolim)
@@ -216,7 +224,7 @@ func build_body() -> void:
 		grab_anchor.position = Vector3(0.45, 2.0, -0.9)
 		add_child(grab_anchor)
 
-	step_audio = make_audio(STEP_SOUND, 1.5, 30.0, 11.0)
+	step_audio = make_audio(STEP_SOUND, 8.0, 30.0, 11.0)
 	pain_audio = make_audio(PAIN_SOUND, 2.0, 30.0, 9.0)
 	roar_audio = make_audio(ROAR_1, 2.0, 38.0, 10.0)
 	attack_audio = make_audio(ATTACK_1, -2.0, 34.0)
@@ -303,6 +311,8 @@ func _physics_process(delta:float) -> void:
 
 	if !enraged_hunt && has_cell_key():
 		trigger_enrage_hunt()
+	if cell_guard && enraged_hunt:
+		cell_guard = false
 
 	if state == "down":
 		process_temporary_defeat(delta)
@@ -319,6 +329,14 @@ func _physics_process(delta:float) -> void:
 	if state == "rest":
 		process_rest(delta)
 		move_and_slide()
+		return
+
+	if cell_guard:
+		active_hunt = false
+		process_cell_wander(delta)
+		move_and_slide()
+		clamp_inside_cell()
+		update_steps(delta, Vector2(velocity.x, velocity.z).length(), false)
 		return
 
 	var to_player := player.global_position - global_position
@@ -395,6 +413,44 @@ func process_patrol(delta:float) -> void:
 	velocity.z = direction.z * PATROL_SPEED
 	play_animation("Walk", true, 0.82)
 
+func setup_cell_guard(center:Vector3, half_extents:Vector3) -> void:
+	cell_guard = true
+	cell_center = center
+	cell_half = half_extents
+	choose_cell_wander_target()
+
+func choose_cell_wander_target() -> void:
+	cell_wander_target = Vector3(
+		cell_center.x + randf_range(-cell_half.x, cell_half.x),
+		global_position.y,
+		cell_center.z + randf_range(-cell_half.z, cell_half.z)
+	)
+	cell_wander_timeout = randf_range(5.0, 10.0)
+
+func process_cell_wander(delta:float) -> void:
+	cell_wander_timeout -= delta
+	var direction := cell_wander_target - global_position
+	direction.y = 0.0
+	if direction.length() < 0.9 || cell_wander_timeout <= 0.0:
+		if randf() < 0.35:
+			state = "rest"
+			rest_timer = randf_range(2.2, 5.0)
+			velocity.x = 0.0
+			velocity.z = 0.0
+			play_animation("Idle_5", true, randf_range(0.82, 1.0))
+		else:
+			choose_cell_wander_target()
+		return
+	look_at_horizontal(cell_wander_target)
+	direction = direction.normalized()
+	velocity.x = direction.x * PATROL_SPEED
+	velocity.z = direction.z * PATROL_SPEED
+	play_animation("Walk", true, 0.82)
+
+func clamp_inside_cell() -> void:
+	global_position.x = clampf(global_position.x, cell_center.x - cell_half.x, cell_center.x + cell_half.x)
+	global_position.z = clampf(global_position.z, cell_center.z - cell_half.z, cell_center.z + cell_half.z)
+
 func process_rest(delta:float) -> void:
 	if enraged_hunt:
 		state = "patrol"
@@ -403,6 +459,11 @@ func process_rest(delta:float) -> void:
 	velocity.x = 0.0
 	velocity.z = 0.0
 	rest_timer -= delta
+	if cell_guard:
+		if rest_timer <= 0.0:
+			state = "patrol"
+			choose_cell_wander_target()
+		return
 	var distance := global_position.distance_to(player.global_position)
 	var player_in_trampoline:bool = player.global_position.z > TRAMPOLINE_CORRIDOR_LIMIT_Z
 	if distance <= ACTIVATION_DISTANCE && !player_in_trampoline && !bool(dungeon.call("is_player_hidden")) && can_see_player():

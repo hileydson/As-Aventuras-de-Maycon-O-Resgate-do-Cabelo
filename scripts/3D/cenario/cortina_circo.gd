@@ -51,6 +51,10 @@ func _ready() -> void:
 
 	x_fechado_esquerdo = painel_esquerdo.position.x
 	x_fechado_direito = painel_direito.position.x
+	# O DungeonPlayer usa collision_layer 2 (diferente do player padrão, que
+	# usa a layer 1) — sem incluir a layer 2 na mask, a área nunca detectava
+	# o player do Calabouço Terror e a cortina nunca abria.
+	area_gatilho.collision_mask = 1 | 2
 	area_gatilho.body_entered.connect(_on_body_entered)
 
 func _ajustar_para_escala_do_pai() -> void:

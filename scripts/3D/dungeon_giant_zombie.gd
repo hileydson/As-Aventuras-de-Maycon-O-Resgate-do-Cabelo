@@ -260,8 +260,10 @@ func _check_head_contact() -> void:
 	head_contact_cooldown = 1.15
 	if is_instance_valid(impact_audio):
 		impact_audio.stream = WALL_HIT_HEAVY
+		impact_audio.volume_db = 7.0
 		impact_audio.pitch_scale = randf_range(0.82, 0.96)
 		impact_audio.play()
+	dungeon.call("spawn_dust_landing", Vector3(contact_point.x, 0.05, contact_point.z))
 	player.apply_knockback(knockback.normalized() * 13.0 + Vector3.UP * 4.5, 0.78)
 	player.shake_camera(0.16, 0.55)
 	dungeon.call("flash_blood_damage_overlay", 0.7)
@@ -329,6 +331,7 @@ func attempt_grab() -> void:
 		# Errou: fecha a mão no vazio, recua e entra em cooldown
 		if is_instance_valid(impact_audio):
 			impact_audio.stream = WALL_HIT_HEAVY
+			impact_audio.volume_db = 3.0
 			impact_audio.pitch_scale = randf_range(0.7, 0.85)
 			impact_audio.play()
 		if is_instance_valid(player):
@@ -365,6 +368,7 @@ func do_grab_kill() -> void:
 			return
 		if is_instance_valid(impact_audio):
 			impact_audio.stream = WALL_HIT if i % 2 == 0 else WALL_HIT_HEAVY
+			impact_audio.volume_db = 3.0
 			impact_audio.pitch_scale = randf_range(0.72, 0.95)
 			impact_audio.play()
 		if i == 0 or randf() < 0.7:

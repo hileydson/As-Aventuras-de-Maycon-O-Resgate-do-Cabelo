@@ -12833,7 +12833,7 @@ transform = Transform3D(9.927573, 0, 1.2013704, 0, 10, 0, -1.2013704, 0, 9.92757
 numero_palhaco = 2
 
 [node name="palhaco_3" parent="." unique_id=2045935428 instance=ExtResource("28_uo1pw")]
-transform = Transform3D(-6.21148, 0, 7.836933, 0, 10, 0, -7.836933, 0, -6.21148, -63.40387, -0.80651855, -88.14316)
+transform = Transform3D(-6.21148, 0, 7.836933, 0, 10, 0, -7.836933, 0, -6.21148, -63.71982, -0.80651855, -87.7944)
 numero_palhaco = 3
 
 [node name="CortinaCirco" type="Node3D" parent="palhaco_3" unique_id=584432109]

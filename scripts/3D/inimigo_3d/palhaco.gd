@@ -9,11 +9,12 @@ extends Node3D
 @export var som_eventual_intervalo_min: float = 8.0
 @export var som_eventual_intervalo_max: float = 30.0
 
+@export_range(0.05, 1.0, 0.01) var brilho_superficie: float = 0.34
+
 const PASTA_AUDIOS := "res://assets/novos_audios/calabouco_terror/"
 
 @onready var olho_esquerdo: Node3D = $"palhaco_olho/sclera cornea2"
 @onready var olho_direito: Node3D = $"palhaco_olho2/sclera cornea2"
-@onready var cabeca: Node3D = $palhaco_olho
 
 var player: Node3D = null
 var rotacao_base_y: float
@@ -57,30 +58,50 @@ func _ready() -> void:
 	centro_no_pai_olho_direito = olho_direito.transform * centro_local_olho
 
 	_configurar_audio()
+	_escurecer_para_tema_dark()
 
 	await get_tree().physics_frame
 	player = _buscar_player_mais_proximo()
+
+func _escurecer_para_tema_dark() -> void:
+	for no in find_children("*", "MeshInstance3D", true, false):
+		var malha := no as MeshInstance3D
+		if malha.mesh == null:
+			continue
+		for indice in malha.mesh.get_surface_count():
+			var original := malha.get_active_material(indice) as StandardMaterial3D
+			if original == null:
+				continue
+			var material := original.duplicate() as StandardMaterial3D
+			material.albedo_color = Color(brilho_superficie, brilho_superficie, brilho_superficie, original.albedo_color.a)
+			material.metallic = minf(material.metallic, 0.12)
+			material.emission_enabled = false
+			malha.set_surface_override_material(indice, material)
 
 func _configurar_audio() -> void:
 	var riso_stream: AudioStream = load(PASTA_AUDIOS + "palhaco_%d_riso.mp3" % numero_palhaco)
 	if riso_stream:
 		if riso_stream is AudioStreamMP3:
 			riso_stream.loop = true
-		var audio_riso := _criar_audio_da_cabeca(riso_stream, -1.0, 40.0)
+		var audio_riso := _criar_audio(riso_stream, -1.0, 40.0)
 		audio_riso.play()
 
 	var eventual_stream: AudioStream = load(PASTA_AUDIOS + "palhaco_%d_eventual.mp3" % numero_palhaco)
 	if eventual_stream:
-		var audio_eventual := _criar_audio_da_cabeca(eventual_stream, 0.0, 42.0)
+		var audio_eventual := _criar_audio(eventual_stream, 0.0, 42.0)
 		_tocar_som_eventual_em_loop(audio_eventual)
 
-func _criar_audio_da_cabeca(stream: AudioStream, volume_db: float, max_distance: float) -> AudioStreamPlayer3D:
+# O áudio fica na raiz, e não nos nós dos olhos: a origem de palhaco_olho tem um
+# deslocamento local grande em Y que, multiplicado pela escala do palhaço na cena
+# (10x a 14x), cai ~100 a 140 unidades abaixo do mapa. Preso ali, o som ficava
+# sempre além do max_distance e nunca era ouvido.
+func _criar_audio(stream: AudioStream, volume_db: float, max_distance: float) -> AudioStreamPlayer3D:
 	var audio := AudioStreamPlayer3D.new()
 	audio.stream = stream
 	audio.volume_db = volume_db
 	audio.max_distance = max_distance
 	audio.unit_size = 6.0
-	cabeca.add_child(audio)
+	add_child(audio)
 	return audio
 
 func _tocar_som_eventual_em_loop(audio: AudioStreamPlayer3D) -> void:
