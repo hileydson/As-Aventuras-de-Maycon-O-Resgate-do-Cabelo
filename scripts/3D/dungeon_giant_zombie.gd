@@ -48,6 +48,7 @@ var animator: AnimationPlayer
 var grab_attachment: BoneAttachment3D
 var grab_anchor: Marker3D
 var head_attachment: BoneAttachment3D
+var head_top_attachment: BoneAttachment3D
 var eye_lights: Array[OmniLight3D] = []
 
 # Áudio
@@ -71,16 +72,23 @@ const GRAB_RADIUS: float = 3.8
 const GRAB_WINDOW: float = 0.55     # a mão continua podendo agarrar durante todo o golpe
 const REST_COOLDOWN: float = 4.0
 
-# A cabeça é gigante (o modelo roda em ~15x), então o alcance precisa acompanhar.
-const HEAD_CONTACT_RADIUS: float = 3.4
-const HEAD_DUST_MAX_Y: float = 2.6      # só levanta poeira quando a cabeça está rente ao chão
-const HEAD_DUST_MIN_SPEED: float = 4.0  # e só quando está varrendo, não parada balançando
-const HEAD_DUST_MIN_STEP: float = 1.8   # espaçamento entre as marcas de poeira do rastro
+# O crânio mede ~3.3 unidades do osso da cabeça até o topo (o modelo roda em ~15x),
+# então ele é tratado como um segmento inteiro, e não como um ponto: era por isso que
+# a testa encostava no player sem registrar nada.
+const HEAD_CONTACT_RADIUS: float = 2.2
+const HEAD_DUST_MAX_Y: float = 4.0      # só levanta poeira quando a cabeça está baixa
+const HEAD_DUST_MIN_SPEED: float = 2.5  # e só quando está varrendo, não parada balançando
+const HEAD_DUST_MIN_STEP: float = 0.9   # espaçamento entre as marcas do rastro
+const HEAD_DUST_SPREAD: float = 3.5     # raio do espalhamento lateral de cada marca
+const HEAD_DUST_SATELLITES: int = 2     # marcas extras jogadas ao redor de cada ponto
+const HEAD_DUST_MAX_PER_PASS: int = 30  # teto por varrida, para não estourar partículas
 
 var previous_head_position: Vector3 = Vector3.ZERO
+var previous_head_top_position: Vector3 = Vector3.ZERO
 var has_previous_head_position: bool = false
 var last_dust_position: Vector3 = Vector3.ZERO
 var has_last_dust_position: bool = false
+var head_dust_budget: int = HEAD_DUST_MAX_PER_PASS
 
 func _ready() -> void:
 	ensure_body()
@@ -196,6 +204,10 @@ func setup_eye_glow() -> void:
 	head_attachment.name = "HeadGlow"
 	head_attachment.bone_name = &"CityDeadOutfit_Head"
 	skel.add_child(head_attachment)
+	head_top_attachment = BoneAttachment3D.new()
+	head_top_attachment.name = "HeadTopPoint"
+	head_top_attachment.bone_name = &"CityDeadOutfit_HeadTop_End"
+	skel.add_child(head_top_attachment)
 	for sx in [-0.06, 0.06]:
 		var eye := OmniLight3D.new()
 		eye.light_color = Color(1.0, 0.06, 0.02)
@@ -262,31 +274,56 @@ func _track_head(delta:float) -> void:
 	if !is_instance_valid(head_attachment):
 		return
 	var head_now := head_attachment.global_position
+	var top_now := head_top_attachment.global_position if is_instance_valid(head_top_attachment) else head_now
 	var head_before := previous_head_position if has_previous_head_position else head_now
+	var top_before := previous_head_top_position if has_previous_head_position else top_now
 	previous_head_position = head_now
+	previous_head_top_position = top_now
 	has_previous_head_position = true
 	var head_speed := head_before.distance_to(head_now) / maxf(delta, 0.0001)
-	_check_head_contact(head_before, head_now)
+	# O crânio inteiro agora, mais o rastro da base e do topo no quadro: cobre tanto
+	# encostar de raspão quanto a descida rápida demais para um teste por quadro.
+	_check_head_contact([
+		[head_now, top_now],
+		[head_before, head_now],
+		[top_before, top_now],
+	])
 	_spread_head_ground_dust(head_now, head_speed)
 
 func _spread_head_ground_dust(head_now:Vector3, head_speed:float) -> void:
 	if head_now.y > HEAD_DUST_MAX_Y || head_speed < HEAD_DUST_MIN_SPEED:
+		head_dust_budget = HEAD_DUST_MAX_PER_PASS
+		return
+	if head_dust_budget <= 0:
 		return
 	if has_last_dust_position && last_dust_position.distance_to(head_now) < HEAD_DUST_MIN_STEP:
 		return
 	last_dust_position = head_now
 	has_last_dust_position = true
+	head_dust_budget -= 1
 	dungeon.call("spawn_dust_landing", Vector3(head_now.x, 0.05, head_now.z))
+	for _i in HEAD_DUST_SATELLITES:
+		if head_dust_budget <= 0:
+			return
+		head_dust_budget -= 1
+		var angulo := randf() * TAU
+		var raio := randf_range(1.2, HEAD_DUST_SPREAD)
+		dungeon.call("spawn_dust_landing", Vector3(head_now.x + cos(angulo) * raio, 0.05, head_now.z + sin(angulo) * raio))
 
-# Testa o trecho que a cabeça percorreu no quadro, e não só onde ela parou: no
-# golpe ela desce rápido demais e antes passava direto pelo player entre dois
-# quadros de física, sem registrar nada.
-func _check_head_contact(head_before:Vector3, head_now:Vector3) -> void:
+func _check_head_contact(segmentos:Array) -> void:
 	if head_contact_cooldown > 0.0:
 		return
-	var player_head := player.global_position + Vector3.UP * 1.0
-	var contact_point := Geometry3D.get_closest_point_to_segment(player_head, head_before, head_now)
-	if contact_point.distance_to(player_head) > HEAD_CONTACT_RADIUS:
+	var corpo_a := player.global_position + Vector3.UP * 0.15
+	var corpo_b := player.global_position + Vector3.UP * 1.75
+	var menor_distancia := INF
+	var contact_point := Vector3.ZERO
+	for segmento in segmentos:
+		var pontos := Geometry3D.get_closest_points_between_segments(segmento[0], segmento[1], corpo_a, corpo_b)
+		var distancia: float = pontos[0].distance_to(pontos[1])
+		if distancia < menor_distancia:
+			menor_distancia = distancia
+			contact_point = pontos[0]
+	if menor_distancia > HEAD_CONTACT_RADIUS:
 		return
 	var knockback := player.global_position - contact_point
 	knockback.y = 0.0
