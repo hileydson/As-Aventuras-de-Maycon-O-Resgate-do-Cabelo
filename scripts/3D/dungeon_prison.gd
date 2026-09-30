@@ -14,6 +14,7 @@ const SMG_ALBEDO:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_Defau
 const SMG_NORMAL:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Normal.png")
 const SMG_METALLIC:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Metallic.png")
 const SMG_ROUGHNESS:Texture2D = preload("res://assets/modelo_3d/calabouco/SMG_DefaultMaterial_Roughness.png")
+const EMOJI_FONT = preload("res://scripts/ui/emoji_font.gd")
 
 var player:DungeonPlayer
 var main_monster:DungeonMainMonster
@@ -1168,10 +1169,13 @@ func build_inventory_hud(hud:CanvasLayer) -> void:
 	inventory_bar.offset_bottom = -82
 	for data in [["flashlight", "🔦", "DUNGEON_ITEM_FLASHLIGHT", Color(0.55, 0.78, 1)], ["pistol", "🔫", "DUNGEON_ITEM_PISTOL", Color(0.8, 0.65, 0.35)], ["blue_key", "🔑", "DUNGEON_ITEM_BLUE_KEY", Color(0.15, 0.35, 1)], ["red_key", "🔑", "DUNGEON_ITEM_RED_KEY", Color(1, 0.12, 0.08)], ["machinegun", "🔫", "DUNGEON_ITEM_MACHINEGUN", Color(1, 0.5, 0.08)], ["green_key", "🔑", "DUNGEON_ITEM_GREEN_KEY", Color(0.08, 1, 0.24)], ["cell_key", "🔑", "DUNGEON_ITEM_CELL_KEY", Color(0.9, 0.78, 0.48)], ["axe", "🪓", "DUNGEON_ITEM_AXE", Color(0.92, 0.15, 0.08)]]:
 		var slot := Label.new()
+		slot.name = "Inventory_%s" % data[0]
+		slot.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		slot.text = "%s\n%s" % [data[1], tr(data[2])]
 		slot.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		slot.custom_minimum_size = Vector2(92, 56)
 		slot.add_theme_font_size_override("font_size", 12)
+		slot.add_theme_font_override("font", EMOJI_FONT.get_ui_font())
 		slot.add_theme_color_override("font_color", data[3])
 		var panel := StyleBoxFlat.new()
 		panel.bg_color = Color(0.015, 0.02, 0.025, 0.88)

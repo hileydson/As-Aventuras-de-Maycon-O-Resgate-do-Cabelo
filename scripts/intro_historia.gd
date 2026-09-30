@@ -13,9 +13,9 @@ var is_mouse_holding:bool = false
 func build_skip_interface() -> void:
 	skip_label = Label.new()
 	skip_label.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	skip_label.offset_left = -280.0
+	skip_label.offset_left = -304.0
 	skip_label.offset_top = 18.0
-	skip_label.offset_right = -24.0
+	skip_label.offset_right = -48.0
 	skip_label.offset_bottom = 42.0
 	skip_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	skip_label.text = tr("UI_HOLD_SKIP")
@@ -27,9 +27,9 @@ func build_skip_interface() -> void:
 	$black_screen.add_child(skip_label)
 	skip_bar = ProgressBar.new()
 	skip_bar.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	skip_bar.offset_left = -280.0
+	skip_bar.offset_left = -304.0
 	skip_bar.offset_top = 46.0
-	skip_bar.offset_right = -24.0
+	skip_bar.offset_right = -48.0
 	skip_bar.offset_bottom = 51.0
 	skip_bar.min_value = 0.0
 	skip_bar.max_value = skip_hold_time

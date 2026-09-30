@@ -414,11 +414,11 @@ offset_right = 3600.0
 offset_bottom = 350.0
 mouse_filter = 2
 
-[node name="BirdsOverlay" type="Parallax2D" parent="."]
+[node name="BirdsOverlay" type="Parallax2D" parent="." unique_id=1688904181]
 z_index = 5
 scroll_scale = Vector2(0.65, 1)
 
-[node name="Birds" type="ColorRect" parent="BirdsOverlay"]
+[node name="Birds" type="ColorRect" parent="BirdsOverlay" unique_id=865594046]
 material = SubResource("ShaderMaterial_day_birds")
 offset_left = -1600.0
 offset_top = -650.0
@@ -465,6 +465,10 @@ shape = SubResource("SegmentShape2D_p57ef")
 position = Vector2(-193.0863, 40.96587)
 scale = Vector2(1.3133289, 1.0431619)
 slide_on_ceiling = false
+editable_children = true
+
+[node name="walk" parent="Maycon" index="3"]
+pitch_scale = 1.1
 
 [node name="Camera2D" type="Camera2D" parent="Maycon" unique_id=1016856960]
 position = Vector2(458.8409, -94.67078)
@@ -620,6 +624,7 @@ frame_progress = 0.47550967
 
 [node name="node_logo_seco" type="Node2D" parent="." unique_id=1534797226]
 visible = false
+z_index = 6
 position = Vector2(94.29799, -40.23429)
 
 [node name="back_fundo_logo" type="ColorRect" parent="node_logo_seco" unique_id=271647574]

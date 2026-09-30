@@ -102,9 +102,10 @@ func _create_ui() -> void:
 	# Container de pular vídeo (Hold to Skip) no canto superior direito
 	skip_container = VBoxContainer.new()
 	skip_container.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	skip_container.offset_left = -280.0
+	# Margem ampla para que a dica continue visível em telas com overscan.
+	skip_container.offset_left = -304.0
 	skip_container.offset_top = 18.0
-	skip_container.offset_right = -24.0
+	skip_container.offset_right = -48.0
 	skip_container.offset_bottom = 58.0
 	skip_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	skip_container.modulate.a = 0.55

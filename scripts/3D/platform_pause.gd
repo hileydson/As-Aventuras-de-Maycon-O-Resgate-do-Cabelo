@@ -2,6 +2,7 @@ extends CanvasLayer
 
 const PENTAGRAM_TEXTURE = preload("res://assets/3D/pentagram_item.png")
 const PAUSE_SOUND = preload("res://assets/novos_audios/pause_sfxr.mp3")
+const EMOJI_FONT = preload("res://scripts/ui/emoji_font.gd")
 
 const GLITTER_COLORS := [
 	Color("ffd700"), # Gold
@@ -233,6 +234,7 @@ func _build_panel() -> void:
 	card.add_child(column)
 	var ornament := Label.new()
 	ornament.text = "✦  ☁  ✦"
+	ornament.add_theme_font_override("font", EMOJI_FONT.get_ui_font())
 	ornament.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ornament.add_theme_font_size_override("font_size", 28)
 	ornament.add_theme_color_override("font_color", Color("ffdd92"))

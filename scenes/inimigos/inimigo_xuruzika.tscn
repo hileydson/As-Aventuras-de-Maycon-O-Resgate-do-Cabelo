@@ -722,7 +722,7 @@ scale = Vector2(0.2017336, -0.23553093)
 texture = ExtResource("6_vis88")
 
 [node name="Inimigo1AttackMagic" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("7_kfsnf")
+stream = ExtResource("8_abdlv")
 
 [node name="Inimigo1VoiceAttack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_abdlv")

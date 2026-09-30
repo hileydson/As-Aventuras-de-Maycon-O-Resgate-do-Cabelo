@@ -905,6 +905,14 @@ func show_chase_briefing() -> void:
 	var layer := CanvasLayer.new()
 	layer.layer = 125
 	add_child(layer)
+	var blackout := ColorRect.new()
+	blackout.color = Color.BLACK
+	blackout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	blackout.modulate.a = 0.0
+	layer.add_child(blackout)
+	var blackout_tween := create_tween()
+	blackout_tween.tween_property(blackout, "modulate:a", 1.0, 2.4)
+	await blackout_tween.finished
 	var message := Label.new()
 	message.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -927,6 +935,9 @@ func show_chase_briefing() -> void:
 		shots.play()
 		await get_tree().create_timer(0.22).timeout
 	await get_tree().create_timer(0.35).timeout
+	var reveal_tween := create_tween()
+	reveal_tween.tween_property(blackout, "modulate:a", 0.0, 2.4)
+	await reveal_tween.finished
 	layer.queue_free()
 
 func finish_chase() -> void:

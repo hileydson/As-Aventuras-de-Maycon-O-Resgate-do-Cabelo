@@ -118,7 +118,6 @@ func _draw() -> void:
 	draw_rect(Rect2(24, 23, 286, 80), Color(0.012, 0.018, 0.03, 0.78), true)
 	draw_rect(Rect2(24, 23, 286, 80), Color(0.31, 0.67, 0.8, 0.65), false, 2.0)
 	draw_string(font, Vector2(38, 51), tr("WELL_HEALTH"), HORIZONTAL_ALIGNMENT_LEFT, 180, 20, Color(1.0, 0.91, 0.87))
-	draw_string(font, Vector2(239, 51), "%d%%" % int(ceil(health)), HORIZONTAL_ALIGNMENT_RIGHT, 55, 20, Color(1.0, 0.91, 0.87))
 	draw_rect(Rect2(38, 64, 255, 24), Color(0.12, 0.025, 0.035), true)
 	draw_rect(Rect2(42, 68, 247.0 * clampf(health / 100.0, 0.0, 1.0), 16), Color(0.72, 0.025, 0.09).lerp(Color(1.0, 0.24, 0.13), health / 100.0), true)
 	for i in 10:

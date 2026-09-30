@@ -385,6 +385,7 @@ func _populate_debug_events() -> void:
 	# 1. Opção especial de teste: Desativar batalhas / Derrota instantânea ao encostar
 	var battle_check = CheckBox.new()
 	battle_check.text = "⚡ " + tr("SETTINGS_DEBUG_NO_BATTLES")
+	battle_check.add_theme_font_override("font", preload("res://scripts/ui/emoji_font.gd").get_ui_font())
 	battle_check.tooltip_text = tr("SETTINGS_DEBUG_NO_BATTLES_DESC")
 	battle_check.button_pressed = Global.debug_disable_battles
 	battle_check.focus_mode = Control.FOCUS_ALL
@@ -399,6 +400,7 @@ func _populate_debug_events() -> void:
 
 	var dungeon_invincible_check = CheckBox.new()
 	dungeon_invincible_check.text = "🛡 " + tr("SETTINGS_DEBUG_DUNGEON_INVINCIBLE")
+	dungeon_invincible_check.add_theme_font_override("font", preload("res://scripts/ui/emoji_font.gd").get_ui_font())
 	dungeon_invincible_check.tooltip_text = tr("SETTINGS_DEBUG_DUNGEON_INVINCIBLE_DESC")
 	dungeon_invincible_check.button_pressed = Global.debug_dungeon_invincible
 	dungeon_invincible_check.focus_mode = Control.FOCUS_ALL
@@ -413,6 +415,7 @@ func _populate_debug_events() -> void:
 
 	var lips_um_golpe_check = CheckBox.new()
 	lips_um_golpe_check.text = "💋 " + tr("SETTINGS_DEBUG_LIPS_ONE_HIT")
+	lips_um_golpe_check.add_theme_font_override("font", preload("res://scripts/ui/emoji_font.gd").get_ui_font())
 	lips_um_golpe_check.tooltip_text = tr("SETTINGS_DEBUG_LIPS_ONE_HIT_DESC")
 	lips_um_golpe_check.button_pressed = Global.debug_lips_um_golpe
 	lips_um_golpe_check.focus_mode = Control.FOCUS_ALL
@@ -428,6 +431,7 @@ func _populate_debug_events() -> void:
 	# Botão para resetar eventos do calabouço no save slot atual
 	var reset_dungeon_btn = Button.new()
 	reset_dungeon_btn.text = "🔄 " + tr("SETTINGS_DEBUG_RESET_DUNGEON")
+	reset_dungeon_btn.add_theme_font_override("font", preload("res://scripts/ui/emoji_font.gd").get_ui_font())
 	reset_dungeon_btn.tooltip_text = tr("SETTINGS_DEBUG_RESET_DUNGEON_DESC")
 	reset_dungeon_btn.focus_mode = Control.FOCUS_ALL
 	reset_dungeon_btn.add_theme_color_override("font_color", Color(1.0, 0.45, 0.45))
@@ -453,6 +457,7 @@ func _populate_debug_events() -> void:
 
 	var dungeon_label = Label.new()
 	dungeon_label.text = "🏰 " + tr("SETTINGS_DEBUG_DUNGEON_SECTION")
+	dungeon_label.add_theme_font_override("font", preload("res://scripts/ui/emoji_font.gd").get_ui_font())
 	dungeon_label.add_theme_color_override("font_color", Color(0.85, 0.65, 1.0))
 	debug_events_container.add_child(dungeon_label)
 
@@ -477,6 +482,7 @@ func _populate_debug_events() -> void:
 
 	var story_label = Label.new()
 	story_label.text = "📜 " + tr("SETTINGS_DEBUG_STORY_SECTION")
+	story_label.add_theme_font_override("font", preload("res://scripts/ui/emoji_font.gd").get_ui_font())
 	story_label.add_theme_color_override("font_color", Color(0.9, 0.85, 0.55))
 	debug_events_container.add_child(story_label)
 

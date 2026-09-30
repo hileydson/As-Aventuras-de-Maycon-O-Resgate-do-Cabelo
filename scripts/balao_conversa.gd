@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-@onready var label = $Panel/RichTextLabel
+@onready var label: RichTextLabel = $Panel/RichTextLabel
 @onready var som_bip = $Panel/AudioStreamPlayer
 @onready var timer: Timer = $Panel/Timer
 @onready var panel: Panel = $Panel
@@ -36,6 +36,10 @@ func _process(_delta: float) -> void:
 		var canvas_pos = balao_marker.get_global_transform_with_canvas().get_origin()
 		# Centraliza o painel acima do marcador
 		panel.global_position = canvas_pos - Vector2(panel.size.x / 2, panel.size.y + 50)
+	# Mensagens longas podem ser lidas com o analógico, inclusive após a digitação.
+	var scroll_input := Input.get_axis("ui_up", "ui_down")
+	if absf(scroll_input) > 0.15:
+		label.get_v_scroll_bar().value += scroll_input * 12.0
 
 func _input(event):
 	# Detecta clique ou botão A para pular a animação ou passar a fala
@@ -54,6 +58,7 @@ func handle_dialog_input():
 func exibir_fala():
 	if fala_atual < falas.size():
 		label.text = tr(falas[fala_atual])
+		label.get_v_scroll_bar().value = 0.0
 		label.visible_characters = 0 # Começa com zero letras aparecendo
 		timer.start(0.04) # Velocidade da digitação
 	else:

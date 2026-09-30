@@ -508,12 +508,12 @@ mouse_filter = 2
 z_index = -10
 
 [node name="Foreground" type="Sprite2D" parent="BurntForestForeground" unique_id=1738582532]
-position = Vector2(1586, 683)
+position = Vector2(1586, 684)
 scale = Vector2(1.6448598, 1.8470576)
 texture = ExtResource("1_pvy0v")
 
 [node name="Foreground2" type="Sprite2D" parent="BurntForestForeground" unique_id=439529494]
-position = Vector2(-1039, 1749)
+position = Vector2(-1039, 1750)
 rotation = 3.1339595
 scale = Vector2(1.6448598, 1.8470576)
 texture = ExtResource("1_pvy0v")

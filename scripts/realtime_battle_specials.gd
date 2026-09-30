@@ -510,13 +510,13 @@ class SpecialOverlay:
 		var punch_color = Color(0.2, 0.85, 1.0, 0.9).lerp(Color(1.0, 1.0, 1.0, 1.0), rush_punch_flash)
 		draw_rect(Rect2(376, 548, 96, 24), Color(0.08, 0.12, 0.22, 0.9), true)
 		draw_rect(Rect2(376, 548, 96, 24), punch_color, false, 2.0 + rush_punch_flash * 2.0)
-		draw_string(font, Vector2(376, 565), "👊 " + tr("POWER_PUNCH") + " [Q/Y]", HORIZONTAL_ALIGNMENT_CENTER, 96, 12, punch_color)
+		draw_string(preload("res://scripts/ui/emoji_font.gd").get_ui_font(), Vector2(376, 565), "👊 " + tr("POWER_PUNCH") + " [Q/Y]", HORIZONTAL_ALIGNMENT_CENTER, 96, 12, punch_color)
 		
 		# Botao Chute [W/B]
 		var kick_color = Color(1.0, 0.2, 0.6, 0.9).lerp(Color(1.0, 1.0, 1.0, 1.0), rush_kick_flash)
 		draw_rect(Rect2(488, 548, 96, 24), Color(0.22, 0.08, 0.16, 0.9), true)
 		draw_rect(Rect2(488, 548, 96, 24), kick_color, false, 2.0 + rush_kick_flash * 2.0)
-		draw_string(font, Vector2(488, 565), "🦶 " + tr("POWER_KICK") + " [W/B]", HORIZONTAL_ALIGNMENT_CENTER, 96, 12, kick_color)
+		draw_string(preload("res://scripts/ui/emoji_font.gd").get_ui_font(), Vector2(488, 565), "🦶 " + tr("POWER_KICK") + " [W/B]", HORIZONTAL_ALIGNMENT_CENTER, 96, 12, kick_color)
 		
 		# Barra do medidor de aceleracao
 		var gauge_bg = Rect2(600, 552, 176, 16)
@@ -841,6 +841,7 @@ func build_special_hud() -> void:
 	symbol_pentagram_ctrl.add_theme_stylebox_override("panel", pentagram_box)
 	symbol_pentagram_label = Label.new()
 	symbol_pentagram_label.text = "👊 + 🦶"
+	symbol_pentagram_label.add_theme_font_override("font", EMOJI_FONT.get_ui_font())
 	symbol_pentagram_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	symbol_pentagram_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	symbol_pentagram_label.add_theme_font_size_override("font_size", 14)
@@ -864,6 +865,7 @@ func build_special_hud() -> void:
 	symbol_rush_ctrl.add_theme_stylebox_override("panel", rush_box)
 	symbol_rush_label = Label.new()
 	symbol_rush_label.text = "🦶 + 💨"
+	symbol_rush_label.add_theme_font_override("font", EMOJI_FONT.get_ui_font())
 	symbol_rush_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	symbol_rush_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	symbol_rush_label.add_theme_font_size_override("font_size", 14)

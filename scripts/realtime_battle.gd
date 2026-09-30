@@ -2,6 +2,8 @@ extends Node2D
 
 const PAUSE_SOUND:AudioStream = preload("res://assets/novos_audios/pause_sfxr.mp3")
 const PAUSE_VISUAL = preload("res://scripts/ui/pause_visual.gd")
+const EMOJI_FONT = preload("res://scripts/ui/emoji_font.gd")
+const SETTINGS_DIALOG:PackedScene = preload("res://scenes/menus/configuracoes_dialog.tscn")
 
 const ARENA_WIDTH:float = 2600.0
 const MIN_Y:float = 260.0
@@ -452,6 +454,9 @@ var player_dash_ghost_timer:float = 0.0
 var player_dash_sound:AudioStreamPlayer
 var seco_second_phase:bool = false
 var seco_dog_respawn_timer:float = 0.0
+var seco_phase_transition:bool = false
+var seco_allies:Array[Dictionary] = []
+var seco_victory_started:bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -1907,6 +1912,26 @@ func build_pause_overlay() -> void:
 	PAUSE_VISUAL.configure_backdrop(pause_overlay, 0.91)
 	PAUSE_VISUAL.add_header(pause_overlay, tr("MENU_BATTLE_PAUSED"), tr("MENU_PAUSE_HINT"))
 	PAUSE_VISUAL.add_side_glow(pause_overlay)
+	var settings_dialog := SETTINGS_DIALOG.instantiate()
+	pause_overlay.add_child(settings_dialog)
+	var settings_button := Button.new()
+	settings_button.text = tr("MENU_SETTINGS").to_upper()
+	settings_button.position = Vector2(70.0, 205.0)
+	settings_button.size = Vector2(360.0, 52.0)
+	PAUSE_VISUAL.style_button(settings_button)
+	settings_button.pressed.connect(func(): settings_dialog.abrir())
+	pause_overlay.add_child(settings_button)
+	var exit_button := Button.new()
+	exit_button.text = tr("MENU_EXIT").to_upper()
+	exit_button.position = Vector2(70.0, 269.0)
+	exit_button.size = Vector2(360.0, 52.0)
+	PAUSE_VISUAL.style_button(exit_button, true)
+	exit_button.pressed.connect(func():
+		battle_paused = false
+		get_tree().paused = false
+		get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	)
+	pause_overlay.add_child(exit_button)
 	var pause_audio := AudioStreamPlayer.new()
 	pause_audio.name = "PauseAudio"
 	pause_audio.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -2022,6 +2047,7 @@ func _create_action_row(action_text:String, label_color:Color, key_tex:Texture2D
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_font_override("font", EMOJI_FONT.get_ui_font())
 	label.add_theme_color_override("font_color", label_color)
 	label.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.05, 0.95))
 	label.add_theme_constant_override("outline_size", 3)
@@ -2144,7 +2170,7 @@ func build_audio() -> void:
 	enemy_voice_sound = create_audio_from_stream(enemy_voice_sound_stream, -1.0)
 	enemy_teleport_sound = create_audio("res://assets/novos_audios/respaw.mp3", -4.0)
 	minion_hit_sound = create_audio("res://assets/novos_audios/punch_3.mp3", -5.0)
-	sword_wave_sound = create_audio("res://assets/novos_audios/inimigo_1_attack_magic.mp3", -3.5)
+	sword_wave_sound = create_audio("res://assets/novos_audios/seco_kick_dimensional_whoosh_pixabay.mp3", -3.5)
 	blood_pickup_sound = create_audio("res://assets/novos_audios/sangue_fill_effect.mp3", -1.5)
 	dog_growl_sound = create_audio("res://assets/novos_audios/growl_1.mp3", -2.0)
 	dog_dash_sound = create_audio("res://assets/novos_audios/dog_running.mp3", -2.5)
@@ -2198,6 +2224,7 @@ func _process(delta:float) -> void:
 		return
 	update_player(delta)
 	update_minions(delta)
+	update_seco_allies(delta)
 	update_sword_waves(delta)
 	update_blood_drops(delta)
 	update_dog_spawners(delta)
@@ -2207,7 +2234,8 @@ func _process(delta:float) -> void:
 	if !enemy_dead:
 		update_enemy(delta)
 	else:
-		update_enemy_explosion(delta)
+		if enemy_id != "1001" || seco_victory_started:
+			update_enemy_explosion(delta)
 		if exit_open && player_position.x >= ARENA_WIDTH - 150.0:
 			finish_battle()
 	update_fighter_transforms()
@@ -2504,6 +2532,7 @@ func resolve_player_dash_hits() -> void:
 			shake(10.0, 0.3)
 			hit_sound.pitch_scale = 0.72
 			hit_sound.play()
+			kick_sound.play()
 			combo += 1
 			on_hit_connected()
 			combo_timeout = 2.4
@@ -2539,6 +2568,7 @@ func resolve_player_dash_hits() -> void:
 			if minion.hp <= 0.0:
 				defeat_minion(i)
 			minions[i] = minion
+	hit_seco_allies(dash_damage, player_dash_facing, 120.0, true)
 
 func spawn_player_dash_ghost() -> void:
 	if !player or !player.sprite_frames:
@@ -2630,6 +2660,13 @@ func resolve_player_hit(kick:bool) -> void:
 			if absf(m_dist.x) <= (155.0 if kick else 125.0) && absf(m_dist.y) <= 65.0 && (m_dist.x * player_facing >= 0.0):
 				has_minion_in_range = true
 				break
+	if !has_minion_in_range:
+		for ally in seco_allies:
+			if !ally.dead:
+				var ally_offset:Vector2 = ally.position - player_position
+				if absf(ally_offset.x) <= (155.0 if kick else 125.0) && absf(ally_offset.y) <= 65.0 && ally_offset.x * player_facing >= 0.0:
+					has_minion_in_range = true
+					break
 
 	if !hit_enemy && !has_minion_in_range:
 		return
@@ -2675,9 +2712,12 @@ func resolve_player_hit(kick:bool) -> void:
 			defeat_enemy()
 
 	var hit_minions = resolve_player_hit_minions(kick, is_special)
-	if !kick && (hit_enemy || hit_minions):
+	var hit_allies = hit_seco_allies((53.0 if kick else 29.0) + (25.0 if is_special else 0.0), player_facing, 155.0 if kick else 125.0)
+	if !kick && (hit_enemy || hit_minions || hit_allies):
 		hit_sound.pitch_scale = 0.72 if is_special else randf_range(0.9, 1.13)
 		hit_sound.play()
+	if hit_enemy || hit_minions || hit_allies:
+		kick_sound.play()
 
 	# Atualizacao do texto de combo no HUD superior
 	combo_label.text = ("%d HITS!\n%s" % [combo, tr("BATTLE_SPECIAL")]) if is_special else ("%d HIT\nCOMBO" % combo)
@@ -2689,7 +2729,7 @@ func resolve_player_hit(kick:bool) -> void:
 	delayed_spawn_hit_counter_popup(hit_popup_pos, combo, is_special, slow_duration)
 
 func apply_hit_stop(duration_sec:float = 0.115, slow_scale:float = 0.10) -> void:
-	if bool(get("special_active")) || enemy_dead || player_dead || leaving:
+	if bool(get("special_active")) || seco_phase_transition || enemy_dead || player_dead || leaving:
 		return
 	hit_stop_token += 1
 	var active_token = hit_stop_token
@@ -2976,6 +3016,18 @@ func defeat_enemy() -> void:
 	if enemy_id == "1001" && !seco_second_phase:
 		start_seco_second_phase()
 		return
+	if enemy_id == "1001" && seco_arena_enemies_alive() && !seco_victory_started:
+		enemy_dead = true
+		enemy.visible = false
+		enemy_bar.visible = false
+		enemy_name_label.visible = false
+		clear_power_projectiles()
+		status_label.text = tr("BATTLE_DEFEAT_REMAINING")
+		return
+	if enemy_id == "1001":
+		seco_victory_started = true
+		seco_phase_transition = false
+		hit_stop_token += 1
 	enemy_dead = true
 	enemy_hit_pending = false
 	clear_power_projectiles()
@@ -3014,6 +3066,9 @@ func defeat_enemy() -> void:
 
 func start_seco_second_phase() -> void:
 	seco_second_phase = true
+	seco_phase_transition = true
+	hit_stop_token += 1
+	Engine.time_scale = 0.25
 	seco_dog_respawn_timer = 0.45
 	enemy_hp = enemy_max_hp * 0.75
 	enemy_attack_time = 0.0
@@ -3028,7 +3083,14 @@ func start_seco_second_phase() -> void:
 	enemy.play("pain")
 	status_label.text = tr("BATTLE_SECO_REVIVED")
 	show_seco_revival_effect()
+	show_seco_phase_announcement()
+	spawn_seco_allies()
+	seco_phase_lightning()
 	shake(20.0, 0.85)
+	await get_tree().create_timer(2.8, true, false, true).timeout
+	if is_inside_tree() && !player_dead && !leaving && !seco_victory_started:
+		seco_phase_transition = false
+		Engine.time_scale = 1.0
 
 func show_seco_revival_effect() -> void:
 	var effect = Control.new()
@@ -3057,15 +3119,139 @@ func show_seco_revival_effect() -> void:
 		particle_tween.tween_property(particle, "modulate:a", 0.0, randf_range(0.6, 1.25)).set_delay(0.28)
 	flash_tween.chain().tween_callback(effect.queue_free)
 
+func show_seco_phase_announcement() -> void:
+	var title := Label.new()
+	title.set_anchors_preset(Control.PRESET_CENTER)
+	title.position = Vector2(-420.0, -64.0)
+	title.size = Vector2(840.0, 128.0)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title.text = tr("BATTLE_SECO_LIFE_POWER")
+	title.add_theme_font_size_override("font_size", 64)
+	title.add_theme_color_override("font_color", Color("bdefff"))
+	title.add_theme_color_override("font_outline_color", Color("102c66"))
+	title.add_theme_constant_override("outline_size", 12)
+	title.z_index = 2400
+	hud_canvas.add_child(title)
+	get_tree().create_timer(2.8, true, false, true).timeout.connect(title.queue_free)
+
+func seco_phase_lightning() -> void:
+	var layer := Control.new()
+	layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.z_index = 2350
+	hud_canvas.add_child(layer)
+	for index in range(19):
+		var bolt := Line2D.new()
+		bolt.width = randf_range(4.0, 9.0)
+		bolt.default_color = Color("d6f7ff")
+		var x := randf_range(15.0, 1135.0)
+		bolt.add_point(Vector2(x, -20.0))
+		for segment in range(1, 7):
+			bolt.add_point(Vector2(x + randf_range(-35.0, 35.0), float(segment) * 115.0))
+		layer.add_child(bolt)
+		var bolt_tween := create_tween()
+		bolt_tween.tween_property(bolt, "modulate:a", 0.0, 0.8).set_delay(randf_range(0.0, 0.8))
+	get_tree().create_timer(2.8, true, false, true).timeout.connect(layer.queue_free)
+	# O golpe de fase ignora a invulnerabilidade breve de um ataque anterior.
+	player_hp = maxf(0.0, player_hp - player_max_hp * 0.25)
+	Global.realtime_hp = player_hp
+	spawn_impact(player_position + Vector2(0.0, -45.0), Color("bdefff"), 1.0)
+	if player_hp <= 0.0:
+		lose_battle()
+
+func spawn_seco_allies() -> void:
+	for index in range(3):
+		var ally_id:String = ["2", "3", "5"][index]
+		var stats:Dictionary = ENEMY_STATS[ally_id]
+		var sprite := sprite_from_scene(ENEMY_SCENES[ally_id], false)
+		sprite.name = "SecoAlly%s" % ally_id
+		sprite.process_mode = Node.PROCESS_MODE_PAUSABLE
+		sprite.play("idle")
+		add_child(sprite)
+		var frame := sprite.sprite_frames.get_frame_texture("idle", 0)
+		var base_scale:float = 145.0 * float(stats.scale) / maxf(1.0, frame.get_height()) if frame else 1.0
+		seco_allies.append({"sprite":sprite, "position":Vector2(clampf(enemy_position.x + (index - 1) * 240.0, 260.0, 2070.0), MIN_Y + 90.0 + index * 75.0), "hp":float(stats.hp), "speed":float(stats.speed) * 0.75, "damage":float(stats.damage), "cooldown":1.5 + index * 0.6, "scale":base_scale, "dead":false})
+
+func seco_allies_alive() -> bool:
+	for ally in seco_allies:
+		if !ally.dead:
+			return true
+	return false
+
+func seco_arena_enemies_alive() -> bool:
+	if seco_allies_alive():
+		return true
+	for minion in minions:
+		if !minion.dead:
+			return true
+	return false
+
+func update_seco_allies(delta:float) -> void:
+	if seco_allies.is_empty() || player_dead || leaving:
+		return
+	for index in seco_allies.size():
+		var ally:Dictionary = seco_allies[index]
+		if ally.dead:
+			continue
+		var sprite:AnimatedSprite2D = ally.sprite
+		var offset:Vector2 = player_position - ally.position
+		ally.cooldown = maxf(0.0, ally.cooldown - delta)
+		if offset.length() > 85.0:
+			ally.position += offset.normalized() * ally.speed * delta
+			sprite.play("walk" if sprite.sprite_frames.has_animation("walk") else "idle")
+		elif ally.cooldown <= 0.0:
+			if sprite.sprite_frames.has_animation("attack"):
+				sprite.play("attack")
+			damage_player(ally.damage, signf(offset.x))
+			ally.cooldown = randf_range(1.6, 2.4)
+		ally.position.x = clampf(ally.position.x, 150.0, ARENA_WIDTH - 160.0)
+		ally.position.y = clampf(ally.position.y, MIN_Y, MAX_Y)
+		sprite.position = ally.position
+		sprite.flip_h = offset.x < 0.0
+		sprite.z_index = int(ally.position.y)
+		var depth_scale:float = remap(ally.position.y, MIN_Y, MAX_Y, 0.85, 1.15)
+		sprite.scale = Vector2.ONE * ally.scale * depth_scale
+		seco_allies[index] = ally
+	if enemy_dead && !seco_arena_enemies_alive() && !seco_victory_started:
+		seco_victory_started = true
+		defeat_enemy()
+
+func hit_seco_allies(damage:float, facing:float, reach:float, dash:bool = false) -> bool:
+	var hit_any := false
+	for index in seco_allies.size():
+		var ally:Dictionary = seco_allies[index]
+		if ally.dead:
+			continue
+		if dash && player_dash_hit_targets.has("seco_ally_%d" % index):
+			continue
+		var offset:Vector2 = ally.position - player_position
+		if absf(offset.x) > reach || absf(offset.y) > 65.0 || offset.x * facing < -30.0:
+			continue
+		hit_any = true
+		if dash:
+			player_dash_hit_targets.append("seco_ally_%d" % index)
+		ally.hp = maxf(0.0, ally.hp - damage)
+		ally.position.x += facing * (85.0 if dash else 25.0)
+		spawn_blood(ally.position + Vector2(0.0, -30.0), 15, facing)
+		if ally.hp <= 0.0:
+			ally.dead = true
+			ally.sprite.visible = false
+			spawn_blood_explosion(ally.position, 42)
+		else:
+			ally.sprite.play("pain" if ally.sprite.sprite_frames.has_animation("pain") else "idle")
+		seco_allies[index] = ally
+	return hit_any
+
 func show_final_seco_victory() -> void:
 	var victory_label = Label.new()
 	victory_label.set_anchors_preset(Control.PRESET_CENTER)
-	victory_label.position = Vector2(-420, -62)
-	victory_label.size = Vector2(840, 124)
+	victory_label.position = Vector2(-540, -62)
+	victory_label.size = Vector2(1080, 124)
 	victory_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	victory_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	victory_label.text = tr("BATTLE_YOU_WIN")
-	victory_label.add_theme_font_size_override("font_size", 76)
+	victory_label.text = tr("BATTLE_FINAL_SECO_VICTORY")
+	victory_label.add_theme_font_size_override("font_size", 43)
 	victory_label.add_theme_color_override("font_color", Color("c8f7ff"))
 	victory_label.add_theme_color_override("font_outline_color", Color("123a72"))
 	victory_label.add_theme_constant_override("outline_size", 12)

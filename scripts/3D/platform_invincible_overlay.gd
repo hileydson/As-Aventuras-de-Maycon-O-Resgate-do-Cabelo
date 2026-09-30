@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const EMOJI_FONT = preload("res://scripts/ui/emoji_font.gd")
+
 signal special_activated
 
 var active:bool = false
@@ -65,6 +67,7 @@ func _build_ui() -> void:
 
 	title_label = Label.new()
 	title_label.text = "✦ " + tr("PLATFORM_INVINCIBLE_TITLE") + " ✦"
+	title_label.add_theme_font_override("font", EMOJI_FONT.get_ui_font())
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title_label.add_theme_font_size_override("font_size", 13)
 	title_label.add_theme_color_override("font_color", Color("ffe082"))

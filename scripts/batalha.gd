@@ -81,6 +81,7 @@ var died:bool = false
 var boss_song:bool = false
 var realtime_transitioning:bool = false
 var suppress_next_opening_explosion:bool = false
+const SECO_LAST_SONG:AudioStream = preload("res://assets/novos_audios/seco_last_song.mp3")
 
 var mapas_backgrounds = {
 	"1" = preload("res://assets/novas_imagens/cenarios/in_use/battle/battle_fase_1_in_fire.png"),
@@ -198,6 +199,7 @@ func play_inicio()->void:
 	batalha_moves.play("move_to_middle")
 	
 	if boss_song :
+		sound_seco_capsule.stream = SECO_LAST_SONG
 		sound_seco_capsule.play()
 	else:
 		battle_song.play()

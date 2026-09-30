@@ -16,10 +16,20 @@ extends Sprite2D
 var texture_no_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_no_fire_paralax.png")
 var texture_with_fire = preload("res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_castle_3_paralax.png")
 
+const FOREGROUND_NO_FIRE_Y_OFFSET := 10.0
+
 var temp_canvas_layer_fogo = canvas_layer
 var portal_funcionar:bool = true
+var foreground_position: Vector2
+var foreground2_position: Vector2
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	var initial_foreground: Sprite2D = get_node_or_null("../BurntForestForeground/Foreground")
+	var initial_foreground2: Sprite2D = get_node_or_null("../BurntForestForeground/Foreground2")
+	if initial_foreground:
+		foreground_position = initial_foreground.position
+	if initial_foreground2:
+		foreground2_position = initial_foreground2.position
 	
 	# SET CAIXA OU QUEUEFREE SE NAO TIVER TRAGO A CAIXA
 	if Global.game_events["caixa_to_carry_moved"]:
@@ -122,8 +132,10 @@ func _on_division_no_fire_body_exited(body: Node2D) -> void:
 		Global.battle_background = "1"
 		if foreground:
 			foreground.texture = texture_with_fire
+			foreground.position = foreground_position
 		if foreground2:
 			foreground2.texture = texture_with_fire
+			foreground2.position = foreground2_position
 		fase_1_before_castle.texture = null
 		cabelo.visible = true
 		smoke.visible = true
@@ -132,8 +144,10 @@ func _on_division_no_fire_body_exited(body: Node2D) -> void:
 		Global.battle_background = "2"
 		if foreground:
 			foreground.texture = texture_no_fire
+			foreground.position = foreground_position + Vector2(0, FOREGROUND_NO_FIRE_Y_OFFSET)
 		if foreground2:
 			foreground2.texture = texture_no_fire
+			foreground2.position = foreground2_position + Vector2(0, FOREGROUND_NO_FIRE_Y_OFFSET)
 		fase_1_before_castle.texture = null
 		cabelo.visible = false
 		smoke.visible = false

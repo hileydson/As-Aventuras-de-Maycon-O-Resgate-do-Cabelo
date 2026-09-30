@@ -7,6 +7,7 @@ const SHAFT_SPEED:float = 24.5
 const MAYCON_DEPTH:float = 7.0
 const DASH_SMOKE_TEXTURE:Texture2D = preload("res://assets/novas_imagens/effects/smoke_animation.png")
 const MAYCON_MODEL_SCENE:PackedScene = preload("res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb")
+const SETTINGS_DIALOG:PackedScene = preload("res://scenes/menus/configuracoes_dialog.tscn")
 const OBSTACLE_SCENES:Array[String] = [
 	"res://assets/polyhaven/endless_well/wooden_crate_01/wooden_crate_01_1k.gltf",
 	"res://assets/polyhaven/endless_well/barrel_03/barrel_03_1k.gltf",
@@ -77,6 +78,7 @@ var ending_start_pitch:float = 0.0
 var ending_scream_started:bool = false
 var transition_sent:bool = false
 var entry_transitioning:bool = true
+var pause_menu:CanvasLayer
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -101,7 +103,34 @@ func _ready() -> void:
 	wind.play()
 	Global.finish_well_entry_scream(2.5)
 	hud.call("set_state", health, 0.0, 0.0, 0.0, 0.0)
+	build_pause_menu()
 	start_entry_fade()
+
+func build_pause_menu() -> void:
+	pause_menu = CanvasLayer.new()
+	pause_menu.layer = 30
+	pause_menu.visible = false
+	add_child(pause_menu)
+	var settings_dialog := SETTINGS_DIALOG.instantiate()
+	pause_menu.add_child(settings_dialog)
+	var column := VBoxContainer.new()
+	column.position = Vector2(70.0, 220.0)
+	column.size = Vector2(360.0, 110.0)
+	column.add_theme_constant_override("separation", 10)
+	pause_menu.add_child(column)
+	var settings := Button.new()
+	settings.text = tr("MENU_SETTINGS").to_upper()
+	settings.custom_minimum_size = Vector2(360.0, 46.0)
+	settings.pressed.connect(func(): settings_dialog.abrir())
+	column.add_child(settings)
+	var exit_button := Button.new()
+	exit_button.text = tr("MENU_EXIT").to_upper()
+	exit_button.custom_minimum_size = Vector2(360.0, 46.0)
+	exit_button.pressed.connect(func():
+		locally_paused = false
+		get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	)
+	column.add_child(exit_button)
 
 func start_entry_fade() -> void:
 	if !is_instance_valid(fade_overlay):
@@ -434,6 +463,8 @@ func toggle_pause() -> void:
 	music.stream_paused = locally_paused
 	wind.stream_paused = locally_paused
 	hud.call("set_pause", locally_paused)
+	if is_instance_valid(pause_menu):
+		pause_menu.visible = locally_paused
 	hud.set_process(true)
 	blood_spray.speed_scale = 0.0 if locally_paused else 1.0
 	dash_blur.visible = false

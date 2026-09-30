@@ -11,6 +11,19 @@ const MARKER_TEXTURE = preload("res://assets/novas_imagens/objects/interrogacao.
 const MAX_HP := 16
 const MINIMAP_SIZE := 220.0
 const MINIMAP_WORLD_SIZE := 360.0
+const ROAD_HALF_WIDTH := 32.0
+const ROAD_SEGMENTS := [
+	[Vector2(-560.0, 720.0), Vector2(-110.0, 720.0)],
+	[Vector2(-480.0, 730.0), Vector2(-480.0, -50.0)],
+	[Vector2(-250.0, 730.0), Vector2(-250.0, -120.0)],
+	[Vector2(-110.0, 730.0), Vector2(-110.0, 270.0)],
+	[Vector2(120.0, 560.0), Vector2(120.0, -120.0)],
+	[Vector2(-560.0, 420.0), Vector2(320.0, 420.0)],
+	[Vector2(-560.0, 300.0), Vector2(-110.0, 300.0)],
+	[Vector2(-480.0, 200.0), Vector2(120.0, 200.0)],
+	[Vector2(-390.0, 40.0), Vector2(-250.0, 40.0)],
+	[Vector2(-110.0, 480.0), Vector2(320.0, 480.0)]
+]
 
 var player:CharacterBody3D
 var members:Array[Dictionary] = []
@@ -123,6 +136,12 @@ func start_chase(chase_player:CharacterBody3D, saved_health:Array[int] = []) -> 
 func road_position(target:Vector3) -> Vector3:
 	target.x = clampf(target.x, -670.0, 490.0)
 	target.z = clampf(target.z, -330.0, 825.0)
+	var road_point := nearest_road_point(Vector2(target.x, target.z))
+	var lateral := Vector2(target.x, target.z) - road_point
+	if lateral.length() > ROAD_HALF_WIDTH:
+		var limited := road_point + lateral.normalized() * ROAD_HALF_WIDTH
+		target.x = limited.x
+		target.z = limited.y
 	var from := Vector3(target.x, -2.0, target.z)
 	var to := Vector3(target.x, -18.0, target.z)
 	var query := PhysicsRayQueryParameters3D.create(from, to)
@@ -133,6 +152,36 @@ func road_position(target:Vector3) -> Vector3:
 	else:
 		target.y = player.global_position.y + 2.0
 	return target
+
+func nearest_road_point(point:Vector2) -> Vector2:
+	var closest := point
+	var best_distance := INF
+	for segment in ROAD_SEGMENTS:
+		var start:Vector2 = segment[0]
+		var finish:Vector2 = segment[1]
+		var along := clampf((point - start).dot(finish - start) / start.distance_squared_to(finish), 0.0, 1.0)
+		var candidate := start.lerp(finish, along)
+		var distance := point.distance_squared_to(candidate)
+		if distance < best_distance:
+			best_distance = distance
+			closest = candidate
+	return closest
+
+func keep_player_on_roads() -> void:
+	if !combat_enabled:
+		return
+	var position_2d := Vector2(player.global_position.x, player.global_position.z)
+	var road_point := nearest_road_point(position_2d)
+	var lateral := position_2d - road_point
+	if lateral.length() <= ROAD_HALF_WIDTH:
+		return
+	var limited := road_point + lateral.normalized() * ROAD_HALF_WIDTH
+	player.global_position.x = limited.x
+	player.global_position.z = limited.y
+	var outward := Vector2(player.velocity.x, player.velocity.z).dot(lateral.normalized())
+	if outward > 0.0:
+		player.velocity.x -= lateral.normalized().x * outward
+		player.velocity.z -= lateral.normalized().y * outward
 
 func build_hud() -> void:
 	hud = CanvasLayer.new()
@@ -374,6 +423,7 @@ func get_member_health() -> Array[int]:
 func _physics_process(delta:float) -> void:
 	if finished or !is_instance_valid(player):
 		return
+	keep_player_on_roads()
 	update_player_health()
 	chase_clock += delta
 	var any_active := false

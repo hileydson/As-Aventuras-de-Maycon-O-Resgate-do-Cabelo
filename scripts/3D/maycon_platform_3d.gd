@@ -954,7 +954,10 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 		boss_name_label.add_theme_color_override("font_color", Color("66ff88"))
 
 	var p_start: Vector3 = lips_boss.global_position
-	var p_barrier: Vector3 = Vector3(p_start.x, p_start.y, -193.2)
+	# A cerca ocupa X=-10..10; o contato precisa ocorrer no centro dela,
+	# independentemente de onde o último golpe atingiu o Lips.
+	var barrier_z: float = boss_barrier.global_position.z if is_instance_valid(boss_barrier) else -193.2
+	var p_barrier: Vector3 = Vector3(0.0, p_start.y, barrier_z + 1.5)
 
 	# 4. MEGA EXPLOSÃO no momento do impacto fatal (motivo de ser arremessado pra tão longe!)
 	_spawn_death_blast(p_start + Vector3(0.0, 1.4, 0.0))
@@ -992,7 +995,7 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 	if is_instance_valid(lips_boss) and "model" in lips_boss and is_instance_valid(lips_boss.model):
 		lips_boss.model.visible = true
 
-	# 6. Lips segue reto até a cerca, sem arco nem rotações que criem um segundo visual.
+	# 6. Lips converge para a madeira e só então a quebra.
 	var flight_duration := 3.4
 	var flight_tw := create_tween()
 	flight_tw.tween_method(func(prog: float):
@@ -1035,10 +1038,9 @@ func start_boss_lips_death_cutscene(lips_boss: Node3D) -> void:
 	await get_tree().create_timer(0.7, true, false, true).timeout
 	Engine.time_scale = 1.0
 
-	# 8. CONTINUAÇÃO RUMO AO INFINITO: Lips não desvia nem cai no buraco da seta, continua voando pra frente no horizonte infinito!
+	# 8. A câmera fica no impacto enquanto Lips segue reto para o horizonte.
 	if is_instance_valid(cutscene_cam):
-		cutscene_cam.global_position = Vector3(3.2, 5.2, -191.0)
-		cutscene_cam.look_at(Vector3(0.0, 7.0, -450.0), Vector3.UP)
+		cutscene_cam.look_at(Vector3(0.0, 4.0, barrier_z - 16.0), Vector3.UP)
 
 	if is_instance_valid(lips_boss):
 		var infinite_tw := create_tween().set_parallel(true)
@@ -2164,6 +2166,7 @@ func _spawn_landing_dust(at: Vector3) -> void:
 func _build_hud() -> void:
 	var canvas := CanvasLayer.new()
 	canvas.name = "HUD"
+	canvas.add_to_group("hide_on_pause")
 	add_child(canvas)
 	var count_panel := HBoxContainer.new()
 	count_panel.anchor_left = 1.0
@@ -2179,12 +2182,13 @@ func _build_hud() -> void:
 	pentagram_label.add_theme_color_override("font_color", Color("d72343"))
 	count_panel.add_child(pentagram_label)
 	var background := PanelContainer.new()
-	background.anchor_top = 1.0
-	background.anchor_bottom = 1.0
+	# Vida fica visível durante a plataforma, no canto superior esquerdo.
+	background.anchor_top = 0.0
+	background.anchor_bottom = 0.0
 	background.offset_left = 12.0
 	background.offset_right = 348.0
-	background.offset_top = -97.0
-	background.offset_bottom = -12.0
+	background.offset_top = 12.0
+	background.offset_bottom = 97.0
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.09, 0.10, 0.14, 0.8)
 	panel_style.set_corner_radius_all(6)
@@ -2265,6 +2269,7 @@ func _build_hud() -> void:
 
 	boss_name_label = Label.new()
 	boss_name_label.text = "★ " + tr("PLATFORM_BOSS_NAME") + " ★"
+	boss_name_label.add_theme_font_override("font", preload("res://scripts/ui/emoji_font.gd").get_ui_font())
 	boss_name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	boss_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	boss_name_label.add_theme_font_size_override("font_size", 14)
