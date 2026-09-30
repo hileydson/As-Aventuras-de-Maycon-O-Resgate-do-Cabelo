@@ -2182,13 +2182,13 @@ func _build_hud() -> void:
 	pentagram_label.add_theme_color_override("font_color", Color("d72343"))
 	count_panel.add_child(pentagram_label)
 	var background := PanelContainer.new()
-	# Vida fica visível durante a plataforma, no canto superior esquerdo.
-	background.anchor_top = 0.0
-	background.anchor_bottom = 0.0
+	# Vida fica visível durante a plataforma, no canto inferior esquerdo.
+	background.anchor_top = 1.0
+	background.anchor_bottom = 1.0
 	background.offset_left = 12.0
 	background.offset_right = 348.0
-	background.offset_top = 12.0
-	background.offset_bottom = 97.0
+	background.offset_top = -97.0
+	background.offset_bottom = -12.0
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.09, 0.10, 0.14, 0.8)
 	panel_style.set_corner_radius_all(6)

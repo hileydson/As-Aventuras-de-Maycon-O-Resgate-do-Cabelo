@@ -418,7 +418,13 @@ var transition_bottom:ColorRect
 var transition_flash:ColorRect
 var intro_label:Label
 var pause_overlay:ColorRect
+var pause_resume_button:Button
 var battle_paused:bool = false
+var controls_intro_overlay:ColorRect
+var controls_intro_label:Label
+var controls_intro_prompt:Label
+var controls_intro_active:bool = false
+var controls_intro_time:float = 0.0
 var dust_particles:Array[Dictionary] = []
 var enemy_dust_distance:float = 0.0
 var power_projectiles:Array[Dictionary] = []
@@ -1914,16 +1920,23 @@ func build_pause_overlay() -> void:
 	PAUSE_VISUAL.add_side_glow(pause_overlay)
 	var settings_dialog := SETTINGS_DIALOG.instantiate()
 	pause_overlay.add_child(settings_dialog)
+	pause_resume_button = Button.new()
+	pause_resume_button.text = tr("MENU_CONTINUE").to_upper()
+	pause_resume_button.position = Vector2(70.0, 205.0)
+	pause_resume_button.size = Vector2(360.0, 52.0)
+	PAUSE_VISUAL.style_button(pause_resume_button)
+	pause_resume_button.pressed.connect(toggle_battle_pause)
+	pause_overlay.add_child(pause_resume_button)
 	var settings_button := Button.new()
 	settings_button.text = tr("MENU_SETTINGS").to_upper()
-	settings_button.position = Vector2(70.0, 205.0)
+	settings_button.position = Vector2(70.0, 269.0)
 	settings_button.size = Vector2(360.0, 52.0)
 	PAUSE_VISUAL.style_button(settings_button)
 	settings_button.pressed.connect(func(): settings_dialog.abrir())
 	pause_overlay.add_child(settings_button)
 	var exit_button := Button.new()
 	exit_button.text = tr("MENU_EXIT").to_upper()
-	exit_button.position = Vector2(70.0, 269.0)
+	exit_button.position = Vector2(70.0, 333.0)
 	exit_button.size = Vector2(360.0, 52.0)
 	PAUSE_VISUAL.style_button(exit_button, true)
 	exit_button.pressed.connect(func():
@@ -2007,20 +2020,55 @@ func build_action_buttons_hud() -> void:
 func show_action_buttons_intro() -> void:
 	if !action_buttons_panel || !pause_overlay:
 		return
+	build_controls_intro_overlay()
 	action_buttons_panel.reparent(hud_canvas)
-	action_buttons_panel.position = Vector2(477, 285)
-	action_buttons_panel.modulate.a = 0.0
+	action_buttons_panel.position = Vector2(690, 220)
+	action_buttons_panel.modulate.a = 1.0
 	action_buttons_panel.visible = true
-	var tween = create_tween().set_parallel(true)
-	tween.tween_property(action_buttons_panel, "modulate:a", 1.0, 0.3).set_delay(1.0)
-	tween.tween_property(action_buttons_panel, "position:y", 300.0, 0.45).set_delay(1.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(action_buttons_panel, "modulate:a", 0.0, 0.35).set_delay(4.2)
-	await tween.finished
+	controls_intro_active = true
+	controls_intro_time = 0.0
+	controls_intro_overlay.visible = true
+	controls_intro_prompt.visible = false
+	get_tree().paused = true
+	set_world_audio_paused(true)
+
+func build_controls_intro_overlay() -> void:
+	if controls_intro_overlay:
+		return
+	controls_intro_overlay = ColorRect.new()
+	controls_intro_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	controls_intro_overlay.color = Color(0.0, 0.0, 0.0, 0.84)
+	controls_intro_overlay.z_index = 5000
+	controls_intro_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_canvas.add_child(controls_intro_overlay)
+	controls_intro_label = Label.new()
+	controls_intro_label.set_anchors_preset(Control.PRESET_CENTER)
+	controls_intro_label.position = Vector2(-500.0, -86.0)
+	controls_intro_label.size = Vector2(520.0, 52.0)
+	controls_intro_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	controls_intro_label.text = tr("BATTLE_CONTROLS_INTRO")
+	controls_intro_label.add_theme_font_size_override("font_size", 26)
+	controls_intro_label.add_theme_color_override("font_color", Color("ffd166"))
+	controls_intro_overlay.add_child(controls_intro_label)
+	controls_intro_prompt = Label.new()
+	controls_intro_prompt.set_anchors_preset(Control.PRESET_CENTER)
+	controls_intro_prompt.position = Vector2(-500.0, 50.0)
+	controls_intro_prompt.size = Vector2(520.0, 45.0)
+	controls_intro_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	controls_intro_prompt.text = tr("BATTLE_CONTROLS_PROMPT")
+	controls_intro_prompt.add_theme_font_size_override("font_size", 22)
+	controls_intro_prompt.add_theme_color_override("font_color", Color("e8f1ff"))
+	controls_intro_overlay.add_child(controls_intro_prompt)
+
+func finish_controls_intro() -> void:
+	controls_intro_active = false
+	controls_intro_overlay.visible = false
 	if is_instance_valid(action_buttons_panel):
 		action_buttons_panel.reparent(pause_overlay)
 		action_buttons_panel.position = Vector2(477, 340)
-		action_buttons_panel.modulate.a = 1.0
 		action_buttons_panel.visible = false
+	get_tree().paused = false
+	intro_time = 0.0
 
 func _create_action_row(action_text:String, label_color:Color, key_tex:Texture2D, mouse_tex:Texture2D, pad_tex:Texture2D, is_space:bool) -> PanelContainer:
 	var row = PanelContainer.new()
@@ -2203,6 +2251,11 @@ func set_world_audio_paused(paused:bool) -> void:
 			world_audio.stream_paused = paused
 
 func _process(delta:float) -> void:
+	if controls_intro_active:
+		controls_intro_time += delta
+		if controls_intro_time >= 2.0:
+			controls_intro_prompt.visible = true
+		return
 	if Input.is_action_just_pressed("ui_cancel") && intro_time <= 0.0 && !leaving && !player_dead:
 		toggle_battle_pause()
 	if battle_paused:
@@ -2255,10 +2308,13 @@ func toggle_battle_pause() -> void:
 	if action_buttons_panel && action_buttons_panel.get_parent() == pause_overlay:
 		action_buttons_panel.visible = battle_paused
 	if battle_paused:
+		pause_resume_button.grab_focus()
 		var pause_audio := pause_overlay.get_node_or_null("PauseAudio") as AudioStreamPlayer
 		if is_instance_valid(pause_audio):
 			pause_audio.play()
 		PAUSE_VISUAL.animate_open(pause_overlay)
+	else:
+		pause_resume_button.release_focus()
 	get_tree().paused = battle_paused
 	for child in get_children():
 		if child is AudioStreamPlayer:
@@ -2280,6 +2336,11 @@ func can_player_kick() -> bool:
 	return player_attack_time <= 0.0
 
 func _unhandled_input(event:InputEvent) -> void:
+	if controls_intro_active:
+		if event.is_pressed() and (event is InputEventKey or event is InputEventMouseButton or event is InputEventJoypadButton):
+			if controls_intro_time >= 2.0:
+				finish_controls_intro()
+		return
 	if battle_paused || intro_time > 0.0 || leaving || player_dead:
 		return
 	if event is InputEventMouseButton && event.pressed:

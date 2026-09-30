@@ -462,13 +462,10 @@ position = Vector2(102.5926, 79.62619)
 shape = SubResource("SegmentShape2D_p57ef")
 
 [node name="Maycon" parent="." unique_id=357775746 instance=ExtResource("1_uwrxv")]
+z_index = 4
 position = Vector2(-193.0863, 40.96587)
 scale = Vector2(1.3133289, 1.0431619)
 slide_on_ceiling = false
-editable_children = true
-
-[node name="walk" parent="Maycon" index="3"]
-pitch_scale = 1.1
 
 [node name="Camera2D" type="Camera2D" parent="Maycon" unique_id=1016856960]
 position = Vector2(458.8409, -94.67078)

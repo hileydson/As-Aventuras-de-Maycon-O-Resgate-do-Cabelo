@@ -6,6 +6,7 @@ extends Node2D
 @onready var canvas: CanvasLayer = $canvas
 var realtime_hp_bar:ProgressBar
 var realtime_hp_label:Label
+var realtime_hp_hud:Control
 
 func _ready() -> void:
 	build_realtime_hp_display()
@@ -31,8 +32,7 @@ func _process(delta: float) -> void:
 	$canvas/layer/maycon_hp/hp_2.visible = !realtime && Global.maycon_hp_count<=1
 	$canvas/layer/maycon_hp/hp_3.visible = !realtime && Global.maycon_hp_count<=0
 	if realtime_hp_bar:
-		realtime_hp_bar.visible = realtime
-		realtime_hp_label.visible = realtime
+		realtime_hp_hud.visible = realtime && !get_tree().paused
 		realtime_hp_bar.value = Global.realtime_hp
 		realtime_hp_label.text = tr("BATTLE_HP_LABEL")
 
@@ -41,9 +41,16 @@ func restore_gameplay_hud() -> void:
 	layer.visible = true
 
 func build_realtime_hp_display() -> void:
+	realtime_hp_hud = Control.new()
+	realtime_hp_hud.name = "RealtimeHealthHUD"
+	realtime_hp_hud.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	realtime_hp_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	realtime_hp_hud.visible = false
+	canvas.add_child(realtime_hp_hud)
 	realtime_hp_bar = ProgressBar.new()
-	realtime_hp_bar.position = Vector2(-542, 397)
+	realtime_hp_bar.position = Vector2(16, 42)
 	realtime_hp_bar.size = Vector2(190, 19)
+	realtime_hp_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	realtime_hp_bar.show_percentage = false
 	realtime_hp_bar.max_value = Global.realtime_hp_max
 	var background = StyleBoxFlat.new()
@@ -56,11 +63,12 @@ func build_realtime_hp_display() -> void:
 	fill.set_corner_radius_all(4)
 	realtime_hp_bar.add_theme_stylebox_override("background", background)
 	realtime_hp_bar.add_theme_stylebox_override("fill", fill)
-	layer.add_child(realtime_hp_bar)
+	realtime_hp_hud.add_child(realtime_hp_bar)
 	realtime_hp_label = Label.new()
-	realtime_hp_label.position = Vector2(-542, 370)
+	realtime_hp_label.position = Vector2(16, 14)
 	realtime_hp_label.size = Vector2(190, 24)
 	realtime_hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	realtime_hp_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	realtime_hp_label.add_theme_font_size_override("font_size", 15)
 	realtime_hp_label.add_theme_color_override("font_color", Color("ffd6dc"))
-	layer.add_child(realtime_hp_label)
+	realtime_hp_hud.add_child(realtime_hp_label)
