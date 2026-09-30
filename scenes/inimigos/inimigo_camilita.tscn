@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://brgahg4b0gy80"]
+[gd_scene format=3 uid="uid://brgahg4b0gy80"]
 
 [ext_resource type="Texture2D" uid="uid://dc6fyyx8xncpv" path="res://assets/novas_imagens/inimigos/camilita/camilita_attack.png" id="1_t5fwm"]
 [ext_resource type="Texture2D" uid="uid://cv4kx83psghuy" path="res://assets/novas_imagens/inimigos/camilita/camilita_idle.png" id="3_gcquk"]
@@ -319,7 +319,7 @@ _data = {
 &"power_attack": SubResource("Animation_evw7u")
 }
 
-[node name="inimigo_camilita" type="AnimatedSprite2D"]
+[node name="inimigo_camilita" type="AnimatedSprite2D" unique_id=1057231986]
 process_mode = 3
 light_mask = 517
 visibility_layer = 517
@@ -333,7 +333,7 @@ frame = 6
 frame_progress = 1.0
 script = ExtResource("4_kbwi8")
 
-[node name="to_battle" type="Area2D" parent="."]
+[node name="to_battle" type="Area2D" parent="." unique_id=937224607]
 light_mask = 517
 visibility_layer = 517
 position = Vector2(-3.9648616, 12.797176)
@@ -341,12 +341,12 @@ scale = Vector2(3.1284537, -7.9651403)
 collision_layer = 4
 collision_mask = 4
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="to_battle"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="to_battle" unique_id=1271464248]
 light_mask = 5
 visibility_layer = 5
 shape = SubResource("RectangleShape2D_kbwi8")
 
-[node name="attack_power" type="GPUParticles2D" parent="."]
+[node name="attack_power" type="GPUParticles2D" parent="." unique_id=1749466544]
 visible = false
 light_mask = 512
 visibility_layer = 512
@@ -355,7 +355,7 @@ scale = Vector2(0.004370174, 0.007473256)
 amount = 15
 process_material = SubResource("ParticleProcessMaterial_gcquk")
 
-[node name="Area2D" type="Area2D" parent="attack_power"]
+[node name="Area2D" type="Area2D" parent="attack_power" unique_id=320091016]
 light_mask = 513
 visibility_layer = 524801
 position = Vector2(-0.0018712934, -0.00029592845)
@@ -363,7 +363,7 @@ scale = Vector2(8.432788e-05, 1.0113322e-05)
 collision_layer = 512
 collision_mask = 512
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="attack_power/Area2D"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="attack_power/Area2D" unique_id=1128227407]
 visibility_layer = 524289
 position = Vector2(95662104, 515884670)
 scale = Vector2(2858707.2, 15971146)
@@ -371,7 +371,7 @@ sprite_frames = SubResource("SpriteFrames_t5fwm")
 autoplay = "default"
 flip_h = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="attack_power/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="attack_power/Area2D" unique_id=1582923047]
 light_mask = 512
 visibility_layer = 524800
 material = SubResource("CanvasItemMaterial_85y4w")
@@ -379,36 +379,34 @@ position = Vector2(39179296, 50253492)
 scale = Vector2(5884276, 21635452)
 shape = SubResource("CircleShape2D_6yikh")
 
-[node name="hps" type="Node2D" parent="."]
+[node name="hps" type="Node2D" parent="." unique_id=1563967692]
 position = Vector2(-25.771532, -18.129248)
 scale = Vector2(2.0308614, 1.2132909)
 
-[node name="hp_1" type="Sprite2D" parent="hps"]
+[node name="hp_1" type="Sprite2D" parent="hps" unique_id=1500347788]
 position = Vector2(12.631714, 109.34494)
 rotation = 3.1415925
 scale = Vector2(0.2017336, -0.23553093)
 texture = ExtResource("6_68kxr")
 
-[node name="hp_2" type="Sprite2D" parent="hps"]
+[node name="hp_2" type="Sprite2D" parent="hps" unique_id=996699824]
 position = Vector2(5.3693237, 109.34494)
 rotation = 3.1415925
 scale = Vector2(0.2017336, -0.23553093)
 texture = ExtResource("6_68kxr")
 
-[node name="Inimigo1AttackMagic" type="AudioStreamPlayer" parent="."]
+[node name="Inimigo1AttackMagic" type="AudioStreamPlayer" parent="." unique_id=1770296075]
 stream = ExtResource("7_d62wo")
 
-[node name="Inimigo1VoiceAttack" type="AudioStreamPlayer" parent="."]
+[node name="Inimigo1VoiceAttack" type="AudioStreamPlayer" parent="." unique_id=369592012]
 stream = ExtResource("8_n4vpa")
 pitch_scale = 1.48
 
-[node name="Timer_enemy_attack" type="Timer" parent="."]
+[node name="Timer_enemy_attack" type="Timer" parent="." unique_id=815539443]
 wait_time = 3.0069999999999997
 
-[node name="inimigo_1_animation_attack" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_6fm5e")
-}
+[node name="inimigo_1_animation_attack" type="AnimationPlayer" parent="." unique_id=705656993]
+libraries/ = SubResource("AnimationLibrary_6fm5e")
 
 [connection signal="animation_finished" from="." to="." method="_on_animation_finished"]
 [connection signal="body_entered" from="to_battle" to="." method="_on_to_battle_body_entered"]
