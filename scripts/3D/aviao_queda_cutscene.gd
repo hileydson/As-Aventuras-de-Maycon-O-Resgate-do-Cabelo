@@ -18,9 +18,6 @@ const DURACAO_FADE_OUT := 2.6
 # Volume do grito conforme a câmera do corte: alto no Maycon, mudo no avião
 const GRITO_PERTO_DB := 1.0
 const GRITO_LONGE_DB := -42.0
-# A partir deste corte os takes ficam curtos demais para cortar o som: o grito
-# passa a rolar direto e vai ficando mais fino conforme a queda acelera
-const CORTE_GRITO_CONTINUO := 9
 const CORTE_INICIO_FADE_OUT := 6
 const GRITO_TOM_BASE := 0.45
 const GRITO_TOM_FINO := 0.92
@@ -103,7 +100,6 @@ func _ready() -> void:
 	var fade_in := create_tween().bind_node(fade_rect)
 	fade_in.tween_property(fade_rect, "modulate:a", 0.0, DURACAO_FADE_IN).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	_preparar_grito()
-	grito.play()
 
 
 # O mp3 do grito tem uma explosão no fim; em loop o trecho do grito cobre a queda
@@ -279,53 +275,36 @@ func _trocar_corte() -> void:
 		enquadramento_aviao = (enquadramento_aviao + 1) % ENQUADRAMENTOS_AVIAO.size()
 		cam_aviao.fov = float(ENQUADRAMENTOS_AVIAO[enquadramento_aviao]["fov"])
 		cam_aviao.make_current()
+	_afinar_grito(no_maycon)
 	_ajustar_volume_do_grito(no_maycon)
-	_afinar_grito()
 	if corte_atual >= CORTE_INICIO_FADE_OUT and not fade_out_iniciado:
 		_iniciar_fade_out()
 
 
-# O grito só se ouve nos cortes em que a câmera está no Maycon. Nos cortes do
-# avião ele é pausado (e não só abaixado), senão a faixa corre em silêncio e
-# volta já no fim quando a câmera retorna para o Maycon.
+# O grito recomeça em cada corte do Maycon. Isso garante que todos os takes
+# tenham o ataque do som, em vez de retomarem uma faixa pausada já perto do fim.
 func _ajustar_volume_do_grito(no_maycon:bool) -> void:
 	if saida_iniciada or not is_instance_valid(grito):
 		return
 	if volume_grito_tw and volume_grito_tw.is_valid():
 		volume_grito_tw.kill()
-	if corte_atual >= CORTE_GRITO_CONTINUO:
-		# Nos cortes relâmpago o grito não é mais cortado, fica contínuo. A
-		# atenuação por distância também sai de cena, senão ele some justamente
-		# nos takes em que a câmera está longe, colada no avião.
+	if no_maycon:
 		grito.attenuation_model = AudioStreamPlayer3D.ATTENUATION_DISABLED
 		grito.stream_paused = false
-		if not grito.playing:
-			grito.play()
 		grito.volume_db = GRITO_PERTO_DB
-		return
-	volume_grito_tw = create_tween().bind_node(grito)
-	if no_maycon:
-		grito.stream_paused = false
-		# Se a faixa tiver acabado, recomeça: nenhum take pode ficar sem o grito
-		if not grito.playing:
-			grito.play()
-		# Rampa curtíssima: os últimos cortes duram menos de 0,2s
-		volume_grito_tw.tween_property(grito, "volume_db", GRITO_PERTO_DB, 0.04)
+		grito.stop()
+		grito.play()
 	else:
-		volume_grito_tw.tween_property(grito, "volume_db", GRITO_LONGE_DB, 0.04)
-		volume_grito_tw.tween_callback(func():
-			if is_instance_valid(grito) and not saida_iniciada:
-				grito.stream_paused = true)
+		grito.volume_db = GRITO_LONGE_DB
+		grito.stop()
 
 
-# O grito vai afinando ao longo dos cortes rápidos, acompanhando a aceleração
-func _afinar_grito() -> void:
-	if saida_iniciada or not is_instance_valid(grito):
+# Cada novo take do Maycon recomeça um pouco mais agudo que o anterior.
+func _afinar_grito(no_maycon:bool) -> void:
+	if not no_maycon or saida_iniciada or not is_instance_valid(grito):
 		return
-	if corte_atual < CORTE_GRITO_CONTINUO:
-		return
-	var restantes := float(CORTES.size() - 1 - CORTE_GRITO_CONTINUO)
-	var avanco := 0.0 if restantes <= 0.0 else clampf(float(corte_atual - CORTE_GRITO_CONTINUO) / restantes, 0.0, 1.0)
+	var ultimo_take := float(ENQUADRAMENTOS_MAYCON.size() - 1)
+	var avanco := 0.0 if ultimo_take <= 0.0 else clampf(float(enquadramento_maycon) / ultimo_take, 0.0, 1.0)
 	grito.pitch_scale = lerpf(GRITO_TOM_BASE, GRITO_TOM_FINO, avanco)
 
 

@@ -303,6 +303,16 @@ func _bind_baked_scene() -> void:
 	boss_barrier = get_node_or_null("GiantWoodenBarrier")
 	if boss_barrier:
 		boss_barrier_collider = boss_barrier.get_node_or_null("CollisionShape3D")
+		var barrier_label: Label3D = boss_barrier.get_node_or_null("BarrierSignLabel")
+		if barrier_label:
+			barrier_label.text = tr("PLATFORM_BARRIER_SIGN")
+
+	var start_sign_text: Label3D = geometry.get_node_or_null("DetalhesDecorativos/StartSignText")
+	if start_sign_text:
+		start_sign_text.text = tr("PLATFORM_START_SIGN")
+		start_sign_text.font_size = 58
+		start_sign_text.pixel_size = 0.0078
+		start_sign_text.outline_size = 6
 
 	exit_arrow = get_node_or_null("ExitHoleArrow")
 	if exit_arrow:
@@ -1165,23 +1175,23 @@ func _scatter_details() -> void:
 	var sign := _asset("sign", HUBS[0] + Vector3(3.6, 0.15, -2.0), 2.8)
 	var sign_back := MeshInstance3D.new()
 	var sign_back_mesh := BoxMesh.new()
-	sign_back_mesh.size = Vector3(4.75, 1.05, 0.16)
+	sign_back_mesh.size = Vector3(5.2, 1.15, 0.16)
 	sign_back.mesh = sign_back_mesh
 	sign_back.material_override = materials["gold"]
 	sign_back.position = sign.position + Vector3(0.0, 1.58, 0.18)
 	geometry.add_child(sign_back)
 	var sign_face := MeshInstance3D.new()
 	var sign_face_mesh := BoxMesh.new()
-	sign_face_mesh.size = Vector3(4.55, 0.86, 0.18)
+	sign_face_mesh.size = Vector3(5.0, 0.98, 0.18)
 	sign_face.mesh = sign_face_mesh
 	sign_face.material_override = materials["wood"]
 	sign_face.position = sign_back.position + Vector3(0.0, 0.0, 0.03)
 	geometry.add_child(sign_face)
 	var sign_text := Label3D.new()
 	sign_text.text = tr("PLATFORM_START_SIGN")
-	sign_text.font_size = 48
-	sign_text.pixel_size = 0.0062
-	sign_text.outline_size = 4
+	sign_text.font_size = 58
+	sign_text.pixel_size = 0.0078
+	sign_text.outline_size = 6
 	sign_text.modulate = Color("fff3d0")
 	sign_text.outline_modulate = Color("4e2c34")
 	sign_text.billboard = BaseMaterial3D.BILLBOARD_DISABLED

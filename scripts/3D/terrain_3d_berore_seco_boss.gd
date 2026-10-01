@@ -155,18 +155,37 @@ func _on_bake_again_timeout() -> void:
 	nav_region.bake_navigation_mesh()
 
 
+var portal_transitioning: bool = false
+
+func _fade_out_to_next_scene(next_scene_path: String, is_back: bool = false) -> void:
+	if portal_transitioning:
+		return
+	portal_transitioning = true
+	
+	if is_back:
+		Global.back_to_fase = true
+	
+	var canvas_fade := CanvasLayer.new()
+	canvas_fade.layer = 128
+	var black_rect := ColorRect.new()
+	black_rect.color = Color.BLACK
+	black_rect.modulate.a = 0.0
+	black_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	black_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas_fade.add_child(black_rect)
+	add_child(canvas_fade)
+	
+	var tw := create_tween()
+	tw.tween_property(black_rect, "modulate:a", 1.0, 4.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	await tw.finished
+	await get_tree().create_timer(0.8).timeout
+	get_tree().change_scene_to_file(next_scene_path)
+
 func _on_portal_next_scene_body_entered(body: Node3D) -> void:
 	if body is CharacterBody3D and body.has_node("Camera3D"):
-		#NEXT SCENE
-		fade.get_node("Transition").play("fade_out")
-		await get_tree().create_timer(2.0).timeout
-		get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_2.tscn")
+		_fade_out_to_next_scene("res://scenes/fase_1_outside_castle_again_no_fire_2.tscn", false)
 
 
 func _on_portal_next_scene_2_body_entered(body: Node3D) -> void:
 	if body is CharacterBody3D and body.has_node("Camera3D"):
-		#NEXT SCENE
-		fade.get_node("Transition").play("fade_out")
-		await get_tree().create_timer(2.0).timeout
-		Global.back_to_fase = true
-		get_tree().change_scene_to_file("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn")
+		_fade_out_to_next_scene("res://scenes/fase_1_outside_castle_again_no_fire_1.tscn", true)

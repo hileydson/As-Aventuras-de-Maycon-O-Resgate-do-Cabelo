@@ -381,6 +381,7 @@ var player_attack_move_dir := Vector2.ZERO
 var player_attack_duration:float = 0.0
 var player_is_kick:bool = false
 var punch_buffer_time:float = 0.0
+var punch_cooldown:float = 0.0
 var player_facing:float = 1.0
 var player_invulnerability:float = 0.0
 var dodge_time:float = 0.0
@@ -1998,7 +1999,7 @@ func build_action_buttons_hud() -> void:
 		if event is InputEventMouseButton && event.pressed && event.button_index == MOUSE_BUTTON_LEFT:
 			if can_player_punch():
 				start_player_attack(false)
-			elif !player_is_kick && player_attack_time > 0.0:
+			elif !player_is_kick && (player_attack_time > 0.0 || punch_cooldown > 0.0):
 				punch_buffer_time = 0.18
 	)
 	action_row_kick.gui_input.connect(func(event:InputEvent):
@@ -2012,6 +2013,7 @@ func build_action_buttons_hud() -> void:
 				player_attack_time = 0.0
 				player_attack_duration = 0.0
 				punch_buffer_time = 0.0
+				punch_cooldown = 0.0
 				start_dodge()
 	)
 
@@ -2318,12 +2320,9 @@ func toggle_battle_pause() -> void:
 func can_player_punch() -> bool:
 	if battle_paused || intro_time > 0.0 || leaving || player_dead || dodge_time > 0.0 || player_dash_active:
 		return false
-	if player_attack_time <= 0.0:
-		return true
-	# Permite desferir o proximo soco a partir da metade da animacao do soco atual
-	if !player_is_kick && player_attack_duration > 0.0 && player_attack_time <= (player_attack_duration * 0.5):
-		return true
-	return false
+	if punch_cooldown > 0.0:
+		return false
+	return player_attack_time <= 0.0
 
 func can_player_kick() -> bool:
 	if battle_paused || intro_time > 0.0 || leaving || player_dead || dodge_time > 0.0 || player_dash_active:
@@ -2347,7 +2346,7 @@ func _unhandled_input(event:InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if can_player_punch():
 				start_player_attack(false)
-			elif !player_is_kick && player_attack_time > 0.0:
+			elif !player_is_kick && (player_attack_time > 0.0 || punch_cooldown > 0.0):
 				punch_buffer_time = 0.18
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if can_player_kick():
@@ -2357,6 +2356,7 @@ func _unhandled_input(event:InputEvent) -> void:
 				player_attack_time = 0.0
 				player_attack_duration = 0.0
 				punch_buffer_time = 0.0
+				punch_cooldown = 0.0
 				start_dodge()
 
 func update_player(delta:float) -> void:
@@ -2365,6 +2365,7 @@ func update_player(delta:float) -> void:
 		return
 
 	player_attack_time = maxf(0.0, player_attack_time - delta)
+	punch_cooldown = maxf(0.0, punch_cooldown - delta)
 	player_invulnerability = maxf(0.0, player_invulnerability - delta)
 	dodge_time = maxf(0.0, dodge_time - delta)
 	dodge_cooldown = maxf(0.0, dodge_cooldown - delta)
@@ -2378,6 +2379,7 @@ func update_player(delta:float) -> void:
 		player_attack_time = 0.0
 		player_attack_duration = 0.0
 		punch_buffer_time = 0.0
+		punch_cooldown = 0.0
 		start_dodge()
 		return
 
@@ -2385,7 +2387,7 @@ func update_player(delta:float) -> void:
 	if Input.is_action_just_pressed("key_q"):
 		if can_player_punch():
 			start_player_attack(false)
-		elif !player_is_kick && player_attack_time > 0.0:
+		elif !player_is_kick && (player_attack_time > 0.0 || punch_cooldown > 0.0):
 			punch_buffer_time = 0.18
 
 	if punch_buffer_time > 0.0:
@@ -2430,6 +2432,7 @@ func start_dodge() -> void:
 	player_attack_time = 0.0
 	player_attack_duration = 0.0
 	punch_buffer_time = 0.0
+	punch_cooldown = 0.0
 	player_attack_move_dir = Vector2.ZERO
 	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if input_direction.length() < 0.1:
@@ -2461,6 +2464,7 @@ func start_player_power_dash(use_kick:bool = false) -> void:
 	player_attack_time = 0.0
 	player_attack_duration = 0.0
 	punch_buffer_time = 0.0
+	punch_cooldown = 0.0
 	player_attack_move_dir = Vector2.ZERO
 	dodge_time = 0.0
 
@@ -2688,6 +2692,7 @@ func start_player_attack(kick:bool) -> void:
 	player_attack_duration = player_attack_time
 	player_is_kick = kick
 	punch_buffer_time = 0.0
+	punch_cooldown = (player_attack_time + 0.10) if !kick else 0.0
 	var input_facing = Input.get_axis("ui_left", "ui_right")
 	if absf(input_facing) > 0.05:
 		player_facing = signf(input_facing)

@@ -4,6 +4,13 @@ const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 const THUG_PAIN_SOUND_1 = preload("res://assets/novos_audios/DS_pain.mp3")
 const THUG_PAIN_SOUND_2 = preload("res://assets/novos_audios/doom_pain.mp3")
 const THUG_PAIN_SOUND_3 = preload("res://assets/novos_audios/seco_scream.mp3")
+const THUG_PAIN_SOUND_4 = preload("res://assets/novos_audios/hurt_sound.mp3")
+const THUG_PAIN_SOUND_5 = preload("res://assets/novos_audios/hurt_sound_3d.mp3")
+const PUNCH_SOUND_1 = preload("res://assets/novos_audios/punch_4.mp3")
+const PUNCH_SOUND_2 = preload("res://assets/novos_audios/punch_1.mp3")
+const PUNCH_SOUND_3 = preload("res://assets/novos_audios/punch_3.mp3")
+const PUNCH_SOUND_4 = preload("res://assets/novos_audios/punch_6.mp3")
+const PUNCH_SOUND_5 = preload("res://assets/novos_audios/punch.mp3")
 const GUN_SOUND = preload("res://assets/novos_audios/gun_shot.mp3")
 const STAGE_INFORMANT := 0
 const STAGE_FELLAS := 1
@@ -69,6 +76,8 @@ var fellas_member_original_positions:Dictionary = {}
 var motorcycle_rotation_before_dismount:Vector3
 var motorcycle_camera_rotation_before_dismount:Vector3
 var thug_pain_sounds:Array[AudioStream] = [THUG_PAIN_SOUND_1, THUG_PAIN_SOUND_2, THUG_PAIN_SOUND_3]
+var thug_pain_sounds_secondary:Array[AudioStream] = [THUG_PAIN_SOUND_4, THUG_PAIN_SOUND_5, THUG_PAIN_SOUND_2]
+var thug_punch_sounds:Array[AudioStream] = [PUNCH_SOUND_1, PUNCH_SOUND_2, PUNCH_SOUND_3, PUNCH_SOUND_4, PUNCH_SOUND_5]
 var wood_debug_mode:bool = false
 var wood_debug_layer:CanvasLayer
 var wood_debug_status:Label
@@ -683,11 +692,23 @@ func add_thug_to_fight(thug:Node3D) -> void:
 	thug.add_child(shout)
 	var pain_audio := AudioStreamPlayer3D.new()
 	pain_audio.name = "PainScream"
-	pain_audio.volume_db = -1.0
-	pain_audio.unit_size = 7.0
-	pain_audio.max_distance = 55.0
+	pain_audio.volume_db = 4.0
+	pain_audio.unit_size = 12.0
+	pain_audio.max_distance = 60.0
 	thug.add_child(pain_audio)
-	thug_data.append({"node":thug, "hp":3, "shout":shout, "pain_audio":pain_audio})
+	var pain_secondary := AudioStreamPlayer3D.new()
+	pain_secondary.name = "PainSecondary"
+	pain_secondary.volume_db = 3.0
+	pain_secondary.unit_size = 10.0
+	pain_secondary.max_distance = 55.0
+	thug.add_child(pain_secondary)
+	var punch_audio := AudioStreamPlayer3D.new()
+	punch_audio.name = "PunchImpact"
+	punch_audio.volume_db = 5.0
+	punch_audio.unit_size = 14.0
+	punch_audio.max_distance = 65.0
+	thug.add_child(punch_audio)
+	thug_data.append({"node":thug, "hp":3, "shout":shout, "pain_audio":pain_audio, "pain_secondary":pain_secondary, "punch_audio":punch_audio})
 
 func attack_with_wood() -> void:
 	if attacking || fight_finishing || !is_instance_valid(weapon_root):
@@ -725,7 +746,7 @@ func resolve_wood_hit() -> void:
 	fight_hit_count += 1
 	spawn_hit_blood(closest["node"])
 	add_permanent_blood_stains(closest)
-	play_thug_pain_scream(closest)
+	play_thug_hit_sounds(closest)
 	Input.start_joy_vibration(0, 0.7, 0.85, 0.22)
 	player.aplicar_shake(0.32)
 	make_thug_retreat(closest)
@@ -770,12 +791,38 @@ func add_permanent_blood_stains(data:Dictionary) -> void:
 		stain.scale = Vector3(randf_range(0.8, 1.35), randf_range(0.65, 1.2), 0.22)
 		thug.add_child(stain)
 
+func play_thug_hit_sounds(data:Dictionary) -> void:
+	var punch_stream: AudioStream = thug_punch_sounds.pick_random()
+	var punch_audio: AudioStreamPlayer3D = data.get("punch_audio")
+	if is_instance_valid(punch_audio):
+		punch_audio.stop()
+		punch_audio.stream = punch_stream
+		punch_audio.pitch_scale = randf_range(0.92, 1.08)
+		punch_audio.play()
+	var direct_punch := AudioStreamPlayer.new()
+	direct_punch.stream = punch_stream
+	direct_punch.volume_db = 4.0
+	direct_punch.pitch_scale = randf_range(0.94, 1.06)
+	add_child(direct_punch)
+	direct_punch.play()
+	direct_punch.finished.connect(direct_punch.queue_free)
+
+	var pain_audio: AudioStreamPlayer3D = data.get("pain_audio")
+	if is_instance_valid(pain_audio):
+		pain_audio.stop()
+		pain_audio.stream = thug_pain_sounds.pick_random()
+		pain_audio.pitch_scale = randf_range(0.88, 1.12)
+		pain_audio.play()
+
+	var pain_secondary: AudioStreamPlayer3D = data.get("pain_secondary")
+	if is_instance_valid(pain_secondary):
+		pain_secondary.stop()
+		pain_secondary.stream = thug_pain_sounds_secondary.pick_random()
+		pain_secondary.pitch_scale = randf_range(0.9, 1.1)
+		pain_secondary.play()
+
 func play_thug_pain_scream(data:Dictionary) -> void:
-	var pain_audio:AudioStreamPlayer3D = data["pain_audio"]
-	pain_audio.stop()
-	pain_audio.stream = thug_pain_sounds.pick_random()
-	pain_audio.pitch_scale = randf_range(0.88, 1.12)
-	pain_audio.play()
+	play_thug_hit_sounds(data)
 
 func make_thug_retreat(data:Dictionary) -> void:
 	var thug:Node3D = data["node"]
@@ -806,9 +853,7 @@ func finish_fight() -> void:
 	Global.in_cutscene = true
 	player.process_mode = Node.PROCESS_MODE_DISABLED
 	await get_tree().create_timer(0.7).timeout
-	fade.get_node("Transition").play("fade_out")
-	await get_tree().create_timer(2.0).timeout
-	await show_chase_briefing()
+	var briefing_layer: CanvasLayer = await show_chase_briefing()
 	if is_instance_valid(weapon_root):
 		weapon_root.queue_free()
 	player.set_wood_melee_mode(false)
@@ -826,11 +871,17 @@ func finish_fight() -> void:
 	set_story_stage(STAGE_CHASE)
 	start_chase_round()
 	the_almost_end_song.stop()
-	fade.get_node("Transition").play("fade_in")
-	await get_tree().create_timer(2.0).timeout
+	if is_instance_valid(briefing_layer):
+		var blackout: ColorRect = briefing_layer.get_node_or_null("Blackout")
+		if is_instance_valid(blackout):
+			var reveal_tween := create_tween()
+			reveal_tween.tween_property(blackout, "modulate:a", 0.0, 3.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+			await reveal_tween.finished
+		briefing_layer.queue_free()
 	player.process_mode = Node.PROCESS_MODE_INHERIT
 	Global.in_cutscene = false
-	fellas_chase.combat_enabled = true
+	if is_instance_valid(fellas_chase):
+		fellas_chase.combat_enabled = true
 
 func start_chase_round(saved_health:Array[int] = []) -> void:
 	player.danos_count = 0
@@ -901,17 +952,18 @@ func restart_chase_after_death() -> void:
 	fellas_chase.combat_enabled = true
 	chase_restart_in_progress = false
 
-func show_chase_briefing() -> void:
+func show_chase_briefing() -> CanvasLayer:
 	var layer := CanvasLayer.new()
 	layer.layer = 125
 	add_child(layer)
 	var blackout := ColorRect.new()
+	blackout.name = "Blackout"
 	blackout.color = Color.BLACK
 	blackout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	blackout.modulate.a = 0.0
 	layer.add_child(blackout)
 	var blackout_tween := create_tween()
-	blackout_tween.tween_property(blackout, "modulate:a", 1.0, 2.4)
+	blackout_tween.tween_property(blackout, "modulate:a", 1.0, 3.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 	await blackout_tween.finished
 	var message := Label.new()
 	message.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -922,36 +974,91 @@ func show_chase_briefing() -> void:
 	message.add_theme_color_override("font_color", Color("f4e7d1"))
 	message.add_theme_color_override("font_outline_color", Color.BLACK)
 	message.add_theme_constant_override("outline_size", 9)
+	message.modulate.a = 0.0
 	layer.add_child(message)
+
+	# Frase 1: fade in lento, duração estendida para leitura e impacto, fade out lento
 	message.text = tr("CITY_CHASE_BRIEFING_1")
-	await get_tree().create_timer(2.4).timeout
+	var msg1_in := create_tween()
+	msg1_in.tween_property(message, "modulate:a", 1.0, 1.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	await msg1_in.finished
+	await get_tree().create_timer(4.5).timeout
+	var msg1_out := create_tween()
+	msg1_out.tween_property(message, "modulate:a", 0.0, 1.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await msg1_out.finished
+	await get_tree().create_timer(0.8).timeout
+
+	# Frase 2: fade in lento, duração estendida para leitura e impacto, fade out lento
 	message.text = tr("CITY_CHASE_BRIEFING_2")
-	await get_tree().create_timer(2.2).timeout
+	var msg2_in := create_tween()
+	msg2_in.tween_property(message, "modulate:a", 1.0, 1.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	await msg2_in.finished
+	await get_tree().create_timer(4.8).timeout
+	var msg2_out := create_tween()
+	msg2_out.tween_property(message, "modulate:a", 0.0, 1.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await msg2_out.finished
+	await get_tree().create_timer(1.0).timeout
+
+	# Tiros com mais espaçamento dramático
 	var shots := AudioStreamPlayer.new()
 	shots.stream = GUN_SOUND
-	shots.volume_db = -2.0
+	shots.volume_db = 1.0
 	layer.add_child(shots)
 	for _shot in 3:
 		shots.play()
-		await get_tree().create_timer(0.22).timeout
-	await get_tree().create_timer(0.35).timeout
-	var reveal_tween := create_tween()
-	reveal_tween.tween_property(blackout, "modulate:a", 0.0, 2.4)
-	await reveal_tween.finished
-	layer.queue_free()
+		await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(1.4).timeout
+	message.queue_free()
+	shots.queue_free()
+	return layer
 
 func finish_chase() -> void:
 	Global.in_cutscene = true
-	player.process_mode = Node.PROCESS_MODE_DISABLED
-	fade.get_node("Transition").play("fade_out")
-	await get_tree().create_timer(2.0).timeout
-	var final_position:Vector3 = fellas_chase.last_escape_position
+	if is_instance_valid(player):
+		player.process_mode = Node.PROCESS_MODE_DISABLED
+		player.set_motorcycle_chase(false)
+		if is_instance_valid(player.get("moto_acelerando")):
+			player.moto_acelerando.stop()
+		if is_instance_valid(player.get("moto_re")):
+			player.moto_re.stop()
+		if is_instance_valid(player.get("gun_shot")):
+			player.gun_shot.stop()
+		player.velocity = Vector3.ZERO
 	if is_instance_valid(fellas_chase):
+		fellas_chase.combat_enabled = false
+		fellas_chase.battle_music.stop()
+		for m in fellas_chase.members:
+			if is_instance_valid(m.get("engine")):
+				(m["engine"] as AudioStreamPlayer3D).stop()
+			if is_instance_valid(m.get("gun")):
+				(m["gun"] as AudioStreamPlayer3D).stop()
+
+	# Fade out bem longo através de CanvasLayer dedicado
+	var canvas_fade := CanvasLayer.new()
+	canvas_fade.layer = 126
+	var black_rect := ColorRect.new()
+	black_rect.color = Color.BLACK
+	black_rect.modulate.a = 0.0
+	black_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	black_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas_fade.add_child(black_rect)
+	add_child(canvas_fade)
+
+	var fade_out_tween := create_tween()
+	fade_out_tween.tween_property(black_rect, "modulate:a", 1.0, 4.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	await fade_out_tween.finished
+
+	await get_tree().create_timer(1.2).timeout
+
+	var final_position:Vector3 = Vector3.ZERO
+	if is_instance_valid(fellas_chase):
+		final_position = fellas_chase.last_escape_position
 		fellas_chase.queue_free()
 	fellas_chase = null
-	player.danos_count = 0
-	player.danos_count_limit = 5
-	player.maycon_hp.visible = false
+	if is_instance_valid(player):
+		player.danos_count = 0
+		player.danos_count_limit = 5
+		player.maycon_hp.visible = false
 	fellas.scale = fellas_original_scale
 	for member in fellas_member_original_positions:
 		member.position = fellas_member_original_positions[member]
@@ -973,8 +1080,14 @@ func finish_chase() -> void:
 		thug.modulate = Color(0.62, 0.2, 0.2, 1.0)
 		(data["shout"] as Label3D).text = ""
 	the_almost_end_song.play()
-	fade.get_node("Transition").play("fade_in")
-	await get_tree().create_timer(1.2).timeout
+
+	# Fade in bem longo
+	var fade_in_tween := create_tween()
+	fade_in_tween.tween_property(black_rect, "modulate:a", 0.0, 3.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	await fade_in_tween.finished
+	canvas_fade.queue_free()
+
+	await get_tree().create_timer(0.6).timeout
 	show_surrender_dialog()
 
 func show_surrender_dialog() -> void:

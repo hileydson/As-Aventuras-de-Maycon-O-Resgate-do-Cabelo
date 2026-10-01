@@ -42,25 +42,37 @@ func _ready() -> void:
 	if Global.back_to_fase:
 		portal_funcionar = false
 	
-	Global.save_progress(get_tree().current_scene.name)
-	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = "0"
 	Global.battle_background = "1"
 	
-	if Global.back_to_fase == true:
+	if Global.game_events.get("cabelo_desapareceu", false) or Global.back_to_fase == true:
 		Global.battle_background = "2"
-		Global.back_to_fase = false
+		Global.game_events["cabelo_desapareceu"] = true
+		portal_funcionar = false
+		cabelo.visible = false
+		smoke.visible = false
+		fogos.visible = false
+		if is_instance_valid(inimigos):
+			inimigos.queue_free()
+		if is_instance_valid(canvas_layer):
+			canvas_layer.queue_free()
 		var foreground = get_node_or_null("../BurntForestForeground/Foreground")
 		var foreground2 = get_node_or_null("../BurntForestForeground/Foreground2")
 		if foreground:
 			foreground.texture = texture_no_fire
+			foreground.position = foreground_position + Vector2(0, FOREGROUND_NO_FIRE_Y_OFFSET)
 		if foreground2:
 			foreground2.texture = texture_no_fire
+			foreground2.position = foreground2_position + Vector2(0, FOREGROUND_NO_FIRE_Y_OFFSET)
 		fase_1_before_castle.texture = null
-		animacoes.play("maycon_back_to_fase")
-		await get_tree().create_timer(1.0).timeout
+		if Global.back_to_fase == true:
+			Global.back_to_fase = false
+			animacoes.play("maycon_back_to_fase")
+			await get_tree().create_timer(1.0).timeout
+	
+	Global.save_progress(get_tree().current_scene.name)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -105,52 +117,32 @@ func _on_back_stage_body_entered(body: Node2D) -> void:
 
 
 func _on_division_no_fire_body_exited(body: Node2D) -> void:
-	
-	if portal_funcionar == false:
+	if portal_funcionar == false or Global.game_events.get("cabelo_desapareceu", false):
 		return
 	
 	portal_funcionar = false
+	Global.game_events["cabelo_desapareceu"] = true
+	Global.save_progress(get_tree().current_scene.name)
 	
 	mk_dudun.play()
 	GameSongs.stop(1)
 	
-	if canvas_layer :
+	if canvas_layer:
 		canvas_layer.queue_free()
-	else :
-		add_child(temp_canvas_layer_fogo)
 		
 	var foreground: Sprite2D = get_node_or_null("../BurntForestForeground/Foreground")
 	var foreground2: Sprite2D = get_node_or_null("../BurntForestForeground/Foreground2")
 	
-	var is_no_fire: bool = false
-	if foreground and foreground.texture == texture_no_fire:
-		is_no_fire = true
-	elif fase_1_before_castle.texture == texture_no_fire:
-		is_no_fire = true
-	
-	if is_no_fire:
-		Global.battle_background = "1"
-		if foreground:
-			foreground.texture = texture_with_fire
-			foreground.position = foreground_position
-		if foreground2:
-			foreground2.texture = texture_with_fire
-			foreground2.position = foreground2_position
-		fase_1_before_castle.texture = null
-		cabelo.visible = true
-		smoke.visible = true
-		fogos.visible = true
-	else:
-		Global.battle_background = "2"
-		if foreground:
-			foreground.texture = texture_no_fire
-			foreground.position = foreground_position + Vector2(0, FOREGROUND_NO_FIRE_Y_OFFSET)
-		if foreground2:
-			foreground2.texture = texture_no_fire
-			foreground2.position = foreground2_position + Vector2(0, FOREGROUND_NO_FIRE_Y_OFFSET)
-		fase_1_before_castle.texture = null
-		cabelo.visible = false
-		smoke.visible = false
-		fogos.visible = false
-		if inimigos != null:
-			inimigos.queue_free()
+	Global.battle_background = "2"
+	if foreground:
+		foreground.texture = texture_no_fire
+		foreground.position = foreground_position + Vector2(0, FOREGROUND_NO_FIRE_Y_OFFSET)
+	if foreground2:
+		foreground2.texture = texture_no_fire
+		foreground2.position = foreground2_position + Vector2(0, FOREGROUND_NO_FIRE_Y_OFFSET)
+	fase_1_before_castle.texture = null
+	cabelo.visible = false
+	smoke.visible = false
+	fogos.visible = false
+	if inimigos != null:
+		inimigos.queue_free()

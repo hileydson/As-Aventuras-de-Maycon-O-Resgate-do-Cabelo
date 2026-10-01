@@ -3788,10 +3788,10 @@ radius = 0.22
 height = 0.44
 
 [sub_resource type="BoxMesh" id="BoxMesh_0qlyy"]
-size = Vector3(4.75, 1.05, 0.16)
+size = Vector3(5.2, 1.15, 0.16)
 
 [sub_resource type="BoxMesh" id="BoxMesh_yu1n6"]
-size = Vector3(4.55, 0.86, 0.18)
+size = Vector3(5, 0.98, 0.18)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mbffk"]
 shading_mode = 0
@@ -14066,12 +14066,12 @@ mesh = SubResource("BoxMesh_yu1n6")
 
 [node name="StartSignText" type="Label3D" parent="Cenario/DetalhesDecorativos"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 1.73, 30.330002)
-pixel_size = 0.0062
+pixel_size = 0.0078
 modulate = Color(1, 0.9529412, 0.8156863, 1)
 outline_modulate = Color(0.30588236, 0.17254902, 0.20392157, 1)
-text = "Sky-High Mayhem"
-font_size = 48
-outline_size = 4
+text = "Cacete nas Alturas"
+font_size = 58
+outline_size = 6
 
 [node name="Pentagramas" type="Node3D" parent="Cenario"]
 

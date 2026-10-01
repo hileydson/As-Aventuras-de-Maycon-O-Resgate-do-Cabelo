@@ -500,7 +500,8 @@ func _update_bullets(delta:float, progress:float) -> void:
 		if bullet.position.y < -100.0:
 			bullets.remove_at(i)
 			continue
-		if invulnerable_time <= 0.0 && dash_time <= 0.0 && bullet.position.distance_to(maycon.position) < bullet.radius + 22.0:
+		var dash_invincible: bool = Global.is_easy_mode() and dash_time > 0.0
+		if invulnerable_time <= 0.0 && !dash_invincible && bullet.position.distance_to(maycon.position) < bullet.radius + 22.0:
 			bullets.remove_at(i)
 			_take_hit(13.0 + progress * 7.0)
 
@@ -526,15 +527,18 @@ func _update_finale(delta:float) -> void:
 	finale_time += delta
 	if bullets.size() > 0:
 		var bullet:Dictionary = bullets[0]
-		bullet.position.y -= 950.0 * delta
-		bullet.radius += 170.0 * delta
+		bullet.position.y -= 700.0 * delta
+		bullet.radius += 120.0 * delta
 		bullets[0] = bullet
 	if finale_time > 0.58 && finale_time - delta <= 0.58:
 		explosion.play()
 		music.stop()
-		_spawn_sparks(maycon.position, 120, Color.WHITE)
-	whiteout.color.a = clampf((finale_time - 0.58) * 2.4, 0.0, 1.0)
-	if finale_time >= 2.0:
+		_spawn_sparks(maycon.position, 140, Color.WHITE)
+	elif finale_time > 0.58 && finale_time < 3.2 && randf() < 0.25:
+		_spawn_sparks(maycon.position + Vector2(randf_range(-40, 40), randf_range(-40, 40)), 8, Color(1.0, 1.0, 1.0, 0.8))
+	var fade_progress: float = clampf((finale_time - 0.58) / 3.8, 0.0, 1.0)
+	whiteout.color.a = smoothstep(0.0, 1.0, fade_progress)
+	if finale_time >= 5.0:
 		get_tree().change_scene_to_file.call_deferred("res://scenes/3D/maycon_platform_3d.tscn")
 		set_process(false)
 

@@ -759,9 +759,22 @@ func eliminate_member(member:Dictionary) -> void:
 		if !other["escaped"]:
 			return
 	finished = true
+	combat_enabled = false
 	minimap_root.visible = false
-	player.set_motorcycle_chase(false)
 	battle_music.stop()
+	for m in members:
+		if is_instance_valid(m.get("engine")):
+			(m["engine"] as AudioStreamPlayer3D).stop()
+		if is_instance_valid(m.get("gun")):
+			(m["gun"] as AudioStreamPlayer3D).stop()
+	if is_instance_valid(player):
+		player.set_motorcycle_chase(false)
+		if is_instance_valid(player.get("moto_acelerando")):
+			player.moto_acelerando.stop()
+		if is_instance_valid(player.get("moto_re")):
+			player.moto_re.stop()
+		if is_instance_valid(player.get("gun_shot")):
+			player.gun_shot.stop()
 	all_escaped.emit()
 
 func update_speed_lines(active:bool, close:bool) -> void:

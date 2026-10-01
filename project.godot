@@ -18,6 +18,7 @@ config/name="As Aventuras de Maycon"
 config/version="5.5"
 run/main_scene="uid://myxkcfyi401t"
 config/features=PackedStringArray("4.6", "Forward Plus")
+boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/show_image=false
 config/icon="res://icon.svg"
 
@@ -195,5 +196,6 @@ locale/fallback="pt"
 
 [rendering]
 
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
 textures/vram_compression/import_etc2_astc=true
 textures/default_filters/use_nearest_mipmap_filter=true
