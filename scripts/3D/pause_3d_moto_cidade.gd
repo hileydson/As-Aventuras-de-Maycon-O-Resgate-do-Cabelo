@@ -34,17 +34,33 @@ func _process(delta: float) -> void:
 	
 	#NAO DEIXA O SEGUNDO CONTROLE PARAR A PARTIDA NO PRIMEIRO START - DAI DEPOIS SIM
 	if (Input.is_action_just_pressed("ui_cancel") and !Input.is_joy_button_pressed(1, JOY_BUTTON_START)) or (Input.is_action_just_pressed("ui_cancel") and Input.is_joy_button_pressed(1, JOY_BUTTON_START) and Global.is_two_player_active):
-		processa_pause_unpause()
+		alterna_pause_uma_vez()
 
 func _input(event: InputEvent) -> void:
 	if not get_tree().paused or not (is_instance_valid(control) and control.visible):
 		return
 	if is_instance_valid(configuracoes_dialog) and configuracoes_dialog.visible:
 		return
+	if event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed):
+		get_viewport().set_input_as_handled()
+		alterna_pause_uma_vez()
+		return
 	Global.check_debug_activation(event)
 
 
 
+
+var ultimo_frame_toggle_pause:int = -1
+
+# O mesmo toque chega por _input e por _process no mesmo quadro: set_input_as_handled
+# corta a propagação do evento, mas não impede Input.is_action_just_pressed de ler a
+# ação. Os dois juntos alternavam o pause duas vezes, e ele reabria em vez de fechar.
+func alterna_pause_uma_vez() -> void:
+	var frame := Engine.get_process_frames()
+	if frame == ultimo_frame_toggle_pause:
+		return
+	ultimo_frame_toggle_pause = frame
+	processa_pause_unpause()
 
 func processa_pause_unpause()->void:
 	if Global.in_cutscene:

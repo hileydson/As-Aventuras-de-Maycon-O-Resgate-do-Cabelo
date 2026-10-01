@@ -165,7 +165,7 @@ func _process(delta: float) -> void:
 	_update_subtitles()
 
 func _process_hold_to_skip(delta: float) -> void:
-	var holding := Input.is_action_pressed("ui_cancel") or Input.is_action_pressed("ui_accept") or is_mouse_holding
+	var holding := Input.is_action_pressed("ui_cancel") or Input.is_action_pressed("ui_accept") or is_mouse_holding or Input.is_joy_button_pressed(0, JOY_BUTTON_B) or Input.is_joy_button_pressed(0, JOY_BUTTON_A)
 
 	if holding:
 		skip_progress = minf(SKIP_HOLD_TIME, skip_progress + delta)

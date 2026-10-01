@@ -3,6 +3,7 @@ extends CanvasLayer
 const PENTAGRAM_TEXTURE = preload("res://assets/3D/pentagram_item.png")
 const PAUSE_SOUND = preload("res://assets/novos_audios/pause_sfxr.mp3")
 const EMOJI_FONT = preload("res://scripts/ui/emoji_font.gd")
+const PAUSE_VISUAL = preload("res://scripts/ui/pause_visual.gd")
 
 const GLITTER_COLORS := [
 	Color("ffd700"), # Gold
@@ -27,6 +28,9 @@ var pause_audio:AudioStreamPlayer
 var glitter_overlay:Control
 var particles:Array[Dictionary] = []
 var configuracoes_dialog:CanvasLayer
+var modern_layout:bool = false
+var modern_menu:VBoxContainer
+var pause_maycon:AnimatedSprite2D
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -38,7 +42,11 @@ func _ready() -> void:
 	add_child(pause_audio)
 	configuracoes_dialog = CONFIGURACOES_DIALOG_SCENE.instantiate()
 	add_child(configuracoes_dialog)
-	_build_panel()
+	modern_layout = get_tree().current_scene == null or get_tree().current_scene.scene_file_path != "res://scenes/3D/maycon_platform_3d.tscn"
+	if modern_layout:
+		_build_modern_panel()
+	else:
+		_build_panel()
 	panel.visible = false
 
 func _input(event: InputEvent) -> void:
@@ -53,7 +61,7 @@ func _unhandled_input(event:InputEvent) -> void:
 		return
 	if get_parent().exit_started or get_parent().death_in_progress:
 		return
-	if event.is_action_pressed("ui_cancel") or event is InputEventJoypadButton and event.button_index == JOY_BUTTON_START and event.pressed:
+	if event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and (event.button_index == JOY_BUTTON_START or (panel.visible and event.button_index == JOY_BUTTON_B)) and event.pressed):
 		_toggle()
 		get_viewport().set_input_as_handled()
 
@@ -65,8 +73,12 @@ func _toggle() -> void:
 		resume_button.grab_focus()
 		if is_instance_valid(pause_audio):
 			pause_audio.play()
-		_spawn_glitter_explosion()
-		if is_instance_valid(card):
+		if modern_layout:
+			PAUSE_VISUAL.animate_walking_maycon(pause_maycon)
+			PAUSE_VISUAL.animate_open(panel, modern_menu)
+		else:
+			_spawn_glitter_explosion()
+		if !modern_layout and is_instance_valid(card):
 			card.pivot_offset = Vector2(220.0, 172.0)
 			card.scale = Vector2(0.7, 0.7)
 			var tween := create_tween().bind_node(self)
@@ -191,6 +203,48 @@ func _return_to_menu() -> void:
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	get_parent().exit_to_menu()
+
+func _build_modern_panel() -> void:
+	panel = Control.new()
+	panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(panel)
+	var backdrop := ColorRect.new()
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	PAUSE_VISUAL.configure_backdrop(backdrop, 0.93)
+	backdrop.z_index = -10
+	panel.add_child(backdrop)
+	PAUSE_VISUAL.add_rotating_pentagram(panel)
+	PAUSE_VISUAL.add_header(panel, tr("MENU_PAUSE"), tr("MENU_PAUSE_HINT"))
+	PAUSE_VISUAL.add_side_glow(panel)
+
+	modern_menu = VBoxContainer.new()
+	modern_menu.position = Vector2(70.0, 205.0)
+	modern_menu.size = Vector2(360.0, 210.0)
+	modern_menu.add_theme_constant_override("separation", 9)
+	panel.add_child(modern_menu)
+	resume_button = Button.new()
+	resume_button.text = tr("MENU_CONTINUE").to_upper()
+	PAUSE_VISUAL.style_button(resume_button)
+	resume_button.pressed.connect(_toggle)
+	modern_menu.add_child(resume_button)
+	config_button = Button.new()
+	config_button.text = tr("MENU_SETTINGS").to_upper()
+	PAUSE_VISUAL.style_button(config_button)
+	config_button.pressed.connect(func(): configuracoes_dialog.abrir())
+	modern_menu.add_child(config_button)
+	var menu_button := Button.new()
+	menu_button.text = tr("PLATFORM_BACK_MENU").to_upper()
+	PAUSE_VISUAL.style_button(menu_button, true)
+	menu_button.pressed.connect(_return_to_menu)
+	modern_menu.add_child(menu_button)
+
+	resume_button.focus_neighbor_bottom = config_button.get_path()
+	config_button.focus_neighbor_top = resume_button.get_path()
+	config_button.focus_neighbor_bottom = menu_button.get_path()
+	menu_button.focus_neighbor_top = config_button.get_path()
+	pause_maycon = PAUSE_VISUAL.add_walking_maycon(panel)
+	var profile := "ace" if get_tree().current_scene != null and get_tree().current_scene.scene_file_path == "res://scenes/3D/aviao_ace_combat.tscn" else "move_only"
+	PAUSE_VISUAL.add_controls_card(panel, profile)
 
 func _build_panel() -> void:
 	panel = Control.new()

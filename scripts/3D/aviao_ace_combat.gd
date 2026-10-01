@@ -432,9 +432,14 @@ func _montar_hud() -> void:
 	painel.offset_top = -62.0
 	painel.offset_bottom = -12.0
 	var estilo := StyleBoxFlat.new()
-	estilo.bg_color = Color(0.09, 0.10, 0.14, 0.8)
-	estilo.set_corner_radius_all(6)
-	estilo.set_content_margin_all(6)
+	estilo.bg_color = Color(0.012, 0.018, 0.03, 0.84)
+	estilo.border_color = Color(0.31, 0.67, 0.8, 0.65)
+	estilo.set_border_width_all(2)
+	estilo.set_corner_radius_all(10)
+	estilo.set_content_margin_all(8)
+	estilo.shadow_color = Color(0.0, 0.0, 0.0, 0.7)
+	estilo.shadow_size = 6
+	estilo.shadow_offset = Vector2(2.0, 3.0)
 	painel.add_theme_stylebox_override("panel", estilo)
 	canvas.add_child(painel)
 	var coluna := VBoxContainer.new()
@@ -474,6 +479,7 @@ func _montar_hud() -> void:
 	botoes_tiro.add_theme_constant_override("separation", 8)
 	botoes_tiro.add_child(_hud_icone(BOTAO_MOUSE, Vector2(58.0, 58.0)))
 	botoes_tiro.add_child(_hud_icone(BOTAO_GATILHO, Vector2(68.0, 68.0)))
+	canvas.add_child(_fundo_hud_acao(Vector2(-160.0, -92.0), Vector2(-12.0, -10.0), Color(1.0, 0.48, 0.68)))
 	canvas.add_child(botoes_tiro)
 
 	botoes_dash = HBoxContainer.new()
@@ -492,6 +498,7 @@ func _montar_hud() -> void:
 	botoes_dash.add_theme_constant_override("separation", 8)
 	botoes_dash.add_child(_hud_icone(BOTAO_DASH_MOUSE, Vector2(54.0, 54.0)))
 	botoes_dash.add_child(_hud_icone(BOTAO_DASH_A, Vector2(54.0, 54.0)))
+	canvas.add_child(_fundo_hud_acao(Vector2(-160.0, -162.0), Vector2(-12.0, -88.0), Color(0.35, 0.9, 1.0)))
 	canvas.add_child(botoes_dash)
 
 	var boss_painel := PanelContainer.new()
@@ -585,6 +592,31 @@ func _hud_icone(textura:Texture2D, tamanho:Vector2) -> TextureRect:
 	icone.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icone.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return icone
+
+
+func _fundo_hud_acao(offset_top_left:Vector2, offset_bottom_right:Vector2, accent:Color) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.anchor_left = 1.0
+	panel.anchor_top = 1.0
+	panel.anchor_right = 1.0
+	panel.anchor_bottom = 1.0
+	panel.offset_left = offset_top_left.x
+	panel.offset_top = offset_top_left.y
+	panel.offset_right = offset_bottom_right.x
+	panel.offset_bottom = offset_bottom_right.y
+	panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.012, 0.02, 0.035, 0.84)
+	style.border_color = Color(accent.r, accent.g, accent.b, 0.65)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(10)
+	style.shadow_color = Color(0.0, 0.0, 0.0, 0.7)
+	style.shadow_size = 6
+	style.shadow_offset = Vector2(2.0, 3.0)
+	panel.add_theme_stylebox_override("panel", style)
+	return panel
 
 
 func _liberar_controle() -> void:

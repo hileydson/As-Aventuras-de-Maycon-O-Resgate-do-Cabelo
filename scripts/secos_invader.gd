@@ -14,6 +14,8 @@ const PAUSE_SCRIPT:Script = preload("res://scripts/secos_invader_pause.gd")
 const DASH_SOUND:AudioStream = preload("res://assets/novos_audios/sliding.mp3")
 const DASH_GAMEPAD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/360_A.png")
 const DASH_KEYBOARD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png")
+const MOVE_GAMEPAD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/PS5_Dpad.png")
+const MOVE_KEYBOARD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/ButtonIcon-Switch-Dpad.png")
 const HUD_FONT:Font = preload("res://assets/fonts/contrast.ttf")
 
 var screen:Vector2
@@ -36,8 +38,10 @@ var blur_overlay:ColorRect
 var fireball:Node2D
 var pause_controller:CanvasLayer
 var hp_bar:ProgressBar
+var hp_card:PanelContainer
 var timeline:ProgressBar
 var dash_card:PanelContainer
+var move_card:PanelContainer
 var health:float
 var max_health:float
 var starting_health:float
@@ -183,15 +187,23 @@ func _build_ui() -> void:
 	title.size = Vector2(screen.x, 150.0)
 	title.modulate.a = 0.0
 	hud.add_child(title)
+	hp_card = PanelContainer.new()
+	hp_card.position = Vector2(20.0, 23.0)
+	hp_card.size = Vector2(286.0, 56.0)
+	hp_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hp_card.add_theme_stylebox_override("panel", _hud_card_style(Color(0.31, 0.67, 0.8, 0.65)))
+	hp_card.visible = false
+	hud.add_child(hp_card)
 	hp_label = Label.new()
 	hp_label.text = tr("UI_HEALTH")
-	hp_label.position = Vector2(20.0, 11.0)
-	hp_label.add_theme_font_size_override("font_size", 16)
+	hp_label.position = Vector2(38.0, 28.0)
+	hp_label.add_theme_font_size_override("font_size", 14)
+	hp_label.add_theme_color_override("font_color", Color(1.0, 0.91, 0.87))
 	hp_label.visible = false
 	hud.add_child(hp_label)
 	hp_bar = ProgressBar.new()
-	hp_bar.position = Vector2(20.0, 38.0)
-	hp_bar.size = Vector2(132.0, 12.0)
+	hp_bar.position = Vector2(38.0, 48.0)
+	hp_bar.size = Vector2(255.0, 18.0)
 	hp_bar.max_value = max_health
 	hp_bar.show_percentage = false
 	var hp_background:StyleBoxFlat = StyleBoxFlat.new()
@@ -204,16 +216,36 @@ func _build_ui() -> void:
 	hp_bar.add_theme_stylebox_override("fill", hp_fill)
 	hp_bar.visible = false
 	hud.add_child(hp_bar)
+	move_card = PanelContainer.new()
+	move_card.position = Vector2(20.0, screen.y - 80.0)
+	move_card.size = Vector2(92.0, 56.0)
+	move_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	move_card.add_theme_stylebox_override("panel", _hud_card_style(Color(0.34, 0.72, 1.0, 0.74)))
+	move_card.visible = false
+	hud.add_child(move_card)
+	var move_icons := HBoxContainer.new()
+	move_icons.position = Vector2(8.0, 9.0)
+	move_icons.size = Vector2(76.0, 38.0)
+	move_icons.add_theme_constant_override("separation", 4)
+	move_card.add_child(move_icons)
+	for texture in [MOVE_KEYBOARD_ICON, MOVE_GAMEPAD_ICON]:
+		var move_icon := TextureRect.new()
+		move_icon.texture = texture
+		move_icon.custom_minimum_size = Vector2(30.0, 36.0)
+		move_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		move_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		move_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		move_icons.add_child(move_icon)
 	dash_card = PanelContainer.new()
-	dash_card.position = Vector2(302.0, 18.0)
-	dash_card.size = Vector2(192.0, 76.0)
+	dash_card.position = Vector2(120.0, screen.y - 80.0)
+	dash_card.size = Vector2(192.0, 56.0)
 	dash_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dash_card.add_theme_stylebox_override("panel", _hud_card_style(Color(0.34, 0.72, 1.0, 0.74)))
 	dash_card.visible = false
 	hud.add_child(dash_card)
 	dash_button = Button.new()
-	dash_button.position = Vector2(10.0, 18.0)
-	dash_button.size = Vector2(172.0, 40.0)
+	dash_button.position = Vector2(10.0, 11.0)
+	dash_button.size = Vector2(172.0, 36.0)
 	dash_button.clip_contents = true
 	dash_button.visible = false
 	dash_button.pressed.connect(_try_dash)
@@ -221,24 +253,24 @@ func _build_ui() -> void:
 	dash_card.add_child(dash_button)
 	var gamepad_icon:Sprite2D = Sprite2D.new()
 	gamepad_icon.texture = DASH_GAMEPAD_ICON
-	gamepad_icon.position = Vector2(18.0, 20.0)
+	gamepad_icon.position = Vector2(18.0, 18.0)
 	gamepad_icon.scale = Vector2(0.28, 0.28)
 	dash_button.add_child(gamepad_icon)
 	var separator:Label = Label.new()
 	separator.text = "/"
-	separator.position = Vector2(35.0, 11.0)
+	separator.position = Vector2(35.0, 9.0)
 	separator.add_theme_font_override("font", HUD_FONT)
 	separator.add_theme_font_size_override("font_size", 13)
 	separator.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dash_button.add_child(separator)
 	var keyboard_icon:Sprite2D = Sprite2D.new()
 	keyboard_icon.texture = DASH_KEYBOARD_ICON
-	keyboard_icon.position = Vector2(68.0, 20.0)
+	keyboard_icon.position = Vector2(68.0, 18.0)
 	keyboard_icon.scale = Vector2(0.48, 0.48)
 	dash_button.add_child(keyboard_icon)
 	var keyboard_label:Label = Label.new()
 	keyboard_label.text = tr("SECO_INVADER_SPACE_KEY")
-	keyboard_label.position = Vector2(43.0, 14.0)
+	keyboard_label.position = Vector2(43.0, 12.0)
 	keyboard_label.size = Vector2(50.0, 12.0)
 	keyboard_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	keyboard_label.add_theme_font_override("font", HUD_FONT)
@@ -248,7 +280,7 @@ func _build_ui() -> void:
 	dash_button.add_child(keyboard_label)
 	var dash_label:Label = Label.new()
 	dash_label.text = tr("POWER_DASH")
-	dash_label.position = Vector2(105.0, 10.0)
+	dash_label.position = Vector2(105.0, 8.0)
 	dash_label.add_theme_font_override("font", HUD_FONT)
 	dash_label.add_theme_font_size_override("font_size", 14)
 	dash_label.add_theme_color_override("font_color", Color("c8efff"))
@@ -360,8 +392,10 @@ func _update_intro(delta:float) -> void:
 		title.visible = false
 		hp_label.visible = true
 		hp_bar.visible = true
+		hp_card.visible = true
 		dash_button.visible = true
 		timeline.visible = true
+		move_card.visible = true
 		dash_card.visible = true
 		start_label.visible = true
 		finish_label.visible = true

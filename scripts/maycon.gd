@@ -48,7 +48,16 @@ func double_jump()->void:
 		
 func _physics_process(delta: float) -> void:
 	if pausePlayer == true:
-		animated_sprite_2d.play("idle_right")
+		if sound_walk.is_playing():
+			sound_walk.stop()
+		if not is_on_floor():
+			velocity += get_gravity() * delta
+			move_and_slide()
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+			move_and_slide()
+			if animated_sprite_2d.animation != "idle_right":
+				animated_sprite_2d.play("idle_right")
 		return
 	
 	# Add the gravity.
@@ -127,6 +136,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		return
 		
 	pausePlayer = true
+	animated_sprite_2d.flip_h = false
 	transition.play("semi_fade_out")
 	mk_dudun.play()
 	$"../ScarySmile".stop()

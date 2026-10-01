@@ -3,6 +3,38 @@ extends RefCounted
 
 const MENU_FONT:Font = preload("res://assets/fonts/contrast.ttf")
 const BACKDROP_SHADER:Shader = preload("res://scenes/menus/pause_backdrop.gdshader")
+const PENTAGRAM_TEXTURE:Texture2D = preload("res://assets/3D/pentagram_item.png")
+const KEY_Q_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Q_Key_Light.png")
+const KEY_W_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/W_Key_Light.png")
+const KEY_SPACE_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png")
+const KEY_SHIFT_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/shift.png")
+const KEY_ENTER_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Blank_White_Enter.png")
+const KEY_DIRECTIONS_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/ButtonIcon-Switch-Dpad.png")
+const MOUSE_SHOOT_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/mouse_trigger.png")
+const MOUSE_ALT_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/mouse_right_click.png")
+const PAD_A_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_A.png")
+const PAD_B_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_B.png")
+const PAD_X_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_X.png")
+const PAD_Y_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_Y.png")
+const PAD_DIRECTIONS_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/PS5_Dpad.png")
+const PAD_TRIGGER_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/button_trigger.png")
+const PAD_SHOULDER_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/rb_xbox.png")
+
+const MAYCON_WALK_TEXTURES:Array[Texture2D] = [
+	preload("res://assets/images/jamela_INTRO_0.png"),
+	preload("res://assets/images/jamela_INTRO_1.png"),
+	preload("res://assets/images/jamela_INTRO_2.png"),
+	preload("res://assets/images/jamela_INTRO_3.png"),
+	preload("res://assets/images/jamela_INTRO_4.png"),
+	preload("res://assets/images/jamela_INTRO_5.png"),
+	preload("res://assets/images/jamela_INTRO_6.png"),
+	preload("res://assets/images/jamela_INTRO_7.png"),
+	preload("res://assets/images/jamela_INTRO2_0.png"),
+	preload("res://assets/images/jamela_INTRO2_1.png"),
+	preload("res://assets/images/jamela_INTRO2_2.png"),
+	preload("res://assets/images/jamela_INTRO2_3.png"),
+	preload("res://assets/images/jamela_INTRO2_4.png")
+]
 
 static func configure_backdrop(backdrop:ColorRect, alpha:float = 0.96) -> void:
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -125,7 +157,177 @@ static func make_info_card(parent:Control, position:Vector2, size:Vector2) -> VB
 	return column
 
 
-static func add_action_row(parent:VBoxContainer, action_text:String, key_texture:Texture2D, mouse_texture:Texture2D, pad_texture:Texture2D, accent:Color, wide_key:bool = false) -> void:
+static func add_rotating_pentagram(parent:Control) -> TextureRect:
+	var pentagram := TextureRect.new()
+	pentagram.name = "RotatingPentagram"
+	pentagram.texture = PENTAGRAM_TEXTURE
+	pentagram.position = Vector2(216.0, -36.0)
+	pentagram.size = Vector2(720.0, 720.0)
+	pentagram.pivot_offset = pentagram.size * 0.5
+	pentagram.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	pentagram.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	pentagram.modulate = Color(0.30, 0.82, 0.88, 0.115)
+	pentagram.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	pentagram.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(pentagram)
+	parent.move_child(pentagram, 0)
+	var rotation_tween := pentagram.create_tween().set_loops().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	rotation_tween.tween_property(pentagram, "rotation", TAU, 32.0).from(0.0).set_trans(Tween.TRANS_LINEAR)
+	return pentagram
+
+
+static func add_walking_maycon(parent:Control) -> AnimatedSprite2D:
+	var frames := SpriteFrames.new()
+	frames.add_animation("walk")
+	frames.set_animation_speed("walk", 5.0)
+	frames.set_animation_loop("walk", false)
+	for texture in MAYCON_WALK_TEXTURES:
+		frames.add_frame("walk", texture)
+	var maycon := AnimatedSprite2D.new()
+	maycon.name = "PauseMaycon"
+	maycon.sprite_frames = frames
+	maycon.animation = "walk"
+	maycon.position = Vector2(690.0, 348.0)
+	maycon.scale = Vector2(1.58, 1.58)
+	maycon.flip_h = true
+	maycon.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	maycon.z_index = 2
+	parent.add_child(maycon)
+	return maycon
+
+
+static func animate_walking_maycon(maycon:AnimatedSprite2D) -> void:
+	if not is_instance_valid(maycon):
+		return
+	maycon.stop()
+	maycon.frame = 0
+	maycon.frame_progress = 0.0
+	maycon.position = Vector2(1180.0, 348.0)
+	maycon.rotation = 0.035
+	maycon.modulate.a = 0.0
+	maycon.play("walk")
+	var reveal := maycon.create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	reveal.tween_property(maycon, "position", Vector2(690.0, 348.0), 1.58).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	reveal.parallel().tween_property(maycon, "rotation", 0.0, 1.58).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	reveal.parallel().tween_property(maycon, "modulate:a", 1.0, 0.42)
+
+
+static func add_controls_card(parent:Control, profile:String, position:Vector2 = Vector2(825.0, 142.0)) -> PanelContainer:
+	var rows := controls_for(profile)
+	if rows.is_empty():
+		return null
+	var height := 77.0 + float(rows.size()) * 45.0
+	var controls_column := make_info_card(parent, position, Vector2(305.0, height))
+	var controls_card := controls_column.get_parent() as PanelContainer
+	controls_card.name = "PauseControlsCard"
+	var controls_title := Label.new()
+	controls_title.text = TranslationServer.translate("MENU_CONTROLLER").to_upper()
+	style_hint(controls_title, 17)
+	controls_title.add_theme_color_override("font_color", Color(0.75, 0.91, 0.92))
+	controls_column.add_child(controls_title)
+	var controls_rule := ColorRect.new()
+	controls_rule.custom_minimum_size = Vector2(0.0, 1.0)
+	controls_rule.color = Color(0.35, 0.72, 0.77, 0.5)
+	controls_column.add_child(controls_rule)
+	for row in rows:
+		add_action_row(
+			controls_column,
+			str(row["label"]),
+			row.get("key") as Texture2D,
+			row.get("mouse") as Texture2D,
+			row.get("pad") as Texture2D,
+			row.get("accent", Color(0.35, 0.9, 1.0)) as Color,
+			bool(row.get("wide_key", false)),
+			row.get("pad_extra") as Texture2D
+		)
+	return controls_card
+
+
+static func controls_for(profile:String) -> Array[Dictionary]:
+	var move := {
+		"label": TranslationServer.translate("PAUSE_MOVE"),
+		"key": KEY_DIRECTIONS_TEXTURE,
+		"pad": PAD_DIRECTIONS_TEXTURE,
+		"accent": Color(0.35, 0.9, 1.0)
+	}
+	var jump := {
+		"label": TranslationServer.translate("POWER_JUMP"),
+		"key": KEY_SPACE_TEXTURE,
+		"pad": PAD_A_TEXTURE,
+		"accent": Color(1.0, 0.88, 0.35),
+		"wide_key": true
+	}
+	var dash := {
+		"label": TranslationServer.translate("POWER_DASH"),
+		"key": KEY_SPACE_TEXTURE,
+		"pad": PAD_A_TEXTURE,
+		"accent": Color(0.35, 0.9, 1.0),
+		"wide_key": true
+	}
+	var shoot := {
+		"label": TranslationServer.translate("PAUSE_SHOOT"),
+		"mouse": MOUSE_SHOOT_TEXTURE,
+		"pad": PAD_TRIGGER_TEXTURE,
+		"accent": Color(1.0, 0.48, 0.68)
+	}
+	var run := {
+		"label": TranslationServer.translate("MENU_RUN"),
+		"key": KEY_SHIFT_TEXTURE,
+		"pad": PAD_SHOULDER_TEXTURE,
+		"accent": Color(0.55, 0.92, 0.72)
+	}
+	match profile:
+		"move_only":
+			return [move]
+		"prologue":
+			return [jump]
+		"2d":
+			return [
+				{"label": TranslationServer.translate("POWER_PUNCH"), "key": KEY_Q_TEXTURE, "pad": PAD_Y_TEXTURE, "accent": Color(0.35, 0.9, 1.0)},
+				{"label": TranslationServer.translate("POWER_KICK"), "key": KEY_W_TEXTURE, "pad": PAD_B_TEXTURE, "accent": Color(1.0, 0.48, 0.68)},
+				jump,
+				{
+					"label": TranslationServer.translate("MENU_RUN"),
+					"key": KEY_SHIFT_TEXTURE,
+					"pad": PAD_SHOULDER_TEXTURE,
+					"pad_extra": PAD_X_TEXTURE,
+					"accent": Color(0.55, 0.92, 0.72)
+				}
+			]
+		"realtime":
+			return [
+				{"label": TranslationServer.translate("POWER_PUNCH"), "key": KEY_Q_TEXTURE, "mouse": MOUSE_SHOOT_TEXTURE, "pad": PAD_Y_TEXTURE, "accent": Color(0.35, 0.9, 1.0)},
+				{"label": TranslationServer.translate("POWER_KICK"), "key": KEY_W_TEXTURE, "mouse": MOUSE_ALT_TEXTURE, "pad": PAD_B_TEXTURE, "accent": Color(1.0, 0.48, 0.68)},
+				dash
+			]
+		"well":
+			return [
+				move,
+				dash,
+				{"label": TranslationServer.translate("PAUSE_SPECIAL"), "key": KEY_Q_TEXTURE, "pad": PAD_Y_TEXTURE, "accent": Color(1.0, 0.35, 0.42)}
+			]
+		"invader":
+			return [move, dash]
+		"ace":
+			return [
+				move,
+				shoot,
+				{"label": TranslationServer.translate("POWER_DASH"), "mouse": MOUSE_ALT_TEXTURE, "pad": PAD_A_TEXTURE, "accent": Color(0.35, 0.9, 1.0)}
+			]
+		"first_3d":
+			return [move, shoot, run]
+		"dungeon":
+			return [
+				move,
+				run,
+				{"label": TranslationServer.translate("PAUSE_INTERACT"), "key": KEY_ENTER_TEXTURE, "pad": PAD_A_TEXTURE, "accent": Color(1.0, 0.88, 0.35), "wide_key": true},
+				shoot
+			]
+		_:
+			return [move, shoot, run]
+
+
+static func add_action_row(parent:VBoxContainer, action_text:String, key_texture:Texture2D, mouse_texture:Texture2D, pad_texture:Texture2D, accent:Color, wide_key:bool = false, pad_extra_texture:Texture2D = null) -> void:
 	var row := PanelContainer.new()
 	row.custom_minimum_size = Vector2(0.0, 38.0)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -164,6 +366,8 @@ static func add_action_row(parent:VBoxContainer, action_text:String, key_texture
 	divider.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.36))
 	content.add_child(divider)
 	_add_input_icon(content, pad_texture, Vector2(24.0, 24.0))
+	if pad_extra_texture:
+		_add_input_icon(content, pad_extra_texture, Vector2(24.0, 24.0))
 
 
 static func _add_input_icon(parent:HBoxContainer, texture:Texture2D, minimum_size:Vector2) -> void:

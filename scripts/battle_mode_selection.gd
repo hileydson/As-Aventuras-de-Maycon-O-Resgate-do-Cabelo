@@ -8,6 +8,11 @@ func _ready() -> void:
 	build_interface()
 	realtime_button.grab_focus()
 
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed):
+		get_viewport().set_input_as_handled()
+		get_tree().change_scene_to_file("res://scenes/difficulty_selection.tscn")
+
 func build_interface() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var background = ColorRect.new()

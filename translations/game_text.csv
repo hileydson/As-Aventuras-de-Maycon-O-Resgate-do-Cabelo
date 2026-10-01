@@ -27,6 +27,11 @@ WELL_POWER_READY,PENTAGRAMA PRONTO!,PENTAGRAM READY!,¡PENTAGRAMA LISTO!,五芒�
 WELL_INVULNERABLE,INVULNERÁVEL!,INVULNERABLE!,¡INVULNERABLE!,无敌！
 WELL_HIT,IMPACTO!,HIT!,¡IMPACTO!,受击！
 MENU_CONTROLLER,CONTROLE,CONTROLLER,CONTROLES,操作说明
+PAUSE_MOVE,Mover,Move,Mover,移动
+PAUSE_SHOOT,Atirar,Shoot,Disparar,射击
+PAUSE_INTERACT,Interagir,Interact,Interactuar,互动
+PAUSE_FLASHLIGHT,Lanterna,Flashlight,Linterna,手电筒
+PAUSE_SPECIAL,Pentagrama,Pentagram,Pentagrama,五芒星
 MENU_RUN,Correr,Run,Correr,奔跑
 MENU_CROUCH,Agachar,Crouch,Agacharse,下蹲
 MENU_MAP,MAPA,MAP,MAPA,地图
@@ -173,7 +178,7 @@ BATTLE_SAFADAMENTE,SAFADAMENTE... ,CRAFTILY... ,DESCARADAMENTE... ,狡猾地逃�
 LABEL_TWO_PLAYER_SCREEN,Segunda tela ativada pelo Controle 2!,Second screen activated by Player 2!,¡Segunda pantalla activada por el Mando 2!,2号手柄已激活第二屏幕！
 BATTLE_MODE_TITLE,ESCOLHA O ESTILO DE BATALHA,CHOOSE YOUR BATTLE STYLE,ELIGE EL ESTILO DE BATALLA,选择战斗模式
 BATTLE_MODE_SUBTITLE,Você poderá iniciar uma nova jornada com um dos dois sistemas.,Start a new journey with one of the two battle systems.,Podrás iniciar una nueva aventura con uno de los dos sistemas.,你可以从这两种战斗系统中选择一种开始新冒险。
-BATTLE_MODE_REALTIME_TITLE,TEMPO REAL  •  PADRÃO,REAL TIME  •  DEFAULT,TIEMPO REAL  •  ESTÁNDAR,实时动作  •  默认
+BATTLE_MODE_REALTIME_TITLE,TEMPO REAL,REAL TIME,TIEMPO REAL,实时动作
 BATTLE_MODE_REALTIME_DESC,"Beat 'em up com movimentação livre, combos, esquiva, inimigos ativos, sangue e arenas progressivas.","Beat 'em up with free movement, combos, dodging, active enemies, blood and progressive arenas.","Beat 'em up con movimiento libre, combos, esquiva, enemigos activos, sangre y arenas progresivas.",自由移动的清版动作格斗，包含连击、闪避、积极的敌人、鲜血飞溅与关卡竞技场。
 BATTLE_MODE_STRATEGIC_TITLE,ESTRATÉGICA,STRATEGIC,ESTRATÉGICA,策略回合
 BATTLE_MODE_STRATEGIC_DESC,"O sistema clássico atual: ataques limitados, defesa por salto e turnos de pressão.","The current classic system: limited attacks, jump defense and pressure turns.","El sistema clásico actual: ataques limitados, defensa por salto y turnos de presión.",经典回合制战斗：攻击次数限制、跳跃防守与压制回合。
@@ -425,7 +430,7 @@ SETTINGS_DEBUG_LIPS_ONE_HIT,Lips morre com um golpe,Lips dies in one hit,Lips mu
 SETTINGS_DEBUG_LIPS_ONE_HIT_DESC,Na fase Super Maycon Brother o Lips cai no primeiro acerto,In the Super Maycon Brother stage Lips goes down on the first hit,En la fase Super Maycon Brother Lips cae al primer golpe,在超级麦肯兄弟关卡中利普斯第一击就倒下
 DIFFICULTY_SELECTION_TITLE,ESCOLHA A DIFICULDADE,CHOOSE DIFFICULTY,ELIGE LA DIFICULTAD,选择难度
 DIFFICULTY_SELECTION_SUBTITLE,Você pode alterar a qualquer momento no menu de configurações.,You can change it at any time in the settings menu.,Puedes cambiarlo en cualquier momento en el menú de ajustes.,您可以随时在设置菜单中进行更改。
-DIFFICULTY_NORMAL_TITLE,NORMAL  •  PADRÃO,NORMAL  •  DEFAULT,NORMAL  •  ESTÁNDAR,普通  •  默认
+DIFFICULTY_NORMAL_TITLE,NORMAL,NORMAL,NORMAL,普通
 DIFFICULTY_NORMAL_DESC,"A experiência original do jogo com o nível de desafio padrão em todas as fases.","The original game experience with standard challenge across all stages.","La experiencia original del juego con el nivel de desafío estándar en todas las fases.",原汁原味的游戏体验，所有关卡均为标准难度挑战。
 DIFFICULTY_EASY_TITLE,FÁCIL,EASY,FÁCIL,简单
 DIFFICULTY_EASY_DESC,"Inimigos com menos vida, menos dano no calabouço e chefes mais acessíveis para uma jornada mais tranquila.","Enemies with less health, less dungeon damage, and more accessible bosses for a smoother journey.","Enemigos con menos vida, menos daño en la mazmorra y jefes más accesibles para una aventura más tranquila.",敌人生命值更低、地牢伤害降低、Boss更易击败，带来更轻松的冒险旅程。

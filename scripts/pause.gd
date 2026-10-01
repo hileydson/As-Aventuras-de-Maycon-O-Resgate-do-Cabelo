@@ -3,15 +3,6 @@ extends Control
 const PAUSE_SOUND:AudioStream = preload("res://assets/novos_audios/pause_sfxr.mp3")
 const PAUSE_VISUAL = preload("res://scripts/ui/pause_visual.gd")
 const MENU_SOUND_CONTROLLER = preload("res://scripts/ui/menu_sound_controller.gd")
-const PENTAGRAM_TEXTURE:Texture2D = preload("res://assets/3D/pentagram_item.png")
-const KEY_Q_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Q_Key_Light.png")
-const KEY_W_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/W_Key_Light.png")
-const KEY_SPACE_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png")
-const KEY_SHIFT_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/shift.png")
-const PAD_A_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_A.png")
-const PAD_B_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_B.png")
-const PAD_X_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_X.png")
-const PAD_Y_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_Y.png")
 
 @onready var pause_animation: AnimationPlayer = $pause_animation
 @onready var black_screen: ColorRect = $black_screen
@@ -61,13 +52,25 @@ func _ready() -> void:
 	run_label.text = tr("MENU_RUN")
 	down_label.text = tr("MENU_CROUCH")
 	_setup_pause_canvas_layer()
-	_apply_modern_pause_layout(p3)
+	_apply_modern_pause_layout()
 	pause_audio = AudioStreamPlayer.new()
 	pause_audio.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_audio.stream = PAUSE_SOUND
 	pause_audio.volume_db = -8.0
 	add_child(pause_audio)
 		
+
+var ultimo_frame_toggle_pause:int = -1
+
+# O mesmo toque chega por _input e por _process no mesmo quadro: set_input_as_handled
+# corta a propagação do evento, mas não impede Input.is_action_just_pressed de ler a
+# ação. Os dois juntos alternavam o pause duas vezes, e ele reabria em vez de fechar.
+func alterna_pause_uma_vez() -> void:
+	var frame := Engine.get_process_frames()
+	if frame == ultimo_frame_toggle_pause:
+		return
+	ultimo_frame_toggle_pause = frame
+	processa_pause_unpause()
 
 func processa_pause_unpause(play_close_sound:bool = true)->void:
 	if transition_in_progress:
@@ -110,12 +113,16 @@ func processa_pause_unpause(play_close_sound:bool = true)->void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_cancel") && (!Global.battle_started) && !Global.block_pause_before_prologo:
-		processa_pause_unpause()
+		alterna_pause_uma_vez()
 
 func _input(event: InputEvent) -> void:
 	if not get_tree().paused or not (pause_layer and pause_layer.visible) or transition_in_progress:
 		return
 	if is_instance_valid(configuracoes_dialog) and configuracoes_dialog.visible:
+		return
+	if event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed):
+		get_viewport().set_input_as_handled()
+		alterna_pause_uma_vez()
 		return
 	Global.check_debug_activation(event)
 			
@@ -192,7 +199,7 @@ func update_hp_display() -> void:
 		realtime_hp_label.text = tr("BATTLE_HP_LABEL")
 
 
-func _apply_modern_pause_layout(third_power:String) -> void:
+func _apply_modern_pause_layout() -> void:
 	_create_opaque_background()
 	black_screen.material = null
 	black_screen.color = Color.TRANSPARENT
@@ -230,21 +237,8 @@ func _apply_modern_pause_layout(third_power:String) -> void:
 	maycon_hp.position = Vector2(850.0, -8.0)
 	maycon_hp.z_index = 102
 
-	var controls_column := PAUSE_VISUAL.make_info_card(black_screen, Vector2(825.0, 142.0), Vector2(305.0, 282.0))
-	controls_card = controls_column.get_parent() as PanelContainer
-	var controls_title := Label.new()
-	controls_title.text = tr("MENU_CONTROLLER").to_upper()
-	PAUSE_VISUAL.style_hint(controls_title, 17)
-	controls_title.add_theme_color_override("font_color", Color(0.75, 0.91, 0.92))
-	controls_column.add_child(controls_title)
-	var controls_rule := ColorRect.new()
-	controls_rule.custom_minimum_size = Vector2(0.0, 1.0)
-	controls_rule.color = Color(0.35, 0.72, 0.77, 0.5)
-	controls_column.add_child(controls_rule)
-	PAUSE_VISUAL.add_action_row(controls_column, tr("POWER_PUNCH"), KEY_Q_TEXTURE, null, PAD_Y_TEXTURE, Color(0.35, 0.9, 1.0))
-	PAUSE_VISUAL.add_action_row(controls_column, tr("POWER_KICK"), KEY_W_TEXTURE, null, PAD_B_TEXTURE, Color(1.0, 0.48, 0.68))
-	PAUSE_VISUAL.add_action_row(controls_column, third_power, KEY_SPACE_TEXTURE, null, PAD_A_TEXTURE, Color(1.0, 0.88, 0.35), true)
-	PAUSE_VISUAL.add_action_row(controls_column, tr("MENU_RUN"), KEY_SHIFT_TEXTURE, null, PAD_X_TEXTURE, Color(0.55, 0.92, 0.72))
+	var profile := "prologue" if get_tree().current_scene != null and get_tree().current_scene.scene_file_path == "res://scenes/game.tscn" else "2d"
+	controls_card = PAUSE_VISUAL.add_controls_card(black_screen, profile)
 	controls_card.visible = true
 
 
@@ -281,20 +275,7 @@ func _create_opaque_background() -> void:
 
 
 func _add_rotating_pentagram() -> void:
-	background_pentagram = TextureRect.new()
-	background_pentagram.name = "RotatingPentagram"
-	background_pentagram.texture = PENTAGRAM_TEXTURE
-	background_pentagram.position = Vector2(216.0, -36.0)
-	background_pentagram.size = Vector2(720.0, 720.0)
-	background_pentagram.pivot_offset = background_pentagram.size * 0.5
-	background_pentagram.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	background_pentagram.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	background_pentagram.modulate = Color(0.30, 0.82, 0.88, 0.115)
-	background_pentagram.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	background_pentagram.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	pause_background.add_child(background_pentagram)
-	var rotation_tween := background_pentagram.create_tween().set_loops().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	rotation_tween.tween_property(background_pentagram, "rotation", TAU, 32.0).from(0.0).set_trans(Tween.TRANS_LINEAR)
+	background_pentagram = PAUSE_VISUAL.add_rotating_pentagram(pause_background)
 
 
 func _play_modern_intro() -> void:

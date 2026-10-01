@@ -2174,11 +2174,11 @@ func _build_hud() -> void:
 	count_panel.offset_left = -135.0
 	count_panel.offset_right = -12.0
 	count_panel.offset_top = 9.0
-	count_panel.offset_bottom = 53.0
+	count_panel.offset_bottom = 41.0
 	canvas.add_child(count_panel)
-	count_panel.add_child(_hud_icon(PENTAGRAM_TEXTURE, Vector2(42.0, 42.0)))
+	count_panel.add_child(_hud_icon(PENTAGRAM_TEXTURE, Vector2(32.0, 32.0)))
 	pentagram_label = Label.new()
-	pentagram_label.add_theme_font_size_override("font_size", 28)
+	pentagram_label.add_theme_font_size_override("font_size", 22)
 	pentagram_label.add_theme_color_override("font_color", Color("d72343"))
 	count_panel.add_child(pentagram_label)
 	var background := PanelContainer.new()
@@ -2186,23 +2186,23 @@ func _build_hud() -> void:
 	background.anchor_top = 1.0
 	background.anchor_bottom = 1.0
 	background.offset_left = 12.0
-	background.offset_right = 348.0
-	background.offset_top = -97.0
+	background.offset_right = 320.0
+	background.offset_top = -76.0
 	background.offset_bottom = -12.0
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.09, 0.10, 0.14, 0.8)
 	panel_style.set_corner_radius_all(6)
-	panel_style.set_content_margin_all(6)
+	panel_style.set_content_margin_all(5)
 	background.add_theme_stylebox_override("panel", panel_style)
 	canvas.add_child(background)
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 5)
+	column.add_theme_constant_override("separation", 3)
 	background.add_child(column)
 	hp_label = Label.new()
-	hp_label.add_theme_font_size_override("font_size", 12)
+	hp_label.add_theme_font_size_override("font_size", 11)
 	column.add_child(hp_label)
 	hp_bar = ProgressBar.new()
-	hp_bar.custom_minimum_size = Vector2(310.0, 12.0)
+	hp_bar.custom_minimum_size = Vector2(290.0, 10.0)
 	hp_bar.show_percentage = false
 	hp_bar.max_value = stage_hp_max
 	var bar_fill := StyleBoxFlat.new()
@@ -2213,22 +2213,22 @@ func _build_hud() -> void:
 	hp_bar.add_theme_stylebox_override("background", bar_back)
 	column.add_child(hp_bar)
 	var control_panel := HBoxContainer.new()
-	control_panel.add_theme_constant_override("separation", 6)
+	control_panel.add_theme_constant_override("separation", 5)
 	column.add_child(control_panel)
-	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_A.png"), Vector2(26.0, 26.0)))
+	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_A.png"), Vector2(20.0, 20.0)))
 	var jump_label := Label.new()
 	jump_label.text = tr("PLATFORM_JUMP_HINT")
-	jump_label.add_theme_font_size_override("font_size", 13)
+	jump_label.add_theme_font_size_override("font_size", 11)
 	control_panel.add_child(jump_label)
-	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_X.png"), Vector2(26.0, 26.0)))
+	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_X.png"), Vector2(20.0, 20.0)))
 	var run_label := Label.new()
 	run_label.text = tr("PLATFORM_RUN_HINT")
-	run_label.add_theme_font_size_override("font_size", 13)
+	run_label.add_theme_font_size_override("font_size", 11)
 	control_panel.add_child(run_label)
-	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_Y.png"), Vector2(26.0, 26.0)))
+	control_panel.add_child(_hud_icon(load("res://assets/novas_imagens/buttons/360_Y.png"), Vector2(20.0, 20.0)))
 	var special_label := Label.new()
 	special_label.text = tr("PLATFORM_SPECIAL_HINT")
-	special_label.add_theme_font_size_override("font_size", 13)
+	special_label.add_theme_font_size_override("font_size", 11)
 	control_panel.add_child(special_label)
 	blood_overlay = Control.new()
 	blood_overlay.set_script(BLOOD_OVERLAY_SCRIPT)

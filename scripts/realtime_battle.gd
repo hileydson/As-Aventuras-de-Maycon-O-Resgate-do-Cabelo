@@ -419,9 +419,10 @@ var transition_flash:ColorRect
 var intro_label:Label
 var pause_overlay:ColorRect
 var pause_resume_button:Button
+var pause_maycon:AnimatedSprite2D
+var pause_menu:VBoxContainer
 var battle_paused:bool = false
 var controls_intro_overlay:ColorRect
-var controls_intro_label:Label
 var controls_intro_prompt:Label
 var controls_intro_active:bool = false
 var controls_intro_time:float = 0.0
@@ -815,6 +816,7 @@ func spawn_hound_alert_popup(world_pos:Vector2, text_to_show:String) -> void:
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.text = text_to_show
+	label.add_theme_font_override("font", EMOJI_FONT.get_ui_font())
 	label.add_theme_font_size_override("font_size", 22)
 	label.add_theme_color_override("font_color", Color("ff5400"))
 	label.add_theme_color_override("font_outline_color", Color("2b0505"))
@@ -1916,35 +1918,37 @@ func build_pause_overlay() -> void:
 	pause_overlay.visible = false
 	hud_canvas.add_child(pause_overlay)
 	PAUSE_VISUAL.configure_backdrop(pause_overlay, 0.91)
+	PAUSE_VISUAL.add_rotating_pentagram(pause_overlay)
 	PAUSE_VISUAL.add_header(pause_overlay, tr("MENU_BATTLE_PAUSED"), tr("MENU_PAUSE_HINT"))
 	PAUSE_VISUAL.add_side_glow(pause_overlay)
+	pause_maycon = PAUSE_VISUAL.add_walking_maycon(pause_overlay)
+	PAUSE_VISUAL.add_controls_card(pause_overlay, "realtime")
 	var settings_dialog := SETTINGS_DIALOG.instantiate()
 	pause_overlay.add_child(settings_dialog)
+	pause_menu = VBoxContainer.new()
+	pause_menu.position = Vector2(70.0, 205.0)
+	pause_menu.size = Vector2(360.0, 210.0)
+	pause_menu.add_theme_constant_override("separation", 9)
+	pause_overlay.add_child(pause_menu)
 	pause_resume_button = Button.new()
 	pause_resume_button.text = tr("MENU_CONTINUE").to_upper()
-	pause_resume_button.position = Vector2(70.0, 205.0)
-	pause_resume_button.size = Vector2(360.0, 52.0)
 	PAUSE_VISUAL.style_button(pause_resume_button)
 	pause_resume_button.pressed.connect(toggle_battle_pause)
-	pause_overlay.add_child(pause_resume_button)
+	pause_menu.add_child(pause_resume_button)
 	var settings_button := Button.new()
 	settings_button.text = tr("MENU_SETTINGS").to_upper()
-	settings_button.position = Vector2(70.0, 269.0)
-	settings_button.size = Vector2(360.0, 52.0)
 	PAUSE_VISUAL.style_button(settings_button)
 	settings_button.pressed.connect(func(): settings_dialog.abrir())
-	pause_overlay.add_child(settings_button)
+	pause_menu.add_child(settings_button)
 	var exit_button := Button.new()
 	exit_button.text = tr("MENU_EXIT").to_upper()
-	exit_button.position = Vector2(70.0, 333.0)
-	exit_button.size = Vector2(360.0, 52.0)
 	PAUSE_VISUAL.style_button(exit_button, true)
 	exit_button.pressed.connect(func():
 		battle_paused = false
 		get_tree().paused = false
 		get_tree().change_scene_to_file("res://scenes/menu.tscn")
 	)
-	pause_overlay.add_child(exit_button)
+	pause_menu.add_child(exit_button)
 	var pause_audio := AudioStreamPlayer.new()
 	pause_audio.name = "PauseAudio"
 	pause_audio.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -2018,13 +2022,7 @@ func build_action_buttons_hud() -> void:
 	pause_overlay.add_child(action_buttons_panel)
 
 func show_action_buttons_intro() -> void:
-	if !action_buttons_panel || !pause_overlay:
-		return
 	build_controls_intro_overlay()
-	action_buttons_panel.reparent(hud_canvas)
-	action_buttons_panel.position = Vector2(690, 220)
-	action_buttons_panel.modulate.a = 1.0
-	action_buttons_panel.visible = true
 	controls_intro_active = true
 	controls_intro_time = 0.0
 	controls_intro_overlay.visible = true
@@ -2036,37 +2034,33 @@ func build_controls_intro_overlay() -> void:
 	if controls_intro_overlay:
 		return
 	controls_intro_overlay = ColorRect.new()
+	controls_intro_overlay.name = "ControlsIntroOverlay"
 	controls_intro_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	controls_intro_overlay.color = Color(0.0, 0.0, 0.0, 0.84)
 	controls_intro_overlay.z_index = 5000
-	controls_intro_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud_canvas.add_child(controls_intro_overlay)
-	controls_intro_label = Label.new()
-	controls_intro_label.set_anchors_preset(Control.PRESET_CENTER)
-	controls_intro_label.position = Vector2(-500.0, -86.0)
-	controls_intro_label.size = Vector2(520.0, 52.0)
-	controls_intro_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	controls_intro_label.text = tr("BATTLE_CONTROLS_INTRO")
-	controls_intro_label.add_theme_font_size_override("font_size", 26)
-	controls_intro_label.add_theme_color_override("font_color", Color("ffd166"))
-	controls_intro_overlay.add_child(controls_intro_label)
+
+	# Card idêntico ao do Pause (PauseControlsCard), centralizado na tela
+	# Card largura 340, altura ~260, centrado em x=(1152-340)/2=406, y=(648-260)/2-20=174
+	var card_pos := Vector2(406.0, 174.0)
+	var card = PAUSE_VISUAL.add_controls_card(controls_intro_overlay, "realtime", card_pos)
+	if is_instance_valid(card):
+		card.custom_minimum_size = Vector2(340.0, 0.0)
+
 	controls_intro_prompt = Label.new()
-	controls_intro_prompt.set_anchors_preset(Control.PRESET_CENTER)
-	controls_intro_prompt.position = Vector2(-500.0, 50.0)
-	controls_intro_prompt.size = Vector2(520.0, 45.0)
+	controls_intro_prompt.name = "ControlsIntroPrompt"
+	controls_intro_prompt.position = Vector2(326.0, 430.0)
+	controls_intro_prompt.size = Vector2(500.0, 45.0)
 	controls_intro_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	controls_intro_prompt.text = tr("BATTLE_CONTROLS_PROMPT")
-	controls_intro_prompt.add_theme_font_size_override("font_size", 22)
-	controls_intro_prompt.add_theme_color_override("font_color", Color("e8f1ff"))
+	PAUSE_VISUAL.style_hint(controls_intro_prompt, 17)
+	controls_intro_prompt.add_theme_color_override("font_color", Color(1.0, 0.97, 0.82))
+	controls_intro_prompt.visible = false
 	controls_intro_overlay.add_child(controls_intro_prompt)
 
 func finish_controls_intro() -> void:
 	controls_intro_active = false
 	controls_intro_overlay.visible = false
-	if is_instance_valid(action_buttons_panel):
-		action_buttons_panel.reparent(pause_overlay)
-		action_buttons_panel.position = Vector2(477, 340)
-		action_buttons_panel.visible = false
 	get_tree().paused = false
 	intro_time = 0.0
 
@@ -2306,13 +2300,14 @@ func toggle_battle_pause() -> void:
 	battle_paused = !battle_paused
 	pause_overlay.visible = battle_paused
 	if action_buttons_panel && action_buttons_panel.get_parent() == pause_overlay:
-		action_buttons_panel.visible = battle_paused
+		action_buttons_panel.visible = false
 	if battle_paused:
 		pause_resume_button.grab_focus()
 		var pause_audio := pause_overlay.get_node_or_null("PauseAudio") as AudioStreamPlayer
 		if is_instance_valid(pause_audio):
 			pause_audio.play()
-		PAUSE_VISUAL.animate_open(pause_overlay)
+		PAUSE_VISUAL.animate_walking_maycon(pause_maycon)
+		PAUSE_VISUAL.animate_open(pause_overlay, pause_menu)
 	else:
 		pause_resume_button.release_focus()
 	get_tree().paused = battle_paused
@@ -2341,7 +2336,12 @@ func _unhandled_input(event:InputEvent) -> void:
 			if controls_intro_time >= 2.0:
 				finish_controls_intro()
 		return
-	if battle_paused || intro_time > 0.0 || leaving || player_dead:
+	if battle_paused:
+		if event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed:
+			get_viewport().set_input_as_handled()
+			toggle_battle_pause()
+		return
+	if intro_time > 0.0 || leaving || player_dead:
 		return
 	if event is InputEventMouseButton && event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:

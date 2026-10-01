@@ -148,8 +148,11 @@ func _input(event: InputEvent) -> void:
 	if leaving:
 		get_viewport().set_input_as_handled()
 		return
+	if get_node_or_null("ConfiguracoesDialog") and get_node("ConfiguracoesDialog").visible:
+		return
 	_process_debug_activation_sequence(event)
-	if event.is_action_pressed("ui_cancel"):
+	var is_back: bool = event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed)
+	if is_back:
 		if fullscreen_delete_dialog and fullscreen_delete_dialog.visible:
 			menu_sounds.play_back()
 			_close_delete_confirmation()
@@ -766,9 +769,6 @@ func _build_interface() -> void:
 	btn_load = _menu_button("MENU_LOAD", "Load")
 	buttons.add_child(btn_load)
 	btn_load.pressed.connect(_on_load_pressed)
-	btn_new_game = _menu_button("MENU_NEW_GAME", "NewGame")
-	buttons.add_child(btn_new_game)
-	btn_new_game.pressed.connect(_on_new_game_pressed)
 	var settings := _menu_button("MENU_SETTINGS", "Settings")
 	buttons.add_child(settings)
 	settings.pressed.connect(_on_settings_pressed)
@@ -777,13 +777,12 @@ func _build_interface() -> void:
 	exit_button.pressed.connect(_on_exit_pressed)
 
 	btn_load.focus_neighbor_top = exit_button.get_path()
-	btn_load.focus_neighbor_bottom = btn_new_game.get_path()
-	btn_new_game.focus_neighbor_top = btn_load.get_path()
-	btn_new_game.focus_neighbor_bottom = settings.get_path()
-	settings.focus_neighbor_top = btn_new_game.get_path()
+	btn_load.focus_neighbor_bottom = settings.get_path()
+	settings.focus_neighbor_top = btn_load.get_path()
 	settings.focus_neighbor_bottom = exit_button.get_path()
 	exit_button.focus_neighbor_top = settings.get_path()
 	exit_button.focus_neighbor_bottom = btn_load.get_path()
+	_update_main_menu_labels()
 
 	# 2. Slot selection submenu stack
 	stack_slots = VBoxContainer.new()
@@ -1140,7 +1139,16 @@ func _update_slot_actions_view() -> void:
 		btn_slot_back.focus_neighbor_bottom = btn_slot_newgame.get_path()
 
 
+func _update_main_menu_labels() -> void:
+	if is_instance_valid(btn_load):
+		if Global.has_any_save():
+			btn_load.text = tr("MENU_LOAD").to_upper()
+		else:
+			btn_load.text = tr("MENU_NEW_GAME").to_upper()
+
+
 func _show_main_menu() -> void:
+	_update_main_menu_labels()
 	stack_main.visible = true
 	stack_slots.visible = false
 	stack_slot_actions.visible = false
@@ -1153,7 +1161,11 @@ func _show_slots_menu(mode: String = "load") -> void:
 	stack_main.visible = false
 	stack_slots.visible = true
 	stack_slot_actions.visible = false
-	if mode == "new_game":
+	if not Global.has_any_save():
+		slots_kicker.text = tr("MENU_SLOTS_TITLE")
+		slots_title.text = tr("MENU_NEW_GAME").to_upper()
+		slots_caption.text = tr("MENU_SLOTS_NEWGAME_DESC")
+	elif mode == "new_game":
 		slots_kicker.text = tr("MENU_NEW_GAME").to_upper()
 		slots_title.text = tr("MENU_SLOTS_TITLE")
 		slots_caption.text = tr("MENU_SLOTS_NEWGAME_DESC")

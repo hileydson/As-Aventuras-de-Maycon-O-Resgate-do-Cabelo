@@ -10,6 +10,8 @@ const PAUSE_VISUAL = preload("res://scripts/ui/pause_visual.gd")
 @onready var quit: Button = $Control/VBoxContainer/quit
 @onready var configuracoes_dialog = $ConfiguracoesDialog
 var pause_audio:AudioStreamPlayer
+var pause_maycon:AnimatedSprite2D
+var controls_card:PanelContainer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -33,17 +35,33 @@ func _process(delta: float) -> void:
 	
 	#NAO DEIXA O SEGUNDO CONTROLE PARAR A PARTIDA NO PRIMEIRO START - DAI DEPOIS SIM
 	if (Input.is_action_just_pressed("ui_cancel") and !Input.is_joy_button_pressed(1, JOY_BUTTON_START)) or (Input.is_action_just_pressed("ui_cancel") and Input.is_joy_button_pressed(1, JOY_BUTTON_START) and Global.is_two_player_active):
-		processa_pause_unpause()
+		alterna_pause_uma_vez()
 
 func _input(event: InputEvent) -> void:
 	if not get_tree().paused or not (is_instance_valid(control) and control.visible):
 		return
 	if is_instance_valid(configuracoes_dialog) and configuracoes_dialog.visible:
 		return
+	if event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed):
+		get_viewport().set_input_as_handled()
+		alterna_pause_uma_vez()
+		return
 	Global.check_debug_activation(event)
 
 
 
+
+var ultimo_frame_toggle_pause:int = -1
+
+# O mesmo toque chega por _input e por _process no mesmo quadro: set_input_as_handled
+# corta a propagação do evento, mas não impede Input.is_action_just_pressed de ler a
+# ação. Os dois juntos alternavam o pause duas vezes, e ele reabria em vez de fechar.
+func alterna_pause_uma_vez() -> void:
+	var frame := Engine.get_process_frames()
+	if frame == ultimo_frame_toggle_pause:
+		return
+	ultimo_frame_toggle_pause = frame
+	processa_pause_unpause()
 
 func processa_pause_unpause()->void:
 	var player = get_tree().get_first_node_in_group("player")
@@ -68,6 +86,7 @@ func processa_pause_unpause()->void:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		get_tree().paused = true
 		pause_audio.play()
+		PAUSE_VISUAL.animate_walking_maycon(pause_maycon)
 		PAUSE_VISUAL.animate_open(control, $Control/VBoxContainer)
 
 func set_pause_hidden_nodes_visible(value:bool) -> void:
@@ -102,6 +121,7 @@ func _apply_modern_layout() -> void:
 	control.offset_bottom = 0.0
 	PAUSE_VISUAL.configure_backdrop(backdrop, 0.91)
 	backdrop.z_index = -10
+	PAUSE_VISUAL.add_rotating_pentagram(control)
 	$Control/pause.visible = false
 	PAUSE_VISUAL.add_header(control, tr("MENU_PAUSE"), tr("MENU_PAUSE_HINT"))
 	PAUSE_VISUAL.add_side_glow(control)
@@ -116,9 +136,9 @@ func _apply_modern_layout() -> void:
 	close.text = close.text.to_upper()
 	settings.text = settings.text.to_upper()
 	quit.text = quit.text.to_upper()
-	var note_column := PAUSE_VISUAL.make_info_card(control, Vector2(780.0, 440.0), Vector2(300.0, 96.0))
-	var note := Label.new()
-	note.text = tr("MENU_PAUSE_HINT")
-	note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	PAUSE_VISUAL.style_hint(note, 16)
-	note_column.add_child(note)
+	pause_maycon = PAUSE_VISUAL.add_walking_maycon(control)
+	var scene_path := get_tree().current_scene.scene_file_path if get_tree().current_scene != null else ""
+	if scene_path != "res://scenes/3D/cenario_3d_bofore_castle_1.tscn":
+		var profile := "dungeon" if scene_path == "res://scenes/3D/calabouco_terror.tscn" else "first_3d"
+		var card_position := Vector2(825.0, 102.0) if profile == "dungeon" else Vector2(825.0, 142.0)
+		controls_card = PAUSE_VISUAL.add_controls_card(control, profile, card_position)

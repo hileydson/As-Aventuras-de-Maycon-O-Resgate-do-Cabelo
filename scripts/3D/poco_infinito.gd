@@ -80,8 +80,10 @@ var ending_scream_started:bool = false
 var transition_sent:bool = false
 var entry_transitioning:bool = true
 var pause_menu:CanvasLayer
+var pause_root:Control
 var pause_column:VBoxContainer
 var pause_resume_button:Button
+var pause_maycon:AnimatedSprite2D
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -116,11 +118,21 @@ func build_pause_menu() -> void:
 	add_child(pause_menu)
 	var settings_dialog := SETTINGS_DIALOG.instantiate()
 	pause_menu.add_child(settings_dialog)
+	pause_root = Control.new()
+	pause_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	pause_menu.add_child(pause_root)
+	var backdrop := ColorRect.new()
+	pause_root.add_child(backdrop)
+	PAUSE_VISUAL.configure_backdrop(backdrop, 0.93)
+	backdrop.z_index = -10
+	PAUSE_VISUAL.add_rotating_pentagram(pause_root)
+	PAUSE_VISUAL.add_header(pause_root, tr("MENU_PAUSE"), tr("MENU_PAUSE_HINT"))
+	PAUSE_VISUAL.add_side_glow(pause_root)
 	pause_column = VBoxContainer.new()
 	pause_column.position = Vector2(70.0, 205.0)
 	pause_column.size = Vector2(360.0, 210.0)
 	pause_column.add_theme_constant_override("separation", 9)
-	pause_menu.add_child(pause_column)
+	pause_root.add_child(pause_column)
 	pause_resume_button = Button.new()
 	pause_resume_button.text = tr("MENU_CONTINUE").to_upper()
 	PAUSE_VISUAL.style_button(pause_resume_button)
@@ -139,6 +151,8 @@ func build_pause_menu() -> void:
 		get_tree().change_scene_to_file("res://scenes/menu.tscn")
 	)
 	pause_column.add_child(exit_button)
+	pause_maycon = PAUSE_VISUAL.add_walking_maycon(pause_root)
+	PAUSE_VISUAL.add_controls_card(pause_root, "well")
 
 func start_entry_fade() -> void:
 	if !is_instance_valid(fade_overlay):
@@ -479,7 +493,8 @@ func toggle_pause() -> void:
 	if locally_paused:
 		pause_sound.play()
 		pause_resume_button.grab_focus()
-		PAUSE_VISUAL.animate_open(pause_column)
+		PAUSE_VISUAL.animate_walking_maycon(pause_maycon)
+		PAUSE_VISUAL.animate_open(pause_root, pause_column)
 	else:
 		pause_resume_button.release_focus()
 

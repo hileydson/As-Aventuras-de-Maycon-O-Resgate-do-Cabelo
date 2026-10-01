@@ -818,6 +818,7 @@ func build_special_hud() -> void:
 	symbol_dash_ctrl.add_theme_stylebox_override("panel", dash_box)
 	symbol_dash_label = Label.new()
 	symbol_dash_label.text = tr("POWER_HOLD_PROMPT")
+	symbol_dash_label.add_theme_font_override("font", EMOJI_FONT.get_ui_font())
 	symbol_dash_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	symbol_dash_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	symbol_dash_label.add_theme_font_size_override("font_size", 12)
