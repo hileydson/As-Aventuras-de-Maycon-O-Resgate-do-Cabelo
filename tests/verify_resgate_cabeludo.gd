@@ -265,6 +265,7 @@ func run() -> void:
 	await step(2)
 	ok("dash custa 3 pentagramas", stage.pentagrams == 4, "pentagramas=%d" % stage.pentagrams)
 	ok("dash deixa o Maycon invencivel", player.is_invincible, "invencivel=%s" % player.is_invincible)
+	ok("dash nao acende a capsula amarela", not player.invincibility_aura.visible, "aura visivel=%s" % player.invincibility_aura.visible)
 	# O Godot renomeia nos repetidos, entao a contagem olha a malha, nao o nome.
 	var riscos:int = 0
 	for c in stage.get_node("Effects").get_children():
@@ -558,6 +559,7 @@ func check_lips_arrival() -> void:
 	# O rastro so nasce depois do fade de entrada, por isso a espera.
 	await step(34)
 	var rastro:bool = lips.has_node("PoeiraDoSalto")
+	var vento_na_queda:bool = intro.wind.visible
 	var guard:int = 6 + 34
 	while lips.position.y > 0.05 and guard < 420:
 		guard += 1
@@ -568,16 +570,28 @@ func check_lips_arrival() -> void:
 	for c in intro.get_children():
 		if c is GPUParticles3D:
 			poeira += 1
+	var batida:bool = intro.has_node("Impacto")
+	ok("vento nao passa durante a queda do Lips", not vento_na_queda, "vento visivel=%s" % vento_na_queda)
+	ok("pancada toca quando o Lips bate no chao", batida, "no Impacto na cena")
 	ok("Lips comeca no ar", alto > 50.0, "y inicial=%.1f" % alto)
 	ok("Lips cai com o cabelo nas costas", cabelo, "no Hair no Lips")
 	ok("poeira sai do Lips durante a queda", rastro, "rastro preso nele")
 	ok("Lips pousa na arena em cerca de 4 s", segundos > 2.5 and segundos < 5.0, "levou %.1f s" % segundos)
-	ok("pouso do Lips joga poeira para todo lado", poeira >= 3, "estouros=%d" % poeira)
-	# Depois do pouso a camera tem de sair em direcao ao Maycon, sem parar nele.
-	var cam_depois:float = intro.get_node("Camera3D").position.z
+	ok("pouso do Lips joga poeira para todo lado", poeira >= 14, "estouros=%d" % poeira)
+	# A cutscene espera a pancada acabar: nada anda enquanto ela toca.
+	var cam_parada:float = intro.get_node("Camera3D").position.z
+	await step(60)
+	var espera:bool = intro.has_node("Impacto") and is_equal_approx(intro.get_node("Camera3D").position.z, cam_parada)
+	ok("a cena espera a pancada terminar", espera, "som tocando e camera parada")
+	# Quando ela termina, a camera sai em direcao ao Maycon, sem parar no Lips.
+	guard = 0
+	while intro.has_node("Impacto") and guard < 700:
+		guard += 1
+		await physics_frame
 	await step(36)
-	var cam_andou:float = intro.get_node("Camera3D").position.z - cam_depois
+	var cam_andou:float = intro.get_node("Camera3D").position.z - cam_parada
 	ok("camera nao fica parada no Lips caido", cam_andou > 20.0, "andou %.0f m rumo ao Maycon" % cam_andou)
+	ok("vento entra depois da queda do Lips", intro.wind.visible, "vento visivel=%s" % intro.wind.visible)
 	intro.free()
 	await step(2)
 

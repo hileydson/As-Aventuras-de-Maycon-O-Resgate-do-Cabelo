@@ -16,6 +16,8 @@ const AMBIENCE = preload("res://assets/novos_audios/song_birds.mp3")
 const STAGE_SONG = preload("res://assets/novos_audios/last_song.mp3")
 # Mesmo som de coleta do Super Maycon Brother.
 const PICKUP_SOUND = preload("res://assets/audio/plim.mp3")
+# Pancada do Lips chegando no chão da arena.
+const IMPACT_SOUND = preload("res://assets/novos_audios/impact_sound.mp3")
 # A música emenda em si mesma estes segundos antes de acabar.
 const SONG_OVERLAP := 3.0
 const SOUNDS = {
@@ -50,6 +52,7 @@ var pentagram_label:Label
 var blur_material:ShaderMaterial
 var song_slots:Array[AudioStreamPlayer] = []
 var song_turn:int = 0
+var wind:MultiMeshInstance3D
 
 func _ready() -> void:
 	old_cutscene = Global.in_cutscene
@@ -147,9 +150,10 @@ func build_pause() -> void:
 	pause.set_script(PAUSE_SCRIPT)
 	add_child(pause)
 
-# Linhas de vento passando pela câmera o tempo todo em que a fase avança.
+# Linhas de vento passando pela câmera o tempo todo em que a fase avança. Elas
+# só entram depois da queda do Lips, onde a câmera ainda está parada.
 func build_wind() -> void:
-	var wind := MultiMeshInstance3D.new()
+	wind = MultiMeshInstance3D.new()
 	wind.name = "LinhasDeVento"
 	wind.set_script(WIND_SCRIPT)
 	wind.quantidade = 120
@@ -163,6 +167,7 @@ func build_wind() -> void:
 	wind.comprimento_max = 7.5
 	wind.alpha_min = 0.10
 	wind.alpha_max = 0.26
+	wind.visible = false
 	camera.add_child(wind)
 
 func _exit_tree() -> void:
@@ -187,6 +192,9 @@ func _physics_process(_delta:float) -> void:
 func opening() -> void:
 	lay_player_down()
 	await lips_arrival()
+	# Vento só a partir daqui: na queda do Lips a câmera está parada.
+	if is_instance_valid(wind):
+		wind.visible = true
 	start_stage_song()
 	set_blur(BLUR_CUTSCENE, Vector2(0.5, 0.5))
 	if show_intro and not OS.get_cmdline_user_args().has("--resgate-skip-intro"):
@@ -252,11 +260,17 @@ func lips_arrival() -> void:
 	queda.tween_property(boss, "position", pouso, 3.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await queda.finished
 	POEIRA.apagar(rastro)
-	for lado in [Vector3.ZERO, Vector3(6, 0, 3), Vector3(-6, 0, -3)]:
-		POEIRA.pousar(self, pouso + lado)
+	# A arena inteira desaparece na poeira: um anel de baforadas em volta do pouso.
+	POEIRA.pousar(self, pouso)
+	POEIRA.impulsionar(self, pouso + Vector3.UP * 0.8)
+	for volta in 12:
+		var angulo := TAU * float(volta) / 12.0
+		var raio := 5.0 if volta % 2 == 0 else 9.5
+		POEIRA.pousar(self, pouso + Vector3(cos(angulo) * raio, 0.0, sin(angulo) * raio))
 	sound("slam")
 	burst(pouso + Vector3.UP, Color("c9b785"), 34)
-	await get_tree().create_timer(0.6).timeout
+	# A próxima parte só entra quando a pancada termina de tocar.
+	await impact_sound(pouso)
 
 # Maycon começa caído, igual à abertura do interior do avião, e se levanta ali
 # mesmo antes de o jogador assumir o controle.
@@ -329,6 +343,20 @@ func fade_to(alpha:float, duration:float) -> void:
 	var tween := create_tween().set_ignore_time_scale(true)
 	tween.tween_property(fade, "color:a", alpha, duration)
 	await tween.finished
+
+# Pancada do pouso do Lips. Devolve só quando o som termina, para a cutscene
+# esperar por ele.
+func impact_sound(_at:Vector3) -> void:
+	var audio := AudioStreamPlayer.new()
+	audio.name = "Impacto"
+	audio.stream = IMPACT_SOUND
+	audio.volume_db = -2.0
+	add_child(audio)
+	audio.play()
+	# A espera sai do tamanho do arquivo: o sinal "finished" não chega em todos os
+	# drivers de áudio.
+	await get_tree().create_timer(IMPACT_SOUND.get_length()).timeout
+	audio.queue_free()
 
 func sound(key:String) -> void:
 	var audio := AudioStreamPlayer.new()

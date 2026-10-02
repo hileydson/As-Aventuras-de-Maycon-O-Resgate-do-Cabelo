@@ -179,6 +179,13 @@ func _splash_blood() -> void:
 		stage.get_node("Effects").add_child(blood)
 		get_tree().create_timer(2.5).timeout.connect(blood.queue_free)
 
+# Aqui a invencibilidade do dash não acende a cápsula amarela: quem mostra o
+# estado é o rastro do próprio dash.
+func set_invincible(active_val:bool, _duration:float = 0.0) -> void:
+	is_invincible = active_val
+	if is_instance_valid(invincibility_aura):
+		invincibility_aura.visible = false
+
 # A caixa empurra o Maycon para cima de leve, sem o impulso cheio do pisão.
 func soft_bounce() -> void:
 	velocity.y = maxf(velocity.y, 6.2)
