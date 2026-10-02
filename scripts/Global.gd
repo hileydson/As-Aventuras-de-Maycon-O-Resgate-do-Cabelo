@@ -21,6 +21,7 @@ var is_two_player_active = false
 var back_to_main_camera = false
 var back_to_fase = false
 var dungeon_return_pending:bool = false
+var debug_resgate_cabeludo_boss:bool = false
 # Cutscene do machado caindo no calabouço (disparada quando o machado cai no buraco em fase_1_castle_2)
 var axe_cutscene_pending:bool = false
 var axe_cutscene_return_valid:bool = false

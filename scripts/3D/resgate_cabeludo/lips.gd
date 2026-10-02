@@ -5,9 +5,11 @@ const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
 @export var max_hp:int = 4
 # Ele corre solto pela arena, sem rumo, arrebentando o que estiver na frente.
 const CORRIDA := 9.0
-const LIMITE_X := 16.0
+const LIMITE_X := 17.0
 const LIMITE_Z := 13.0
-const ESTRAGO := 2.6
+# Alcance do estrago. As arvores da arena ficam em x = 18, na beirada, entao ele
+# precisa derrubar o que esta pouco alem de onde os pes dele chegam.
+const ESTRAGO := 3.2
 var hp:int = 4
 var active:bool = false
 var clock:float = 0.0
@@ -47,17 +49,39 @@ func start() -> void:
 	colher_destrutiveis()
 	sortear_destino()
 
-# Pega o cenário da arena, menos o chão, as paredes, o portão, a jaula e ele mesmo.
+# Pega o cenário da arena, menos ele mesmo, a jaula e as peças grandes que
+# fecham o lugar: o chão, os barrancos das laterais, o portão e a parede do fim.
 func colher_destrutiveis() -> void:
 	destrutiveis.clear()
 	var arena:Node3D = get_parent()
-	var fixos := ["Floor", "Cliff", "ClimbStep", "EndWall", "Gate", "Lips", "Jaula"]
 	for filho in arena.get_children():
-		if filho == self or fixos.has(filho.name) or not filho is Node3D:
+		if filho == self or filho.name == "Jaula" or not filho is Node3D:
+			continue
+		if parte_do_lugar(filho as Node3D):
 			continue
 		destrutiveis.append(filho as Node3D)
 
+# Mede a peça pelas próprias malhas, só na horizontal: o chão, os barrancos, o
+# portão e a parede do fim são largos ou compridos. Árvore é alta e fina, então
+# ela continua valendo como enfeite que ele arrebenta.
+func parte_do_lugar(peca:Node3D) -> bool:
+	for malha in peca.find_children("*", "MeshInstance3D", true, false):
+		var forma:Mesh = (malha as MeshInstance3D).mesh
+		if forma == null:
+			continue
+		var tamanho:Vector3 = forma.get_aabb().size * (malha as MeshInstance3D).global_transform.basis.get_scale()
+		if tamanho.x > 8.0 or tamanho.z > 8.0:
+			return true
+	return false
+
 func sortear_destino() -> void:
+	# De vez em quando ele vai direto para cima de um enfeite, para a corrida
+	# sempre acabar arrebentando alguma coisa.
+	if not destrutiveis.is_empty() and randf() < 0.4:
+		var alvo:Node3D = destrutiveis[randi() % destrutiveis.size()]
+		if is_instance_valid(alvo):
+			target = Vector3(alvo.global_position.x, position.y, alvo.global_position.z)
+			return
 	# Destino qualquer dentro da arena, longe do ponto onde ele está.
 	for _tentativa in 8:
 		var escolha := centro + Vector3(randf_range(-LIMITE_X, LIMITE_X), 0.0, randf_range(-LIMITE_Z, LIMITE_Z))

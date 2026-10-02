@@ -106,7 +106,7 @@ func run() -> void:
 	ok("gameplay lotada de inimigos", total >= 180, "total=%d" % total)
 	var contador:Node = stage.get_node_or_null("HUD/Pentagramas")
 	ok("contador de pentagramas em cima", contador != null and contador.visible and contador.get_child_count() == 2, "nó=%s" % (contador != null))
-	ok("corrida 10% mais rapida (8,58 m/s)", is_equal_approx(player.run_speed, 8.58), "run_speed=%.2f" % player.run_speed)
+	ok("corrida 20% mais rapida (10,3 m/s)", is_equal_approx(player.run_speed, 10.3), "run_speed=%.2f" % player.run_speed)
 	var com_batalha:int = 0
 	for enemy in root.get_tree().get_nodes_in_group("resgate_enemies"):
 		if enemy.battle_sprite != null:
@@ -155,7 +155,7 @@ func run() -> void:
 	await step(60)
 	var advance:float = z0 - player.global_position.z
 	Input.action_release("ui_up")
-	ok("corrida atinge ~8,58 m/s em regime", advance > 8.1 and advance < 9.1, "dz=%.2f m/s  vz=%.2f" % [advance, player.velocity.z])
+	ok("corrida atinge ~10,3 m/s em regime", advance > 9.8 and advance < 10.8, "dz=%.2f m/s  vz=%.2f" % [advance, player.velocity.z])
 
 	await settle(lane)
 	var base_y:float = player.global_position.y
@@ -545,6 +545,55 @@ func check_arena_battle() -> void:
 	var perto:float = stage.camera.global_position.distance_to(player.global_position)
 	ok("camera da batalha fica perto do Maycon", perto < 7.0, "distancia=%.1f m" % perto)
 	ok("Maycon fica do lado esquerdo da tela", tela.x < rect.size.x * 0.45 and tela.x > 0.0, "x=%.0f de %.0f" % [tela.x, rect.size.x])
+	# Camera giratoria: o analogico direito roda ela em volta do Maycon.
+	var giro_antes:float = player.camera_yaw
+	var pos_antes:Vector3 = stage.camera.global_position
+	Input.action_press("look_right", 1.0)
+	await step(30)
+	Input.action_release("look_right")
+	await step(20)
+	var girou:float = absf(wrapf(player.camera_yaw - giro_antes, -PI, PI))
+	ok("analogico direito gira a camera na batalha", girou > 0.3, "girou %.2f rad" % girou)
+	ok("a camera muda de lugar ao girar", stage.camera.global_position.distance_to(pos_antes) > 1.0, "andou %.1f m" % stage.camera.global_position.distance_to(pos_antes))
+	ok("camera girada continua perto e olhando para ele", stage.camera.global_position.distance_to(player.global_position) < 7.5 and not stage.camera.is_position_behind(player.global_position + Vector3.UP), "distancia=%.1f m" % stage.camera.global_position.distance_to(player.global_position))
+	# O mouse tambem gira, com o ponteiro preso.
+	giro_antes = player.camera_yaw
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	var mexeu := InputEventMouseMotion.new()
+	mexeu.relative = Vector2(120.0, 0.0)
+	Input.parse_input_event(mexeu)
+	await step(4)
+	ok("mouse gira a camera na batalha", absf(player.camera_yaw - giro_antes) > 0.1, "girou %.2f rad" % absf(player.camera_yaw - giro_antes))
+	# Andar e relativo a camera: com ela girada, para frente nao e mais o -z.
+	player.camera_yaw = PI * 0.5
+	await step(4)
+	var onde_antes:Vector3 = player.global_position
+	Input.action_press("ui_up")
+	await step(25)
+	Input.action_release("ui_up")
+	var andou_x:float = absf(player.global_position.x - onde_antes.x)
+	var andou_z:float = absf(player.global_position.z - onde_antes.z)
+	ok("andar segue a camera girada", andou_x > andou_z, "x=%.2f z=%.2f" % [andou_x, andou_z])
+	player.camera_yaw = 0.0
+	await step(10)
+	# Entrada fechada: o portao nao deixa sair da arena.
+	var portao:StaticBody3D = stage.get_node("Arena/Gate")
+	ok("portao fecha a entrada da arena", portao.visible and not portao.get_node("CollisionShape3D").disabled, "visivel=%s colisao=%s" % [portao.visible, not portao.get_node("CollisionShape3D").disabled])
+	place(Vector3(0, 0.4, -1782))
+	player.arena_mode = true
+	Input.action_press("ui_down")
+	await step(90)
+	Input.action_release("ui_down")
+	ok("Maycon nao sai da arena pela entrada", player.global_position.z < -1776.0, "z=%.1f" % player.global_position.z)
+	# As escadas sairam da arena.
+	var escadas:int = 0
+	for filho in stage.get_node("Arena").get_children():
+		for malha in (filho as Node3D).find_children("*", "MeshInstance3D", true, false):
+			var forma:Mesh = (malha as MeshInstance3D).mesh
+			if forma is BoxMesh and absf((forma as BoxMesh).size.x - 2.8) < 0.01 and absf((forma as BoxMesh).size.z - 6.0) < 0.01:
+				escadas += 1
+	ok("as escadas da arena foram removidas", escadas == 0, "degraus=%d" % escadas)
+	ok("as paredes da arena nao entram na lista do Lips", not lips_pode_destruir_parede(), "paredes fora da lista")
 	# Lips corre pelo cenario e arrebenta o que encontra.
 	var lips:Node3D = stage.boss
 	lips.start()
@@ -560,7 +609,8 @@ func check_arena_battle() -> void:
 	var peca:Node3D = lips.destrutiveis[0]
 	for item in lips.destrutiveis:
 		var onde:Vector3 = (item as Node3D).global_position
-		if absf(onde.x - lips.centro.x) < lips.LIMITE_X - 2.0 and absf(onde.z - lips.centro.z) < lips.LIMITE_Z - 2.0:
+		# Alcance real dele: onde os pes chegam mais o raio do estrago.
+		if absf(onde.x - lips.centro.x) < lips.LIMITE_X + lips.ESTRAGO - 0.5 and absf(onde.z - lips.centro.z) < lips.LIMITE_Z + lips.ESTRAGO - 0.5:
 			peca = item
 			break
 	var quebradas:int = lips.destruidos
@@ -597,6 +647,17 @@ func check_arena_battle() -> void:
 	await step(2)
 	ok("dash continua valendo na batalha", player.dash_time > 0.0, "dash=%.2f" % player.dash_time)
 	await step(30)
+
+# O Lips nao pode arrebentar o chao nem os barrancos que fecham a arena.
+func lips_pode_destruir_parede() -> bool:
+	# Monta a lista na hora, para o teste nao depender de ele ja ter comecado.
+	stage.boss.colher_destrutiveis()
+	for peca in stage.boss.destrutiveis:
+		for malha in (peca as Node3D).find_children("*", "MeshInstance3D", true, false):
+			var forma:Mesh = (malha as MeshInstance3D).mesh
+			if forma != null and forma.get_aabb().size.length() > 14.0:
+				return true
+	return false
 
 # Zerar a fase: Maycon levanta, vai ate a jaula, vira 2D e a frase fica na tela.
 func check_victory() -> void:

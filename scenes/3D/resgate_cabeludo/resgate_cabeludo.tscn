@@ -2815,59 +2815,11 @@ size = Vector3(3, 12, 50)
 albedo_color = Color(0.52156866, 0.49019608, 0.3764706, 1)
 roughness = 0.95
 
-[sub_resource type="BoxMesh" id="BoxMesh_jajvg"]
-size = Vector3(2.8, 1.4, 6)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_r8qit"]
-size = Vector3(2.8, 1.4, 6)
-
-[sub_resource type="BoxMesh" id="BoxMesh_wio8e"]
-size = Vector3(2.8, 2.8, 6)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_65ecw"]
-size = Vector3(2.8, 2.8, 6)
-
-[sub_resource type="BoxMesh" id="BoxMesh_lph7u"]
-size = Vector3(2.8, 4.2, 6)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_lyx3j"]
-size = Vector3(2.8, 4.2, 6)
-
-[sub_resource type="BoxMesh" id="BoxMesh_x7exw"]
-size = Vector3(2.8, 5.6, 6)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_v42pg"]
-size = Vector3(2.8, 5.6, 6)
-
 [sub_resource type="BoxMesh" id="BoxMesh_s25qx"]
 size = Vector3(3, 12, 50)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xlo40"]
 size = Vector3(3, 12, 50)
-
-[sub_resource type="BoxMesh" id="BoxMesh_88umq"]
-size = Vector3(2.8, 1.4, 6)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_46vl8"]
-size = Vector3(2.8, 1.4, 6)
-
-[sub_resource type="BoxMesh" id="BoxMesh_fkbbh"]
-size = Vector3(2.8, 2.8, 6)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_mwgtg"]
-size = Vector3(2.8, 2.8, 6)
-
-[sub_resource type="BoxMesh" id="BoxMesh_6fyyp"]
-size = Vector3(2.8, 4.2, 6)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_8torp"]
-size = Vector3(2.8, 4.2, 6)
-
-[sub_resource type="BoxMesh" id="BoxMesh_2bqqw"]
-size = Vector3(2.8, 5.6, 6)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_b6724"]
-size = Vector3(2.8, 5.6, 6)
 
 [sub_resource type="BoxMesh" id="BoxMesh_jgx1a"]
 size = Vector3(40, 10, 2)
@@ -23819,50 +23771,6 @@ mesh = SubResource("BoxMesh_q754r")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/Cliff"]
 shape = SubResource("BoxShape3D_saxf4")
 
-[node name="ClimbStep" type="StaticBody3D" parent="Arena"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.7, -1800)
-
-[node name="Mesh" type="MeshInstance3D" parent="Arena/ClimbStep"]
-material_override = SubResource("StandardMaterial3D_trsv5")
-visibility_range_end = 180.0
-mesh = SubResource("BoxMesh_jajvg")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/ClimbStep"]
-shape = SubResource("BoxShape3D_r8qit")
-
-[node name="@StaticBody3D@1286" type="StaticBody3D" parent="Arena"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.9, 1.4, -1800)
-
-[node name="Mesh" type="MeshInstance3D" parent="Arena/@StaticBody3D@1286"]
-material_override = SubResource("StandardMaterial3D_trsv5")
-visibility_range_end = 180.0
-mesh = SubResource("BoxMesh_wio8e")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/@StaticBody3D@1286"]
-shape = SubResource("BoxShape3D_65ecw")
-
-[node name="@StaticBody3D@1287" type="StaticBody3D" parent="Arena"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.8, 2.1, -1800)
-
-[node name="Mesh" type="MeshInstance3D" parent="Arena/@StaticBody3D@1287"]
-material_override = SubResource("StandardMaterial3D_trsv5")
-visibility_range_end = 180.0
-mesh = SubResource("BoxMesh_lph7u")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/@StaticBody3D@1287"]
-shape = SubResource("BoxShape3D_lyx3j")
-
-[node name="@StaticBody3D@1288" type="StaticBody3D" parent="Arena"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.7, 2.8, -1800)
-
-[node name="Mesh" type="MeshInstance3D" parent="Arena/@StaticBody3D@1288"]
-material_override = SubResource("StandardMaterial3D_trsv5")
-visibility_range_end = 180.0
-mesh = SubResource("BoxMesh_x7exw")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/@StaticBody3D@1288"]
-shape = SubResource("BoxShape3D_v42pg")
-
 [node name="AncientTree" type="Node3D" parent="Arena" instance=ExtResource("7_jrtj5")]
 transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -18, 0, -1780)
 
@@ -23891,50 +23799,6 @@ mesh = SubResource("BoxMesh_s25qx")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/@StaticBody3D@1294"]
 shape = SubResource("BoxShape3D_xlo40")
-
-[node name="@StaticBody3D@1295" type="StaticBody3D" parent="Arena"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.7, -1800)
-
-[node name="Mesh" type="MeshInstance3D" parent="Arena/@StaticBody3D@1295"]
-material_override = SubResource("StandardMaterial3D_trsv5")
-visibility_range_end = 180.0
-mesh = SubResource("BoxMesh_88umq")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/@StaticBody3D@1295"]
-shape = SubResource("BoxShape3D_46vl8")
-
-[node name="@StaticBody3D@1296" type="StaticBody3D" parent="Arena"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.9, 1.4, -1800)
-
-[node name="Mesh" type="MeshInstance3D" parent="Arena/@StaticBody3D@1296"]
-material_override = SubResource("StandardMaterial3D_trsv5")
-visibility_range_end = 180.0
-mesh = SubResource("BoxMesh_fkbbh")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/@StaticBody3D@1296"]
-shape = SubResource("BoxShape3D_mwgtg")
-
-[node name="@StaticBody3D@1297" type="StaticBody3D" parent="Arena"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8, 2.1, -1800)
-
-[node name="Mesh" type="MeshInstance3D" parent="Arena/@StaticBody3D@1297"]
-material_override = SubResource("StandardMaterial3D_trsv5")
-visibility_range_end = 180.0
-mesh = SubResource("BoxMesh_6fyyp")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/@StaticBody3D@1297"]
-shape = SubResource("BoxShape3D_8torp")
-
-[node name="@StaticBody3D@1298" type="StaticBody3D" parent="Arena"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.7, 2.8, -1800)
-
-[node name="Mesh" type="MeshInstance3D" parent="Arena/@StaticBody3D@1298"]
-material_override = SubResource("StandardMaterial3D_trsv5")
-visibility_range_end = 180.0
-mesh = SubResource("BoxMesh_2bqqw")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Arena/@StaticBody3D@1298"]
-shape = SubResource("BoxShape3D_b6724")
 
 [node name="@Node3D@1299" type="Node3D" parent="Arena" instance=ExtResource("7_jrtj5")]
 transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 18, 0, -1780)

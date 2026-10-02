@@ -230,6 +230,7 @@ func build_wind() -> void:
 func _exit_tree() -> void:
 	Global.in_cutscene = old_cutscene
 	Engine.time_scale = 1.0
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if get_tree() != null and get_tree().paused:
 		get_tree().paused = false
 
@@ -241,8 +242,12 @@ func _physics_process(_delta:float) -> void:
 		return
 	if player.control_enabled and not player.arena_mode and player.position.z < -1778:
 		player.arena_mode = true
+		# O portao fecha a entrada: dali em diante o Maycon e o Lips ficam
+		# trancados juntos dentro da arena.
 		$Arena/Gate/CollisionShape3D.disabled = false
 		$Arena/Gate.visible = true
+		# O ponteiro vai para a camera, que agora gira em volta do Maycon.
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		boss.start()
 		update_hud()
 
@@ -679,6 +684,8 @@ func respawn() -> void:
 	player.launch_time = 0.0
 	player.hurt_time = 2.0
 	player.arena_mode = false
+	# Fora da arena a câmera volta a ser da fase, então o ponteiro volta também.
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	boss.active = false
 	boss.position = Vector3(0, 0, -1800)
 	boss.hp = 4
@@ -715,6 +722,7 @@ func exit_to_menu() -> void:
 	exit_started = true
 	player.control_enabled = false
 	player.step_audio.stop()
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	get_tree().paused = false
 	for slot in song_slots:
 		if is_instance_valid(slot):
@@ -779,6 +787,7 @@ func finish() -> void:
 	player.control_enabled = false
 	player.step_audio.stop()
 	Global.in_cutscene = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	player.velocity = Vector3.ZERO
 	if is_instance_valid(boss_bar):
 		boss_bar.visible = false

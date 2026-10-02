@@ -3,8 +3,8 @@ extends "res://scripts/3D/platform_maycon.gd"
 const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
 const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 
-# Corrida 10% mais rápida que os 7,8 originais.
-@export var run_speed:float = 8.58
+# Corrida 20% mais rápida (de 8.58 para 10.3).
+@export var run_speed:float = 10.3
 # A fase corre sozinha: o jogador só desvia, pula e sobrevive.
 @export var auto_run:bool = true
 # Dash curto, pago em pentagramas, invencível enquanto dura.
@@ -19,6 +19,12 @@ const DASH_BLUR := 0.62
 const PUNCH_TIME := 0.26
 const PUNCH_REACH := 3.4
 const PUNCH_ANIM_SPEED := 3.2
+# Câmera da arena: gira em volta do Maycon com o mouse ou o analógico direito.
+const MOUSE_SENSIBILIDADE := 0.004
+const GIRO_ANALOGICO := 2.5
+const PITCH_MIN := -0.55
+const PITCH_MAX := 0.45
+const ARENA_DISTANCIA := 5.2
 var arena_mode:bool = false
 var punch_time:float = 0.0
 var punch_hit:bool = false
@@ -45,12 +51,16 @@ func _ready() -> void:
 		visual_skeleton = ossos[0] as Skeleton3D
 
 func _unhandled_input(event:InputEvent) -> void:
-	# A câmera pertence à fase, nunca ao mouse; aqui só escutamos o dash.
 	if event.is_action_pressed("dash_resgate"):
 		try_dash()
 	# O soco existe só na batalha contra o Lips.
 	elif event.is_action_pressed("soco_resgate") and arena_mode:
 		try_punch()
+	# Na corrida a câmera é da fase. Na arena o mouse gira ela em volta do Maycon.
+	elif arena_mode and control_enabled and event is InputEventMouseMotion:
+		var mouse := event as InputEventMouseMotion
+		camera_yaw -= mouse.relative.x * MOUSE_SENSIBILIDADE
+		camera_pitch = clampf(camera_pitch - mouse.relative.y * MOUSE_SENSIBILIDADE * 0.75, PITCH_MIN, PITCH_MAX)
 
 func _process(delta:float) -> void:
 	if not control_enabled:
@@ -59,10 +69,15 @@ func _process(delta:float) -> void:
 	var focus := global_position + Vector3(0, 1.3, -4.0)
 	var desired := global_position + Vector3(0, 2.8, 5.6)
 	if arena_mode:
-		# Terceira pessoa colada nele, com a mira à direita para o Maycon ficar
-		# do lado esquerdo da tela.
-		desired = global_position + Vector3(2.0, 2.6, 5.2)
-		focus = global_position + Vector3(1.9, 1.3, -2.0)
+		# Analógico direito girando a câmera em volta dele.
+		var look := Vector2(Input.get_axis("look_left", "look_right"), Input.get_axis("look_up", "look_down"))
+		if look.length_squared() > 0.04:
+			camera_yaw -= look.x * delta * GIRO_ANALOGICO
+			camera_pitch = clampf(camera_pitch - look.y * delta * GIRO_ANALOGICO * 0.6, PITCH_MIN, PITCH_MAX)
+		# Terceira pessoa colada nele, com a mira deslocada para o lado para o
+		# Maycon ficar na esquerda da tela em qualquer ângulo.
+		desired = global_position + orbita() * ARENA_DISTANCIA + arena_lado() * 2.0 + Vector3.UP * (2.6 - camera_pitch * 4.0)
+		focus = global_position + Vector3.UP * 1.3 - orbita() * 2.0 + arena_lado() * 1.9
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-8.0 * delta))
 	camera.look_at(focus)
 	if camera_shake > 0.0:
@@ -98,9 +113,16 @@ func _physics_process(delta:float) -> void:
 			direction = Vector3(input.x, 0, -1)
 			velocity.x = move_toward(velocity.x, input.x * run_speed * 0.8, acceleration * delta)
 			velocity.z = move_toward(velocity.z, -run_speed, acceleration * delta)
+		elif arena_mode:
+			# Com a câmera girando, andar é sempre relativo a ela: para frente é
+			# para longe da câmera, seja qual for o ângulo.
+			var frente := -orbita()
+			var lado := arena_lado()
+			direction = (lado * input.x + frente * -input.y).normalized()
+			velocity.x = move_toward(velocity.x, direction.x * run_speed, acceleration * delta)
+			velocity.z = move_toward(velocity.z, direction.z * run_speed, acceleration * delta)
 		else:
-			if not arena_mode:
-				input.y = minf(input.y, 0.0)
+			input.y = minf(input.y, 0.0)
 			direction = Vector3(input.x, 0, input.y).normalized()
 			velocity.x = move_toward(velocity.x, direction.x * run_speed, acceleration * delta)
 			velocity.z = move_toward(velocity.z, direction.z * run_speed, acceleration * delta)
@@ -138,7 +160,7 @@ func _physics_process(delta:float) -> void:
 		_update_punch(delta)
 	else:
 		_play_animation("Air_Flail" if not is_on_floor() else "Arise" if moving else "Walking")
-		animation_player.speed_scale = 0.62 if not is_on_floor() else 1.0
+		animation_player.speed_scale = 0.62 if not is_on_floor() else 1.2 if moving else 1.0
 	visual.visible = hurt_time <= 0.0 or fmod(hurt_time, 0.16) < 0.08
 	if global_position.y < get_parent().fall_limit(global_position.z):
 		get_parent().respawn()
@@ -205,6 +227,15 @@ func soft_bounce() -> void:
 	jumps = 1
 	jump_buffer = 0.0
 	_play_animation("Air_Flail")
+
+# Direção que vai do Maycon para a câmera, no ângulo atual da órbita.
+func orbita() -> Vector3:
+	return Vector3(sin(camera_yaw), 0.0, cos(camera_yaw))
+
+# Lado direito da tela, perpendicular à órbita.
+func arena_lado() -> Vector3:
+	var atras := orbita()
+	return Vector3(atras.z, 0.0, -atras.x)
 
 # Soco da batalha final: a animação Dead do Maycon acelerada, com o estalo e o
 # tranco de câmera. Sem a animação importada, o braço é lançado na mão.
@@ -289,7 +320,12 @@ func try_dash() -> void:
 	var input := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	# Para frente e para os lados, nunca para trás.
 	var direction := Vector3(input.x, 0.0, minf(input.y, 0.0))
-	if direction.length_squared() < 0.01:
+	if arena_mode:
+		# Na arena o "para frente" é o da câmera, que pode estar girada.
+		direction = arena_lado() * input.x + -orbita() * maxf(-input.y, 0.0)
+		if direction.length_squared() < 0.01:
+			direction = -orbita()
+	elif direction.length_squared() < 0.01:
 		direction = Vector3(0, 0, -1)
 	dash_velocity = direction.normalized() * DASH_SPEED
 	dash_velocity.y = 0.0

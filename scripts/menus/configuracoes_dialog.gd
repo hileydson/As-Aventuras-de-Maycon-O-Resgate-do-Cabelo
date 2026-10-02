@@ -15,6 +15,8 @@ const DEBUG_TRAVEL_DESTINATIONS := [
 	{"label": "DEBUG_TRAVEL_STONE_STREET", "scene": "res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn"},
 	{"label": "DEBUG_TRAVEL_SECO_FIGHT_2", "scene": "res://scenes/fase_1_outside_castle_again_no_fire_2.tscn"},
 	{"label": "DEBUG_TRAVEL_LOST_CITY", "scene": "res://scenes/3D/last_fight_before_end.tscn"},
+	{"label": "DEBUG_TRAVEL_RESGATE_CABELUDO", "scene": "res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn"},
+	{"label": "DEBUG_TRAVEL_RESGATE_CABELUDO_BOSS", "scene": "res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn", "boss": true},
 ]
 
 @onready var backdrop: ColorRect = $Backdrop
@@ -540,7 +542,11 @@ func _populate_debug_travel() -> void:
 		button.text = tr(String(destination["label"]))
 		button.focus_mode = Control.FOCUS_ALL
 		button.custom_minimum_size.y = 34.0
-		button.pressed.connect(_travel_to_debug_scene.bind(String(destination["scene"])))
+		var dest = destination
+		button.pressed.connect(func():
+			Global.debug_resgate_cabeludo_boss = bool(dest.get("boss", false))
+			_travel_to_debug_scene(String(dest["scene"]))
+		)
 		debug_travel_container.add_child(button)
 		buttons.append(button)
 
