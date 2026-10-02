@@ -455,3 +455,14 @@ DEBUG_TRAVEL_HORROR_DUNGEON,CALABOUÇO TERROR,HORROR DUNGEON,CALABOZO DEL TERROR
 DEBUG_TRAVEL_STONE_STREET,RUA DAS PEDRAS,STONE STREET,CALLE DE LAS PIEDRAS,石头街
 DEBUG_TRAVEL_SECO_FIGHT_2,LUTA CONTRA SECO 2 (2D),FIGHT AGAINST SECO 2 (2D),LUCHA CONTRA SECO 2 (2D),对战塞科 2（2D）
 DEBUG_TRAVEL_LOST_CITY,CIDADE PERDIDA,LOST CITY,CIUDAD PERDIDA,失落之城
+RESGATE_TITLE_TOP,Resgate,Hairy,Rescate,拯救
+RESGATE_TITLE_BOTTOM,Cabeludo,Rescue,Peludo,头发
+RESGATE_CIGARRO,PEGA ISSO FACIL!,CATCH THIS! EASY!,¡ATRAPA ESTO! ¡FÁCIL!,接住这个！很简单！
+RESGATE_CONTROLS,W / A / D ou direcional: correr · Espaço / A: pular (2x) · E: poder · Esc: pausa,W / A / D or stick: run · Space / A: jump (2x) · E: power · Esc: pause,W / A / D o stick: correr · Espacio / A: saltar (2x) · E: poder · Esc: pausa,W / A / D 或摇杆：奔跑 · 空格 / A：跳跃（两次）· E：技能 · Esc：暂停
+RESGATE_BLOOD,SANGUE  %d / 100,BLOOD  %d / 100,SANGRE  %d / 100,血量  %d / 100
+RESGATE_CHARGE,PENTAGRAMAS  %d  ·  Poder: 20,PENTAGRAMS  %d  ·  Power: 20,PENTAGRAMAS  %d  ·  Poder: 20,五芒星  %d  ·  技能消耗：20
+RESGATE_CHECKPOINT,Checkpoint,Checkpoint,Checkpoint,检查点
+RESGATE_LIFE,VIDA,LIFE,VIDA,生命
+RESGATE_PAUSE,PAUSADO · Esc para continuar,PAUSED · Esc to resume,PAUSA · Esc para continuar,已暂停 · Esc 继续
+RESGATE_BOSS_HINT,Suba nas pedras e pule na cabeça do Lips! Fuja do círculo antes do impacto!,Climb the rocks and jump on Lips's head! Leave the circle before impact!,¡Sube a las rocas y salta sobre Lips! ¡Sal del círculo antes del impacto!,爬上岩石并跳到利普斯头上！在落地前离开圆圈！
+RESGATE_BOSS_HP,LIPS  %d / 4,LIPS  %d / 4,LIPS  %d / 4,利普斯  %d / 4

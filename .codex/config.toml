@@ -1,0 +1,35 @@
+[mcp_servers.blender]
+command = "/home/dev/.local/bin/uv"
+args = [
+    "run",
+    "--directory",
+    "/home/dev/.config/Claude/Claude Extensions/ant.dir.gh.blender.blender-mcp",
+    "blender-mcp",
+]
+
+[mcp_servers.blender.env]
+BLENDER_MCP_PORT = "9877"
+
+[mcp_servers.gimp-mcp]
+command = "/home/dev/.local/bin/uv"
+args = [
+    "run",
+    "--directory",
+    "/home/dev/.local/share/gimp-mcp",
+    "gimp_mcp_server.py",
+]
+
+[mcp_servers.godot-ai]
+command = "/home/dev/.local/bin/uvx"
+args = [
+    "--link-mode",
+    "copy",
+    "--from",
+    "godot-ai==3.2.5",
+    "godot-ai",
+    "attach",
+    "--port",
+    "8000",
+    "--ws-port",
+    "9500",
+]

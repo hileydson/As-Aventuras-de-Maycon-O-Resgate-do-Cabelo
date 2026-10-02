@@ -1,0 +1,140 @@
+[gd_scene format=3 uid="uid://dyl3rfi0ntp7o"]
+
+[ext_resource type="Script" uid="uid://dhes86dirrpl1" path="res://scripts/3D/resgate_cabeludo/city_cutscene.gd" id="1_mydlv"]
+[ext_resource type="PackedScene" uid="uid://1cu6omuly5n6" path="res://assets/modelo_3d/mario_3d_models/lips_3d_rigged.glb" id="2_1mnkf"]
+[ext_resource type="PackedScene" uid="uid://b8su6umib7an5" path="res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb" id="3_jjpyw"]
+[ext_resource type="ArrayMesh" uid="uid://basii1tmbljhr" path="res://assets/modelo_3d/ace_combat/airplane_v2_L2.123c71795678-4b63-46c4-b2c6-549c45f4c806/11805_airplane_v2_L2.obj" id="4_jm3nu"]
+[ext_resource type="Texture2D" uid="uid://jpruwl1kxn8m" path="res://assets/novas_imagens/cabelo/cabelo_idle.png" id="5_qf8ta"]
+[ext_resource type="Texture2D" uid="uid://b7ukdc2kwsyj2" path="res://assets/novas_imagens/cigarro/cigarro.png" id="6_fahvw"]
+[ext_resource type="PackedScene" uid="uid://be1dk6nq66lm" path="res://assets/kenney/platformer_3d/spring.glb" id="7_q26p3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mydlv"]
+atlas = ExtResource("5_qf8ta")
+region = Rect2(0, 0, 151, 194)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1mnkf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mydlv")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s6ry8"]
+albedo_color = Color(0.3019608, 0.32156864, 0.38039216, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="BoxMesh_j7ovf"]
+size = Vector3(10, 10.4, 12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qmxfc"]
+albedo_color = Color(0.49019608, 0.50980395, 0.57254905, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="BoxMesh_smbrw"]
+size = Vector3(11, 0.5, 13)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p2x1w"]
+albedo_color = Color(0.47843137, 0.96862745, 0.93333334, 1)
+roughness = 0.95
+
+[sub_resource type="SphereMesh" id="SphereMesh_m3oq8"]
+material = SubResource("StandardMaterial3D_p2x1w")
+
+[node name="ResgateCityCutscene" type="Node3D" unique_id=327030118]
+script = ExtResource("1_mydlv")
+
+[node name="Lips" type="Node3D" parent="." unique_id=284447607]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24)
+
+[node name="Visual" parent="Lips" unique_id=706532238 instance=ExtResource("2_1mnkf")]
+transform = Transform3D(-1.9, 0, -1.6610328e-07, 0, 1.9, 0, 1.6610328e-07, 0, -1.9, 0, 1.8, 0)
+
+[node name="Maycon" parent="." unique_id=351338382 instance=ExtResource("3_jjpyw")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 8)
+
+[node name="Plane" type="Node3D" parent="." unique_id=821419570]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, -15)
+
+[node name="Fuselagem" type="MeshInstance3D" parent="Plane" unique_id=1829753816]
+transform = Transform3D(0.02, 0, 0, 0, -8.7422775e-10, 0.02, 0, -0.02, -8.7422775e-10, 0, -3.66, 0)
+mesh = ExtResource("4_jm3nu")
+
+[node name="Hair" type="AnimatedSprite3D" parent="." unique_id=31896808]
+transform = Transform3D(0.8342132, 0, 0.5514421, 0, 1, 0, -0.5514421, 0, 0.8342132, -1.144165, 0, -2.0942383)
+sprite_frames = SubResource("SpriteFrames_1mnkf")
+
+[node name="Cigarro" type="Sprite3D" parent="." unique_id=1848583582]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 13, -102)
+pixel_size = 0.006
+billboard = 1
+texture = ExtResource("6_fahvw")
+
+[node name="CigarroBuilding" type="Node3D" parent="." unique_id=134983968]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 5.2, -102)
+
+[node name="Mesh" type="MeshInstance3D" parent="CigarroBuilding" unique_id=351576647]
+material_override = SubResource("StandardMaterial3D_s6ry8")
+visibility_range_end = 180.0
+mesh = SubResource("BoxMesh_j7ovf")
+
+[node name="CigarroRoof" type="Node3D" parent="." unique_id=755633759]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 10.6, -102)
+
+[node name="Mesh" type="MeshInstance3D" parent="CigarroRoof" unique_id=1546786757]
+material_override = SubResource("StandardMaterial3D_qmxfc")
+visibility_range_end = 180.0
+mesh = SubResource("BoxMesh_smbrw")
+
+[node name="Spring" parent="." unique_id=967831253 instance=ExtResource("7_q26p3")]
+transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, 0, -113)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1319812246]
+current = true
+fov = 65.0
+far = 1600.0
+
+[node name="NightRim" type="DirectionalLight3D" parent="." unique_id=1667127380]
+transform = Transform3D(0.8480481, 0.32625088, -0.4175821, 0, 0.7880108, 0.6156615, 0.52991927, -0.5221106, 0.668271, 0, 0, 0)
+light_color = Color(0.62352943, 0.7882353, 1, 1)
+light_energy = 0.42
+
+[node name="ActionFill" type="OmniLight3D" parent="." unique_id=79937237]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, -90)
+light_color = Color(0.7490196, 0.84313726, 0.9254902, 1)
+light_energy = 1.2
+omni_range = 180.0
+
+[node name="Magic" type="CPUParticles3D" parent="." unique_id=1830844747]
+emitting = false
+amount = 90
+lifetime = 3.5
+one_shot = true
+explosiveness = 0.8
+mesh = SubResource("SphereMesh_m3oq8")
+direction = Vector3(0, 1, 0)
+gravity = Vector3(0, -2, 0)
+initial_velocity_min = 8.0
+initial_velocity_max = 25.0
+scale_amount_min = 0.07
+scale_amount_max = 0.22
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1279287828]
+
+[node name="Phrase" type="Label" parent="HUD" unique_id=234514072]
+offset_right = 500.0
+offset_bottom = 65.0
+theme_override_colors/font_outline_color = Color(0.08235294, 0.16078432, 0.11764706, 1)
+theme_override_constants/outline_size = 7
+theme_override_font_sizes/font_size = 44
+horizontal_alignment = 1
+
+[node name="Fade" type="ColorRect" parent="HUD" unique_id=481071261]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

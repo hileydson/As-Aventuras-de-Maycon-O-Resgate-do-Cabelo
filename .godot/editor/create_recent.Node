@@ -1,3 +1,4 @@
+AnimatedSprite3D
 Marker2D
 Camera3D
 CanvasLayer
@@ -5,7 +6,6 @@ SubViewport
 SubViewportContainer
 Label
 AnimatedSprite2D
-AnimatedSprite3D
 RichTextLabel
 Node2D
 ColorRect

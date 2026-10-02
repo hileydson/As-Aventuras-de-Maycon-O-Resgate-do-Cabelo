@@ -66,6 +66,7 @@ var weapon_root:Node3D
 var loose_wood:Node3D
 var attacking:bool = false
 var pickup_started:bool = false
+var rescue_started:bool = false
 var fight_finishing:bool = false
 var fight_hit_count:int = 0
 var informant_dialog_available:bool = true
@@ -479,12 +480,24 @@ func _on_chao_body_entered(_body:Node3D) -> void:
 	get_tree().reload_current_scene()
 
 func _on_area_3d_body_entered(body:Node3D) -> void:
-	if body is CharacterBody3D && stage == STAGE_CABELO:
+	if body == player && stage == STAGE_CABELO && !rescue_started:
+		rescue_started = true
 		player.process_mode = Node.PROCESS_MODE_DISABLED
-		await get_tree().create_timer(1.5).timeout
-		fade.get_node("Transition").play("fade_out")
-		await get_tree().create_timer(2.0).timeout
-		get_tree().change_scene_to_file("res://scenes/demo_end.tscn")
+		player.visible = false
+		var player_hud := player.get_node_or_null("hud_canvas") as CanvasLayer
+		if player_hud:
+			player_hud.visible = false
+		Global.in_cutscene = true
+		cutscene_inicio.stop()
+		objective_ui.visible = false
+		city_minimap.visible = false
+		$cidade_perdida.visible = false
+		the_almost_end_song.stop()
+		var rescue := load("res://scenes/3D/resgate_cabeludo/city_cutscene.tscn").instantiate() as Node3D
+		rescue.position = Vector3(cabelo.global_position.x, -7.08, cabelo.global_position.z)
+		rescue.rotation.y = PI
+		add_child(rescue)
+		cabelo.visible = false
 
 func _on_cutscene_inicio_animation_finished(anim_name:StringName) -> void:
 	if anim_name != "intro_mapa":

@@ -1787,6 +1787,40 @@ func defeat_all_minions() -> void:
 			defeat_minion(minion_index)
 	sword_waves.clear()
 
+func explode_all_arena_enemies_in_blood() -> void:
+	for index in seco_allies.size():
+		var ally:Dictionary = seco_allies[index]
+		if !ally.dead:
+			ally.dead = true
+			if is_instance_valid(ally.sprite):
+				ally.sprite.visible = false
+			spawn_blood_explosion(ally.position + Vector2(0.0, -25.0), 55)
+			for idx in range(5):
+				spawn_impact(ally.position + Vector2(randf_range(-40.0, 40.0), randf_range(-55.0, 15.0)), Color("d90429"), 1.0 if randf() > 0.5 else -1.0)
+			for idx in range(5):
+				var s_pos = ally.position + Vector2(randf_range(-50.0, 50.0), randf_range(20.0, 55.0))
+				s_pos.y = clampf(s_pos.y, MIN_Y + 12.0, MAX_Y + 15.0)
+				stains.append({"position":s_pos, "radius":randf_range(16.0, 32.0), "alpha":randf_range(0.65, 0.9)})
+		seco_allies[index] = ally
+	for minion_index in minions.size():
+		var minion:Dictionary = minions[minion_index]
+		if !minion.dead:
+			minion.dead = true
+			minion.death_time = 2.0
+			minion.hit_pending = false
+			minion.is_casting_wave = false
+			if is_instance_valid(minion.sprite):
+				minion.sprite.visible = false
+			spawn_blood_explosion(minion.position + Vector2(0.0, -25.0), 48)
+			for idx in range(4):
+				spawn_impact(minion.position + Vector2(randf_range(-35.0, 35.0), randf_range(-45.0, 15.0)), Color("d90429"), 1.0 if randf() > 0.5 else -1.0)
+			for idx in range(4):
+				var s_pos = minion.position + Vector2(randf_range(-40.0, 40.0), randf_range(20.0, 50.0))
+				s_pos.y = clampf(s_pos.y, MIN_Y + 12.0, MAX_Y + 15.0)
+				stains.append({"position":s_pos, "radius":randf_range(14.0, 28.0), "alpha":randf_range(0.6, 0.85)})
+		minions[minion_index] = minion
+	sword_waves.clear()
+
 func update_minion_transforms() -> void:
 	for minion in minions:
 		if !is_instance_valid(minion.sprite):
@@ -2226,7 +2260,8 @@ func build_audio() -> void:
 	dog_growl_sound = create_audio("res://assets/novos_audios/growl_1.mp3", -2.0)
 	dog_dash_sound = create_audio("res://assets/novos_audios/dog_running.mp3", -2.5)
 	player_dash_sound = create_audio("res://assets/novos_audios/punch.mp3", -1.5)
-	dungeon_ambience_sound = create_audio("res://assets/novos_audios/calabouco_terror/dungeon_ambience_pixabay.mp3", 0.0, true)
+	dungeon_ambience_sound = create_audio("res://assets/novos_audios/calabouco_terror/dungeon_ambience_pixabay.mp3", -1.5, true)
+	seco_end_song_sound = create_audio("res://assets/novos_audios/seco_end_song.mp3", 0.0, true)
 
 func create_audio(path:String, volume:float, looping:bool = false) -> AudioStreamPlayer:
 	var audio = AudioStreamPlayer.new()
@@ -3093,14 +3128,6 @@ func defeat_enemy() -> void:
 	if enemy_id == "1001" && !seco_second_phase:
 		start_seco_second_phase()
 		return
-	if enemy_id == "1001" && seco_arena_enemies_alive() && !seco_victory_started:
-		enemy_dead = true
-		enemy.visible = false
-		enemy_bar.visible = false
-		enemy_name_label.visible = false
-		clear_power_projectiles()
-		status_label.text = tr("BATTLE_DEFEAT_REMAINING")
-		return
 	if enemy_id == "1001":
 		seco_victory_started = true
 		seco_phase_transition = false
@@ -3111,10 +3138,9 @@ func defeat_enemy() -> void:
 	if enemy_id == "1001":
 		if !Global.realtime_enemy_spawn_id.is_empty():
 			Global.inimigos_mortos[Global.realtime_enemy_spawn_id] = true
-		if enemy_id == "1001":
-			Global.game_events["seco_defeated"] = true
-			Global.inimigos_mortos["Fase1BeforeCastle_/root/Fase1BeforeCastle/Inimigos/inimigo_boss_seco"] = true
-			Global.inimigos_mortos["fase_1_outside_castle_again_no_fire_2_/root/fase_1_outside_castle_again_no_fire_2/fase_1_before_castle/Inimigos/inimigo_boss_seco"] = true
+		Global.game_events["seco_defeated"] = true
+		Global.inimigos_mortos["Fase1BeforeCastle_/root/Fase1BeforeCastle/Inimigos/inimigo_boss_seco"] = true
+		Global.inimigos_mortos["fase_1_outside_castle_again_no_fire_2_/root/fase_1_outside_castle_again_no_fire_2/fase_1_before_castle/Inimigos/inimigo_boss_seco"] = true
 		Global.realtime_enemy_respawns.erase(Global.realtime_enemy_spawn_id)
 	if enemy_id == "1" && Global.realtime_return_scene.ends_with("fase_1_castle_2.tscn"):
 		Global.game_events["camilita_defeated"] = true
@@ -3124,10 +3150,12 @@ func defeat_enemy() -> void:
 	battle_song.stop()
 	if is_instance_valid(dungeon_ambience_sound):
 		dungeon_ambience_sound.stop()
+	if is_instance_valid(seco_end_song_sound):
+		seco_end_song_sound.stop()
 	enemy_death_sound.play()
 	if enemy_id != "1001":
 		victory_sound.play()
-	Engine.time_scale = 0.16 if enemy_id == "1001" else 0.24
+	Engine.time_scale = 0.22 if enemy_id == "1001" else 0.24
 	restore_normal_time_after_explosion()
 	spawn_blood_explosion(enemy_position + Vector2(0, -45), 96)
 	for index in range(7):
@@ -3140,8 +3168,10 @@ func defeat_enemy() -> void:
 	enemy_explosion_time = 1.5 if enemy_id == "1001" else 0.92
 	status_label.text = tr("BATTLE_BLOOD_EXPLOSION")
 	if enemy_id == "1001":
+		explode_all_arena_enemies_in_blood()
 		show_final_seco_victory()
-	defeat_all_minions()
+	else:
+		defeat_all_minions()
 
 func start_seco_second_phase() -> void:
 	seco_second_phase = true
@@ -3267,7 +3297,7 @@ func seco_arena_enemies_alive() -> bool:
 	return false
 
 func update_seco_allies(delta:float) -> void:
-	if seco_allies.is_empty() || player_dead || leaving:
+	if seco_allies.is_empty() || player_dead || leaving || enemy_dead:
 		return
 	for index in seco_allies.size():
 		var ally:Dictionary = seco_allies[index]
@@ -3346,13 +3376,14 @@ func update_enemy_explosion(delta:float) -> void:
 		return
 	enemy_explosion_time = maxf(0.0, enemy_explosion_time - delta)
 	if enemy_explosion_time <= 0.0:
+		Engine.time_scale = 1.0
 		exit_open = true
 		exit_label.visible = true
 		exit_label.text = tr("BATTLE_VICTORY_EXIT")
 		status_label.text = tr("BATTLE_PATH_CLEARED")
 
 func restore_normal_time_after_explosion() -> void:
-	await get_tree().create_timer(3.2 if enemy_id == "1001" else 1.15, true, false, true).timeout
+	await get_tree().create_timer(2.0 if enemy_id == "1001" else 1.15, true, false, true).timeout
 	Engine.time_scale = 1.0
 
 func lose_battle() -> void:
@@ -3365,6 +3396,8 @@ func lose_battle() -> void:
 	battle_song.stop()
 	if is_instance_valid(dungeon_ambience_sound):
 		dungeon_ambience_sound.stop()
+	if is_instance_valid(seco_end_song_sound):
+		seco_end_song_sound.stop()
 	clear_blood_drops()
 	
 	await get_tree().create_timer(1.1).timeout
@@ -3421,6 +3454,8 @@ func finish_battle() -> void:
 	battle_song.stop()
 	if is_instance_valid(dungeon_ambience_sound):
 		dungeon_ambience_sound.stop()
+	if is_instance_valid(seco_end_song_sound):
+		seco_end_song_sound.stop()
 	Global.battle_started = false
 	Global.back_to_main_camera = true
 	Global.realtime_hp = player_hp
