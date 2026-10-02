@@ -21,6 +21,7 @@ const GRITO_LONGE_DB := -42.0
 const CORTE_INICIO_FADE_OUT := 6
 const GRITO_TOM_BASE := 0.45
 const GRITO_TOM_FINO := 0.92
+const GRITO_INICIO_TAKES_INTERMEDIARIOS := 1.45
 const TEMPO_MUNDO_TOTAL := 4.1   # segundos "reais" da queda, esticados pelo slow motion
 
 # Pontos inicial e final de cada personagem no espaço do mundo
@@ -281,8 +282,8 @@ func _trocar_corte() -> void:
 		_iniciar_fade_out()
 
 
-# O grito recomeça em cada corte do Maycon. Isso garante que todos os takes
-# tenham o ataque do som, em vez de retomarem uma faixa pausada já perto do fim.
+# O primeiro e o último take preservam a entrada gradual do grito. Nos takes
+# intermediários, o áudio já entra na parte forte para acompanhar os cortes.
 func _ajustar_volume_do_grito(no_maycon:bool) -> void:
 	if saida_iniciada or not is_instance_valid(grito):
 		return
@@ -293,7 +294,9 @@ func _ajustar_volume_do_grito(no_maycon:bool) -> void:
 		grito.stream_paused = false
 		grito.volume_db = GRITO_PERTO_DB
 		grito.stop()
-		grito.play()
+		var ultimo_take := ENQUADRAMENTOS_MAYCON.size() - 1
+		var take_intermediario := enquadramento_maycon > 0 and enquadramento_maycon < ultimo_take
+		grito.play(GRITO_INICIO_TAKES_INTERMEDIARIOS if take_intermediario else 0.0)
 	else:
 		grito.volume_db = GRITO_LONGE_DB
 		grito.stop()
