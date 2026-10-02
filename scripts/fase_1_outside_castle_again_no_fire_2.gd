@@ -1,7 +1,7 @@
 extends Sprite2D
 
 @onready var animacoes: AnimationPlayer = $animacoes
-@onready var maycon_falling: AnimatedSprite2D = $maycon_falling
+@onready var maycon_falling: AnimatedSprite2D = get_node_or_null("maycon_falling")
 @onready var camera: Camera2D = $maycon_fase/Camera2D
 @onready var maycon_fase: CharacterBody2D = $maycon_fase
 @onready var fase_1_before_castle: Sprite2D = $"."
@@ -10,7 +10,7 @@ extends Sprite2D
 @onready var explotion: AnimatedSprite2D = $explotion
 @onready var explotion_2: AnimatedSprite2D = $explotion2
 @onready var explotion_3: AnimatedSprite2D = $explotion3
-@onready var seco_camera: Camera2D = $Inimigos/inimigo_boss_seco/seco_camera
+@onready var seco_camera: Camera2D = get_node_or_null("seco_camera") if has_node("seco_camera") else get_node_or_null("Inimigos/inimigo_boss_seco/seco_camera")
 @onready var inimigos: Node = $Inimigos
 
 @onready var breaking_glass: AudioStreamPlayer = $BreakingGlass
@@ -52,28 +52,34 @@ func _ready() -> void:
 		if is_instance_valid(inimigo_boss_seco):
 			inimigo_boss_seco.visible = false
 			inimigo_boss_seco.queue_free()
+		$no_monster_flask.visible = false
+		$no_monster_flask_empty.visible = true
 		$smoke.visible = false
 		$ScarySmile.stop()
 		$sound_seco_capsule.stop()
-	elif Global.game_events["seco_break_capsule"]==false:
+	elif Global.game_events.get("seco_break_capsule", false) == false:
+		$no_monster_flask.visible = true
+		$no_monster_flask_empty.visible = false
 		$smoke.visible = true
 		$ScarySmile.play()
 		$sound_seco_capsule.play()
+		if is_instance_valid(inimigo_boss_seco):
+			inimigo_boss_seco.visible = false
+			inimigo_boss_seco.position = Vector2(1762, 767)
 	else:
 		if is_instance_valid(start_seco_break_capsule):
 			start_seco_break_capsule.queue_free()
-		
-		if inimigos.has_node("inimigo_boss_seco") && !seco_morto:
+		$no_monster_flask.visible = false
+		$no_monster_flask_empty.visible = true
+		$smoke.visible = false
+		$ScarySmile.stop()
+		$sound_seco_capsule.stop()
+		if is_instance_valid(inimigo_boss_seco) && !seco_morto:
+			inimigo_boss_seco.position = Vector2(1294, 886)
 			inimigo_boss_seco.visible = true
 			inimigo_boss_seco.flip_h = true
-			$smoke.visible = false
-			$ScarySmile.stop()
-			$sound_seco_capsule.play()
-		else:
-			$smoke.visible = false
-			$ScarySmile.stop()
-			$sound_seco_capsule.stop()
-
+			inimigo_boss_seco.play("idle")
+			inimigo_boss_seco.get_node("hps").visible = true
 		
 	
 	
@@ -117,24 +123,56 @@ func reset_maycon_motion()->void:
 	Global.battle_started = false
 
 func _on_start_seco_break_capsule_body_entered(body: Node2D) -> void:
+	if body != maycon_fase:
+		return
+	if Global.battle_started or Global.game_events.get("seco_break_capsule", false):
+		return
+	
+	start_seco_break_capsule.set_deferred("monitoring", false)
+	start_seco_break_capsule.set_deferred("monitorable", false)
+	
 	#start scene seco break capsule
 	$"../maycon_itens".get_node("canvas").visible = false
-	inimigo_boss_seco.get_node("hps").visible = false
+	if is_instance_valid(inimigo_boss_seco):
+		inimigo_boss_seco.get_node("hps").visible = false
+		inimigo_boss_seco.visible = false
+		inimigo_boss_seco.position = Vector2(1762, 767)
 	Global.battle_started = true
+	maycon_fase.velocity = Vector2.ZERO
+	maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
 	explotion.play("default")
 	explotion_2.play("default")
 	explotion_3.play("default")
 	breaking_glass.play()
-	await get_tree().create_timer(3.0).timeout 
-	seco_camera.make_current()
+	
+	$no_monster_flask.visible = false
+	$no_monster_flask_empty.visible = true
+	$smoke.visible = false
+	$ScarySmile.stop()
+	
+	await get_tree().create_timer(1.8).timeout 
+	if is_instance_valid(seco_camera):
+		seco_camera.make_current()
 	animacoes.play("seco_break_capsule")
 	Global.game_events["seco_break_capsule"] = true
 	Global.save_progress(get_tree().current_scene.name)
-	start_seco_break_capsule.queue_free()
-	await get_tree().create_timer(6.0).timeout 
-	inimigo_boss_seco.flip_h = true
-	inimigo_boss_seco.get_node("hps").visible = true
+	
+	await animacoes.animation_finished
+	
+	if is_instance_valid(inimigo_boss_seco):
+		inimigo_boss_seco.position = Vector2(1294, 886)
+		inimigo_boss_seco.visible = true
+		inimigo_boss_seco.flip_h = true
+		inimigo_boss_seco.play("idle")
+		inimigo_boss_seco.get_node("hps").visible = true
+	
+	camera.make_current()
+	Global.battle_started = false
+	maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
 	$"../maycon_itens".get_node("canvas").visible = true
+	
+	if is_instance_valid(start_seco_break_capsule):
+		start_seco_break_capsule.queue_free()
 	
 	
 	

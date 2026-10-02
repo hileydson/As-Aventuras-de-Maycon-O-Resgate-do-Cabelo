@@ -543,6 +543,7 @@ func reset_default_values()->void:
 	axe_cutscene_return_position = Vector2.ZERO
 	from_slum = false
 	platform_arrival_pending = false
+	cena_first_seco_boss = false
 	platform_pentagrams = 0
 	platform_pentagram_collected = {}
 	battle_background = "1" # default o cenario de fogo fora do castelo

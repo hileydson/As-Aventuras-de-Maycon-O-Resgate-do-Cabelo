@@ -1,5 +1,7 @@
 extends Camera2D
 
+const OLD_FILM_SHADER = preload("res://scenes/3D/poco_infinito_old_film.gdshader")
+
 @onready var camera_2d_maycon: Camera2D = $"../maycon_fase/Camera2D"
 @onready var msg_block: Label = $msg_block
 @onready var fade: Node2D = $fade
@@ -16,6 +18,7 @@ func _on_ready() -> void:
 		pause.queue_free()
 		$"../../maycon_itens".get_node("canvas").visible = false
 		canvas_layer.visible = false
+		_create_old_film_filter()
 		GameSongs.stop(1)
 		inimigo_boss_seco.get_node("hps").visible = false
 		maycon_fase.visible = false
@@ -76,4 +79,29 @@ func _on_ready() -> void:
 		#camera_2d_maycon.make_current()
 		#$"../../auto_fade_in".get_node("Transition").play("fade_in")
 		#canvas_layer.visible = true
+
+func _create_old_film_filter() -> void:
+	var film_rect := ColorRect.new()
+	film_rect.name = "OldFilmFilter"
+	film_rect.position = $ColorRect.position
+	film_rect.size = $ColorRect.size
+	film_rect.z_index = 100
+	film_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var material := ShaderMaterial.new()
+	material.shader = OLD_FILM_SHADER
+	material.set_shader_parameter("sepia_amount", 0.16)
+	material.set_shader_parameter("grain_amount", 0.025)
+	material.set_shader_parameter("grain_speed", 20.0)
+	material.set_shader_parameter("vignette_intensity", 0.28)
+	material.set_shader_parameter("vignette_radius", 1.08)
+	material.set_shader_parameter("flicker_intensity", 0.012)
+	material.set_shader_parameter("scratch_intensity", 0.10)
+	material.set_shader_parameter("dust_intensity", 0.12)
+	material.set_shader_parameter("jitter_amount", 0.00012)
+	film_rect.material = material
+	add_child(film_rect)
+
+	msg_block.z_index = 110
+	fade.z_index = 200
 		

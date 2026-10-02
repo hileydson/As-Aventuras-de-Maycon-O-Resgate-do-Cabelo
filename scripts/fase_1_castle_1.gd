@@ -1,5 +1,7 @@
 extends Sprite2D
 
+const POST_BOSS_FADE_DURATION:float = 4.0
+
 @onready var animacoes: AnimationPlayer = $animacoes
 @onready var maycon_falling: AnimatedSprite2D = $maycon_falling
 @onready var camera: Camera2D = $maycon_fase/Camera2D
@@ -12,6 +14,13 @@ func taken_hp(taken_hp):
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	var returning_from_first_seco_battle:bool = Global.cena_first_seco_boss
+	Global.cena_first_seco_boss = false
+	if not GameSongs.is_song_playing(1):
+		GameSongs.play_song(1)
+	if returning_from_first_seco_battle:
+		_play_post_boss_fade_in()
+
 	Global.save_progress(get_tree().current_scene.name)
 	
 	if Global.game_events["taken_hp_fase_1_castle_1"]:
@@ -28,6 +37,24 @@ func _ready() -> void:
 		Global.back_to_fase = false
 		animacoes.play("maycon_back_to_fase")
 		await get_tree().create_timer(1.0).timeout
+
+func _play_post_boss_fade_in() -> void:
+	var fade_layer := CanvasLayer.new()
+	fade_layer.name = "PostBossLongFadeIn"
+	fade_layer.layer = 100
+	get_tree().current_scene.add_child.call_deferred(fade_layer)
+
+	var fade_rect := ColorRect.new()
+	fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade_rect.color = Color.BLACK
+	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade_layer.add_child(fade_rect)
+
+	await get_tree().process_frame
+	var fade_tween := get_tree().create_tween()
+	fade_tween.tween_property(fade_rect, "color:a", 0.0, POST_BOSS_FADE_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await fade_tween.finished
+	fade_layer.queue_free()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -1,5 +1,8 @@
 extends Area3D
 
+const OLD_FILM_SHADER = preload("res://scenes/3D/poco_infinito_old_film.gdshader")
+const POST_BOSS_FADE_DURATION:float = 4.0
+
 @onready var barra_vida: ProgressBar = $"../../CanvasLayer/ProgressBar"
 @onready var growl_fino: AudioStreamPlayer = $"../../Growl_fino"
 @onready var seco_died: Label = $"../../seco_died"
@@ -9,6 +12,7 @@ extends Area3D
 @onready var final_msg_2: Label = $"../../ColorRect/final_msg2"
 
 var hp:int = 100
+var victory_sequence_started:bool = false
 
 func receber_dano(dano:int)->void:
 	var dano_aplicado: int = dano * 2 if Global.is_easy_mode() else dano
@@ -56,7 +60,11 @@ func atualizar_barra():
 	tween.tween_property(barra_vida, "value", hp, 0.2)
 
 func morrer():
+	if victory_sequence_started:
+		return
+	victory_sequence_started = true
 	remove_from_group("enemy_hitbox")
+	_setup_victory_old_film()
 	
 	if Global.is_two_player_active:
 		for p in get_tree().get_nodes_in_group("player"):
@@ -85,9 +93,57 @@ func morrer():
 	await get_tree().create_timer(4.0).timeout 
 	final_msg_2.visible = true
 	await get_tree().create_timer(4.0).timeout 
-	$"../../../../fade".get_node("Transition").play("fade_out")
-	await get_tree().create_timer(2.0).timeout 
+	await _play_long_fade_out()
 	
 	Global.game_events["seco_first_scene_castle"]=true
+	Global.cena_first_seco_boss = true
 	Global.save_progress("castelo_1")
 	get_tree().change_scene_to_file("res://scenes/fase_1_castle_1.tscn") 
+
+func _setup_victory_old_film() -> void:
+	var scene_root := get_tree().current_scene
+	var film_layer := CanvasLayer.new()
+	film_layer.name = "VictoryOldFilmFilter"
+	film_layer.layer = 10
+	scene_root.add_child(film_layer)
+
+	var film_rect := ColorRect.new()
+	film_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	film_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var material := ShaderMaterial.new()
+	material.shader = OLD_FILM_SHADER
+	material.set_shader_parameter("sepia_amount", 0.16)
+	material.set_shader_parameter("grain_amount", 0.025)
+	material.set_shader_parameter("grain_speed", 20.0)
+	material.set_shader_parameter("vignette_intensity", 0.28)
+	material.set_shader_parameter("vignette_radius", 1.08)
+	material.set_shader_parameter("flicker_intensity", 0.012)
+	material.set_shader_parameter("scratch_intensity", 0.10)
+	material.set_shader_parameter("dust_intensity", 0.12)
+	material.set_shader_parameter("jitter_amount", 0.00012)
+	film_rect.material = material
+	film_layer.add_child(film_rect)
+
+	var text_layer := CanvasLayer.new()
+	text_layer.name = "VictoryText"
+	text_layer.layer = 20
+	scene_root.add_child(text_layer)
+	seco_died.reparent(text_layer)
+	final_msg.reparent(text_layer)
+	final_msg_2.reparent(text_layer)
+
+func _play_long_fade_out() -> void:
+	var fade_layer := CanvasLayer.new()
+	fade_layer.name = "PostBossLongFadeOut"
+	fade_layer.layer = 100
+	get_tree().current_scene.add_child(fade_layer)
+
+	var fade_rect := ColorRect.new()
+	fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade_rect.color = Color(0, 0, 0, 0)
+	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade_layer.add_child(fade_rect)
+
+	var fade_tween := get_tree().create_tween()
+	fade_tween.tween_property(fade_rect, "color:a", 1.0, POST_BOSS_FADE_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await fade_tween.finished

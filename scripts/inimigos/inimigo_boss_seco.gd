@@ -8,13 +8,13 @@ extends AnimatedSprite2D
 @onready var hp_6: Sprite2D = $hps/hp_6
 @onready var hp_7: Sprite2D = $hps/hp_7
 @onready var hp_8: Sprite2D = $hps/hp_8
-@onready var ds_pain: AudioStreamPlayer = $"../../../Cenario de batalha/DsPain"
-@onready var passos_areia: AudioStreamPlayer = $"../../../Cenario de batalha/PassosAreia"
-@onready var inimigos: Node = $"../.."
+@onready var ds_pain: AudioStreamPlayer = get_node_or_null("../../../Cenario de batalha/DsPain")
+@onready var passos_areia: AudioStreamPlayer = get_node_or_null("../../../Cenario de batalha/PassosAreia")
+@onready var inimigos: Node = get_node_or_null("../..")
 
-@onready var batalha_moves: AnimationPlayer = $"../../../Cenario de batalha/batalha_moves"
+@onready var batalha_moves: AnimationPlayer = get_node_or_null("../../../Cenario de batalha/batalha_moves")
 @onready var me: AnimatedSprite2D = $"."
-@onready var maycon: CharacterBody2D = $"../../../Cenario de batalha/Maycon"
+@onready var maycon: CharacterBody2D = get_node_or_null("../../../Cenario de batalha/Maycon")
 @onready var timer_enemy_attack: Timer = $Timer_enemy_attack
 @onready var inimigo_1_animation_attack: AnimationPlayer = $inimigo_1_animation_attack
 
@@ -121,6 +121,10 @@ func _on_animation_finished() -> void:
 
 
 func _on_to_battle_body_entered(body: Node2D) -> void:
+	if Global.battle_started:
+		return
+	if body != null and not body.name.begins_with("maycon"):
+		return
 	if Global.try_debug_instakill_enemy(self, "1001", id_unico):
 		return
 	Global.battle_next_enemy = "1001"

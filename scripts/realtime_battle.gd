@@ -2320,9 +2320,11 @@ func toggle_battle_pause() -> void:
 func can_player_punch() -> bool:
 	if battle_paused || intro_time > 0.0 || leaving || player_dead || dodge_time > 0.0 || player_dash_active:
 		return false
+	if player_is_kick && player_attack_time > 0.0:
+		return false
 	if punch_cooldown > 0.0:
 		return false
-	return player_attack_time <= 0.0
+	return true
 
 func can_player_kick() -> bool:
 	if battle_paused || intro_time > 0.0 || leaving || player_dead || dodge_time > 0.0 || player_dash_active:
@@ -2692,7 +2694,7 @@ func start_player_attack(kick:bool) -> void:
 	player_attack_duration = player_attack_time
 	player_is_kick = kick
 	punch_buffer_time = 0.0
-	punch_cooldown = (player_attack_time + 0.10) if !kick else 0.0
+	punch_cooldown = (player_attack_time * 0.82) if !kick else 0.0
 	var input_facing = Input.get_axis("ui_left", "ui_right")
 	if absf(input_facing) > 0.05:
 		player_facing = signf(input_facing)
@@ -3064,6 +3066,7 @@ func damage_player(damage:float, hit_direction:float) -> void:
 	player_attack_time = 0.0
 	player_attack_duration = 0.0
 	punch_buffer_time = 0.0
+	punch_cooldown = 0.0
 	player_attack_move_dir = Vector2.ZERO
 	player_position.x += hit_direction * 54.0
 	player_position.x = clampf(player_position.x, 150.0, ARENA_WIDTH - 80.0 if exit_open else 2130.0)

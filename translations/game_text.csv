@@ -279,6 +279,7 @@ Tendrás 3 vidas; si mueres, volverás al último guardado.","你拥有3次攻�
 BOSS_INTRO_OLINDAO,OLINDÃO,OLINDÃO,OLINDÃO,奥林当
 BOSS_INTRO_TRIPA,TRIPA,TRIPA,TRIPA,大肚
 BOSS_INTRO_MAIOR,MAIOR,MAIOR,MAIOR,汉
+BOSS_INTRO_3D,EM 3D,IN 3D,EN 3D,3D 登场
 PLATFORM_BLOOD,Sangue,Blood,Sangre,血量
 PLATFORM_OBJECTIVE,Siga as ilhas até a bandeira e pule no poço,Follow the islands to the flag and jump into the well,Sigue las islas hasta la bandera y salta al pozo,沿着岛屿前往旗帜并跳入井中
 PLATFORM_CONTROLS,WASD / SETAS: MOVER   ESPAÇO / A: PULAR   SHIFT: CORRER   BOTÃO DIREITO: CÂMERA,WASD / ARROWS: MOVE   SPACE / A: JUMP   SHIFT: RUN   RIGHT MOUSE: CAMERA,WASD / FLECHAS: MOVER   ESPACIO / A: SALTAR   SHIFT: CORRER   BOTÓN DERECHO: CÁMARA,WASD / 方向键：移动   空格 / A：跳跃   SHIFT：奔跑   鼠标右键：视角

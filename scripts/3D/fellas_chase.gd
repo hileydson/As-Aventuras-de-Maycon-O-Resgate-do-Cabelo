@@ -11,7 +11,7 @@ const MARKER_TEXTURE = preload("res://assets/novas_imagens/objects/interrogacao.
 const MAX_HP := 16
 const MINIMAP_SIZE := 220.0
 const MINIMAP_WORLD_SIZE := 360.0
-const ROAD_HALF_WIDTH := 32.0
+const ROAD_HALF_WIDTH := 12.0
 const ROAD_SEGMENTS := [
 	[Vector2(-560.0, 720.0), Vector2(-110.0, 720.0)],
 	[Vector2(-480.0, 730.0), Vector2(-480.0, -50.0)],
@@ -21,7 +21,6 @@ const ROAD_SEGMENTS := [
 	[Vector2(-560.0, 420.0), Vector2(320.0, 420.0)],
 	[Vector2(-560.0, 300.0), Vector2(-110.0, 300.0)],
 	[Vector2(-480.0, 200.0), Vector2(120.0, 200.0)],
-	[Vector2(-390.0, 40.0), Vector2(-250.0, 40.0)],
 	[Vector2(-110.0, 480.0), Vector2(320.0, 480.0)]
 ]
 
@@ -167,21 +166,27 @@ func nearest_road_point(point:Vector2) -> Vector2:
 			closest = candidate
 	return closest
 
-func keep_player_on_roads() -> void:
-	if !combat_enabled:
-		return
-	var position_2d := Vector2(player.global_position.x, player.global_position.z)
-	var road_point := nearest_road_point(position_2d)
-	var lateral := position_2d - road_point
-	if lateral.length() <= ROAD_HALF_WIDTH:
-		return
-	var limited := road_point + lateral.normalized() * ROAD_HALF_WIDTH
-	player.global_position.x = limited.x
-	player.global_position.z = limited.y
-	var outward := Vector2(player.velocity.x, player.velocity.z).dot(lateral.normalized())
-	if outward > 0.0:
-		player.velocity.x -= lateral.normalized().x * outward
-		player.velocity.z -= lateral.normalized().y * outward
+func get_nearest_road_segment(point:Vector2) -> Array:
+	var best_segment = ROAD_SEGMENTS[0]
+	var best_distance := INF
+	for segment in ROAD_SEGMENTS:
+		var start:Vector2 = segment[0]
+		var finish:Vector2 = segment[1]
+		var along := clampf((point - start).dot(finish - start) / start.distance_squared_to(finish), 0.0, 1.0)
+		var candidate := start.lerp(finish, along)
+		var distance := point.distance_squared_to(candidate)
+		if distance < best_distance:
+			best_distance = distance
+			best_segment = segment
+	return best_segment
+
+func get_road_direction_at(point:Vector2, desired_dir:Vector2) -> Vector2:
+	var best_seg := get_nearest_road_segment(point)
+	var seg_dir:Vector2 = (best_seg[1] - best_seg[0]).normalized()
+	if desired_dir.dot(seg_dir) >= 0.0:
+		return seg_dir
+	else:
+		return -seg_dir
 
 func build_hud() -> void:
 	hud = CanvasLayer.new()
@@ -423,7 +428,6 @@ func get_member_health() -> Array[int]:
 func _physics_process(delta:float) -> void:
 	if finished or !is_instance_valid(player):
 		return
-	keep_player_on_roads()
 	update_player_health()
 	chase_clock += delta
 	var any_active := false
@@ -480,15 +484,18 @@ func update_player_health() -> void:
 func move_wandering(member:Dictionary, delta:float) -> void:
 	var sprite:Sprite3D = member["sprite"]
 	member["turn_timer"] -= delta
-	if member["turn_timer"] <= 0.0 or sprite.global_position.distance_to(member["target"]) < 7.0:
-		member["turn_timer"] = randf_range(3.0, 6.0)
-		var angle := randf() * TAU
-		member["target"] = road_position(sprite.global_position + Vector3(sin(angle), 0.0, cos(angle)) * randf_range(24.0, 65.0))
+	if member["turn_timer"] <= 0.0 or sprite.global_position.distance_to(member["target"]) < 8.0:
+		member["turn_timer"] = randf_range(3.5, 6.0)
+		var current_2d := Vector2(sprite.global_position.x, sprite.global_position.z)
+		var heading_2d := Vector2(member["heading"].x, member["heading"].z).normalized()
+		var road_dir := get_road_direction_at(current_2d, heading_2d)
+		var next_point_2d := current_2d + road_dir * randf_range(35.0, 70.0)
+		member["target"] = road_position(Vector3(next_point_2d.x, sprite.global_position.y, next_point_2d.y))
 	var direction:Vector3 = (member["target"] as Vector3) - sprite.global_position
 	direction.y = 0.0
 	if direction.length() > 0.1:
-		member["heading"] = (member["heading"] as Vector3).lerp(direction.normalized(), minf(1.0, delta * 1.2)).normalized()
-		move_member(member, delta, 8.0)
+		member["heading"] = (member["heading"] as Vector3).lerp(direction.normalized(), minf(1.0, delta * 1.8)).normalized()
+		move_member(member, delta, 10.0)
 
 func move_chasing(member:Dictionary, delta:float, distance:float) -> void:
 	var sprite:Sprite3D = member["sprite"]
@@ -502,10 +509,12 @@ func move_chasing(member:Dictionary, delta:float, distance:float) -> void:
 	if member["flee_timer"] > 0.0:
 		var flee_dir:Vector3 = (member["flee_target"] as Vector3) - sprite.global_position
 		flee_dir.y = 0.0
-		if flee_dir.length() < 14.0 or member["flee_target"] == Vector3.ZERO:
-			var random_corner := randf_range(0.8, 1.4) * (-1.0 if randf() < 0.5 else 1.0)
-			var next_heading := (member["heading"] as Vector3).rotated(Vector3.UP, random_corner).normalized()
-			member["flee_target"] = road_position(sprite.global_position + next_heading * randf_range(80.0, 130.0))
+		if flee_dir.length() < 16.0 or member["flee_target"] == Vector3.ZERO:
+			var current_2d := Vector2(sprite.global_position.x, sprite.global_position.z)
+			var heading_2d := Vector2(member["heading"].x, member["heading"].z).normalized()
+			var flee_road_dir := get_road_direction_at(current_2d, heading_2d)
+			var flee_point_2d := current_2d + flee_road_dir * randf_range(90.0, 140.0)
+			member["flee_target"] = road_position(Vector3(flee_point_2d.x, sprite.global_position.y, flee_point_2d.y))
 			flee_dir = (member["flee_target"] as Vector3) - sprite.global_position
 			flee_dir.y = 0.0
 		if flee_dir.length() > 0.1:
@@ -521,7 +530,8 @@ func move_chasing(member:Dictionary, delta:float, distance:float) -> void:
 
 	# Se estiver ficando para trás (menos de 18 metros na frente ou atrás do player):
 	if forward_proj < 18.0:
-		var overtake_point := player.global_position + player_forward * randf_range(32.0, 50.0) + player.global_basis.x * sin(chase_clock * 0.85 + member["phase"]) * 8.5
+		var raw_overtake := player.global_position + player_forward * randf_range(32.0, 50.0) + player.global_basis.x * sin(chase_clock * 0.85 + member["phase"]) * 6.0
+		var overtake_point := road_position(raw_overtake)
 		var overtake_dir := overtake_point - sprite.global_position
 		overtake_dir.y = 0.0
 		if overtake_dir.length() > 0.1:
@@ -534,13 +544,14 @@ func move_chasing(member:Dictionary, delta:float, distance:float) -> void:
 	var side := player.global_basis.x
 	side.y = 0.0
 	var preferred_distance := 30.0 + sin(chase_clock * 0.8 + member["phase"]) * 7.0
-	var preferred := player.global_position + player_forward * preferred_distance + side * sin(chase_clock * 0.65 + member["phase"]) * 8.0
+	var raw_preferred := player.global_position + player_forward * preferred_distance + side * sin(chase_clock * 0.65 + member["phase"]) * 6.0
+	var preferred := road_position(raw_preferred)
 	var heading := preferred - sprite.global_position
 	heading.y = 0.0
 	if distance < 18.0:
 		heading += player_forward * 25.0
 	if heading.length() > 0.1:
-		member["heading"] = (member["heading"] as Vector3).lerp(heading.normalized(), minf(1.0, delta * 2.0)).normalized()
+		member["heading"] = (member["heading"] as Vector3).lerp(heading.normalized(), minf(1.0, delta * 2.2)).normalized()
 	move_member(member, delta, maxf(16.0, player_speed + 2.5))
 
 func check_ray_clearance(from:Vector3, dir:Vector3, dist:float) -> Dictionary:
@@ -551,15 +562,20 @@ func check_ray_clearance(from:Vector3, dir:Vector3, dist:float) -> Dictionary:
 	return get_world_3d().direct_space_state.intersect_ray(ray)
 
 func find_best_clear_direction(origin:Vector3) -> Vector3:
+	var road_2d := nearest_road_point(Vector2(origin.x, origin.z))
+	var to_road := Vector3(road_2d.x - origin.x, 0.0, road_2d.y - origin.z)
+	var road_dir_bias := to_road.normalized() if to_road.length() > 0.5 else Vector3.ZERO
 	var best_dir := Vector3.FORWARD
-	var best_dist := 0.0
+	var best_score := -INF
 	for i in 8:
 		var angle := float(i) * TAU / 8.0
 		var test_dir := Vector3(sin(angle), 0.0, cos(angle)).normalized()
-		var hit := check_ray_clearance(origin, test_dir, 20.0)
-		var clear_dist := 20.0 if hit.is_empty() else origin.distance_to(hit["position"])
-		if clear_dist > best_dist:
-			best_dist = clear_dist
+		var hit := check_ray_clearance(origin, test_dir, 24.0)
+		var clear_dist := 24.0 if hit.is_empty() else origin.distance_to(hit["position"])
+		var bias := test_dir.dot(road_dir_bias) * 6.0 if road_dir_bias != Vector3.ZERO else 0.0
+		var score := clear_dist + bias
+		if score > best_score:
+			best_score = score
 			best_dir = test_dir
 	return best_dir
 
@@ -576,13 +592,13 @@ func move_member(member:Dictionary, delta:float, speed:float) -> void:
 	var dist_moved := sprite.global_position.distance_to(member["last_pos"])
 	if dist_moved < maxf(0.05, speed * delta * 0.22):
 		member["stuck_timer"] += delta
-		if member["stuck_timer"] > 0.20:
-			# Enroscou num canto ou parede! Sair imediatamente:
+		if member["stuck_timer"] > 0.18:
+			# Enroscou num canto ou parede! Sair imediatamente em direção à rua livre:
 			var escape_dir := find_best_clear_direction(sprite.global_position)
 			member["heading"] = escape_dir
 			heading = escape_dir
 			member["stuck_timer"] = 0.0
-			sprite.global_position = road_position(sprite.global_position + escape_dir * 1.8)
+			sprite.global_position = road_position(sprite.global_position + escape_dir * 2.5)
 			member["last_pos"] = sprite.global_position
 			return
 	else:
@@ -590,21 +606,26 @@ func move_member(member:Dictionary, delta:float, speed:float) -> void:
 	member["last_pos"] = sprite.global_position
 
 	# 2. SENSORES PROATIVOS (WHISKERS) PARA EVITAR PAREDES E MANTER-SE NA RUA
-	var check_dist := clampf(speed * 0.42, 4.0, 9.0)
+	var check_dist := clampf(speed * 0.6, 6.0, 16.0)
 	var hit_center := check_ray_clearance(sprite.global_position, heading, check_dist)
 	if !hit_center.is_empty():
-		var right_dir := heading.rotated(Vector3.UP, deg_to_rad(-40.0)).normalized()
-		var left_dir := heading.rotated(Vector3.UP, deg_to_rad(40.0)).normalized()
+		var right_dir := heading.rotated(Vector3.UP, deg_to_rad(-45.0)).normalized()
+		var left_dir := heading.rotated(Vector3.UP, deg_to_rad(45.0)).normalized()
 		var hit_right := check_ray_clearance(sprite.global_position, right_dir, check_dist * 0.85)
 		var hit_left := check_ray_clearance(sprite.global_position, left_dir, check_dist * 0.85)
 
 		var right_clear := check_dist if hit_right.is_empty() else sprite.global_position.distance_to(hit_right["position"])
 		var left_clear := check_dist if hit_left.is_empty() else sprite.global_position.distance_to(hit_left["position"])
 
+		var road_2d := nearest_road_point(Vector2(sprite.global_position.x, sprite.global_position.z))
+		var road_center_dir := Vector3(road_2d.x - sprite.global_position.x, 0.0, road_2d.y - sprite.global_position.z)
+
 		if right_clear > left_clear + 0.5:
-			heading = heading.rotated(Vector3.UP, deg_to_rad(-65.0) * delta * 4.5).normalized()
+			heading = heading.rotated(Vector3.UP, deg_to_rad(-70.0) * delta * 4.5).normalized()
 		elif left_clear > right_clear + 0.5:
-			heading = heading.rotated(Vector3.UP, deg_to_rad(65.0) * delta * 4.5).normalized()
+			heading = heading.rotated(Vector3.UP, deg_to_rad(70.0) * delta * 4.5).normalized()
+		elif road_center_dir.length() > 0.5:
+			heading = heading.lerp(road_center_dir.normalized(), minf(1.0, delta * 6.0)).normalized()
 		else:
 			var best_escape := find_best_clear_direction(sprite.global_position)
 			heading = heading.lerp(best_escape, minf(1.0, delta * 8.0)).normalized()

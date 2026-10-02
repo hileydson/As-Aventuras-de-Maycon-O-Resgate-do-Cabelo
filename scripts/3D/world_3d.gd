@@ -16,6 +16,7 @@ extends Node3D
 @export var inimigo_scene: PackedScene 
 @export var inimigo_scene_2: PackedScene 
 var enemy_chance:bool = false
+var death_sequence_started:bool = false
 
 # Referência ao nó que contém os pontos de spawn
 #@onready var pontos_container = $"."
@@ -164,6 +165,9 @@ func _make_hud_panel(rect:Rect2, accent:Color) -> PanelContainer:
 	return panel
 
 func maycon_died()->void:
+	if death_sequence_started:
+		return
+	death_sequence_started = true
 	you_died.text = tr("BATTLE_YOU_DIED_CAPS")
 	you_died.visible = true
 	
@@ -179,7 +183,7 @@ func maycon_died()->void:
 	
 	fade.get_node("Transition").play("fade_out")
 	await get_tree().create_timer(2.0).timeout 
-	get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_4.tscn") 
+	get_tree().reload_current_scene()
 	# Called every frame. 'delta' is the elapsed time since the previous frame.
 	
 
