@@ -95,6 +95,9 @@ func run() -> void:
 	ok("aviso de checkpoint ancorado no canto inferior direito", is_equal_approx(hint.anchor_left, 1.0) and is_equal_approx(hint.anchor_top, 1.0), "ancora=%.1f,%.1f" % [hint.anchor_left, hint.anchor_top])
 	var total:int = root.get_tree().get_nodes_in_group("resgate_enemies").size()
 	ok("gameplay lotada de inimigos", total >= 180, "total=%d" % total)
+	var contador:Node = stage.get_node_or_null("HUD/Pentagramas")
+	ok("contador de pentagramas em cima", contador != null and contador.visible and contador.get_child_count() == 2, "nó=%s" % (contador != null))
+	ok("corrida 10% mais rapida (8,58 m/s)", is_equal_approx(player.run_speed, 8.58), "run_speed=%.2f" % player.run_speed)
 	var com_batalha:int = 0
 	for enemy in root.get_tree().get_nodes_in_group("resgate_enemies"):
 		if enemy.battle_sprite != null:
@@ -143,7 +146,7 @@ func run() -> void:
 	await step(60)
 	var advance:float = z0 - player.global_position.z
 	Input.action_release("ui_up")
-	ok("corrida atinge ~7.8 m/s em regime", advance > 7.3 and advance < 8.3, "dz=%.2f m/s  vz=%.2f" % [advance, player.velocity.z])
+	ok("corrida atinge ~8,58 m/s em regime", advance > 8.1 and advance < 9.1, "dz=%.2f m/s  vz=%.2f" % [advance, player.velocity.z])
 
 	await settle(lane)
 	var base_y:float = player.global_position.y
@@ -219,14 +222,60 @@ func run() -> void:
 	await step(1)
 	ok("pouso comum levanta poeira", conta_poeira() > antes_do_pouso, "estouros %d->%d" % [antes_do_pouso, conta_poeira()])
 
-	print("-- Caixas --")
+	print("-- Caixas por contato --")
 	var crate:Node3D = find_course("Crate_0044")
-	await settle(crate.global_position + Vector3(0, 3.2, 0))
+	await settle(crate.global_position + Vector3(0, 0.4, 4.0))
 	var pent_before:int = stage.pentagrams
-	await step(60)
-	ok("caixa quebra ao pousar em cima", not crate.active, "ativa=%s" % crate.active)
-	await step(60)
+	var poeira_caixa:int = conta_poeira()
+	Input.action_press("ui_up")
+	guard = 0
+	while crate.active and guard < 120:
+		guard += 1
+		# A conta e tirada no ultimo quadro antes de quebrar, porque os estouros antigos somem.
+		poeira_caixa = conta_poeira()
+		await physics_frame
+	Input.action_release("ui_up")
+	await step(1)
+	ok("caixa quebra so de passar nela, sem pulo", not crate.active, "ativa=%s frames=%d" % [crate.active, guard])
+	ok("caixa joga o Maycon para cima de leve", player.velocity.y > 3.0 and player.velocity.y < 9.0, "vy=%.2f" % player.velocity.y)
+	ok("caixa estoura poeira", conta_poeira() > poeira_caixa, "estouros %d->%d" % [poeira_caixa, conta_poeira()])
+	await step(90)
 	ok("caixa libera pentagramas coletaveis", stage.pentagrams > pent_before, "antes=%d depois=%d" % [pent_before, stage.pentagrams])
+
+	print("-- Dash --")
+	await settle(lane)
+	stage.pentagrams = 2
+	stage.update_hud()
+	press_action("dash_resgate")
+	await step(2)
+	ok("dash nao sai com menos de 3 pentagramas", player.dash_time <= 0.0 and stage.pentagrams == 2, "pentagramas=%d dash=%.2f" % [stage.pentagrams, player.dash_time])
+	stage.pentagrams = 7
+	stage.update_hud()
+	var z_dash:float = player.global_position.z
+	press_action("dash_resgate")
+	await step(2)
+	ok("dash custa 3 pentagramas", stage.pentagrams == 4, "pentagramas=%d" % stage.pentagrams)
+	ok("dash deixa o Maycon invencivel", player.is_invincible, "invencivel=%s" % player.is_invincible)
+	ok("dash deixa rastro", stage.get_node("Effects").find_children("RastroDoDash*", "", true, false).size() > 0, "silhuetas=%d" % stage.get_node("Effects").find_children("RastroDoDash*", "", true, false).size())
+	var antes_vida:float = stage.hp
+	player.receive_damage(20.0, player.global_position + Vector3(0, 0, -2))
+	ok("dano nao entra durante o dash", is_equal_approx(stage.hp, antes_vida), "vida=%.0f" % stage.hp)
+	guard = 0
+	while player.dash_time > 0.0 and guard < 60:
+		guard += 1
+		await physics_frame
+	var alcance:float = z_dash - player.global_position.z
+	ok("dash e curto", alcance > 2.0 and alcance < 7.0, "avanco=%.2f m" % alcance)
+	await step(5)
+	ok("invencibilidade acaba com o dash", not player.is_invincible, "invencivel=%s" % player.is_invincible)
+	await settle(lane)
+	stage.pentagrams = 9
+	Input.action_press("ui_down")
+	press_action("dash_resgate")
+	await step(2)
+	Input.action_release("ui_down")
+	ok("dash nunca vai para tras", player.dash_velocity.z <= 0.01, "vz=%.2f" % player.dash_velocity.z)
+	await step(20)
 
 	print("-- Checkpoint --")
 	var check:Node3D = find_course("Checkpoint_0220")
@@ -325,6 +374,20 @@ func run() -> void:
 	await step(10)
 	var back_edge:Vector3 = Vector3(0, 0, 15.5)
 	ok("camera da largada nao alcanca o fim da trilha antiga", stage.camera.is_position_behind(back_edge), "camera z=%.1f" % stage.camera.global_position.z)
+
+	print("-- Pose do Lips --")
+	var skel:Skeleton3D = stage.boss.skeleton
+	if skel != null:
+		var osso := skel.find_bone("Leg_Upper.L")
+		if osso < 0:
+			osso = 0
+		skel.reset_bone_poses()
+		var descanso:Quaternion = skel.get_bone_rest(osso).basis.get_rotation_quaternion()
+		stage.boss.set_bone(skel.get_bone_name(osso), 0.0)
+		var pose:Quaternion = skel.get_bone_pose_rotation(osso)
+		ok("balanco zero deixa o osso no descanso", absf(pose.dot(descanso)) > 0.999, "dot=%.4f osso=%s" % [pose.dot(descanso), skel.get_bone_name(osso)])
+	else:
+		ok("balanco zero deixa o osso no descanso", false, "sem Skeleton3D no Lips")
 
 	print("-- Cabelo da arena --")
 	var cabelo:Node = stage.get_node_or_null("Arena/Lips/Hair")

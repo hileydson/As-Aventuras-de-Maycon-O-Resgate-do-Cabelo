@@ -308,6 +308,13 @@ static func controls_for(profile:String) -> Array[Dictionary]:
 			]
 		"invader":
 			return [move, dash]
+		"resgate":
+			# O dash do Resgate Cabeludo fica no B do controle e na tecla V.
+			return [
+				move,
+				jump,
+				{"label": TranslationServer.translate("POWER_DASH"), "pad": PAD_B_TEXTURE, "accent": Color(0.35, 0.9, 1.0)}
+			]
 		"ace":
 			return [
 				move,

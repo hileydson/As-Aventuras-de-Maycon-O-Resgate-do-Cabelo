@@ -1,8 +1,7 @@
 extends Node3D
 
 const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
-# Mesmo motor acelerando usado no avião e na queda do Maycon.
-const PLANE_ENGINE = preload("res://assets/novos_audios/modo_acelerando.mp3")
+const PLANE_ENGINE = preload("res://assets/novos_audios/aviao.mp3")
 
 @export var forest_scene:String = "res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn"
 @export var pace:float = 1.0
@@ -97,8 +96,12 @@ func pose_lips_running(phase:float) -> void:
 
 func set_lips_bone(bone_name:String, angle:float) -> void:
 	var bone := lips_skeleton.find_bone(bone_name)
-	if bone >= 0:
-		lips_skeleton.set_bone_pose_rotation(bone, Quaternion(Vector3.RIGHT, angle))
+	if bone < 0:
+		return
+	# Gira a partir do descanso do osso. Substituir a orientacao virava o pe para
+	# dentro da barriga.
+	var descanso := lips_skeleton.get_bone_rest(bone).basis.get_rotation_quaternion()
+	lips_skeleton.set_bone_pose_rotation(bone, descanso * Quaternion(Vector3.RIGHT, angle))
 
 func move(node:Node3D, destination:Vector3, duration:float) -> Tween:
 	var tween := create_tween()

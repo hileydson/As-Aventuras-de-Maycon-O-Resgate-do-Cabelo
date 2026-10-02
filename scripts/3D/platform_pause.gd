@@ -243,7 +243,12 @@ func _build_modern_panel() -> void:
 	config_button.focus_neighbor_bottom = menu_button.get_path()
 	menu_button.focus_neighbor_top = config_button.get_path()
 	pause_maycon = PAUSE_VISUAL.add_walking_maycon(panel)
-	var profile := "ace" if get_tree().current_scene != null and get_tree().current_scene.scene_file_path == "res://scenes/3D/aviao_ace_combat.tscn" else "move_only"
+	var profile := "move_only"
+	var cena:Node = get_tree().current_scene
+	if cena != null and cena.scene_file_path == "res://scenes/3D/aviao_ace_combat.tscn":
+		profile = "ace"
+	elif cena != null and cena.scene_file_path == "res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn":
+		profile = "resgate"
 	PAUSE_VISUAL.add_controls_card(panel, profile)
 
 func _build_panel() -> void:

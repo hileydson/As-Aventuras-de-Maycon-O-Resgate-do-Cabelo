@@ -116,5 +116,9 @@ func pose_running(phase:float) -> void:
 
 func set_bone(bone_name:String, angle:float) -> void:
 	var bone := skeleton.find_bone(bone_name)
-	if bone >= 0:
-		skeleton.set_bone_pose_rotation(bone, Quaternion(Vector3.RIGHT, angle))
+	if bone < 0:
+		return
+	# Gira a partir do descanso do osso. Substituir a orientacao virava o pe para
+	# dentro da barriga.
+	var descanso := skeleton.get_bone_rest(bone).basis.get_rotation_quaternion()
+	skeleton.set_bone_pose_rotation(bone, descanso * Quaternion(Vector3.RIGHT, angle))

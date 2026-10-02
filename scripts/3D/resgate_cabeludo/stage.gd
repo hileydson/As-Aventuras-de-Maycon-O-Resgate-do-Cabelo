@@ -9,6 +9,8 @@ const WIND_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
 const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
 const AMBIENCE = preload("res://assets/novos_audios/song_birds.mp3")
 const STAGE_SONG = preload("res://assets/novos_audios/last_song.mp3")
+# Mesmo som de coleta do Super Maycon Brother.
+const PICKUP_SOUND = preload("res://assets/audio/plim.mp3")
 # A música emenda em si mesma estes segundos antes de acabar.
 const SONG_OVERLAP := 3.0
 const SOUNDS = {
@@ -39,6 +41,7 @@ var exit_started:bool = false
 var death_in_progress:bool = false
 var intro_active:bool = true
 var old_cutscene:bool = false
+var pentagram_label:Label
 var song_slots:Array[AudioStreamPlayer] = []
 var song_turn:int = 0
 
@@ -78,6 +81,29 @@ func build_hud() -> void:
 	life.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bar.add_child(life)
 	life.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Contador de pentagramas em cima, no mesmo formato do Super Maycon Brother.
+	var count_panel := HBoxContainer.new()
+	count_panel.name = "Pentagramas"
+	count_panel.anchor_left = 1.0
+	count_panel.anchor_right = 1.0
+	count_panel.offset_left = -135.0
+	count_panel.offset_right = -12.0
+	count_panel.offset_top = 9.0
+	count_panel.offset_bottom = 41.0
+	count_panel.visible = false
+	$HUD.add_child(count_panel)
+	var icon := TextureRect.new()
+	icon.texture = PENTAGRAM
+	icon.custom_minimum_size = Vector2(32.0, 32.0)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	count_panel.add_child(icon)
+	pentagram_label = Label.new()
+	pentagram_label.add_theme_font_size_override("font_size", 22)
+	pentagram_label.add_theme_color_override("font_color", Color("d72343"))
+	pentagram_label.add_theme_color_override("font_outline_color", Color("15291e"))
+	pentagram_label.add_theme_constant_override("outline_size", 6)
+	count_panel.add_child(pentagram_label)
 	var hint:Label = $HUD/Hint
 	hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
 	hint.offset_left = -300
@@ -118,8 +144,7 @@ func _exit_tree() -> void:
 		get_tree().paused = false
 
 func _unhandled_input(event:InputEvent) -> void:
-	if player.control_enabled and event.is_action_pressed("key_e"):
-		use_power()
+	pass # O dash mora no player.gd, no B do controle e na tecla V.
 
 func _physics_process(_delta:float) -> void:
 	if finishing or get_tree().paused:
@@ -167,6 +192,7 @@ func opening() -> void:
 	await rise_player()
 	player._play_animation("Walking")
 	$HUD/Stats.visible = true
+	$HUD/Pentagramas.visible = true
 	start_ambience()
 	intro_active = false
 	Global.in_cutscene = false
@@ -247,10 +273,90 @@ func sound(key:String) -> void:
 
 func update_hud() -> void:
 	$HUD/Stats/Health.value = hp
+	if is_instance_valid(pentagram_label):
+		pentagram_label.text = str(pentagrams)
 
-func collect() -> void:
+func collect(at:Vector3 = Vector3.ZERO) -> void:
 	pentagrams += 1
 	update_hud()
+	pickup_burst(at if at != Vector3.ZERO else player.global_position + Vector3.UP)
+	pickup_sound()
+
+# O dash cobra pentagramas; devolve falso quando não há o bastante.
+func spend_pentagrams(amount:int) -> bool:
+	if pentagrams < amount or finishing or exit_started:
+		return false
+	pentagrams -= amount
+	update_hud()
+	return true
+
+# Mesmo estouro de cores da coleta no Super Maycon Brother.
+func pickup_burst(at:Vector3) -> void:
+	var colors := [Color("ffda60"), Color("ff6fb1"), Color("71d3ff"), Color("a985ff"), Color("8ee899"), Color("ff9369")]
+	var spark_mesh := SphereMesh.new()
+	spark_mesh.radius = 0.095
+	spark_mesh.height = 0.19
+	spark_mesh.radial_segments = 8
+	spark_mesh.rings = 4
+	for i in 36:
+		var spark := MeshInstance3D.new()
+		spark.mesh = spark_mesh
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = colors[i % colors.size()]
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		spark.material_override = mat
+		spark.position = at
+		spark.scale = Vector3.ONE * randf_range(0.8, 1.7)
+		$Effects.add_child(spark)
+		var direction := Vector3(randf_range(-1.0, 1.0), randf_range(0.25, 1.1), randf_range(-1.0, 1.0)).normalized()
+		var distance := randf_range(1.1, 2.5)
+		var tween := create_tween().bind_node(spark).set_parallel(true)
+		tween.tween_property(spark, "position", at + direction * distance, 0.7).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		tween.tween_property(spark, "scale", Vector3.ZERO, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tween.chain().tween_callback(spark.queue_free)
+	var flash := Sprite3D.new()
+	flash.texture = PENTAGRAM
+	flash.pixel_size = 0.0031
+	flash.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	flash.shaded = false
+	flash.position = at
+	$Effects.add_child(flash)
+	var brilho := create_tween().bind_node(flash).set_parallel(true)
+	brilho.tween_property(flash, "scale", Vector3.ONE * 3.0, 0.35)
+	brilho.tween_property(flash, "modulate:a", 0.0, 0.35)
+	brilho.chain().tween_callback(flash.queue_free)
+
+# Som nítido por cima e ecos em cascata atrás, como no Super Maycon Brother.
+func pickup_sound() -> void:
+	var base_pitch := 1.25
+	var orig_vol := -10.0
+	var orig := AudioStreamPlayer.new()
+	orig.stream = PICKUP_SOUND
+	orig.pitch_scale = base_pitch
+	orig.volume_db = orig_vol
+	add_child(orig)
+	orig.finished.connect(orig.queue_free)
+	orig.play()
+	var bg_vol := orig_vol - 8.5
+	var echo_delays := [0.13, 0.26, 0.39, 0.54]
+	var echo_vols := [-5.0, -9.0, -13.0, -17.0]
+	var echo_pitches := [1.02, 1.05, 1.08, 1.11]
+	for idx in echo_delays.size():
+		var delay_time:float = echo_delays[idx]
+		var echo_vol:float = bg_vol + echo_vols[idx]
+		var echo_pitch:float = base_pitch * echo_pitches[idx]
+		get_tree().create_timer(delay_time).timeout.connect(func():
+			if not is_instance_valid(self):
+				return
+			var echo := AudioStreamPlayer.new()
+			echo.stream = PICKUP_SOUND
+			if AudioServer.get_bus_index("ItemReverb") >= 0:
+				echo.bus = "ItemReverb"
+			echo.pitch_scale = echo_pitch
+			echo.volume_db = echo_vol
+			add_child(echo)
+			echo.finished.connect(echo.queue_free)
+			echo.play())
 
 func heal(amount:float) -> void:
 	hp = minf(100.0, hp + amount)
@@ -385,27 +491,6 @@ func pickup(at:Vector3, blood:bool) -> Node3D:
 
 func drop_blood(at:Vector3) -> void:
 	pickup(at, true)
-
-func use_power() -> void:
-	if pentagrams < 20 or finishing:
-		return
-	pentagrams -= 20
-	sound("power")
-	$HUD/Power.visible = true
-	$HUD/Power.modulate.a = 0.85
-	var tween := create_tween()
-	tween.tween_property($HUD/Power, "modulate:a", 0.0, 0.9)
-	tween.tween_callback(func(): $HUD/Power.visible = false)
-	for enemy in get_tree().get_nodes_in_group("resgate_enemies"):
-		if not enemy.active:
-			continue
-		var target:Vector3 = enemy.global_position + Vector3.UP
-		if camera.global_position.distance_to(target) > 55.0 or camera.is_position_behind(target) or not get_viewport().get_visible_rect().has_point(camera.unproject_position(target)):
-			continue
-		var query := PhysicsRayQueryParameters3D.create(camera.global_position, target, 1)
-		if get_world_3d().direct_space_state.intersect_ray(query).is_empty():
-			enemy.defeat()
-	update_hud()
 
 func burst(at:Vector3, color:Color, count:int) -> void:
 	var fx := CPUParticles3D.new()

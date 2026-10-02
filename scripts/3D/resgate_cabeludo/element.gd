@@ -1,5 +1,7 @@
 extends Node3D
 
+const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
+
 @export_enum("crate", "bounce_crate", "pentagram", "spring", "hazard", "checkpoint", "blood", "butterfly") var kind:String = "crate"
 @export var bounces:int = 5
 @export var travel:Vector3 = Vector3.ZERO
@@ -54,13 +56,15 @@ func _physics_process(delta:float) -> void:
 	var horizontal := Vector2(diff.x, diff.z).length()
 	match kind:
 		"crate", "bounce_crate":
-			# Detectar também o pouso já resolvido pelo CharacterBody3D.
-			if cooldown <= 0.0 and horizontal < 0.95 and diff.y > 0.8 and diff.y < 1.35 and player.velocity.y <= 0.1:
-				player.bounce()
+			# Basta passar por cima ou encostar: a caixa joga o Maycon para cima de
+			# leve e estoura em poeira, sem precisar de pulo certeiro.
+			if cooldown <= 0.0 and horizontal < 1.25 and diff.y > -0.6 and diff.y < 1.8:
+				player.soft_bounce()
 				cooldown = 0.24
 				remaining -= 1
 				stage.release_pentagrams(global_position + Vector3.UP * 1.5, 1 if kind == "bounce_crate" else 3)
 				stage.sound("wood")
+				POEIRA.aterrar(stage, global_position + Vector3.UP * 0.4)
 				if kind == "crate" or remaining <= 0:
 					stage.burst(global_position + Vector3.UP * 0.5, Color("c89152"), 12)
 					retire()
@@ -70,7 +74,7 @@ func _physics_process(delta:float) -> void:
 				if kind == "blood":
 					stage.heal(18.0)
 				else:
-					stage.collect()
+					stage.collect(global_position)
 				retire()
 		"spring":
 			if horizontal < 1.5 and diff.y > -0.2 and diff.y < 1.6 and cooldown <= 0.0:

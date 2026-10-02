@@ -3,15 +3,23 @@ extends "res://scripts/3D/platform_maycon.gd"
 const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
 const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 
-@export var run_speed:float = 7.8
+# Corrida 10% mais rápida que os 7,8 originais.
+@export var run_speed:float = 8.58
 # A fase corre sozinha: o jogador só desvia, pula e sobrevive.
 @export var auto_run:bool = true
+# Dash curto, pago em pentagramas, invencível enquanto dura.
+const DASH_COST := 3
+const DASH_TIME := 0.2
+const DASH_SPEED := 22.0
 var arena_mode:bool = false
 var launch_time:float = 0.0
 var launch_velocity:Vector3
 var jump_dust:GPUParticles3D
 var was_airborne:bool = false
 var pending_landing:bool = false
+var dash_time:float = 0.0
+var dash_velocity:Vector3
+var dash_trail_clock:float = 0.0
 
 func _ready() -> void:
 	super._ready()
@@ -20,8 +28,10 @@ func _ready() -> void:
 	visual.rotation.y = PI
 	control_enabled = false
 
-func _unhandled_input(_event:InputEvent) -> void:
-	pass # A câmera pertence à fase, nunca ao mouse.
+func _unhandled_input(event:InputEvent) -> void:
+	# A câmera pertence à fase, nunca ao mouse; aqui só escutamos o dash.
+	if event.is_action_pressed("dash_resgate"):
+		try_dash()
 
 func _process(delta:float) -> void:
 	if not control_enabled:
@@ -41,7 +51,17 @@ func _physics_process(delta:float) -> void:
 	_update_fart_puffs(delta)
 	if not control_enabled or dying:
 		return
-	if launch_time > 0.0:
+	if dash_time > 0.0:
+		dash_time -= delta
+		velocity = dash_velocity
+		dash_trail_clock -= delta
+		if dash_trail_clock <= 0.0:
+			dash_trail_clock = 0.035
+			_spawn_dash_ghost()
+		if dash_time <= 0.0:
+			set_invincible(false)
+			velocity = dash_velocity * 0.35
+	elif launch_time > 0.0:
 		launch_time -= delta
 		velocity.x = launch_velocity.x
 		velocity.z = launch_velocity.z
@@ -68,7 +88,7 @@ func _physics_process(delta:float) -> void:
 	else:
 		coyote_time = maxf(0.0, coyote_time - delta)
 	jump_buffer = 0.14 if Input.is_action_just_pressed("ui_accept") else maxf(0.0, jump_buffer - delta)
-	if jump_buffer > 0.0 and launch_time <= 0.0 and (coyote_time > 0.0 or jumps == 1):
+	if jump_buffer > 0.0 and launch_time <= 0.0 and dash_time <= 0.0 and (coyote_time > 0.0 or jumps == 1):
 		if jumps == 1:
 			_spawn_fart()
 		velocity.y = 8.9 if jumps == 0 else 8.1
@@ -77,7 +97,8 @@ func _physics_process(delta:float) -> void:
 		jump_buffer = 0.0
 		jump_audio.play()
 		POEIRA.saltar(get_parent(), global_position)
-	velocity.y -= 23.0 * delta
+	if dash_time <= 0.0:
+		velocity.y -= 23.0 * delta
 	if Input.is_action_just_released("ui_accept") and velocity.y > 3.5 and launch_time <= 0.0:
 		velocity.y *= 0.62
 	move_and_slide()
@@ -122,7 +143,7 @@ func launch_to(target:Vector3, duration:float) -> void:
 	was_airborne = true
 
 func receive_damage(amount:float, source:Vector3) -> void:
-	if not control_enabled or hurt_time > 0.0 or dying:
+	if not control_enabled or hurt_time > 0.0 or dying or is_invincible:
 		return
 	hurt_time = 1.6
 	get_parent().damage(amount)
@@ -130,9 +151,8 @@ func receive_damage(amount:float, source:Vector3) -> void:
 	velocity += Vector3(away.x * 4, 4, away.z * 2)
 	Input.start_joy_vibration(0, 0.35, 0.55, 0.2)
 	_splash_blood()
-	# Pancada levanta poeira para todo lado, junto com o sangue.
-	POEIRA.pousar(get_parent(), global_position)
-	POEIRA.impulsionar(get_parent(), global_position + Vector3.UP * 0.8)
+	# Pancada levanta poeira junto com o sangue, numa baforada só.
+	POEIRA.aterrar(get_parent(), global_position)
 
 # Mesmo espirro das lutas: muito sangue para todo lado a cada pancada.
 func _splash_blood() -> void:
@@ -143,3 +163,50 @@ func _splash_blood() -> void:
 		blood.scale = Vector3.ONE * randf_range(2.0, 3.4)
 		stage.get_node("Effects").add_child(blood)
 		get_tree().create_timer(2.5).timeout.connect(blood.queue_free)
+
+# A caixa empurra o Maycon para cima de leve, sem o impulso cheio do pisão.
+func soft_bounce() -> void:
+	velocity.y = maxf(velocity.y, 6.2)
+	jumps = 1
+	jump_buffer = 0.0
+	_play_animation("Air_Flail")
+
+func try_dash() -> void:
+	if not control_enabled or dying or dash_time > 0.0 or launch_time > 0.0:
+		return
+	var stage:Node3D = get_parent()
+	if not stage.spend_pentagrams(DASH_COST):
+		return
+	var input := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	# Para frente e para os lados, nunca para trás.
+	var direction := Vector3(input.x, 0.0, minf(input.y, 0.0))
+	if direction.length_squared() < 0.01:
+		direction = Vector3(0, 0, -1)
+	dash_velocity = direction.normalized() * DASH_SPEED
+	dash_velocity.y = 0.0
+	dash_time = DASH_TIME
+	dash_trail_clock = 0.0
+	set_invincible(true)
+	jump_audio.play()
+	POEIRA.saltar(stage, global_position)
+
+# Rastro do dash: silhuetas que ficam para trás e se apagam.
+func _spawn_dash_ghost() -> void:
+	var forma := CapsuleMesh.new()
+	forma.radius = 0.36
+	forma.height = 1.65
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.albedo_color = Color(1.0, 0.86, 0.3, 0.42)
+	var ghost := MeshInstance3D.new()
+	ghost.name = "RastroDoDash"
+	ghost.mesh = forma
+	ghost.material_override = mat
+	get_parent().get_node("Effects").add_child(ghost)
+	ghost.global_position = global_position + Vector3.UP * 0.83
+	var apagar := get_parent().create_tween().bind_node(ghost)
+	apagar.tween_property(mat, "albedo_color:a", 0.0, 0.3)
+	apagar.parallel().tween_property(ghost, "scale", Vector3.ONE * 0.6, 0.3)
+	apagar.tween_callback(ghost.queue_free)
