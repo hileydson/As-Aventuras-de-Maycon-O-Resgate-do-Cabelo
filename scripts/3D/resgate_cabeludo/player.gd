@@ -15,7 +15,13 @@ const DASH_SPEED := 22.0
 const DASH_GHOST_COLOR := Color(0.25, 0.85, 1.0, 0.22)
 const DASH_STREAK_COLOR := Color(0.35, 0.90, 1.0, 0.20)
 const DASH_BLUR := 0.62
+# Soco da batalha final: rápido, curto e só dentro da arena.
+const PUNCH_TIME := 0.26
+const PUNCH_REACH := 3.4
+const PUNCH_ANIM_SPEED := 3.2
 var arena_mode:bool = false
+var punch_time:float = 0.0
+var punch_hit:bool = false
 var launch_time:float = 0.0
 var launch_velocity:Vector3
 var jump_dust:GPUParticles3D
@@ -42,6 +48,9 @@ func _unhandled_input(event:InputEvent) -> void:
 	# A câmera pertence à fase, nunca ao mouse; aqui só escutamos o dash.
 	if event.is_action_pressed("dash_resgate"):
 		try_dash()
+	# O soco existe só na batalha contra o Lips.
+	elif event.is_action_pressed("soco_resgate") and arena_mode:
+		try_punch()
 
 func _process(delta:float) -> void:
 	if not control_enabled:
@@ -50,9 +59,10 @@ func _process(delta:float) -> void:
 	var focus := global_position + Vector3(0, 1.3, -4.0)
 	var desired := global_position + Vector3(0, 2.8, 5.6)
 	if arena_mode:
-		# Recuada além da entrada para enquadrar o player desde o primeiro passo na arena.
-		desired = Vector3(global_position.x * 0.3, 17, -1758)
-		focus = Vector3(global_position.x * 0.3, 3.0, -1796)
+		# Terceira pessoa colada nele, com a mira à direita para o Maycon ficar
+		# do lado esquerdo da tela.
+		desired = global_position + Vector3(2.0, 2.6, 5.2)
+		focus = global_position + Vector3(1.9, 1.3, -2.0)
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-8.0 * delta))
 	camera.look_at(focus)
 	if camera_shake > 0.0:
@@ -124,8 +134,11 @@ func _physics_process(delta:float) -> void:
 		velocity.x = 0.0
 	_update_landing_dust()
 	var moving := Vector2(velocity.x, velocity.z).length() > 0.2
-	_play_animation("Air_Flail" if not is_on_floor() else "Arise" if moving else "Walking")
-	animation_player.speed_scale = 0.62 if not is_on_floor() else 1.0
+	if punch_time > 0.0:
+		_update_punch(delta)
+	else:
+		_play_animation("Air_Flail" if not is_on_floor() else "Arise" if moving else "Walking")
+		animation_player.speed_scale = 0.62 if not is_on_floor() else 1.0
 	visual.visible = hurt_time <= 0.0 or fmod(hurt_time, 0.16) < 0.08
 	if global_position.y < get_parent().fall_limit(global_position.z):
 		get_parent().respawn()
@@ -192,6 +205,80 @@ func soft_bounce() -> void:
 	jumps = 1
 	jump_buffer = 0.0
 	_play_animation("Air_Flail")
+
+# Soco da batalha final: a animação Dead do Maycon acelerada, com o estalo e o
+# tranco de câmera. Sem a animação importada, o braço é lançado na mão.
+func try_punch() -> void:
+	if not control_enabled or dying or punch_time > 0.0 or dash_time > 0.0 or launch_time > 0.0:
+		return
+	punch_time = PUNCH_TIME
+	punch_hit = false
+	var stage:Node3D = get_parent()
+	stage.sound("hit")
+	camera_shake = maxf(camera_shake, 0.1)
+	if animation_player != null and animation_player.has_animation("Dead"):
+		animation_player.speed_scale = PUNCH_ANIM_SPEED
+		animation_player.play("Dead")
+
+func _update_punch(delta:float) -> void:
+	punch_time -= delta
+	var andado:float = 1.0 - clampf(punch_time / PUNCH_TIME, 0.0, 1.0)
+	if animation_player == null or not animation_player.has_animation("Dead"):
+		_pose_punch(andado)
+	# O golpe entra no meio do movimento, uma vez só por soco.
+	if not punch_hit and andado > 0.35:
+		punch_hit = true
+		_punch_contact()
+	if punch_time <= 0.0:
+		punch_time = 0.0
+		if visual_skeleton != null:
+			visual_skeleton.reset_bone_poses()
+		if animation_player != null:
+			animation_player.speed_scale = 1.0
+
+# Braço direito lançado para frente e o tronco acompanhando, a partir do descanso
+# de cada osso.
+func _pose_punch(andado:float) -> void:
+	if visual_skeleton == null:
+		return
+	visual_skeleton.reset_bone_poses()
+	# Recolhe, estende e volta: o pico do golpe fica no meio.
+	var golpe := sin(clampf(andado, 0.0, 1.0) * PI)
+	_pose_bone("Spine", Vector3(0.0, -0.3 * golpe, 0.0))
+	_pose_bone("Spine02", Vector3(0.06 * golpe, -0.2 * golpe, 0.0))
+	_pose_bone("RightShoulder", Vector3(0.0, -0.24 * golpe, 0.12 * golpe))
+	_pose_bone("RightArm", Vector3(lerpf(0.2, -0.45, golpe), -0.18, lerpf(-0.8, -0.3, golpe)))
+	_pose_bone("RightForeArm", Vector3(lerpf(1.2, 0.05, golpe), 0.0, -0.12))
+	_pose_bone("LeftArm", Vector3(0.1, 0.18, 0.95))
+	_pose_bone("LeftForeArm", Vector3(0.9, 0.0, 0.2))
+	_pose_bone("Head", Vector3(0.05 * golpe, -0.1 * golpe, 0.0))
+
+func _pose_bone(nome:String, euler:Vector3) -> void:
+	var osso := visual_skeleton.find_bone(nome)
+	if osso < 0:
+		return
+	var descanso := visual_skeleton.get_bone_rest(osso).basis.get_rotation_quaternion()
+	visual_skeleton.set_bone_pose_rotation(osso, descanso * Quaternion.from_euler(euler))
+
+# Quem estiver na frente leva: o Lips perde um ponto, os inimigos morrem.
+func _punch_contact() -> void:
+	var stage:Node3D = get_parent()
+	# O modelo aponta para o próprio +z: o soco sai por ali.
+	var frente := visual.global_transform.basis.z
+	var alvo := global_position + Vector3(frente.x, 0.0, frente.z).normalized() * PUNCH_REACH * 0.5 + Vector3.UP
+	POEIRA.saltar(stage, alvo)
+	stage.burst(alvo, Color("fff0b8"), 16)
+	var boss:Node3D = stage.boss
+	if is_instance_valid(boss) and boss.active:
+		var diff := boss.global_position - global_position
+		if Vector2(diff.x, diff.z).length() < PUNCH_REACH:
+			boss.receive_hit()
+	for inimigo in get_tree().get_nodes_in_group("resgate_enemies"):
+		if not inimigo.active:
+			continue
+		var para := (inimigo as Node3D).global_position - global_position
+		if Vector2(para.x, para.z).length() < PUNCH_REACH and absf(para.y) < 2.4:
+			inimigo.defeat()
 
 func try_dash() -> void:
 	if not control_enabled or dying or dash_time > 0.0 or launch_time > 0.0:

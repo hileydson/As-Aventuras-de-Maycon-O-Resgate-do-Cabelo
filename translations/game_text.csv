@@ -466,3 +466,4 @@ RESGATE_LIFE,VIDA,LIFE,VIDA,生命
 RESGATE_PAUSE,PAUSADO · Esc para continuar,PAUSED · Esc to resume,PAUSA · Esc para continuar,已暂停 · Esc 继续
 RESGATE_BOSS_HINT,Suba nas pedras e pule na cabeça do Lips! Fuja do círculo antes do impacto!,Climb the rocks and jump on Lips's head! Leave the circle before impact!,¡Sube a las rocas y salta sobre Lips! ¡Sal del círculo antes del impacto!,爬上岩石并跳到利普斯头上！在落地前离开圆圈！
 RESGATE_BOSS_HP,LIPS  %d / 4,LIPS  %d / 4,LIPS  %d / 4,利普斯  %d / 4
+RESGATE_HOME,"Vamos pra casa amigo....","Let's go home, buddy....","Vamos a casa, amigo....",我们回家吧，朋友……

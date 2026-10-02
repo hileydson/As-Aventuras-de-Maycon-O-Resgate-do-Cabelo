@@ -1,21 +1,30 @@
 extends Node3D
 
+const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
+
 @export var max_hp:int = 4
-@export var slam_radius:float = 6.0
+# Ele corre solto pela arena, sem rumo, arrebentando o que estiver na frente.
+const CORRIDA := 9.0
+const LIMITE_X := 16.0
+const LIMITE_Z := 13.0
+const ESTRAGO := 2.6
 var hp:int = 4
 var active:bool = false
-var state:String = "run"
 var clock:float = 0.0
 var invulnerable:float = 0.0
-var origin:Vector3
 var target:Vector3
 var stage:Node3D
+var centro:Vector3
+# Tudo o que ele pode destruir na arena, com o que precisa ser desligado em cada peça.
+var destrutiveis:Array[Node3D] = []
+var destruidos:int = 0
 @onready var animation:AnimationPlayer = $Visual.find_child("AnimationPlayer", true, false)
 @onready var skeleton:Skeleton3D = $Visual.find_child("Skeleton3D", true, false) as Skeleton3D
 
 func _ready() -> void:
 	stage = get_tree().get_first_node_in_group("resgate_stage")
 	hp = max_hp
+	centro = position
 	play("Belly_Flop")
 	if animation and animation.is_playing():
 		animation.seek(animation.current_animation_length, true)
@@ -28,13 +37,58 @@ func play(anim:String) -> void:
 func start() -> void:
 	hp = max_hp
 	active = true
-	state = "run"
 	clock = 0.0
 	invulnerable = 1.0
 	if animation:
 		animation.stop()
 	if skeleton:
 		skeleton.reset_bone_poses()
+	$Warning.visible = false
+	colher_destrutiveis()
+	sortear_destino()
+
+# Pega o cenário da arena, menos o chão, as paredes, o portão, a jaula e ele mesmo.
+func colher_destrutiveis() -> void:
+	destrutiveis.clear()
+	var arena:Node3D = get_parent()
+	var fixos := ["Floor", "Cliff", "ClimbStep", "EndWall", "Gate", "Lips", "Jaula"]
+	for filho in arena.get_children():
+		if filho == self or fixos.has(filho.name) or not filho is Node3D:
+			continue
+		destrutiveis.append(filho as Node3D)
+
+func sortear_destino() -> void:
+	# Destino qualquer dentro da arena, longe do ponto onde ele está.
+	for _tentativa in 8:
+		var escolha := centro + Vector3(randf_range(-LIMITE_X, LIMITE_X), 0.0, randf_range(-LIMITE_Z, LIMITE_Z))
+		if Vector2(escolha.x - position.x, escolha.z - position.z).length() > 9.0:
+			target = escolha
+			return
+	target = centro
+
+# Arrebenta o que estiver no caminho: a peça sai de cena com poeira e estrondo.
+func destruir(peca:Node3D) -> void:
+	peca.visible = false
+	for forma in peca.find_children("*", "CollisionShape3D", true, false):
+		(forma as CollisionShape3D).disabled = true
+	if peca is StaticBody3D:
+		(peca as StaticBody3D).collision_layer = 0
+	destruidos += 1
+	if is_instance_valid(stage):
+		stage.sound("wood")
+		stage.burst(peca.global_position + Vector3.UP, Color("8a6a3c"), 20)
+		POEIRA.aterrar(stage, peca.global_position + Vector3.UP * 0.3)
+
+func quebrar_no_caminho() -> void:
+	for i in range(destrutiveis.size() - 1, -1, -1):
+		var peca:Node3D = destrutiveis[i]
+		if not is_instance_valid(peca):
+			destrutiveis.remove_at(i)
+			continue
+		var diff := peca.global_position - global_position
+		if Vector2(diff.x, diff.z).length() < ESTRAGO:
+			destrutiveis.remove_at(i)
+			destruir(peca)
 
 func _physics_process(delta:float) -> void:
 	if not active or not stage.player.control_enabled:
@@ -42,63 +96,45 @@ func _physics_process(delta:float) -> void:
 	clock += delta
 	invulnerable = maxf(0.0, invulnerable - delta)
 	var player:CharacterBody3D = stage.player
-	match state:
-		"run":
-			position.x = sin(clock * 1.1) * 9.0
-			$Visual.position.y = 2.28 + absf(sin(clock * 8.0)) * 0.13
-			$Visual.rotation.y = PI * 0.5 if cos(clock * 1.1) > 0.0 else -PI * 0.5
-			pose_running(clock * 8.0)
-			if clock >= 4.0:
-				state = "warn"
-				clock = 0.0
-				target = Vector3(clampf(player.position.x, -11, 11), 0, clampf(player.position.z, -1812, -1788))
-				$Warning.global_position = target + Vector3.UP * 0.08
-				$Warning.visible = true
-				play("Jump_Prep")
-		"warn":
-			$Warning.scale = Vector3.ONE * (0.85 + sin(clock * 15) * 0.1)
-			if clock >= 1.3:
-				state = "jump"
-				clock = 0.0
-				origin = global_position
-				stage.sound("grunt")
-				play("Jump_Ascent")
-		"jump":
-			var t := minf(clock / 2.0, 1.0)
-			global_position = origin.lerp(target, t) + Vector3.UP * sin(t * PI) * 14.0
-			$Warning.global_position = target + Vector3.UP * 0.08
-			if t >= 1.0:
-				state = "rest"
-				clock = 0.0
-				$Warning.visible = false
-				play("Belly_Flop")
-				stage.sound("slam")
-				stage.burst(global_position, Color("c9b785"), 28)
-				if Vector2(player.position.x - position.x, player.position.z - position.z).length() < slam_radius and player.position.y < 1.6:
-					player.receive_damage(30, global_position)
-		"rest":
-			if clock > 3.6:
-				state = "run"
-				clock = 0.0
-				if animation:
-					animation.stop()
-				if skeleton:
-					skeleton.reset_bone_poses()
+	# Corrida sem rumo pela arena, trocando de destino ao chegar.
+	var rumo := Vector3(target.x - position.x, 0.0, target.z - position.z)
+	if rumo.length() < 1.2:
+		sortear_destino()
+	else:
+		var passo := rumo.normalized() * CORRIDA * delta
+		position.x += passo.x
+		position.z += passo.z
+		$Visual.rotation.y = atan2(passo.x, passo.z)
+	position.x = clampf(position.x, centro.x - LIMITE_X, centro.x + LIMITE_X)
+	position.z = clampf(position.z, centro.z - LIMITE_Z, centro.z + LIMITE_Z)
+	$Visual.position.y = 2.28 + absf(sin(clock * 9.0)) * 0.16
+	pose_running(clock * 9.0)
+	quebrar_no_caminho()
 	var diff := player.global_position - global_position
 	var horizontal := Vector2(diff.x, diff.z).length()
-	if horizontal < 2.2 and diff.y > 3.2 and diff.y < 5.5 and player.velocity.y < -1.0 and invulnerable <= 0.0:
-		hp -= 1
-		invulnerable = 2.0
+	# O pisão na cabeça continua valendo, mesmo com ele correndo.
+	if horizontal < 2.6 and diff.y > 3.0 and diff.y < 5.8 and player.velocity.y < -1.0 and invulnerable <= 0.0:
 		player.bounce()
-		stage.sound("hit")
-		stage.burst(global_position + Vector3.UP * 4, Color("ffdb6a"), 22)
-		stage.update_hud()
-		if hp <= 0:
-			active = false
-			play("Belly_Flop")
-			stage.finish()
-	elif horizontal < 1.8 and diff.y < 3.2 and diff.y > -1.0 and state != "rest":
+		receive_hit()
+	elif horizontal < 2.0 and diff.y < 3.2 and diff.y > -1.0:
 		player.receive_damage(20, global_position)
+
+# Soco e pisão descontam a mesma coisa, com uma janela de folga entre dois golpes.
+func receive_hit() -> void:
+	if not active or invulnerable > 0.0:
+		return
+	hp -= 1
+	invulnerable = 0.9
+	stage.sound("hit")
+	stage.burst(global_position + Vector3.UP * 4, Color("ffdb6a"), 22)
+	stage.update_hud()
+	if hp <= 0:
+		active = false
+		play("Belly_Flop")
+		if skeleton:
+			skeleton.reset_bone_poses()
+		$Visual.position.y = 0.6
+		stage.finish()
 
 func pose_running(phase:float) -> void:
 	if not skeleton:

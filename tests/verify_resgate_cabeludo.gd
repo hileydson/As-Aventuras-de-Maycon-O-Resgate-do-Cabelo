@@ -264,6 +264,11 @@ func run() -> void:
 	press_action("dash_resgate")
 	await step(2)
 	ok("dash custa 3 pentagramas", stage.pentagrams == 4, "pentagramas=%d" % stage.pentagrams)
+	# O contador mostra o desconto: o troco sobe e o painel leva um soco.
+	var troco:Label = stage.get_node("HUD").get_node_or_null("PentagramaGasto") as Label
+	ok("contador mostra o desconto do dash", troco != null and troco.text == "-3", "troco='%s'" % (troco.text if troco else ""))
+	ok("contador de pentagramas leva um soco", stage.pentagram_panel.scale.x > 1.05, "escala=%.2f" % stage.pentagram_panel.scale.x)
+	var troco_y:float = troco.position.y if troco != null else 0.0
 	ok("dash deixa o Maycon invencivel", player.is_invincible, "invencivel=%s" % player.is_invincible)
 	ok("dash nao acende a capsula amarela", not player.invincibility_aura.visible, "aura visivel=%s" % player.invincibility_aura.visible)
 	# O Godot renomeia nos repetidos, entao a contagem olha a malha, nao o nome.
@@ -298,6 +303,8 @@ func run() -> void:
 		guard += 1
 		await physics_frame
 	ok("rastro do dash se apaga sozinho", player.dash_ghosts.is_empty(), "sobrou=%d" % player.dash_ghosts.size())
+	ok("o troco do pentagrama sobe e apaga", not is_instance_valid(troco) or (troco.position.y < troco_y and troco.modulate.a < 1.0), "subiu e sumiu")
+	ok("contador volta ao tamanho normal", is_equal_approx(stage.pentagram_panel.scale.x, 1.0), "escala=%.2f" % stage.pentagram_panel.scale.x)
 	await settle(lane)
 	stage.pentagrams = 9
 	Input.action_press("ui_down")
@@ -453,7 +460,7 @@ func run() -> void:
 	var sujos:Array[String] = []
 	for i in estado.get_node_count():
 		var nome:String = str(estado.get_node_name(i))
-		if nome in ["PauseFofo", "LinhasDeVento", "MotionBlur", "Pentagramas", "Vida", "Battle", "Ambiente", "maycon_3d_model_ia_animations"] or nome.begins_with("@AudioStreamPlayer"):
+		if nome in ["PauseFofo", "LinhasDeVento", "MotionBlur", "Pentagramas", "Vida", "Battle", "Ambiente", "maycon_3d_model_ia_animations", "Jaula", "SangueDoLips", "Maycon2D", "Despedida", "Impacto"] or nome.begins_with("@AudioStreamPlayer"):
 			if not sujos.has(nome):
 				sujos.append(nome)
 	ok("cena salva sem nos criados em tempo de execucao", sujos.is_empty(), "sujos=%s" % str(sujos))
@@ -481,7 +488,8 @@ func run() -> void:
 		ok("balanco zero deixa o osso no descanso", false, "sem Skeleton3D no Lips")
 
 	print("-- Cabelo da arena --")
-	var cabelo:Node = stage.get_node_or_null("Arena/Lips/Hair")
+	# Depois da chegada do Lips ele fica trancado na jaula, não mais nas costas.
+	var cabelo:Node = stage.cage.get_node_or_null("Hair")
 	ok("cabelo da arena e o AnimatedSprite3D da cutscene", cabelo is AnimatedSprite3D and cabelo.sprite_frames != null, "tipo=%s" % (cabelo.get_class() if cabelo else "<ausente>"))
 
 	print("-- Arena final --")
@@ -497,9 +505,153 @@ func run() -> void:
 	await step(60)
 	ok("Lips entra em acao com 4 pontos", stage.boss.active and stage.boss.hp == 4, "ativo=%s hp=%d" % [stage.boss.active, stage.boss.hp])
 	framed("na arena final")
+	await check_arena_battle()
+	await check_victory()
 
 	print("=== FALHAS: %d ===" % fails)
 	quit(1 if fails > 0 else 0)
+
+# Batalha nova: jaula com o cabelo, Lips correndo e destruindo, camera na
+# esquerda, soco e sangue do chefe embaixo.
+func check_arena_battle() -> void:
+	print("-- Batalha contra o Lips --")
+	var jaula:RigidBody3D = stage.cage
+	ok("jaula de metal fica na arena", jaula != null and jaula.get_parent() == stage.get_node("Arena"), "pai=%s" % (jaula.get_parent().name if jaula else "-"))
+	ok("jaula pesa quase nada", jaula != null and jaula.mass < 1.0 and jaula.physics_material_override != null and jaula.physics_material_override.bounce > 0.5, "massa=%.2f quique=%.2f" % [jaula.mass, jaula.physics_material_override.bounce])
+	var cabelo:AnimatedSprite3D = jaula.get_node_or_null("Hair") as AnimatedSprite3D
+	ok("cabelo esta dentro da jaula", cabelo != null, "no Hair na jaula")
+	ok("cabelo fica sempre de frente (billboard)", cabelo != null and cabelo.billboard == BaseMaterial3D.BILLBOARD_ENABLED, "billboard=%d" % (cabelo.billboard if cabelo else -1))
+	ok("jaula tem barras de metal", jaula != null and jaula.find_children("*", "MeshInstance3D", false, false).size() > 20, "barras=%d" % jaula.find_children("*", "MeshInstance3D", false, false).size())
+	# Encostar nela joga a jaula para o lado.
+	var antes:Vector3 = jaula.global_position
+	place(Vector3(antes.x, 0.4, antes.z + 1.5))
+	player.arena_mode = true
+	await step(30)
+	var andou:float = Vector2(jaula.global_position.x - antes.x, jaula.global_position.z - antes.z).length()
+	ok("jaula quica para o lado quando alguem encosta", andou > 0.5, "andou %.2f m" % andou)
+	# Sangue do Lips embaixo, no meio da tela.
+	var barra:TextureProgressBar = stage.boss_bar
+	var rect := root.get_viewport().get_visible_rect()
+	await step(2)
+	var centro_x:float = barra.global_position.x + barra.size.x * 0.5
+	ok("sangue do Lips aparece embaixo e centralizado", barra.visible and absf(centro_x - rect.size.x * 0.5) < 2.0 and barra.global_position.y > rect.size.y * 0.75, "x=%.0f y=%.0f" % [centro_x, barra.global_position.y])
+	ok("barra do chefe usa a textura de sangue", barra.texture_progress == load("res://assets/novas_imagens/objects/sangue_fill.png"), "textura de sangue")
+	# Terceira pessoa perto, com o Maycon do lado esquerdo da tela.
+	place(Vector3(0, 0.4, -1800))
+	player.arena_mode = true
+	await step(30)
+	var alvo:Vector3 = player.global_position + Vector3.UP
+	var tela:Vector2 = stage.camera.unproject_position(alvo)
+	var perto:float = stage.camera.global_position.distance_to(player.global_position)
+	ok("camera da batalha fica perto do Maycon", perto < 7.0, "distancia=%.1f m" % perto)
+	ok("Maycon fica do lado esquerdo da tela", tela.x < rect.size.x * 0.45 and tela.x > 0.0, "x=%.0f de %.0f" % [tela.x, rect.size.x])
+	# Lips corre pelo cenario e arrebenta o que encontra.
+	var lips:Node3D = stage.boss
+	lips.start()
+	var inicio:Vector3 = lips.global_position
+	var longe:float = 0.0
+	for _i in 180:
+		await physics_frame
+		longe = maxf(longe, Vector2(lips.global_position.x - inicio.x, lips.global_position.z - inicio.z).length())
+	ok("Lips corre pela arena", longe > 6.0, "afastou %.1f m" % longe)
+	ok("Lips tem o cenario da arena para arrebentar", lips.destrutiveis.size() > 0, "pecas=%d" % lips.destrutiveis.size())
+	# Manda ele em cima de uma peca para conferir o estrago. Ela tem de estar
+	# dentro do trecho onde ele corre, senao ele nunca chega nela.
+	var peca:Node3D = lips.destrutiveis[0]
+	for item in lips.destrutiveis:
+		var onde:Vector3 = (item as Node3D).global_position
+		if absf(onde.x - lips.centro.x) < lips.LIMITE_X - 2.0 and absf(onde.z - lips.centro.z) < lips.LIMITE_Z - 2.0:
+			peca = item
+			break
+	var quebradas:int = lips.destruidos
+	lips.target = peca.global_position
+	var guard:int = 0
+	while guard < 400 and peca.visible:
+		guard += 1
+		await physics_frame
+		lips.target = peca.global_position
+	ok("Lips destroi o cenario pelo caminho", lips.destruidos > quebradas, "pecas quebradas=%d" % lips.destruidos)
+	ok("a peca destruida sai de cena", not peca.visible, "visivel=%s" % peca.visible)
+	# O soco não existe fora da arena.
+	place(Vector3(0, 0.4, 0))
+	press_action("soco_resgate")
+	await step(4)
+	ok("soco nao sai fora da arena", player.punch_time <= 0.0, "soco=%.2f" % player.punch_time)
+	# Dentro dela ele acerta o Lips e tira um ponto.
+	lips.position = Vector3(0, 0, -1800)
+	lips.target = lips.position
+	place(Vector3(0, 0.4, -1798))
+	player.arena_mode = true
+	player.visual.rotation.y = PI
+	lips.invulnerable = 0.0
+	var vida_lips:int = lips.hp
+	press_action("soco_resgate")
+	await step(2)
+	ok("soco sai na batalha", player.punch_time > 0.0, "soco=%.2f" % player.punch_time)
+	await step(20)
+	ok("soco tira um ponto do Lips", lips.hp == vida_lips - 1, "hp=%d antes=%d" % [lips.hp, vida_lips])
+	ok("soco e rapido e acaba sozinho", player.punch_time <= 0.0, "soco=%.2f" % player.punch_time)
+	# O dash continua valendo na batalha.
+	stage.pentagrams = 5
+	press_action("dash_resgate")
+	await step(2)
+	ok("dash continua valendo na batalha", player.dash_time > 0.0, "dash=%.2f" % player.dash_time)
+	await step(30)
+
+# Zerar a fase: Maycon levanta, vai ate a jaula, vira 2D e a frase fica na tela.
+func check_victory() -> void:
+	print("-- Cutscene de vitoria --")
+	var lips:Node3D = stage.boss
+	# Lips paradinho ao alcance do soco, com um ponto só de vida.
+	lips.position = Vector3(0, 0, -1800)
+	lips.target = lips.position
+	place(Vector3(0, 0.4, -1798))
+	player.arena_mode = true
+	player.visual.rotation.y = PI
+	lips.active = true
+	lips.hp = 1
+	lips.invulnerable = 0.0
+	press_action("soco_resgate")
+	await step(20)
+	ok("vencer o Lips comeca o fim da fase", stage.finishing, "finishing=%s" % stage.finishing)
+	ok("sangue do chefe sai da tela no fim", not stage.boss_bar.visible, "visivel=%s" % stage.boss_bar.visible)
+	# Ele cai no chao antes de levantar.
+	await step(10)
+	ok("Maycon cai no chao antes de levantar", absf(player.visual.rotation.x + PI * 0.5) < 0.2 or (player.animation_player != null and player.animation_player.has_animation("RunFast")), "rot.x=%.2f" % player.visual.rotation.x)
+	var guard:int = 0
+	var dois_d:Sprite3D = null
+	while guard < 900 and dois_d == null:
+		guard += 1
+		await physics_frame
+		dois_d = stage.get_node("Effects").get_node_or_null("Maycon2D") as Sprite3D
+	ok("Maycon vira o Maycon 2D do menu", dois_d != null and dois_d.texture == load("res://assets/novas_imagens/maycon/jamelao_float_1.png"), "sprite do menu")
+	ok("camera fica nas costas do Maycon", stage.camera.global_position.z > player.global_position.z, "camera z=%.1f player z=%.1f" % [stage.camera.global_position.z, player.global_position.z])
+	ok("Maycon andou ate a jaula", player.global_position.distance_to(stage.cage.global_position) < 5.0, "distancia=%.1f m" % player.global_position.distance_to(stage.cage.global_position))
+	# A troca e lenta: o 3D desaparece e o 2D aparece.
+	guard = 0
+	while guard < 900 and player.visual.visible:
+		guard += 1
+		await physics_frame
+	ok("troca de 3D para 2D e lenta", guard > 60, "levou %.1f s" % (float(guard) / 60.0))
+	ok("Maycon 2D fica visivel no lugar dele", dois_d != null and dois_d.modulate.a > 0.9, "alfa=%.2f" % (dois_d.modulate.a if dois_d else 0.0))
+	# A frase entra devagar e fica seis segundos.
+	guard = 0
+	var frase:Label = null
+	while guard < 600 and frase == null:
+		guard += 1
+		await physics_frame
+		frase = stage.get_node("HUD").get_node_or_null("Despedida") as Label
+	ok("frase de despedida entra no meio da tela", frase != null and frase.text == tr("RESGATE_HOME"), "texto='%s'" % (frase.text if frase else ""))
+	guard = 0
+	while guard < 240 and frase.modulate.a < 0.99:
+		guard += 1
+		await physics_frame
+	ok("frase entra devagar", guard > 60, "levou %.1f s" % (float(guard) / 60.0))
+	var parada:int = 0
+	while parada < 600 and stage.fade.color.a < 0.05 and is_instance_valid(frase):
+		parada += 1
+		await physics_frame
+	ok("frase fica uns 6 segundos antes do fade", parada > 300, "ficou %.1f s" % (float(parada) / 60.0))
 
 # O Godot renomeia nós repetidos, então a contagem olha o tipo, não o nome.
 func eh_planta(nome:String) -> bool:
@@ -556,6 +708,8 @@ func check_lips_arrival() -> void:
 	await step(6)
 	var alto:float = lips.position.y
 	var cabelo:bool = lips.has_node("Hair")
+	# A referencia e pega agora porque no fim da pancada ele sai das costas do Lips.
+	var cabeca:Node3D = lips.get_node("Hair")
 	# O rastro so nasce depois do fade de entrada, por isso a espera.
 	await step(34)
 	var rastro:bool = lips.has_node("PoeiraDoSalto")
@@ -578,20 +732,43 @@ func check_lips_arrival() -> void:
 	ok("poeira sai do Lips durante a queda", rastro, "rastro preso nele")
 	ok("Lips pousa na arena em cerca de 4 s", segundos > 2.5 and segundos < 5.0, "levou %.1f s" % segundos)
 	ok("pouso do Lips joga poeira para todo lado", poeira >= 14, "estouros=%d" % poeira)
-	# A cutscene espera a pancada acabar: nada anda enquanto ela toca.
-	var cam_parada:float = intro.get_node("Camera3D").position.z
-	await step(60)
-	var espera:bool = intro.has_node("Impacto") and is_equal_approx(intro.get_node("Camera3D").position.z, cam_parada)
-	ok("a cena espera a pancada terminar", espera, "som tocando e camera parada")
+	# Enquanto a pancada toca, a camera fica em cima do cabelo, tremendo, e o
+	# cabelo voa para o alto antes de cair na jaula.
+	var cam:Camera3D = intro.get_node("Camera3D")
+	var cabelo_y:float = cabeca.global_position.y
+	await step(30)
+	var perto_do_cabelo:float = cam.global_position.distance_to(cabeca.global_position)
+	var tremeu:float = 0.0
+	var antes_tremor:Vector3 = cam.global_position
+	for _i in 20:
+		await physics_frame
+		tremeu = maxf(tremeu, cam.global_position.distance_to(antes_tremor))
+		antes_tremor = cam.global_position
+	# Voo: sobe bem alto, a camera segue nele e ele desce dentro da jaula.
+	var pico:float = cabelo_y
+	var longe_do_cabelo:float = 0.0
+	var guarda_voo:int = 0
+	while guarda_voo < 300 and cabeca.get_parent() != intro.cage:
+		guarda_voo += 1
+		await physics_frame
+		pico = maxf(pico, cabeca.global_position.y)
+		longe_do_cabelo = maxf(longe_do_cabelo, cam.global_position.distance_to(cabeca.global_position))
+	ok("o cabelo voa para cima na pancada", pico > cabelo_y + 8.0, "subiu %.1f m" % (pico - cabelo_y))
+	ok("camera acompanha o cabelo no voo", longe_do_cabelo < 6.0, "maior distancia=%.1f m" % longe_do_cabelo)
+	ok("o cabelo cai dentro da jaula", cabeca.get_parent() == intro.cage and cabeca.position.is_equal_approx(Vector3.ZERO), "pai=%s" % cabeca.get_parent().name)
+	ok("a cena espera a pancada terminar", intro.has_node("Impacto") and cam.position.z < -1700.0, "som tocando e camera na arena")
+	ok("camera foca na cara do cabelo na pancada", perto_do_cabelo < 5.0, "distancia=%.1f m" % perto_do_cabelo)
+	ok("camera treme enquanto a pancada toca", tremeu > 0.02, "tremor=%.3f m por quadro" % tremeu)
 	# Quando ela termina, a camera sai em direcao ao Maycon, sem parar no Lips.
 	guard = 0
 	while intro.has_node("Impacto") and guard < 700:
 		guard += 1
 		await physics_frame
 	await step(36)
-	var cam_andou:float = intro.get_node("Camera3D").position.z - cam_parada
+	var cam_andou:float = cam.position.z - cabeca.global_position.z
 	ok("camera nao fica parada no Lips caido", cam_andou > 20.0, "andou %.0f m rumo ao Maycon" % cam_andou)
 	ok("vento entra depois da queda do Lips", intro.wind.visible, "vento visivel=%s" % intro.wind.visible)
+	ok("o cabelo vai das costas do Lips para a jaula", intro.cage.has_node("Hair"), "cabelo na jaula")
 	intro.free()
 	await step(2)
 
