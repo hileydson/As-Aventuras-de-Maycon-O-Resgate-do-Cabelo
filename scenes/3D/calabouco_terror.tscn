@@ -12790,7 +12790,7 @@ stream = ExtResource("22_m3wx5")
 volume_db = 2.0
 
 [node name="palhaco_1" parent="." unique_id=959748196 instance=ExtResource("28_uo1pw")]
-transform = Transform3D(-10.893561, 0, -8.793766, 0, 14, 0, 8.793766, 0, -10.893561, 66.030396, -5.4754333, -84.42331)
+transform = Transform3D(9.221652, -0.018384768, -10.5337925, 0, -13.999978, 0.024434347, -10.53381, -0.016094647, -9.221638, 66.030396, 5.121765, -84.42331)
 
 [node name="palhaco_2" parent="." unique_id=991447964 instance=ExtResource("28_uo1pw")]
 transform = Transform3D(9.927573, 0, 1.2013704, 0, 10, 0, -1.2013704, 0, 9.927573, -0.21655273, -1.0945435, -173.50456)

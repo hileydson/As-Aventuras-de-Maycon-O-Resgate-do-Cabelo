@@ -82,14 +82,20 @@ func morrer():
 	await get_tree().create_timer(3.0).timeout 
 	canvas_layer.visible = false
 	var player = get_tree().get_first_node_in_group("player")
-	player.get_node("hud_canvas").visible = false
-	$"../../../../fade".get_node("Transition").play("fade_out")
-	await get_tree().create_timer(2.0).timeout 
+	if is_instance_valid(player) and player.has_node("hud_canvas"):
+		player.get_node("hud_canvas").visible = false
 	
-	#cena de encerramento 
+	# Oculta "OLINDÃO DESVIOU!" e escurece a tela para fundo todo preto
+	seco_died.visible = false
+	blackout.color = Color(0, 0, 0, 0)
 	blackout.visible = true
-	final_msg.visible = true
+	var bg_tween := create_tween()
+	bg_tween.tween_property(blackout, "color:a", 1.0, 0.7)
+	await bg_tween.finished
+	blackout.color = Color.BLACK
 	
+	# Exibe as próximas frases sobre o fundo totalmente preto
+	final_msg.visible = true
 	await get_tree().create_timer(4.0).timeout 
 	final_msg_2.visible = true
 	await get_tree().create_timer(4.0).timeout 
@@ -128,9 +134,25 @@ func _setup_victory_old_film() -> void:
 	text_layer.name = "VictoryText"
 	text_layer.layer = 20
 	scene_root.add_child(text_layer)
+	
+	if is_instance_valid(blackout):
+		blackout.reparent(text_layer)
+		blackout.set_anchors_preset(Control.PRESET_FULL_RECT)
+		blackout.offset_left = 0
+		blackout.offset_top = 0
+		blackout.offset_right = 0
+		blackout.offset_bottom = 0
+		blackout.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		blackout.color = Color.BLACK
+		blackout.visible = false
+		blackout.z_index = 0
+		
 	seco_died.reparent(text_layer)
+	seco_died.z_index = 1
 	final_msg.reparent(text_layer)
+	final_msg.z_index = 1
 	final_msg_2.reparent(text_layer)
+	final_msg_2.z_index = 1
 
 func _play_long_fade_out() -> void:
 	var fade_layer := CanvasLayer.new()
