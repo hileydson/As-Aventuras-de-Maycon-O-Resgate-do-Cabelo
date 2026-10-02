@@ -9,8 +9,12 @@ const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
 @export var auto_run:bool = true
 # Dash curto, pago em pentagramas, invencível enquanto dura.
 const DASH_COST := 3
-const DASH_TIME := 0.2
+const DASH_TIME := 0.22
 const DASH_SPEED := 22.0
+# Mesmas cores e tempos do dash do Poço Infinito.
+const DASH_GHOST_COLOR := Color(0.25, 0.85, 1.0, 0.22)
+const DASH_STREAK_COLOR := Color(0.35, 0.90, 1.0, 0.20)
+const DASH_BLUR := 0.62
 var arena_mode:bool = false
 var launch_time:float = 0.0
 var launch_velocity:Vector3
@@ -20,6 +24,9 @@ var pending_landing:bool = false
 var dash_time:float = 0.0
 var dash_velocity:Vector3
 var dash_trail_clock:float = 0.0
+var dash_ghosts:Array[Dictionary] = []
+var dash_fov_base:float = 0.0
+var visual_skeleton:Skeleton3D
 
 func _ready() -> void:
 	super._ready()
@@ -27,6 +34,9 @@ func _ready() -> void:
 		$Preview.queue_free()
 	visual.rotation.y = PI
 	control_enabled = false
+	var ossos := visual.find_children("*", "Skeleton3D", true, false)
+	if ossos.size() > 0:
+		visual_skeleton = ossos[0] as Skeleton3D
 
 func _unhandled_input(event:InputEvent) -> void:
 	# A câmera pertence à fase, nunca ao mouse; aqui só escutamos o dash.
@@ -45,22 +55,27 @@ func _process(delta:float) -> void:
 		focus = Vector3(global_position.x * 0.3, 3.0, -1796)
 	camera.global_position = camera.global_position.lerp(desired, 1.0 - exp(-8.0 * delta))
 	camera.look_at(focus)
+	if camera_shake > 0.0:
+		camera_shake = maxf(0.0, camera_shake - delta * 2.0)
+		camera.global_position += Vector3(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0), 0.0) * camera_shake * 0.6
 
 func _physics_process(delta:float) -> void:
 	hurt_time = maxf(0.0, hurt_time - delta)
 	_update_fart_puffs(delta)
 	if not control_enabled or dying:
 		return
+	_update_dash_ghosts(delta)
 	if dash_time > 0.0:
 		dash_time -= delta
 		velocity = dash_velocity
 		dash_trail_clock -= delta
 		if dash_trail_clock <= 0.0:
-			dash_trail_clock = 0.035
+			dash_trail_clock = 0.045
 			_spawn_dash_ghost()
+			_spawn_dash_streak()
+			_spawn_dash_smoke(false)
 		if dash_time <= 0.0:
-			set_invincible(false)
-			velocity = dash_velocity * 0.35
+			_end_dash()
 	elif launch_time > 0.0:
 		launch_time -= delta
 		velocity.x = launch_velocity.x
@@ -187,26 +202,110 @@ func try_dash() -> void:
 	dash_time = DASH_TIME
 	dash_trail_clock = 0.0
 	set_invincible(true)
-	jump_audio.play()
-	POEIRA.saltar(stage, global_position)
+	# Mesmo peido do dash do Poço Infinito, com o tom sorteado.
+	fart_audio.pitch_scale = randf_range(0.7, 0.8)
+	fart_audio.play()
+	camera_shake = maxf(camera_shake, 0.12)
+	dash_fov_base = camera.fov
+	camera.fov = dash_fov_base + 5.0
+	stage.set_blur(DASH_BLUR, Vector2(0.5, 0.5))
+	for i in 7:
+		_spawn_dash_smoke(true)
+	_spawn_dash_ghost()
+	for i in 3:
+		_spawn_dash_streak()
 
-# Rastro do dash: silhuetas que ficam para trás e se apagam.
-func _spawn_dash_ghost() -> void:
-	var forma := CapsuleMesh.new()
-	forma.radius = 0.36
-	forma.height = 1.65
+func _end_dash() -> void:
+	set_invincible(false)
+	velocity = dash_velocity * 0.35
+	if dash_fov_base > 0.0:
+		camera.fov = dash_fov_base
+		dash_fov_base = 0.0
+	fart_audio.pitch_scale = 0.75
+	get_parent().set_blur(get_parent().BLUR_GAMEPLAY, Vector2(0.5, 0.28))
+
+func _dash_material(cor:Color) -> StandardMaterial3D:
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	mat.albedo_color = Color(1.0, 0.86, 0.3, 0.42)
-	var ghost := MeshInstance3D.new()
-	ghost.name = "RastroDoDash"
-	ghost.mesh = forma
-	ghost.material_override = mat
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.albedo_color = cor
+	return mat
+
+# Silhueta do próprio Maycon ficando para trás, com a pose dos ossos copiada.
+func _spawn_dash_ghost() -> void:
+	var ghost:Node3D = MODEL.instantiate()
 	get_parent().get_node("Effects").add_child(ghost)
-	ghost.global_position = global_position + Vector3.UP * 0.83
-	var apagar := get_parent().create_tween().bind_node(ghost)
-	apagar.tween_property(mat, "albedo_color:a", 0.0, 0.3)
-	apagar.parallel().tween_property(ghost, "scale", Vector3.ONE * 0.6, 0.3)
-	apagar.tween_callback(ghost.queue_free)
+	ghost.global_transform = visual.global_transform
+	var copias := ghost.find_children("*", "Skeleton3D", true, false)
+	if visual_skeleton != null and copias.size() > 0:
+		var copia := copias[0] as Skeleton3D
+		for osso in visual_skeleton.get_bone_count():
+			copia.set_bone_pose_rotation(osso, visual_skeleton.get_bone_pose_rotation(osso))
+			copia.set_bone_pose_position(osso, visual_skeleton.get_bone_pose_position(osso))
+	var anim:AnimationPlayer = ghost.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if anim != null:
+		anim.stop()
+		anim.process_mode = Node.PROCESS_MODE_DISABLED
+	var mat := _dash_material(DASH_GHOST_COLOR)
+	for malha in ghost.find_children("*", "MeshInstance3D", true, false):
+		(malha as MeshInstance3D).material_override = mat
+	dash_ghosts.append({"node": ghost, "mat": mat, "life": 0.25, "duration": 0.25, "alpha": DASH_GHOST_COLOR.a, "base_scale": ghost.scale})
+
+# Riscos finos de velocidade ao redor dele, deitados na direção do dash.
+func _spawn_dash_streak() -> void:
+	var cilindro := CylinderMesh.new()
+	cilindro.top_radius = 0.015
+	cilindro.bottom_radius = 0.07
+	cilindro.height = randf_range(2.2, 4.2)
+	cilindro.radial_segments = 5
+	var streak := MeshInstance3D.new()
+	streak.name = "RastroDoDash"
+	streak.mesh = cilindro
+	var mat := _dash_material(DASH_STREAK_COLOR)
+	streak.material_override = mat
+	get_parent().get_node("Effects").add_child(streak)
+	streak.global_position = global_position + Vector3(randf_range(-0.55, 0.55), randf_range(0.25, 1.5), randf_range(-0.55, 0.55))
+	var direcao := dash_velocity.normalized()
+	if direcao.length_squared() > 0.001:
+		streak.look_at(streak.global_position + direcao, Vector3.UP)
+		streak.rotate_object_local(Vector3.RIGHT, PI * 0.5)
+	dash_ghosts.append({"node": streak, "mat": mat, "life": 0.18, "duration": 0.18, "alpha": DASH_STREAK_COLOR.a, "base_scale": streak.scale})
+
+# A fumaça usa o mesmo sistema de baforadas que o peido do pulo duplo já tem.
+func _spawn_dash_smoke(inicial:bool) -> void:
+	var direcao := dash_velocity.normalized()
+	var puff := Sprite3D.new()
+	puff.texture = FART_SMOKE
+	puff.hframes = 3
+	puff.vframes = 2
+	puff.frame = randi_range(0, 1)
+	puff.pixel_size = randf_range(0.009, 0.014) if inicial else randf_range(0.007, 0.011)
+	puff.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	puff.shaded = false
+	puff.transparent = true
+	puff.double_sided = true
+	get_parent().get_node("Effects").add_child(puff)
+	puff.global_position = global_position + Vector3.UP * 0.5 - direcao * 0.8 + Vector3(randf_range(-0.45, 0.45), randf_range(-0.3, 0.4), randf_range(-0.45, 0.45))
+	var alpha:float = randf_range(0.18, 0.28) if inicial else randf_range(0.10, 0.18)
+	puff.modulate = Color(randf_range(0.48, 0.62), randf_range(0.79, 0.92), randf_range(0.55, 0.71), alpha)
+	var lado := Vector3(-direcao.z, 0.0, direcao.x) * randf_range(-2.1, 2.1)
+	var duracao:float = randf_range(0.42, 0.64) if inicial else randf_range(0.35, 0.5)
+	fart_puffs.append({"node": puff, "life": duracao, "duration": duracao, "alpha": alpha, "velocity": -direcao * 2.7 + lado + Vector3.UP * 0.65, "start_frame": puff.frame})
+
+func _update_dash_ghosts(delta:float) -> void:
+	for i in range(dash_ghosts.size() - 1, -1, -1):
+		var data:Dictionary = dash_ghosts[i]
+		var node:Node3D = data.node
+		if not is_instance_valid(node):
+			dash_ghosts.remove_at(i)
+			continue
+		data["life"] = float(data.life) - delta
+		var progress:float = clampf(float(data.life) / float(data.duration), 0.0, 1.0)
+		var mat:StandardMaterial3D = data.mat
+		if mat != null:
+			mat.albedo_color.a = pow(progress, 1.35) * float(data.alpha)
+		node.scale = (data.base_scale as Vector3) * (1.0 + (1.0 - progress) * 0.10)
+		if data.life <= 0.0:
+			node.queue_free()
+			dash_ghosts.remove_at(i)

@@ -7,6 +7,11 @@ const BLOOD = preload("res://assets/novas_imagens/objects/sangue_fill.png")
 const WIND_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
 # Mesmo pause do avião e do Super Maycon Brother.
 const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
+const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
+# Mesmo blur direcional do dash do Poço Infinito, usado aqui como motion blur.
+const BLUR_SHADER = preload("res://scenes/3D/poco_infinito_dash_blur.gdshader")
+const BLUR_CUTSCENE := 0.72
+const BLUR_GAMEPLAY := 0.16
 const AMBIENCE = preload("res://assets/novos_audios/song_birds.mp3")
 const STAGE_SONG = preload("res://assets/novos_audios/last_song.mp3")
 # Mesmo som de coleta do Super Maycon Brother.
@@ -42,6 +47,7 @@ var death_in_progress:bool = false
 var intro_active:bool = true
 var old_cutscene:bool = false
 var pentagram_label:Label
+var blur_material:ShaderMaterial
 var song_slots:Array[AudioStreamPlayer] = []
 var song_turn:int = 0
 
@@ -56,6 +62,7 @@ func _ready() -> void:
 	$HUD/Stats.visible = false
 	fade.color = Color.BLACK
 	build_hud()
+	build_blur()
 	build_wind()
 	build_pause()
 	update_hud()
@@ -113,6 +120,27 @@ func build_hud() -> void:
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	hint.text = ""
 
+# Motion blur de tela cheia. Entra antes do resto do HUD para o título, o aviso
+# e o fade não saírem borrados.
+func build_blur() -> void:
+	blur_material = ShaderMaterial.new()
+	blur_material.shader = BLUR_SHADER
+	var rect := ColorRect.new()
+	rect.name = "MotionBlur"
+	rect.material = blur_material
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	$HUD.add_child(rect)
+	rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	$HUD.move_child(rect, 0)
+	set_blur(0.0, Vector2(0.5, 0.5))
+
+func set_blur(strength:float, center:Vector2) -> void:
+	if blur_material == null:
+		return
+	blur_material.set_shader_parameter("blur_strength", strength)
+	blur_material.set_shader_parameter("blur_center", center)
+	blur_material.set_shader_parameter("blur_direction", Vector2(0.0, 1.0))
+
 func build_pause() -> void:
 	var pause := CanvasLayer.new()
 	pause.name = "PauseFofo"
@@ -157,21 +185,14 @@ func _physics_process(_delta:float) -> void:
 		update_hud()
 
 func opening() -> void:
-	start_stage_song()
 	lay_player_down()
+	await lips_arrival()
+	start_stage_song()
+	set_blur(BLUR_CUTSCENE, Vector2(0.5, 0.5))
 	if show_intro and not OS.get_cmdline_user_args().has("--resgate-skip-intro"):
-		camera.position = Vector3(22, 15, 18)
-		camera.look_at(Vector3(0, 2, -30))
-		await fade_to(0.0, 1.2)
-		for shot in $Introduction.get_children():
-			camera.global_transform = shot.global_transform
-			var pan := create_tween()
-			pan.tween_property(camera, "position", camera.position + camera.basis.x * 5, 0.7)
-			await pan.finished
-		camera.position = boss.global_position + Vector3(8, 6, 10)
-		camera.look_at(boss.global_position + Vector3.UP * 1.5)
-		await get_tree().create_timer(1.1).timeout
-		# As palavras entram no meio da vinda, e não depois dela.
+		# A música entra e a câmera já sai do Lips em direção ao Maycon, sem parar
+		# para olhar ele caído.
+		# As palavras entram no meio da vinda e ficam até a hora de jogar.
 		show_title()
 		# Vinda disparada do Lips até o Maycon, pelo desfiladeiro e pelas copas.
 		for point in [Vector3(0, 18, -1500), Vector3(0, 42, -1300), Vector3(0, 42, -1090), Vector3(0, 15, -900), Vector3(0, -5, -620), Vector3(0, -5, -400), Vector3(0, 14, -300), Vector3(0, 2.8, 5.6)]:
@@ -189,6 +210,9 @@ func opening() -> void:
 	camera.look_at(player.position + Vector3(0, 1.3, -4.0))
 	if fade.color.a > 0.0:
 		await fade_to(0.0, 0.8)
+	# Só agora a frase sai, e é neste instante que o Maycon se levanta do chão.
+	hide_title()
+	set_blur(BLUR_GAMEPLAY, Vector2(0.5, 0.28))
 	await rise_player()
 	player._play_animation("Walking")
 	$HUD/Stats.visible = true
@@ -203,18 +227,61 @@ func show_title() -> void:
 	sound("hit")
 	var title := create_tween()
 	title.tween_property($HUD/Title, "modulate:a", 1.0, 0.15).from(0.0)
-	title.tween_interval(2.2)
-	title.tween_property($HUD/Title, "modulate:a", 0.6, 0.6)
-	title.tween_property($HUD/Title, "modulate:a", 0.0, 0.4)
+
+func hide_title() -> void:
+	if not $HUD/Title.visible:
+		return
+	var title := create_tween()
+	title.tween_property($HUD/Title, "modulate:a", 0.0, 0.45)
 	title.tween_callback(func(): $HUD/Title.visible = false)
+	await title.finished
+
+# Antes de tudo: o Lips despenca do céu com o cabelo nas costas, soltando poeira,
+# e bate na arena. Só depois começa a cutscene com a música.
+func lips_arrival() -> void:
+	if not show_intro or OS.get_cmdline_user_args().has("--resgate-skip-intro"):
+		return
+	var pouso:Vector3 = boss.position
+	boss.position = pouso + Vector3(0, 72, 0)
+	camera.position = pouso + Vector3(15, 11, 23)
+	camera.look_at(pouso + Vector3.UP * 3)
+	set_blur(BLUR_CUTSCENE, Vector2(0.5, 0.5))
+	await fade_to(0.0, 0.4)
+	var rastro := POEIRA.rastro(boss)
+	var queda := create_tween()
+	queda.tween_property(boss, "position", pouso, 3.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await queda.finished
+	POEIRA.apagar(rastro)
+	for lado in [Vector3.ZERO, Vector3(6, 0, 3), Vector3(-6, 0, -3)]:
+		POEIRA.pousar(self, pouso + lado)
+	sound("slam")
+	burst(pouso + Vector3.UP, Color("c9b785"), 34)
+	await get_tree().create_timer(0.6).timeout
 
 # Maycon começa caído, igual à abertura do interior do avião, e se levanta ali
 # mesmo antes de o jogador assumir o controle.
 func lay_player_down() -> void:
+	var ap:AnimationPlayer = player.animation_player
+	if ap != null and ap.has_animation("RunFast"):
+		# Primeiro quadro do RunFast: ele já aparece caído no chão.
+		ap.play("RunFast")
+		ap.seek(0, true)
+		ap.pause()
+		return
 	player.visual.rotation.x = -PI * 0.5
 	player.visual.position.y = 0.14
 
 func rise_player() -> void:
+	# RunFast é a animação de levantar do chão, a mesma da abertura do avião.
+	var ap:AnimationPlayer = player.animation_player
+	if ap != null and ap.has_animation("RunFast"):
+		player.visual.rotation.x = 0.0
+		player.visual.position.y = 0.0
+		ap.speed_scale = 1.0
+		ap.play("RunFast")
+		await get_tree().create_timer(ap.get_animation("RunFast").length + 0.1).timeout
+		return
+	# Sem a animação na importação do modelo, o levantar é feito na mão.
 	var rise := create_tween()
 	rise.tween_property(player.visual, "rotation:x", 0.0, 0.85).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	rise.parallel().tween_property(player.visual, "position:y", 0.0, 0.85)
