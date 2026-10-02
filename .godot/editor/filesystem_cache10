@@ -4089,7 +4089,7 @@ poco_infinito_dash_blur.gdshader::Shader::2435143504947494239::1790563197::0::1:
 poco_infinito_old_film.gdshader::Shader::371425795906284564::1790619261::0::1::::<><><>0<>0<><>::
 seco_3d.tscn::PackedScene::5460663912371079189::1770983362::0::1::::<><><>0<>0<><>::uid://lhs7w1lfxh4w::::res://scripts/3D/seco_3d.gd<>uid://winmr31cwh05::::res://assets/novos_audios/growl_1.mp3<>uid://d2ubmgfppbohq::::res://assets/novos_audios/growl_2.mp3<>uid://oliyk2sx4vpw::::res://assets/novos_audios/growl_3.mp3<>uid://dmk7ag335ld5j::::res://assets/audio/pulo_maycon.mp3<>uid://3ioxpfl6y5r::::res://assets/novos_audios/seco_3d_power.mp3<>uid://dbylb1bjbstk2::::res://scenes/3D/seco_power_3d_1.tscn<>uid://dvchofw63am8g::::res://assets/novas_imagens/inimigos/seco/seco_kick.png<>uid://dl7rs3v1uv2q4::::res://assets/novas_imagens/inimigos/seco/seco_idle_smile_2.png<>uid://oc3lu102dap5::::res://scripts/3D/seco_3d_hp.gd<>uid://mqywkexvidu2::::res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/10 Font/CyberpunkCraftpixPixel.otf<>uid://dqygg3h3b6qgp::::res://assets/novas_imagens/3d_enemies/olindao_3d_animations.glb
 seco_arena_sky.gdshader::Shader::7244629115135912618::1790563197::0::1::::<><><>0<>0<><>::
-seco_boss_intro.tscn::PackedScene::8380118472116791735::1790946336::0::1::::<><><>0<>0<><>::uid://c7x78up7owcd5::::res://scripts/3D/seco_boss_intro.gd<>uid://dqygg3h3b6qgp::::res://assets/novas_imagens/3d_enemies/olindao_3d_animations.glb<>uid://mqywkexvidu2::::res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/10 Font/CyberpunkCraftpixPixel.otf<>uid://cmjmm8d40e8b1::::res://assets/novos_audios/punch_3.mp3<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://baxuptfks1jf8::::res://scenes/3D/poco_infinito_dash_blur.gdshader
+seco_boss_intro.tscn::PackedScene::8380118472116791735::1790946828::0::1::::<><><>0<>0<><>::uid://c7x78up7owcd5::::res://scripts/3D/seco_boss_intro.gd<>uid://dqygg3h3b6qgp::::res://assets/novas_imagens/3d_enemies/olindao_3d_animations.glb<>uid://mqywkexvidu2::::res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/10 Font/CyberpunkCraftpixPixel.otf<>uid://cmjmm8d40e8b1::::res://assets/novos_audios/punch_3.mp3<>uid://cgbaylimr110j::::res://assets/novos_audios/cidade_intro_wind.mp3<>uid://baxuptfks1jf8::::res://scenes/3D/poco_infinito_dash_blur.gdshader
 seco_power_3d_1.tscn::PackedScene::7279667001091999291::1790563197::0::1::::<><><>0<>0<><>::uid://dkny6wmmn76sa::::res://scripts/3D/seco_power_3d_1.gd
 textura_config_barro.tres::StandardMaterial3D::508369455886373574::1770251008::0::1::::<><><>0<>0<><>::uid://boqyn3fvgnhwl::::res://assets/novas_imagens/3d_cenarios/textura_chao_barro.png
 torcha_3d.tscn::PackedScene::4262523608559728082::1770083291::0::1::::<><><>0<>0<><>::uid://ckvw6nxkmuyub::::res://assets/novas_imagens/3d_cenarios/torcha/torcha_1.png<>uid://i1icjuoy3vk0::::res://scripts/3D/torcha_3d.gd<>uid://cd88qjqo1o4ol::::res://assets/novas_imagens/3d_cenarios/torcha/torcha_2.png<>uid://4tyqelvsk8bf::::res://assets/novas_imagens/3d_cenarios/torcha/torcha_3.png<>uid://csaj5qrrfomxb::::res://assets/novas_imagens/3d_cenarios/torcha/torcha_4.png<>uid://tgbq8dtejvrb::::res://assets/novos_audios/fire_cracling.mp3
@@ -4188,7 +4188,7 @@ dungeon_giant_zombie.gd::GDScript::408991823400523981::1790709289::0::1::::Dunge
 dungeon_infected.gd::GDScript::3648851865426708569::1790563197::0::1::::DungeonInfected<>CharacterBody3D<><>0<>0<><>::
 dungeon_main_monster.gd::GDScript::7669060581581853465::1790707419::0::1::::DungeonMainMonster<>CharacterBody3D<><>0<>0<><>::
 dungeon_player.gd::GDScript::7907898859989045673::1790707936::0::1::::DungeonPlayer<>CharacterBody3D<><>0<>0<><>::
-dungeon_prison.gd::GDScript::5680103363493170547::1790793213::0::1::::<>Node3D<><>0<>0<><>::
+dungeon_prison.gd::GDScript::5680103363493170547::1790947571::0::1::::<>Node3D<><>0<>0<><>::
 fellas_chase.gd::GDScript::4676541764410775153::1790907695::0::1::::<>Node3D<><>0<>0<><>::
 gas.gd::GDScript::5586480109356844290::1770239842::0::1::::<>Area3D<><>0<>0<><>::
 import_collision_gen.gd::GDScript::-1::1770925133::0::1::::<>EditorScenePostImport<><>0<>1<><>::
@@ -4214,7 +4214,7 @@ poco_infinito.gd::GDScript::6682402298837709200::1790873743::0::1::::<>Node3D<><
 poco_infinito_hud.gd::GDScript::858845652044994715::1790873762::0::1::::<>Control<><>0<>0<><>::
 recebe_dano_inimigo_default.gd::GDScript::3095823013865271534::1790563197::0::1::::<>Area3D<><>0<>0<><>::
 seco_3d.gd::GDScript::787679171757530100::1790563197::0::1::::<>CharacterBody3D<><>0<>0<><>::
-seco_3d_hp.gd::GDScript::988493377774990596::1790946667::0::1::::<>Area3D<><>0<>0<><>::
+seco_3d_hp.gd::GDScript::988493377774990596::1790946828::0::1::::<>Area3D<><>0<>0<><>::
 seco_boss_intro.gd::GDScript::7068368002226580188::1790946595::0::1::::<>Node3D<><>0<>0<><>::
 seco_power_3d_1.gd::GDScript::7889501140315098800::1790563197::0::1::::<>Area3D<><>0<>0<><>::
 terrain_3d_berore_seco_boss.gd::GDScript::588626761430007919::1790886901::0::1::::<>Node3D<><>0<>0<><>::
