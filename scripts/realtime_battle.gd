@@ -354,6 +354,8 @@ var dash_sound:AudioStreamPlayer
 var enemy_power_sound:AudioStreamPlayer
 var enemy_voice_sound:AudioStreamPlayer
 var enemy_teleport_sound:AudioStreamPlayer
+var dungeon_ambience_sound:AudioStreamPlayer
+var seco_end_song_sound:AudioStreamPlayer
 
 var action_buttons_panel:PanelContainer
 var action_row_punch:PanelContainer
@@ -496,6 +498,11 @@ func _ready() -> void:
 	set_world_audio_paused(true)
 	if enemy_id != "1001":
 		battle_song.play()
+	else:
+		if is_instance_valid(dungeon_ambience_sound):
+			dungeon_ambience_sound.play()
+		if is_instance_valid(seco_end_song_sound):
+			seco_end_song_sound.play()
 	start_entry_sequence()
 	if !Global.realtime_controls_hint_seen:
 		Global.realtime_controls_hint_seen = true
@@ -2219,6 +2226,7 @@ func build_audio() -> void:
 	dog_growl_sound = create_audio("res://assets/novos_audios/growl_1.mp3", -2.0)
 	dog_dash_sound = create_audio("res://assets/novos_audios/dog_running.mp3", -2.5)
 	player_dash_sound = create_audio("res://assets/novos_audios/punch.mp3", -1.5)
+	dungeon_ambience_sound = create_audio("res://assets/novos_audios/calabouco_terror/dungeon_ambience_pixabay.mp3", 0.0, true)
 
 func create_audio(path:String, volume:float, looping:bool = false) -> AudioStreamPlayer:
 	var audio = AudioStreamPlayer.new()
@@ -3114,6 +3122,8 @@ func defeat_enemy() -> void:
 	enemy_bar.visible = false
 	enemy_name_label.visible = false
 	battle_song.stop()
+	if is_instance_valid(dungeon_ambience_sound):
+		dungeon_ambience_sound.stop()
 	enemy_death_sound.play()
 	if enemy_id != "1001":
 		victory_sound.play()
@@ -3353,6 +3363,8 @@ func lose_battle() -> void:
 	status_label.text = tr("BATTLE_YOU_FELL")
 	exit_label.visible = false
 	battle_song.stop()
+	if is_instance_valid(dungeon_ambience_sound):
+		dungeon_ambience_sound.stop()
 	clear_blood_drops()
 	
 	await get_tree().create_timer(1.1).timeout
@@ -3407,6 +3419,8 @@ func finish_battle() -> void:
 	get_tree().paused = false
 	Engine.time_scale = 1.0
 	battle_song.stop()
+	if is_instance_valid(dungeon_ambience_sound):
+		dungeon_ambience_sound.stop()
 	Global.battle_started = false
 	Global.back_to_main_camera = true
 	Global.realtime_hp = player_hp

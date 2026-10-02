@@ -1,4 +1,4 @@
-[gd_scene load_steps=80 format=3 uid="uid://dmratg4yp57fk"]
+[gd_scene format=3 uid="uid://dmratg4yp57fk"]
 
 [ext_resource type="Texture2D" uid="uid://daiuev2s4dsgh" path="res://assets/novas_imagens/cenarios/in_use/fase_1/fase_1_outside_castle_again_no_fire_1_paralax.png" id="1_nnpcb"]
 [ext_resource type="AudioStream" uid="uid://dm0y08bfijfeo" path="res://assets/novos_audios/barulho_gilhotina.mp3" id="1_ssjau"]
@@ -15,12 +15,38 @@
 [ext_resource type="PackedScene" uid="uid://bgar7p5o5l876" path="res://scenes/batalha_2d.tscn" id="6_yvup1"]
 [ext_resource type="PackedScene" uid="uid://bxrvb1ninxb77" path="res://scenes/pause.tscn" id="7_ssjau"]
 [ext_resource type="AudioStream" uid="uid://bhcvqv63n0fh8" path="res://assets/novos_audios/metal_batendo.mp3" id="8_ghhu0"]
-[ext_resource type="PackedScene" uid="uid://bpow8ov3t2bre" path="res://scenes/default_transition_auto_fade_in.tscn" id="12_yvup1"]
+[ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="12_yvup1"]
 [ext_resource type="Texture2D" uid="uid://b1jw8ciiqgjbw" path="res://assets/novas_imagens/effects/Pixel fire/fire asset white floored/Group 4 - 4/Group 4 - 4.png" id="14_dro78"]
-[ext_resource type="Shader" path="res://scenes/fase_1_dark_sky_background.gdshader" id="sky_dynamic_background"]
 [ext_resource type="Shader" uid="uid://f8f54lfnqp5y" path="res://scenes/fase_1_before_castle_1_clouds.gdshader" id="sky_clouds"]
+[ext_resource type="Shader" uid="uid://bx2u0v837euxb" path="res://scenes/fase_1_dark_sky_background.gdshader" id="sky_dynamic_background"]
 [ext_resource type="Shader" uid="uid://dytv70uo3y83j" path="res://scenes/fase_1_before_castle_1_mountains.gdshader" id="sky_mountains"]
 [ext_resource type="Texture2D" uid="uid://cng7cklydpdnk" path="res://assets/novas_imagens/cenarios/in_use/fase_1/arvores.png" id="sky_parallax_trees"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_bg"]
+shader = ExtResource("sky_dynamic_background")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_far_mountains"]
+shader = ExtResource("sky_mountains")
+shader_parameter/mountain_color = Color(0.02, 0.035, 0.06, 1)
+shader_parameter/rim_color = Color(0.06, 0.1, 0.16, 1)
+shader_parameter/horizon = 0.48
+shader_parameter/mountain_height = 0.19
+shader_parameter/peak_count = 9.0
+shader_parameter/seed = 9.4
+shader_parameter/opacity = 0.68
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_near_mountains"]
+shader = ExtResource("sky_mountains")
+shader_parameter/mountain_color = Color(0.01, 0.018, 0.035, 1)
+shader_parameter/rim_color = Color(0.04, 0.07, 0.12, 1)
+shader_parameter/horizon = 0.61
+shader_parameter/mountain_height = 0.27
+shader_parameter/peak_count = 6.5
+shader_parameter/seed = 27.1
+shader_parameter/opacity = 0.82
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_clouds"]
+shader = ExtResource("sky_clouds")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vk5ux"]
 atlas = ExtResource("5_yvup1")
@@ -526,128 +552,101 @@ size = Vector2(400.40625, 136)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s4wqb"]
 size = Vector2(404.20313, 136)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_bg"]
-shader = ExtResource("sky_dynamic_background")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_far_mountains"]
-shader = ExtResource("sky_mountains")
-shader_parameter/mountain_color = Color(0.02, 0.035, 0.06, 1)
-shader_parameter/rim_color = Color(0.06, 0.10, 0.16, 1)
-shader_parameter/horizon = 0.48
-shader_parameter/mountain_height = 0.19
-shader_parameter/peak_count = 9.0
-shader_parameter/seed = 9.4
-shader_parameter/opacity = 0.68
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_near_mountains"]
-shader = ExtResource("sky_mountains")
-shader_parameter/mountain_color = Color(0.01, 0.018, 0.035, 1)
-shader_parameter/rim_color = Color(0.04, 0.07, 0.12, 1)
-shader_parameter/horizon = 0.61
-shader_parameter/mountain_height = 0.27
-shader_parameter/peak_count = 6.5
-shader_parameter/seed = 27.1
-shader_parameter/opacity = 0.82
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky_clouds"]
-shader = ExtResource("sky_clouds")
-
-[node name="outside_castelo_1" type="Node2D"]
+[node name="outside_castelo_1" type="Node2D" unique_id=516885763]
 process_mode = 1
 
-[node name="DynamicDarkBackground" type="Parallax2D" parent="."]
+[node name="DynamicDarkBackground" type="Parallax2D" parent="." unique_id=1653868323]
 z_index = -30
 scroll_scale = Vector2(0.5, 1)
 
-[node name="DarkSky" type="ColorRect" parent="DynamicDarkBackground"]
+[node name="DarkSky" type="ColorRect" parent="DynamicDarkBackground" unique_id=1124339667]
 material = SubResource("ShaderMaterial_sky_bg")
 offset_left = -572.0
 offset_right = 3168.0
 offset_bottom = 1344.0
 mouse_filter = 2
 
-[node name="FarMountains" type="Parallax2D" parent="."]
+[node name="FarMountains" type="Parallax2D" parent="." unique_id=1825200490]
 z_index = -29
 scroll_scale = Vector2(0.58, 1)
 
-[node name="MountainRange" type="ColorRect" parent="FarMountains"]
+[node name="MountainRange" type="ColorRect" parent="FarMountains" unique_id=2006744826]
 material = SubResource("ShaderMaterial_sky_far_mountains")
 offset_left = -572.0
 offset_right = 3168.0
 offset_bottom = 1344.0
 mouse_filter = 2
 
-[node name="NearMountains" type="Parallax2D" parent="."]
+[node name="NearMountains" type="Parallax2D" parent="." unique_id=385224098]
 z_index = -27
 scroll_scale = Vector2(0.68, 1)
 
-[node name="MountainRange" type="ColorRect" parent="NearMountains"]
+[node name="MountainRange" type="ColorRect" parent="NearMountains" unique_id=1626456347]
 material = SubResource("ShaderMaterial_sky_near_mountains")
 offset_left = -572.0
 offset_right = 3168.0
 offset_bottom = 1344.0
 mouse_filter = 2
 
-[node name="DynamicClouds" type="Parallax2D" parent="."]
+[node name="DynamicClouds" type="Parallax2D" parent="." unique_id=896985980]
 z_index = -25
 scroll_scale = Vector2(0.62, 1)
 
-[node name="CloudField" type="ColorRect" parent="DynamicClouds"]
+[node name="CloudField" type="ColorRect" parent="DynamicClouds" unique_id=1209091370]
 material = SubResource("ShaderMaterial_sky_clouds")
 offset_left = -572.0
 offset_right = 3168.0
 offset_bottom = 1344.0
 mouse_filter = 2
 
-[node name="DistantBurntTrees" type="Parallax2D" parent="."]
+[node name="DistantBurntTrees" type="Parallax2D" parent="." unique_id=1514028551]
 z_index = -20
 scroll_scale = Vector2(0.75, 1)
 
-[node name="Trees" type="Sprite2D" parent="DistantBurntTrees"]
+[node name="Trees" type="Sprite2D" parent="DistantBurntTrees" unique_id=1705044137]
 position = Vector2(1436, 877)
 scale = Vector2(1.5683334, 1.6935166)
 texture = ExtResource("sky_parallax_trees")
 
-[node name="BurntForestForeground" type="Parallax2D" parent="."]
+[node name="BurntForestForeground" type="Parallax2D" parent="." unique_id=191405931]
 z_index = -10
 
-[node name="Foreground" type="Sprite2D" parent="BurntForestForeground"]
+[node name="Foreground" type="Sprite2D" parent="BurntForestForeground" unique_id=932695871]
 position = Vector2(1586, 683)
-scale = Vector2(1.6491411, 1.6410256)
+scale = Vector2(1.6491411, 1.6410255)
 texture = ExtResource("1_nnpcb")
 
-
-[node name="BarulhoGilhotina" type="AudioStreamPlayer" parent="."]
+[node name="BarulhoGilhotina" type="AudioStreamPlayer" parent="." unique_id=303988330]
 stream = ExtResource("1_ssjau")
 volume_db = -4.063
 autoplay = true
 parameters/looping = true
 
-[node name="maycon_itens" parent="." instance=ExtResource("1_yvup1")]
+[node name="maycon_itens" parent="." unique_id=77165274 instance=ExtResource("1_yvup1")]
 
-[node name="Fase1BeforeCastle" type="Sprite2D" parent="."]
+[node name="Fase1BeforeCastle" type="Sprite2D" parent="." unique_id=430672799]
 process_mode = 1
 position = Vector2(1586, 683)
 script = ExtResource("2_s4wqb")
 
-[node name="Camera_temp" type="Camera2D" parent="Fase1BeforeCastle"]
+[node name="Camera_temp" type="Camera2D" parent="Fase1BeforeCastle" unique_id=385581388]
 position = Vector2(2512, -258)
 enabled = false
 
-[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/Camera_temp"]
+[node name="ColorRect" type="ColorRect" parent="Fase1BeforeCastle/Camera_temp" unique_id=1174715726]
 offset_left = -584.0
 offset_top = -334.0
 offset_right = 580.0
 offset_bottom = 327.0
 color = Color(0, 0, 0, 1)
 
-[node name="guilhote2" type="AnimatedSprite2D" parent="Fase1BeforeCastle/Camera_temp"]
+[node name="guilhote2" type="AnimatedSprite2D" parent="Fase1BeforeCastle/Camera_temp" unique_id=310771462]
 visible = false
 position = Vector2(-43, 124)
 scale = Vector2(6.3385406, 10.269529)
 sprite_frames = SubResource("SpriteFrames_krf8o")
 
-[node name="msg_block" type="Label" parent="Fase1BeforeCastle/Camera_temp"]
+[node name="msg_block" type="Label" parent="Fase1BeforeCastle/Camera_temp" unique_id=1209680124]
 visible = false
 z_index = 3
 offset_left = -427.0
@@ -658,62 +657,60 @@ scale = Vector2(2.9967816, 1.6456175)
 text = "TEXT...
 TEXT..."
 
-[node name="breaking" type="AnimatedSprite2D" parent="Fase1BeforeCastle/Camera_temp"]
+[node name="breaking" type="AnimatedSprite2D" parent="Fase1BeforeCastle/Camera_temp" unique_id=1488477300]
 visible = false
 position = Vector2(-36, -25)
 sprite_frames = SubResource("SpriteFrames_upd12")
 frame = 9
 frame_progress = 1.0
 
-[node name="axe" type="AnimatedSprite2D" parent="Fase1BeforeCastle/Camera_temp"]
+[node name="axe" type="AnimatedSprite2D" parent="Fase1BeforeCastle/Camera_temp" unique_id=876219577]
 visible = false
 position = Vector2(-454.0001, -505.00003)
 scale = Vector2(11.66667, 11.368923)
 sprite_frames = SubResource("SpriteFrames_ckdea")
 autoplay = "default"
 
-[node name="MetalBatendo" type="AudioStreamPlayer" parent="Fase1BeforeCastle/Camera_temp"]
+[node name="MetalBatendo" type="AudioStreamPlayer" parent="Fase1BeforeCastle/Camera_temp" unique_id=1628661890]
 stream = ExtResource("8_ghhu0")
 
-[node name="no_monster_flask" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="no_monster_flask" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=561191674]
 position = Vector2(647.99994, 175.99998)
 scale = Vector2(3.6925187, 4.7253985)
 sprite_frames = SubResource("SpriteFrames_ssjau")
 autoplay = "default"
 
-[node name="MkDudun" type="AudioStreamPlayer" parent="Fase1BeforeCastle"]
+[node name="MkDudun" type="AudioStreamPlayer" parent="Fase1BeforeCastle" unique_id=924137120]
 stream = ExtResource("3_mm3kt")
 volume_db = -6.71
 pitch_scale = 0.33
 
-[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle"]
-libraries = {
-&"": SubResource("AnimationLibrary_ahm46")
-}
+[node name="animacoes" type="AnimationPlayer" parent="Fase1BeforeCastle" unique_id=1270682734]
+libraries/ = SubResource("AnimationLibrary_ahm46")
 
-[node name="guilhote" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="guilhote" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=677940877]
 position = Vector2(288.99997, 243.00003)
 scale = Vector2(6.3385406, 10.269529)
 sprite_frames = SubResource("SpriteFrames_n6co3")
 autoplay = "default"
 frame_progress = 0.41254604
 
-[node name="gilhotina_broken" type="Node2D" parent="Fase1BeforeCastle"]
+[node name="gilhotina_broken" type="Node2D" parent="Fase1BeforeCastle" unique_id=1921715086]
 visible = false
 
-[node name="guilhote_broken_1" type="AnimatedSprite2D" parent="Fase1BeforeCastle/gilhotina_broken"]
+[node name="guilhote_broken_1" type="AnimatedSprite2D" parent="Fase1BeforeCastle/gilhotina_broken" unique_id=495002371]
 position = Vector2(154, 241)
 rotation = -1.3089969
 scale = Vector2(4.9366674, 7.5778904)
 sprite_frames = SubResource("SpriteFrames_5200q")
 
-[node name="guilhote_broken_2" type="AnimatedSprite2D" parent="Fase1BeforeCastle/gilhotina_broken"]
+[node name="guilhote_broken_2" type="AnimatedSprite2D" parent="Fase1BeforeCastle/gilhotina_broken" unique_id=163432949]
 position = Vector2(369, 253)
 rotation = 1.0471976
 scale = Vector2(3.6077971, 4.1231656)
 sprite_frames = SubResource("SpriteFrames_10cfe")
 
-[node name="maycon_fase" parent="Fase1BeforeCastle" instance=ExtResource("4_wsirf")]
+[node name="maycon_fase" parent="Fase1BeforeCastle" unique_id=1043491180 instance=ExtResource("4_wsirf")]
 light_mask = 512
 visibility_layer = 524800
 position = Vector2(-367.99988, 210)
@@ -721,7 +718,7 @@ scale = Vector2(2.7735984, 2.5222125)
 collision_layer = 5
 collision_mask = 1
 
-[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase"]
+[node name="Camera2D" type="Camera2D" parent="Fase1BeforeCastle/maycon_fase" unique_id=445248010]
 position = Vector2(11.542603, 0.47611237)
 scale = Vector2(4.6533337, 4.4133334)
 zoom = Vector2(0.5, 0.5)
@@ -730,166 +727,166 @@ limit_top = 21
 limit_right = 3157
 limit_bottom = 1349
 
-[node name="Inimigos" type="Node" parent="Fase1BeforeCastle"]
+[node name="Inimigos" type="Node" parent="Fase1BeforeCastle" unique_id=1681158605]
 
-[node name="inimigo_bomba_pretti" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("5_cpmlm")]
+[node name="inimigo_bomba_pretti" parent="Fase1BeforeCastle/Inimigos" unique_id=386932643 instance=ExtResource("5_cpmlm")]
 position = Vector2(2351, 1118)
 scale = Vector2(1.5319358, -1.3703847)
 
-[node name="inimigo_fofo" parent="Fase1BeforeCastle/Inimigos" instance=ExtResource("6_mm3kt")]
+[node name="inimigo_fofo" parent="Fase1BeforeCastle/Inimigos" unique_id=126600160 instance=ExtResource("6_mm3kt")]
 position = Vector2(2580, 951)
 
-[node name="block_gilhotina" type="Area2D" parent="Fase1BeforeCastle"]
+[node name="block_gilhotina" type="Area2D" parent="Fase1BeforeCastle" unique_id=847134399]
 position = Vector2(1, -1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Fase1BeforeCastle/block_gilhotina"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Fase1BeforeCastle/block_gilhotina" unique_id=249869307]
 position = Vector2(123.5, 200.5)
 shape = SubResource("RectangleShape2D_6tryt")
 
-[node name="smoke15" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke15" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1642928449]
 position = Vector2(1413.9998, 631.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke16" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke16" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=369333244]
 position = Vector2(1474, 631.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke17" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke17" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1704722408]
 position = Vector2(1521, 644.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke18" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke18" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=29804275]
 position = Vector2(1478, 595.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke19" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke19" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1400124958]
 position = Vector2(1448, 548.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke20" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke20" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=641815882]
 position = Vector2(1489, 550.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke21" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke21" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1839663405]
 position = Vector2(-1028.0002, 713.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke22" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke22" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=2013009216]
 position = Vector2(-989, 698.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke23" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke23" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1141899888]
 position = Vector2(-963, 694.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke24" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke24" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1429468057]
 position = Vector2(-916, 694.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke25" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke25" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=1720013271]
 position = Vector2(-886, 692.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke26" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke26" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=652050376]
 position = Vector2(-944, 626.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="smoke27" type="AnimatedSprite2D" parent="Fase1BeforeCastle"]
+[node name="smoke27" type="AnimatedSprite2D" parent="Fase1BeforeCastle" unique_id=510776026]
 position = Vector2(-970, 639.99994)
 rotation = 0.025717258
 scale = Vector2(5.700968, 6.5159583)
 sprite_frames = SubResource("SpriteFrames_sybhq")
 autoplay = "default"
 
-[node name="next_scene" type="Area2D" parent="."]
+[node name="next_scene" type="Area2D" parent="." unique_id=1686485704]
 position = Vector2(16, -2)
 
-[node name="next" type="CollisionShape2D" parent="next_scene"]
+[node name="next" type="CollisionShape2D" parent="next_scene" unique_id=1673514252]
 position = Vector2(2964, 901.99994)
 scale = Vector2(5.559998, 2.9600005)
 shape = SubResource("WorldBoundaryShape2D_pg6gg")
 
-[node name="dead_line" type="Area2D" parent="."]
+[node name="dead_line" type="Area2D" parent="." unique_id=2147193480]
 light_mask = 524289
 visibility_layer = 524289
 collision_layer = 524289
 collision_mask = 524289
 
-[node name="dead" type="CollisionShape2D" parent="dead_line"]
+[node name="dead" type="CollisionShape2D" parent="dead_line" unique_id=1413677363]
 light_mask = 524289
 visibility_layer = 524289
 position = Vector2(1442, 1268)
 scale = Vector2(13.518565, 10.061738)
 shape = SubResource("WorldBoundaryShape2D_7je0d")
 
-[node name="back_stage" type="Area2D" parent="."]
+[node name="back_stage" type="Area2D" parent="." unique_id=1930182096]
 position = Vector2(1586, 683)
 
-[node name="back" type="CollisionShape2D" parent="back_stage"]
+[node name="back" type="CollisionShape2D" parent="back_stage" unique_id=1630353481]
 position = Vector2(-405.00024, 131)
 scale = Vector2(3.3999994, 5.44)
 shape = SubResource("WorldBoundaryShape2D_36c4s")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1034575058]
 collision_layer = 524291
 collision_mask = 524291
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=118984208]
 process_mode = 4
 light_mask = 524289
 visibility_layer = 524289
 position = Vector2(1696, 1180)
 shape = SubResource("RectangleShape2D_hnmna")
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=1753652187]
 position = Vector2(2384, 1253)
 shape = SubResource("RectangleShape2D_p1t4m")
 
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D" unique_id=2083186708]
 position = Vector2(2738.8984, 1128)
 shape = SubResource("RectangleShape2D_s4wqb")
 
-[node name="battle" parent="." instance=ExtResource("6_yvup1")]
+[node name="battle" parent="." unique_id=1576783984 instance=ExtResource("6_yvup1")]
 process_mode = 0
 position = Vector2(-675, 329)
 
-[node name="Pause" parent="." instance=ExtResource("7_ssjau")]
+[node name="Pause" parent="." unique_id=224948083 instance=ExtResource("7_ssjau")]
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
@@ -900,7 +897,7 @@ offset_bottom = -1283.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[node name="fade" parent="." instance=ExtResource("12_yvup1")]
+[node name="fade" parent="." unique_id=108933026 instance=ExtResource("12_yvup1")]
 
 [connection signal="body_entered" from="Fase1BeforeCastle/block_gilhotina" to="Fase1BeforeCastle" method="_on_block_gilhotina_body_entered"]
 [connection signal="body_entered" from="next_scene" to="Fase1BeforeCastle" method="_on_next_scene_body_entered"]

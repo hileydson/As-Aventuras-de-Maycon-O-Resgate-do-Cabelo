@@ -20,6 +20,14 @@ extends Sprite2D
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
 	
+	if is_instance_valid(fade) and fade.has_node("Transition"):
+		var trans := fade.get_node("Transition") as AnimationPlayer
+		trans.speed_scale = 0.65
+		trans.animation_finished.connect(func(anim_name: StringName):
+			if anim_name == &"fade_in":
+				trans.speed_scale = 1.0
+		)
+	
 	#REINICIA AS BATALHAS
 	Global.battle_next_boss = 0
 	Global.battle_next_enemy = "0"
