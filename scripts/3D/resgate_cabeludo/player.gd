@@ -2,9 +2,10 @@ extends "res://scripts/3D/platform_maycon.gd"
 
 const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
 const BLOOD_SCENE = preload("res://scenes/3D/blood.tscn")
+const SCREAM_SOUND = preload("res://assets/novos_audios/maycon_falling_fase_1_transition.mp3")
 
-# Corrida 20% mais rápida (de 8.58 para 10.3).
-@export var run_speed:float = 10.3
+# Corrida acelerada em 15% (de 10.3 para 11.85).
+@export var run_speed:float = 11.85
 # A fase corre sozinha: o jogador só desvia, pula e sobrevive.
 @export var auto_run:bool = true
 # Dash curto, pago em pentagramas, invencível enquanto dura.
@@ -39,9 +40,15 @@ var dash_trail_clock:float = 0.0
 var dash_ghosts:Array[Dictionary] = []
 var dash_fov_base:float = 0.0
 var visual_skeleton:Skeleton3D
+var scream_audio:AudioStreamPlayer3D
 
 func _ready() -> void:
 	super._ready()
+	scream_audio = AudioStreamPlayer3D.new()
+	scream_audio.stream = SCREAM_SOUND
+	scream_audio.volume_db = 1.0
+	scream_audio.unit_size = 12.0
+	add_child(scream_audio)
 	if has_node("Preview"):
 		$Preview.queue_free()
 	visual.rotation.y = PI
@@ -51,6 +58,8 @@ func _ready() -> void:
 		visual_skeleton = ossos[0] as Skeleton3D
 
 func _unhandled_input(event:InputEvent) -> void:
+	if is_instance_valid(get_parent().final_battle) and get_parent().final_battle.handles_player():
+		return
 	if event.is_action_pressed("dash_resgate"):
 		try_dash()
 	# O soco existe só na batalha contra o Lips.
@@ -63,6 +72,9 @@ func _unhandled_input(event:InputEvent) -> void:
 		camera_pitch = clampf(camera_pitch - mouse.relative.y * MOUSE_SENSIBILIDADE * 0.75, PITCH_MIN, PITCH_MAX)
 
 func _process(delta:float) -> void:
+	if is_instance_valid(get_parent().final_battle) and get_parent().final_battle.handles_player():
+		get_parent().final_battle.update_camera(delta)
+		return
 	if not control_enabled:
 		return
 	# Câmera colada atrás do Maycon, acompanhando a corrida de perto.
@@ -85,6 +97,9 @@ func _process(delta:float) -> void:
 		camera.global_position += Vector3(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0), 0.0) * camera_shake * 0.6
 
 func _physics_process(delta:float) -> void:
+	if is_instance_valid(get_parent().final_battle) and get_parent().final_battle.handles_player():
+		get_parent().final_battle.physics_player(delta)
+		return
 	hurt_time = maxf(0.0, hurt_time - delta)
 	_update_fart_puffs(delta)
 	if not control_enabled or dying:
@@ -143,12 +158,16 @@ func _physics_process(delta:float) -> void:
 		coyote_time = 0.0
 		jump_buffer = 0.0
 		jump_audio.play()
+		_play_scream()
 		POEIRA.saltar(get_parent(), global_position)
 	if dash_time <= 0.0:
 		velocity.y -= 23.0 * delta
 	if Input.is_action_just_released("ui_accept") and velocity.y > 3.5 and launch_time <= 0.0:
 		velocity.y *= 0.62
+	var previously_on_floor := is_on_floor()
 	move_and_slide()
+	if previously_on_floor and not is_on_floor() and velocity.y < 0.0:
+		_play_scream()
 	# O Maycon não sai da pista de lado; a queda só existe nos buracos entre as plataformas.
 	var limit:float = get_parent().track_limit(global_position.z)
 	if absf(global_position.x) > limit:
@@ -163,12 +182,16 @@ func _physics_process(delta:float) -> void:
 		animation_player.speed_scale = 0.62 if not is_on_floor() else 1.2 if moving else 1.0
 	visual.visible = hurt_time <= 0.0 or fmod(hurt_time, 0.16) < 0.08
 	if global_position.y < get_parent().fall_limit(global_position.z):
+		if is_instance_valid(scream_audio):
+			scream_audio.stop()
 		get_parent().respawn()
 
 # O trampolim joga poeira junto com o Maycon e cobre o chão quando ele aterra.
 func _update_landing_dust() -> void:
 	var airborne := not is_on_floor()
 	if was_airborne and not airborne:
+		if is_instance_valid(scream_audio):
+			scream_audio.stop()
 		if pending_landing:
 			pending_landing = false
 			POEIRA.apagar(jump_dust)
@@ -179,6 +202,13 @@ func _update_landing_dust() -> void:
 			POEIRA.aterrar(get_parent(), global_position)
 	was_airborne = airborne
 
+func _play_scream() -> void:
+	if not is_instance_valid(scream_audio):
+		return
+	scream_audio.stop()
+	scream_audio.pitch_scale = randf_range(0.85, 1.05)
+	scream_audio.play()
+
 func launch_to(target:Vector3, duration:float) -> void:
 	launch_time = duration
 	launch_velocity = (target - global_position) / duration
@@ -186,6 +216,7 @@ func launch_to(target:Vector3, duration:float) -> void:
 	velocity.y += 11.5 * duration
 	jumps = 1
 	jump_audio.play()
+	_play_scream()
 	POEIRA.impulsionar(get_parent(), global_position)
 	POEIRA.apagar(jump_dust)
 	jump_dust = POEIRA.rastro(self)
@@ -193,6 +224,9 @@ func launch_to(target:Vector3, duration:float) -> void:
 	was_airborne = true
 
 func receive_damage(amount:float, source:Vector3) -> void:
+	if is_instance_valid(get_parent().final_battle) and get_parent().final_battle.handles_player():
+		get_parent().final_battle.take_hit(amount,source)
+		return
 	if not control_enabled or hurt_time > 0.0 or dying or is_invincible:
 		return
 	hurt_time = 1.6

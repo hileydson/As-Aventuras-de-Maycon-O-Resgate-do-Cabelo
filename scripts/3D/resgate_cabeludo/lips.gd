@@ -115,6 +115,8 @@ func quebrar_no_caminho() -> void:
 			destruir(peca)
 
 func _physics_process(delta:float) -> void:
+	if is_instance_valid(stage) and is_instance_valid(stage.final_battle) and stage.final_battle.engaged:
+		return
 	if not active or not stage.player.control_enabled:
 		return
 	clock += delta

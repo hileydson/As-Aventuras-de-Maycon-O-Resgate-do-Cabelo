@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn" id="1"]
+
+[node name="EldenLipsPreview" instance=ExtResource("1")]
+preview_final_battle = true

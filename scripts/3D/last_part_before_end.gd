@@ -112,15 +112,84 @@ func _ready() -> void:
 	build_objective_ui()
 	build_city_minimap()
 	objective_ui.visible = false
-	set_story_stage(STAGE_INFORMANT)
-	player.get_node("hud_canvas/maycon_hp").visible = false
-	Global.in_cutscene = true
-	luz_mapa.visible = true
-	maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
-	cutscene_inicio.play("intro_mapa")
+	if not _check_saved_city_progress():
+		set_story_stage(STAGE_INFORMANT)
+		player.get_node("hud_canvas/maycon_hp").visible = false
+		Global.in_cutscene = true
+		luz_mapa.visible = true
+		maycon_3d.process_mode = Node.PROCESS_MODE_DISABLED
+		cutscene_inicio.play("intro_mapa")
 	if OS.get_cmdline_user_args().has("--test-wood-pickup"):
 		wood_debug_mode = true
 		call_deferred("start_wood_pickup_test")
+
+func _check_saved_city_progress() -> bool:
+	var ev: Dictionary = Global.game_events
+	if ev.get("cidade_cabelo_resgatado", false):
+		_skip_intro_for_event_stage()
+		set_story_stage(STAGE_CABELO)
+		var cabelo_pos: Vector3 = cabelo.global_position + Vector3(0.0, 0.0, 15.0)
+		place_player_on_ground(cabelo_pos)
+		player.look_at(Vector3(cabelo.global_position.x, player.global_position.y, cabelo.global_position.z), Vector3.UP)
+		player.velocity = Vector3.ZERO
+		return true
+	elif ev.get("cidade_perseguicao_concluida", false):
+		_skip_intro_for_event_stage()
+		set_story_stage(STAGE_CABELO)
+		var cabelo_pos: Vector3 = cabelo.global_position + Vector3(0.0, 0.0, 25.0)
+		place_player_on_ground(cabelo_pos)
+		player.look_at(Vector3(cabelo.global_position.x, player.global_position.y, cabelo.global_position.z), Vector3.UP)
+		player.velocity = Vector3.ZERO
+		return true
+	elif ev.get("cidade_luta_fellas_vencida", false):
+		_skip_intro_for_event_stage()
+		player.global_position = fellas.global_position + Vector3(0.0, 0.0, 18.0)
+		chase_start_position = player.global_position
+		chase_start_rotation = player.rotation
+		var player_camera: Camera3D = player.get_node("Camera3D")
+		chase_start_camera_rotation = player_camera.rotation
+		set_story_stage(STAGE_CHASE)
+		start_chase_round()
+		return true
+	elif ev.get("cidade_madeira_coletada", false):
+		_skip_intro_for_event_stage()
+		var fellas_pos: Vector3 = fellas.global_position + Vector3(0.0, 0.0, 15.0)
+		place_player_on_ground(fellas_pos)
+		player.look_at(Vector3(fellas.global_position.x, player.global_position.y, fellas.global_position.z), Vector3.UP)
+		player.velocity = Vector3.ZERO
+		player.dismount_final_game()
+		player.set_wood_melee_mode(true)
+		var player_cam: Camera3D = player.get_node("Camera3D")
+		player_cam.make_current()
+		build_first_person_weapon(player_cam)
+		setup_thugs()
+		set_story_stage(STAGE_FIGHT)
+		return true
+	elif ev.get("cidade_fellas_encontrados", false):
+		_skip_intro_for_event_stage()
+		var fellas_pos: Vector3 = fellas.global_position + Vector3(0.0, 0.0, 15.0)
+		place_player_on_ground(fellas_pos)
+		player.look_at(Vector3(fellas.global_position.x, player.global_position.y, fellas.global_position.z), Vector3.UP)
+		player.velocity = Vector3.ZERO
+		set_story_stage(STAGE_DISMOUNT)
+		return true
+	elif ev.get("cidade_informante_falado", false):
+		_skip_intro_for_event_stage()
+		set_story_stage(STAGE_FELLAS)
+		return true
+	return false
+
+func _skip_intro_for_event_stage() -> void:
+	cutscene_inicio.stop()
+	city_intro_finished = true
+	maycon_3d.process_mode = Node.PROCESS_MODE_INHERIT
+	luz_mapa.visible = false
+	player.set_final_game()
+	player.get_node("hud_canvas/maycon_hp").visible = false
+	player.set_rain(true)
+	objective_ui.visible = true
+	the_almost_end_song.play()
+	Global.in_cutscene = false
 
 func start_wood_pickup_test() -> void:
 	cutscene_inicio.stop()
@@ -482,6 +551,9 @@ func _on_chao_body_entered(_body:Node3D) -> void:
 func _on_area_3d_body_entered(body:Node3D) -> void:
 	if body == player && stage == STAGE_CABELO && !rescue_started:
 		rescue_started = true
+		Global.game_events["cidade_cabelo_resgatado"] = true
+		Global.save_to_player_savegame()
+		Global.save_settings()
 		player.process_mode = Node.PROCESS_MODE_DISABLED
 		player.visible = false
 		var player_hud := player.get_node_or_null("hud_canvas") as CanvasLayer
@@ -537,6 +609,9 @@ func _on_area_3d_cigarro_body_entered(body:Node3D) -> void:
 
 func on_informant_dialog_finished() -> void:
 	if stage == STAGE_INFORMANT:
+		Global.game_events["cidade_informante_falado"] = true
+		Global.save_to_player_savegame()
+		Global.save_settings()
 		set_story_stage(STAGE_FELLAS)
 	Global.in_cutscene = false
 	player.process_mode = Node.PROCESS_MODE_INHERIT
@@ -564,6 +639,9 @@ func _on_area_3d_lips_body_entered(body:Node3D) -> void:
 	balao_marker.add_child(balao_)
 
 func on_fellas_dialog_finished() -> void:
+	Global.game_events["cidade_fellas_encontrados"] = true
+	Global.save_to_player_savegame()
+	Global.save_settings()
 	set_story_stage(STAGE_DISMOUNT)
 	Global.in_cutscene = true
 
@@ -628,6 +706,9 @@ func begin_pickup_cutscene() -> void:
 	player_camera.position = standing_camera_position
 	player_camera.rotation = standing_camera_rotation
 	setup_thugs()
+	Global.game_events["cidade_madeira_coletada"] = true
+	Global.save_to_player_savegame()
+	Global.save_settings()
 	set_story_stage(STAGE_FIGHT)
 	fade.get_node("Transition").play("fade_in")
 	await get_tree().create_timer(2.0).timeout
@@ -862,6 +943,9 @@ func finish_fight() -> void:
 	if fight_finishing:
 		return
 	fight_finishing = true
+	Global.game_events["cidade_luta_fellas_vencida"] = true
+	Global.save_to_player_savegame()
+	Global.save_settings()
 	set_story_stage(STAGE_SURRENDER)
 	Global.in_cutscene = true
 	player.process_mode = Node.PROCESS_MODE_DISABLED
@@ -1116,6 +1200,9 @@ func show_surrender_dialog() -> void:
 	balao_marker.add_child(balao_)
 
 func unlock_cabelo() -> void:
+	Global.game_events["cidade_perseguicao_concluida"] = true
+	Global.save_to_player_savegame()
+	Global.save_settings()
 	set_story_stage(STAGE_CABELO)
 	player.process_mode = Node.PROCESS_MODE_INHERIT
 	Global.in_cutscene = false

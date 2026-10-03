@@ -78,10 +78,12 @@ dungeon_unlocked=true, dungeon_intro_cutscene_seen=true, dungeon_axe_cutscene_se
 var maycon_itens = {axe=false}
 var game_events_default = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true, passagem_pestilenta_feita=false, camilita_defeated=false, cabelo_desapareceu=false,
-dungeon_unlocked=false, dungeon_intro_cutscene_seen=false, dungeon_axe_cutscene_seen=false, dungeon_axe_cutscene_played=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_blue_gate_open=false, dungeon_red_gate_open=false, dungeon_green_gate_open=false, dungeon_blue_key_used=false, dungeon_red_key_used=false, dungeon_green_key_used=false, dungeon_cell_key_used=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
+dungeon_unlocked=false, dungeon_intro_cutscene_seen=false, dungeon_axe_cutscene_seen=false, dungeon_axe_cutscene_played=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_blue_gate_open=false, dungeon_red_gate_open=false, dungeon_green_gate_open=false, dungeon_blue_key_used=false, dungeon_red_key_used=false, dungeon_green_key_used=false, dungeon_cell_key_used=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false,
+cidade_informante_falado=false, cidade_fellas_encontrados=false, cidade_madeira_coletada=false, cidade_luta_fellas_vencida=false, cidade_perseguicao_concluida=false, cidade_cabelo_resgatado=false}
 var game_events = {taken_hp_fase_1_outside_castle_again_no_fire_2=false, taken_hp_fase_1_castle_1=false, caixa_to_carry_moved=false, 
 axe_taken=false, gilhotina_broken=false, seco_break_capsule=false, seco_defeated=false, seco_first_scene_castle=false, first_battle=true, before_prologo=true, passagem_pestilenta_feita=false, camilita_defeated=false, cabelo_desapareceu=false,
-dungeon_unlocked=false, dungeon_intro_cutscene_seen=false, dungeon_axe_cutscene_seen=false, dungeon_axe_cutscene_played=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_blue_gate_open=false, dungeon_red_gate_open=false, dungeon_green_gate_open=false, dungeon_blue_key_used=false, dungeon_red_key_used=false, dungeon_green_key_used=false, dungeon_cell_key_used=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false}
+dungeon_unlocked=false, dungeon_intro_cutscene_seen=false, dungeon_axe_cutscene_seen=false, dungeon_axe_cutscene_played=false, dungeon_flashlight_taken=false, dungeon_pistol_taken=false, dungeon_gun_taken=false, dungeon_blue_key_taken=false, dungeon_red_key_taken=false, dungeon_green_key_taken=false, dungeon_key_taken=false, dungeon_intro_lever=false, dungeon_blue_lever=false, dungeon_red_lever=false, dungeon_green_lever=false, dungeon_blue_gate_open=false, dungeon_red_gate_open=false, dungeon_green_gate_open=false, dungeon_blue_key_used=false, dungeon_red_key_used=false, dungeon_green_key_used=false, dungeon_cell_key_used=false, dungeon_finale_triggered=false, dungeon_axe_door_open=false, dungeon_axe_taken=false,
+cidade_informante_falado=false, cidade_fellas_encontrados=false, cidade_madeira_coletada=false, cidade_luta_fellas_vencida=false, cidade_perseguicao_concluida=false, cidade_cabelo_resgatado=false}
 var inimigos_mortos = {}
 var realtime_enemy_respawns:Dictionary = {}
 var aim_assist_strength:float = 0.6
@@ -787,6 +789,21 @@ func reset_dungeon_events(save_now: bool = true) -> void:
 	for k in dungeon_keys:
 		game_events[k] = false
 	maycon_itens["axe"] = false
+	if save_now:
+		save_to_player_savegame()
+		save_settings()
+
+func reset_city_events(save_now: bool = true) -> void:
+	var city_keys := [
+		"cidade_informante_falado",
+		"cidade_fellas_encontrados",
+		"cidade_madeira_coletada",
+		"cidade_luta_fellas_vencida",
+		"cidade_perseguicao_concluida",
+		"cidade_cabelo_resgatado"
+	]
+	for k in city_keys:
+		game_events[k] = false
 	if save_now:
 		save_to_player_savegame()
 		save_settings()

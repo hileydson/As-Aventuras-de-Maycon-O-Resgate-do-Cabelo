@@ -9,6 +9,7 @@ const WIND_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
 const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
 const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
 const JAULA = preload("res://scripts/3D/resgate_cabeludo/jaula.gd")
+const ELDEN_LIPS = preload("res://scripts/3D/resgate_cabeludo/elden_lips.gd")
 # Mesmo Maycon 2D do menu principal, o do olhar para frente.
 const MAYCON_2D = preload("res://assets/novas_imagens/maycon/jamelao_float_1.png")
 # Mesmo blur direcional do dash do Poço Infinito, usado aqui como motion blur.
@@ -34,6 +35,7 @@ const SOUNDS = {
 }
 
 @export var show_intro:bool = true
+@export var preview_final_battle:bool = false
 @onready var player = $Maycon
 @onready var camera:Camera3D = $Camera3D
 @onready var boss = $Arena/Lips
@@ -60,6 +62,7 @@ var song_turn:int = 0
 var wind:MultiMeshInstance3D
 var cage:RigidBody3D
 var boss_bar:TextureProgressBar
+var final_battle:Node3D
 
 func _ready() -> void:
 	old_cutscene = Global.in_cutscene
@@ -76,6 +79,11 @@ func _ready() -> void:
 	build_wind()
 	build_cage()
 	build_pause()
+	final_battle = Node3D.new()
+	final_battle.name = "EldenLips"
+	final_battle.set_script(ELDEN_LIPS)
+	add_child(final_battle)
+	final_battle.setup(self)
 	update_hud()
 	call_deferred("opening")
 
@@ -241,17 +249,16 @@ func _physics_process(_delta:float) -> void:
 	if finishing or get_tree().paused:
 		return
 	if player.control_enabled and not player.arena_mode and player.position.z < -1778:
-		player.arena_mode = true
-		# O portao fecha a entrada: dali em diante o Maycon e o Lips ficam
-		# trancados juntos dentro da arena.
-		$Arena/Gate/CollisionShape3D.disabled = false
-		$Arena/Gate.visible = true
-		# O ponteiro vai para a camera, que agora gira em volta do Maycon.
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		boss.start()
-		update_hud()
+		final_battle.begin()
 
 func opening() -> void:
+	if preview_final_battle or Global.debug_resgate_cabeludo_boss or OS.get_cmdline_user_args().has("--elden-lips-preview"):
+		Global.debug_resgate_cabeludo_boss = false
+		lock_hair_in_cage()
+		player.position = Vector3(0,0.08,-1779)
+		fade.color.a = 0.0
+		final_battle.begin()
+		return
 	lay_player_down()
 	await lips_arrival()
 	lock_hair_in_cage()
@@ -332,13 +339,12 @@ func lips_arrival() -> void:
 		POEIRA.pousar(self, pouso + Vector3(cos(angulo) * raio, 0.0, sin(angulo) * raio))
 	sound("slam")
 	burst(pouso + Vector3.UP, Color("c9b785"), 34)
-	# A pancada toca e a câmera trava na cara do cabelo, tremendo, até ela acabar.
-	# Só depois a cena segue.
+	# A pancada toca e a câmera foca na cara do cabelo tremendo por um tempo mais curto e dinâmico.
 	impact_sound(pouso)
-	await shake_on_hair(IMPACT_SOUND.get_length())
+	await shake_on_hair(3.8)
 
 # Enquanto a pancada toca, a câmera chega perto da cara do cabelo e treme. O
-# tremor é forte na batida e vai morrendo até o som acabar.
+# tremor é forte na batida e vai morrendo até o tempo determinado.
 func shake_on_hair(duracao:float) -> void:
 	var cabelo:Node3D = boss.get_node_or_null("Hair") as Node3D
 	if cabelo == null:
@@ -444,7 +450,7 @@ func start_stage_song() -> void:
 
 # Emenda a música em si mesma antes do fim, então a virada nunca deixa silêncio.
 func chain_song() -> void:
-	if finishing or song_slots.is_empty():
+	if finishing or song_slots.is_empty() or (is_instance_valid(final_battle) and final_battle.engaged):
 		return
 	var slot:AudioStreamPlayer = song_slots[song_turn]
 	song_turn = 1 - song_turn
@@ -496,7 +502,7 @@ func update_hud() -> void:
 	if is_instance_valid(pentagram_label):
 		pentagram_label.text = str(pentagrams)
 	if is_instance_valid(boss_bar):
-		boss_bar.visible = boss.active and not finishing
+		boss_bar.visible = boss.active and not finishing and not (is_instance_valid(final_battle) and final_battle.engaged)
 		boss_bar.value = float(boss.hp)
 
 func collect(at:Vector3 = Vector3.ZERO) -> void:
@@ -672,6 +678,9 @@ func show_checkpoint() -> void:
 	aviso.tween_callback(func(): hint.text = "")
 
 func respawn() -> void:
+	if is_instance_valid(final_battle) and final_battle.engaged:
+		final_battle.retry()
+		return
 	if respawning or finishing or exit_started:
 		return
 	respawning = true
