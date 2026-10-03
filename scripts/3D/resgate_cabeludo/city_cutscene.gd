@@ -5,9 +5,19 @@ const PLANE_ENGINE = preload("res://assets/novos_audios/aviao.mp3")
 const CITY_SONG = preload("res://assets/novos_audios/city_cutscene_song.mp3")
 const STEP_SOUND = preload("res://assets/novos_audios/mario_part_sounds/passo.mp3")
 const WIND_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
-const BLUR_SHADER = preload("res://scenes/3D/poco_infinito_dash_blur.gdshader")
+const BLUR_SHADER = preload("res://scenes/3D/resgate_cabeludo/city_cutscene_motion_blur.gdshader")
 const PLANE_GRIP := Vector3(0.0, -3.07, 0.8)
 const SONG_FADE_TIME := 6.0
+# Blur de base sempre presente, mais o ganho sobre a velocidade do fundo na tela.
+const BLUR_BASE := .06
+const BLUR_GAIN := .22
+const BLUR_MAX := .42
+const BLUR_REFERENCE := 20.0
+# Corte de memória: clarão âmbar curto, no mesmo tom da dissolução do Maycon.
+const FLASH_COLOR := Color(1.0, .93, .82)
+const FLASH_ALPHA := .62
+const FLASH_TIME := .38
+const FLASH_BLUR := .34
 
 @export var forest_scene:String = "res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn"
 @export var pace:float = 1.0
@@ -36,6 +46,13 @@ var city_song:AudioStreamPlayer
 var music_fading:bool = false
 var camera_zoom:Tween
 var hair_grip:BoneAttachment3D
+var blur_material:ShaderMaterial
+var flash_overlay:ColorRect
+var flash_tween:Tween
+var flash_blur:float = 0.0
+var flashes:int = 0
+var blur_strength:float = 0.0
+var previous_camera:Transform3D
 
 func _ready() -> void:
 	Global.in_cutscene = true
@@ -68,6 +85,7 @@ func _ready() -> void:
 	build_city_audio()
 	build_plane_wind()
 	build_motion_blur()
+	build_memory_flash()
 	call_deferred("sequence")
 
 func build_city_audio() -> void:
@@ -88,15 +106,60 @@ func build_motion_blur() -> void:
 	var effect := ColorRect.new()
 	effect.name = "MotionBlur"
 	effect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var mat := ShaderMaterial.new()
-	mat.shader = BLUR_SHADER
-	mat.set_shader_parameter("blur_strength", .14)
-	mat.set_shader_parameter("blur_direction", Vector2(0,1))
-	mat.set_shader_parameter("blur_center", Vector2(.5,.5))
-	effect.material = mat
+	blur_material = ShaderMaterial.new()
+	blur_material.shader = BLUR_SHADER
+	blur_material.set_shader_parameter("blur_strength", BLUR_BASE)
+	blur_material.set_shader_parameter("blur_direction", Vector2(0,1))
+	effect.material = blur_material
 	$HUD.add_child(effect)
 	$HUD.move_child(effect, 0)
 	effect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	previous_camera = camera.global_transform
+
+func build_memory_flash() -> void:
+	flash_overlay = ColorRect.new()
+	flash_overlay.name = "MemoryFlash"
+	flash_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	flash_overlay.color = Color(FLASH_COLOR, 0.0)
+	$HUD.add_child(flash_overlay)
+	# Acima dos planos e da frase, mas abaixo do fade que encerra a cena.
+	$HUD.move_child(flash_overlay, $HUD/Fade.get_index())
+	flash_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+# Cada troca de take corta como uma lembrança: clarão curto e um puxão no blur.
+func memory_flash() -> void:
+	if not flash_overlay:
+		return
+	if flash_tween and flash_tween.is_valid():
+		flash_tween.kill()
+	flash_overlay.color = Color(FLASH_COLOR, FLASH_ALPHA)
+	flash_blur = FLASH_BLUR
+	flashes += 1
+	flash_tween = create_tween()
+	flash_tween.tween_property(flash_overlay, "color:a", 0.0, FLASH_TIME * pace).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	flash_tween.parallel().tween_property(self, "flash_blur", 0.0, FLASH_TIME * pace).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+# Deslocamento de um ponto do mundo na tela, em frações de meia tela.
+func screen_offset(view:Transform3D, fov_degrees:float, target:Vector3) -> Vector2:
+	var local:Vector3 = view.affine_inverse() * target
+	if local.z > -.05:
+		return Vector2.ZERO
+	var extent := tan(deg_to_rad(fov_degrees) * .5)
+	var viewport:Vector2 = get_viewport().get_visible_rect().size
+	var aspect := viewport.x / maxf(viewport.y, 1.0)
+	return Vector2(local.x / (-local.z * extent * aspect), -local.y / (-local.z * extent))
+
+# O fundo é o que escorre na tela quando a câmera corre: ele dita o blur.
+func update_motion_blur(delta:float) -> void:
+	if not blur_material:
+		return
+	var reference:Vector3 = previous_camera.origin - previous_camera.basis.z * BLUR_REFERENCE
+	var drift := screen_offset(camera.global_transform, camera.fov, reference) / maxf(delta, .0001)
+	blur_strength = minf(BLUR_BASE + flash_blur + drift.length() * BLUR_GAIN, BLUR_MAX)
+	if drift.length() > .0001:
+		blur_material.set_shader_parameter("blur_direction", drift.normalized())
+	blur_material.set_shader_parameter("blur_strength", blur_strength)
+	previous_camera = camera.global_transform
 
 func fade_city_song(duration:float) -> void:
 	if music_fading:
@@ -188,6 +251,7 @@ func _process(delta:float) -> void:
 	if $HUD/Phrase.visible:
 		var screen := camera.unproject_position($Cigarro.global_position + Vector3.UP * 2.0)
 		$HUD/Phrase.position = screen - Vector2($HUD/Phrase.size.x * 0.5, 40)
+	update_motion_blur(delta)
 
 func animate(player:AnimationPlayer, name:String) -> void:
 	if player and player.has_animation(name):
@@ -287,6 +351,7 @@ func move(node:Node3D, destination:Vector3, duration:float) -> Tween:
 	return tween
 
 func shot(actor:Node3D, offset:Vector3, target:Node3D, aim:Vector3, duration:float, first_person:bool = false, end_fov:float = 65.0) -> void:
+	memory_flash()
 	if camera_zoom and camera_zoom.is_valid():
 		camera_zoom.kill()
 	camera.fov = 65.0
@@ -366,6 +431,7 @@ func sequence() -> void:
 	await shot(maycon, Vector3(0, 1.65, -0.2), plane, Vector3.ZERO, 3, true)
 	await shot(maycon, Vector3(-7, 3, 5), maycon, Vector3.UP * 1.1, 4, false, 48)
 	await shot(maycon, Vector3(0, 1.65, -0.2), plane, Vector3.ZERO, 2, true)
+	memory_flash()
 	follow = maycon
 	follow_offset = Vector3(0, 1.65, -0.2)
 	focus = $Cigarro
@@ -428,6 +494,7 @@ func sequence() -> void:
 	arc(maycon, Vector3(24, 105, -280), 20, 8)
 	arc(lips, Vector3(27, 102, -282), 20, 8)
 	# Primeiro mostra o segundo impulso; só então dissolve tudo em branco.
+	memory_flash()
 	follow = maycon
 	follow_offset = Vector3(-12, 4, 22)
 	focus = maycon

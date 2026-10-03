@@ -87,6 +87,14 @@ func run() -> void:
 	var city:Node3D = load("res://scenes/3D/last_fight_before_end.tscn").instantiate()
 	var anchor:Marker3D = city.get_node("ResgateCityAnchor")
 	check("city cinematic follows the avenue east from the gas station",(anchor.basis*Vector3.FORWARD).is_equal_approx(Vector3.RIGHT) and anchor.position.distance_to(Vector3(-535,-7.08,-202))<.01)
+	var trigger:CollisionShape3D = city.get_node("cabelo/Area3D/CollisionShape3D")
+	var trigger_basis:Basis = (city.get_node("cabelo").transform * city.get_node("cabelo/Area3D").transform * trigger.transform).basis
+	var half:Vector3 = trigger.shape.size * .5
+	var reach_x:float = (trigger_basis * Vector3(half.x,0,0)).length()
+	var reach_y:float = (trigger_basis * Vector3(0,half.y,0)).length()
+	var reach_z:float = (trigger_basis * Vector3(0,0,half.z)).length()
+	check("cutscene trigger reaches Maycon well before the hair",reach_x>6.5 and reach_z>6.5 and reach_y>2.0)
+	if reach_x<=6.5 or reach_z<=6.5 or reach_y<=2.0: print("Trigger reach: %.2f x %.2f x %.2f" % [reach_x,reach_y,reach_z])
 	var cutscene:Node3D = load("res://scenes/3D/resgate_cabeludo/city_cutscene.tscn").instantiate()
 	check("Cabelo starts above the pavement instead of inside it",cutscene.get_node("Hair").position.y>1)
 	var cigar:Sprite3D = cutscene.get_node("Cigarro")

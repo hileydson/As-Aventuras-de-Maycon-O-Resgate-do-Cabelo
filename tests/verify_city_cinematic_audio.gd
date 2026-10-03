@@ -43,6 +43,12 @@ func run() -> void:
 	var previous_grip_phase := -1
 	var settled_grip_frames := 0
 	var previous_paper_basis := Basis.IDENTITY
+	var flashes := 0
+	var flash_peak := 0.0
+	var blur_idle := 1.0
+	var blur_peak := 0.0
+	var blur_turns := false
+	var previous_blur_direction := Vector2.ZERO
 	var lips_min_fov := 65.0
 	var lips_max_fov := 0.0
 	var maycon_min_fov := 65.0
@@ -96,6 +102,15 @@ func run() -> void:
 		if city.maycon_entered and not city.maycon_running and city.lips.get_parent()==city:
 			fell_to_spring = fell_to_spring or city.maycon.position.distance_to(city.get_node("Spring").position)<1.1
 			bounced = bounced or (fell_to_spring and city.maycon.position.y>30 and city.lips.position.y>25)
+		var flash:float = city.get_node("HUD/MemoryFlash").color.a
+		flashes = city.flashes
+		flash_peak = maxf(flash_peak,flash)
+		var blur:float = city.blur_material.get_shader_parameter("blur_strength")
+		blur_idle = minf(blur_idle,blur)
+		blur_peak = maxf(blur_peak,blur)
+		var blur_direction:Vector2 = city.blur_material.get_shader_parameter("blur_direction")
+		blur_turns = blur_turns or (previous_blur_direction!=Vector2.ZERO and blur_direction.dot(previous_blur_direction)<.99)
+		previous_blur_direction = blur_direction
 		var color:Color = city.get_node("HUD/Fade").color
 		if color.a>.98:
 			white_end = color.r==1 and color.g==1 and color.b==1
@@ -105,6 +120,10 @@ func run() -> void:
 	check("Lips running and jump shots stay behind Lips and Cabelo",lips_third_person)
 	check("paper stays attached by its edge to Lips' animated right hand",held_samples>100 and paper_attached and paper_turns)
 	if not paper_attached: print("Largest hand gap: %.3f (%s)" % [largest_hand_gap,gap_phase])
+	check("every take change flashes like a memory cut",flashes>=18 and flash_peak>.5)
+	if flashes<18 or flash_peak<=.5: print("Flashes: %d (peak %.2f)" % [flashes,flash_peak])
+	check("motion blur stays light but follows the camera",blur_idle>.0 and blur_idle<.1 and blur_peak>.2 and blur_peak<=.42 and blur_turns)
+	if not (blur_peak>.2 and blur_peak<=.42): print("Blur range: %.3f..%.3f (%d flashes)" % [blur_idle,blur_peak,flashes])
 	check("Lips running shots gradually zoom toward him",lips_max_fov>62 and lips_min_fov<54)
 	check("Maycon third person running shot gradually zooms toward him",maycon_max_fov>62 and maycon_min_fov<54)
 	check("Maycon footsteps play in first and third person",running_fp and running_tp)
