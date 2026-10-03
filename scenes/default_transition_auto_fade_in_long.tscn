@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://eryejsrbh53q"]
+[gd_scene format=3 uid="uid://eryejsrbh53q"]
 
 [sub_resource type="Animation" id="Animation_d6a83"]
 length = 0.001
@@ -90,21 +90,21 @@ _data = {
 &"fade_out": SubResource("Animation_7g71p")
 }
 
-[node name="Node2D" type="Node2D"]
+[node name="Node2D" type="Node2D" unique_id=1859033491]
 
-[node name="Transition" type="AnimationPlayer" parent="."]
+[node name="Transition" type="AnimationPlayer" parent="." unique_id=1736074629]
 reset_on_save = false
-libraries = {
-&"": SubResource("AnimationLibrary_bnd43")
-}
-autoplay = "fade_in"
+libraries/ = SubResource("AnimationLibrary_bnd43")
+autoplay = &"fade_in"
 
-[node name="ColorRect" type="ColorRect" parent="Transition"]
+[node name="ColorRect" type="ColorRect" parent="Transition" unique_id=113712943]
 visible = false
 z_index = 10
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 483.0
+offset_bottom = 298.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)

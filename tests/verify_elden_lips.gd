@@ -108,10 +108,10 @@ func run() -> void:
 	check("Maycon dash has a short travel distance",stage.player.position.distance_to(dash_start)>1 and stage.player.position.distance_to(dash_start)<3.2)
 	check("dash trail fades instead of accumulating",stage.player.dash_ghosts.is_empty() and stage.player.fart_puffs.is_empty())
 	battle.action = ""
-	battle.request_action("dash_resgate")
+	battle.request_action("elden_dodge")
 	battle.action = ""
 	var exhausted:float = battle.stamina
-	battle.request_action("dash_resgate")
+	battle.request_action("elden_dodge")
 	check("two consecutive dashes exhaust the reserve and block a third",exhausted<24 and battle.stamina==exhausted and battle.action.is_empty())
 	battle.attack(false)
 	check("exhaustion also prevents sword attacks",battle.action.is_empty() and battle.stamina==exhausted)
@@ -183,6 +183,7 @@ func run() -> void:
 	check("pause freezes Lips windup and projectiles",battle.boss_time==attack_time and projectile.position==projectile_position)
 	check("pause freezes storm and music repeat timer",battle.atmosphere.time==atmosphere_time and battle.atmosphere.score_timer.time_left==score_time)
 	check("pause blocks combat actions and keeps resume menu active",battle.stamina==paused_stamina and pause_menu.can_process())
+	check("pause lists the arena actions",pause_menu.controls_profile=="elden" and is_instance_valid(pause_menu.controls_card) and pause_menu.controls_card.get_child(0).get_child_count()==6)
 	pause_menu._toggle()
 	stage.player.position.x += 5
 	await frames(34)
@@ -203,6 +204,8 @@ func run() -> void:
 	check("second phase resumes combat",battle.phase_two and battle.boss_state!="phase")
 	check("hazards are bounded",battle.hazards.size()<=12)
 	battle.action = ""
+	battle.request_action("elden_lock")
+	check("the aim never leaves Lips",battle.locked and not InputMap.has_action("elden_lock"))
 	battle.flasks = 2
 	stage.hp = 20
 	battle.request_action("elden_heal")
@@ -219,7 +222,7 @@ func run() -> void:
 	check("shield reduction does not prevent lethal damage",stage.hp==0 and stage.death_in_progress)
 	await frames(250)
 	check("death retries directly in arena",battle.fighting and stage.player.arena_mode and stage.player.position.z<-1778)
-	check("retry resets both phases and resources",not battle.phase_two and stage.boss.hp==stage.boss.max_hp and battle.flasks==2 and stage.hp==100)
+	check("retry resets both phases and resources",not battle.phase_two and stage.boss.hp==stage.boss.max_hp and battle.flasks==battle.max_flasks() and stage.hp==100)
 	check("retry restores the smaller stamina reserve",battle.stamina==battle.MAX_STAMINA)
 	check("retry resets storm phase",battle.atmosphere.phase_heat==0 and battle.atmosphere.rain.emitting)
 	check("retry clears blood and knockback",battle.blood_nodes.is_empty() and battle.hud.blood_stains.is_empty() and battle.hero_knockback==Vector3.ZERO and battle.boss_knockback==Vector3.ZERO)

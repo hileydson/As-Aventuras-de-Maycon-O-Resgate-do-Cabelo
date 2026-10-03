@@ -32,6 +32,9 @@ PAUSE_SHOOT,Atirar,Shoot,Disparar,射击
 PAUSE_INTERACT,Interagir,Interact,Interactuar,互动
 PAUSE_FLASHLIGHT,Lanterna,Flashlight,Linterna,手电筒
 PAUSE_SPECIAL,Pentagrama,Pentagram,Pentagrama,五芒星
+PAUSE_ATTACK,Atacar,Attack,Atacar,攻击
+PAUSE_GUARD,Defender,Guard,Defender,防御
+PAUSE_POTION,Poção de sangue,Blood flask,Frasco de sangre,血瓶
 MENU_RUN,Correr,Run,Correr,奔跑
 MENU_CROUCH,Agachar,Crouch,Agacharse,下蹲
 MENU_MAP,MAPA,MAP,MAPA,地图
@@ -474,9 +477,6 @@ ELDEN_BOSS_PHASE2,Elden Lips — A Fome Antiga,Elden Lips — The Ancient Hunger
 ELDEN_INTRO_LINE,"Além da jaula, algo antigo desperta.","Beyond the cage, something ancient stirs.","Más allá de la jaula, algo antiguo despierta.",牢笼之外，远古之物苏醒。
 ELDEN_CHALLENGE,Uma madeira. Um escudo. A última promessa.,A plank. A shield. One final promise.,Una tabla. Un escudo. Una última promesa.,一块木板。一面盾牌。最后的承诺。
 ELDEN_VIGOR,ESTAMINA,STAMINA,RESISTENCIA,精力
-ELDEN_FLASK,Sangue vital × {count}  ·  R / Y,Life essence × {count}  ·  R / Y,Esencia vital × {count}  ·  R / Y,生命精华 × {count}  ·  R / Y
-ELDEN_CONTROLS,WASD / setas: mover · Q / clique: atacar · E: golpe pesado · F / botão direito: defender · V / espaço: esquivar · Tab: travar alvo · R: curar,WASD / arrows: move · Q / click: attack · E: heavy · F / right click: guard · V / space: dodge · Tab: lock target · R: heal,WASD / flechas: mover · Q / clic: atacar · E: fuerte · F / clic derecho: defender · V / espacio: esquivar · Tab: fijar · R: curar,WASD / 方向键：移动 · Q / 左键：攻击 · E：重击 · F / 右键：防御 · V / 空格：闪避 · Tab：锁定 · R：治疗
-ELDEN_CONTROLS_PAD,Analógico: mover · X: atacar · RB: pesado · LB: defender · B: esquivar · R3: travar alvo · Y: curar,Stick: move · X: attack · RB: heavy · LB: guard · B: dodge · R3: lock target · Y: heal,Palanca: mover · X: atacar · RB: fuerte · LB: defender · B: esquivar · R3: fijar · Y: curar,摇杆：移动 · X：攻击 · RB：重击 · LB：防御 · B：闪避 · R3：锁定 · Y：治疗
 ELDEN_SKIP,Espaço / A — iniciar batalha,Space / A — begin battle,Espacio / A — iniciar batalla,空格 / A — 开始战斗
 ELDEN_EXHAUSTED,Recupere a estamina.,Recover your stamina.,Recupera la resistencia.,恢复精力。
 ELDEN_PERFECT_BLOCK,BLOQUEIO PERFEITO,PERFECT BLOCK,BLOQUEO PERFECTO,完美格挡

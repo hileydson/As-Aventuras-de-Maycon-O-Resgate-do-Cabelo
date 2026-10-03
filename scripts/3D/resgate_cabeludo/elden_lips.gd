@@ -13,12 +13,14 @@ const CENTER := Vector3(0,0,-1800)
 const LIGHT_DAMAGE := 6
 const HEAVY_DAMAGE := 11
 const MAX_STAMINA := 50.0
+const FLASKS_EASY := 4
+const FLASKS_NORMAL := 1
 const WALK_SPEED := 3.8
 const GUARD_SPEED := 2.0
 const DODGE_TIME := 0.42
 const DODGE_SPEED := 9.0
 const DODGE_IFRAMES := Vector2(0.05,0.26)
-const INPUT_ACTIONS := ["elden_left","elden_right","elden_up","elden_down","elden_guard","elden_attack","elden_heavy","elden_dodge","elden_lock","elden_heal"]
+const INPUT_ACTIONS := ["elden_left","elden_right","elden_up","elden_down","elden_guard","elden_attack","elden_heavy","elden_dodge","elden_heal"]
 var stage:Node3D
 var player:CharacterBody3D
 var boss:Node3D
@@ -27,10 +29,11 @@ var engaged:bool = false
 var fighting:bool = false
 var intro:bool = false
 var phase_two:bool = false
+# A mira nunca sai de Lips: não existe alternância de alvo nesta arena.
 var locked:bool = true
 var stamina:float = MAX_STAMINA
 var stamina_delay:float = 0
-var flasks:int = 2
+var flasks:int = FLASKS_NORMAL
 var guarding:bool = false
 var guard_time:float = 0
 var action:String = ""
@@ -113,8 +116,8 @@ func _register_input() -> void:
 		"elden_left":[KEY_A],"elden_right":[KEY_D],"elden_up":[KEY_W],"elden_down":[KEY_S],
 		"elden_guard":[KEY_F,MOUSE_BUTTON_RIGHT,JOY_BUTTON_LEFT_SHOULDER],
 		"elden_attack":[MOUSE_BUTTON_LEFT],"elden_heavy":[KEY_E,JOY_BUTTON_RIGHT_SHOULDER],
-		"elden_dodge":[KEY_SPACE],"elden_lock":[KEY_TAB,MOUSE_BUTTON_MIDDLE,JOY_BUTTON_RIGHT_STICK],
-		"elden_heal":[KEY_R,JOY_BUTTON_Y]}
+		"elden_dodge":[KEY_SPACE,JOY_BUTTON_B],
+		"elden_heal":[KEY_V,JOY_BUTTON_Y]}
 	for name in INPUT_ACTIONS:
 		if InputMap.has_action(name): continue
 		InputMap.add_action(name)
@@ -124,7 +127,7 @@ func _register_input() -> void:
 			if code >= 32:
 				event = InputEventKey.new()
 				event.physical_keycode = code
-			elif name == "elden_attack" or code == MOUSE_BUTTON_RIGHT and name == "elden_guard" or code == MOUSE_BUTTON_MIDDLE and name == "elden_lock":
+			elif name == "elden_attack" or code == MOUSE_BUTTON_RIGHT and name == "elden_guard":
 				event = InputEventMouseButton.new()
 				event.button_index = code
 			else:
@@ -135,7 +138,7 @@ func _register_input() -> void:
 func _build_touch_controls() -> void:
 	for i in 8:
 		var touch := Button.new()
-		var actions := ["ui_left","ui_right","ui_up","ui_down","soco_resgate","elden_guard","dash_resgate","elden_heal"]
+		var actions := ["ui_left","ui_right","ui_up","ui_down","soco_resgate","elden_guard","elden_dodge","elden_heal"]
 		var keys := ["ELDEN_TOUCH_LEFT","ELDEN_TOUCH_RIGHT","ELDEN_TOUCH_UP","ELDEN_TOUCH_DOWN","ELDEN_TOUCH_ATTACK","ELDEN_TOUCH_GUARD","ELDEN_TOUCH_DODGE","ELDEN_TOUCH_HEAL"]
 		touch.text = tr(keys[i])
 		touch.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT if i<4 else Control.PRESET_BOTTOM_RIGHT)
@@ -231,7 +234,7 @@ func begin() -> void:
 		_play(player.animation_player,"maycon_idle")
 		camera.global_position = boss.global_position+Vector3(3.8,2.8,6.5)
 		camera.look_at(boss.global_position+Vector3.UP*2.5)
-		atmosphere.play_sound("roar",boss.global_position,-14,.75)
+		atmosphere.play_sound("laugh",boss.global_position,-8)
 		hud.title = tr("ELDEN_BOSS_NAME")
 		hud.subtitle = tr("ELDEN_INTRO_LINE")
 		create_tween().tween_property(hud,"title_alpha",1.0,1.5))
@@ -309,13 +312,12 @@ func start_fight() -> void:
 	player.camera_yaw = 0
 	stamina = MAX_STAMINA
 	stamina_delay = 0
-	flasks = 2
+	flasks = max_flasks()
 	invulnerability = 1
 	boss_state = "stalk"
 	boss_time = 2.0
 	close_pressure = 0
 	repulse_cooldown = 3.0
-	hud.hint_time = 22
 	hud.boss_trail = 1
 	create_tween().set_parallel(true).tween_property(hud,"title_alpha",0.0,1.0)
 	create_tween().tween_property(hud,"letterbox",0.0,.8)
@@ -333,31 +335,95 @@ func _unhandled_input(event:InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if not fighting or stage.death_in_progress: return
-	for name in ["soco_resgate","dash_resgate","elden_attack","elden_heavy","elden_dodge","elden_lock","elden_heal"]:
+	# A mira fica presa em Lips: nada de girar a câmera nem destravar o alvo.
+	for name in ["soco_resgate","elden_attack","elden_heavy","elden_dodge","elden_heal"]:
 		if event.is_action_pressed(name):
 			request_action(name)
 			get_viewport().set_input_as_handled()
 			return
-	if event is InputEventMouseMotion and not locked:
-		player.camera_yaw -= event.relative.x*.0035
-		player.camera_pitch = clampf(player.camera_pitch-event.relative.y*.002,-.5,.35)
 
 func request_action(name:String) -> void:
 	if not fighting or stage.death_in_progress or get_tree().paused: return
-	if name == "elden_lock":
-		locked = not locked
-		return
 	if not action.is_empty(): return
-	if guarding and name not in ["elden_dodge","dash_resgate"]: return
-	if name in ["elden_dodge","dash_resgate"]:
+	if guarding and name != "elden_dodge": return
+	if name == "elden_dodge":
 		guarding = false
 	if name in ["elden_attack","soco_resgate"]: attack(false)
 	elif name == "elden_heavy": attack(true)
-	elif name in ["elden_dodge","dash_resgate"]: dodge()
-	elif name == "elden_heal" and flasks>0 and stage.hp<100:
-		flasks -= 1
-		set_action("heal",1.3)
-		_play(player.animation_player,"maycon_guard")
+	elif name == "elden_dodge": dodge()
+	elif name == "elden_heal": drink_flask()
+
+func max_flasks() -> int:
+	return FLASKS_EASY if Global.is_easy_mode() else FLASKS_NORMAL
+
+func drink_flask() -> void:
+	# Um toque basta: o frasco é gasto e o sangue volta na hora, sem segurar nada.
+	if flasks<=0 or stage.hp>=100: return
+	flasks -= 1
+	set_action("heal",.9)
+	action_contact = true
+	_play(player.animation_player,"maycon_guard")
+	stage.hp = minf(100,stage.hp+45)
+	stage.sound("heal")
+	heal_magic()
+	stage.update_hud()
+
+func heal_magic() -> void:
+	# Selo mágico subindo pelo corpo: só malha e partículas, sem shader novo.
+	for i in 3:
+		var seal := ring(player.global_position,.80+float(i)*.26,Color("8ff0a8") if i<2 else Color("f2e2a0"))
+		var height := .10+float(i)*.34
+		seal.position.y = height
+		effects.append({"node":seal,"life":1.05+float(i)*.12,"duration":1.05+float(i)*.12,
+			"growth":-.30,"follow":Vector3(0,height,0),"rise":1.6+float(i)*.3})
+	var sparks := CPUParticles3D.new()
+	sparks.amount = 90
+	sparks.lifetime = 1.1
+	sparks.one_shot = true
+	sparks.explosiveness = .55
+	sparks.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	sparks.emission_box_extents = Vector3(.45,.1,.45)
+	sparks.direction = Vector3.UP
+	sparks.spread = 12
+	sparks.initial_velocity_min = 1.6
+	sparks.initial_velocity_max = 3.4
+	sparks.gravity = Vector3(0,1.2,0)
+	sparks.scale_amount_min = .05
+	sparks.scale_amount_max = .16
+	var ramp := Gradient.new()
+	ramp.set_color(0,Color("d8ffe2"))
+	ramp.set_color(1,Color(.58,.95,.66,0.0))
+	ramp.add_point(.4,Color("8ff0a8"))
+	sparks.color_ramp = ramp
+	var bead := SphereMesh.new()
+	bead.radius = .07
+	bead.height = .22
+	bead.radial_segments = 8
+	bead.rings = 4
+	var glow := StandardMaterial3D.new()
+	glow.albedo_color = Color.WHITE
+	glow.vertex_color_use_as_albedo = true
+	glow.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	glow.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	bead.material = glow
+	sparks.mesh = bead
+	player.visual.add_child(sparks)
+	sparks.position = Vector3(0,.15,0)
+	sparks.finished.connect(sparks.queue_free)
+	sparks.emitting = true
+	var halo := OmniLight3D.new()
+	halo.light_color = Color("9cf7b2")
+	halo.light_energy = 0
+	halo.omni_range = 5.0
+	player.visual.add_child(halo)
+	halo.position = Vector3(0,1.1,0)
+	var pulse := create_tween()
+	pulse.tween_property(halo,"light_energy",5.0,.18)
+	pulse.tween_property(halo,"light_energy",0.0,.85)
+	pulse.tween_callback(halo.queue_free)
+	hud.heal_flash = 1.0
+	stage.burst(player.global_position+Vector3.UP,Color("8ff0a8"),26)
+	player.camera_shake = maxf(player.camera_shake,.08)
 
 func spend_stamina(amount:float) -> bool:
 	if stamina < amount:
@@ -435,11 +501,6 @@ func physics_player(delta:float) -> void:
 			action_contact = true
 			atmosphere.play_sound("swing",player.global_position,-16,.80 if action=="heavy" else 1.0)
 			weapon_contact(action=="heavy")
-		elif action == "heal" and not action_contact and progress>.65:
-			action_contact = true
-			stage.hp = minf(100,stage.hp+45)
-			stage.sound("heal")
-			stage.burst(player.global_position+Vector3.UP,Color("99cda0"),16)
 		if action_time<=0: action = ""
 	if action in ["hurt","guard_break"]: speed = 0
 	player.velocity.x = move_toward(player.velocity.x,direction.x*speed,delta*45)
@@ -754,7 +815,6 @@ func _update_close_pressure(delta:float) -> void:
 	boss_contact = false
 	warning = ring(boss.position,6.5,Color("bd6a98"))
 	_play(boss.animation,"lips_slam_windup",.10,true)
-	show_message("ELDEN_WARN_REPULSE",boss_time)
 	atmosphere.play_sound("food_charge",boss.position,-12,.65)
 
 func repulse() -> void:
@@ -873,7 +933,6 @@ func prepare_attack() -> void:
 		attack_target.z = clampf(attack_target.z,-1810,-1783)
 		_play(boss.animation,"lips_sweep_windup",.10,true)
 		warning = ring(boss.position,1.8,Color("a64d5b"))
-		show_message("ELDEN_WARN_DASH",boss_time)
 		atmosphere.play_sound("food_charge",boss.position,-18,1.2)
 		return
 	_play(boss.animation,"lips_slam_windup" if boss_attack=="slam" else "lips_sweep_windup" if boss_attack=="sweep" else "lips_throw_windup",.10,true)
@@ -882,7 +941,6 @@ func prepare_attack() -> void:
 	add_child(held_food)
 	_fit_food(held_food,2.6 if boss_attack=="sweep" else 2.1)
 	warning = ring(attack_target if boss_attack!="sweep" else boss.position,4.6 if boss_attack=="slam" else 3.2,Color("d29a68"))
-	show_message("ELDEN_WARN_SLAM" if boss_attack=="slam" else "ELDEN_WARN_SWEEP" if boss_attack=="sweep" else "ELDEN_WARN_TOMATO",boss_time)
 	atmosphere.play_sound("food_charge",boss.position,-17,1.1 if phase_two else 1)
 
 func execute_attack() -> void:
@@ -997,6 +1055,11 @@ func _update_effects(delta:float) -> void:
 		data.life -= delta
 		if is_instance_valid(data.node):
 			data.node.scale += Vector3.ONE*delta*float(data.get("growth",2.0))
+			if data.has("follow"):
+				var follow:Vector3 = data.follow
+				follow.y += delta*float(data.get("rise",0.0))
+				data["follow"] = follow
+				data.node.global_position = player.global_position+follow
 			data.node.material_override.albedo_color.a = maxf(0,float(data.life)/float(data.duration))*.5
 			if data.life<=0: data.node.queue_free()
 		if data.life<=0: effects.remove_at(i)
@@ -1163,7 +1226,7 @@ func retry() -> void:
 	_clear_blood()
 	stage.hp = 100
 	stamina = MAX_STAMINA
-	flasks = 2
+	flasks = max_flasks()
 	phase_two = false
 	phase_started = false
 	poise = 60

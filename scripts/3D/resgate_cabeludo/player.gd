@@ -201,6 +201,7 @@ func _update_landing_dust() -> void:
 			POEIRA.aterrar(get_parent(), global_position)
 		POEIRA.estouro(get_parent(),global_position+Vector3.UP*.08,100,Vector3(.8,.1,.8),1.0,2.6,5.5)
 		get_parent().sound("hit")
+		get_parent().sound("kick")
 	was_airborne = airborne
 
 func _play_scream() -> void:

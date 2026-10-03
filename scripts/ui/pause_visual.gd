@@ -5,6 +5,8 @@ const MENU_FONT:Font = preload("res://assets/fonts/contrast.ttf")
 const BACKDROP_SHADER:Shader = preload("res://scenes/menus/pause_backdrop.gdshader")
 const PENTAGRAM_TEXTURE:Texture2D = preload("res://assets/3D/pentagram_item.png")
 const KEY_Q_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Q_Key_Light.png")
+const KEY_V_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/V_Key_Light.png")
+const KEY_F_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/F_Key_Light.png")
 const KEY_W_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/W_Key_Light.png")
 const KEY_SPACE_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png")
 const KEY_SHIFT_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/shift.png")
@@ -19,6 +21,7 @@ const PAD_Y_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_
 const PAD_DIRECTIONS_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/PS5_Dpad.png")
 const PAD_TRIGGER_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/button_trigger.png")
 const PAD_SHOULDER_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/rb_xbox.png")
+const PAD_LEFT_SHOULDER_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/lb_xbox.png")
 
 const MAYCON_WALK_TEXTURES:Array[Texture2D] = [
 	preload("res://assets/images/jamela_INTRO_0.png"),
@@ -314,8 +317,17 @@ static func controls_for(profile:String) -> Array[Dictionary]:
 			return [
 				move,
 				jump,
-				{"label": TranslationServer.translate("POWER_DASH"), "pad": PAD_B_TEXTURE, "accent": Color(0.35, 0.9, 1.0)},
+				{"label": TranslationServer.translate("POWER_DASH"), "key": KEY_V_TEXTURE, "pad": PAD_B_TEXTURE, "accent": Color(0.35, 0.9, 1.0)},
 				{"label": TranslationServer.translate("POWER_PUNCH"), "key": KEY_Q_TEXTURE, "pad": PAD_X_TEXTURE, "accent": Color(1.0, 0.88, 0.35)}
+			]
+		"elden":
+			# Arena do Elden Lips: a esquiva troca para o espaço e o B, e o frasco
+			# de sangue entra na tecla V com o Y do controle.
+			return [
+				{"label": TranslationServer.translate("POWER_DASH"), "key": KEY_SPACE_TEXTURE, "pad": PAD_B_TEXTURE, "accent": Color(0.35, 0.9, 1.0), "wide_key": true},
+				{"label": TranslationServer.translate("PAUSE_ATTACK"), "key": KEY_Q_TEXTURE, "mouse": MOUSE_SHOOT_TEXTURE, "pad": PAD_X_TEXTURE, "accent": Color(1.0, 0.88, 0.35)},
+				{"label": TranslationServer.translate("PAUSE_GUARD"), "key": KEY_F_TEXTURE, "mouse": MOUSE_ALT_TEXTURE, "pad": PAD_LEFT_SHOULDER_TEXTURE, "accent": Color(0.55, 0.92, 0.72)},
+				{"label": TranslationServer.translate("PAUSE_POTION"), "key": KEY_V_TEXTURE, "pad": PAD_Y_TEXTURE, "accent": Color(1.0, 0.35, 0.42)}
 			]
 		"ace":
 			return [

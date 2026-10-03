@@ -4,6 +4,7 @@ const AMBIENCE = preload("res://assets/novos_audios/calabouco_terror/dungeon_amb
 const BOOM = preload("res://assets/novos_audios/seco_invader_boom_pixabay.mp3")
 const GATE = preload("res://assets/novos_audios/calabouco_terror/gate_opening_heavy.mp3")
 const GROWL = preload("res://assets/novos_audios/calabouco_terror/zombie_growl_pixabay.mp3")
+const LAUGH = preload("res://assets/novos_audios/gargarocada.mp3")
 const BATTLE_SCORE = preload("res://assets/novos_audios/last_battle.mp3")
 const SCORE_OVERLAP := 1.0
 const DIMENSIONAL_FX = preload("res://scripts/3D/resgate_cabeludo/dimensional_effect.gd")
@@ -23,7 +24,7 @@ const SFX = {
 	"step":[preload("res://assets/novos_audios/elden_lips/sfx/boss_step.ogg")],
 	"shift":[preload("res://assets/novos_audios/elden_lips/sfx/world_shift.ogg")],
 	"thunder":[preload("res://assets/novos_audios/elden_lips/sfx/storm_thunder.ogg")],
-	"gate":[GATE],"roar":[GROWL],"boom":[BOOM]}
+	"gate":[GATE],"roar":[GROWL],"laugh":[LAUGH],"boom":[BOOM]}
 const STORM_WIND = preload("res://assets/novos_audios/elden_lips/sfx/storm_wind.ogg")
 var stage:Node3D
 var environment:Environment
@@ -209,7 +210,7 @@ func play_sound(kind:String,at:Vector3,volume:float = -9.0,pitch:float = 1.0) ->
 		voice.pitch_scale = pitch*randf_range(.96,1.04)
 		voice.play()
 		return
-	var first := 0 if kind in ["pain","hurt"] else 2 if kind in ["thunder","shift","roar"] else 5
+	var first := 0 if kind in ["pain","hurt"] else 2 if kind in ["thunder","shift","roar","laugh"] else 5
 	var end := 2 if first==0 else 5 if first==2 else sound_pool.size()
 	for i in range(first,end):
 		var sound := sound_pool[i]
@@ -218,7 +219,7 @@ func play_sound(kind:String,at:Vector3,volume:float = -9.0,pitch:float = 1.0) ->
 		sound.stream = variants[randi()%variants.size()]
 		sound.global_position = at
 		sound.volume_db = volume
-		sound.pitch_scale = pitch*randf_range(.96,1.04) if kind not in ["thunder","shift","gate"] else pitch
+		sound.pitch_scale = pitch*randf_range(.96,1.04) if kind not in ["thunder","shift","gate","laugh"] else pitch
 		sound.play()
 		return
 

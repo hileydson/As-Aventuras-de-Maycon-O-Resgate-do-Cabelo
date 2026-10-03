@@ -31,6 +31,8 @@ var configuracoes_dialog:CanvasLayer
 var modern_layout:bool = false
 var modern_menu:VBoxContainer
 var pause_maycon:AnimatedSprite2D
+var controls_card:PanelContainer
+var controls_profile:String = ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -74,6 +76,7 @@ func _toggle() -> void:
 		if is_instance_valid(pause_audio):
 			pause_audio.play()
 		if modern_layout:
+			_refresh_controls_card()
 			PAUSE_VISUAL.animate_walking_maycon(pause_maycon)
 			PAUSE_VISUAL.animate_open(panel, modern_menu)
 		else:
@@ -243,13 +246,31 @@ func _build_modern_panel() -> void:
 	config_button.focus_neighbor_bottom = menu_button.get_path()
 	menu_button.focus_neighbor_top = config_button.get_path()
 	pause_maycon = PAUSE_VISUAL.add_walking_maycon(panel)
-	var profile := "move_only"
+	_refresh_controls_card()
+
+# A ficha de controles é montada de novo a cada abertura: a cena atual só existe
+# depois do _ready e a arena final usa botões diferentes do resto da fase.
+func _refresh_controls_card() -> void:
+	var profile := _controls_profile()
+	if profile == controls_profile and is_instance_valid(controls_card):
+		return
+	controls_profile = profile
+	if is_instance_valid(controls_card):
+		controls_card.queue_free()
+	controls_card = PAUSE_VISUAL.add_controls_card(panel, profile)
+
+func _controls_profile() -> String:
+	var parent := get_parent()
+	if parent != null and parent.has_method("pause_controls_profile"):
+		var custom := str(parent.pause_controls_profile())
+		if not custom.is_empty():
+			return custom
 	var cena:Node = get_tree().current_scene
 	if cena != null and cena.scene_file_path == "res://scenes/3D/aviao_ace_combat.tscn":
-		profile = "ace"
+		return "ace"
 	elif cena != null and cena.scene_file_path == "res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn":
-		profile = "resgate"
-	PAUSE_VISUAL.add_controls_card(panel, profile)
+		return "resgate"
+	return "move_only"
 
 func _build_panel() -> void:
 	panel = Control.new()

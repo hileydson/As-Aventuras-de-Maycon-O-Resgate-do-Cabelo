@@ -1,14 +1,16 @@
 extends Control
 
 # Layout proporcional ao viewport, sem fontes pequenas presas a uma resolução.
+const PAD_HEAL_TEXTURE = preload("res://assets/novas_imagens/buttons/360_Y.png")
+const KEY_HEAL_TEXTURE = preload("res://assets/novas_imagens/buttons/V_Key_Light.png")
 var battle:Node3D
 var title:String = ""
 var subtitle:String = ""
 var title_alpha:float = 0.0
 var letterbox:float = 0.0
 var damage_flash:float = 0.0
+var heal_flash:float = 0.0
 var boss_trail:float = 1.0
-var hint_time:float = 18.0
 var font:Font = ThemeDB.fallback_font
 var gold := Color("c6b88c")
 var ivory := Color("e0dac9")
@@ -22,13 +24,13 @@ func _process(delta:float) -> void:
 	if battle == null or not battle.engaged:
 		return
 	damage_flash = maxf(0.0, damage_flash - delta * 1.6)
+	heal_flash = maxf(0.0, heal_flash - delta * 1.3)
 	for i in range(blood_stains.size()-1,-1,-1):
 		var stain := blood_stains[i]
 		stain.life -= delta
 		stain.position.y += delta*.002
 		if stain.life<=0: blood_stains.remove_at(i)
 	if battle.fighting:
-		hint_time = maxf(0.0, hint_time - delta)
 		boss_trail = move_toward(boss_trail, float(battle.boss.hp) / float(battle.boss.max_hp), delta * 0.15)
 	queue_redraw()
 
@@ -71,6 +73,37 @@ func draw_blood() -> void:
 		var end := center+Vector2(0,radius*stain.drip)
 		draw_line(center+Vector2(0,radius*.4),end,Color(.30,.002,.014,alpha*.48),maxf(2,radius*.07))
 		draw_circle(end,radius*.065,Color(.35,.003,.020,alpha*.6))
+
+func draw_flasks(unit:float) -> void:
+	# Frascos de sangue no canto inferior direito, com o botão que os bebe ao lado.
+	var total:int = maxi(1,battle.max_flasks())
+	var slot := 42.0*unit
+	var glyph := 36.0*unit
+	var baseline := size.y-92*unit
+	var button := Rect2(size.x-36*unit-glyph,baseline-glyph*.5,glyph,glyph)
+	var texture:Texture2D = PAD_HEAL_TEXTURE if battle.using_gamepad else KEY_HEAL_TEXTURE
+	draw_texture_rect(texture,button,false,Color(1,1,1,.92 if battle.flasks>0 else .34))
+	var start := button.position.x-12*unit-slot*float(total)
+	for i in total:
+		draw_flask(Vector2(start+slot*(float(i)+.5),baseline),slot,i<battle.flasks)
+
+func draw_flask(center:Vector2, slot:float, full:bool) -> void:
+	var bulb := center+Vector2(0,slot*.16)
+	var radius := slot*.34
+	var liquid := Color(.69,.09,.14,.95) if full else Color(.16,.05,.06,.52)
+	var glass := Color(.74,.85,.87,.90) if full else Color(.52,.58,.60,.34)
+	if full and heal_flash>0:
+		draw_circle(bulb,radius*(1.5+heal_flash*.7),Color(.56,.95,.64,heal_flash*.22))
+	draw_circle(bulb,radius,Color(.04,.05,.07,.76))
+	draw_circle(bulb,radius*.84,liquid)
+	draw_arc(bulb,radius,0,TAU,26,glass,maxf(1.0,slot*.055))
+	if full:
+		draw_circle(bulb-Vector2(radius*.34,radius*.36),radius*.17,Color(1,1,1,.42))
+	var neck := Rect2(center.x-slot*.11,center.y-slot*.34,slot*.22,slot*.28)
+	draw_rect(neck,Color(.04,.05,.07,.76))
+	draw_rect(neck.grow(-maxf(1.0,slot*.035)),liquid)
+	var cork := Rect2(center.x-slot*.15,center.y-slot*.44,slot*.30,slot*.12)
+	draw_rect(cork,Color(.40,.28,.17,.95 if full else .38))
 
 func text_center(text:String, center:Vector2, font_size:int, color:Color) -> void:
 	var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
@@ -120,6 +153,8 @@ func _draw() -> void:
 		draw_rect(Rect2(Vector2.ZERO,s).grow(-border), Color(0.008,0.008,0.015,0.015 + damage_flash*0.018), false, 10.0*unit)
 	if damage_flash > 0:
 		draw_rect(Rect2(Vector2.ZERO,s),Color(0.45,0.015,0.02,damage_flash*0.13))
+	if heal_flash > 0:
+		draw_rect(Rect2(Vector2.ZERO,s),Color(0.22,0.72,0.34,heal_flash*0.09))
 	draw_blood()
 	if letterbox > 0:
 		var h := s.y * 0.105 * letterbox
@@ -130,8 +165,7 @@ func _draw() -> void:
 		var width := minf(300.0*unit,s.x*0.35)
 		meter(Rect2(x,35*unit,width,16*unit),battle.stage.hp/100.0,Color("a52b35"))
 		meter(Rect2(x,61*unit,width*.65,8*unit),battle.stamina/battle.MAX_STAMINA,Color("778e58"))
-		draw_string(font,Vector2(x,90*unit),tr("ELDEN_VIGOR"),HORIZONTAL_ALIGNMENT_LEFT,-1,int(12*unit),gold)
-		draw_string(font,Vector2(x,120*unit),tr("ELDEN_FLASK").format({"count":battle.flasks}),HORIZONTAL_ALIGNMENT_LEFT,-1,int(17*unit),ivory)
+		draw_flasks(unit)
 		var boss_width := minf(s.x*0.74,960*unit)
 		var bx := (s.x-boss_width)*0.5
 		var by := s.y-62*unit
@@ -141,17 +175,6 @@ func _draw() -> void:
 			var aim:Vector2 = battle.camera.unproject_position(battle.boss.global_position+Vector3.UP*2.7)
 			draw_circle(aim,3.0*unit,ivory)
 			draw_arc(aim,9.0*unit,0,TAU,24,Color(ivory,0.6),1.0)
-		if hint_time > 0:
-			var hint := tr("ELDEN_CONTROLS_PAD") if battle.using_gamepad else tr("ELDEN_CONTROLS")
-			var hint_size := int(14*unit)
-			var hint_color := Color(ivory,minf(1,hint_time))
-			if font.get_string_size(hint,HORIZONTAL_ALIGNMENT_LEFT,-1,hint_size).x>s.x*.92:
-				var parts := hint.split(" · ")
-				var middle := ceili(parts.size()*.5)
-				text_center(" · ".join(parts.slice(0,middle)),Vector2(s.x*.5,s.y-145*unit),hint_size,hint_color)
-				text_center(" · ".join(parts.slice(middle)),Vector2(s.x*.5,s.y-126*unit),hint_size,hint_color)
-			else:
-				text_center(hint,Vector2(s.x*0.5,s.y-130*unit),hint_size,hint_color)
 		if not battle.message.is_empty():
 			text_center(tr(battle.message),Vector2(s.x*.5,s.y*.22),int(20*unit),gold)
 	if title_alpha > 0:

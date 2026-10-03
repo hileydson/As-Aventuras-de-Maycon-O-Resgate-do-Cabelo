@@ -28,6 +28,7 @@ const IMPACT_SOUND = preload("res://assets/novos_audios/impact_sound.mp3")
 const SONG_OVERLAP := 3.0
 const SOUNDS = {
 	"hit": preload("res://assets/novos_audios/punch_4.mp3"),
+	"kick": preload("res://assets/novos_audios/kick.mp3"),
 	"wood": preload("res://assets/novos_audios/mario_part_sounds/wood_barrier_break.mp3"),
 	"spring": preload("res://assets/novos_audios/maycon_platform_landing.mp3"),
 	"heal": preload("res://assets/novos_audios/sangue_fill_effect.mp3"),
@@ -217,6 +218,12 @@ func build_pause() -> void:
 	pause.set_script(PAUSE_SCRIPT)
 	add_child(pause)
 
+# A ficha de controles do pause muda quando a arena do Elden Lips assume o jogo.
+func pause_controls_profile() -> String:
+	if is_instance_valid(final_battle) and final_battle.engaged:
+		return "elden"
+	return "resgate"
+
 # Linhas de vento passando pela câmera o tempo todo em que a fase avança. Elas
 # só entram depois da queda do Lips, onde a câmera ainda está parada.
 func build_wind() -> void:
@@ -292,8 +299,6 @@ func opening() -> void:
 	camera.look_at(player.position + Vector3(0, 1.3, -4.0))
 	if fade.color.a > 0.0:
 		await fade_to(0.0, 0.8)
-	# Só agora a frase sai, e é neste instante que o Maycon se levanta do chão.
-	hide_title()
 	set_blur(BLUR_GAMEPLAY, Vector2(0.5, 0.28))
 	await rise_player()
 	player._play_animation("Walking")
@@ -303,6 +308,9 @@ func opening() -> void:
 	intro_active = false
 	Global.in_cutscene = false
 	player.control_enabled = true
+	# A frase permanece mais um pouco na tela após o início da gameplay
+	await get_tree().create_timer(1.8).timeout
+	hide_title()
 
 func show_title() -> void:
 	$HUD/Title.visible = true
