@@ -142,6 +142,12 @@ func ground_y(distance:float) -> float:
 		return 30.0
 	return 0.0
 
+# A vegetação tem de caber inteira no mesmo trecho de chão que a sustenta.
+func forest_floor(distance:float,margin:float = 0.0) -> bool:
+	for span in [Vector2(-15,350),Vector2(350,660),Vector2(700,1040),Vector2(1070,1370),Vector2(1370,1780)]:
+		if distance-margin>=span.x and distance+margin<=span.y: return true
+	return false
+
 func build_forest(path:String) -> void:
 	var root_node := Node3D.new()
 	root_node.name = "ResgateCabeludo"
@@ -232,6 +238,7 @@ func build_forest(path:String) -> void:
 	box(zones[2], "SpringLanding", Vector3(0, -1, -707), Vector3(16, 2, 14), "617547")
 	box(zones[3], "CanopyLanding", Vector3(0, 29, -1077), Vector3(14, 2, 14), "876644")
 	for d in range(0, 1780, 8):
+		if not forest_floor(d,2.0): continue
 		var h := ground_y(d)
 		var zone := zones[0 if d < 350 else 1 if d < 700 else 2 if d < 1070 else 3 if d < 1370 else 4]
 		for side in [-1, 1]:
@@ -240,6 +247,7 @@ func build_forest(path:String) -> void:
 			var tree := model(zone, "Tree_%04d" % d, KENNEY + ("tree.glb" if d % 24 else "tree-pine.glb"), Vector3(x, h - (12 if d >= 1070 and d < 1370 else 0), -d), Vector3.ONE * tall)
 			tree.rotation.y = rng.randf_range(0, TAU)
 			for j in 2:
+				if not forest_floor(d+j*3,1.2): continue
 				var prop:String = ["plant.glb", "mushrooms.glb", "flowers.glb", "grass.glb", "rocks.glb"][(d / 8 + j) as int % 5]
 				model(zone, "Understory", KENNEY + prop, Vector3(side * rng.randf_range(6.5, 10), h, -d - j * 3), Vector3.ONE * rng.randf_range(1.0, 2.2))
 		if d % 40 == 0:
@@ -401,7 +409,7 @@ func build_city(path:String) -> void:
 	plane.position = Vector3(0, 30, -15)
 	root_node.add_child(plane)
 	sprite(root_node, "Hair", "res://assets/novas_imagens/cabelo/cabelo_idle.png", Vector3(0, 1.3, 0), 1.5)
-	sprite(root_node, "Cigarro", "res://assets/novas_imagens/cigarro/cigarro.png", Vector3(12, 13, -102), 3.0)
+	sprite(root_node, "Cigarro", "res://assets/novas_imagens/cigarro/cigarro.png", Vector3(9.2, 12.35, -95.8), 3.0)
 	# Apoio próprio para manter o Cigarro sobre um telhado em qualquer ajuste da rua.
 	box(root_node, "CigarroBuilding", Vector3(14, 5.2, -102), Vector3(10, 10.4, 12), "4d5261", false)
 	box(root_node, "CigarroRoof", Vector3(14, 10.6, -102), Vector3(11, 0.5, 13), "7d8292", false)

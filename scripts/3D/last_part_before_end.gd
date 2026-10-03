@@ -566,8 +566,8 @@ func _on_area_3d_body_entered(body:Node3D) -> void:
 		$cidade_perdida.visible = false
 		the_almost_end_song.stop()
 		var rescue := load("res://scenes/3D/resgate_cabeludo/city_cutscene.tscn").instantiate() as Node3D
-		rescue.position = Vector3(cabelo.global_position.x, -7.08, cabelo.global_position.z)
-		rescue.rotation.y = PI
+		# Avenida ao lado do posto: a perseguição segue pela rua, longe dos prédios.
+		rescue.transform = $ResgateCityAnchor.transform
 		add_child(rescue)
 		cabelo.visible = false
 

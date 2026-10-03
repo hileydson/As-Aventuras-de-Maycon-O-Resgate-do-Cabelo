@@ -25,6 +25,14 @@ var lips_skeleton:Skeleton3D
 
 func _ready() -> void:
 	Global.in_cutscene = true
+	# A cidade usa contraste forte na gameplay; estes planos precisam mostrar os atores.
+	var world:WorldEnvironment = get_parent().get_node_or_null("WorldEnvironment")
+	if world and world.environment:
+		camera.environment = world.environment.duplicate()
+		camera.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		camera.environment.ambient_light_color = Color("899bb9")
+		camera.environment.ambient_light_energy = .65
+		camera.environment.adjustment_enabled = false
 	lips_animation = lips.find_child("AnimationPlayer", true, false)
 	lips_skeleton = lips.find_child("Skeleton3D", true, false) as Skeleton3D
 	maycon_animation = maycon.find_child("AnimationPlayer", true, false)
@@ -66,6 +74,7 @@ func _process(delta:float) -> void:
 			camera.position.y += sin(time * 13.0) * 0.08
 	if focus:
 		camera.look_at(focus.global_position + global_basis * focus_offset)
+		$ActionFill.global_position = focus.global_position+Vector3.UP*5
 	if attached:
 		hair.position = Vector3(0, 2.3, 0.95)
 	if lips_running and not lips.get_parent() == plane:
