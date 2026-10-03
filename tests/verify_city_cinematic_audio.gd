@@ -14,6 +14,13 @@ func frames(count:int) -> void:
 	for i in count: await physics_frame
 
 func run() -> void:
+	# Na fase a cutscene nasce ao lado do WorldEnvironment da cidade; sem um irmão
+	# com esse nome o ajuste de iluminação da cena nem roda. Precisa ser irmão em
+	# root: a troca de cena só libera a cutscene enquanto ela é filha de root.
+	var world := WorldEnvironment.new()
+	world.name = "WorldEnvironment"
+	world.environment = Environment.new()
+	root.add_child(world)
 	var city:Node3D = load("res://scenes/3D/resgate_cabeludo/city_cutscene.tscn").instantiate()
 	city.pace = .08
 	root.add_child(city)
@@ -21,11 +28,17 @@ func run() -> void:
 	await frames(2)
 	check("city starts the requested soundtrack",city.city_song.playing and city.city_song.stream.get_length()>50)
 	check("city soundtrack does not loop",not city.city_song.stream.loop)
+	var env:Environment = city.camera.environment
+	# Entre o dia da versão anterior e a noite fechada da gameplay que a antecede.
+	check("cutscene is lit as dusk instead of daylight",env.ambient_light_energy>.2 and env.ambient_light_energy<.4 and env.adjustment_enabled and env.adjustment_brightness<1.0)
 	var trails := 0
 	for node in city.plane.get_children():
 		if node is GPUParticles3D and not node.local_coords and node.emitting: trails += 1
 	check("plane leaves two trails and has backward wind lines",trails==2 and city.plane.get_node("VentoDoAviao").velocidade>0)
 	var lips_third_person := true
+	var lips_angles := {}
+	var rebound_peak := 0.0
+	var rebound_away := false
 	var running_fp := false
 	var running_tp := false
 	var jumping_dust := false
@@ -61,7 +74,14 @@ func run() -> void:
 			await process_frame
 			continue
 		if city.follow==city.lips:
-			lips_third_person = lips_third_person and not city.bob and city.lips.visible and city.follow_offset.z>0
+			lips_third_person = lips_third_person and not city.bob and city.lips.visible
+			if city.follow_offset.z>2: lips_angles["atras"] = true
+			if city.follow_offset.z< -2: lips_angles["frente"] = true
+			if absf(city.follow_offset.x)>6 and absf(city.follow_offset.z)<3: lips_angles["lado"] = true
+		if city.maycon_entered:
+			rebound_peak = maxf(rebound_peak,city.maycon.position.y)
+			if city.maycon.position.y>100 and city.plane.position.z<0:
+				rebound_away = rebound_away or city.maycon.position.z>0
 		if city.attached:
 			var sheet:AnimatedSprite3D = city.hair
 			var half_height:float = sheet.sprite_frames.get_frame_texture(sheet.animation,sheet.frame).get_height()*sheet.pixel_size*.5
@@ -117,7 +137,11 @@ func run() -> void:
 			faded_music = city.city_song.volume_db< -55
 		unobstructed = unobstructed and not building.has_point(city.camera.position) and not roof.has_point(city.camera.position)
 		await frames(1)
-	check("Lips running and jump shots stay behind Lips and Cabelo",lips_third_person)
+	world.queue_free()
+	check("Lips running and jump shots stay in third person",lips_third_person)
+	check("Lips focus alternates between behind, front and side angles",lips_angles.size()==3)
+	check("final rebound hurls Maycon higher and against the plane's heading",rebound_peak>140 and rebound_away)
+	if rebound_peak<=140 or not rebound_away: print("Rebound: peak %.1f away=%s" % [rebound_peak,rebound_away])
 	check("paper stays attached by its edge to Lips' animated right hand",held_samples>100 and paper_attached and paper_turns)
 	if not paper_attached: print("Largest hand gap: %.3f (%s)" % [largest_hand_gap,gap_phase])
 	check("every take change flashes like a memory cut",flashes>=18 and flash_peak>.5)

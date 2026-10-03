@@ -61,9 +61,13 @@ func _ready() -> void:
 	if world and world.environment:
 		camera.environment = world.environment.duplicate()
 		camera.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-		camera.environment.ambient_light_color = Color("899bb9")
-		camera.environment.ambient_light_energy = .65
-		camera.environment.adjustment_enabled = false
+		# Anoitecer: continua legível, mas sem o dia claro que brigava com a gameplay.
+		camera.environment.ambient_light_color = Color("5a6a86")
+		camera.environment.ambient_light_energy = .32
+		camera.environment.adjustment_enabled = true
+		camera.environment.adjustment_brightness = .88
+		camera.environment.adjustment_contrast = 1.16
+		camera.environment.adjustment_saturation = 1.12
 	lips_animation = lips.find_child("AnimationPlayer", true, false)
 	lips_skeleton = lips.find_child("Skeleton3D", true, false) as Skeleton3D
 	maycon_animation = maycon.find_child("AnimationPlayer", true, false)
@@ -403,7 +407,10 @@ func sequence() -> void:
 	move(plane, Vector3(0, 30, -64), 14)
 	await shot(lips, Vector3(7, 5, 12), plane, Vector3.ZERO, 1.4)
 	await shot(lips, Vector3(3.5, 3.8, 8), lips, Vector3.UP * 1.7, 4.6, false, 52)
-	await shot(lips, Vector3(5, 4, 9), lips, Vector3.UP * 1.7, 5, false, 48)
+	# O mesmo tempo do take antigo, repartido em ângulos distintos do mesmo trecho.
+	await shot(lips, Vector3(-8.5, 2.8, 1.5), lips, Vector3.UP * 1.7, 1.7)
+	await shot(lips, Vector3(1.5, 3.4, -8), lips, Vector3.UP * 1.7, 1.7)
+	await shot(lips, Vector3(7.5, 3.2, -4.5), lips, Vector3.UP * 1.7, 1.6)
 	lips_running = false
 	lips.get_node("Visual").position.y = 1.8
 	lips.get_node("Visual").rotation.z = 0.0
@@ -491,12 +498,13 @@ func sequence() -> void:
 	await get_tree().create_timer(.18 * pace).timeout
 	animate(maycon_animation, "Air_Flail")
 	var rebote_poeira := POEIRA.rastro(maycon)
-	arc(maycon, Vector3(24, 105, -280), 20, 8)
-	arc(lips, Vector3(27, 102, -282), 20, 8)
+	# Avião segue para -z: o impulso cospe os dois no rumo oposto e muito mais alto.
+	arc(maycon, Vector3(24, 168, 58), 26, 8)
+	arc(lips, Vector3(27, 164, 60), 26, 8)
 	# Primeiro mostra o segundo impulso; só então dissolve tudo em branco.
 	memory_flash()
 	follow = maycon
-	follow_offset = Vector3(-12, 4, 22)
+	follow_offset = Vector3(-12, 4, -22)
 	focus = maycon
 	focus_offset = Vector3.UP
 	bob = false
