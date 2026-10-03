@@ -79,7 +79,7 @@ func draw_flasks(unit:float) -> void:
 	var total:int = maxi(1,battle.max_flasks())
 	var slot := 42.0*unit
 	var glyph := 36.0*unit
-	var baseline := size.y-92*unit
+	var baseline := 56*unit
 	var button := Rect2(size.x-36*unit-glyph,baseline-glyph*.5,glyph,glyph)
 	var texture:Texture2D = PAD_HEAL_TEXTURE if battle.using_gamepad else KEY_HEAL_TEXTURE
 	draw_texture_rect(texture,button,false,Color(1,1,1,.92 if battle.flasks>0 else .34))
@@ -184,5 +184,3 @@ func _draw() -> void:
 		var line_width := minf(s.x*.4,420*unit)
 		draw_line(Vector2((s.x-line_width)/2,s.y*.55),Vector2((s.x+line_width)/2,s.y*.55),Color(gold,title_alpha*.5),1)
 		text_center(subtitle,Vector2(s.x*.5,s.y*.61),int(19*unit),Color(ivory,title_alpha))
-	if battle.intro:
-		text_center(tr("ELDEN_SKIP"),Vector2(s.x*.5,s.y-35*unit),int(13*unit),Color(ivory,.7))

@@ -330,10 +330,6 @@ func _unhandled_input(event:InputEvent) -> void:
 		using_gamepad = true
 	elif event is InputEventKey or event is InputEventMouseButton or event is InputEventMouseMotion:
 		using_gamepad = false
-	if intro and event.is_action_pressed("ui_accept"):
-		start_fight()
-		get_viewport().set_input_as_handled()
-		return
 	if not fighting or stage.death_in_progress: return
 	# A mira fica presa em Lips: nada de girar a câmera nem destravar o alvo.
 	for name in ["soco_resgate","elden_attack","elden_heavy","elden_dodge","elden_heal"]:
