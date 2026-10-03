@@ -28,9 +28,13 @@ func run() -> void:
 	var pause_menu:CanvasLayer = stage.get_node("PauseFofo")
 	var intro_position:Vector3 = stage.player.position
 	var intro_blend:float = battle.atmosphere.world_blend
+	var rift:Node3D = battle.atmosphere.time_rift
+	var rift_time:float = rift.elapsed
+	check("temporal transformation has dimensional rings and particles",rift.rings.size()==3 and rift.pixels.amount>100 and rift.motes.amount>100)
 	pause_menu._toggle()
 	await frames(30)
 	check("pause freezes cinematic and world transformation",stage.player.position==intro_position and battle.atmosphere.world_blend==intro_blend and pause_menu.can_process())
+	check("pause freezes dimensional particles and rings",rift.elapsed==rift_time)
 	pause_menu._toggle()
 	await frames(240)
 	check("cinematic picks up sword first",battle.intro and battle.blade_equipped and not battle.shield_equipped)
@@ -50,6 +54,15 @@ func run() -> void:
 	check("Portuguese HUD calls the resource estamina",stage.tr("ELDEN_VIGOR")=="ESTAMINA" and stage.tr("ELDEN_EXHAUSTED")=="Recupere a estamina.")
 	TranslationServer.set_locale(locale)
 	battle.boss_time = 999
+	Input.action_press("ui_right")
+	await frames(20)
+	check("Maycon walks more slowly during battle",Vector2(stage.player.velocity.x,stage.player.velocity.z).length()<=3.81 and Vector2(stage.player.velocity.x,stage.player.velocity.z).length()>3.7)
+	Input.action_press("elden_guard")
+	await frames(15)
+	check("shield movement is slower than regular walking",Vector2(stage.player.velocity.x,stage.player.velocity.z).length()<=2.01)
+	Input.action_release("ui_right")
+	Input.action_release("elden_guard")
+	await frames(10)
 	battle.invulnerability = 0
 	stage.player.visual.rotation.y = PI
 	battle.guarding = true
@@ -126,6 +139,9 @@ func run() -> void:
 			hit_sound = hit_sound or sound.stream.resource_path.contains("wood_body_")
 			pain_sound = pain_sound or sound.stream.resource_path.contains("lips_pain_")
 	check("boss damage separates wooden contact and pain",hit_sound and pain_sound)
+	check("Lips pain has an audible dedicated voice channel",battle.atmosphere.sound_pool[0].stream.resource_path.contains("lips_pain_") and battle.atmosphere.sound_pool[0].volume_db>=-6)
+	battle.atmosphere.play_sound("hurt",stage.player.position,-10)
+	check("Maycon pain does not interrupt Lips voice",battle.atmosphere.sound_pool[0].stream.resource_path.contains("lips_pain_") and battle.atmosphere.sound_pool[1].stream.resource_path.contains("maycon_hurt.ogg"))
 	check("Lips has a dedicated damage reaction",battle.boss_hurt_time>0 and stage.boss.animation.current_animation=="elden/lips_hurt")
 	var boss_before:Vector3 = stage.boss.position
 	battle.boss_state = "recover"
@@ -212,6 +228,37 @@ func run() -> void:
 	await frames(45)
 	check("weather fog evolves over time",absf(before-battle.atmosphere.environment.fog_density)>.00001)
 	check("power animations are distinct",stage.boss.animation.has_animation("elden/lips_throw") and stage.boss.animation.has_animation("elden/lips_sweep_windup"))
+	battle.clear_attack()
+	battle.boss_state = "recover"
+	battle.boss_time = 999
+	battle.boss_hurt_time = 0
+	battle.close_pressure = 0
+	battle.repulse_cooldown = 0
+	battle.action = ""
+	battle.hero_knockback = Vector3.ZERO
+	stage.player.velocity = Vector3.ZERO
+	stage.player.position = stage.boss.position+Vector3(0,.08,3.5)
+	stage.hp = 100
+	battle.invulnerability = 0
+	await frames(120)
+	check("Lips allows short periods of nearby combat",battle.boss_attack!="repulse" and battle.close_pressure>1.8)
+	await frames(180)
+	check("prolonged proximity triggers a telegraphed repulsion",battle.boss_attack=="repulse" and battle.boss_state=="windup" and is_instance_valid(battle.warning))
+	var near_distance:float = stage.player.position.distance_to(stage.boss.position)
+	await frames(125)
+	check("repulsion damages and throws Maycon far away",stage.hp<100 and stage.player.position.distance_to(stage.boss.position)>near_distance+3)
+	battle.close_pressure = 6
+	battle.boss_state = "recover"
+	battle.boss_time = 999
+	stage.player.position = stage.boss.position+Vector3(0,.08,3.5)
+	battle._update_close_pressure(.1)
+	check("repulsion cooldown prevents repeated punishment",battle.repulse_cooldown>0 and battle.boss_state=="recover")
+	stage.hp = 100
+	battle.invulnerability = .5
+	battle.hero_knockback = Vector3.ZERO
+	battle.repulse()
+	check("dodge invulnerability avoids the repulsion",stage.hp==100 and battle.hero_knockback==Vector3.ZERO)
+	battle.close_pressure = 0
 	for base_damage in [18.0,20.0,34.0,10.0]:
 		stage.hp = 100
 		battle.invulnerability = 0
@@ -224,12 +271,24 @@ func run() -> void:
 	# Victory must call the existing ending flow once, after the presentation.
 	battle.victory()
 	await frames(210)
-	check("victory reaches existing rescue ending",stage.finishing and not battle.engaged)
+	check("victory reaches existing rescue ending",stage.finishing and not battle.engaged and not stage.boss.visible)
 	# Deixe a cinemática concluir: liberar a fase enquanto seus timers aguardam
 	# interrompe corrotinas e produz falsos avisos de recursos no encerramento.
+	var saw_walk := false
+	var saw_dissolve := false
+	var original_scale:Vector3 = stage.player.visual.scale
+	var kept_scale := true
 	for i in 3600:
 		if not is_instance_valid(stage): break
+		saw_walk = saw_walk or stage.player.animation_player.current_animation=="Skill_03"
+		kept_scale = kept_scale and stage.player.visual.scale.is_equal_approx(original_scale)
+		var sprite:Sprite3D = stage.get_node_or_null("Effects/Maycon2D")
+		if sprite and sprite.material_override is ShaderMaterial:
+			var progress:float = sprite.material_override.get_shader_parameter("progress")
+			saw_dissolve = saw_dissolve or (progress>.1 and progress<.9 and stage.player.visual.visible and stage.has_node("Effects/MayconMemoryFX"))
 		await frames(1)
+	check("victory walks to Cabelo using Skill_03",saw_walk)
+	check("3D transforms into 2D with progressive dissolve and particles",saw_dissolve and kept_scale)
 	check("rescue cinematic reaches ending bridge",is_instance_valid(current_scene) and current_scene.scene_file_path=="res://scenes/3D/resgate_cabeludo/ending_bridge.tscn")
 	if is_instance_valid(stage): stage.queue_free()
 	if is_instance_valid(current_scene): current_scene.queue_free()

@@ -6,6 +6,7 @@ const GATE = preload("res://assets/novos_audios/calabouco_terror/gate_opening_he
 const GROWL = preload("res://assets/novos_audios/calabouco_terror/zombie_growl_pixabay.mp3")
 const BATTLE_SCORE = preload("res://assets/novos_audios/last_battle.mp3")
 const SCORE_OVERLAP := 1.0
+const DIMENSIONAL_FX = preload("res://scripts/3D/resgate_cabeludo/dimensional_effect.gd")
 const SFX = {
 	"hit":[preload("res://assets/novos_audios/elden_lips/sfx/wood_body_1.ogg"),preload("res://assets/novos_audios/elden_lips/sfx/wood_body_2.ogg"),preload("res://assets/novos_audios/elden_lips/sfx/wood_body_3.ogg")],
 	"heavy_hit":[preload("res://assets/novos_audios/elden_lips/sfx/wood_body_heavy.ogg")],
@@ -60,6 +61,7 @@ var score_timer:Timer
 var score_active:bool = false
 var score_turn:int = 0
 var score_fade:Tween
+var time_rift:Node3D
 
 func setup(owner_stage:Node3D) -> void:
 	stage = owner_stage
@@ -138,6 +140,13 @@ func enter(smooth:bool = true) -> void:
 	transition.tween_property(drone,"volume_db",-23.0,4.0)
 	transition.tween_property(wind_audio,"volume_db",-24.0,4.5)
 	if smooth: play_sound("shift",stage.player.global_position,-13)
+	if is_instance_valid(time_rift): time_rift.queue_free()
+	if smooth:
+		time_rift = Node3D.new()
+		time_rift.set_script(DIMENSIONAL_FX)
+		add_child(time_rift)
+		time_rift.global_position = stage.player.global_position+Vector3.UP*1.2
+		time_rift.setup(false,4.8)
 	if is_instance_valid(stage.wind): stage.wind.visible = false
 
 func start_score() -> void:
@@ -174,6 +183,7 @@ func stop_score(duration:float = 1.5) -> void:
 
 func leave() -> void:
 	active = false
+	if is_instance_valid(time_rift): time_rift.queue_free()
 	stop_score(2.5)
 	stage.get_node("Morning").environment = original_environment
 	var recover := create_tween().set_parallel(true)
@@ -188,6 +198,17 @@ func leave() -> void:
 
 func play_sound(kind:String,at:Vector3,volume:float = -9.0,pitch:float = 1.0) -> void:
 	if not SFX.has(kind): return
+	# Cada personagem tem uma voz dedicada; um novo golpe reinicia seu gemido.
+	if kind in ["pain","hurt"]:
+		var voice := sound_pool[0 if kind=="pain" else 1]
+		voice.stop()
+		var variants:Array = SFX[kind]
+		voice.stream = variants[randi()%variants.size()]
+		voice.global_position = at
+		voice.volume_db = volume
+		voice.pitch_scale = pitch*randf_range(.96,1.04)
+		voice.play()
+		return
 	var first := 0 if kind in ["pain","hurt"] else 2 if kind in ["thunder","shift","roar"] else 5
 	var end := 2 if first==0 else 5 if first==2 else sound_pool.size()
 	for i in range(first,end):
@@ -389,6 +410,7 @@ func build_weather() -> void:
 func _process(delta:float) -> void:
 	if not active: return
 	time += delta
+	if is_instance_valid(time_rift): time_rift.global_position = stage.player.global_position+Vector3.UP*1.2
 	var blend := smoothstep(0,1,world_blend)
 	if blend>.55 and not dark_materials_applied:
 		for mesh in arena_materials: mesh.material_override = arena_materials[mesh].dark

@@ -96,6 +96,24 @@ func _draw() -> void:
 		for i in 3:
 			var radius := (transition+float(i)*.16)*s.length()*.50
 			draw_arc(s*.5,radius,0,TAU,96,Color(.27,.38,.40,veil*.09),3*unit)
+		var center := s*.5
+		var clock_radius := minf(s.x,s.y)*(.23+transition*.28)
+		for tick in 48:
+			var angle := TAU*float(tick)/48-transition*TAU*.35
+			var axis := Vector2(cos(angle),sin(angle))
+			var length := 18.0 if tick%4==0 else 7.0
+			draw_line(center+axis*clock_radius,center+axis*(clock_radius+length*unit),Color(.53,.76,.78,veil*.35),2*unit)
+		for hand in 2:
+			var angle := -transition*TAU*(3.0 if hand==0 else 7.0)-PI*.5
+			draw_line(center,center+Vector2(cos(angle),sin(angle))*clock_radius*(.55 if hand==0 else .8),Color(.64,.82,.83,veil*.18),3*unit)
+		for strand in 7:
+			var angle := TAU*float(strand)/7+transition*.7
+			var points := PackedVector2Array()
+			for step in 6:
+				var radius := clock_radius*.5+float(step)*clock_radius*.28
+				var bend := angle+sin(float(step)*2.6+float(strand))*.06*veil
+				points.append(center+Vector2(cos(bend),sin(bend))*radius)
+			draw_polyline(points,Color(.51,.74,.80,veil*.12),1.5*unit,true)
 	# Vinheta por faixas suaves: nenhum shader novo ou textura de tela necessária.
 	for i in range(12):
 		var border := float(12-i) * 5.0 * unit

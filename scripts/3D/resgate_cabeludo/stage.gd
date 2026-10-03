@@ -10,6 +10,8 @@ const PAUSE_SCRIPT = preload("res://scripts/3D/platform_pause.gd")
 const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
 const JAULA = preload("res://scripts/3D/resgate_cabeludo/jaula.gd")
 const ELDEN_LIPS = preload("res://scripts/3D/resgate_cabeludo/elden_lips.gd")
+const DIMENSIONAL_FX = preload("res://scripts/3D/resgate_cabeludo/dimensional_effect.gd")
+const MEMORY_DISSOLVE = preload("res://scenes/3D/resgate_cabeludo/maycon_memory_dissolve.gdshader")
 # Mesmo Maycon 2D do menu principal, o do olhar para frente.
 const MAYCON_2D = preload("res://assets/novas_imagens/maycon/jamelao_float_1.png")
 # Mesmo blur direcional do dash do Poço Infinito, usado aqui como motion blur.
@@ -826,12 +828,21 @@ func victory_cutscene() -> void:
 	parada.y = player.global_position.y
 	player.visual.rotation.y = atan2(jaula_pos.x - parada.x, jaula_pos.z - parada.z)
 	var saida:Vector3 = player.global_position
+	var direction := (parada-saida).normalized()
+	player.animation_player.speed_scale = 1.0
+	player.animation_player.play("Skill_03",.18)
+	player.velocity = direction*2.0
 	var passos := create_tween()
 	passos.tween_method(func(t:float):
+		if not player.animation_player.is_playing(): player.animation_player.play("Skill_03",0)
 		player.global_position = saida.lerp(parada, t)
+		player._update_footsteps(get_process_delta_time(),direction,2.0)
 		encaixar_camera(0.0)
-	, 0.0, 1.0, 3.0).set_trans(Tween.TRANS_SINE)
+	, 0.0, 1.0, maxf(1.2,saida.distance_to(parada)/2.0))
 	await passos.finished
+	player.velocity = Vector3.ZERO
+	player.step_audio.stop()
+	player.animation_player.play("Walking",.18)
 	await transformar_em_2d()
 	await despedida()
 
@@ -860,8 +871,7 @@ func encaixar_camera(atras:float) -> void:
 	camera.global_position = postura_camera(atras)
 	camera.look_at(mira_camera())
 
-# A transformação é lenta e cheia de magia: o Maycon 3D se desfaz enquanto o
-# Maycon 2D do menu aparece no lugar dele.
+# A onda luminosa desfaz o volume dos pés à cabeça e revela a mesma silhueta em 2D.
 func transformar_em_2d() -> void:
 	var dois_d := Sprite3D.new()
 	dois_d.name = "Maycon2D"
@@ -869,28 +879,78 @@ func transformar_em_2d() -> void:
 	dois_d.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	dois_d.shaded = false
 	dois_d.double_sided = true
-	dois_d.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
 	# Mesmo tamanho do Maycon 2D do menu principal.
 	dois_d.pixel_size = 0.01
 	dois_d.scale = Vector3.ONE * 1.4
-	dois_d.modulate = Color(1, 1, 1, 0)
 	$Effects.add_child(dois_d)
 	dois_d.global_position = player.global_position + Vector3.UP * (0.74 * 1.4)
-	# Magia girando em volta dele antes de a troca começar.
-	for volta in 3:
-		pickup_burst(player.global_position + Vector3.UP * randf_range(0.6, 1.8))
-		pickup_sound()
-		await get_tree().create_timer(0.45).timeout
-	var base:Vector3 = player.visual.scale
-	var troca := create_tween().set_parallel(true)
-	troca.tween_property(player.visual, "scale", base * 0.05, 2.4).set_trans(Tween.TRANS_SINE)
-	troca.tween_property(dois_d, "modulate:a", 1.0, 2.4).set_trans(Tween.TRANS_SINE)
-	for volta in 4:
-		troca.tween_callback(func(): pickup_burst(player.global_position + Vector3.UP * randf_range(0.5, 2.0))).set_delay(0.5 * float(volta))
+	var fx := Node3D.new()
+	fx.name = "MayconMemoryFX"
+	fx.set_script(DIMENSIONAL_FX)
+	$Effects.add_child(fx)
+	fx.global_position = player.global_position+Vector3.UP*1.0
+	fx.setup(true,6.0)
+	var noise := NoiseTexture2D.new()
+	noise.width = 128
+	noise.height = 128
+	noise.seamless = true
+	noise.noise = FastNoiseLite.new()
+	var materials:Array[ShaderMaterial] = []
+	var originals:Array[Dictionary] = []
+	var height := float(MAYCON_2D.get_height())*dois_d.pixel_size*dois_d.scale.y
+	for child in player.visual.find_children("*","MeshInstance3D",true,false):
+		var mesh := child as MeshInstance3D
+		if not mesh.mesh: continue
+		var override:Material = mesh.material_override
+		for surface in mesh.mesh.get_surface_count():
+			var source:Material = override if override else mesh.get_active_material(surface)
+			var old_surface:Material = mesh.get_surface_override_material(surface)
+			var mat := memory_material(noise,height)
+			if source is BaseMaterial3D:
+				mat.set_shader_parameter("base_color",source.albedo_color)
+				if source.albedo_texture: mat.set_shader_parameter("albedo_texture",source.albedo_texture)
+			originals.append({"mesh":mesh,"surface":surface,"material":old_surface,"override":override})
+			mesh.set_surface_override_material(surface,mat)
+			materials.append(mat)
+		mesh.material_override = null
+	var flat := memory_material(noise,height)
+	flat.set_shader_parameter("albedo_texture",MAYCON_2D)
+	flat.set_shader_parameter("reveal",true)
+	flat.set_shader_parameter("billboard",true)
+	dois_d.material_override = flat
+	materials.append(flat)
+	set_blur(.12,Vector2(.5,.5))
+	sound("power")
+	var start_angle := atan2(camera.global_position.x-player.global_position.x,camera.global_position.z-player.global_position.z)
+	var memory_angle:float = player.visual.rotation.y+PI-.22
+	var orbit := create_tween()
+	orbit.tween_method(func(t:float):
+		var angle := lerp_angle(start_angle,memory_angle,t)+sin(t*PI)*.38
+		camera.global_position = player.global_position+Vector3(sin(angle)*4.5,2.1,cos(angle)*4.5)
+		camera.look_at(player.global_position+Vector3.UP*1.1)
+	,0.0,1.0,1.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await orbit.finished
+	pickup_sound()
+	var troca := create_tween()
+	troca.tween_method(func(progress:float):
+		for mat in materials: mat.set_shader_parameter("progress",progress)
+	,0.0,1.0,3.8).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await troca.finished
 	player.visual.visible = false
-	player.visual.scale = base
+	for data in originals:
+		data.mesh.set_surface_override_material(data.surface,data.material)
+		data.mesh.material_override = data.override
 	burst(dois_d.global_position, Color("ffe9a3"), 30)
+	pickup_sound()
+
+func memory_material(noise:NoiseTexture2D,height:float) -> ShaderMaterial:
+	var mat := ShaderMaterial.new()
+	mat.shader = MEMORY_DISSOLVE
+	mat.set_shader_parameter("progress",0.0)
+	mat.set_shader_parameter("noise_texture",noise)
+	mat.set_shader_parameter("floor_y",player.global_position.y)
+	mat.set_shader_parameter("body_height",height)
+	return mat
 
 # A frase entra devagar no meio da tela e fica seis segundos.
 func despedida() -> void:

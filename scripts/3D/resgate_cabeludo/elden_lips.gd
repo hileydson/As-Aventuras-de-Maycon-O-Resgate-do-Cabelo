@@ -13,6 +13,8 @@ const CENTER := Vector3(0,0,-1800)
 const LIGHT_DAMAGE := 6
 const HEAVY_DAMAGE := 11
 const MAX_STAMINA := 50.0
+const WALK_SPEED := 3.8
+const GUARD_SPEED := 2.0
 const DODGE_TIME := 0.42
 const DODGE_SPEED := 9.0
 const DODGE_IFRAMES := Vector2(0.05,0.26)
@@ -77,6 +79,8 @@ var boss_step_time:float = 0.0
 var hero_knockback:Vector3 = Vector3.ZERO
 var boss_knockback:Vector3 = Vector3.ZERO
 var boss_dash_trail_clock:float = 0.0
+var close_pressure:float = 0.0
+var repulse_cooldown:float = 0.0
 var blood_nodes:Array[Dictionary] = []
 
 func setup(owner_stage:Node3D) -> void:
@@ -309,6 +313,8 @@ func start_fight() -> void:
 	invulnerability = 1
 	boss_state = "stalk"
 	boss_time = 2.0
+	close_pressure = 0
+	repulse_cooldown = 3.0
 	hud.hint_time = 22
 	hud.boss_trail = 1
 	create_tween().set_parallel(true).tween_property(hud,"title_alpha",0.0,1.0)
@@ -409,7 +415,7 @@ func physics_player(delta:float) -> void:
 	if stamina_delay<=0 and action.is_empty() and not guarding: stamina = minf(MAX_STAMINA,stamina+delta*14)
 	var input := movement_input()
 	var direction:Vector3 = (player.arena_lado()*input.x-player.orbita()*-input.y).normalized()
-	var speed := 3.0 if guarding else 5.8
+	var speed := GUARD_SPEED if guarding else WALK_SPEED
 	if not action.is_empty():
 		action_time -= delta
 		var progress := 1.0-action_time/action_length
@@ -474,7 +480,7 @@ func weapon_contact(heavy:bool) -> void:
 	poise -= 18 if heavy else 7
 	boss_knockback = facing*(3.4 if heavy else 2.6)
 	atmosphere.play_sound("heavy_hit" if heavy else "hit",at,-6 if heavy else -8)
-	atmosphere.play_sound("pain",boss.global_position+Vector3.UP*2,-14)
+	atmosphere.play_sound("pain",boss.global_position+Vector3.UP*2,-4)
 	boss_hurt_time = .42
 	if boss_state in ["stalk","recover"]:
 		_play(boss.animation,"lips_hurt",.035,true)
@@ -556,6 +562,7 @@ func _physics_process(delta:float) -> void:
 		return
 	_update_hazards(delta)
 	if not fighting or stage.death_in_progress: return
+	_update_close_pressure(delta)
 	_update_boss(delta)
 	_move_boss_back(delta)
 
@@ -728,6 +735,45 @@ func _spawn_boss_dash_trail() -> void:
 		(mesh as MeshInstance3D).material_override = mat
 	player.dash_ghosts.append({"node":ghost,"mat":mat,"life":.20,"duration":.20,"alpha":color.a,"base_scale":ghost.scale})
 
+func _update_close_pressure(delta:float) -> void:
+	repulse_cooldown = maxf(0,repulse_cooldown-delta)
+	if boss_state=="phase":
+		close_pressure = 0
+		return
+	var offset := player.global_position-boss.global_position
+	offset.y = 0
+	close_pressure = minf(6,close_pressure+delta) if offset.length()<5.5 else maxf(0,close_pressure-delta*2)
+	if close_pressure<(3.8 if phase_two else 4.8) or repulse_cooldown>0: return
+	if boss_state not in ["stalk","recover"] or boss_hurt_time>0: return
+	clear_attack()
+	close_pressure = 0
+	repulse_cooldown = 9.0
+	boss_attack = "repulse"
+	boss_state = "windup"
+	boss_time = .95 if phase_two else 1.15
+	boss_contact = false
+	warning = ring(boss.position,6.5,Color("bd6a98"))
+	_play(boss.animation,"lips_slam_windup",.10,true)
+	show_message("ELDEN_WARN_REPULSE",boss_time)
+	atmosphere.play_sound("food_charge",boss.position,-12,.65)
+
+func repulse() -> void:
+	var away := player.global_position-boss.global_position
+	away.y = 0
+	if away.length()<6.5 and invulnerability<=0:
+		take_hit(12,boss.global_position,true)
+		if not stage.death_in_progress:
+			hero_knockback = (away.normalized() if away.length_squared()>.001 else Vector3.FORWARD)*14
+			player.velocity.y = 3.0
+			player.camera_shake = .45
+	atmosphere.play_sound("slam",boss.position,-9,.65)
+	atmosphere.play_sound("shift",boss.position,-14,1.25)
+	stage.burst(boss.position+Vector3.UP,Color("bb7ca6"),45)
+	for i in 2:
+		var wave := ring(boss.position,1.0,Color("bf86ab"))
+		wave.position.y += float(i)*.2
+		effects.append({"node":wave,"life":.85,"duration":.85,"growth":8.0})
+
 func _update_boss(delta:float) -> void:
 	boss_time -= delta
 	var to_player := player.global_position-boss.global_position
@@ -779,6 +825,9 @@ func _update_boss(delta:float) -> void:
 			if progress>.2 and not boss_contact and boss.position.distance_to(player.position)<2.8:
 				boss_contact = true
 				take_hit(18,boss.global_position)
+		elif boss_attack == "repulse" and progress>.45 and not boss_contact:
+			boss_contact = true
+			repulse()
 		if boss_time<=0:
 			boss.position.y = 0
 			clear_attack()
@@ -850,7 +899,7 @@ func execute_attack() -> void:
 		atmosphere.play_sound("swing",boss.position,-13,.75)
 		return
 	# O alvo do salto fica fixo desde o aviso: não persegue Maycon no ar.
-	_play(boss.animation,"lips_sweep" if boss_attack=="sweep" else "lips_slam" if boss_attack=="slam" else "lips_throw",.035,true)
+	_play(boss.animation,"lips_sweep" if boss_attack=="sweep" else "lips_slam" if boss_attack in ["slam","repulse"] else "lips_throw",.035,true)
 
 func clear_attack() -> void:
 	boss_dash_trail_clock = 0
@@ -947,7 +996,7 @@ func _update_effects(delta:float) -> void:
 		var data := effects[i]
 		data.life -= delta
 		if is_instance_valid(data.node):
-			data.node.scale += Vector3.ONE*delta*2.0
+			data.node.scale += Vector3.ONE*delta*float(data.get("growth",2.0))
 			data.node.material_override.albedo_color.a = maxf(0,float(data.life)/float(data.duration))*.5
 			if data.life<=0: data.node.queue_free()
 		if data.life<=0: effects.remove_at(i)
@@ -1152,6 +1201,8 @@ func victory() -> void:
 	create_tween().tween_property(hud,"title_alpha",1.0,.7)
 	atmosphere.play_sound("boom",boss.position,-14,.6)
 	await get_tree().create_timer(3.3,false).timeout
+	stage.burst(boss.global_position+Vector3.UP*2,Color("6e7270"),45)
+	boss.visible = false
 	atmosphere.leave()
 	engaged = false
 	hud.visible = false
