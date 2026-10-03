@@ -427,7 +427,6 @@ func heal_magic() -> void:
 
 func spend_stamina(amount:float) -> bool:
 	if stamina < amount:
-		show_message("ELDEN_EXHAUSTED",1.2)
 		return false
 	stamina -= amount
 	stamina_delay = 1.0
