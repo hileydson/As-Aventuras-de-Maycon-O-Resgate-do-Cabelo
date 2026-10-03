@@ -32,4 +32,4 @@ func _select_language(language) -> void:
 	espanhol.disabled = true
 	chines.disabled = true
 	Global.set_game_language(language)
-	get_tree().change_scene_to_file("res://scenes/intro_pacoca_producoes.tscn")
+	get_tree().change_scene_to_file("res://scenes/godot_splash.tscn")

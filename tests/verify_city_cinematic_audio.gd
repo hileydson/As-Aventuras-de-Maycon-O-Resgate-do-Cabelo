@@ -20,6 +20,7 @@ func run() -> void:
 	current_scene = city
 	await frames(2)
 	check("city starts the requested soundtrack",city.city_song.playing and city.city_song.stream.get_length()>50)
+	check("city soundtrack does not loop",not city.city_song.stream.loop)
 	var trails := 0
 	for node in city.plane.get_children():
 		if node is GPUParticles3D and not node.local_coords and node.emitting: trails += 1
@@ -34,12 +35,53 @@ func run() -> void:
 	var white_end := false
 	var faded_music := false
 	var unobstructed := true
+	var held_samples := 0
+	var paper_attached := true
+	var paper_turns := false
+	var largest_hand_gap := 0.0
+	var gap_phase := ""
+	var previous_grip_phase := -1
+	var settled_grip_frames := 0
+	var previous_paper_basis := Basis.IDENTITY
+	var lips_min_fov := 65.0
+	var lips_max_fov := 0.0
+	var maycon_min_fov := 65.0
+	var maycon_max_fov := 0.0
 	var building := AABB(Vector3(9,0,-108),Vector3(10,10.4,12))
 	var roof := AABB(Vector3(8.5,10.35,-108.5),Vector3(11,.5,13))
 	for i in 900:
 		if not is_instance_valid(city): break
+		if not city.is_inside_tree():
+			await process_frame
+			continue
 		if city.follow==city.lips:
 			lips_third_person = lips_third_person and not city.bob and city.lips.visible and city.follow_offset.z>0
+		if city.attached:
+			var sheet:AnimatedSprite3D = city.hair
+			var half_height:float = sheet.sprite_frames.get_frame_texture(sheet.animation,sheet.frame).get_height()*sheet.pixel_size*.5
+			var held_edge:Vector3 = sheet.global_transform * Vector3(0,half_height,0)
+			var local_edge:Vector3 = sheet.transform * Vector3(0,half_height,0)
+			paper_attached = paper_attached and sheet.get_parent() is BoneAttachment3D and sheet.get_parent().bone_name=="Arm_Lower.R" and sheet.billboard==BaseMaterial3D.BILLBOARD_DISABLED and local_edge.distance_to(Vector3(0,.3,0))<.001
+			var grip_phase:int = 1 if city.lips_running else 2 if city.lips_hanging else 0
+			settled_grip_frames = settled_grip_frames + 1 if grip_phase==previous_grip_phase else 0
+			previous_grip_phase = grip_phase
+			# BoneAttachment acompanha a pose na atualização de render, após os timers
+			# que trocam a animação. Aguarda essa atualização antes de medir no mundo.
+			if grip_phase>0 and settled_grip_frames>2:
+				var gap:float = held_edge.distance_to(city.lips_hand_transform().origin)
+				if gap>largest_hand_gap:
+					largest_hand_gap = gap
+					gap_phase = "run=%s / hanging=%s" % [city.lips_running,city.lips_hanging]
+				paper_attached = paper_attached and gap<.12
+			if held_samples>0: paper_turns = paper_turns or not sheet.global_basis.is_equal_approx(previous_paper_basis)
+			previous_paper_basis = sheet.global_basis
+			held_samples += 1
+		if city.lips_running and city.focus==city.lips:
+			lips_min_fov = minf(lips_min_fov,city.camera.fov)
+			lips_max_fov = maxf(lips_max_fov,city.camera.fov)
+		if city.maycon_running and city.follow==city.maycon and not city.bob:
+			maycon_min_fov = minf(maycon_min_fov,city.camera.fov)
+			maycon_max_fov = maxf(maycon_max_fov,city.camera.fov)
 		if city.maycon_running and city.step_audio.playing:
 			running_fp = running_fp or (city.bob and not city.maycon.visible)
 			running_tp = running_tp or (not city.bob and city.maycon.visible)
@@ -61,6 +103,10 @@ func run() -> void:
 		unobstructed = unobstructed and not building.has_point(city.camera.position) and not roof.has_point(city.camera.position)
 		await frames(1)
 	check("Lips running and jump shots stay behind Lips and Cabelo",lips_third_person)
+	check("paper stays attached by its edge to Lips' animated right hand",held_samples>100 and paper_attached and paper_turns)
+	if not paper_attached: print("Largest hand gap: %.3f (%s)" % [largest_hand_gap,gap_phase])
+	check("Lips running shots gradually zoom toward him",lips_max_fov>62 and lips_min_fov<54)
+	check("Maycon third person running shot gradually zooms toward him",maycon_max_fov>62 and maycon_min_fov<54)
 	check("Maycon footsteps play in first and third person",running_fp and running_tp)
 	check("Lips leaves dust while jumping",jumping_dust)
 	check("Lips hangs below the plane with one arm upward and hand attached",correct_grip)

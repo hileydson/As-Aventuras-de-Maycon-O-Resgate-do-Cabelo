@@ -5,7 +5,9 @@ const PLANE_ENGINE = preload("res://assets/novos_audios/aviao.mp3")
 const CITY_SONG = preload("res://assets/novos_audios/city_cutscene_song.mp3")
 const STEP_SOUND = preload("res://assets/novos_audios/mario_part_sounds/passo.mp3")
 const WIND_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
+const BLUR_SHADER = preload("res://scenes/3D/poco_infinito_dash_blur.gdshader")
 const PLANE_GRIP := Vector3(0.0, -3.07, 0.8)
+const SONG_FADE_TIME := 6.0
 
 @export var forest_scene:String = "res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn"
 @export var pace:float = 1.0
@@ -31,6 +33,9 @@ var lips_hanging:bool = false
 var step_timer:float = 0.0
 var step_audio:AudioStreamPlayer
 var city_song:AudioStreamPlayer
+var music_fading:bool = false
+var camera_zoom:Tween
+var hair_grip:BoneAttachment3D
 
 func _ready() -> void:
 	Global.in_cutscene = true
@@ -54,6 +59,7 @@ func _ready() -> void:
 		library.add_animation("Air_Flail", load("res://assets/novas_imagens/3d_enemies/maycon_air_flail.res"))
 	$HUD/Phrase.text = tr("RESGATE_CIGARRO")
 	$HUD/Phrase.visible = false
+	hair.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	maycon.visible = false
 	$Spring.visible = false
 	$Magic.emitting = false
@@ -61,13 +67,14 @@ func _ready() -> void:
 	build_engine_sound()
 	build_city_audio()
 	build_plane_wind()
+	build_motion_blur()
 	call_deferred("sequence")
 
 func build_city_audio() -> void:
 	city_song = AudioStreamPlayer.new()
 	city_song.name = "CityCutsceneSong"
 	city_song.stream = CITY_SONG.duplicate()
-	city_song.stream.loop = true
+	city_song.stream.loop = false
 	city_song.volume_db = -7.0
 	add_child(city_song)
 	city_song.play()
@@ -76,6 +83,28 @@ func build_city_audio() -> void:
 	step_audio.stream = STEP_SOUND
 	step_audio.volume_db = -5.0
 	add_child(step_audio)
+
+func build_motion_blur() -> void:
+	var effect := ColorRect.new()
+	effect.name = "MotionBlur"
+	effect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var mat := ShaderMaterial.new()
+	mat.shader = BLUR_SHADER
+	mat.set_shader_parameter("blur_strength", .14)
+	mat.set_shader_parameter("blur_direction", Vector2(0,1))
+	mat.set_shader_parameter("blur_center", Vector2(.5,.5))
+	effect.material = mat
+	$HUD.add_child(effect)
+	$HUD.move_child(effect, 0)
+	effect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+func fade_city_song(duration:float) -> void:
+	if music_fading:
+		return
+	music_fading = true
+	var fade := create_tween().set_ignore_time_scale(true)
+	var remaining := maxf(.05,city_song.stream.get_length() - city_song.get_playback_position())
+	fade.tween_property(city_song, "volume_db", -60.0, minf(duration,remaining))
 
 func build_plane_wind() -> void:
 	var vento := MultiMeshInstance3D.new()
@@ -132,6 +161,9 @@ func build_engine_sound() -> void:
 
 func _process(delta:float) -> void:
 	time += delta
+	# A faixa é mais curta que a cena: desvanece antes do fim natural, sem repetir.
+	if city_song.playing and city_song.get_playback_position() >= city_song.stream.get_length() - SONG_FADE_TIME:
+		fade_city_song(SONG_FADE_TIME)
 	if maycon_running:
 		step_timer -= delta
 		if step_timer <= 0.0:
@@ -147,8 +179,6 @@ func _process(delta:float) -> void:
 	if focus:
 		camera.look_at(focus.global_position + global_basis * focus_offset)
 		$ActionFill.global_position = focus.global_position+Vector3.UP*5
-	if attached:
-		hair.position = Vector3(0, 2.3, 0.95)
 	if lips_running and not lips.get_parent() == plane:
 		$Lips/Visual.position.y = 1.8 + absf(sin(time * 9.0)) * 0.18
 		$Lips/Visual.rotation.z = sin(time * 9.0) * 0.035
@@ -163,7 +193,7 @@ func animate(player:AnimationPlayer, name:String) -> void:
 	if player and player.has_animation(name):
 		player.play(name, 0.15)
 
-func pose_lips_running(phase:float) -> void:
+func pose_lips_running(phase:float, carrying_hair:bool = false) -> void:
 	if not lips_skeleton:
 		return
 	lips_skeleton.reset_bone_poses()
@@ -176,7 +206,11 @@ func pose_lips_running(phase:float) -> void:
 	aim_lips_arm("Arm_Upper.L", Vector3(0,-1,swing * .85).normalized())
 	aim_lips_arm("Arm_Upper.R", Vector3(0,-1,-swing * .85).normalized())
 	set_lips_bone("Arm_Lower.L", -.35)
-	set_lips_bone("Arm_Lower.R", -.35)
+	if attached or carrying_hair:
+		# Cotovelo dobrado para segurar a folha acima do chão enquanto corre.
+		aim_lips_arm("Arm_Lower.R", Vector3(0,.3 + sin(phase) * .12,1).normalized())
+	else:
+		set_lips_bone("Arm_Lower.R", -.35)
 	set_lips_bone("Head", sin(phase * 2.0) * 0.04)
 
 func set_lips_bone(bone_name:String, angle:float) -> void:
@@ -195,6 +229,40 @@ func aim_lips_arm(bone_name:String, direction:Vector3) -> void:
 	var aimed := Basis(Quaternion(rest.y.normalized(), direction)) * rest
 	lips_skeleton.set_bone_pose_rotation(bone, (parent_pose.inverse() * aimed).get_rotation_quaternion())
 
+func pose_lips_pickup() -> void:
+	lips_skeleton.reset_bone_poses()
+	set_lips_bone("Hips", -.12)
+	aim_lips_arm("Arm_Upper.R", Vector3(0,-.6,.8).normalized())
+	aim_lips_arm("Arm_Upper.L", Vector3(0,-1,-.15).normalized())
+	aim_lips_arm("Arm_Lower.R", Vector3(0,.3,1).normalized())
+	set_lips_bone("Head", .16)
+
+func lips_hand_transform() -> Transform3D:
+	var bone := lips_skeleton.find_bone("Arm_Lower.R")
+	return lips_skeleton.global_transform * lips_skeleton.get_bone_global_pose(bone) * Transform3D(Basis.IDENTITY,Vector3(0,.3,0))
+
+func paper_in_hand_transform() -> Transform3D:
+	# Calibra com o braço abaixado, para a folha ficar legível durante a corrida.
+	pose_lips_running(0.0, true)
+	var bone := lips_skeleton.find_bone("Arm_Lower.R")
+	var bone_basis := lips_skeleton.get_bone_global_pose(bone).basis
+	var paper_basis := bone_basis.inverse() * Basis(Vector3.UP, PI + .18)
+	# Compensa a escala do rig: o papel mantém o tamanho original do Cabelo.
+	paper_basis = paper_basis.scaled(Vector3.ONE / lips_skeleton.global_basis.get_scale().y)
+	var half_height := hair.sprite_frames.get_frame_texture(hair.animation,hair.frame).get_height() * hair.pixel_size * .5
+	return Transform3D(paper_basis,Vector3(0,.3,0) - paper_basis.y * half_height)
+
+func hold_hair_in_hand(paper_transform:Transform3D) -> void:
+	hair_grip = BoneAttachment3D.new()
+	hair_grip.name = "CabeloNaMao"
+	hair_grip.bone_name = "Arm_Lower.R"
+	lips_skeleton.add_child(hair_grip)
+	hair.reparent(hair_grip, false)
+	hair.billboard = BaseMaterial3D.BILLBOARD_DISABLED
+	hair.double_sided = true
+	hair.transform = paper_transform
+	attached = true
+
 func pose_lips_hanging() -> void:
 	if not lips_skeleton:
 		return
@@ -202,7 +270,7 @@ func pose_lips_hanging() -> void:
 	# O eixo Y do braço aponta para o cotovelo; vira o braço inteiro para cima.
 	aim_lips_arm("Arm_Upper.L", Vector3.UP)
 	aim_lips_arm("Arm_Upper.R", Vector3(.12,-1,.25).normalized())
-	set_lips_bone("Arm_Lower.R", -.5)
+	aim_lips_arm("Arm_Lower.R", Vector3(.15,.2,1).normalized())
 	set_lips_bone("Leg_Upper.L", .12 + sin(time * 3.0) * .06)
 	set_lips_bone("Leg_Upper.R", -.14 + sin(time * 3.0) * .06)
 	set_lips_bone("Leg_Lower.L", .25)
@@ -218,7 +286,13 @@ func move(node:Node3D, destination:Vector3, duration:float) -> Tween:
 	tween.tween_property(node, "position", destination, duration * pace)
 	return tween
 
-func shot(actor:Node3D, offset:Vector3, target:Node3D, aim:Vector3, duration:float, first_person:bool = false) -> void:
+func shot(actor:Node3D, offset:Vector3, target:Node3D, aim:Vector3, duration:float, first_person:bool = false, end_fov:float = 65.0) -> void:
+	if camera_zoom and camera_zoom.is_valid():
+		camera_zoom.kill()
+	camera.fov = 65.0
+	if end_fov < 65.0:
+		camera_zoom = create_tween()
+		camera_zoom.tween_property(camera, "fov", end_fov, duration * pace).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	follow = actor
 	follow_offset = offset
 	focus = target
@@ -248,16 +322,23 @@ func sequence() -> void:
 	animate(maycon_animation, "Arise")
 	move(lips, Vector3(0, 0, 0), 3.5)
 	await shot(hair, Vector3(9, 5, 9), lips, Vector3.UP * 2, 3.5)
-	# Pega o cabelo original; ele permanece preso nas costas em todos os planos.
-	arc(hair, lips.position + Vector3(0, 2.3, 0.95), 3, 1.0)
+	# Estende a mão antes de pegar o Cabelo pela borda, como uma folha de papel.
+	lips_running = false
+	lips_animation.stop()
+	var paper_transform := paper_in_hand_transform()
+	pose_lips_pickup()
+	var right_arm := lips_skeleton.find_bone("Arm_Lower.R")
+	var paper_target:Vector3 = (lips_skeleton.global_transform * lips_skeleton.get_bone_global_pose(right_arm) * paper_transform).origin
+	arc(hair, to_local(paper_target), .5, 1.0)
 	await shot(lips, Vector3(5, 3, 4), hair, Vector3.ZERO, 1.0)
-	hair.reparent(lips, true)
-	attached = true
+	hold_hair_in_hand(paper_transform)
+	lips_running = true
+	animate(lips_animation, "Run")
 	move(lips, Vector3(0, 0, -46), 11)
 	move(plane, Vector3(0, 30, -64), 14)
 	await shot(lips, Vector3(7, 5, 12), plane, Vector3.ZERO, 1.4)
-	await shot(lips, Vector3(3.5, 3.8, 8), lips, Vector3(0, 2.4, -5), 4.6)
-	await shot(lips, Vector3(5, 4, 9), lips, Vector3(0, 2.4, -4), 5)
+	await shot(lips, Vector3(3.5, 3.8, 8), lips, Vector3.UP * 1.7, 4.6, false, 52)
+	await shot(lips, Vector3(5, 4, 9), lips, Vector3.UP * 1.7, 5, false, 48)
 	lips_running = false
 	lips.get_node("Visual").position.y = 1.8
 	lips.get_node("Visual").rotation.z = 0.0
@@ -283,7 +364,7 @@ func sequence() -> void:
 	await shot(maycon, Vector3(0, 1.65, -0.2), plane, Vector3.ZERO, 3, true)
 	await shot(maycon, Vector3(0, 1.65, -0.2), maycon, Vector3(0, 1.5, -20), 2, true)
 	await shot(maycon, Vector3(0, 1.65, -0.2), plane, Vector3.ZERO, 3, true)
-	await shot(maycon, Vector3(-7, 3, 5), maycon, Vector3(0, 1, -3), 4)
+	await shot(maycon, Vector3(-7, 3, 5), maycon, Vector3.UP * 1.1, 4, false, 48)
 	await shot(maycon, Vector3(0, 1.65, -0.2), plane, Vector3.ZERO, 2, true)
 	follow = maycon
 	follow_offset = Vector3(0, 1.65, -0.2)
@@ -355,9 +436,8 @@ func sequence() -> void:
 	await get_tree().create_timer(1.0 * pace).timeout
 	$HUD/Fade.color = Color(1,1,1,0)
 	var fade := create_tween()
-	fade.set_parallel(true)
 	fade.tween_property($HUD/Fade, "color:a", 1.0, 7.0 * pace).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	fade.tween_property(city_song, "volume_db", -60.0, 7.0 * pace)
+	fade_city_song(7.0 * pace)
 	await fade.finished
 	city_song.stop()
 	POEIRA.apagar(rebote_poeira)
