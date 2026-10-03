@@ -2,6 +2,10 @@ extends Node3D
 
 const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
 const PLANE_ENGINE = preload("res://assets/novos_audios/aviao.mp3")
+const CITY_SONG = preload("res://assets/novos_audios/city_cutscene_song.mp3")
+const STEP_SOUND = preload("res://assets/novos_audios/mario_part_sounds/passo.mp3")
+const WIND_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
+const PLANE_GRIP := Vector3(0.0, -3.07, 0.8)
 
 @export var forest_scene:String = "res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn"
 @export var pace:float = 1.0
@@ -22,6 +26,11 @@ var maycon_entered:bool = false
 var lips_animation:AnimationPlayer
 var maycon_animation:AnimationPlayer
 var lips_skeleton:Skeleton3D
+var maycon_running:bool = false
+var lips_hanging:bool = false
+var step_timer:float = 0.0
+var step_audio:AudioStreamPlayer
+var city_song:AudioStreamPlayer
 
 func _ready() -> void:
 	Global.in_cutscene = true
@@ -50,7 +59,62 @@ func _ready() -> void:
 	$Magic.emitting = false
 	$HUD/Fade.color.a = 0.0
 	build_engine_sound()
+	build_city_audio()
+	build_plane_wind()
 	call_deferred("sequence")
+
+func build_city_audio() -> void:
+	city_song = AudioStreamPlayer.new()
+	city_song.name = "CityCutsceneSong"
+	city_song.stream = CITY_SONG.duplicate()
+	city_song.stream.loop = true
+	city_song.volume_db = -7.0
+	add_child(city_song)
+	city_song.play()
+	step_audio = AudioStreamPlayer.new()
+	step_audio.name = "PassosMaycon"
+	step_audio.stream = STEP_SOUND
+	step_audio.volume_db = -5.0
+	add_child(step_audio)
+
+func build_plane_wind() -> void:
+	var vento := MultiMeshInstance3D.new()
+	vento.name = "VentoDoAviao"
+	vento.set_script(WIND_SCRIPT)
+	vento.quantidade = 120
+	vento.alcance_z = 100.0
+	vento.raio_min = 7.0
+	vento.raio_max = 38.0
+	vento.velocidade = 90.0 / pace
+	vento.z_limite = 40.0
+	vento.espessura = 0.035
+	vento.comprimento_min = 3.0
+	vento.comprimento_max = 10.0
+	vento.alpha_min = .12
+	vento.alpha_max = .35
+	plane.add_child(vento)
+	# As partículas ficam no espaço por onde o avião passou, sem acompanhar o nó.
+	for lado in [-1.0, 1.0]:
+		var rastro := GPUParticles3D.new()
+		rastro.name = "RastroDaAsa"
+		rastro.amount = 180
+		rastro.lifetime = 5.0 * pace
+		rastro.local_coords = false
+		rastro.draw_pass_1 = POEIRA.nuvem()
+		var mat := ParticleProcessMaterial.new()
+		mat.direction = Vector3.BACK
+		mat.spread = 3.0
+		mat.initial_velocity_min = .3
+		mat.initial_velocity_max = .8
+		mat.gravity = Vector3.ZERO
+		mat.scale_min = .22
+		mat.scale_max = .5
+		mat.color = Color(.84, .92, 1.0, .32)
+		mat.alpha_curve = POEIRA.curva()
+		rastro.process_material = mat
+		rastro.visibility_aabb = AABB(Vector3(-35,-20,-35),Vector3(70,50,130))
+		rastro.position = Vector3(lado * 13.5, -.4, 3)
+		plane.add_child(rastro)
 
 # O avião estava passando sem som nenhum; o motor agora acompanha ele em loop.
 func build_engine_sound() -> void:
@@ -68,6 +132,14 @@ func build_engine_sound() -> void:
 
 func _process(delta:float) -> void:
 	time += delta
+	if maycon_running:
+		step_timer -= delta
+		if step_timer <= 0.0:
+			step_audio.pitch_scale = randf_range(1.02, 1.1)
+			step_audio.play()
+			step_timer = .34 * pace
+	elif step_audio.playing:
+		step_audio.stop()
 	if follow:
 		camera.global_position = follow.global_position + global_basis * follow_offset
 		if bob:
@@ -81,6 +153,8 @@ func _process(delta:float) -> void:
 		$Lips/Visual.position.y = 1.8 + absf(sin(time * 9.0)) * 0.18
 		$Lips/Visual.rotation.z = sin(time * 9.0) * 0.035
 		pose_lips_running(time * 9.0)
+	if lips_hanging:
+		pose_lips_hanging()
 	if $HUD/Phrase.visible:
 		var screen := camera.unproject_position($Cigarro.global_position + Vector3.UP * 2.0)
 		$HUD/Phrase.position = screen - Vector2($HUD/Phrase.size.x * 0.5, 40)
@@ -99,8 +173,10 @@ func pose_lips_running(phase:float) -> void:
 	set_lips_bone("Leg_Upper.R", -swing)
 	set_lips_bone("Leg_Lower.L", maxf(0.0, -swing) * 0.85)
 	set_lips_bone("Leg_Lower.R", maxf(0.0, swing) * 0.85)
-	set_lips_bone("Arm_Upper.L", -swing * 0.85)
-	set_lips_bone("Arm_Upper.R", swing * 0.85)
+	aim_lips_arm("Arm_Upper.L", Vector3(0,-1,swing * .85).normalized())
+	aim_lips_arm("Arm_Upper.R", Vector3(0,-1,-swing * .85).normalized())
+	set_lips_bone("Arm_Lower.L", -.35)
+	set_lips_bone("Arm_Lower.R", -.35)
 	set_lips_bone("Head", sin(phase * 2.0) * 0.04)
 
 func set_lips_bone(bone_name:String, angle:float) -> void:
@@ -111,6 +187,31 @@ func set_lips_bone(bone_name:String, angle:float) -> void:
 	# dentro da barriga.
 	var descanso := lips_skeleton.get_bone_rest(bone).basis.get_rotation_quaternion()
 	lips_skeleton.set_bone_pose_rotation(bone, descanso * Quaternion(Vector3.RIGHT, angle))
+
+func aim_lips_arm(bone_name:String, direction:Vector3) -> void:
+	var bone := lips_skeleton.find_bone(bone_name)
+	var rest := lips_skeleton.get_bone_global_rest(bone).basis
+	var parent_pose := lips_skeleton.get_bone_global_pose(lips_skeleton.get_bone_parent(bone)).basis
+	var aimed := Basis(Quaternion(rest.y.normalized(), direction)) * rest
+	lips_skeleton.set_bone_pose_rotation(bone, (parent_pose.inverse() * aimed).get_rotation_quaternion())
+
+func pose_lips_hanging() -> void:
+	if not lips_skeleton:
+		return
+	lips_skeleton.reset_bone_poses()
+	# O eixo Y do braço aponta para o cotovelo; vira o braço inteiro para cima.
+	aim_lips_arm("Arm_Upper.L", Vector3.UP)
+	aim_lips_arm("Arm_Upper.R", Vector3(.12,-1,.25).normalized())
+	set_lips_bone("Arm_Lower.R", -.5)
+	set_lips_bone("Leg_Upper.L", .12 + sin(time * 3.0) * .06)
+	set_lips_bone("Leg_Upper.R", -.14 + sin(time * 3.0) * .06)
+	set_lips_bone("Leg_Lower.L", .25)
+	set_lips_bone("Leg_Lower.R", .32)
+	# Mantém a ponta da mão no mesmo ponto da fuselagem, inclusive no balanço.
+	var lower := lips_skeleton.find_bone("Arm_Lower.L")
+	var hand:Vector3 = lips_skeleton.get_bone_global_pose(lower) * Vector3(0,.3,0)
+	var hand_in_plane:Vector3 = plane.to_local(lips_skeleton.to_global(hand))
+	lips.position += PLANE_GRIP - hand_in_plane
 
 func move(node:Node3D, destination:Vector3, duration:float) -> Tween:
 	var tween := create_tween()
@@ -154,25 +255,30 @@ func sequence() -> void:
 	attached = true
 	move(lips, Vector3(0, 0, -46), 11)
 	move(plane, Vector3(0, 30, -64), 14)
-	await shot(lips, Vector3(0, 3.2, -0.3), plane, Vector3.ZERO, 4, true)
-	await shot(lips, Vector3(0, 3.2, -0.3), lips, Vector3(0, 3, -22), 2, true)
-	await shot(lips, Vector3(5, 5, 10), plane, Vector3.ZERO, 5)
+	await shot(lips, Vector3(7, 5, 12), plane, Vector3.ZERO, 1.4)
+	await shot(lips, Vector3(3.5, 3.8, 8), lips, Vector3(0, 2.4, -5), 4.6)
+	await shot(lips, Vector3(5, 4, 9), lips, Vector3(0, 2.4, -4), 5)
+	lips_running = false
+	lips.get_node("Visual").position.y = 1.8
+	lips.get_node("Visual").rotation.z = 0.0
 	animate(lips_animation, "Jump_Ascent")
 	sound("res://assets/novos_audios/mario_part_sounds/lips_jump_grunt.mp3")
-	arc(lips, Vector3(0, 26, -64), 12, 3)
-	await shot(lips, Vector3(9, 4, 13), plane, Vector3.ZERO, 3)
+	POEIRA.saltar(self, lips.global_position)
+	var lips_dust := POEIRA.rastro(lips)
+	arc(lips, Vector3(.6, 23.4, -63.2), 8, 3)
+	await shot(lips, Vector3(8, 1.5, 12), lips, Vector3.UP * 2.4, 3)
 	lips.reparent(plane, true)
-	lips_running = false
-	if lips_skeleton:
-		lips_skeleton.reset_bone_poses()
-	lips.position = Vector3(0, -4, 0)
-	animate(lips_animation, "Jump_Ascent")
-	if lips_animation and lips_animation.is_playing():
-		lips_animation.seek(lips_animation.current_animation_length * 0.5, true)
-		lips_animation.pause()
+	lips_animation.stop()
+	lips_hanging = true
+	lips.position = Vector3(.6, -6.6, .8)
+	pose_lips_hanging()
+	POEIRA.apagar(lips_dust)
+	await shot(lips, Vector3(11, -2, 17), lips, Vector3.UP * 2, 1.8)
 	move(plane, Vector3(0, 42, -185), 26)
 	maycon_entered = true
 	maycon.visible = true
+	maycon_running = true
+	step_timer = 0.0
 	move(maycon, Vector3(0, 0, -106), 18)
 	await shot(maycon, Vector3(0, 1.65, -0.2), plane, Vector3.ZERO, 3, true)
 	await shot(maycon, Vector3(0, 1.65, -0.2), maycon, Vector3(0, 1.5, -20), 2, true)
@@ -197,6 +303,7 @@ func sequence() -> void:
 	arc($Spring, Vector3(0, 0.2, -113), 3, 2)
 	move(maycon, Vector3(0, 0, -113), 2)
 	await shot(maycon, Vector3(8, 4, 6), $Spring, Vector3.ZERO, 2)
+	maycon_running = false
 	$Magic.global_position = maycon.global_position
 	$Magic.emitting = true
 	animate(maycon_animation, "Air_Flail")
@@ -209,23 +316,50 @@ func sequence() -> void:
 	await shot(maycon, Vector3(7, 4, 13), plane, Vector3.ZERO, 4)
 	POEIRA.apagar(salto_poeira)
 	move(plane, Vector3(0, 43, -198), 2)
-	arc(maycon, Vector3(0, 43, -198), 4, 2)
-	await shot(maycon, Vector3(7, 5, 12), lips, Vector3.ZERO, 2)
+	var encontro:Vector3 = Vector3(0, 43, -198) + lips.position + Vector3(1, .4, 1)
+	arc(maycon, encontro, 4, 2)
+	await shot(maycon, Vector3(12, -2, 18), lips, Vector3.UP * 1.2, 2)
 	sound("res://assets/novos_audios/punch_4.mp3")
+	lips_hanging = false
 	lips.reparent(self, true)
 	animate(lips_animation, "Belly_Dive")
-	move(lips, Vector3(0, -28, -215), 4)
-	move(maycon, Vector3(1, -26, -215), 4)
+	# A pancada joga os dois de volta ao mesmo trampolim, ainda com Cabelo.
+	var pouso:Vector3 = $Spring.position + Vector3(-.6, .85, 0)
+	var queda := move(maycon, pouso, 4)
+	queda.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	var queda_lips := move(lips, pouso + Vector3(1.4, 0, .3), 4)
+	queda_lips.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	move(plane, Vector3(0, 46, -265), 8)
-	follow = plane
-	follow_offset = Vector3(12, 7, 32)
-	focus = plane
-	focus_offset = Vector3.ZERO
 	maycon.visible = true
 	lips.visible = true
-	await get_tree().create_timer(3 * pace).timeout
+	await shot(maycon, Vector3(-10, 5, 18), maycon, Vector3.UP, 4)
+	sound("res://assets/novos_audios/maycon_platform_landing.mp3")
+	sound("res://assets/novos_audios/punch_4.mp3")
+	POEIRA.pousar(self, $Spring.global_position)
+	POEIRA.impulsionar(self, maycon.global_position)
+	var spring_scale:Vector3 = $Spring.scale
+	var quicar := create_tween()
+	quicar.tween_property($Spring, "scale", spring_scale * Vector3(1.12,.55,1.12), .18 * pace)
+	quicar.tween_property($Spring, "scale", spring_scale, .3 * pace).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await get_tree().create_timer(.18 * pace).timeout
+	animate(maycon_animation, "Air_Flail")
+	var rebote_poeira := POEIRA.rastro(maycon)
+	arc(maycon, Vector3(24, 105, -280), 20, 8)
+	arc(lips, Vector3(27, 102, -282), 20, 8)
+	# Primeiro mostra o segundo impulso; só então dissolve tudo em branco.
+	follow = maycon
+	follow_offset = Vector3(-12, 4, 22)
+	focus = maycon
+	focus_offset = Vector3.UP
+	bob = false
+	await get_tree().create_timer(1.0 * pace).timeout
+	$HUD/Fade.color = Color(1,1,1,0)
 	var fade := create_tween()
-	fade.tween_property($HUD/Fade, "color:a", 1.0, 5.0 * pace)
+	fade.set_parallel(true)
+	fade.tween_property($HUD/Fade, "color:a", 1.0, 7.0 * pace).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	fade.tween_property(city_song, "volume_db", -60.0, 7.0 * pace)
 	await fade.finished
+	city_song.stop()
+	POEIRA.apagar(rebote_poeira)
 	Global.in_cutscene = false
 	get_tree().change_scene_to_file(forest_scene)

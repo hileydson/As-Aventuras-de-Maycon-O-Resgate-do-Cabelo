@@ -75,7 +75,7 @@ func _ready() -> void:
 	$HUD/Title.visible = false
 	$HUD/Power.visible = false
 	$HUD/Stats.visible = false
-	fade.color = Color.BLACK
+	fade.color = Color.WHITE
 	build_hud()
 	build_blur()
 	build_wind()
@@ -258,11 +258,13 @@ func opening() -> void:
 		Global.debug_resgate_cabeludo_boss = false
 		lock_hair_in_cage()
 		player.position = Vector3(0,0.08,-1779)
-		fade.color.a = 0.0
+		fade.color = Color(0,0,0,0)
 		final_battle.begin()
 		return
 	lay_player_down()
 	await lips_arrival()
+	if fade.color.a > 0.0:
+		await fade_from_white()
 	lock_hair_in_cage()
 	# Vento só a partir daqui: na queda do Lips a câmera está parada.
 	if is_instance_valid(wind):
@@ -326,7 +328,7 @@ func lips_arrival() -> void:
 	camera.position = pouso + Vector3(15, 11, 23)
 	camera.look_at(pouso + Vector3.UP * 3)
 	set_blur(BLUR_CUTSCENE, Vector2(0.5, 0.5))
-	await fade_to(0.0, 0.4)
+	await fade_from_white()
 	var rastro := POEIRA.rastro(boss)
 	var queda := create_tween()
 	queda.tween_property(boss, "position", pouso, 3.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
@@ -476,6 +478,11 @@ func fade_to(alpha:float, duration:float) -> void:
 	var tween := create_tween().set_ignore_time_scale(true)
 	tween.tween_property(fade, "color:a", alpha, duration)
 	await tween.finished
+
+func fade_from_white() -> void:
+	await fade_to(0.0, 3.5)
+	# Os fades de morte continuam com a cor escura usada durante a fase.
+	fade.color = Color(0,0,0,0)
 
 # Pancada do pouso do Lips. Devolve só quando o som termina, para a cutscene
 # esperar por ele.
@@ -832,11 +839,12 @@ func victory_cutscene() -> void:
 	player.animation_player.speed_scale = 1.0
 	player.animation_player.play("Skill_03",.18)
 	player.velocity = direction*2.0
+	player.step_timer = 0.0
 	var passos := create_tween()
 	passos.tween_method(func(t:float):
 		if not player.animation_player.is_playing(): player.animation_player.play("Skill_03",0)
 		player.global_position = saida.lerp(parada, t)
-		player._update_footsteps(get_process_delta_time(),direction,2.0)
+		update_victory_footsteps(get_process_delta_time())
 		encaixar_camera(0.0)
 	, 0.0, 1.0, maxf(1.2,saida.distance_to(parada)/2.0))
 	await passos.finished
@@ -845,6 +853,14 @@ func victory_cutscene() -> void:
 	player.animation_player.play("Walking",.18)
 	await transformar_em_2d()
 	await despedida()
+
+func update_victory_footsteps(delta:float) -> void:
+	# Só o ritmo do áudio muda; a caminhada e Skill_03 mantêm a velocidade.
+	player.step_timer -= delta
+	if player.step_timer <= 0.0:
+		player.step_audio.pitch_scale = randf_range(.94,1.0)
+		player.step_audio.play()
+		player.step_timer = .9
 
 # Câmera nas costas do Maycon, com a jaula logo à frente.
 func camera_atras(atras:float, duracao:float) -> void:

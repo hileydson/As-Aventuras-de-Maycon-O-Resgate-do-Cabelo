@@ -3771,7 +3771,7 @@ Objects.png::CompressedTexture2D::2603308936418570908::1767636737::1767636737::1
 Rotating_blades.png::CompressedTexture2D::6149366124704441297::1767636737::1767636737::1::::<><><>0<>0<>2fca820f122e19df28bb2db13d324fce<>res://.godot/imported/Rotating_blades.png-778390e24f5b94daf7df31c4f7d64871.ctex::
 scull.png::CompressedTexture2D::924674051756614918::1767636737::1767636737::1::::<><><>0<>0<>88eb904c1d7beb8167d968b4d6b1cae2<>res://.godot/imported/scull.png-4bd9b4129b919690a5980b9d4505cce9.ctex::
 web.png::CompressedTexture2D::1665521307035554969::1767636737::1767636737::1::::<><><>0<>0<>2c41fd68a1281a64f1d37785b533eed3<>res://.godot/imported/web.png-555c1399ada65fb9f4e6bf50c2102997.ctex::
-::res://assets/novos_audios/::1791032354
+::res://assets/novos_audios/::1791050753
 3d_first_battle_seco.mp3::AudioStreamMP3::9112742089382917435::1769799971::1769800042::1::::<><><>0<>0<>58169ca5379430dc1b6d26419f4d403f<>res://.godot/imported/3d_first_battle_seco.mp3-e99bf30f277278144a0a538012a2b91d.mp3str::
 aviao.mp3::AudioStreamMP3::5671949246934315895::1790966307::1790966320::1::::<><><>0<>0<>e1ec2094a5ef7484431f0f73bd51ae32<>res://.godot/imported/aviao.mp3-2d12bb4bc19eb1a3a2ea58f28881817a.mp3str::
 balao_conversa.mp3::AudioStreamMP3::7050655661624707243::1770925133::1770925139::1::::<><><>0<>0<>a117f8ff1f77e4f280e68d2751a017bb<>res://.godot/imported/balao_conversa.mp3-67afbdd3f08c480ed2a2a7a0d42c9703.mp3str::
@@ -3781,6 +3781,7 @@ breaking_glass.mp3::AudioStreamMP3::4880573308737830447::1768311606::1768311621:
 cidade_intro_rewind.mp3::AudioStreamMP3::3684896172450195055::1770925133::1770925139::1::::<><><>0<>0<>dcfe75df7dfb9fb951caa289d60868d2<>res://.godot/imported/cidade_intro_rewind.mp3-128ca8ae213e4c145f0ba713f0ffb265.mp3str::
 cidade_intro_up_sky.mp3::AudioStreamMP3::3027180191845422724::1770925133::1770925139::1::::<><><>0<>0<>65503a3497a35642090e817242d7448a<>res://.godot/imported/cidade_intro_up_sky.mp3-369785d3cba950b4d9900119b361d05f.mp3str::
 cidade_intro_wind.mp3::AudioStreamMP3::5196082256706456227::1770925133::1770925139::1::::<><><>0<>0<>051eaeddca717d80903ec796eaa98ad0<>res://.godot/imported/cidade_intro_wind.mp3-efdb5585ed9ed281e0503f005cbc100a.mp3str::
+city_cutscene_song.mp3::AudioStreamMP3::8867974483615606809::1791050665::1791050753::1::::<><><>0<>0<>3f8517b180aff33cd43a421af60d8d27<>res://.godot/imported/city_cutscene_song.mp3-ea367f99b3f59ac74c82f41b471e31f8.mp3str::
 dog_running.mp3::AudioStreamMP3::4223914770646437209::1770136503::1770136516::1::::<><><>0<>0<>f7e43bbf48ab0a0b2ebd25843dd67dba<>res://.godot/imported/dog_running.mp3-616b6ce3d63959241934827d256831f1.mp3str::
 doom_pain.mp3::AudioStreamMP3::197338572569176268::1767636737::1767636737::1::::<><><>0<>0<>d5bd35358dadf6a0d53c905ebe39af1c<>res://.godot/imported/doom_pain.mp3-295dfcb02db7e800db3c7d1a56cfe330.mp3str::
 DS_pain.mp3::AudioStreamMP3::3481859271185822829::1767636737::1767636737::1::::<><><>0<>0<>4b85990fb35cd734f8bb3b64133b3968<>res://.godot/imported/DS_pain.mp3-5a5a26c951faa20e14fe96f4907c6e4d.mp3str::
@@ -4145,7 +4146,7 @@ inimigo_2_first_3d_battle.tscn::PackedScene::4948208014118277051::1771523043::0:
 inimigo_bomba_pretti_3d.tscn::PackedScene::2695814990897236639::1769968693::0::1::::<><><>0<>0<><>::uid://wh5qn7k0e20g::::res://scripts/3D/inimigo_bomba_pretti_3d.gd<>uid://cjny1v7bphapj::::res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_attack_2.png<>uid://b65egppqvsc2d::::res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_idle.png<>uid://dj6t28v6ftb70::::res://assets/novas_imagens/inimigos/bomba_pretti/bomba_pretti_attack_1.png<>uid://md6f74rxwo7d::::res://assets/novas_imagens/effects/X_plosion/spritesheet/spritesheet.png
 palhaco.tscn::PackedScene::5248951180308203644::1790706443::0::1::::<><><>0<>0<><>::uid://br5iur5a7lw68::::res://assets/modelo_3d/calabouco/palhaco.glb<>uid://bebfh5yu6gvco::::res://scripts/3D/inimigo_3d/palhaco.gd<>uid://dbm2rbvwmjv2e::::res://assets/modelo_3d/calabouco/palhaco_olho.glb<>uid://bpi2tr8t2phxv::::res://assets/modelo_3d/calabouco/palhaco_olho_sclera_mat.tres<>uid://48xxj5u8mi0y::::res://assets/modelo_3d/calabouco/palhaco_olho_iris_mat.tres
 ::res://scenes/3D/resgate_cabeludo/::1791044365
-city_cutscene.tscn::PackedScene::8868233164109791378::1791048589::0::1::::<><><>0<>0<><>::uid://dhes86dirrpl1::::res://scripts/3D/resgate_cabeludo/city_cutscene.gd<>uid://1cu6omuly5n6::::res://assets/modelo_3d/mario_3d_models/lips_3d_rigged.glb<>uid://b8su6umib7an5::::res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb<>uid://basii1tmbljhr::::res://assets/modelo_3d/ace_combat/airplane_v2_L2.123c71795678-4b63-46c4-b2c6-549c45f4c806/11805_airplane_v2_L2.obj<>uid://jpruwl1kxn8m::::res://assets/novas_imagens/cabelo/cabelo_idle.png<>uid://b7ukdc2kwsyj2::::res://assets/novas_imagens/cigarro/cigarro.png<>uid://be1dk6nq66lm::::res://assets/kenney/platformer_3d/spring.glb
+city_cutscene.tscn::PackedScene::8868233164109791378::1791048774::0::1::::<><><>0<>0<><>::uid://dhes86dirrpl1::::res://scripts/3D/resgate_cabeludo/city_cutscene.gd<>uid://1cu6omuly5n6::::res://assets/modelo_3d/mario_3d_models/lips_3d_rigged.glb<>uid://b8su6umib7an5::::res://assets/novas_imagens/3d_enemies/maycon_3d_model_ia_animations.glb<>uid://basii1tmbljhr::::res://assets/modelo_3d/ace_combat/airplane_v2_L2.123c71795678-4b63-46c4-b2c6-549c45f4c806/11805_airplane_v2_L2.obj<>uid://jpruwl1kxn8m::::res://assets/novas_imagens/cabelo/cabelo_idle.png<>uid://b7ukdc2kwsyj2::::res://assets/novas_imagens/cigarro/cigarro.png<>uid://be1dk6nq66lm::::res://assets/kenney/platformer_3d/spring.glb
 elden_lips_preview.tscn::PackedScene::3317229873605802160::1791032357::0::1::::<><><>0<>0<><>::res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn<>uid://5e6b7yfokgm8::::res://assets/novos_audios/last_battle.mp3
 ending_bridge.tscn::PackedScene::-1::1790964252::0::1::::<><><>0<>0<><>::res://scripts/3D/resgate_cabeludo/ending_bridge.gd
 maycon_memory_dissolve.gdshader::Shader::2163802817350209075::1791044218::0::1::::<><><>0<>0<><>::
@@ -4276,7 +4277,7 @@ cortina_circo.gd::GDScript::6418112455299800925::1790706818::0::1::::<>Node3D<><
 ::res://scripts/3D/inimigo_3d/::1790707789
 palhaco.gd::GDScript::2669558135246662342::1790707789::0::1::::<>Node3D<><>0<>0<><>::
 ::res://scripts/3D/resgate_cabeludo/::1791044365
-city_cutscene.gd::GDScript::7659994937875581604::1791048457::0::1::::<>Node3D<><>0<>0<><>::
+city_cutscene.gd::GDScript::7659994937875581604::1791050900::0::1::::<>Node3D<><>0<>0<><>::
 dimensional_effect.gd::GDScript::5640314511611085493::1791044218::0::1::::<>Node3D<><>0<>0<><>::
 elden_lips.gd::GDScript::8658030414138734269::1791047495::0::1::::<>Node3D<><>0<>0<><>::
 elden_lips_atmosphere.gd::GDScript::21611664930330355::1791044268::0::1::::<>Node3D<><>0<>0<><>::
@@ -4288,7 +4289,7 @@ jaula.gd::GDScript::4228691474379083161::1790974082::0::1::::<>RigidBody3D<><>0<
 lips.gd::GDScript::3591246930118358301::1790998719::0::1::::<>Node3D<><>0<>0<><>::
 player.gd::GDScript::69671782399458946::1791048400::0::1::::<>CharacterBody3D<><>0<>0<><>::
 poeira.gd::GDScript::2809231488113563779::1790966059::0::1::::<>Node<><>0<>0<><>::
-stage.gd::GDScript::651149920257559217::1791047383::0::1::::<>Node3D<><>0<>0<><>::
+stage.gd::GDScript::651149920257559217::1791050744::0::1::::<>Node3D<><>0<>0<><>::
 ::res://scripts/inimigos/::1790563197
 enemy_data.gd::GDScript::5291297442027347434::1768420697::0::1::::<>Node2D<><>0<>0<><>::
 inimigo_1.gd::GDScript::9091500814300405403::1790563197::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
@@ -4303,7 +4304,7 @@ configuracoes_dialog.gd::GDScript::5435864756212849056::1791034837::0::1::::<>Ca
 ::res://scripts/tools/::1791029456
 bake_elden_lips_animations.gd::GDScript::7620067336403114312::1790999236::0::1::::<>SceneTree<><>0<>0<><>::
 bake_platform_scene.gd::GDScript::5181919851487842878::1790644158::0::1::::<>SceneTree<><>0<>1<><>::
-bake_resgate_cabeludo.gd::GDScript::7042268128192735044::1791048400::0::1::::<>SceneTree<><>0<>1<><>::
+bake_resgate_cabeludo.gd::GDScript::7042268128192735044::1791048774::0::1::::<>SceneTree<><>0<>1<><>::
 polish_elden_lips_animations.gd::GDScript::6211534702511953019::1791029804::0::1::::<>SceneTree<><>0<>0<><>::
 ::res://scripts/ui/::1790972524
 emoji_font.gd::GDScript::2736335681519218948::1790793300::0::1::::<>RefCounted<><>0<>0<><>::
@@ -4316,10 +4317,11 @@ terrain3d-01_00.res::Terrain3DRegion::4979166056605722663::1770136386::0::1::::<
 terrain3d_00-01.res::Terrain3DRegion::5019486532651089028::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00-02.res::Terrain3DRegion::3854885546111145601::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d_00_00.res::Terrain3DRegion::4948174298051947078::1770136386::0::1::::<><><>0<>0<><>::
-::res://tests/::1790998925
+::res://tests/::1791048844
 inspect_head_bones.gd::GDScript::2178062246225173415::1790563197::0::1::::<>SceneTree<><>0<>0<><>::
 verify_elden_lips.gd::GDScript::6608994292151332354::1791047495::0::1::::<>SceneTree<><>0<>0<><>::
 verify_maycon_fp_body.gd::GDScript::6710687674176764627::1790563197::0::1::::<>SceneTree<><>0<>0<><>::
+verify_rescue_landing_and_city.gd::GDScript::6400308341423337610::1791048774::0::1::::<>SceneTree<><>0<>0<><>::
 verify_resgate_cabeludo.gd::GDScript::6734687796586508805::1790975475::0::1::::<>SceneTree<><>0<>0<><>::
 ::res://translations/::1791044375
 game_text.csv::Translation::1292654866392114924::1791044268::1791044375::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
