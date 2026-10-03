@@ -37,6 +37,9 @@ func run() -> void:
 	check("plane leaves two trails and has backward wind lines",trails==2 and city.plane.get_node("VentoDoAviao").velocidade>0)
 	var lips_third_person := true
 	var lips_angles := {}
+	var lips_shots := {}
+	var breath_in_fp := false
+	var breath_only_fp := true
 	var rebound_peak := 0.0
 	var rebound_away := false
 	var running_fp := false
@@ -78,6 +81,10 @@ func run() -> void:
 			if city.follow_offset.z>2: lips_angles["atras"] = true
 			if city.follow_offset.z< -2: lips_angles["frente"] = true
 			if absf(city.follow_offset.x)>6 and absf(city.follow_offset.z)<3: lips_angles["lado"] = true
+			lips_shots[str(city.follow_offset)] = true
+		if city.breath_audio.playing:
+			breath_in_fp = breath_in_fp or (city.bob and city.maycon_running)
+			breath_only_fp = breath_only_fp and city.bob and city.maycon_running
 		if city.maycon_entered:
 			rebound_peak = maxf(rebound_peak,city.maycon.position.y)
 			if city.maycon.position.y>100 and city.plane.position.z<0:
@@ -140,14 +147,16 @@ func run() -> void:
 	world.queue_free()
 	check("Lips running and jump shots stay in third person",lips_third_person)
 	check("Lips focus alternates between behind, front and side angles",lips_angles.size()==3)
+	check("Lips coverage is cut into many distinct camera angles",lips_shots.size()>=9)
+	check("Maycon breathing plays only in the first person running takes",breath_in_fp and breath_only_fp)
 	check("final rebound hurls Maycon higher and against the plane's heading",rebound_peak>140 and rebound_away)
 	if rebound_peak<=140 or not rebound_away: print("Rebound: peak %.1f away=%s" % [rebound_peak,rebound_away])
 	check("paper stays attached by its edge to Lips' animated right hand",held_samples>100 and paper_attached and paper_turns)
 	if not paper_attached: print("Largest hand gap: %.3f (%s)" % [largest_hand_gap,gap_phase])
-	check("every take change flashes like a memory cut",flashes>=18 and flash_peak>.5)
-	if flashes<18 or flash_peak<=.5: print("Flashes: %d (peak %.2f)" % [flashes,flash_peak])
-	check("motion blur stays light but follows the camera",blur_idle>.0 and blur_idle<.1 and blur_peak>.2 and blur_peak<=.42 and blur_turns)
-	if not (blur_peak>.2 and blur_peak<=.42): print("Blur range: %.3f..%.3f (%d flashes)" % [blur_idle,blur_peak,flashes])
+	check("every take change flashes like a memory cut",flashes>=22 and flash_peak>.5)
+	if flashes<22 or flash_peak<=.5: print("Flashes: %d (peak %.2f)" % [flashes,flash_peak])
+	check("motion blur stays light but follows the camera",blur_idle>.0 and blur_idle<.12 and blur_peak>.25 and blur_peak<=.52 and blur_turns)
+	if not (blur_peak>.25 and blur_peak<=.52): print("Blur range: %.3f..%.3f (%d flashes)" % [blur_idle,blur_peak,flashes])
 	check("Lips running shots gradually zoom toward him",lips_max_fov>62 and lips_min_fov<54)
 	check("Maycon third person running shot gradually zooms toward him",maycon_max_fov>62 and maycon_min_fov<54)
 	check("Maycon footsteps play in first and third person",running_fp and running_tp)

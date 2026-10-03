@@ -4,14 +4,15 @@ const POEIRA = preload("res://scripts/3D/resgate_cabeludo/poeira.gd")
 const PLANE_ENGINE = preload("res://assets/novos_audios/aviao.mp3")
 const CITY_SONG = preload("res://assets/novos_audios/city_cutscene_song.mp3")
 const STEP_SOUND = preload("res://assets/novos_audios/mario_part_sounds/passo.mp3")
+const BREATH_SOUND = preload("res://assets/novos_audios/respiro_correndo.mp3")
 const WIND_SCRIPT = preload("res://scripts/3D/aviao_linhas_vento.gd")
 const BLUR_SHADER = preload("res://scenes/3D/resgate_cabeludo/city_cutscene_motion_blur.gdshader")
 const PLANE_GRIP := Vector3(0.0, -3.07, 0.8)
 const SONG_FADE_TIME := 6.0
 # Blur de base sempre presente, mais o ganho sobre a velocidade do fundo na tela.
-const BLUR_BASE := .06
-const BLUR_GAIN := .22
-const BLUR_MAX := .42
+const BLUR_BASE := .08
+const BLUR_GAIN := .28
+const BLUR_MAX := .52
 const BLUR_REFERENCE := 20.0
 # Corte de memória: clarão âmbar curto, no mesmo tom da dissolução do Maycon.
 const FLASH_COLOR := Color(1.0, .93, .82)
@@ -42,6 +43,7 @@ var maycon_running:bool = false
 var lips_hanging:bool = false
 var step_timer:float = 0.0
 var step_audio:AudioStreamPlayer
+var breath_audio:AudioStreamPlayer
 var city_song:AudioStreamPlayer
 var music_fading:bool = false
 var camera_zoom:Tween
@@ -105,6 +107,13 @@ func build_city_audio() -> void:
 	step_audio.stream = STEP_SOUND
 	step_audio.volume_db = -5.0
 	add_child(step_audio)
+	# Respiração só nos takes em primeira pessoa, por cima dos passos.
+	breath_audio = AudioStreamPlayer.new()
+	breath_audio.name = "RespiroMaycon"
+	breath_audio.stream = BREATH_SOUND.duplicate()
+	breath_audio.stream.loop = true
+	breath_audio.volume_db = -6.0
+	add_child(breath_audio)
 
 func build_motion_blur() -> void:
 	var effect := ColorRect.new()
@@ -239,6 +248,11 @@ func _process(delta:float) -> void:
 			step_timer = .34 * pace
 	elif step_audio.playing:
 		step_audio.stop()
+	if maycon_running and bob:
+		if not breath_audio.playing:
+			breath_audio.play()
+	elif breath_audio.playing:
+		breath_audio.stop()
 	if follow:
 		camera.global_position = follow.global_position + global_basis * follow_offset
 		if bob:
@@ -407,10 +421,12 @@ func sequence() -> void:
 	move(plane, Vector3(0, 30, -64), 14)
 	await shot(lips, Vector3(7, 5, 12), plane, Vector3.ZERO, 1.4)
 	await shot(lips, Vector3(3.5, 3.8, 8), lips, Vector3.UP * 1.7, 4.6, false, 52)
-	# O mesmo tempo do take antigo, repartido em ângulos distintos do mesmo trecho.
-	await shot(lips, Vector3(-8.5, 2.8, 1.5), lips, Vector3.UP * 1.7, 1.7)
-	await shot(lips, Vector3(1.5, 3.4, -8), lips, Vector3.UP * 1.7, 1.7)
-	await shot(lips, Vector3(7.5, 3.2, -4.5), lips, Vector3.UP * 1.7, 1.6)
+	# O mesmo tempo do take antigo, repartido igualmente em cinco ângulos.
+	await shot(lips, Vector3(-8.5, 2.2, 1.5), lips, Vector3.UP * 1.7, 1.0)
+	await shot(lips, Vector3(1.5, 3.4, -8), lips, Vector3.UP * 1.7, 1.0)
+	await shot(lips, Vector3(8.5, 2.8, -1.0), lips, Vector3.UP * 1.7, 1.0)
+	await shot(lips, Vector3(-5.0, 1.4, -6.5), lips, Vector3.UP * 1.7, 1.0)
+	await shot(lips, Vector3(6.0, 6.5, 6.0), lips, Vector3.UP * 1.7, 1.0)
 	lips_running = false
 	lips.get_node("Visual").position.y = 1.8
 	lips.get_node("Visual").rotation.z = 0.0
