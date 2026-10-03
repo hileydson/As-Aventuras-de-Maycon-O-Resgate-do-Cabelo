@@ -4,8 +4,8 @@ const AMBIENCE = preload("res://assets/novos_audios/calabouco_terror/dungeon_amb
 const BOOM = preload("res://assets/novos_audios/seco_invader_boom_pixabay.mp3")
 const GATE = preload("res://assets/novos_audios/calabouco_terror/gate_opening_heavy.mp3")
 const GROWL = preload("res://assets/novos_audios/calabouco_terror/zombie_growl_pixabay.mp3")
-const BASE_SCORE = preload("res://assets/novos_audios/elden_lips/ritual.ogg")
-const RAGE_SCORE = preload("res://assets/novos_audios/elden_lips/frenzy.ogg")
+const BATTLE_SCORE = preload("res://assets/novos_audios/last_battle.mp3")
+const SCORE_OVERLAP := 1.0
 const SFX = {
 	"hit":[preload("res://assets/novos_audios/elden_lips/sfx/wood_body_1.ogg"),preload("res://assets/novos_audios/elden_lips/sfx/wood_body_2.ogg"),preload("res://assets/novos_audios/elden_lips/sfx/wood_body_3.ogg")],
 	"heavy_hit":[preload("res://assets/novos_audios/elden_lips/sfx/wood_body_heavy.ogg")],
@@ -56,14 +56,24 @@ var ritual_columns:Array[Dictionary] = []
 var eye:MeshInstance3D
 var pupil:MeshInstance3D
 var ritual_materials:Array[Dictionary] = []
+var score_timer:Timer
+var score_active:bool = false
+var score_turn:int = 0
+var score_fade:Tween
 
 func setup(owner_stage:Node3D) -> void:
 	stage = owner_stage
 	original_environment = stage.get_node("Morning").environment
 	original_sun_energy = stage.get_node("MorningSun").light_energy
 	original_sun_color = stage.get_node("MorningSun").light_color
-	base = music(BASE_SCORE,-80)
-	rage = music(RAGE_SCORE,-80)
+	base = music(BATTLE_SCORE,-80)
+	rage = music(BATTLE_SCORE,-80)
+	base.stream.loop = false
+	rage.stream.loop = false
+	score_timer = Timer.new()
+	score_timer.one_shot = true
+	score_timer.timeout.connect(chain_score)
+	add_child(score_timer)
 	drone = music(AMBIENCE,-80)
 	wind_audio = music(STORM_WIND,-80)
 	drone.finished.connect(func():
@@ -100,7 +110,7 @@ func enter(smooth:bool = true) -> void:
 	phase_heat = 0
 	world_blend = 0.0 if smooth else 1.0
 	dark_materials_applied = false
-	storm_timer = 7.5
+	storm_timer = 10.0
 	lightning_time = 0
 	thunder_delay = -1
 	decor.visible = true
@@ -131,20 +141,36 @@ func enter(smooth:bool = true) -> void:
 	if is_instance_valid(stage.wind): stage.wind.visible = false
 
 func start_score() -> void:
-	base.play()
-	rage.play()
-	create_tween().tween_property(base,"volume_db",-12.0,2.0)
+	if score_fade and score_fade.is_running(): score_fade.kill()
+	score_timer.stop()
+	base.stop()
+	rage.stop()
+	base.volume_db = -12.0
+	rage.volume_db = -12.0
+	score_turn = 0
+	score_active = true
+	chain_score()
+
+# Mesmo padrão da música da fase: dois players emendam a cauda no início.
+func chain_score() -> void:
+	if not score_active: return
+	var slot:AudioStreamPlayer = base if score_turn==0 else rage
+	score_turn = 1-score_turn
+	slot.play()
+	score_timer.start(maxf(.01,BATTLE_SCORE.get_length()-SCORE_OVERLAP))
 
 func second_phase() -> void:
-	create_tween().tween_property(rage,"volume_db",-12.0,2.5)
 	phase_tween = create_tween()
 	phase_tween.tween_property(self,"phase_heat",1.0,2.0)
 	storm_timer = .25
 	play_sound("roar",stage.boss.global_position)
 
 func stop_score(duration:float = 1.5) -> void:
-	var fade := create_tween().set_parallel(true)
-	for player in [base,rage,drone,wind_audio]: fade.tween_property(player,"volume_db",-80.0,duration)
+	score_active = false
+	score_timer.stop()
+	if score_fade and score_fade.is_running(): score_fade.kill()
+	score_fade = create_tween().set_parallel(true)
+	for player in [base,rage,drone,wind_audio]: score_fade.tween_property(player,"volume_db",-80.0,duration)
 
 func leave() -> void:
 	active = false
@@ -305,7 +331,7 @@ func build_weather() -> void:
 	weather.name = "EldenStorm"
 	add_child(weather)
 	rain = CPUParticles3D.new()
-	rain.amount = 260
+	rain.amount = 135
 	rain.lifetime = 1.3
 	rain.preprocess = 1.3
 	rain.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
@@ -313,12 +339,12 @@ func build_weather() -> void:
 	rain.direction = Vector3(-.28,-1,.12)
 	rain.spread = 8
 	rain.gravity = Vector3(-2,-4,.5)
-	rain.initial_velocity_min = 10
-	rain.initial_velocity_max = 13
+	rain.initial_velocity_min = 8
+	rain.initial_velocity_max = 11
 	var drop := BoxMesh.new()
-	drop.size = Vector3(.012,.42,.012)
+	drop.size = Vector3(.009,.28,.009)
 	rain.mesh = drop
-	var rain_mat := material(Color(.46,.64,.73,.23))
+	var rain_mat := material(Color(.46,.64,.73,.15))
 	rain_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	rain_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	rain.material_override = rain_mat
@@ -374,7 +400,7 @@ func _process(delta:float) -> void:
 	if world_blend>.90:
 		storm_timer -= delta
 		if storm_timer<=0:
-			storm_timer = randf_range(7,13)*(1.0-phase_heat*.25)
+			storm_timer = randf_range(12,22)*(1.0-phase_heat*.15)
 			lightning_time = .38
 			thunder_delay = randf_range(.6,1.2)
 			lightning.position = Vector3([-19.0,19.0][randi()%2],0,randf_range(-1815,-1794))
@@ -394,7 +420,7 @@ func _process(delta:float) -> void:
 	environment.fog_light_color = Color("1c2634").lerp(Color("35202d"),phase_heat)
 	environment.adjustment_saturation = lerpf(original_environment.adjustment_saturation if original_environment.adjustment_enabled else 1.0,.35,blend)
 	environment.adjustment_contrast = lerpf(original_environment.adjustment_contrast if original_environment.adjustment_enabled else 1.0,1.16,blend)
-	rain.material_override.albedo_color.a = .23*blend
+	rain.material_override.albedo_color.a = .15*blend
 	rain.gravity.x = -2+sin(time*.38)*1.4
 	mist.material_override.albedo_color.a = .045*blend
 	mist.direction = Vector3(1,.04,sin(time*.19)*.5)

@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://bni5j522pqiwu"]
 
 [ext_resource type="PackedScene" path="res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn" id="1"]
+[ext_resource type="AudioStream" uid="uid://5e6b7yfokgm8" path="res://assets/novos_audios/last_battle.mp3" id="2_egqww"]
 
-[node name="EldenLipsPreview" instance=ExtResource("1")]
+[node name="EldenLipsPreview" unique_id=474076357 instance=ExtResource("1")]
 preview_final_battle = true
+
+[node name="LastBattle" type="AudioStreamPlayer" parent="." index="0" unique_id=536086035]
+stream = ExtResource("2_egqww")

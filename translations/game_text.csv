@@ -473,18 +473,19 @@ ELDEN_BOSS_NAME,Elden Lips,Elden Lips,Elden Lips,艾尔登利普斯
 ELDEN_BOSS_PHASE2,Elden Lips — A Fome Antiga,Elden Lips — The Ancient Hunger,Elden Lips — El Hambre Antigua,艾尔登利普斯 — 远古饥饿
 ELDEN_INTRO_LINE,"Além da jaula, algo antigo desperta.","Beyond the cage, something ancient stirs.","Más allá de la jaula, algo antiguo despierta.",牢笼之外，远古之物苏醒。
 ELDEN_CHALLENGE,Uma madeira. Um escudo. A última promessa.,A plank. A shield. One final promise.,Una tabla. Un escudo. Una última promesa.,一块木板。一面盾牌。最后的承诺。
-ELDEN_VIGOR,VIGOR,STAMINA,RESISTENCIA,精力
+ELDEN_VIGOR,ESTAMINA,STAMINA,RESISTENCIA,精力
 ELDEN_FLASK,Sangue vital × {count}  ·  R / Y,Life essence × {count}  ·  R / Y,Esencia vital × {count}  ·  R / Y,生命精华 × {count}  ·  R / Y
 ELDEN_CONTROLS,WASD / setas: mover · Q / clique: atacar · E: golpe pesado · F / botão direito: defender · V / espaço: esquivar · Tab: travar alvo · R: curar,WASD / arrows: move · Q / click: attack · E: heavy · F / right click: guard · V / space: dodge · Tab: lock target · R: heal,WASD / flechas: mover · Q / clic: atacar · E: fuerte · F / clic derecho: defender · V / espacio: esquivar · Tab: fijar · R: curar,WASD / 方向键：移动 · Q / 左键：攻击 · E：重击 · F / 右键：防御 · V / 空格：闪避 · Tab：锁定 · R：治疗
 ELDEN_CONTROLS_PAD,Analógico: mover · X: atacar · RB: pesado · LB: defender · B: esquivar · R3: travar alvo · Y: curar,Stick: move · X: attack · RB: heavy · LB: guard · B: dodge · R3: lock target · Y: heal,Palanca: mover · X: atacar · RB: fuerte · LB: defender · B: esquivar · R3: fijar · Y: curar,摇杆：移动 · X：攻击 · RB：重击 · LB：防御 · B：闪避 · R3：锁定 · Y：治疗
 ELDEN_SKIP,Espaço / A — iniciar batalha,Space / A — begin battle,Espacio / A — iniciar batalla,空格 / A — 开始战斗
-ELDEN_EXHAUSTED,Recupere o vigor.,Recover your stamina.,Recupera la resistencia.,恢复精力。
+ELDEN_EXHAUSTED,Recupere a estamina.,Recover your stamina.,Recupera la resistencia.,恢复精力。
 ELDEN_PERFECT_BLOCK,BLOQUEIO PERFEITO,PERFECT BLOCK,BLOQUEO PERFECTO,完美格挡
 ELDEN_GUARD_BREAK,GUARDA QUEBRADA,GUARD BROKEN,GUARDIA ROTA,防御崩溃
 ELDEN_STAGGER,Lips cambaleia — ataque agora.,Lips staggers — strike now.,Lips tambalea — ataca ahora.,利普斯失衡 — 现在攻击。
 ELDEN_WARN_SLAM,Esmagamento — saia do círculo.,Crushing leap — leave the circle.,Salto aplastante — sal del círculo.,粉碎跳跃 — 离开圆圈。
 ELDEN_WARN_SWEEP,Varrida de batatas — defenda ou esquive.,Fries sweep — guard or dodge.,Barrido de papas — bloquea o esquiva.,薯条横扫 — 格挡或闪避。
 ELDEN_WARN_TOMATO,Tomates ao ar — continue se movendo.,Tomatoes incoming — keep moving.,Tomates en vuelo — sigue moviéndote.,番茄来袭 — 保持移动。
+ELDEN_WARN_DASH,Investida — saia da linha.,Dash — move out of the way.,Embestida — sal de la trayectoria.,冲刺 — 避开路线。
 ELDEN_PHASE_TITLE,A FOME ANTIGA,THE ANCIENT HUNGER,EL HAMBRE ANTIGUA,远古饥饿
 ELDEN_PHASE_LINE,O banquete ainda não terminou.,The feast is not yet over.,El banquete aún no termina.,盛宴尚未结束。
 ELDEN_DEATH,VOCÊ MORREU,YOU DIED,HAS MUERTO,你死了

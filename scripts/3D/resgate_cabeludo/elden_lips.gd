@@ -10,10 +10,12 @@ const LIPS_ANIMS = preload("res://assets/modelo_3d/elden_lips/lips_combat.res")
 const FRIES = preload("res://assets/kenney/food_kit/fries.glb")
 const TOMATO = preload("res://assets/kenney/food_kit/tomato.glb")
 const CENTER := Vector3(0,0,-1800)
-const LIGHT_DAMAGE := 16
-const HEAVY_DAMAGE := 28
-const DODGE_TIME := 0.62
-const DODGE_IFRAMES := Vector2(0.07,0.40)
+const LIGHT_DAMAGE := 6
+const HEAVY_DAMAGE := 11
+const MAX_STAMINA := 50.0
+const DODGE_TIME := 0.42
+const DODGE_SPEED := 9.0
+const DODGE_IFRAMES := Vector2(0.05,0.26)
 const INPUT_ACTIONS := ["elden_left","elden_right","elden_up","elden_down","elden_guard","elden_attack","elden_heavy","elden_dodge","elden_lock","elden_heal"]
 var stage:Node3D
 var player:CharacterBody3D
@@ -24,7 +26,7 @@ var fighting:bool = false
 var intro:bool = false
 var phase_two:bool = false
 var locked:bool = true
-var stamina:float = 100
+var stamina:float = MAX_STAMINA
 var stamina_delay:float = 0
 var flasks:int = 2
 var guarding:bool = false
@@ -72,8 +74,13 @@ var shield_equipped:bool = false
 var swing_alternate:bool = false
 var boss_hurt_time:float = 0.0
 var boss_step_time:float = 0.0
+var hero_knockback:Vector3 = Vector3.ZERO
+var boss_knockback:Vector3 = Vector3.ZERO
+var boss_dash_trail_clock:float = 0.0
+var blood_nodes:Array[Dictionary] = []
 
 func setup(owner_stage:Node3D) -> void:
+	process_mode = Node.PROCESS_MODE_PAUSABLE
 	stage = owner_stage
 	player = stage.player
 	boss = stage.boss
@@ -88,6 +95,7 @@ func setup(owner_stage:Node3D) -> void:
 	atmosphere.setup(stage)
 	hud = Control.new()
 	hud.set_script(HUD)
+	hud.process_mode = Node.PROCESS_MODE_PAUSABLE
 	hud.battle = self
 	hud.visible = false
 	stage.get_node("HUD").add_child(hud)
@@ -295,7 +303,8 @@ func start_fight() -> void:
 	locked = true
 	camera.fov = 62
 	player.camera_yaw = 0
-	stamina = 100
+	stamina = MAX_STAMINA
+	stamina_delay = 0
 	flasks = 2
 	invulnerability = 1
 	boss_state = "stalk"
@@ -328,7 +337,7 @@ func _unhandled_input(event:InputEvent) -> void:
 		player.camera_pitch = clampf(player.camera_pitch-event.relative.y*.002,-.5,.35)
 
 func request_action(name:String) -> void:
-	if not fighting or stage.death_in_progress: return
+	if not fighting or stage.death_in_progress or get_tree().paused: return
 	if name == "elden_lock":
 		locked = not locked
 		return
@@ -349,7 +358,7 @@ func spend_stamina(amount:float) -> bool:
 		show_message("ELDEN_EXHAUSTED",1.2)
 		return false
 	stamina -= amount
-	stamina_delay = .7
+	stamina_delay = 1.0
 	return true
 
 func set_action(name:String,duration:float) -> void:
@@ -378,9 +387,17 @@ func dodge() -> void:
 	dodge_direction = dodge_direction.normalized()
 	set_action("dodge",DODGE_TIME)
 	_play(player.animation_player,"maycon_dodge",.04)
+	player.animation_player.speed_scale = player.animation_player.get_animation("elden/maycon_dodge").length/DODGE_TIME
 	atmosphere.play_sound("swing",player.global_position,-20,1.5)
+	player.dash_velocity = dodge_direction*DODGE_SPEED
+	player.dash_trail_clock = 0.045
+	player._spawn_dash_ghost()
+	for i in 3: player._spawn_dash_streak()
+	player._spawn_dash_smoke(true)
 
 func physics_player(delta:float) -> void:
+	player._update_dash_ghosts(delta)
+	player._update_fart_puffs(delta)
 	if not fighting or stage.death_in_progress:
 		player.velocity = Vector3.ZERO
 		return
@@ -389,7 +406,7 @@ func physics_player(delta:float) -> void:
 	var wants_guard := Input.is_action_pressed("elden_guard") and action.is_empty() and stamina>0
 	guard_time = guard_time+delta if wants_guard else 0.0
 	guarding = wants_guard
-	if stamina_delay<=0 and action.is_empty(): stamina = minf(100,stamina+delta*(9 if guarding else 29))
+	if stamina_delay<=0 and action.is_empty() and not guarding: stamina = minf(MAX_STAMINA,stamina+delta*14)
 	var input := movement_input()
 	var direction:Vector3 = (player.arena_lado()*input.x-player.orbita()*-input.y).normalized()
 	var speed := 3.0 if guarding else 5.8
@@ -399,7 +416,14 @@ func physics_player(delta:float) -> void:
 		speed = .9
 		if action == "dodge":
 			direction = dodge_direction
-			speed = 12.0 if progress < .67 else 4.0
+			speed = DODGE_SPEED if progress < .67 else 3.0
+			if progress<.67:
+				player.dash_trail_clock -= delta
+				if player.dash_trail_clock<=0:
+					player.dash_trail_clock = .045
+					player._spawn_dash_ghost()
+					player._spawn_dash_streak()
+					player._spawn_dash_smoke(false)
 			invulnerability = maxf(invulnerability,.025) if progress*DODGE_TIME>=DODGE_IFRAMES.x and progress*DODGE_TIME<=DODGE_IFRAMES.y else invulnerability
 		elif action in ["slash","heavy"] and not action_contact and progress> (.50 if action=="heavy" else .40):
 			action_contact = true
@@ -414,6 +438,10 @@ func physics_player(delta:float) -> void:
 	if action in ["hurt","guard_break"]: speed = 0
 	player.velocity.x = move_toward(player.velocity.x,direction.x*speed,delta*45)
 	player.velocity.z = move_toward(player.velocity.z,direction.z*speed,delta*45)
+	if hero_knockback.length_squared()>.001:
+		player.velocity.x = hero_knockback.x
+		player.velocity.z = hero_knockback.z
+		hero_knockback = hero_knockback.move_toward(Vector3.ZERO,delta*16)
 	player.velocity.y -= 23*delta
 	player.move_and_slide()
 	player.position.x = clampf(player.position.x,-17,17)
@@ -437,18 +465,21 @@ func weapon_contact(heavy:bool) -> void:
 	diff.y = 0
 	var facing:Vector3 = player.visual.global_basis.z.normalized()
 	if diff.length()>4.4 or facing.dot(diff.normalized())<.35: return
+	if absf(boss.position.y-player.position.y)>2.5: return
 	var at:Vector3 = player.global_position+facing*2.6+Vector3.UP*1.6
 	if boss_state == "phase" or boss.hp<=0: return
 	var damage := HEAVY_DAMAGE if heavy else LIGHT_DAMAGE
 	if boss_state == "recover": damage = int(damage*1.2)
 	boss.hp = maxi(0,boss.hp-damage)
-	poise -= 32 if heavy else 12
+	poise -= 18 if heavy else 7
+	boss_knockback = facing*(3.4 if heavy else 2.6)
 	atmosphere.play_sound("heavy_hit" if heavy else "hit",at,-6 if heavy else -8)
 	atmosphere.play_sound("pain",boss.global_position+Vector3.UP*2,-14)
 	boss_hurt_time = .42
 	if boss_state in ["stalk","recover"]:
 		_play(boss.animation,"lips_hurt",.035,true)
-	stage.burst(at,Color("e6ca8c"),14)
+	var wound:Vector3 = boss.global_position+Vector3.UP*1.8-facing*.65
+	blood_spray(wound,-facing,1.3 if heavy else 1.0)
 	player.camera_shake = .16 if heavy else .07
 	hit_pause = .055 if heavy else .035
 	Input.start_joy_vibration(0,.2,.35,.10)
@@ -465,10 +496,12 @@ func take_hit(damage:float,source:Vector3,unblockable:bool = false) -> void:
 	var diff := source-player.global_position
 	diff.y = 0
 	var frontal:bool = player.visual.global_basis.z.normalized().dot(diff.normalized())>.15
+	var blocked := false
 	if guarding and frontal and not unblockable:
 		var perfect := guard_time<=.19
 		var cost := 8.0 if perfect else damage*.95
 		if stamina>=cost:
+			blocked = true
 			spend_stamina(cost)
 			atmosphere.play_sound("block",player.global_position,-9,.8)
 			stage.burst(player.global_position+Vector3.UP,Color("a3dfda"),12)
@@ -477,24 +510,24 @@ func take_hit(damage:float,source:Vector3,unblockable:bool = false) -> void:
 				poise -= 45
 				show_message("ELDEN_PERFECT_BLOCK",1.2)
 				if poise<=0: stagger()
-			else:
-				stage.hp = maxf(1,stage.hp-damage*.12)
-			invulnerability = .25
-			return
-		stamina = 0
-		guarding = false
-		set_action("guard_break",1.0)
-		show_message("ELDEN_GUARD_BREAK",1.5)
+			damage *= .85
+		else:
+			stamina = 0
+			guarding = false
+			set_action("guard_break",1.0)
+			show_message("ELDEN_GUARD_BREAK",1.5)
 	else:
 		set_action("hurt",.48)
+	damage *= 1.25
 	if Global.is_easy_mode(): damage *= .6
 	stage.hp = maxf(0,stage.hp-damage)
 	invulnerability = .75
 	player.camera_shake = .3
 	hud.damage_flash = 1
+	player_hit_effects(source,.85 if blocked else 1.0)
 	atmosphere.play_sound("hit",player.global_position,-11,.9)
 	atmosphere.play_sound("hurt",player.global_position,-12)
-	_play(player.animation_player,"maycon_hurt",.025,true)
+	_play(player.animation_player,"maycon_guard" if blocked else "maycon_hurt",.025,true)
 	Input.start_joy_vibration(0,.35,.55,.18)
 	stage.update_hud()
 	if stage.hp<=0: stage.respawn()
@@ -513,15 +546,187 @@ func _physics_process(delta:float) -> void:
 	elapsed += delta
 	boss_hurt_time = maxf(0,boss_hurt_time-delta)
 	_update_effects(delta)
+	_update_blood(delta)
 	if not fighting or stage.death_in_progress: return
 	message_time -= delta
 	if message_time<=0: message = ""
 	if hit_pause>0:
 		hit_pause -= delta
+		_move_boss_back(delta)
 		return
 	_update_hazards(delta)
 	if not fighting or stage.death_in_progress: return
 	_update_boss(delta)
+	_move_boss_back(delta)
+
+func _move_boss_back(delta:float) -> void:
+	if boss_knockback.length_squared()<.001: return
+	# Salto e investida mantêm a trajetória anunciada mesmo ao receber dano.
+	if not (boss_state=="attack" and boss_attack in ["slam","dash"]):
+		boss.position += boss_knockback*delta
+		boss.position.x = clampf(boss.position.x,-14,14)
+		boss.position.z = clampf(boss.position.z,-1810,-1783)
+	boss_knockback = boss_knockback.move_toward(Vector3.ZERO,delta*14)
+
+func player_hit_effects(source:Vector3,strength:float = 1.0) -> void:
+	var away := player.global_position-source
+	away.y = 0
+	if away.length_squared()<.001: away = -player.visual.global_basis.z
+	away = away.normalized()
+	hero_knockback = away*4.0*strength
+	blood_spray(player.global_position+Vector3.UP*1.0,-away,strength)
+	hud.splash_blood(strength)
+
+func blood_spray(at:Vector3,direction:Vector3,strength:float) -> void:
+	# Gotas alongadas e a mesma rampa de cores do calabouço terror.
+	var ramp := Gradient.new()
+	ramp.set_color(0,Color(.62,.03,.03,1.0))
+	ramp.set_color(1,Color(.2,.004,.008,0.0))
+	ramp.add_point(.45,Color(.4,.01,.015,1.0))
+	var drops := CPUParticles3D.new()
+	drops.amount = maxi(30,int(200*strength))
+	drops.lifetime = 1.7
+	drops.one_shot = true
+	drops.explosiveness = 1.0
+	drops.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	drops.emission_sphere_radius = .16
+	drops.direction = (Vector3.UP+direction*.25).normalized()
+	drops.spread = 35
+	drops.gravity = Vector3(0,-14,0)
+	drops.initial_velocity_min = 7.0
+	drops.initial_velocity_max = 10.5
+	drops.scale_amount_min = .65
+	drops.scale_amount_max = 1.9
+	drops.color_ramp = ramp
+	drops.particle_flag_align_y = true
+	var bead := SphereMesh.new()
+	bead.radius = .03
+	bead.height = .20
+	bead.radial_segments = 12
+	bead.rings = 6
+	drops.mesh = bead
+	var red := StandardMaterial3D.new()
+	red.albedo_color = Color.WHITE
+	red.vertex_color_use_as_albedo = true
+	red.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	red.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	bead.material = red
+	add_child(drops)
+	drops.global_position = at
+	drops.emitting = true
+	drops.restart()
+	_track_blood(drops,2.1,"spray")
+	var mist := CPUParticles3D.new()
+	mist.amount = maxi(18,int(80*strength))
+	mist.lifetime = .7
+	mist.one_shot = true
+	mist.explosiveness = 1.0
+	mist.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	mist.emission_sphere_radius = .22
+	mist.direction = (direction+Vector3.UP*.4).normalized()
+	mist.spread = 100
+	mist.initial_velocity_min = 1.5
+	mist.initial_velocity_max = 4.0
+	mist.gravity = Vector3(0,-6,0)
+	mist.color_ramp = ramp
+	var fine := SphereMesh.new()
+	fine.radius = .015
+	fine.height = .04
+	fine.radial_segments = 6
+	fine.rings = 3
+	fine.material = red
+	mist.mesh = fine
+	add_child(mist)
+	mist.global_position = at
+	mist.emitting = true
+	mist.restart()
+	_track_blood(mist,1.1,"spray")
+	for i in maxi(3,int(9*strength)):
+		var mark := MeshInstance3D.new()
+		var shape := ImmediateMesh.new()
+		var radius := randf_range(.13,.40)*sqrt(strength)
+		var vertices := PackedVector3Array()
+		for point in 14:
+			var angle := TAU*float(point)/14
+			vertices.append(Vector3(cos(angle),0,sin(angle))*radius*randf_range(.65,1.25))
+		shape.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
+		for point in vertices.size():
+			shape.surface_add_vertex(Vector3.ZERO)
+			shape.surface_add_vertex(vertices[(point+1)%vertices.size()])
+			shape.surface_add_vertex(vertices[point])
+		shape.surface_end()
+		mark.mesh = shape
+		var wet := StandardMaterial3D.new()
+		wet.albedo_color = Color(.30,.008,.026,.84)
+		wet.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		wet.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		wet.cull_mode = BaseMaterial3D.CULL_DISABLED
+		wet.roughness = .28
+		mark.material_override = wet
+		mark.visible = false
+		add_child(mark)
+		var spread := randf_range(.2,2.8)
+		var angle := randf()*TAU
+		mark.position = Vector3(clampf(at.x+cos(angle)*spread,-16.5,16.5),.025+randf()*.006,clampf(at.z+sin(angle)*spread,-1811,-1779))
+		_track_blood(mark,randf_range(14,20),"mark")
+		blood_nodes.back()["delay"] = randf_range(.9,1.4)
+
+func _track_blood(node:Node3D,life:float,kind:String) -> void:
+	while blood_nodes.size()>=72:
+		var oldest:Dictionary = blood_nodes.pop_front()
+		if is_instance_valid(oldest.node): oldest.node.queue_free()
+	blood_nodes.append({"node":node,"life":life,"kind":kind})
+
+func _update_blood(delta:float) -> void:
+	for i in range(blood_nodes.size()-1,-1,-1):
+		var data := blood_nodes[i]
+		if not is_instance_valid(data.node):
+			blood_nodes.remove_at(i)
+			continue
+		data.life -= delta
+		if data.has("delay"):
+			data.delay -= delta
+			data.node.visible = data.delay<=0
+		if data.kind=="mark": data.node.material_override.albedo_color.a = minf(1,data.life/3.0)*.84
+		if data.life<=0:
+			data.node.queue_free()
+			blood_nodes.remove_at(i)
+
+func _clear_blood() -> void:
+	for data in blood_nodes:
+		if is_instance_valid(data.node): data.node.queue_free()
+	blood_nodes.clear()
+	hero_knockback = Vector3.ZERO
+	boss_knockback = Vector3.ZERO
+	hud.blood_stains.clear()
+	_clear_dodge_trail()
+
+func _clear_dodge_trail() -> void:
+	player._update_dash_ghosts(1.0)
+	player._update_fart_puffs(1.0)
+	player.dash_velocity = Vector3.ZERO
+	player.dash_trail_clock = 0
+	boss_dash_trail_clock = 0
+
+func _spawn_boss_dash_trail() -> void:
+	var visual:Node3D = boss.get_node("Visual")
+	var ghost := visual.duplicate() as Node3D
+	var anim := ghost.find_child("AnimationPlayer",true,false) as AnimationPlayer
+	if anim:
+		anim.stop(true)
+		anim.process_mode = Node.PROCESS_MODE_DISABLED
+	stage.get_node("Effects").add_child(ghost)
+	ghost.global_transform = visual.global_transform
+	var skeleton := ghost.find_child("Skeleton3D",true,false) as Skeleton3D
+	if skeleton:
+		for bone in boss.skeleton.get_bone_count():
+			skeleton.set_bone_pose_rotation(bone,boss.skeleton.get_bone_pose_rotation(bone))
+			skeleton.set_bone_pose_position(bone,boss.skeleton.get_bone_pose_position(bone))
+	var color := Color(.68,.16,.23,.22)
+	var mat:StandardMaterial3D = player._dash_material(color)
+	for mesh in ghost.find_children("*","MeshInstance3D",true,false):
+		(mesh as MeshInstance3D).material_override = mat
+	player.dash_ghosts.append({"node":ghost,"mat":mat,"life":.20,"duration":.20,"alpha":color.a,"base_scale":ghost.scale})
 
 func _update_boss(delta:float) -> void:
 	boss_time -= delta
@@ -565,11 +770,20 @@ func _update_boss(delta:float) -> void:
 			boss_contact = true
 			for offset in [-2.4,0.0,2.4]:
 				spawn_projectile(attack_target+Vector3(offset,0,0))
+		elif boss_attack == "dash":
+			boss.position = attack_origin.lerp(attack_target,progress)
+			boss_dash_trail_clock -= delta
+			if boss_dash_trail_clock<=0:
+				boss_dash_trail_clock = .05
+				_spawn_boss_dash_trail()
+			if progress>.2 and not boss_contact and boss.position.distance_to(player.position)<2.8:
+				boss_contact = true
+				take_hit(18,boss.global_position)
 		if boss_time<=0:
 			boss.position.y = 0
 			clear_attack()
 			boss_state = "recover"
-			boss_time = 1.0 if phase_two else 1.65
+			boss_time = (.65 if phase_two else .95) if boss_attack=="dash" else 1.0 if phase_two else 1.65
 			_play(boss.animation,"lips_idle")
 	elif boss_state == "recover" and boss_hurt_time<=0 and boss_time<.5:
 		_play(boss.animation,"lips_idle")
@@ -585,17 +799,34 @@ func _update_boss(delta:float) -> void:
 	boss.position.z = clampf(boss.position.z,-1810,-1783)
 
 func prepare_attack() -> void:
-	var sequence := ["sweep","slam","tomato","sweep","tomato","slam"]
+	var sequence := ["sweep","slam","tomato","dash","sweep","tomato","dash","slam"]
 	boss_attack = sequence[attack_index%sequence.size()]
 	attack_index += 1
-	if player.global_position.distance_to(boss.global_position)>10 and boss_attack=="sweep": boss_attack = "slam"
+	if player.global_position.distance_to(boss.global_position)>10 and boss_attack=="sweep": boss_attack = "dash"
 	boss_state = "windup"
-	boss_time = 1.35 if boss_attack=="slam" else 1.15
+	boss_time = .65 if boss_attack=="dash" else 1.35 if boss_attack=="slam" else 1.15
 	if phase_two: boss_time *= .86
 	attack_target = player.global_position
 	attack_target.y = 0
 	attack_origin = boss.position
 	boss_contact = false
+	if boss_attack=="dash":
+		var direction := attack_target-attack_origin
+		direction.y = 0
+		var distance := direction.length()
+		direction = direction.normalized() if distance>.01 else Vector3.FORWARD
+		if distance<3.1:
+			direction = Vector3(-direction.z,0,direction.x)*(1 if attack_index%2==0 else -1)
+			attack_target = attack_origin+direction*3.6
+		else:
+			attack_target = attack_origin+direction*minf(distance-2.3,9.0 if phase_two else 8.0)
+		attack_target.x = clampf(attack_target.x,-14,14)
+		attack_target.z = clampf(attack_target.z,-1810,-1783)
+		_play(boss.animation,"lips_sweep_windup",.10,true)
+		warning = ring(boss.position,1.8,Color("a64d5b"))
+		show_message("ELDEN_WARN_DASH",boss_time)
+		atmosphere.play_sound("food_charge",boss.position,-18,1.2)
+		return
 	_play(boss.animation,"lips_slam_windup" if boss_attack=="slam" else "lips_sweep_windup" if boss_attack=="sweep" else "lips_throw_windup",.10,true)
 	boss.animation.speed_scale = (1.35 if boss_attack=="slam" else 1.15)/boss_time
 	held_food = (FRIES if boss_attack=="sweep" else TOMATO).instantiate()
@@ -607,13 +838,22 @@ func prepare_attack() -> void:
 
 func execute_attack() -> void:
 	boss_state = "attack"
-	boss_length = .85 if boss_attack=="slam" else .9
+	boss_length = .42 if boss_attack=="dash" else .85 if boss_attack=="slam" else .9
 	boss_time = boss_length
 	attack_origin = boss.position
+	if boss_attack=="dash":
+		var direction := attack_target-attack_origin
+		boss.get_node("Visual").rotation.y = atan2(direction.x,direction.z)
+		_play(boss.animation,"lips_walk",.035,true)
+		boss.animation.speed_scale = 3.8 if phase_two else 3.2
+		boss_dash_trail_clock = 0
+		atmosphere.play_sound("swing",boss.position,-13,.75)
+		return
 	# O alvo do salto fica fixo desde o aviso: não persegue Maycon no ar.
 	_play(boss.animation,"lips_sweep" if boss_attack=="sweep" else "lips_slam" if boss_attack=="slam" else "lips_throw",.035,true)
 
 func clear_attack() -> void:
+	boss_dash_trail_clock = 0
 	if is_instance_valid(warning): warning.queue_free()
 	warning = null
 	if is_instance_valid(held_food): held_food.queue_free()
@@ -869,10 +1109,11 @@ func retry() -> void:
 	hud.title = tr("ELDEN_DEATH")
 	hud.subtitle = tr("ELDEN_RETRY")
 	create_tween().tween_property(hud,"title_alpha",1.0,.7)
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(2.0,false).timeout
 	await stage.fade_to(1.0,.55)
+	_clear_blood()
 	stage.hp = 100
-	stamina = 100
+	stamina = MAX_STAMINA
 	flasks = 2
 	phase_two = false
 	phase_started = false
@@ -902,6 +1143,7 @@ func victory() -> void:
 	boss.active = false
 	player.control_enabled = false
 	player.velocity = Vector3.ZERO
+	_clear_dodge_trail()
 	_clear_hazards()
 	atmosphere.stop_score(2.0)
 	_play(boss.animation,"lips_death")
@@ -909,7 +1151,7 @@ func victory() -> void:
 	hud.subtitle = tr("ELDEN_VICTORY_LINE")
 	create_tween().tween_property(hud,"title_alpha",1.0,.7)
 	atmosphere.play_sound("boom",boss.position,-14,.6)
-	await get_tree().create_timer(3.3).timeout
+	await get_tree().create_timer(3.3,false).timeout
 	atmosphere.leave()
 	engaged = false
 	hud.visible = false

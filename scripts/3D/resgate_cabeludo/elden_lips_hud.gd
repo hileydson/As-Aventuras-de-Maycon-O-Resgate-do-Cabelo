@@ -12,6 +12,7 @@ var hint_time:float = 18.0
 var font:Font = ThemeDB.fallback_font
 var gold := Color("c6b88c")
 var ivory := Color("e0dac9")
+var blood_stains:Array[Dictionary] = []
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -21,10 +22,55 @@ func _process(delta:float) -> void:
 	if battle == null or not battle.engaged:
 		return
 	damage_flash = maxf(0.0, damage_flash - delta * 1.6)
+	for i in range(blood_stains.size()-1,-1,-1):
+		var stain := blood_stains[i]
+		stain.life -= delta
+		stain.position.y += delta*.002
+		if stain.life<=0: blood_stains.remove_at(i)
 	if battle.fighting:
 		hint_time = maxf(0.0, hint_time - delta)
 		boss_trail = move_toward(boss_trail, float(battle.boss.hp) / float(battle.boss.max_hp), delta * 0.15)
 	queue_redraw()
+
+func splash_blood(strength:float = 1.0) -> void:
+	for i in maxi(2,int(9*strength)):
+		var position := Vector2(randf_range(.08,.92),randf_range(.08,.92))
+		# As bordas recebem a maior parte das manchas; o alvo e as barras ficam legíveis.
+		if i%3!=0:
+			if i%2==0: position.x = randf_range(.02,.13) if randf()<.5 else randf_range(.87,.98)
+			else: position.y = randf_range(.03,.12) if randf()<.5 else randf_range(.84,.96)
+		var contour := PackedVector2Array()
+		var radii := PackedFloat32Array()
+		for point in 12: radii.append(randf_range(.60,1.20))
+		for point in 72:
+			var segment := point/6
+			var blend := smoothstep(0.0,1.0,float(point%6)/6.0)
+			var angle := TAU*float(point)/72
+			var reach := lerpf(radii[segment],radii[(segment+1)%12],blend)
+			contour.append(Vector2(cos(angle),sin(angle))*reach)
+		var specks:Array[Vector3] = []
+		for drop in 10:
+			specks.append(Vector3(randf_range(-1.6,1.6),randf_range(-1.5,1.5),randf_range(.025,.10)))
+		if blood_stains.size()>=20: blood_stains.pop_front()
+		blood_stains.append({"position":position,"radius":randf_range(.040,.100)*sqrt(strength),"contour":contour,"specks":specks,"life":randf_range(6,9),"drip":randf_range(.6,1.6)})
+	queue_redraw()
+
+func draw_blood() -> void:
+	for stain in blood_stains:
+		var center:Vector2 = stain.position*size
+		var radius:float = stain.radius*minf(size.x,size.y)
+		var alpha := clampf(stain.life/2.0,0,1)
+		var polygon := PackedVector2Array()
+		for point in stain.contour: polygon.append(center+point*radius)
+		draw_colored_polygon(polygon,Color(.40,.006,.026,alpha*.58))
+		polygon.clear()
+		for point in stain.contour: polygon.append(center+point*radius*.72)
+		draw_colored_polygon(polygon,Color(.19,.002,.014,alpha*.50))
+		for drop in stain.specks:
+			draw_circle(center+Vector2(drop.x,drop.y)*radius,drop.z*radius,Color(.40,.005,.020,alpha*.68))
+		var end := center+Vector2(0,radius*stain.drip)
+		draw_line(center+Vector2(0,radius*.4),end,Color(.30,.002,.014,alpha*.48),maxf(2,radius*.07))
+		draw_circle(end,radius*.065,Color(.35,.003,.020,alpha*.6))
 
 func text_center(text:String, center:Vector2, font_size:int, color:Color) -> void:
 	var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
@@ -56,6 +102,7 @@ func _draw() -> void:
 		draw_rect(Rect2(Vector2.ZERO,s).grow(-border), Color(0.008,0.008,0.015,0.015 + damage_flash*0.018), false, 10.0*unit)
 	if damage_flash > 0:
 		draw_rect(Rect2(Vector2.ZERO,s),Color(0.45,0.015,0.02,damage_flash*0.13))
+	draw_blood()
 	if letterbox > 0:
 		var h := s.y * 0.105 * letterbox
 		draw_rect(Rect2(0,0,s.x,h),Color.BLACK)
@@ -64,7 +111,7 @@ func _draw() -> void:
 		var x := 36.0*unit
 		var width := minf(300.0*unit,s.x*0.35)
 		meter(Rect2(x,35*unit,width,16*unit),battle.stage.hp/100.0,Color("a52b35"))
-		meter(Rect2(x,61*unit,width,8*unit),battle.stamina/100.0,Color("778e58"))
+		meter(Rect2(x,61*unit,width*.65,8*unit),battle.stamina/battle.MAX_STAMINA,Color("778e58"))
 		draw_string(font,Vector2(x,90*unit),tr("ELDEN_VIGOR"),HORIZONTAL_ALIGNMENT_LEFT,-1,int(12*unit),gold)
 		draw_string(font,Vector2(x,120*unit),tr("ELDEN_FLASK").format({"count":battle.flasks}),HORIZONTAL_ALIGNMENT_LEFT,-1,int(17*unit),ivory)
 		var boss_width := minf(s.x*0.74,960*unit)
