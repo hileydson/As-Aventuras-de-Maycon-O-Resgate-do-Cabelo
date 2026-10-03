@@ -67,6 +67,11 @@ var shield_offset:Basis = Basis.IDENTITY
 var props_calibrated:bool = false
 var created_actions:Array[String] = []
 var using_gamepad:bool = false
+var blade_equipped:bool = false
+var shield_equipped:bool = false
+var swing_alternate:bool = false
+var boss_hurt_time:float = 0.0
+var boss_step_time:float = 0.0
 
 func setup(owner_stage:Node3D) -> void:
 	stage = owner_stage
@@ -179,12 +184,14 @@ func begin() -> void:
 	stage.set_blur(0,Vector2(.5,.5))
 	blade = BLADE.instantiate()
 	shield = SHIELD.instantiate()
+	shield.scale = Vector3.ONE*.78
 	add_child(blade)
 	add_child(shield)
-	blade.position = Vector3(0.8,.12,-1786)
+	blade.position = Vector3(.30,.12,-1785.42)
 	blade.rotation = Vector3(PI*.5,0,.3)
-	shield.position = Vector3(-.6,.15,-1786)
+	shield.position = Vector3(-.32,.15,-1785.38)
 	shield.rotation.x = PI*.5
+	_calibrate_props()
 	hud.letterbox = 1
 	var start := player.global_position
 	player.visual.rotation.y = PI
@@ -198,11 +205,16 @@ func begin() -> void:
 		_play(player.animation_player,"maycon_pickup")
 		camera.global_position = player.global_position+Vector3(2.3,1.0,-1.8)
 		camera.look_at(player.global_position+Vector3.UP*.65))
-	intro_tween.tween_interval(1.05)
+	intro_tween.tween_interval(1.09)
 	intro_tween.tween_callback(func():
+		blade_equipped = true
+		atmosphere.play_sound("equip",player.global_position,-16))
+	intro_tween.tween_interval(.99)
+	intro_tween.tween_callback(func():
+		shield_equipped = true
 		equipped = true
-		atmosphere.play_sound("equip",player.global_position,-13,1.3))
-	intro_tween.tween_interval(1.15)
+		atmosphere.play_sound("equip",player.global_position,-15,.9))
+	intro_tween.tween_interval(1.12)
 	intro_tween.tween_callback(func():
 		_play(player.animation_player,"maycon_idle")
 		camera.global_position = boss.global_position+Vector3(3.8,2.8,6.5)
@@ -262,8 +274,8 @@ func _load_animations(asset:Resource,animator:AnimationPlayer,skeleton:Skeleton3
 	skeleton.reset_bone_poses()
 	source.free()
 
-func _play(animator:AnimationPlayer,key:String,blend:float = .12) -> void:
-	if animator and animator.has_animation("elden/"+key) and animator.current_animation != "elden/"+key:
+func _play(animator:AnimationPlayer,key:String,blend:float = .12,restart:bool = false) -> void:
+	if animator and animator.has_animation("elden/"+key) and (restart or animator.current_animation != "elden/"+key):
 		animator.speed_scale = 1
 		animator.play("elden/"+key,blend)
 
@@ -271,6 +283,8 @@ func start_fight() -> void:
 	if not engaged or fighting: return
 	if intro_tween and intro_tween.is_running(): intro_tween.call_deferred("kill")
 	equipped = true
+	blade_equipped = true
+	shield_equipped = true
 	_calibrate_props()
 	intro = false
 	fighting = true
@@ -347,8 +361,9 @@ func set_action(name:String,duration:float) -> void:
 func attack(heavy:bool) -> void:
 	if not spend_stamina(30 if heavy else 18): return
 	set_action("heavy" if heavy else "slash",1.15 if heavy else .72)
-	_play(player.animation_player,"maycon_"+action,.06)
-	atmosphere.play_sound("swing",player.global_position,-17,1.2 if not heavy else .8)
+	var clip := "maycon_heavy" if heavy else "maycon_slash_alt" if swing_alternate else "maycon_slash"
+	swing_alternate = not swing_alternate
+	_play(player.animation_player,clip,.045,true)
 
 func movement_input() -> Vector2:
 	var input := Input.get_vector("ui_left","ui_right","ui_up","ui_down")
@@ -388,6 +403,7 @@ func physics_player(delta:float) -> void:
 			invulnerability = maxf(invulnerability,.025) if progress*DODGE_TIME>=DODGE_IFRAMES.x and progress*DODGE_TIME<=DODGE_IFRAMES.y else invulnerability
 		elif action in ["slash","heavy"] and not action_contact and progress> (.50 if action=="heavy" else .40):
 			action_contact = true
+			atmosphere.play_sound("swing",player.global_position,-16,.80 if action=="heavy" else 1.0)
 			weapon_contact(action=="heavy")
 		elif action == "heal" and not action_contact and progress>.65:
 			action_contact = true
@@ -411,6 +427,7 @@ func physics_player(delta:float) -> void:
 		player.visual.rotation.y = lerp_angle(player.visual.rotation.y,atan2(facing.x,facing.z),minf(1,delta*14))
 	if action.is_empty():
 		_play(player.animation_player,"maycon_guard" if guarding else "maycon_walk" if direction.length_squared()>.01 else "maycon_idle")
+		if not guarding and direction.length_squared()>.01: player.animation_player.speed_scale = clampf(speed*.38,1.0,2.3)
 	player._update_footsteps(delta,direction,speed)
 	player.visual.visible = true
 	if player.position.y < -5: stage.respawn()
@@ -426,7 +443,11 @@ func weapon_contact(heavy:bool) -> void:
 	if boss_state == "recover": damage = int(damage*1.2)
 	boss.hp = maxi(0,boss.hp-damage)
 	poise -= 32 if heavy else 12
-	atmosphere.play_sound("block",at,-12,1.15)
+	atmosphere.play_sound("heavy_hit" if heavy else "hit",at,-6 if heavy else -8)
+	atmosphere.play_sound("pain",boss.global_position+Vector3.UP*2,-14)
+	boss_hurt_time = .42
+	if boss_state in ["stalk","recover"]:
+		_play(boss.animation,"lips_hurt",.035,true)
 	stage.burst(at,Color("e6ca8c"),14)
 	player.camera_shake = .16 if heavy else .07
 	hit_pause = .055 if heavy else .035
@@ -471,8 +492,9 @@ func take_hit(damage:float,source:Vector3,unblockable:bool = false) -> void:
 	invulnerability = .75
 	player.camera_shake = .3
 	hud.damage_flash = 1
-	atmosphere.play_sound("slam",player.global_position,-12,1.3)
-	_play(player.animation_player,"maycon_guard",.02)
+	atmosphere.play_sound("hit",player.global_position,-11,.9)
+	atmosphere.play_sound("hurt",player.global_position,-12)
+	_play(player.animation_player,"maycon_hurt",.025,true)
 	Input.start_joy_vibration(0,.35,.55,.18)
 	stage.update_hud()
 	if stage.hp<=0: stage.respawn()
@@ -484,11 +506,12 @@ func stagger() -> void:
 	boss_state = "recover"
 	boss_time = 2.0
 	show_message("ELDEN_STAGGER",1.4)
-	_play(boss.animation,"lips_guard",.08)
+	_play(boss.animation,"lips_stagger",.055,true)
 
 func _physics_process(delta:float) -> void:
 	if not engaged: return
 	elapsed += delta
+	boss_hurt_time = maxf(0,boss_hurt_time-delta)
 	_update_effects(delta)
 	if not fighting or stage.death_in_progress: return
 	message_time -= delta
@@ -508,9 +531,14 @@ func _update_boss(delta:float) -> void:
 		boss.get_node("Visual").rotation.y = lerp_angle(boss.get_node("Visual").rotation.y,atan2(to_player.x,to_player.z),delta*3)
 	if boss_state == "stalk":
 		if to_player.length()>5.3:
-			boss.position += to_player.normalized()*delta*(3.5 if phase_two else 2.7)
-			_play(boss.animation,"lips_walk")
-		else: _play(boss.animation,"lips_idle")
+			boss.position += to_player.normalized()*delta*(3.5 if phase_two else 2.7)*(.3 if boss_hurt_time>0 else 1.0)
+			if boss_hurt_time<=0: _play(boss.animation,"lips_walk")
+			if boss_hurt_time<=0: boss.animation.speed_scale = 1.65 if phase_two else 1.3
+			boss_step_time -= delta
+			if boss_step_time<=0:
+				boss_step_time = .35 if phase_two else .44
+				atmosphere.play_sound("step",boss.global_position,-18)
+		elif boss_hurt_time<=0: _play(boss.animation,"lips_idle")
 		if boss_time<=0: prepare_attack()
 	elif boss_state == "windup":
 		if warning:
@@ -531,7 +559,7 @@ func _update_boss(delta:float) -> void:
 			var front:Vector3 = boss.get_node("Visual").global_basis.z.normalized()
 			if to_player.length()<5.6 and front.dot(to_player.normalized())>-.15:
 				take_hit(24,boss.global_position)
-			atmosphere.play_sound("swing",boss.global_position,-10,.75)
+			atmosphere.play_sound("food_sweep",boss.global_position,-10)
 			stage.burst(boss.global_position+front*3+Vector3.UP,Color("e6b85e"),12)
 		elif boss_attack == "tomato" and progress>.35 and not boss_contact:
 			boss_contact = true
@@ -543,9 +571,11 @@ func _update_boss(delta:float) -> void:
 			boss_state = "recover"
 			boss_time = 1.0 if phase_two else 1.65
 			_play(boss.animation,"lips_idle")
-	elif boss_state == "recover" and boss_time<=0:
-		boss_state = "stalk"
-		boss_time = .8 if phase_two else 1.2
+	elif boss_state == "recover" and boss_hurt_time<=0 and boss_time<.5:
+		_play(boss.animation,"lips_idle")
+		if boss_time<=0:
+			boss_state = "stalk"
+			boss_time = .8 if phase_two else 1.2
 	elif boss_state == "phase" and boss_time<=0:
 		phase_two = true
 		boss_state = "stalk"
@@ -566,13 +596,14 @@ func prepare_attack() -> void:
 	attack_target.y = 0
 	attack_origin = boss.position
 	boss_contact = false
-	_play(boss.animation,"lips_slam" if boss_attack=="slam" else "lips_heavy",.12)
+	_play(boss.animation,"lips_slam_windup" if boss_attack=="slam" else "lips_sweep_windup" if boss_attack=="sweep" else "lips_throw_windup",.10,true)
+	boss.animation.speed_scale = (1.35 if boss_attack=="slam" else 1.15)/boss_time
 	held_food = (FRIES if boss_attack=="sweep" else TOMATO).instantiate()
 	add_child(held_food)
 	_fit_food(held_food,2.6 if boss_attack=="sweep" else 2.1)
 	warning = ring(attack_target if boss_attack!="sweep" else boss.position,4.6 if boss_attack=="slam" else 3.2,Color("d29a68"))
 	show_message("ELDEN_WARN_SLAM" if boss_attack=="slam" else "ELDEN_WARN_SWEEP" if boss_attack=="sweep" else "ELDEN_WARN_TOMATO",boss_time)
-	atmosphere.play_sound("roar",boss.position,-20,1.2 if phase_two else 1)
+	atmosphere.play_sound("food_charge",boss.position,-17,1.1 if phase_two else 1)
 
 func execute_attack() -> void:
 	boss_state = "attack"
@@ -580,7 +611,7 @@ func execute_attack() -> void:
 	boss_time = boss_length
 	attack_origin = boss.position
 	# O alvo do salto fica fixo desde o aviso: não persegue Maycon no ar.
-	_play(boss.animation,"lips_slash" if boss_attack=="sweep" else "lips_slam",.04)
+	_play(boss.animation,"lips_sweep" if boss_attack=="sweep" else "lips_slam" if boss_attack=="slam" else "lips_throw",.035,true)
 
 func clear_attack() -> void:
 	if is_instance_valid(warning): warning.queue_free()
@@ -611,7 +642,7 @@ func impact(at:Vector3,radius:float,damage:float) -> void:
 	if Vector2(player.position.x-at.x,player.position.z-at.z).length()<radius:
 		take_hit(damage,at)
 	atmosphere.play_sound("slam",at,-5,.8)
-	atmosphere.play_sound("boom",at,-16,.8)
+	atmosphere.play_sound("splat",at,-12)
 	stage.burst(at+Vector3.UP*.4,Color("b24e45"),28)
 	player.camera_shake = maxf(player.camera_shake,.30)
 	var shock := ring(at,radius,Color("b5756b"))
@@ -635,7 +666,7 @@ func spawn_projectile(target:Vector3) -> void:
 	var duration := 1.15
 	var velocity := (target-origin)/duration+Vector3.UP*9.0*duration*.5
 	hazards.append({"node":tomato,"kind":"projectile","velocity":velocity,"life":duration+1,"radius":1.0})
-	atmosphere.play_sound("swing",origin,-14,1.1)
+	atmosphere.play_sound("food_launch",origin,-14)
 
 func spawn_pool(at:Vector3,radius:float,duration:float) -> void:
 	if hazards.size()>=12: return
@@ -693,7 +724,8 @@ func second_phase() -> void:
 	hud.subtitle = tr("ELDEN_PHASE_LINE")
 	create_tween().tween_property(hud,"title_alpha",1.0,.6)
 	atmosphere.second_phase()
-	_play(boss.animation,"lips_heavy")
+	_play(boss.animation,"lips_slam_windup",.15,true)
+	boss.animation.speed_scale = 1.35/3.2
 	for offset in [Vector3(-7,0,0),Vector3(7,0,0),Vector3(0,0,6)]:
 		spawn_pool(boss.position+offset,2,4)
 
@@ -730,13 +762,13 @@ func update_camera(delta:float) -> void:
 
 func _process(_delta:float) -> void:
 	if not engaged: return
-	if intro or boss_state in ["stalk","recover"]:
-		_pose_waiting_lips()
-	if equipped and is_instance_valid(blade):
-		if not props_calibrated: _calibrate_props()
-		if action.is_empty() or action == "heal":
-			_pose_ready_maycon()
+	if boss_hurt_time>0 and boss_state in ["windup","attack"]:
+		var chest:int = boss.skeleton.find_bone("Chest")
+		var weight := sin((1-boss_hurt_time/.42)*PI)*.14
+		boss.skeleton.set_bone_pose_rotation(chest,boss.skeleton.get_bone_pose_rotation(chest)*Quaternion(Vector3.RIGHT,-weight))
+	if blade_equipped and is_instance_valid(blade):
 		_attach_prop(blade,hero_skeleton,"RightHand",blade_offset)
+	if shield_equipped and is_instance_valid(shield):
 		_attach_prop(shield,hero_skeleton,"LeftHand",shield_offset)
 	if is_instance_valid(held_food):
 		var skel:Skeleton3D = boss.skeleton
@@ -813,7 +845,8 @@ func _attach_prop(prop:Node3D,skeleton:Skeleton3D,bone_name:String,offset:Basis)
 	var bone := skeleton.find_bone(bone_name)
 	if bone<0: return
 	var pose := skeleton.global_transform*skeleton.get_bone_global_pose(bone)
-	prop.global_transform = Transform3D(pose.basis.orthonormalized()*offset,pose.origin)
+	var size := .78 if prop==shield else 1.0
+	prop.global_transform = Transform3D(pose.basis.orthonormalized()*offset*size,pose.origin)
 
 func _clear_hazards() -> void:
 	clear_attack()
@@ -855,7 +888,7 @@ func retry() -> void:
 	_play(boss.animation,"lips_idle",0)
 	hud.title_alpha = 0
 	hud.boss_trail = 1
-	atmosphere.enter()
+	atmosphere.enter(false)
 	camera.position = player.position+Vector3(1.5,3,6)
 	camera.look_at(boss.position+Vector3.UP*2)
 	await stage.fade_to(0.0,.6)

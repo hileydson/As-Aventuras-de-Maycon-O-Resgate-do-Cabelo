@@ -43,6 +43,13 @@ func _draw() -> void:
 		return
 	var s := size
 	var unit := clampf(s.y / 720.0, 0.7, 1.65)
+	var transition:float = battle.atmosphere.world_blend
+	if battle.intro and transition>0 and transition<1:
+		var veil := sin(transition*PI)
+		draw_rect(Rect2(Vector2.ZERO,s),Color(.015,.020,.034,veil*.72))
+		for i in 3:
+			var radius := (transition+float(i)*.16)*s.length()*.50
+			draw_arc(s*.5,radius,0,TAU,96,Color(.27,.38,.40,veil*.09),3*unit)
 	# Vinheta por faixas suaves: nenhum shader novo ou textura de tela necessária.
 	for i in range(12):
 		var border := float(12-i) * 5.0 * unit

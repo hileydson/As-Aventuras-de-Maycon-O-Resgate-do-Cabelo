@@ -24,11 +24,14 @@ func run() -> void:
 	check("cinematic freezes combat",battle.intro and not battle.fighting and not stage.player.control_enabled)
 	check("boss waits in front of cage",stage.boss.position.z>stage.cage.position.z)
 	check("Blender swordplay animation imported",stage.player.animation_player.has_animation("elden/maycon_slash"))
+	check("world transformation starts gradually",battle.atmosphere.world_blend<.02 and battle.atmosphere.environment.fog_density<.002)
 	await frames(240)
-	check("cinematic equips wooden weapons",battle.intro and battle.equipped)
-	await frames(120)
+	check("cinematic picks up sword first",battle.intro and battle.blade_equipped and not battle.shield_equipped)
+	await frames(55)
+	check("cinematic picks up shield separately",battle.equipped and battle.shield_equipped)
+	await frames(65)
 	check("cinematic presents Elden Lips title",battle.hud.title==stage.tr("ELDEN_BOSS_NAME") and battle.hud.title_alpha>0)
-	await frames(270)
+	await frames(360)
 	check("cinematic starts combat naturally",battle.fighting and not battle.intro and stage.player.control_enabled)
 	await frames(2)
 	await process_frame
@@ -48,6 +51,7 @@ func run() -> void:
 	battle.guarding = false
 	battle.take_hit(24,stage.player.position+Vector3(0,0,-4))
 	check("unblocked hit removes health",stage.hp<health)
+	check("Maycon has a dedicated damage reaction",stage.player.animation_player.current_animation=="elden/maycon_hurt")
 	stage.hp = 100
 	battle.action = ""
 	battle.stamina = 100
@@ -65,6 +69,14 @@ func run() -> void:
 	var boss_health:int = stage.boss.hp
 	battle.weapon_contact(false)
 	check("wooden weapon damages boss in front",stage.boss.hp<boss_health)
+	var hit_sound := false
+	var pain_sound := false
+	for sound in battle.atmosphere.sound_pool:
+		if sound.stream:
+			hit_sound = hit_sound or sound.stream.resource_path.contains("wood_body_")
+			pain_sound = pain_sound or sound.stream.resource_path.contains("lips_pain_")
+	check("boss damage separates wooden contact and pain",hit_sound and pain_sound)
+	check("Lips has a dedicated damage reaction",battle.boss_hurt_time>0 and stage.boss.animation.current_animation=="elden/lips_hurt")
 	boss_health = stage.boss.hp
 	stage.player.visual.rotation.y = 0
 	battle.weapon_contact(false)
@@ -90,6 +102,11 @@ func run() -> void:
 	await frames(250)
 	check("death retries directly in arena",battle.fighting and stage.player.arena_mode and stage.player.position.z<-1778)
 	check("retry resets both phases and resources",not battle.phase_two and stage.boss.hp==stage.boss.max_hp and battle.flasks==2 and stage.hp==100)
+	check("retry resets storm phase",battle.atmosphere.phase_heat==0 and battle.atmosphere.rain.emitting)
+	var before:float = battle.atmosphere.environment.fog_density
+	await frames(45)
+	check("weather fog evolves over time",absf(before-battle.atmosphere.environment.fog_density)>.00001)
+	check("power animations are distinct",stage.boss.animation.has_animation("elden/lips_throw") and stage.boss.animation.has_animation("elden/lips_sweep_windup"))
 	# Victory must call the existing ending flow once, after the presentation.
 	battle.victory()
 	await frames(210)
