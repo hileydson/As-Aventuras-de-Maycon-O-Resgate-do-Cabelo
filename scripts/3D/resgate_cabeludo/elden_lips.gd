@@ -455,7 +455,7 @@ func dodge() -> void:
 	set_action("dodge",DODGE_TIME)
 	_play(player.animation_player,"maycon_dodge",.04)
 	player.animation_player.speed_scale = player.animation_player.get_animation("elden/maycon_dodge").length/DODGE_TIME
-	atmosphere.play_sound("swing",player.global_position,-20,1.5)
+	atmosphere.play_sound("swing",player.global_position,6.0,1.4)
 	player.dash_velocity = dodge_direction*DODGE_SPEED
 	player.dash_trail_clock = 0.045
 	player._spawn_dash_ghost()
@@ -494,7 +494,7 @@ func physics_player(delta:float) -> void:
 			invulnerability = maxf(invulnerability,.025) if progress*DODGE_TIME>=DODGE_IFRAMES.x and progress*DODGE_TIME<=DODGE_IFRAMES.y else invulnerability
 		elif action in ["slash","heavy"] and not action_contact and progress> (.50 if action=="heavy" else .40):
 			action_contact = true
-			atmosphere.play_sound("swing",player.global_position,-16,.80 if action=="heavy" else 1.0)
+			atmosphere.play_sound("swing",player.global_position,4.0,.80 if action=="heavy" else 1.0)
 			weapon_contact(action=="heavy")
 		if action_time<=0: action = ""
 	if action in ["hurt","guard_break"]: speed = 0
@@ -535,8 +535,8 @@ func weapon_contact(heavy:bool) -> void:
 	boss.hp = maxi(0,boss.hp-damage)
 	poise -= 18 if heavy else 7
 	boss_knockback = facing*(3.4 if heavy else 2.6)
-	atmosphere.play_sound("heavy_hit" if heavy else "hit",at,-6 if heavy else -8)
-	atmosphere.play_sound("pain",boss.global_position+Vector3.UP*2,-4)
+	atmosphere.play_sound("heavy_hit" if heavy else "hit",at,6.0 if heavy else 5.0)
+	atmosphere.play_sound("pain",boss.global_position+Vector3.UP*2,4.0)
 	boss_hurt_time = .42
 	if boss_state in ["stalk","recover"]:
 		_play(boss.animation,"lips_hurt",.035,true)
@@ -949,7 +949,7 @@ func execute_attack() -> void:
 		_play(boss.animation,"lips_walk",.035,true)
 		boss.animation.speed_scale = 3.8 if phase_two else 3.2
 		boss_dash_trail_clock = 0
-		atmosphere.play_sound("swing",boss.position,-13,.75)
+		atmosphere.play_sound("swing",boss.position,6.0,.75)
 		return
 	# O alvo do salto fica fixo desde o aviso: não persegue Maycon no ar.
 	_play(boss.animation,"lips_sweep" if boss_attack=="sweep" else "lips_slam" if boss_attack in ["slam","repulse"] else "lips_throw",.035,true)
