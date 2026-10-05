@@ -508,3 +508,6 @@ ELDEN_TOUCH_HEAL,Curar,Heal,Curar,治疗
 SETTINGS_DEBUG_CITY_SECTION,Eventos da Cidade Perdida,Lost City Events,Eventos de la Ciudad Perdida,失落之城事件
 SETTINGS_DEBUG_RESET_CITY,Resetar Eventos da Cidade Perdida,Reset Lost City Events,Reiniciar Eventos de la Ciudad Perdida,重置失落之城事件
 SETTINGS_DEBUG_RESET_CITY_DESC,Reseta os marcos de progresso e missões da Cidade Perdida no save atual.,Resets Lost City progress milestones and missions in current save.,Reinicia los hitos de progreso y misiones de la Ciudad Perdida en la partida actual.,重置当前存档中失落之城的进度里程碑与任务。
+PASSAGE_FIND_FUEL,Encontre combustível para a lanterna.,Find fuel for the lantern.,Encuentra combustible para la linterna.,寻找灯笼的燃料。
+PASSAGE_FIND_FIRE,Busque um ponto de fogo para acender a lanterna.,Find a fire to light the lantern.,Busca un fuego para encender la linterna.,寻找火源点亮灯笼。
+PASSAGE_FIND_EXIT,Busque a saída.,Find the exit.,Busca la salida.,寻找出口。

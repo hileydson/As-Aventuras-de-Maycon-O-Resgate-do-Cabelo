@@ -789,6 +789,7 @@ func spawn_minions() -> void:
 			"strafe_dir":Vector2(0.0, 1.0),
 			"variant":variant.id,
 			"kind":variant.get("kind", "knight"),
+			"sprite_reversed":variant.get("bandit_type", "") == "light",
 			"style":variant.style,
 			"name":minion_name,
 			"facing":1.0,
@@ -1828,7 +1829,8 @@ func update_minion_transforms() -> void:
 		minion.sprite.position = minion.position
 		minion.sprite.z_index = int(minion.position.y)
 		var depth_scale = remap(minion.position.y, MIN_Y, MAX_Y, 0.85, 1.15)
-		minion.sprite.scale = Vector2(depth_scale * minion.base_scale, depth_scale * minion.base_scale)
+		var horizontal_scale:float = -1.0 if minion.get("sprite_reversed", false) else 1.0
+		minion.sprite.scale = Vector2(horizontal_scale * depth_scale * minion.base_scale, depth_scale * minion.base_scale)
 		if minion.behavior != "jump_attack":
 			minion.sprite.offset.y = minion.get("base_offset_y", -14.0)
 		var base_mod:Color = minion.get("base_modulate", Color.WHITE)

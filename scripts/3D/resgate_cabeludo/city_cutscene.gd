@@ -55,6 +55,11 @@ var flash_blur:float = 0.0
 var flashes:int = 0
 var blur_strength:float = 0.0
 var previous_camera:Transform3D
+var masonry_impacts_active:bool = false
+var masonry_targets:Array[Dictionary] = []
+var previous_rebound_position:Vector3
+var masonry_impacts:int = 0
+var last_masonry_impact:Vector3 = Vector3.INF
 
 func _ready() -> void:
 	Global.in_cutscene = true
@@ -237,6 +242,8 @@ func build_engine_sound() -> void:
 
 func _process(delta:float) -> void:
 	time += delta
+	if masonry_impacts_active:
+		check_masonry_crossing()
 	# A faixa é mais curta que a cena: desvanece antes do fim natural, sem repetir.
 	if city_song.playing and city_song.get_playback_position() >= city_song.stream.get_length() - SONG_FADE_TIME:
 		fade_city_song(SONG_FADE_TIME)
@@ -399,6 +406,80 @@ func sound(path:String) -> void:
 	audio.finished.connect(audio.queue_free)
 	audio.play()
 
+# A cidade importada tem prédios visuais sem colisores: o teste usa o volume
+# de cada malha, no espaço local dela, somente durante o segundo impulso.
+func begin_masonry_crossing() -> void:
+	masonry_targets.clear()
+	previous_rebound_position = maycon.global_position + Vector3.UP
+	for node_name:String in ["CigarroBuilding", "CigarroRoof"]:
+		var mesh:MeshInstance3D = get_node(node_name + "/Mesh")
+		masonry_targets.append({"mesh":mesh, "hit":false})
+	var city:Node3D = get_parent().get_node_or_null("cidade")
+	var rebound_bounds:AABB = global_transform * AABB(Vector3(-5, 0, -120), Vector3(40, 198, 186))
+	var meshes:Array[Node] = city.find_children("*", "MeshInstance3D", true, false) if city else []
+	for mesh:MeshInstance3D in meshes:
+		var world_box:AABB = mesh.global_transform * mesh.get_aabb()
+		if !rebound_bounds.intersects(world_box) or world_box.size.y < 4.0 or maxf(world_box.size.x, world_box.size.z) < 6.0:
+			continue
+		masonry_targets.append({"mesh":mesh, "hit":false})
+	for target:Dictionary in masonry_targets:
+		var mesh:MeshInstance3D = target.mesh
+		target["inverse"] = mesh.global_transform.affine_inverse()
+		target["bounds"] = mesh.get_aabb()
+	masonry_impacts_active = true
+
+func check_masonry_crossing() -> void:
+	var next_position:Vector3 = maycon.global_position + Vector3.UP
+	for target:Dictionary in masonry_targets:
+		if target.hit or !is_instance_valid(target.mesh):
+			continue
+		var mesh:MeshInstance3D = target.mesh
+		var inverse:Transform3D = target.inverse
+		var bounds:AABB = target.bounds
+		var hit:Variant = bounds.intersects_segment(inverse * previous_rebound_position, inverse * next_position)
+		if hit != null:
+			target.hit = true
+			var at:Vector3 = mesh.global_transform * hit
+			if last_masonry_impact.distance_to(at) > 5.0:
+				last_masonry_impact = at
+				spawn_masonry_impact(at)
+	previous_rebound_position = next_position
+
+func spawn_masonry_impact(at:Vector3) -> void:
+	masonry_impacts += 1
+	POEIRA.estouro(self, at, 180, Vector3(1.5, 1.0, 1.5), 1.0, 6.0, 16.0)
+	sound("res://assets/novos_audios/punch_4.mp3")
+	var material:StandardMaterial3D = StandardMaterial3D.new()
+	material.albedo_color = Color(.52, .47, .39)
+	material.roughness = .96
+	for i in range(36):
+		var chunk:RigidBody3D = RigidBody3D.new()
+		chunk.name = "MasonryChunk"
+		chunk.collision_layer = 0
+		chunk.collision_mask = 1
+		chunk.gravity_scale = 1.8
+		chunk.mass = .3
+		var size:Vector3 = Vector3(randf_range(.18,.55), randf_range(.12,.35), randf_range(.18,.5))
+		var visual:MeshInstance3D = MeshInstance3D.new()
+		var box:BoxMesh = BoxMesh.new()
+		box.size = size
+		visual.mesh = box
+		visual.material_override = material
+		chunk.add_child(visual)
+		var collision:CollisionShape3D = CollisionShape3D.new()
+		var shape:BoxShape3D = BoxShape3D.new()
+		shape.size = size
+		collision.shape = shape
+		chunk.add_child(collision)
+		add_child(chunk, true)
+		chunk.global_position = at + Vector3(randf_range(-1,1), randf_range(-.5,.5), randf_range(-1,1))
+		chunk.linear_velocity = Vector3(randf_range(-8,8), randf_range(10,19), randf_range(-8,8))
+		chunk.angular_velocity = Vector3(randf_range(-9,9),randf_range(-9,9),randf_range(-9,9))
+		var cleanup:Tween = create_tween().bind_node(chunk)
+		cleanup.tween_interval(5.0)
+		cleanup.tween_property(visual, "scale", Vector3.ZERO, .6)
+		cleanup.tween_callback(chunk.queue_free)
+
 func sequence() -> void:
 	animate(lips_animation, "Run")
 	lips_running = true
@@ -514,9 +595,14 @@ func sequence() -> void:
 	await get_tree().create_timer(.18 * pace).timeout
 	animate(maycon_animation, "Air_Flail")
 	var rebote_poeira := POEIRA.rastro(maycon)
+	begin_masonry_crossing()
 	# Avião segue para -z: o impulso cospe os dois no rumo oposto e muito mais alto.
-	arc(maycon, Vector3(24, 168, 58), 26, 8)
-	arc(lips, Vector3(27, 164, 60), 26, 8)
+	# O primeiro trecho atravessa a lateral do prédio antes do lançamento ao céu.
+	var breach:Vector3 = $CigarroBuilding.position + Vector3(0, 2.8, 0)
+	var launch:Tween = arc(maycon, breach, .5, .9)
+	launch.finished.connect(func(): arc(maycon, Vector3(24, 168, 58), 26, 7.1))
+	var launch_lips:Tween = arc(lips, breach + Vector3(1.4, 0, .3), .5, .9)
+	launch_lips.finished.connect(func(): arc(lips, Vector3(27, 164, 60), 26, 7.1))
 	# Primeiro mostra o segundo impulso; só então dissolve tudo em branco.
 	memory_flash()
 	follow = maycon

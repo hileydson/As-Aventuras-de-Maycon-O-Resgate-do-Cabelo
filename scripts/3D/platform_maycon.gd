@@ -6,7 +6,7 @@ const FART_SOUND = preload("res://assets/audio/peido.mp3")
 const STEP_SOUND = preload("res://assets/novos_audios/mario_part_sounds/passo.mp3")
 const FART_SMOKE = preload("res://assets/novas_imagens/effects/smoke_animation.png")
 const AIR_FLAIL_ANIM = preload("res://assets/novas_imagens/3d_enemies/maycon_air_flail.res")
-const SMALL_STEP_HEIGHTS := [0.12, 0.24, 0.36, 0.48]
+const SMALL_STEP_HEIGHTS := [0.12, 0.24, 0.36, 0.48, 0.60, 0.72, 0.84, 0.96]
 
 @onready var camera:Camera3D = $"../Camera3D"
 
@@ -272,11 +272,13 @@ func _step_over_small_lip(delta:float) -> void:
 	var horizontal_move := Vector3(velocity.x * delta, 0.0, velocity.z * delta)
 	if horizontal_move.length_squared() < 0.00001 or not test_move(global_transform, horizontal_move):
 		return
+	# Sonda além da borda arredondada da cápsula para subir até o topo de uma vez.
+	var clearance_move:Vector3 = horizontal_move.normalized() * maxf(horizontal_move.length(), 0.55)
 	for rise in SMALL_STEP_HEIGHTS:
 		if test_move(global_transform, Vector3.UP * rise):
 			continue
 		var raised := global_transform.translated(Vector3.UP * rise)
-		if not test_move(raised, horizontal_move):
+		if not test_move(raised, clearance_move):
 			global_position.y += rise
 			velocity.y = maxf(velocity.y, 0.0)
 			return

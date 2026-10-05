@@ -355,7 +355,7 @@ func remove_bullets_from_gun()->void:
 @onready var raycast = $Camera3D/RayCast3D
 
 func get_aim_assist_target(max_angle_deg: float = 16.0) -> Dictionary:
-	if not Global.maycon_pegou_arma_first_3d_battle or on_moto or estou_morto:
+	if not Global.maycon_pegou_arma_first_3d_battle or on_moto or wood_melee_mode or estou_morto:
 		return {}
 	if Global.aim_assist_strength <= 0.001 or not camera_3d:
 		return {}
@@ -409,7 +409,7 @@ func get_aim_assist_target(max_angle_deg: float = 16.0) -> Dictionary:
 	return best_candidate
 
 func _aplicar_assistente_mira(delta: float, joy_look: Vector2) -> void:
-	if not Global.maycon_pegou_arma_first_3d_battle or on_moto or estou_morto:
+	if not Global.maycon_pegou_arma_first_3d_battle or on_moto or wood_melee_mode or estou_morto:
 		return
 	if Global.aim_assist_strength <= 0.001 or not camera_3d:
 		return
@@ -442,6 +442,8 @@ func _aplicar_assistente_mira(delta: float, joy_look: Vector2) -> void:
 	camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 
 func atirar():
+	if wood_melee_mode:
+		return
 	var alvo = null
 	var ponto_impacto = Vector3.ZERO
 	
@@ -662,7 +664,7 @@ func _physics_process(delta):
 		if device_id == 0 and Input.is_action_just_pressed("tiro"):
 			apertou_tiro = true
 		
-		if Global.maycon_pegou_arma_first_3d_battle && apertou_tiro && arma_sprite.animation != "shoot" && gun_bullets_count != 0:
+		if !wood_melee_mode && Global.maycon_pegou_arma_first_3d_battle && apertou_tiro && arma_sprite.animation != "shoot" && gun_bullets_count != 0:
 			atirar()
 			shoot_fire.play("shoot")
 			arma_sprite.play("shoot")
@@ -828,7 +830,7 @@ func _physics_process(delta):
 				lamp_light.visible = false	
 			
 			# Logica da arma
-			if Global.maycon_pegou_arma_first_3d_battle and !on_moto:
+			if Global.maycon_pegou_arma_first_3d_battle and !on_moto and !wood_melee_mode:
 				arma_sprite.play("walk")
 				control_gun.visible = true
 		

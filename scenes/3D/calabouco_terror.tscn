@@ -12661,7 +12661,7 @@ shape = SubResource("BoxShape3D_7smht")
 
 [node name="@OmniLight3D@1724" type="OmniLight3D" parent="PrisonArchitecture/AxeCellDoor" unique_id=178182228]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.3, 0)
-light_color = Color(0.95, 0.02, 0.01, 1)
+light_color = Color(0.9, 0.8, 0.52, 1)
 light_energy = 3.6
 omni_range = 7.0
 

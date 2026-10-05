@@ -746,7 +746,7 @@ func build_pickups() -> void:
 	# Passagem verde (GreenWing): chave da cela do machado dentro da cela
 	pickups["cell_key"] = build_key(Vector3(49.5, 0.65, -164.0), Color(0.9, 0.8, 0.52), "CellKey")
 
-	axe_door = build_gate("AxeCellDoor", Vector3(-5.25, 0, -7), 7.0, "x", Color(0.95, 0.02, 0.01))
+	axe_door = build_gate("AxeCellDoor", Vector3(-5.25, 0, -7), 7.0, "x", Color(0.9, 0.8, 0.52))
 	axe_pickup = build_axe(Vector3(-8.2, 0.72, -7))
 	trampoline = Node3D.new()
 	trampoline.name = "Trampoline"

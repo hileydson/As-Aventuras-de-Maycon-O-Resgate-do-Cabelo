@@ -468,6 +468,9 @@ func _populate_debug_events() -> void:
 	var city_keys: Array[String] = []
 	var other_keys: Array[String] = []
 	for k in Global.game_events.keys():
+		# Histórico e outros metadados não são eventos alternáveis.
+		if typeof(Global.game_events[k]) != TYPE_BOOL:
+			continue
 		if str(k).begins_with("dungeon_") or k == "axe_taken":
 			dungeon_keys.append(str(k))
 		elif str(k).begins_with("cidade_"):
@@ -484,7 +487,7 @@ func _populate_debug_events() -> void:
 	for event_name in dungeon_keys:
 		var check = CheckBox.new()
 		check.text = str(event_name)
-		check.button_pressed = bool(Global.game_events.get(event_name, false))
+		check.button_pressed = Global.game_events[event_name]
 		check.focus_mode = Control.FOCUS_ALL
 		check.add_theme_color_override("font_color", Color(0.8, 0.88, 1.0))
 		check.toggled.connect(func(pressed: bool):
@@ -509,7 +512,7 @@ func _populate_debug_events() -> void:
 	for event_name in city_keys:
 		var check = CheckBox.new()
 		check.text = str(event_name)
-		check.button_pressed = bool(Global.game_events.get(event_name, false))
+		check.button_pressed = Global.game_events[event_name]
 		check.focus_mode = Control.FOCUS_ALL
 		check.add_theme_color_override("font_color", Color(0.85, 0.95, 1.0))
 		check.toggled.connect(func(pressed: bool):
@@ -532,7 +535,7 @@ func _populate_debug_events() -> void:
 	for event_name in other_keys:
 		var check = CheckBox.new()
 		check.text = str(event_name)
-		check.button_pressed = bool(Global.game_events.get(event_name, false))
+		check.button_pressed = Global.game_events[event_name]
 		check.focus_mode = Control.FOCUS_ALL
 		check.toggled.connect(func(pressed: bool):
 			Global.game_events[event_name] = pressed
