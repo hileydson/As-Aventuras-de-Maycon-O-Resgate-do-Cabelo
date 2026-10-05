@@ -12661,9 +12661,9 @@ shape = SubResource("BoxShape3D_7smht")
 
 [node name="@OmniLight3D@1724" type="OmniLight3D" parent="PrisonArchitecture/AxeCellDoor" unique_id=178182228]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.3, 0)
-light_color = Color(0.9, 0.8, 0.52, 1)
-light_energy = 3.6
-omni_range = 7.0
+light_color = Color(0.95, 0.97, 1, 1)
+light_energy = 0.75
+omni_range = 5.0
 
 [node name="AxePickup" type="Node3D" parent="PrisonArchitecture" unique_id=37175987]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.2, 0.72, -7)
@@ -12680,8 +12680,9 @@ mesh = SubResource("PrismMesh_gf3pw")
 
 [node name="@OmniLight3D@1727" type="OmniLight3D" parent="PrisonArchitecture/AxePickup" unique_id=1362990101]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
-light_color = Color(0.9, 0.08, 0.02, 1)
-light_energy = 3.8
+light_color = Color(0.95, 0.97, 1, 1)
+light_energy = 0.6
+omni_range = 3.5
 
 [node name="Trampoline" type="Node3D" parent="PrisonArchitecture" unique_id=1565304669]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.5)

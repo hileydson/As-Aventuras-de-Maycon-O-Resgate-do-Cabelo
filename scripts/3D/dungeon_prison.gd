@@ -556,7 +556,7 @@ func build_key_rooms() -> void:
 	# Alavanca na frente da grade, apoiada no chão
 	levers["green"] = build_lever(Vector3(42.0, 0, -164.0), "green", -PI * 0.5)
 
-func build_gate(node_name:String, position_value:Vector3, width:float, axis:String, color:Color, add_light:bool = true) -> Node3D:
+func build_gate(node_name:String, position_value:Vector3, width:float, axis:String, color:Color, add_light:bool = true, light_energy:float = 3.6, light_range:float = 7.0) -> Node3D:
 	var door := Node3D.new()
 	door.name = node_name
 	door.position = position_value
@@ -578,7 +578,7 @@ func build_gate(node_name:String, position_value:Vector3, width:float, axis:Stri
 	barrier.add_child(b_col)
 	door.add_child(barrier)
 	if add_light:
-		build_light(Vector3(0, 3.3, 0), color, 3.6, 7, door)
+		build_light(Vector3(0, 3.3, 0), color, light_energy, light_range, door)
 	return door
 
 func build_lever(position_value:Vector3, stage:String, rotation_y:float = 0.0) -> Node3D:
@@ -746,7 +746,7 @@ func build_pickups() -> void:
 	# Passagem verde (GreenWing): chave da cela do machado dentro da cela
 	pickups["cell_key"] = build_key(Vector3(49.5, 0.65, -164.0), Color(0.9, 0.8, 0.52), "CellKey")
 
-	axe_door = build_gate("AxeCellDoor", Vector3(-5.25, 0, -7), 7.0, "x", Color(0.9, 0.8, 0.52))
+	axe_door = build_gate("AxeCellDoor", Vector3(-5.25, 0, -7), 7.0, "x", Color(0.95, 0.97, 1.0), true, 0.75, 5.0)
 	axe_pickup = build_axe(Vector3(-8.2, 0.72, -7))
 	trampoline = Node3D.new()
 	trampoline.name = "Trampoline"
@@ -852,7 +852,7 @@ func build_axe(position_value:Vector3) -> Node3D:
 	blade.position = Vector3(0.25, 0.9, 0)
 	blade.rotation.z = -PI * 0.5
 	axe.add_child(blade)
-	build_light(Vector3(0, 1.1, 0), Color(0.9, 0.08, 0.02), 3.8, 5, axe)
+	build_light(Vector3(0, 1.1, 0), Color(0.95, 0.97, 1.0), 0.6, 3.5, axe)
 	return axe
 
 func instantiate_model(path:String, position_value:Vector3, scale_value:Vector3, parent:Node3D) -> Node3D:

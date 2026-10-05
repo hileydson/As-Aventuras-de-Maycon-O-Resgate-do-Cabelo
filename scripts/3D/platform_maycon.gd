@@ -6,7 +6,7 @@ const FART_SOUND = preload("res://assets/audio/peido.mp3")
 const STEP_SOUND = preload("res://assets/novos_audios/mario_part_sounds/passo.mp3")
 const FART_SMOKE = preload("res://assets/novas_imagens/effects/smoke_animation.png")
 const AIR_FLAIL_ANIM = preload("res://assets/novas_imagens/3d_enemies/maycon_air_flail.res")
-const SMALL_STEP_HEIGHTS := [0.12, 0.24, 0.36, 0.48, 0.60, 0.72, 0.84, 0.96]
+const SMALL_STEP_HEIGHTS := [0.12, 0.24, 0.36, 0.48, 0.60, 0.65]
 
 @onready var camera:Camera3D = $"../Camera3D"
 
