@@ -518,7 +518,7 @@ func _take_hit(damage:float) -> void:
 	_spawn_sparks(maycon.position, 25, Color(0.95, 0.1, 0.2))
 	_update_hud()
 	if health <= 0.0:
-		Global.realtime_hp = starting_health if Global.battle_mode == Global.battle_mode_realtime else Global.realtime_hp
+		Global.realtime_hp = max_health if Global.battle_mode == Global.battle_mode_realtime else Global.realtime_hp
 		get_tree().change_scene_to_file.call_deferred("res://scenes/secos_invader.tscn")
 		set_process(false)
 

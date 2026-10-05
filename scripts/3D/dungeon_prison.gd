@@ -1988,6 +1988,11 @@ func collect_pickup(pickup_name:String) -> void:
 		"machinegun_test":
 			player.set_weapon("machinegun")
 			show_pickup_notice(tr("DUNGEON_ITEM_MACHINEGUN"))
+	if is_key_item:
+		var order:Array = Global.game_events.get("dungeon_key_pickup_order", []).duplicate()
+		order.erase(pickup_name)
+		order.append(pickup_name)
+		Global.game_events["dungeon_key_pickup_order"] = order
 	pickup.queue_free()
 	pickups.erase(pickup_name)
 	Global.save_progress("calabouco_terror")
@@ -2439,6 +2444,26 @@ func flash_blood_damage_overlay(intensity:float = 0.7) -> void:
 	if current_serial == monster_damage_serial:
 		blood_overlay.visible = false
 
+func return_last_collected_key() -> void:
+	var order:Array = Global.game_events.get("dungeon_key_pickup_order", []).duplicate()
+	var taken_events:Dictionary = {"blue_key": "dungeon_blue_key_taken", "red_key": "dungeon_red_key_taken", "green_key": "dungeon_green_key_taken", "cell_key": "dungeon_key_taken"}
+	# Saves anteriores não possuem histórico; a progressão das salas indica a ordem.
+	if order.is_empty():
+		for key:String in ["blue_key", "red_key", "green_key", "cell_key"]:
+			if event_is_true(taken_events[key]):
+				order.append(key)
+	while !order.is_empty():
+		var key:String = str(order.pop_back())
+		if !taken_events.has(key) or !event_is_true(taken_events[key]):
+			continue
+		Global.game_events[taken_events[key]] = false
+		Global.game_events["dungeon_%s_used" % key] = false
+		var gate:String = "dungeon_axe_door_open" if key == "cell_key" else "dungeon_%s_gate_open" % key.trim_suffix("_key")
+		Global.game_events[gate] = false
+		break
+	Global.game_events["dungeon_key_pickup_order"] = order
+	Global.save_progress("calabouco_terror")
+
 func restart_after_caught(infected:DungeonInfected) -> void:
 	sequence_running = true
 	player.controls_enabled = false
@@ -2477,6 +2502,7 @@ func restart_after_caught(infected:DungeonInfected) -> void:
 	fade_overlay.visible = true
 	fade_overlay.color = Color(0.12, 0, 0, 0)
 	await create_tween().tween_property(fade_overlay, "color:a", 1.0, 0.75).finished
+	return_last_collected_key()
 	get_tree().reload_current_scene()
 
 func spawn_blood_spurt(origin_pos:Vector3) -> void:

@@ -1,7 +1,7 @@
 class_name PauseVisual
 extends RefCounted
 
-const MENU_FONT:Font = preload("res://assets/fonts/contrast.ttf")
+const MENU_FONT:Font = preload("res://assets/fonts/contrast_menu.tres")
 const BACKDROP_SHADER:Shader = preload("res://scenes/menus/pause_backdrop.gdshader")
 const PENTAGRAM_TEXTURE:Texture2D = preload("res://assets/3D/pentagram_item.png")
 const KEY_Q_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Q_Key_Light.png")
@@ -63,7 +63,7 @@ static func style_title(label:Label, font_size:int = 46) -> void:
 	label.uppercase = true
 
 
-static func style_hint(label:Label, font_size:int = 15) -> void:
+static func style_hint(label:Label, font_size:int = 17) -> void:
 	label.add_theme_font_override("font", MENU_FONT)
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", Color(0.67, 0.80, 0.82))
@@ -73,7 +73,7 @@ static func style_button(button:Button, is_danger:bool = false) -> void:
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.custom_minimum_size = Vector2(330.0, 52.0)
 	button.add_theme_font_override("font", MENU_FONT)
-	button.add_theme_font_size_override("font_size", 20)
+	button.add_theme_font_size_override("font_size", 22)
 	button.add_theme_color_override("font_color", Color(1.0, 0.78, 0.78) if is_danger else Color(0.84, 0.93, 0.93))
 	button.add_theme_color_override("font_hover_color", Color(1.0, 0.97, 0.82))
 	button.add_theme_color_override("font_focus_color", Color(1.0, 0.97, 0.82))
@@ -371,7 +371,7 @@ static func add_action_row(parent:VBoxContainer, action_text:String, key_texture
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.add_theme_font_override("font", MENU_FONT)
-	label.add_theme_font_size_override("font_size", 13)
+	label.add_theme_font_size_override("font_size", 15)
 	label.add_theme_color_override("font_color", accent)
 	content.add_child(label)
 	_add_input_icon(content, key_texture, Vector2(38.0, 24.0) if wide_key else Vector2(24.0, 24.0))

@@ -788,6 +788,7 @@ func reset_dungeon_events(save_now: bool = true) -> void:
 	]
 	for k in dungeon_keys:
 		game_events[k] = false
+	game_events["dungeon_key_pickup_order"] = []
 	maycon_itens["axe"] = false
 	if save_now:
 		save_to_player_savegame()

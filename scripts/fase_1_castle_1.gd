@@ -16,8 +16,11 @@ func taken_hp(taken_hp):
 func _ready() -> void:
 	var returning_from_first_seco_battle:bool = Global.cena_first_seco_boss
 	Global.cena_first_seco_boss = false
-	if not GameSongs.is_song_playing(1):
-		GameSongs.play_song(1)
+	if Global.game_events.get("seco_first_scene_castle", false):
+		if not GameSongs.is_song_playing(1):
+			GameSongs.play_song(1)
+	else:
+		GameSongs.stop(1)
 	if returning_from_first_seco_battle:
 		_play_post_boss_fade_in()
 

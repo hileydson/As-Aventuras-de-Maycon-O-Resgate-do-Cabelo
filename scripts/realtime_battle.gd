@@ -3098,12 +3098,17 @@ func resolve_enemy_hit() -> void:
 	if absf(distance.x) <= 125.0 && absf(distance.y) <= 58.0:
 		damage_player(enemy_damage, signf(distance.x))
 
+func incoming_player_damage(damage:float) -> float:
+	if enemy_id == "1001" && Global.realtime_return_scene == "res://scenes/fase_1_outside_castle_again_no_fire_2.tscn":
+		return damage * 0.85
+	return damage
+
 func damage_player(damage:float, hit_direction:float) -> void:
 	if player_dead || player_invulnerability > 0.0:
 		return
 	if hit_direction == 0.0:
 		hit_direction = 1.0
-	player_hp = maxf(0.0, player_hp - damage)
+	player_hp = maxf(0.0, player_hp - incoming_player_damage(damage))
 	Global.realtime_hp = player_hp
 	player_invulnerability = 0.82
 	player_attack_time = 0.0
@@ -3263,7 +3268,7 @@ func seco_phase_lightning() -> void:
 		bolt_tween.tween_property(bolt, "modulate:a", 0.0, 0.8).set_delay(randf_range(0.0, 0.8))
 	get_tree().create_timer(2.8, true, false, true).timeout.connect(layer.queue_free)
 	# O golpe de fase ignora a invulnerabilidade breve de um ataque anterior.
-	player_hp = maxf(0.0, player_hp - player_max_hp * 0.25)
+	player_hp = maxf(0.0, player_hp - incoming_player_damage(player_max_hp * 0.25))
 	Global.realtime_hp = player_hp
 	spawn_impact(player_position + Vector2(0.0, -45.0), Color("bdefff"), 1.0)
 	if player_hp <= 0.0:
@@ -3355,8 +3360,8 @@ func hit_seco_allies(damage:float, facing:float, reach:float, dash:bool = false)
 func show_final_seco_victory() -> void:
 	var victory_label = Label.new()
 	victory_label.set_anchors_preset(Control.PRESET_CENTER)
-	victory_label.position = Vector2(-540, -62)
-	victory_label.size = Vector2(1080, 124)
+	victory_label.position = Vector2(-540, -82)
+	victory_label.size = Vector2(1080, 164)
 	victory_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	victory_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	victory_label.text = tr("BATTLE_FINAL_SECO_VICTORY")

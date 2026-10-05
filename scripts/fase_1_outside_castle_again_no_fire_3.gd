@@ -13,6 +13,8 @@ extends Sprite2D
 var balao_
 
 var next_scene = false
+var final_fade_started:bool = false
+var dialogue_started:bool = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Global.save_progress(get_tree().current_scene.name)
@@ -37,6 +39,9 @@ func _process(delta: float) -> void:
 		get_tree().change_scene_to_file("res://scenes/3D/last_fight_before_end.tscn")
 
 func _on_next_scene_body_entered(body: Node2D) -> void:
+	if body != maycon_fase or dialogue_started:
+		return
+	dialogue_started = true
 	maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
 	await get_tree().create_timer(0.4).timeout 
 	fade.get_node("Transition").play("fade_out")
@@ -72,8 +77,14 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 	
 
 func terminou_ultimo_dialogo()->void:
-	fade.get_node("Transition").play("fade_out")
-	await get_tree().create_timer(2.0).timeout 
+	if final_fade_started:
+		return
+	final_fade_started = true
+	fade.get_node("Transition").stop()
+	var screen:ColorRect = fade.get_node("Transition/ScreenCanvas/ColorRect")
+	screen.visible = true
+	screen.self_modulate = Color(1, 1, 1, 0)
+	await create_tween().tween_property(screen, "self_modulate:a", 1.0, 5.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT).finished
 	next_scene = true
 	
 	

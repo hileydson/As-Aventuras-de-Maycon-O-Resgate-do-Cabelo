@@ -17,7 +17,7 @@ const MAYCON_WALK_TEXTURES = [
 	preload("res://assets/images/andando_direita_6.png"),
 	preload("res://assets/images/andando_direita_7.png"),
 ]
-const MENU_FONT = preload("res://assets/fonts/contrast.ttf")
+const MENU_FONT = preload("res://assets/fonts/contrast_menu.tres")
 const SKY_SHADER = preload("res://scenes/3D/menu_night_sky.gdshader")
 const WATER_SHADER = preload("res://scenes/3D/menu_ocean.gdshader")
 const SAND_SHADER = preload("res://scenes/3D/menu_sand.gdshader")
@@ -883,7 +883,7 @@ func _build_interface() -> void:
 	action_empty_label = Label.new()
 	action_empty_label.text = tr("MENU_SLOT_NO_DATA")
 	action_empty_label.add_theme_font_override("font", MENU_FONT)
-	action_empty_label.add_theme_font_size_override("font_size", 13)
+	action_empty_label.add_theme_font_size_override("font_size", 15)
 	action_empty_label.add_theme_color_override("font_color", Color(0.55, 0.68, 0.70))
 	details_inner.add_child(action_empty_label)
 
@@ -961,7 +961,7 @@ func _label(value: String, size: int, color: Color, upper: bool, translate: bool
 	if upper:
 		result.text = result.text.to_upper()
 	result.add_theme_font_override("font", MENU_FONT)
-	result.add_theme_font_size_override("font_size", size)
+	result.add_theme_font_size_override("font_size", maxi(size, 15))
 	result.add_theme_color_override("font_color", color)
 	result.add_theme_color_override("font_shadow_color", Color(0.0, 0.02, 0.04, 0.7))
 	result.add_theme_constant_override("shadow_offset_x", 1)
@@ -1030,7 +1030,7 @@ func _build_slot_card(slot: int) -> Button:
 	var status_badge := Label.new()
 	status_badge.name = "StatusBadge"
 	status_badge.add_theme_font_override("font", MENU_FONT)
-	status_badge.add_theme_font_size_override("font_size", 13)
+	status_badge.add_theme_font_size_override("font_size", 15)
 	status_badge.add_theme_color_override("font_shadow_color", Color(0.0, 0.02, 0.04, 0.7))
 	status_badge.add_theme_constant_override("shadow_offset_x", 1)
 	status_badge.add_theme_constant_override("shadow_offset_y", 1)
@@ -1039,7 +1039,7 @@ func _build_slot_card(slot: int) -> Button:
 	var bottom_label := Label.new()
 	bottom_label.name = "BottomLabel"
 	bottom_label.add_theme_font_override("font", MENU_FONT)
-	bottom_label.add_theme_font_size_override("font_size", 13)
+	bottom_label.add_theme_font_size_override("font_size", 15)
 	bottom_label.add_theme_color_override("font_color", Color(0.62, 0.76, 0.78))
 	bottom_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.02, 0.04, 0.7))
 	bottom_label.add_theme_constant_override("shadow_offset_x", 1)
@@ -1473,7 +1473,7 @@ func _on_overwrite_confirmed() -> void:
 func _apply_menu_button_style(button: Button, is_danger: bool = false) -> void:
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.add_theme_font_override("font", MENU_FONT)
-	button.add_theme_font_size_override("font_size", 20)
+	button.add_theme_font_size_override("font_size", 22)
 
 	if is_danger:
 		button.add_theme_color_override("font_color", Color(1.0, 0.78, 0.78))
