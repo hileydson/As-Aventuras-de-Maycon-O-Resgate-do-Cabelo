@@ -29,7 +29,7 @@ res://scenes/fase_1_castle_no_fire_1.tscn::d78dbf5a65c3b675b8cdbf7e341dbfa3::179
 res://scenes/fase_1_castle_no_fire_2.tscn::75d09538522ca5184ced016cf8ff4fe8::1790563197::res://.godot/exported/133200997/export-3c3d05877c4ec37330306e2cbf80fb0f-fase_1_castle_no_fire_2.scn
 res://scenes/fase_1_outside_castle_again_no_fire_1.tscn::d997acfc5c1e942bdddb0fd1c2a61967::1790950143::res://.godot/exported/133200997/export-a3356e83dceedc6e829193948cb5a5ed-fase_1_outside_castle_again_no_fire_1.scn
 res://scenes/fase_1_outside_castle_again_no_fire_2.tscn::4b770be87ea779b2e3c4fa7a65bceff7::1790907695::res://.godot/exported/133200997/export-f9ee804e357dbf4c135524117a0d99ba-fase_1_outside_castle_again_no_fire_2.scn
-res://scenes/fase_1_outside_castle_again_no_fire_3.tscn::6bbc3e9459a9f0cc134285c79477539e::1790618473::res://.godot/exported/133200997/export-dff55fe45b2be0f5a440454f8287699b-fase_1_outside_castle_again_no_fire_3.scn
+res://scenes/fase_1_outside_castle_again_no_fire_3.tscn::2db238952f9ca636c3548b459b4d90c4::1791220335::res://.godot/exported/133200997/export-dff55fe45b2be0f5a440454f8287699b-fase_1_outside_castle_again_no_fire_3.scn
 res://scenes/default_transition_auto_fade_in.tscn::a49e975cf71698add5c8aee9194d2706::1790894115::res://.godot/exported/133200997/export-994adf6f1ea351b7814f37eb20607215-default_transition_auto_fade_in.scn
 res://scenes/battle_fade.tscn::a1aee71b583b303715076c2800a52c6b::1767636737::res://.godot/exported/133200997/export-9c41ef030c3e84ce73e6e59972aa009f-battle_fade.scn
 res://scenes/game_songs.tscn::32273a8ee897b479ed9f66c9c3ff64fa::1769626880::res://.godot/exported/133200997/export-c8daa772bacfc5aa84ec3037abcdda9a-game_songs.scn
@@ -41,7 +41,7 @@ res://scenes/inimigos/cabelo.tscn::4d05e047d0a0d71b44087f453588842d::1790792740:
 res://scenes/inimigos/inimigo_boss_seco.tscn::cd4d5061f5e8b3301da7df5a56f7ecfe::1790792740::res://.godot/exported/133200997/export-636daf6cc716058df4c40427967fbef1-inimigo_boss_seco.scn
 res://scenes/inimigos/inimigo_manga.tscn::e74ab77c974ab5da7cfe99d096662768::1790792740::res://.godot/exported/133200997/export-b5fbdd962c7fea7e594d7b9f1c468959-inimigo_manga.scn
 res://scenes/inimigos/inimigo_xuruzika.tscn::cd823e1d9cf2e9d82c3f0154e0b612e6::1790792740::res://.godot/exported/133200997/export-e4fde1f7a97106757c8a95776fa5fca9-inimigo_xuruzika.scn
-res://scenes/default_transition_auto_fade_in_long.tscn::ba54bdc689e9dea22fd98b2a827e54a1::1791059751::res://.godot/exported/133200997/export-72067638cbb21262ecc598d8e837bd55-default_transition_auto_fade_in_long.scn
+res://scenes/default_transition_auto_fade_in_long.tscn::4076ea6f37312d90f72c5d621d76b327::1791220335::res://.godot/exported/133200997/export-72067638cbb21262ecc598d8e837bd55-default_transition_auto_fade_in_long.scn
 res://scenes/intro_historia.tscn::5cc1a85fa98ec119c9dead2ea886606c::1767805402::res://.godot/exported/133200997/export-91da5494a5bbc108440de3e39ac7f253-intro_historia.scn
 res://scenes/bloco.tscn::c70653850d195d3c245269242c9c8da7::1790689864::res://.godot/exported/133200997/export-1e7962ade101294610152523d449ac65-bloco.scn
 res://scenes/caixa.tscn::860a078d002c248b92765289e31bba12::1770226448::res://.godot/exported/133200997/export-7ed813ab58755eaa8488e6daf7da6442-caixa.scn
@@ -151,3 +151,4 @@ res://scenes/3D/resgate_cabeludo/elden_lips_preview.tscn::c4031838b3922273e5d5fb
 res://scenes/3D/resgate_cabeludo/ending_bridge.tscn::2db6fe29da078f9a1316e6d8b019bd94::1790964252::res://.godot/exported/133200997/export-aa7e1bdb6ba54786c7532057f909a6d9-ending_bridge.scn
 res://scenes/3D/resgate_cabeludo/resgate_cabeludo.tscn::9db85d5189aaa0a7124fb8b3ce799c69::1791048400::res://.godot/exported/133200997/export-04e91df98d8380330c630dfc49e1d390-resgate_cabeludo.scn
 res://scenes/godot_splash.tscn::4d0c8216338769278afe80179cc213b8::1791058775::res://.godot/exported/133200997/export-670e571b849d8ca28c97b89c70672372-godot_splash.scn
+res://assets/fonts/contrast_menu.tres::b37f9c2319e16d5c61560afada59b6f3::1791220469::res://.godot/exported/133200997/export-a800915a91161f5eae207c272d3854db-contrast_menu.res

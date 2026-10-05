@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="As Aventuras de Maycon"
-config/version="6.5"
+config/version="6.6"
 run/main_scene="uid://myxkcfyi401t"
 config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/bg_color=Color(0, 0, 0, 1)

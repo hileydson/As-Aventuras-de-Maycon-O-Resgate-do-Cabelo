@@ -89,7 +89,8 @@ func morrer():
 	seco_died.visible = false
 	blackout.color = Color(0, 0, 0, 0)
 	blackout.visible = true
-	var bg_tween := create_tween()
+	# A hierarquia do chefe está desativada; este fade precisa continuar no SceneTree.
+	var bg_tween := get_tree().create_tween()
 	bg_tween.tween_property(blackout, "color:a", 1.0, 0.7)
 	await bg_tween.finished
 	blackout.color = Color.BLACK
