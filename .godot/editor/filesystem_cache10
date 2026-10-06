@@ -297,10 +297,13 @@ pulo_maycon.mp3::AudioStreamMP3::8024115255752159689::1767636736::1767636736::1:
 sair.mp3::AudioStreamMP3::8687246828843105594::1767636736::1767636736::1::::<><><>0<>0<>37c2928e1022df0677441d742c698d11<>res://.godot/imported/sair.mp3-677e98a84718b146fa570d4231053b2f.mp3str::
 sound0.wav::AudioStreamWAV::4412821191005728883::1767636736::1767636736::1::::<><><>0<>0<>8ec9c02dd2e6aecab1e7e77bd0ed9c84<>res://.godot/imported/sound0.wav-671a985a643f216f16d5ed6d2ce4ccea.sample::
 sound1.mp3::AudioStreamMP3::2394456978190327307::1767636736::1767636736::1::::<><><>0<>0<>8522cae094c628da9a32d886aa07d7b1<>res://.godot/imported/sound1.mp3-631d84f9e51cfc2664f7d180108e8d93.mp3str::
-::res://assets/fonts/::1791223741
-contrast.ttf::FontFile::4242287116472386449::1790563196::1790270218::1::::<><><>0<>0<>551e4b3f8d818437e52c8373b33ca9bc<>res://.godot/imported/contrast.ttf-de11ed9f140ba5c32970615019343744.fontdata::
-contrast_menu.tres::FontVariation::-1::1791223741::0::1::::<><><>0<>0<><>::res://assets/fonts/contrast.ttf
+::res://assets/fonts/::1791297808
+contrast.ttf::FontFile::4242287116472386449::1790563196::1791297528::1::::<><><>0<>0<>4d14c7bee71ae7b3f8a28110c063bd93<>res://.godot/imported/contrast.ttf-de11ed9f140ba5c32970615019343744.fontdata::
+contrast_menu.tres::FontVariation::-1::1791297714::0::1::::<><><>0<>0<><>::res://assets/fonts/contrast_readable.ttf
+contrast_readable.ttf::FontFile::965967208538561505::1791297834::1791297840::1::::<><><>0<>0<>5280e0e1d4f758af6283a7c8871c85ea<>res://.godot/imported/contrast_readable.ttf-1244ca17aeba4695ba7efc70fdde95f6.fontdata::
 NotoColorEmoji.ttf::FontFile::5350275372691184498::1790793154::1790793535::1::::<><><>0<>0<>ead18327114ac898a2470a1af84fa216<>res://.godot/imported/NotoColorEmoji.ttf-5bcefd16ba84146614613f6de606de52.fontdata::
+NotoSans-LICENSE.txt::TextFile::-1::1791297626::0::1::::<><><>0<>0<><>::
+NotoSans-Regular.ttf::FontFile::6211118599248554067::1791297626::1791297648::1::::<><><>0<>0<>6f4933503dfda57b4cc89d1f5e9a408e<>res://.godot/imported/NotoSans-Regular.ttf-674bcff8e78e1ac2b0101362155b4faa.fontdata::
 NotoSansSymbols2-Regular.ttf::FontFile::7249156847389575818::1790793293::1790793342::1::::<><><>0<>0<>458bc6a1dd646fafda9d87160ec64e94<>res://.godot/imported/NotoSansSymbols2-Regular.ttf-7788f1b789d60481fa956b02b4581693.fontdata::
 ::res://assets/horror_creatures/::1790966720
 ATTRIBUTION.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
@@ -4189,7 +4192,7 @@ difficulty_selection.gd::GDScript::2147860775748857937::1790873940::0::1::::<>Co
 efeito_vidro_canvas.gd::GDScript::2533287663486452858::1767636737::0::1::::<>CanvasLayer<><>0<>0<><>::
 effect_stage_show.gd::GDScript::684586504690271007::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 explosao.gd::GDScript::6255021781690688224::1767836030::0::1::::<>CPUParticles2D<><>0<>0<><>::
-fase_1_before_castle_1.gd::GDScript::6635833604853315044::1791297066::0::1::::<>Sprite2D<><>0<>0<><>::
+fase_1_before_castle_1.gd::GDScript::6635833604853315044::1791297340::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_2.gd::GDScript::3133076191879326939::1768258387::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_3.gd::GDScript::6184730094203413863::1790563197::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_4.gd::GDScript::2154952988607779227::1790563197::0::1::::<>Sprite2D<><>0<>0<><>::
@@ -4320,7 +4323,7 @@ polish_elden_lips_animations.gd::GDScript::6211534702511953019::1791223741::0::1
 controls_intro_overlay.gd::GDScript::406352773143518366::1791296361::0::1::::<>CanvasLayer<><>0<>0<><>::
 emoji_font.gd::GDScript::2736335681519218948::1790793300::0::1::::<>RefCounted<><>0<>0<><>::
 menu_sound_controller.gd::GDScript::2657661350508022770::1790563197::0::1::::<>Node<><>0<>0<><>::
-pause_visual.gd::GDScript::416433903312413180::1791223741::0::1::::PauseVisual<>RefCounted<><>0<>0<><>::
+pause_visual.gd::GDScript::416433903312413180::1791297568::0::1::::PauseVisual<>RefCounted<><>0<>0<><>::
 ::res://terrain_3d_data/::1770136386
 terrain3d-01-01.res::Terrain3DRegion::876206289458360874::1770136386::0::1::::<><><>0<>0<><>::
 terrain3d-01-02.res::Terrain3DRegion::5592144705733295144::1770136386::0::1::::<><><>0<>0<><>::

@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://b1o834pgp267n"
-path="res://.godot/imported/contrast.ttf-de11ed9f140ba5c32970615019343744.fontdata"
+uid="uid://cuqyhlsx8oue2"
+path="res://.godot/imported/NotoSans-Regular.ttf-674bcff8e78e1ac2b0101362155b4faa.fontdata"
 
 [deps]
 
-source_file="res://assets/fonts/contrast.ttf"
-dest_files=["res://.godot/imported/contrast.ttf-de11ed9f140ba5c32970615019343744.fontdata"]
+source_file="res://assets/fonts/NotoSans-Regular.ttf"
+dest_files=["res://.godot/imported/NotoSans-Regular.ttf-674bcff8e78e1ac2b0101362155b4faa.fontdata"]
 
 [params]
 

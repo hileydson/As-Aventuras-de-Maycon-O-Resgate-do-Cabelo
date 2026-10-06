@@ -66,7 +66,7 @@ static func style_title(label:Label, font_size:int = 46) -> void:
 static func style_hint(label:Label, font_size:int = 17) -> void:
 	label.add_theme_font_override("font", MENU_FONT)
 	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", Color(0.67, 0.80, 0.82))
+	label.add_theme_color_override("font_color", Color(0.79, 0.89, 0.91))
 
 
 static func style_button(button:Button, is_danger:bool = false) -> void:
