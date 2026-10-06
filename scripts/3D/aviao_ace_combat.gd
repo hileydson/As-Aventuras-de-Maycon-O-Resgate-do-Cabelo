@@ -587,6 +587,7 @@ func _montar_pausa() -> void:
 func _hud_icone(textura:Texture2D, tamanho:Vector2) -> TextureRect:
 	var icone := TextureRect.new()
 	icone.texture = textura
+	Global.input_hints.bind_visibility(icone, textura == BOTAO_GATILHO or textura == BOTAO_DASH_A)
 	icone.custom_minimum_size = tamanho
 	icone.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icone.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

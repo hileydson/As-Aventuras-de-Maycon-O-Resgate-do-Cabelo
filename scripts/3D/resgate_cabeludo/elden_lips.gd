@@ -494,6 +494,7 @@ func physics_player(delta:float) -> void:
 			invulnerability = maxf(invulnerability,.025) if progress*DODGE_TIME>=DODGE_IFRAMES.x and progress*DODGE_TIME<=DODGE_IFRAMES.y else invulnerability
 		elif action in ["slash","heavy"] and not action_contact and progress> (.50 if action=="heavy" else .40):
 			action_contact = true
+			atmosphere.play_sound("swing",player.global_position,-16,.80 if action=="heavy" else 1.0)
 			atmosphere.play_sound("swing",player.global_position,4.0,.80 if action=="heavy" else 1.0)
 			weapon_contact(action=="heavy")
 		if action_time<=0: action = ""
@@ -535,6 +536,8 @@ func weapon_contact(heavy:bool) -> void:
 	boss.hp = maxi(0,boss.hp-damage)
 	poise -= 18 if heavy else 7
 	boss_knockback = facing*(3.4 if heavy else 2.6)
+	atmosphere.play_sound("heavy_hit" if heavy else "hit",at,-6 if heavy else -8)
+	atmosphere.play_sound("pain",boss.global_position+Vector3.UP*2,-4)
 	atmosphere.play_sound("heavy_hit" if heavy else "hit",at,6.0 if heavy else 5.0)
 	atmosphere.play_sound("pain",boss.global_position+Vector3.UP*2,4.0)
 	boss_hurt_time = .42

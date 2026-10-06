@@ -1,5 +1,6 @@
 extends Control
 
+const ICON_KEYS = preload("res://assets/novas_imagens/buttons/WASD_Keys_Light.svg")
 const ICON_DPAD = preload("res://assets/novas_imagens/buttons/PS5_Dpad.png")
 const ICON_BTN_A = preload("res://assets/novas_imagens/buttons/360_A.png")
 const ICON_BTN_Y = preload("res://assets/novas_imagens/buttons/360_Y.png")
@@ -26,6 +27,9 @@ var explosion:float = -1.0
 var death:bool = false
 var paused_local:bool = false
 var droplets:Array[Dictionary] = []
+
+func _ready() -> void:
+	Global.input_hints.device_changed.connect(queue_redraw)
 
 func set_state(new_health:float, new_progress:float, new_charge:float, new_cooldown:float, new_ending_time:float, new_player_screen:Vector2 = Vector2.ZERO, new_speed:float = 0.0, new_power_time:float = 0.0) -> void:
 	health = new_health
@@ -200,7 +204,7 @@ func _draw_bottom_badges(height: float) -> void:
 	var p1 := Rect2(24.0, base_y, 48.0, panel_h)
 	draw_rect(p1, bg_col, true)
 	draw_rect(p1, border_col, false, 1.5)
-	draw_texture_rect(ICON_DPAD, Rect2(34.0, base_y + 5.0, 28.0, 28.0), false)
+	draw_texture_rect(ICON_DPAD if Global.input_hints.using_gamepad else ICON_KEYS, Rect2(34.0, base_y + 5.0, 28.0, 28.0), false)
 	
 	# 2. Badge Dash (Espaço + Botão A)
 	var p2 := Rect2(80.0, base_y, 90.0, panel_h)
@@ -209,8 +213,7 @@ func _draw_bottom_badges(height: float) -> void:
 	var p2_border: Color = Color(0.2, 0.45, 0.55, 0.5) if is_dashing else border_col
 	draw_rect(p2, bg_col, true)
 	draw_rect(p2, p2_border, false, 1.5)
-	draw_texture_rect(ICON_KEY_SPACE, Rect2(87.0, base_y + 6.0, 32.0, 26.0), false, Color(1, 1, 1, dash_alpha))
-	draw_texture_rect(ICON_BTN_A, Rect2(133.0, base_y + 6.0, 26.0, 26.0), false, Color(1, 1, 1, dash_alpha))
+	draw_texture_rect(ICON_BTN_A if Global.input_hints.using_gamepad else ICON_KEY_SPACE, Rect2(109.0, base_y + 6.0, 32.0, 26.0), false, Color(1, 1, 1, dash_alpha))
 	if is_dashing:
 		var fill_w: float = 86.0 * (1.0 - cooldown / 0.6)
 		draw_rect(Rect2(82.0, base_y + panel_h - 4.0, fill_w, 2.5), Color(0.25, 0.85, 1.0, 0.9), true)
@@ -224,5 +227,4 @@ func _draw_bottom_badges(height: float) -> void:
 		draw_rect(p3.grow(2.0), Color(1.0, 0.82, 0.2, 0.18 + sin(time * 8.0) * 0.08), true)
 	draw_rect(p3, bg_col, true)
 	draw_rect(p3, p3_border, false, 2.0 if is_charged else 1.5)
-	draw_texture_rect(ICON_KEY_Q, Rect2(186.0, base_y + 6.0, 26.0, 26.0), false, Color(1, 1, 1, pent_alpha))
-	draw_texture_rect(ICON_BTN_Y, Rect2(230.0, base_y + 6.0, 26.0, 26.0), false, Color(1, 1, 1, pent_alpha))
+	draw_texture_rect(ICON_BTN_Y if Global.input_hints.using_gamepad else ICON_KEY_Q, Rect2(209.0, base_y + 6.0, 26.0, 26.0), false, Color(1, 1, 1, pent_alpha))

@@ -15,7 +15,7 @@ const DASH_SOUND:AudioStream = preload("res://assets/novos_audios/sliding.mp3")
 const DASH_GAMEPAD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/360_A.png")
 const DASH_KEYBOARD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png")
 const MOVE_GAMEPAD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/PS5_Dpad.png")
-const MOVE_KEYBOARD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/ButtonIcon-Switch-Dpad.png")
+const MOVE_KEYBOARD_ICON:Texture2D = preload("res://assets/novas_imagens/buttons/WASD_Keys_Light.svg")
 const HUD_FONT:Font = preload("res://assets/fonts/contrast.ttf")
 
 var screen:Vector2
@@ -236,6 +236,7 @@ func _build_ui() -> void:
 		move_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		move_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		move_icons.add_child(move_icon)
+		Global.input_hints.bind_visibility(move_icon, texture == MOVE_GAMEPAD_ICON)
 	dash_card = PanelContainer.new()
 	dash_card.position = Vector2(120.0, screen.y - 80.0)
 	dash_card.size = Vector2(192.0, 56.0)
@@ -253,9 +254,10 @@ func _build_ui() -> void:
 	dash_card.add_child(dash_button)
 	var gamepad_icon:Sprite2D = Sprite2D.new()
 	gamepad_icon.texture = DASH_GAMEPAD_ICON
-	gamepad_icon.position = Vector2(18.0, 18.0)
+	gamepad_icon.position = Vector2(68.0, 18.0)
 	gamepad_icon.scale = Vector2(0.28, 0.28)
 	dash_button.add_child(gamepad_icon)
+	Global.input_hints.bind_visibility(gamepad_icon, true)
 	var separator:Label = Label.new()
 	separator.text = "/"
 	separator.position = Vector2(35.0, 9.0)
@@ -263,11 +265,13 @@ func _build_ui() -> void:
 	separator.add_theme_font_size_override("font_size", 13)
 	separator.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dash_button.add_child(separator)
+	separator.visible = false
 	var keyboard_icon:Sprite2D = Sprite2D.new()
 	keyboard_icon.texture = DASH_KEYBOARD_ICON
 	keyboard_icon.position = Vector2(68.0, 18.0)
 	keyboard_icon.scale = Vector2(0.48, 0.48)
 	dash_button.add_child(keyboard_icon)
+	Global.input_hints.bind_visibility(keyboard_icon, false)
 	var keyboard_label:Label = Label.new()
 	keyboard_label.text = tr("SECO_INVADER_SPACE_KEY")
 	keyboard_label.position = Vector2(43.0, 12.0)
@@ -278,6 +282,7 @@ func _build_ui() -> void:
 	keyboard_label.add_theme_color_override("font_color", Color(0.15, 0.15, 0.17))
 	keyboard_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dash_button.add_child(keyboard_label)
+	Global.input_hints.bind_visibility(keyboard_label, false)
 	var dash_label:Label = Label.new()
 	dash_label.text = tr("POWER_DASH")
 	dash_label.position = Vector2(105.0, 8.0)

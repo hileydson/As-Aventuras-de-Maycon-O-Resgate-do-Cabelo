@@ -544,13 +544,13 @@ distance = -60.52633
 normal = Vector2(1, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
-size = Vector2(1008, 178)
+size = Vector2(1013, 178)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
 size = Vector2(400.40625, 136)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s4wqb"]
-size = Vector2(404.20313, 136)
+size = Vector2(429.20313, 136)
 
 [node name="outside_castelo_1" type="Node2D" unique_id=516885763]
 process_mode = 1
@@ -871,7 +871,7 @@ collision_mask = 524291
 process_mode = 4
 light_mask = 524289
 visibility_layer = 524289
-position = Vector2(1696, 1180)
+position = Vector2(1693.5, 1180)
 shape = SubResource("RectangleShape2D_hnmna")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=1753652187]
@@ -879,7 +879,7 @@ position = Vector2(2384, 1253)
 shape = SubResource("RectangleShape2D_p1t4m")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D" unique_id=2083186708]
-position = Vector2(2738.8984, 1128)
+position = Vector2(2751.3984, 1128)
 shape = SubResource("RectangleShape2D_s4wqb")
 
 [node name="battle" parent="." unique_id=1576783984 instance=ExtResource("6_yvup1")]

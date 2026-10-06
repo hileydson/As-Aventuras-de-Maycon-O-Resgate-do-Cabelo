@@ -161,8 +161,8 @@ PROMPT_CLIMB_STAIRS,subir as escadas?,climb the stairs?,¿subir las escaleras?,�
 LABEL_YOU_SUCK,SEU IDIOTA!,YOU SUCK!,¡IDIOTA!,你个蠢蛋！
 LABEL_PESTILENT_PASSAGE,Passagem Pestilenta,Pestilent passage,Pasaje Pestilente,恶臭通道
 LEVEL_PESTILENT_PASSAGE,Passagem Pestilenta,Pestilent passage,Pasaje Pestilente,恶臭通道
-LABEL_ROCKS_PATH,Caminho das Pedras,Rocks Path,Camino de Piedras,碎石小径
-LEVEL_STONE_PATH,Caminho das Pedras,Rocks Path,Camino de Piedras,碎石小径
+LABEL_ROCKS_PATH,Rua das Pedras,Stone Street,Calle de las Piedras,石头街
+LEVEL_STONE_PATH,Rua das Pedras,Stone Street,Calle de las Piedras,石头街
 LABEL_MUNDO_OLINDAO,Mundo do Olindão,Olindão's World,El Mundo de Olindão,奥林当的世界
 LEVEL_OLINDAO_WORLD,Mundo do Olindão,Olindão's World,El Mundo de Olindão,奥林当的世界
 LABEL_CIDADE,Cidade,City,Ciudad,城市
@@ -516,3 +516,49 @@ STAGE_1_HINT_BOX,Chute ou Soco para afastar a caixa!,Kick or punch to push the b
 STAGE_1_HINT_JUMP,Corra e pule para alcançar o outro lado!,Run and jump to reach the other side!,¡Corre y salta para llegar al otro lado!,奔跑并跳跃到达另一边！
 CONTROLS_PAUSE_HINT,Acesse os controles pelo pause também!,You can also access the controls from the pause menu!,¡También puedes consultar los controles desde el menú de pausa!,也可以通过暂停菜单查看操作！
 STAGE_1_HINT_DOUBLE_JUMP,Alcance com o pulo duplo!,Reach it with a double jump!,¡Alcánzalo con un salto doble!,用二段跳到达那里！
+INPUT_HINT_DEVICE_NAME_KBM,TECLADO E MOUSE,KEYBOARD & MOUSE,TECLADO Y RATÓN,键盘与鼠标
+INPUT_HINT_DEVICE_NAME_PAD,CONTROLE,CONTROLLER,MANDO,手柄
+MENU_PAUSE_HINT_KBM,ESC para continuar,ESC to continue,ESC para continuar,按 ESC 继续
+MENU_PAUSE_HINT_PAD,START para continuar,START to continue,START para continuar,按 START 继续
+OBJECTIVE_DISMOUNT_KBM,Pressione E para descer da moto,Press E to get off the motorcycle,Pulsa E para bajar de la moto,按 E 下摩托车
+OBJECTIVE_DISMOUNT_PAD,Pressione START para descer da moto,Press START to get off the motorcycle,Pulsa START para bajar de la moto,按 START 下摩托车
+BATTLE_MODE_HINT_KBM,Setas para escolher  •  Enter para confirmar,Arrows to choose  •  Enter to confirm,Flechas para elegir  •  Enter para confirmar,方向键选择  •  Enter 确认
+BATTLE_MODE_HINT_PAD,Direcional/analógico para escolher  •  A para confirmar,D-pad/stick to choose  •  A to confirm,Cruceta/palanca para elegir  •  A para confirmar,方向键/摇杆选择  •  A 确认
+DIFFICULTY_SELECTION_HINT_KBM,Setas para escolher  •  Enter para confirmar,Arrows to choose  •  Enter to confirm,Flechas para elegir  •  Enter para confirmar,方向键选择  •  Enter 确认
+DIFFICULTY_SELECTION_HINT_PAD,Direcional/analógico para escolher  •  A para confirmar,D-pad/stick to choose  •  A to confirm,Cruceta/palanca para elegir  •  A para confirmar,方向键/摇杆选择  •  A 确认
+DUNGEON_PROMPT_FLASHLIGHT_KBM,[E] PEGAR LANTERNA,[E] TAKE FLASHLIGHT,[E] TOMAR LINTERNA,[E] 拿起手电筒
+DUNGEON_PROMPT_FLASHLIGHT_PAD,[A] PEGAR LANTERNA,[A] TAKE FLASHLIGHT,[A] TOMAR LINTERNA,[A] 拿起手电筒
+DUNGEON_PROMPT_GUN_KBM,[E] PEGAR METRALHADORA,[E] TAKE MACHINE GUN,[E] TOMAR AMETRALLADORA,[E] 拿起机枪
+DUNGEON_PROMPT_GUN_PAD,[A] PEGAR METRALHADORA,[A] TAKE MACHINE GUN,[A] TOMAR AMETRALLADORA,[A] 拿起机枪
+DUNGEON_PROMPT_KEY_KBM,[E] PEGAR CHAVE DA CELA,[E] TAKE CELL KEY,[E] TOMAR LLAVE DE LA CELDA,[E] 拿起牢房钥匙
+DUNGEON_PROMPT_KEY_PAD,[A] PEGAR CHAVE DA CELA,[A] TAKE CELL KEY,[A] TOMAR LLAVE DE LA CELDA,[A] 拿起牢房钥匙
+DUNGEON_PROMPT_AXE_KBM,[E] RECUPERAR O MACHADO,[E] RECOVER THE AXE,[E] RECUPERAR EL HACHA,[E] 取回斧头
+DUNGEON_PROMPT_AXE_PAD,[A] RECUPERAR O MACHADO,[A] RECOVER THE AXE,[A] RECUPERAR EL HACHA,[A] 取回斧头
+DUNGEON_PROMPT_TRAMPOLINE_KBM,[E] PULAR E VOLTAR AO CASTELO,[E] JUMP BACK TO THE CASTLE,[E] SALTAR Y VOLVER AL CASTILLO,[E] 跳回城堡
+DUNGEON_PROMPT_TRAMPOLINE_PAD,[A] PULAR E VOLTAR AO CASTELO,[A] JUMP BACK TO THE CASTLE,[A] SALTAR Y VOLVER AL CASTILLO,[A] 跳回城堡
+DUNGEON_MOVE_HINT_KBM,WASD para mover • E para interagir,WASD to move • E to interact,WASD para mover • E para interactuar,WASD 移动 • E 互动
+DUNGEON_MOVE_HINT_PAD,Analógico para mover • A para interagir,Stick to move • A to interact,Palanca para mover • A para interactuar,摇杆移动 • A 互动
+DUNGEON_FLASHLIGHT_ON_KBM,LANTERNA: LIGADA • Botão direito,FLASHLIGHT: ON • Right click,LINTERNA: ENCENDIDA • Clic derecho,手电筒：开启 • 鼠标右键
+DUNGEON_FLASHLIGHT_ON_PAD,LANTERNA: LIGADA • Y,FLASHLIGHT: ON • Y,LINTERNA: ENCENDIDA • Y,手电筒：开启 • Y
+DUNGEON_FLASHLIGHT_OFF_KBM,LANTERNA: DESLIGADA • Botão direito,FLASHLIGHT: OFF • Right click,LINTERNA: APAGADA • Clic derecho,手电筒：关闭 • 鼠标右键
+DUNGEON_FLASHLIGHT_OFF_PAD,LANTERNA: DESLIGADA • Y,FLASHLIGHT: OFF • Y,LINTERNA: APAGADA • Y,手电筒：关闭 • Y
+DUNGEON_PISTOL_READY_KBM,PISTOLA • Clique esquerdo para atirar,PISTOL • Left click to fire,PISTOLA • Clic izquierdo para disparar,手枪 • 左键射击
+DUNGEON_PISTOL_READY_PAD,PISTOLA • RT para atirar,PISTOL • RT to fire,PISTOLA • RT para disparar,手枪 • RT 射击
+DUNGEON_RELOAD_PROMPT_KBM,R: Recarregar,R: Reload,R: Recargar,R: 换弹
+DUNGEON_RELOAD_PROMPT_PAD,B / X: Recarregar,B / X: Reload,B / X: Recargar,B / X: 换弹
+PLATFORM_JUMP_HINT_KBM,PULO,JUMP,SALTO,跳跃
+PLATFORM_JUMP_HINT_PAD,PULO,JUMP,SALTO,跳跃
+PLATFORM_RUN_HINT_KBM,Correr,Run,Correr,奔跑
+PLATFORM_RUN_HINT_PAD,Correr,Run,Correr,奔跑
+PLATFORM_SPECIAL_HINT_KBM,Ativar Especial,Activate Special,Activar Especial,激活特技
+PLATFORM_SPECIAL_HINT_PAD,Ativar Especial,Activate Special,Activar Especial,激活特技
+PLATFORM_SPECIAL_PROMPT_KBM,ESPECIAL PRONTO,SPECIAL READY,ESPECIAL LISTO,特殊技能就绪
+PLATFORM_SPECIAL_PROMPT_PAD,ESPECIAL PRONTO,SPECIAL READY,ESPECIAL LISTO,特殊技能就绪
+PLATFORM_SHAKE_OFF_KBM,GIRE O MOUSE!,ROTATE THE MOUSE!,¡GIRA EL RATÓN!,旋转鼠标！
+PLATFORM_SHAKE_OFF_PAD,GIRE O ANALÓGICO!,ROTATE THE STICK!,¡GIRA LA PALANCA!,旋转摇杆！
+POWER_ROTATE_ANALOG_KBM,GIRE COM WASD,CIRCLE WITH WASD,GIRA CON WASD,用 WASD 转圈
+POWER_ROTATE_ANALOG_PAD,GIRE O ANALÓGICO,ROTATE THE ANALOG STICK,GIRA LA PALANCA,旋转摇杆
+POWER_ROTATE_ANALOG_EXCL_KBM,GIRE COM WASD!,CIRCLE WITH WASD!,¡GIRA CON WASD!,用 WASD 转圈！
+POWER_ROTATE_ANALOG_EXCL_PAD,GIRE O ANALÓGICO!,ROTATE THE ANALOG STICK!,¡GIRA LA PALANCA!,旋转摇杆！
+WELL_CONTROLS_KBM,WASD / SETAS: MOVER  ESPAÇO: DASH DE PEIDO  Q: PENTAGRAMA,WASD / ARROWS: MOVE  SPACE: FART DASH  Q: PENTAGRAM,WASD / FLECHAS: MOVER  ESPACIO: DASH DE PEDO  Q: PENTAGRAMA,WASD / 方向键：移动  空格：屁冲刺  Q：五芒星
+WELL_CONTROLS_PAD,DIRECIONAL: MOVER  A: DASH DE PEIDO  Y: PENTAGRAMA,D-PAD / STICK: MOVE  A: FART DASH  Y: PENTAGRAM,CRUCETA / PALANCA: MOVER  A: DASH DE PEDO  Y: PENTAGRAMA,方向键 / 摇杆：移动  A：屁冲刺  Y：五芒星

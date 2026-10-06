@@ -82,9 +82,13 @@ class StruggleAnalogWidget extends Control:
 		# Orbiting analog knob
 		var knob_pos := stick_center + Vector2.from_angle(visual_spin) * 20.0
 		var knob_color := Color(1.0, 0.9, 0.35, 1.0 if has_input else pulse)
-		draw_circle(knob_pos, 13.5, Color(0.16, 0.2, 0.3, 1.0))
-		draw_circle(knob_pos, 8.5, knob_color)
-		draw_circle(knob_pos, 3.5, Color.WHITE)
+		if Global.input_hints.using_gamepad:
+			draw_circle(knob_pos, 13.5, Color(0.16, 0.2, 0.3, 1.0))
+			draw_circle(knob_pos, 8.5, knob_color)
+			draw_circle(knob_pos, 3.5, Color.WHITE)
+		else:
+			var mouse:Texture2D = preload("res://assets/novas_imagens/buttons/mouse_right_click.png")
+			draw_texture_rect(mouse, Rect2(stick_center - Vector2(23, 23), Vector2(46, 46)), false, knob_color)
 		
 		# Center crosshairs
 		draw_line(stick_center - Vector2(7, 0), stick_center + Vector2(7, 0), Color(0.35, 0.45, 0.55, 0.6), 1.5)
@@ -92,7 +96,7 @@ class StruggleAnalogWidget extends Control:
 		
 		# 3. Text & Progress Bar
 		var text_x := 122.0
-		var title_text := tr("PLATFORM_SHAKE_OFF")
+		var title_text:String = Global.input_hints.text("PLATFORM_SHAKE_OFF")
 		draw_string(font, Vector2(text_x, 26.0), title_text, HORIZONTAL_ALIGNMENT_LEFT, 290, 16, Color(1.0, 0.92, 0.5, 1.0))
 		
 		# Status instruction text

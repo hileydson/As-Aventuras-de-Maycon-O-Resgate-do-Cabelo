@@ -70,7 +70,7 @@ func build_interface() -> void:
 	normal_button.pressed.connect(select_difficulty.bind(Global.DIFFICULTY_NORMAL))
 
 	var hint = Label.new()
-	hint.text = tr("DIFFICULTY_SELECTION_HINT")
+	Global.input_hints.bind_text(hint, "DIFFICULTY_SELECTION_HINT")
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.add_theme_color_override("font_color", Color("9fb3c8"))
 	content.add_child(hint)

@@ -68,7 +68,7 @@ func build_interface() -> void:
 	strategic_button.pressed.connect(select_mode.bind(Global.battle_mode_strategic))
 
 	var hint = Label.new()
-	hint.text = tr("BATTLE_MODE_HINT")
+	Global.input_hints.bind_text(hint, "BATTLE_MODE_HINT")
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.add_theme_color_override("font_color", Color("9fb3c8"))
 	content.add_child(hint)

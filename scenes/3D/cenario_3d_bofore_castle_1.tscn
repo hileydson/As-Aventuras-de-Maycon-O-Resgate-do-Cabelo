@@ -177,16 +177,19 @@ text = "climb the stairs?"
 position = Vector2(981.99994, 571)
 scale = Vector2(0.51, 0.52)
 texture = ExtResource("6_0du57")
+metadata/input_hint_device = "kbm"
 
 [node name="button_A" type="Sprite2D" parent="escada/prompt" unique_id=49380446]
 position = Vector2(1044, 588)
 scale = Vector2(0.65, 0.62)
 texture = ExtResource("5_5yycw")
+metadata/input_hint_device = "pad"
 
 [node name="BlankWhiteSuperWide" type="Sprite2D" parent="escada/prompt" unique_id=1335622023]
 position = Vector2(983.99994, 610)
 scale = Vector2(0.59, 0.58)
 texture = ExtResource("8_0i7ck")
+metadata/input_hint_device = "kbm"
 
 [node name="Ladder" type="MeshInstance3D" parent="escada" unique_id=2072898695]
 transform = Transform3D(0.9970003, -0.077397704, 0, 0.077397704, 0.9970003, 0, 0, 0, 0.46697748, -15.012909, 0.29013252, -22.89187)

@@ -1,5 +1,10 @@
 extends Node
 
+# O Global apenas expõe o gerenciador visual; a detecção permanece na UI.
+var input_hints:Node:
+	get:
+		return get_node("/root/InputHints")
+
 const language_pt_br = "pt"
 const language_en = "en"
 const language_es = "es"

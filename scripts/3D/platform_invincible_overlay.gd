@@ -115,9 +115,10 @@ func _build_ui() -> void:
 	special_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	special_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	prompt_row.add_child(special_icon)
+	Global.input_hints.bind_texture(special_icon, load("res://assets/novas_imagens/buttons/Q_Key_Light.png"), special_icon.texture)
 
 	special_prompt_label = Label.new()
-	special_prompt_label.text = tr("PLATFORM_SPECIAL_PROMPT")
+	Global.input_hints.bind_text(special_prompt_label, "PLATFORM_SPECIAL_PROMPT")
 	special_prompt_label.add_theme_font_size_override("font_size", 14)
 	special_prompt_label.add_theme_color_override("font_color", Color("fff6d0"))
 	special_prompt_label.mouse_filter = Control.MOUSE_FILTER_IGNORE

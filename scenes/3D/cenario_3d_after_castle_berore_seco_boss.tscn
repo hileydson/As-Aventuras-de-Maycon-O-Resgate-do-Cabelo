@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://cemapjdo6u5wl"]
+[gd_scene load_steps=41 format=3 uid="uid://cemapjdo6u5wl"]
 
 [ext_resource type="AudioStream" uid="uid://b538p200u57lv" path="res://assets/novos_audios/final_cabelo_mistery.mp3" id="1_12fbm"]
 [ext_resource type="Texture2D" uid="uid://c58hvspwv25xf" path="res://assets/novas_imagens/3d_cenarios/textura_chao_caminho_das_pegras.png" id="1_34rwn"]
@@ -19,6 +19,9 @@
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="14_v64fo"]
 [ext_resource type="Texture2D" uid="uid://c71odhu3buit" path="res://assets/novas_imagens/3d_battle/arma_3d.png" id="14_whkre"]
 [ext_resource type="ArrayMesh" uid="uid://c1f464or8gmd0" path="res://assets/modelo_3d/maycon/maycon_base_3d.obj" id="19_oyv4m"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_caminho_das_pedras"]
+font_size = 128
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_whkre"]
 
@@ -858,12 +861,14 @@ texture = ExtResource("14_whkre")
 
 [node name="caminho_das_pedras" type="Label" parent="."]
 visible = false
+texture_filter = 2
 offset_left = 267.0
-offset_top = 168.00002
-offset_right = 385.0
-offset_bottom = 191.00002
-scale = Vector2(4.0000005, 4.6400003)
-text = "        Rocks Path"
+offset_top = 168.0
+offset_right = 1367.0
+offset_bottom = 352.0
+scale = Vector2(0.5, 0.58)
+text = "Rua das Pedras"
+label_settings = SubResource("LabelSettings_caminho_das_pedras")
 
 [node name="you_died" type="Label" parent="."]
 visible = false

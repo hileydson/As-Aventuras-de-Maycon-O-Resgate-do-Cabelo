@@ -2153,7 +2153,7 @@ func _create_action_row(action_text:String, label_color:Color, key_tex:Texture2D
 			tr_key.stretch_mode = TextureRect.STRETCH_SCALE
 			space_ctrl.add_child(tr_key)
 			var space_lbl = Label.new()
-			space_lbl.text = "SPACE"
+			space_lbl.text = tr("SECO_INVADER_SPACE_KEY")
 			space_lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 			space_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			space_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -2161,6 +2161,7 @@ func _create_action_row(action_text:String, label_color:Color, key_tex:Texture2D
 			space_lbl.add_theme_color_override("font_color", Color(0.15, 0.15, 0.2, 0.9))
 			space_ctrl.add_child(space_lbl)
 			hbox.add_child(space_ctrl)
+			Global.input_hints.bind_visibility(space_ctrl, false)
 		else:
 			var tr_key = TextureRect.new()
 			tr_key.texture = key_tex
@@ -2169,6 +2170,7 @@ func _create_action_row(action_text:String, label_color:Color, key_tex:Texture2D
 			tr_key.custom_minimum_size = Vector2(22, 22)
 			tr_key.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			hbox.add_child(tr_key)
+			Global.input_hints.bind_visibility(tr_key, false)
 
 	if mouse_tex:
 		var tr_mouse = TextureRect.new()
@@ -2178,6 +2180,7 @@ func _create_action_row(action_text:String, label_color:Color, key_tex:Texture2D
 		tr_mouse.custom_minimum_size = Vector2(20, 20)
 		tr_mouse.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		hbox.add_child(tr_mouse)
+		Global.input_hints.bind_visibility(tr_mouse, false)
 
 	var div = Label.new()
 	div.text = "/"
@@ -2185,6 +2188,7 @@ func _create_action_row(action_text:String, label_color:Color, key_tex:Texture2D
 	div.add_theme_color_override("font_color", Color(1, 1, 1, 0.35))
 	div.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	hbox.add_child(div)
+	div.visible = false
 
 	if pad_tex:
 		var tr_pad = TextureRect.new()
@@ -2194,6 +2198,7 @@ func _create_action_row(action_text:String, label_color:Color, key_tex:Texture2D
 		tr_pad.custom_minimum_size = Vector2(22, 22)
 		tr_pad.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		hbox.add_child(tr_pad)
+		Global.input_hints.bind_visibility(tr_pad, true)
 
 	row.add_child(hbox)
 	return row

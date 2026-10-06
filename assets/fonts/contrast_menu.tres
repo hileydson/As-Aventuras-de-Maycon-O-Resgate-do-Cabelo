@@ -1,6 +1,6 @@
-[gd_resource type="FontVariation" load_steps=2 format=3]
+[gd_resource type="FontVariation" format=3 uid="uid://d6287i7tra37"]
 
-[ext_resource type="FontFile" path="res://assets/fonts/contrast_readable.ttf" id="1"]
+[ext_resource type="FontFile" uid="uid://n06lrwaa7vh6" path="res://assets/fonts/contrast_readable.ttf" id="1"]
 
 [resource]
 base_font = ExtResource("1")

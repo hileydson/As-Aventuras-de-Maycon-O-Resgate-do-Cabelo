@@ -17,6 +17,7 @@ var ivory := Color("e0dac9")
 var blood_stains:Array[Dictionary] = []
 
 func _ready() -> void:
+	Global.input_hints.device_changed.connect(queue_redraw)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
@@ -81,7 +82,7 @@ func draw_flasks(unit:float) -> void:
 	var glyph := 36.0*unit
 	var baseline := 56*unit
 	var button := Rect2(size.x-36*unit-glyph,baseline-glyph*.5,glyph,glyph)
-	var texture:Texture2D = PAD_HEAL_TEXTURE if battle.using_gamepad else KEY_HEAL_TEXTURE
+	var texture:Texture2D = PAD_HEAL_TEXTURE if Global.input_hints.using_gamepad else KEY_HEAL_TEXTURE
 	draw_texture_rect(texture,button,false,Color(1,1,1,.92 if battle.flasks>0 else .34))
 	var start := button.position.x-12*unit-slot*float(total)
 	for i in total:

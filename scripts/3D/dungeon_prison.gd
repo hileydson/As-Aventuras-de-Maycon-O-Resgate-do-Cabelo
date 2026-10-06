@@ -989,7 +989,7 @@ func build_hud() -> void:
 	help_label = make_label(17, Color(0.65, 0.72, 0.7), HORIZONTAL_ALIGNMENT_LEFT)
 	help_label.position = Vector2(28, 58)
 	help_label.size = Vector2(940, 35)
-	help_label.text = tr("DUNGEON_MOVE_HINT")
+	Global.input_hints.bind_text(help_label, "DUNGEON_MOVE_HINT")
 	help_label.visible = false
 	hud.add_child(help_label)
 	flashlight_label = make_label(18, Color(0.7, 0.84, 0.95), HORIZONTAL_ALIGNMENT_RIGHT)
@@ -1039,16 +1039,18 @@ func build_hud() -> void:
 	sprint_rb_icon = Sprite2D.new()
 	sprint_rb_icon.texture = load("res://assets/novas_imagens/buttons/rb_xbox.png")
 	sprint_rb_icon.scale = Vector2(0.44, 0.40)
-	sprint_rb_icon.position = Vector2(30, 26)
+	sprint_rb_icon.position = Vector2(98, 26)
 	sprint_rb_icon.rotation = 0.22
 	sprint_rb_icon.self_modulate = Color(1.0, 1.0, 1.0, 0.84)
 	sprint_hud.add_child(sprint_rb_icon)
+	Global.input_hints.bind_visibility(sprint_rb_icon, true)
 	
 	var slash_sep := make_label(16, Color(0.65, 0.72, 0.8, 0.8), HORIZONTAL_ALIGNMENT_CENTER)
 	slash_sep.position = Vector2(58, 12)
 	slash_sep.size = Vector2(16, 28)
 	slash_sep.text = "/"
 	sprint_hud.add_child(slash_sep)
+	slash_sep.visible = false
 	
 	sprint_shift_icon = Sprite2D.new()
 	sprint_shift_icon.texture = load("res://assets/novas_imagens/buttons/shift_dark.png")
@@ -1056,6 +1058,7 @@ func build_hud() -> void:
 	sprint_shift_icon.position = Vector2(98, 26)
 	sprint_shift_icon.self_modulate = Color(1.0, 1.0, 1.0, 0.61)
 	sprint_hud.add_child(sprint_shift_icon)
+	Global.input_hints.bind_visibility(sprint_shift_icon, false)
 	
 	var sprint_title := make_label(16, Color(0.9, 0.94, 0.98, 0.95), HORIZONTAL_ALIGNMENT_LEFT)
 	sprint_title.position = Vector2(132, 14)
@@ -2055,7 +2058,7 @@ func update_interaction() -> void:
 			
 	prompt_label.visible = prompt_key != ""
 	if prompt_key != "":
-		prompt_label.text = tr(prompt_key)
+		Global.input_hints.bind_text(prompt_label, prompt_key)
 
 func on_interact_pressed() -> void:
 	if sequence_running:

@@ -339,8 +339,14 @@ func set_cigarro_3d_model()->void:
 	cigarro_perfect_animations.visible = true
 	
 
+func _refresh_input_hints() -> void:
+	for node in $hud_canvas.find_children("*", "", true, false):
+		if node.has_meta("input_hint_device"):
+			Global.input_hints.bind_visibility(node, node.get_meta("input_hint_device") == "pad", device_id)
+
 func set_device_id(id: int):
 	device_id = id
+	_refresh_input_hints()
 	print("Maycon configurado para o controle: ", device_id) # Isso vai confirmar no console
 	
 func add_bullets_to_gun(number:int):
@@ -475,6 +481,7 @@ func change_sprite_two_player()->void:
 	set_cigarro_3d_model()
 
 func _ready():
+	_refresh_input_hints()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	motorcycle_gun_rest_position = metralhadora_moto.position
 	motorcycle_bike_rest_position = motorcycle_sprite.position

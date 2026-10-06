@@ -11,7 +11,7 @@ const KEY_W_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/W_Ke
 const KEY_SPACE_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Blank_White_Super_Wide.png")
 const KEY_SHIFT_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/shift.png")
 const KEY_ENTER_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/Blank_White_Enter.png")
-const KEY_DIRECTIONS_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/ButtonIcon-Switch-Dpad.png")
+const KEY_DIRECTIONS_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/WASD_Keys_Light.svg")
 const MOUSE_SHOOT_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/mouse_trigger.png")
 const MOUSE_ALT_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/mouse_right_click.png")
 const PAD_A_TEXTURE:Texture2D = preload("res://assets/novas_imagens/buttons/360_A.png")
@@ -115,6 +115,8 @@ static func add_header(parent:Control, title_text:String, hint_text:String, left
 	hint.position = Vector2(left, 140.0)
 	hint.size = Vector2(440.0, 30.0)
 	hint.text = hint_text
+	if hint_text == TranslationServer.translate("MENU_PAUSE_HINT"):
+		Global.input_hints.bind_text(hint, "MENU_PAUSE_HINT")
 	style_hint(hint)
 	parent.add_child(hint)
 	return {"title": title, "rule": rule, "hint": hint}
@@ -224,7 +226,7 @@ static func add_controls_card(parent:Control, profile:String, position:Vector2 =
 	var controls_card := controls_column.get_parent() as PanelContainer
 	controls_card.name = "PauseControlsCard"
 	var controls_title := Label.new()
-	controls_title.text = TranslationServer.translate("MENU_CONTROLLER").to_upper()
+	Global.input_hints.bind_text(controls_title, "INPUT_HINT_DEVICE_NAME")
 	style_hint(controls_title, 17)
 	controls_title.add_theme_color_override("font_color", Color(0.75, 0.91, 0.92))
 	controls_column.add_child(controls_title)
@@ -384,12 +386,13 @@ static func add_action_row(parent:VBoxContainer, action_text:String, key_texture
 	divider.add_theme_font_size_override("font_size", 11)
 	divider.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.36))
 	content.add_child(divider)
-	_add_input_icon(content, pad_texture, Vector2(24.0, 24.0))
+	divider.visible = false
+	_add_input_icon(content, pad_texture, Vector2(24.0, 24.0), true)
 	if pad_extra_texture:
-		_add_input_icon(content, pad_extra_texture, Vector2(24.0, 24.0))
+		_add_input_icon(content, pad_extra_texture, Vector2(24.0, 24.0), true)
 
 
-static func _add_input_icon(parent:HBoxContainer, texture:Texture2D, minimum_size:Vector2) -> void:
+static func _add_input_icon(parent:HBoxContainer, texture:Texture2D, minimum_size:Vector2, gamepad:bool = false) -> void:
 	if not texture:
 		return
 	var icon := TextureRect.new()
@@ -401,6 +404,17 @@ static func _add_input_icon(parent:HBoxContainer, texture:Texture2D, minimum_siz
 	icon.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(icon)
+	Global.input_hints.bind_visibility(icon, gamepad)
+	if texture == KEY_SPACE_TEXTURE:
+		var key_name := Label.new()
+		key_name.text = TranslationServer.translate("SECO_INVADER_SPACE_KEY")
+		key_name.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		key_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		key_name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		key_name.add_theme_font_size_override("font_size", 7)
+		key_name.add_theme_color_override("font_color", Color("404040"))
+		key_name.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon.add_child(key_name)
 
 
 static func animate_open(control:Control, menu:Control = null) -> void:

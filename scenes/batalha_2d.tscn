@@ -1546,16 +1546,19 @@ visible = false
 position = Vector2(476.18665, 284.4588)
 scale = Vector2(0.46373326, 0.41864932)
 texture = ExtResource("3_0sh2x")
+metadata/input_hint_device = "kbm"
 
 [node name="BlankWhiteEnter" type="Sprite2D" parent="Cenario de batalha/explicacao_batalha/ok_buttons"]
 position = Vector2(475.18658, 240.4588)
 scale = Vector2(0.41986665, 0.46917605)
 texture = ExtResource("4_h2e1h")
+metadata/input_hint_device = "kbm"
 
 [node name="360A" type="Sprite2D" parent="Cenario de batalha/explicacao_batalha/ok_buttons"]
 position = Vector2(527, 264.5)
 scale = Vector2(0.46999997, 0.5124846)
 texture = ExtResource("5_yn2t1")
+metadata/input_hint_device = "pad"
 
 [node name="fade_interno_explicacao" parent="Cenario de batalha/explicacao_batalha" instance=ExtResource("6_h2e1h")]
 

@@ -1711,11 +1711,13 @@ position = Vector2(1117.5, 528.6931)
 rotation = -0.16053383
 scale = Vector2(0.37234885, 0.39948073)
 texture = ExtResource("19_moto_a")
+metadata/input_hint_device = "pad"
 
 [node name="MouseTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=2027830176]
 position = Vector2(1086, 527.9584)
 scale = Vector2(0.31000003, 0.34530595)
 texture = ExtResource("19_moto_space")
+metadata/input_hint_device = "kbm"
 
 [node name="PneuMoto" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=220419637]
 modulate = Color(0.5167645, 0.5167645, 0.5167645, 1)
@@ -1732,12 +1734,14 @@ texture = ExtResource("17_csxxf")
 position = Vector2(1084, 637)
 scale = Vector2(0.33, 0.35)
 texture = ExtResource("18_fbcau")
+metadata/input_hint_device = "kbm"
 
 [node name="R2Re" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=901762359]
 position = Vector2(1119.0001, 638)
 rotation = 0.18635033
 scale = Vector2(0.41499877, 0.39499992)
 texture = ExtResource("19_moto_b")
+metadata/input_hint_device = "pad"
 
 [node name="ChaseShootButtons" type="Node2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons" unique_id=439923038]
 visible = false
@@ -1746,11 +1750,13 @@ visible = false
 position = Vector2(1117.5, 468)
 scale = Vector2(0.37234885, 0.39948073)
 texture = ExtResource("16_jvhfj")
+metadata/input_hint_device = "pad"
 
 [node name="MouseClick" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_moto/hud_moto_buttons/ChaseShootButtons" unique_id=370855284]
 position = Vector2(1086, 468)
 scale = Vector2(0.31000003, 0.34530595)
 texture = ExtResource("17_xpqs8")
+metadata/input_hint_device = "kbm"
 
 [node name="control_gun" type="Control" parent="CharacterBody3D/hud_canvas" unique_id=908181743]
 visible = false
@@ -1829,11 +1835,13 @@ position = Vector2(1085, 569)
 rotation = -0.16053383
 scale = Vector2(0.37234885, 0.39948073)
 texture = ExtResource("16_jvhfj")
+metadata/input_hint_device = "pad"
 
 [node name="MouseTrigger" type="Sprite2D" parent="CharacterBody3D/hud_canvas/control_gun/hud_gun_buttons" unique_id=1578668518]
 position = Vector2(1053.5, 568.26526)
 scale = Vector2(0.31000003, 0.34530595)
 texture = ExtResource("17_xpqs8")
+metadata/input_hint_device = "kbm"
 
 [node name="maycon_hp" type="Node2D" parent="CharacterBody3D/hud_canvas" unique_id=2047809680]
 position = Vector2(-22, 151)
@@ -1880,12 +1888,14 @@ position = Vector2(66.66665, 569.7366)
 rotation = 0.23999959
 scale = Vector2(0.5152658, 0.47644296)
 texture = ExtResource("31_mwhgs")
+metadata/input_hint_device = "pad"
 
 [node name="ShiftDark" type="Sprite2D" parent="CharacterBody3D/hud_canvas/maycon_hp" unique_id=514321162]
 self_modulate = Color(1, 1, 1, 0.60800004)
 position = Vector2(129.16667, 571.6289)
 scale = Vector2(0.62659717, 0.53784496)
 texture = ExtResource("32_01a3d")
+metadata/input_hint_device = "kbm"
 
 [node name="gun_position_2_players" type="Marker2D" parent="CharacterBody3D/hud_canvas" unique_id=1943724276]
 position = Vector2(361, 22)

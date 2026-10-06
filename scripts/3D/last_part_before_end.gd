@@ -97,6 +97,7 @@ var city_intro_finished:bool = false
 var city_minimap_pause_hidden:bool = false
 
 func _ready() -> void:
+	$cidade_perdida.text = tr("LABEL_LOST_CITY")
 	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
 	player.motorcycle_chase_died.connect(restart_chase_after_death)
 	player.get_node("chuva").process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -504,6 +505,7 @@ func print_enemy_debug_transform() -> void:
 	enemy_debug_status.text = "Valores dos inimigos impressos.\nTamanho: %s\nY do grupo: %.4f" % [fellas.scale, fellas.global_position.y]
 
 func set_story_stage(new_stage:int) -> void:
+	objective_label.remove_meta("input_hint_text")
 	stage = new_stage
 	informant.visible = true
 	fellas.visible = stage >= STAGE_FELLAS && stage != STAGE_CHASE
@@ -521,7 +523,7 @@ func set_story_stage(new_stage:int) -> void:
 		STAGE_FELLAS:
 			objective_label.text = tr("OBJECTIVE_FIND_FELLAS")
 		STAGE_DISMOUNT:
-			objective_label.text = tr("OBJECTIVE_DISMOUNT")
+			Global.input_hints.bind_text(objective_label, "OBJECTIVE_DISMOUNT")
 		STAGE_FIGHT:
 			objective_label.text = tr("OBJECTIVE_FIGHT_FELLAS")
 		STAGE_SURRENDER:

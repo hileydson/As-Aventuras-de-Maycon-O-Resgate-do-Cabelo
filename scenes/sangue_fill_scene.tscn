@@ -1247,16 +1247,19 @@ scale = Vector2(2.0800023, 2.440001)
 position = Vector2(-583.645, 91.7475)
 scale = Vector2(0.30709994, 0.24069993)
 texture = ExtResource("4_8n6oc")
+metadata/input_hint_device = "kbm"
 
 [node name="BlankWhiteEnter" type="Sprite2D" parent="sangue_fill/buttons"]
 position = Vector2(-584.05994, 73.4875)
 scale = Vector2(0.27804998, 0.26975)
 texture = ExtResource("5_4h8og")
+metadata/input_hint_device = "kbm"
 
 [node name="360A" type="Sprite2D" parent="sangue_fill/buttons"]
 position = Vector2(-554, 82)
 scale = Vector2(0.29749992, 0.27750003)
 texture = ExtResource("6_hh2fn")
+metadata/input_hint_device = "pad"
 
 [connection signal="animation_changed" from="sangue_fill/sangue_sprite" to="sangue_fill/sangue_sprite" method="_on_animation_changed"]
 [connection signal="animation_finished" from="sangue_fill/sangue_sprite" to="sangue_fill/sangue_sprite" method="_on_animation_finished"]

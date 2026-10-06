@@ -440,9 +440,13 @@ class SpecialOverlay:
 		var tangent = Vector2.from_angle(arrow_angle + PI * 0.5)
 		draw_colored_polygon(PackedVector2Array([arrow_tip + tangent * 9.0, arrow_tip - tangent * 9.0, arrow_tip + Vector2.from_angle(arrow_angle) * 14.0]), Color(0.35, 0.88, 1.0, 0.96))
 		var knob_position = stick_center + Vector2.from_angle(spin) * 23.0
-		draw_circle(knob_position, 14.0, Color(0.16, 0.2, 0.3, 1.0))
-		draw_circle(knob_position, 8.0, hint_color)
-		draw_string(font, Vector2(615, 516), analog_hint_text, HORIZONTAL_ALIGNMENT_CENTER, 245, 24, hint_color)
+		if Global.input_hints.using_gamepad:
+			draw_circle(knob_position, 14.0, Color(0.16, 0.2, 0.3, 1.0))
+			draw_circle(knob_position, 8.0, hint_color)
+		else:
+			var keys:Texture2D = preload("res://assets/novas_imagens/buttons/WASD_Keys_Light.svg")
+			draw_texture_rect(keys, Rect2(stick_center - Vector2(23, 23), Vector2(46, 46)), false, hint_color)
+		draw_string(font, Vector2(615, 516), Global.input_hints.text("POWER_ROTATE_ANALOG"), HORIZONTAL_ALIGNMENT_CENTER, 245, 24, hint_color)
 		draw_string(font, Vector2(615, 544), tr("POWER_PENTAGRAM_FORCE"), HORIZONTAL_ALIGNMENT_CENTER, 245, 15, Color(0.76, 0.9, 1.0, 0.92))
 		draw_rect(Rect2(630, 556, 215, 13), Color(0.015, 0.02, 0.05, 0.9), true)
 		draw_rect(Rect2(633, 559, 209.0 * energy, 7), Color(1.0, 0.06, 0.3, 0.98), true)
@@ -1151,18 +1155,19 @@ func start_pentagram_force() -> void:
 	pentagram_last_stick = Vector2.ZERO
 	pentagram_input_activity = 0.0
 	var portrait = load("res://assets/novas_imagens/3d_cenarios/maycon_on_3d/maycon_icon.png") as Texture2D
-	special_overlay.call("start_pentagram", portrait, tr("POWER_ROTATE_ANALOG"))
+	special_overlay.call("start_pentagram", portrait, Global.input_hints.text("POWER_ROTATE_ANALOG"))
 	player.play("attack_punch")
 	shake(8.0, 0.5)
 
 	await get_tree().create_timer(1.14, true, false, true).timeout
 	pentagram_rotation_enabled = true
-	status_label.text = tr("POWER_ROTATE_ANALOG_EXCL")
+	status_label.text = Global.input_hints.text("POWER_ROTATE_ANALOG_EXCL")
 	var charge_elapsed = 0.0
 	var applied_pulses = 0
 	while charge_elapsed < PENTAGRAM_CHARGE_DURATION:
 		if !is_inside_tree():
 			return
+		status_label.text = Global.input_hints.text("POWER_ROTATE_ANALOG_EXCL")
 		await get_tree().create_timer(0.1, true, false, true).timeout
 		charge_elapsed += 0.1
 		if !pentagram_is_near_end && (charge_elapsed >= (PENTAGRAM_CHARGE_DURATION - 1.4) || pentagram_charge >= 0.96):

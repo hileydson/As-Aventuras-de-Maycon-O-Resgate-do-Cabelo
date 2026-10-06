@@ -21,6 +21,9 @@
 [ext_resource type="AudioStream" uid="uid://cgbaylimr110j" path="res://assets/novos_audios/cidade_intro_wind.mp3" id="13_ut78q"]
 [ext_resource type="Texture2D" uid="uid://b35jq8goxova5" path="res://assets/novas_imagens/npcs/tony.png" id="14_n602u"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_cidade_perdida"]
+font_size = 128
+
 [sub_resource type="Environment" id="Environment_nhhbp"]
 background_color = Color(0.61, 0.48098502, 0.4453, 1)
 background_energy_multiplier = 0.4
@@ -727,12 +730,14 @@ pitch_scale = 0.71
 
 [node name="cidade_perdida" type="Label" parent="." unique_id=463533787]
 visible = false
+texture_filter = 2
 offset_left = 346.0
 offset_top = 208.0
-offset_right = 463.0
-offset_bottom = 231.0
-scale = Vector2(3.76, 3.16)
+offset_right = 1446.0
+offset_bottom = 392.0
+scale = Vector2(0.47, 0.395)
 text = "Cidade Perdida"
+label_settings = SubResource("LabelSettings_cidade_perdida")
 
 [node name="cutscene" type="Node3D" parent="." unique_id=1404409369]
 

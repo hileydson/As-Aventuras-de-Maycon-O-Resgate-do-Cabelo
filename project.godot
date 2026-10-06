@@ -30,6 +30,7 @@ DefaultTransitionFadeOut="res://scenes/default_transition_fade_out.tscn"
 GameSongs="*res://scenes/game_songs.tscn"
 BattleShatteredScreenEffect="*res://scenes/battle_shattered_screen_effect.tscn"
 _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
+InputHints="*res://scripts/ui/input_hints.gd"
 
 [display]
 
