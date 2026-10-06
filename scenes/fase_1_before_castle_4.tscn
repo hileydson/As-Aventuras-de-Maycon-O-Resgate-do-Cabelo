@@ -371,10 +371,10 @@ normal = Vector2(1, 0)
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_vi3cd"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vi3cd"]
-size = Vector2(548, 178)
+size = Vector2(548, 638)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_agc3r"]
-size = Vector2(1420, 178)
+size = Vector2(1420, 625.73035)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ytiji"]
 size = Vector2(440, 178)
@@ -757,13 +757,13 @@ physics_material_override = SubResource("PhysicsMaterial_vi3cd")
 process_mode = 4
 light_mask = 524294
 visibility_layer = 524294
-position = Vector2(281, 1159)
+position = Vector2(281, 1389)
 shape = SubResource("RectangleShape2D_vi3cd")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=1148752434]
 light_mask = 524294
 visibility_layer = 524294
-position = Vector2(1557, 1164.2697)
+position = Vector2(1557, 1388.1348)
 shape = SubResource("RectangleShape2D_agc3r")
 
 [node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D" unique_id=605220672]

@@ -193,14 +193,14 @@ distance = -60.52633
 normal = Vector2(1, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
-size = Vector2(398, 178)
+size = Vector2(398, 786)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wrggl"]
 radius = 22.89917
 height = 622.1897
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
-size = Vector2(1387.625, 178)
+size = Vector2(1387.625, 770)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t7fus"]
 atlas = ExtResource("7_t30a4")
@@ -451,7 +451,7 @@ collision_mask = 524291
 process_mode = 4
 light_mask = 524289
 visibility_layer = 524289
-position = Vector2(355, 1073)
+position = Vector2(355, 1377)
 shape = SubResource("RectangleShape2D_hnmna")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D" unique_id=1467932170]
@@ -461,7 +461,7 @@ rotation = 0.75447637
 shape = SubResource("CapsuleShape2D_wrggl")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=124414147]
-position = Vector2(1561, 1072)
+position = Vector2(1561, 1368)
 shape = SubResource("RectangleShape2D_p1t4m")
 
 [node name="battle" parent="." unique_id=1357326329 instance=ExtResource("5_7cf5f")]

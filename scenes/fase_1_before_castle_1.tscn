@@ -530,14 +530,17 @@ distance = 0.89923096
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_7je0d"]
 distance = -60.52633
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_isw4w"]
+size = Vector2(548, 773)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hnmna"]
-size = Vector2(548, 178)
+size = Vector2(548, 837)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
-size = Vector2(317, 178)
+size = Vector2(317, 815)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2rkwj"]
-size = Vector2(339, 178)
+size = Vector2(339, 789)
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_36c4s"]
 normal = Vector2(1, 0)
@@ -825,11 +828,11 @@ scale = Vector2(1, 0.91999996)
 stream = ExtResource("15_avl2m")
 
 [node name="label_stage_1" type="Label" parent="Fase1BeforeCastle1/node2d_stage_1_label" unique_id=1902917278]
+texture_filter = 2
 offset_left = -253.0
 offset_top = -325.0
 offset_right = 936.6907
 offset_bottom = -141.0
-texture_filter = 2
 scale = Vector2(0.97, 0.8750002)
 text = " Olindão's World"
 label_settings = SubResource("LabelSettings_jph6d")
@@ -877,26 +880,26 @@ collision_mask = 524291
 process_mode = 4
 light_mask = 524294
 visibility_layer = 524294
-position = Vector2(278, 1138)
-shape = SubResource("RectangleShape2D_hnmna")
+position = Vector2(278, 1435.5)
+shape = SubResource("RectangleShape2D_isw4w")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D" unique_id=1263496586]
 process_mode = 4
 light_mask = 524294
 visibility_layer = 524294
-position = Vector2(1997, 1140)
+position = Vector2(1997, 1469.5)
 shape = SubResource("RectangleShape2D_hnmna")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=1763876413]
 light_mask = 524294
 visibility_layer = 524294
-position = Vector2(1013, 1138)
+position = Vector2(1013, 1456.5)
 shape = SubResource("RectangleShape2D_p1t4m")
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D" unique_id=215634162]
 light_mask = 524294
 visibility_layer = 524294
-position = Vector2(3001.5, 1136)
+position = Vector2(3001.5, 1441.5)
 shape = SubResource("RectangleShape2D_2rkwj")
 
 [node name="CollisionShape2D5" type="CollisionShape2D" parent="StaticBody2D" unique_id=482941422]
@@ -1116,7 +1119,7 @@ autowrap_mode = 2
 [node name="tutorial_3" type="Marker2D" parent="." unique_id=2034190563]
 position = Vector2(1651, 830)
 
-[node name="Hint" type="Label" parent="tutorial_3"]
+[node name="Hint" type="Label" parent="tutorial_3" unique_id=1017662238]
 texture_filter = 2
 offset_left = -310.0
 offset_top = -45.0

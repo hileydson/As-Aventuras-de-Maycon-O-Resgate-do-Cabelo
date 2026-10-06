@@ -163,16 +163,16 @@ a = Vector2(0, -40.625)
 b = Vector2(0.2941177, 47.61029)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_54a10"]
-size = Vector2(533, 178)
+size = Vector2(533, 765)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nulh8"]
-size = Vector2(302, 178)
+size = Vector2(302, 754)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
-size = Vector2(317, 178)
+size = Vector2(317, 761)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6v7in"]
-size = Vector2(96.12341, 139.34717)
+size = Vector2(694.5603, 139.34717)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nulh8"]
 height = 294.083
@@ -537,20 +537,20 @@ collision_mask = 524291
 process_mode = 4
 light_mask = 524289
 visibility_layer = 524289
-position = Vector2(285.5, 1138)
+position = Vector2(285.5, 1431.5)
 shape = SubResource("RectangleShape2D_54a10")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D" unique_id=1493331908]
 process_mode = 4
-position = Vector2(1874, 1140)
+position = Vector2(1874, 1428)
 shape = SubResource("RectangleShape2D_nulh8")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=553754250]
-position = Vector2(1013, 1138)
+position = Vector2(1013, 1429.5)
 shape = SubResource("RectangleShape2D_p1t4m")
 
 [node name="CollisionShape2D6" type="CollisionShape2D" parent="StaticBody2D" unique_id=1702282372]
-position = Vector2(2343.0002, 1091.0001)
+position = Vector2(2352.44, 1390.0696)
 rotation = -1.6023498
 shape = SubResource("RectangleShape2D_6v7in")
 

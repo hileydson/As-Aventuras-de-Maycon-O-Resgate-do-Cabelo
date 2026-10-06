@@ -171,7 +171,7 @@ distance = -60.52633
 normal = Vector2(1, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1t4m"]
-size = Vector2(1871, 178)
+size = Vector2(1881, 178)
 
 [node name="castelo_no_fire_2" type="Node2D" unique_id=1432182111]
 process_mode = 1
@@ -302,7 +302,7 @@ collision_layer = 524291
 collision_mask = 524291
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=1783814099]
-position = Vector2(1078.5, 1072)
+position = Vector2(1083.5, 1072)
 shape = SubResource("RectangleShape2D_p1t4m")
 
 [node name="battle" parent="." unique_id=268168074 instance=ExtResource("6_44bvi")]
