@@ -49,6 +49,9 @@ var realtime_return_position_valid:bool = false
 var realtime_restore_pending:bool = false
 var realtime_restore_frames:int = 0
 var realtime_controls_hint_seen:bool = false
+var stage_1_controls_hint_seen:bool = false
+var stage_1_title_seen:bool = false
+var stage_1_session_boxes:Dictionary = {}
 var last_fase = "fase_1"
 var block_pause_before_prologo = false
 #var before_prologo:bool = false #TESTE - correto eh TRUE
@@ -368,6 +371,8 @@ func save_to_player_savegame() -> void:
 			var data = JSON.parse_string(json_text)
 			if data is Dictionary:
 				data["game_events"] = game_events.duplicate()
+				data["stage_1_controls_hint_seen"] = stage_1_controls_hint_seen
+				data["stage_1_title_seen"] = stage_1_title_seen
 				data["aim_assist_strength"] = aim_assist_strength
 				data["difficulty"] = difficulty
 				data["default_language"] = default_language
@@ -536,6 +541,8 @@ func _process(_delta: float) -> void:
 	restore_realtime_player_position()
 
 func reset_default_values()->void:
+	stage_1_controls_hint_seen = false
+	stage_1_title_seen = false
 	debug_dungeon_invincible = false
 	debug_lips_um_golpe = false
 	back_to_main_camera = false
@@ -635,6 +642,8 @@ func save_progress(fase:String)->void:
 	save_array["default_language"] = default_language
 	save_array["maycon_itens"] = maycon_itens
 	save_array["game_events"] = game_events
+	save_array["stage_1_controls_hint_seen"] = stage_1_controls_hint_seen
+	save_array["stage_1_title_seen"] = stage_1_title_seen
 	save_array["inimigos_mortos"] = inimigos_mortos
 	save_array["aim_assist_strength"] = aim_assist_strength
 	save_array["graphics_settings"] = _graphics_settings_to_dict()
@@ -714,6 +723,8 @@ func load_progress(slot: int = -1)->void:
 			var json_string = file.get_as_text() 
 			file.close()
 			save_array = JSON.parse_string(json_string)
+			stage_1_controls_hint_seen = save_array.get("stage_1_controls_hint_seen", false) == true
+			stage_1_title_seen = save_array.get("stage_1_title_seen", false) == true
 			
 			if save_array.has("default_language"):
 				set_game_language(str(save_array["default_language"]), false)

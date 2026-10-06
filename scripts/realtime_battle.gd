@@ -1920,6 +1920,7 @@ func build_hud() -> void:
 	exit_label.position = Vector2(-260, 170)
 	exit_label.size = Vector2(520, 50)
 	exit_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	exit_label.add_theme_font_override("font", EMOJI_FONT.get_ui_font())
 	exit_label.add_theme_font_size_override("font_size", 30)
 	exit_label.add_theme_color_override("font_color", Color("80ed99"))
 	exit_label.visible = false

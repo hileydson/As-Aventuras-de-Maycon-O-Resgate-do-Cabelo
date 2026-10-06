@@ -613,9 +613,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8894854, 1.2420645, 21.1830
 visible = false
 offset_left = 289.0
 offset_top = 165.00002
-offset_right = 407.0
-offset_bottom = 188.00002
-scale = Vector2(4.0000005, 4.6400003)
+offset_right = 761.0
+offset_bottom = 257.00002
+texture_filter = 2
+scale = Vector2(1.0000001, 1.1600001)
+theme_override_font_sizes/font_size = 64
 text = "Pestilent passage"
 
 [node name="blackout" type="ColorRect" parent="." unique_id=1669473560]

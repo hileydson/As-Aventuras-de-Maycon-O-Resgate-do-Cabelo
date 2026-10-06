@@ -227,7 +227,7 @@ THAT DAMN SECO!","¡POR FIN MATASTE
 AL MALDITO SECO!","你终于杀死了
 该死的塞科！"
 BATTLE_YOU_WIN,VOCE VENCEU!,YOU WIN!,¡GANASTE!,你赢了！
-BATTLE_VICTORY_EXIT,VITÓRIA!  AVANCE PARA A SAÍDA  →,VICTORY!  MOVE TO THE EXIT  →,¡VICTORIA!  AVANZA HACIA LA SALIDA  →,胜利！前往出口  →
+BATTLE_VICTORY_EXIT,VITÓRIA!  AVANCE PARA A SAÍDA  ➜,VICTORY!  MOVE TO THE EXIT  ➜,¡VICTORIA!  AVANZA HACIA LA SALIDA  ➜,胜利！前往出口  ➜
 BATTLE_PATH_CLEARED,CAMINHO LIBERADO,PATH CLEARED,CAMINO DESPEJADO,通路已开启
 BATTLE_YOU_FELL,VOCÊ CAIU,YOU FELL,HAS CAÍDO,你倒下了
 BATTLE_YOU_DIED,Você morreu,You died,Has muerto,你死了
@@ -511,3 +511,8 @@ SETTINGS_DEBUG_RESET_CITY_DESC,Reseta os marcos de progresso e missões da Cidad
 PASSAGE_FIND_FUEL,Encontre combustível para a lanterna.,Find fuel for the lantern.,Encuentra combustible para la linterna.,寻找灯笼的燃料。
 PASSAGE_FIND_FIRE,Busque um ponto de fogo para acender a lanterna.,Find a fire to light the lantern.,Busca un fuego para encender la linterna.,寻找火源点亮灯笼。
 PASSAGE_FIND_EXIT,Busque a saída.,Find the exit.,Busca la salida.,寻找出口。
+
+STAGE_1_HINT_BOX,Chute ou Soco para afastar a caixa!,Kick or punch to push the box away!,¡Patea o golpea para apartar la caja!,踢或挥拳推开箱子！
+STAGE_1_HINT_JUMP,Corra e pule para alcançar o outro lado!,Run and jump to reach the other side!,¡Corre y salta para llegar al otro lado!,奔跑并跳跃到达另一边！
+CONTROLS_PAUSE_HINT,Acesse os controles pelo pause também!,You can also access the controls from the pause menu!,¡También puedes consultar los controles desde el menú de pausa!,也可以通过暂停菜单查看操作！
+STAGE_1_HINT_DOUBLE_JUMP,Alcance com o pulo duplo!,Reach it with a double jump!,¡Alcánzalo con un salto doble!,用二段跳到达那里！
