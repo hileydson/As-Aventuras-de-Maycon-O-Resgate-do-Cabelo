@@ -55,6 +55,8 @@ var realtime_restore_pending:bool = false
 var realtime_restore_frames:int = 0
 var realtime_controls_hint_seen:bool = false
 var stage_1_controls_hint_seen:bool = false
+var first_3d_controls_hint_seen:bool = false
+var stone_path_controls_hint_seen:bool = false
 var stage_1_title_seen:bool = false
 var stage_1_session_boxes:Dictionary = {}
 var last_fase = "fase_1"
@@ -377,6 +379,8 @@ func save_to_player_savegame() -> void:
 			if data is Dictionary:
 				data["game_events"] = game_events.duplicate()
 				data["stage_1_controls_hint_seen"] = stage_1_controls_hint_seen
+				data["first_3d_controls_hint_seen"] = first_3d_controls_hint_seen
+				data["stone_path_controls_hint_seen"] = stone_path_controls_hint_seen
 				data["stage_1_title_seen"] = stage_1_title_seen
 				data["aim_assist_strength"] = aim_assist_strength
 				data["difficulty"] = difficulty
@@ -547,6 +551,8 @@ func _process(_delta: float) -> void:
 
 func reset_default_values()->void:
 	stage_1_controls_hint_seen = false
+	first_3d_controls_hint_seen = false
+	stone_path_controls_hint_seen = false
 	stage_1_title_seen = false
 	debug_dungeon_invincible = false
 	debug_lips_um_golpe = false
@@ -648,6 +654,8 @@ func save_progress(fase:String)->void:
 	save_array["maycon_itens"] = maycon_itens
 	save_array["game_events"] = game_events
 	save_array["stage_1_controls_hint_seen"] = stage_1_controls_hint_seen
+	save_array["first_3d_controls_hint_seen"] = first_3d_controls_hint_seen
+	save_array["stone_path_controls_hint_seen"] = stone_path_controls_hint_seen
 	save_array["stage_1_title_seen"] = stage_1_title_seen
 	save_array["inimigos_mortos"] = inimigos_mortos
 	save_array["aim_assist_strength"] = aim_assist_strength
@@ -729,6 +737,8 @@ func load_progress(slot: int = -1)->void:
 			file.close()
 			save_array = JSON.parse_string(json_string)
 			stage_1_controls_hint_seen = save_array.get("stage_1_controls_hint_seen", false) == true
+			first_3d_controls_hint_seen = save_array.get("first_3d_controls_hint_seen", false) == true
+			stone_path_controls_hint_seen = save_array.get("stone_path_controls_hint_seen", false) == true
 			stage_1_title_seen = save_array.get("stage_1_title_seen", false) == true
 			
 			if save_array.has("default_language"):

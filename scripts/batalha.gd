@@ -235,6 +235,8 @@ func show_first_battle() -> void:
 	first_battle_explain_shown = true
 	await get_tree().create_timer(4.0).timeout
 	#fade_interno_explicacao.get_node("Transition").play("fade_in")
+	if !Global.battle_started or current_enemy == null:
+		return
 	
 	text_about_itens.text = tr("TUTORIAL_STRATEGIC_BATTLE")
 		
@@ -287,7 +289,7 @@ func _process(delta: float) -> void:
 		emit_signal("player_clicou")
 		
 	
-	if Global.battle_started && Global.game_events["first_battle"] && first_battle_explain_shown==false:
+	if Global.battle_started && current_enemy != null && Global.battle_mode != Global.battle_mode_realtime && Global.game_events.get("first_battle", false) && first_battle_explain_shown==false:
 		show_first_battle()
 	
 	control_attack_power()	

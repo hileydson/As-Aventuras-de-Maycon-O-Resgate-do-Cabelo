@@ -1,5 +1,8 @@
 extends Node3D
 
+const BATTLE_HUD_DECOR = preload("res://scripts/ui/battle_hud_decor.gd")
+const CONTROLS_INTRO = preload("res://scripts/ui/controls_intro_overlay.gd")
+const CONTROLS_INTRO_DELAY:float = 9.0
 
 @onready var arma: Area3D = $Area3D
 @onready var gun_load: AudioStreamPlayer = $GunLoad
@@ -45,6 +48,9 @@ func _ready() -> void:
 	Global.maycon_pegou_lamp_fire_3d_world = false
 	Global.maycon_pegou_arma_first_3d_battle = false
 	
+	_style_stone_path_hud()
+	_show_controls_intro()
+	
 	caminho_das_pedras.text = tr("LEVEL_STONE_PATH")
 	
 	await get_tree().create_timer(2.0).timeout
@@ -61,6 +67,29 @@ func _ready() -> void:
 	
 	await get_tree().create_timer(5.0).timeout
 	respaw.start()
+
+func _style_stone_path_hud() -> void:
+	var player := maycon_3d.get_node_or_null("CharacterBody3D")
+	if !is_instance_valid(player):
+		return
+	var hud := player.get_node_or_null("hud_canvas")
+	if !is_instance_valid(hud):
+		return
+	var decor := BATTLE_HUD_DECOR.new()
+	decor.name = "BattleHudDecor"
+	decor.player = player
+	hud.add_child(decor)
+
+func _show_controls_intro() -> void:
+	if Global.stone_path_controls_hint_seen:
+		return
+	await get_tree().create_timer(CONTROLS_INTRO_DELAY).timeout
+	if portal_transitioning or Global.players_dead_count > 0 or !is_inside_tree():
+		return
+	Global.stone_path_controls_hint_seen = true
+	var intro = CONTROLS_INTRO.new()
+	intro.profile = "first_3d"
+	add_child(intro)
 
 func maycon_died(two_players:bool)->void:
 	you_died.text = tr("BATTLE_YOU_DIED_CAPS")

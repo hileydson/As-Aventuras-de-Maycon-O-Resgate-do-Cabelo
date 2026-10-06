@@ -1,6 +1,8 @@
 extends CanvasLayer
 
 const PAUSE_VISUAL = preload("res://scripts/ui/pause_visual.gd")
+# Perfil de controles exibido no card; cada fase informa o seu antes de entrar na árvore.
+var profile: String = "2d"
 var elapsed: float = 0.0
 var prompt: Label
 var active: bool = false
@@ -20,10 +22,11 @@ func _ready() -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 24)
 	center.add_child(column)
-	var card := PAUSE_VISUAL.add_controls_card(overlay, "2d", Vector2.ZERO)
-	card.reparent(column)
-	card.custom_minimum_size = Vector2(340, 0)
-	card.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var card := PAUSE_VISUAL.add_controls_card(overlay, profile, Vector2.ZERO)
+	if is_instance_valid(card):
+		card.reparent(column)
+		card.custom_minimum_size = Vector2(340, 0)
+		card.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var pause_hint := Label.new()
 	pause_hint.name = "ControlsPauseHint"
 	pause_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

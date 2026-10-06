@@ -1,5 +1,9 @@
 extends Node3D
 
+const BATTLE_HUD_DECOR = preload("res://scripts/ui/battle_hud_decor.gd")
+const CONTROLS_INTRO = preload("res://scripts/ui/controls_intro_overlay.gd")
+const CONTROLS_INTRO_DELAY:float = 6.0
+
 @onready var arma: Area3D = $Area3D
 @onready var gun_load: AudioStreamPlayer = $GunLoad
 @onready var seco_welcome: AudioStreamPlayer = $SecoWelcome
@@ -115,6 +119,7 @@ func _ready() -> void:
 	create_outer_embers()
 	create_dungeon_floor()
 	_style_first_battle_hud()
+	_show_controls_intro()
 	
 	Global.maycon_pegou_lamp_3d_world = false
 	Global.maycon_pegou_lamp_fire_3d_world = false
@@ -134,35 +139,21 @@ func _style_first_battle_hud() -> void:
 	var hud := player.get_node_or_null("hud_canvas")
 	if !is_instance_valid(hud):
 		return
-	var gun_controls := hud.get_node_or_null("control_gun")
-	if is_instance_valid(gun_controls):
-		var gun_panel := _make_hud_panel(Rect2(1018.0, 535.0, 118.0, 68.0), Color(1.0, 0.48, 0.68))
-		gun_controls.add_child(gun_panel)
-		gun_controls.move_child(gun_panel, 0)
-	var life_hud := hud.get_node_or_null("maycon_hp")
-	if is_instance_valid(life_hud):
-		var run_panel := _make_hud_panel(Rect2(35.0, 542.0, 132.0, 58.0), Color(0.35, 0.9, 1.0))
-		life_hud.add_child(run_panel)
-		life_hud.move_child(run_panel, 0)
-		var life_panel := _make_hud_panel(Rect2(30.0, 602.0, 330.0, 52.0), Color(0.31, 0.67, 0.8))
-		life_hud.add_child(life_panel)
-		life_hud.move_child(life_panel, 1)
+	var decor := BATTLE_HUD_DECOR.new()
+	decor.name = "BattleHudDecor"
+	decor.player = player
+	hud.add_child(decor)
 
-func _make_hud_panel(rect:Rect2, accent:Color) -> PanelContainer:
-	var panel := PanelContainer.new()
-	panel.position = rect.position
-	panel.size = rect.size
-	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.012, 0.02, 0.035, 0.84)
-	style.border_color = Color(accent.r, accent.g, accent.b, 0.65)
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(10)
-	style.shadow_color = Color(0.0, 0.0, 0.0, 0.7)
-	style.shadow_size = 6
-	style.shadow_offset = Vector2(2.0, 3.0)
-	panel.add_theme_stylebox_override("panel", style)
-	return panel
+func _show_controls_intro() -> void:
+	if Global.first_3d_controls_hint_seen:
+		return
+	await get_tree().create_timer(CONTROLS_INTRO_DELAY).timeout
+	if death_sequence_started or !is_inside_tree():
+		return
+	Global.first_3d_controls_hint_seen = true
+	var intro = CONTROLS_INTRO.new()
+	intro.profile = "first_3d"
+	add_child(intro)
 
 func maycon_died()->void:
 	if death_sequence_started:

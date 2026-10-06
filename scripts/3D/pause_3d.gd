@@ -33,6 +33,10 @@ func _process(delta: float) -> void:
 	if configuracoes_dialog and configuracoes_dialog.visible:
 		return
 	
+	# O overlay de controles segura o jogo e bloqueia o pause enquanto aparece.
+	if Global.block_pause_before_prologo and not (is_instance_valid(control) and control.visible):
+		return
+	
 	#NAO DEIXA O SEGUNDO CONTROLE PARAR A PARTIDA NO PRIMEIRO START - DAI DEPOIS SIM
 	if (Input.is_action_just_pressed("ui_cancel") and !Input.is_joy_button_pressed(1, JOY_BUTTON_START)) or (Input.is_action_just_pressed("ui_cancel") and Input.is_joy_button_pressed(1, JOY_BUTTON_START) and Global.is_two_player_active):
 		alterna_pause_uma_vez()

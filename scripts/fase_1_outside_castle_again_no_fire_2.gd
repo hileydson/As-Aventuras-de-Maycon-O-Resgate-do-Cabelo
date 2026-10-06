@@ -89,7 +89,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	
 	# previne bug da batalha iniciar e nao haver collision com o maycon
-	if capsule_cutscene_active or Global.battle_started:
+	if capsule_cutscene_active or Global.battle_started or Global.in_cutscene:
 		maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
 	else:
 		maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
@@ -128,7 +128,7 @@ func reset_maycon_motion()->void:
 func _on_start_seco_break_capsule_body_entered(body: Node2D) -> void:
 	if body != maycon_fase:
 		return
-	if Global.battle_started or Global.game_events.get("seco_break_capsule", false):
+	if capsule_cutscene_active or Global.battle_started or Global.game_events.get("seco_break_capsule", false):
 		return
 	
 	start_seco_break_capsule.set_deferred("monitoring", false)
@@ -141,7 +141,7 @@ func _on_start_seco_break_capsule_body_entered(body: Node2D) -> void:
 		inimigo_boss_seco.visible = false
 		inimigo_boss_seco.position = Vector2(1762, 767)
 	capsule_cutscene_active = true
-	Global.battle_started = true
+	Global.in_cutscene = true
 	maycon_fase.velocity = Vector2.ZERO
 	maycon_fase.process_mode = Node.PROCESS_MODE_DISABLED
 	explotion.play("default")
@@ -174,7 +174,7 @@ func _on_start_seco_break_capsule_body_entered(body: Node2D) -> void:
 	$"../maycon_itens".get_node("canvas").visible = true
 	await get_tree().create_timer(0.8, false).timeout
 	capsule_cutscene_active = false
-	Global.battle_started = false
+	Global.in_cutscene = false
 	maycon_fase.process_mode = Node.PROCESS_MODE_INHERIT
 	
 	if is_instance_valid(start_seco_break_capsule):
