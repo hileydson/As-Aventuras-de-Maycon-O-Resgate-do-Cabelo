@@ -1,4 +1,4 @@
-<img width="1024" height="1536" alt="As Aventuras de Maycon - O Resgate do Cabelo" src="https://github.com/user-attachments/assets/89d54534-6d8c-403d-99c1-d147a1023b9e" />
+<img width="1024" height="1536" alt="As Aventuras de Maycon - O Resgate do Cabelo" src="https://github.com/user-attachments/assets/87154246-b3c0-4c7a-b867-0e5c27577581" />
 
 
 Essa é a demo do jogo 'As Aventuras de Maycon - O Resgate do Cabelo'.
