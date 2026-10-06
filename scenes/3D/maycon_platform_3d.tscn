@@ -1,10 +1,9 @@
-[gd_scene load_steps=1317 format=3]
+[gd_scene load_steps=1316 format=3]
 
 [ext_resource type="Script" path="res://scripts/3D/maycon_platform_3d.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/3D/platform_maycon.gd" id="2"]
 [ext_resource type="PackedScene" path="res://assets/kenney/platformer_3d/block-grass-large.glb" id="3_asplv"]
 [ext_resource type="PackedScene" path="res://assets/kenney/platformer_3d/rocks.glb" id="4_ddkw7"]
-[ext_resource type="PackedScene" path="res://assets/kenney/platformer_3d/star.glb" id="5_aias0"]
 [ext_resource type="PackedScene" path="res://assets/kenney/platformer_3d/flag.glb" id="6_qkynt"]
 [ext_resource type="PackedScene" path="res://assets/kenney/platformer_3d/tree.glb" id="7_se153"]
 [ext_resource type="PackedScene" path="res://assets/kenney/platformer_3d/tree-pine-small.glb" id="8_nu7f3"]
@@ -10648,9 +10647,6 @@ collision_mask = 0
 [node name="@CollisionShape3D@1851" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_1/@Node3D@1854/@StaticBody3D@1852"]
 shape = SubResource("BoxShape3D_ej510")
 
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_1" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -36, 6.2, 4)
-
 [node name="@Node3D@1861" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 4.35, 4)
 
@@ -10834,9 +10830,6 @@ collision_mask = 0
 
 [node name="@CollisionShape3D@1907" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_2/@Node3D@1910/@StaticBody3D@1908"]
 shape = SubResource("BoxShape3D_16bia")
-
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_2" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 36, 5.7, 4)
 
 [node name="@Node3D@1917" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 3.85, 4)
@@ -11022,9 +11015,6 @@ collision_mask = 0
 [node name="@CollisionShape3D@1963" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_3/@Node3D@1966/@StaticBody3D@1964"]
 shape = SubResource("BoxShape3D_wdjei")
 
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_3" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -55, 7.2, -28)
-
 [node name="@Node3D@1973" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 5.35, -28)
 
@@ -11208,9 +11198,6 @@ collision_mask = 0
 
 [node name="@CollisionShape3D@2019" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_4/@Node3D@2022/@StaticBody3D@2020"]
 shape = SubResource("BoxShape3D_sflr3")
-
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_4" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 55, 6.7, -28)
 
 [node name="@Node3D@2029" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 4.85, -28)
@@ -11396,9 +11383,6 @@ collision_mask = 0
 [node name="@CollisionShape3D@2075" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_5/@Node3D@2078/@StaticBody3D@2076"]
 shape = SubResource("BoxShape3D_paeen")
 
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_5" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -36, 7.9999995, -58)
-
 [node name="@Node3D@2085" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 6.1499996, -58)
 
@@ -11582,9 +11566,6 @@ collision_mask = 0
 
 [node name="@CollisionShape3D@2131" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_6/@Node3D@2134/@StaticBody3D@2132"]
 shape = SubResource("BoxShape3D_hkhai")
-
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_6" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 36, 5.7, -58)
 
 [node name="@Node3D@2141" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 3.85, -58)
@@ -11770,9 +11751,6 @@ collision_mask = 0
 [node name="@CollisionShape3D@2187" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_7/@Node3D@2190/@StaticBody3D@2188"]
 shape = SubResource("BoxShape3D_lddo3")
 
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_7" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -59, 6.4, -91)
-
 [node name="@Node3D@2197" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_7"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -61, 4.55, -91)
 
@@ -11956,9 +11934,6 @@ collision_mask = 0
 
 [node name="@CollisionShape3D@2243" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_8/@Node3D@2246/@StaticBody3D@2244"]
 shape = SubResource("BoxShape3D_rgib6")
-
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_8" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 59, 8.2, -91)
 
 [node name="@Node3D@2253" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_8"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61, 6.35, -91)
@@ -12144,9 +12119,6 @@ collision_mask = 0
 [node name="@CollisionShape3D@2299" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_9/@Node3D@2302/@StaticBody3D@2300"]
 shape = SubResource("BoxShape3D_fldqu")
 
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_9" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -34, 5.7, -122)
-
 [node name="@Node3D@2309" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_9"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 3.85, -122)
 
@@ -12330,9 +12302,6 @@ collision_mask = 0
 
 [node name="@CollisionShape3D@2355" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_10/@Node3D@2358/@StaticBody3D@2356"]
 shape = SubResource("BoxShape3D_daaqt")
-
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_10" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 34, 7.2, -122)
 
 [node name="@Node3D@2365" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_10"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 5.35, -122)
@@ -12518,9 +12487,6 @@ collision_mask = 0
 [node name="@CollisionShape3D@2411" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_11/@Node3D@2414/@StaticBody3D@2412"]
 shape = SubResource("BoxShape3D_tri5u")
 
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_11" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -54, 7.9999995, -155)
-
 [node name="@Node3D@2421" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_11"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, 6.1499996, -155)
 
@@ -12704,9 +12670,6 @@ collision_mask = 0
 
 [node name="@CollisionShape3D@2467" type="CollisionShape3D" parent="Cenario/AreasElevadas/Elevado_Hub_12/@Node3D@2470/@StaticBody3D@2468"]
 shape = SubResource("BoxShape3D_bibpe")
-
-[node name="star2" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_12" instance=ExtResource("5_aias0")]
-transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 54, 5.7, -155)
 
 [node name="@Node3D@2477" type="Node3D" parent="Cenario/AreasElevadas/Elevado_Hub_12"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 3.85, -155)

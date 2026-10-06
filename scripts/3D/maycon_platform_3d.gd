@@ -593,7 +593,6 @@ func _build_elevated_areas() -> void:
 			_platform(top, Vector2(3.5, 3.5), "grass_light")
 		var balcony := hub + Vector3(side * 11.0, 4.1, -4.0)
 		_platform(balcony, Vector2(7.0, 7.0), "grass")
-		_asset("star", balcony + Vector3.UP * 1.1, 1.6)
 
 func _build_finish() -> void:
 	# The final flag surrounds a real opening; only the side and end caps are solid.
