@@ -768,7 +768,7 @@ ladder.obj::Mesh::8832730959216156851::1770313501::1770313527::1::::<><><>0<>0<>
 Roof.png::CompressedTexture2D::4027733717397675435::1770313501::1770313527::1::::<><><>0<>0<>f503ea6d492b467eb39b6978a582d977<>res://.godot/imported/Roof.png-3b206da8baa00a61419a6d8fb057b233.s3tc.ctex<*>res://.godot/imported/Roof.png-3b206da8baa00a61419a6d8fb057b233.etc2.ctex::
 ::res://assets/novas_imagens/::1791392209
 the_legend_of_maycon.ico::OtherFile::-1::1791392042::0::1::::<><><>0<>0<><>::
-the_legend_of_maycon.png::CompressedTexture2D::3466688442024192840::1791392206::1791392209::1::::<><><>0<>0<>f2cd13ed98a89049318cc01c6af7cdd6<>res://.godot/imported/the_legend_of_maycon.png-1d93a38fba4abd81418bee8386d03f3b.ctex::
+the_legend_of_maycon.png::CompressedTexture2D::3466688442024192840::1791392206::1791392606::1::::<><><>0<>0<>f2cd13ed98a89049318cc01c6af7cdd6<>res://.godot/imported/the_legend_of_maycon.png-1d93a38fba4abd81418bee8386d03f3b.ctex::
 ::res://assets/novas_imagens/3d_battle/::1770925139
 arma_3d.png::CompressedTexture2D::208041587662444155::1769824615::1769824722::1::::<><><>0<>0<>d46c136d3ab78b9f9fdf2ae4f4dcb383<>res://.godot/imported/arma_3d.png-48906d11f5ba9717c041ab214ccf0b77.s3tc.ctex<*>res://.godot/imported/arma_3d.png-48906d11f5ba9717c041ab214ccf0b77.etc2.ctex::
 bala.png::CompressedTexture2D::6512492865523401105::1769873177::1769873189::1::::<><><>0<>0<>1d9d520f398125c86896a4a04f07fee8<>res://.godot/imported/bala.png-415bf17cdc4e8a03b9ae4be217ca13d7.ctex::
