@@ -7,6 +7,8 @@ var elapsed: float = 0.0
 var prompt: Label
 var active: bool = false
 var previous_pause_block: bool = false
+var opened_at_msec: int = 0
+var input_actions: Array[StringName] = []
 
 func _ready() -> void:
 	layer = 60
@@ -45,17 +47,24 @@ func _ready() -> void:
 	column.add_child(prompt)
 	previous_pause_block = Global.block_pause_before_prologo
 	Global.block_pause_before_prologo = true
+	opened_at_msec = Time.get_ticks_msec()
+	input_actions = InputMap.get_actions()
 	active = true
 	get_tree().paused = true
 
-func _process(delta: float) -> void:
-	elapsed += delta
+func _process(_delta: float) -> void:
+	elapsed = float(Time.get_ticks_msec() - opened_at_msec) / 1000.0
 	prompt.modulate.a = 1.0 if elapsed >= 2.0 else 0.0
+	if active and elapsed >= 2.0:
+		for action in input_actions:
+			if Input.is_action_just_pressed(action):
+				finish()
+				break
 
 func _input(event: InputEvent) -> void:
-	if event.is_pressed() and not event.is_echo() and (event is InputEventKey or event is InputEventMouseButton or event is InputEventJoypadButton):
+	if event.is_pressed() and not event.is_echo() and (event is InputEventKey or event is InputEventMouseButton or event is InputEventJoypadButton or event is InputEventScreenTouch or event is InputEventAction):
 		get_viewport().set_input_as_handled()
-		if elapsed >= 2.0:
+		if Time.get_ticks_msec() - opened_at_msec >= 2000:
 			finish()
 
 func finish() -> void:

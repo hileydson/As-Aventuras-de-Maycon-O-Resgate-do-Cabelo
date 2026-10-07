@@ -21,7 +21,7 @@
 [ext_resource type="ArrayMesh" uid="uid://c1f464or8gmd0" path="res://assets/modelo_3d/maycon/maycon_base_3d.obj" id="19_oyv4m"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_caminho_das_pedras"]
-font_size = 128
+font_size = 104
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_whkre"]
 
@@ -862,15 +862,21 @@ texture = ExtResource("14_whkre")
 [node name="caminho_das_pedras" type="Label" parent="."]
 visible = false
 texture_filter = 2
-offset_left = 267.0
-offset_top = 168.0
-offset_right = 739.0
-offset_bottom = 260.00002
-texture_filter = 2
-scale = Vector2(1.0000001, 1.1600001)
-theme_override_font_sizes/font_size = 64
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -70.0
+offset_right = 540.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
 text = "Rua das Pedras"
 label_settings = SubResource("LabelSettings_caminho_das_pedras")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="you_died" type="Label" parent="."]
 visible = false
