@@ -112,7 +112,9 @@ func set_difficulty(val: String, should_save: bool = true) -> void:
 
 func set_battle_mode(mode: String, should_save: bool = true) -> void:
 	battle_mode = battle_mode_strategic if mode == battle_mode_strategic else battle_mode_realtime
-	if should_save and has_save_slot(current_save_slot):
+	if should_save and _is_main_menu():
+		save_settings()
+	elif should_save and has_save_slot(current_save_slot):
 		save_to_player_savegame()
 
 signal debug_mode_activated
@@ -366,7 +368,51 @@ func restore_graphics_defaults_2d() -> void:
 	apply_gfx_msaa_2d(_gfx_defaults.get("msaa_2d", 2))
 	apply_gfx_texture_filter_2d(_gfx_defaults.get("texture_filter_2d", 1))
 
-func save_to_player_savegame() -> void:
+var _menu_settings_baseline: Dictionary = {}
+var _pending_menu_settings: Dictionary = {}
+
+func _is_main_menu() -> bool:
+	var scene := get_tree().current_scene
+	return is_instance_valid(scene) and scene.scene_file_path == "res://scenes/menu.tscn"
+
+func _menu_settings_snapshot() -> Dictionary:
+	return {
+		"aim_assist_strength": aim_assist_strength,
+		"difficulty": difficulty,
+		"default_language": default_language,
+		"battle_mode": battle_mode,
+		"graphics_settings": _graphics_settings_to_dict(),
+	}
+
+func begin_menu_settings() -> void:
+	_menu_settings_baseline = _menu_settings_snapshot()
+	_pending_menu_settings.clear()
+
+func _capture_pending_menu_settings() -> void:
+	var settings := _menu_settings_snapshot()
+	for key in settings:
+		if settings[key] != _menu_settings_baseline.get(key):
+			_pending_menu_settings[key] = settings[key]
+		else:
+			_pending_menu_settings.erase(key)
+
+func apply_pending_menu_settings() -> bool:
+	if _pending_menu_settings.is_empty():
+		return false
+	for key in _pending_menu_settings:
+		if key == "graphics_settings":
+			_apply_graphics_settings_from_dict(_pending_menu_settings[key])
+		elif key == "default_language":
+			set_game_language(_pending_menu_settings[key], false)
+		else:
+			set(key, _pending_menu_settings[key])
+	_pending_menu_settings.clear()
+	return true
+
+func save_to_player_savegame(slot_chosen_from_menu: bool = false) -> void:
+	if _is_main_menu() and not slot_chosen_from_menu:
+		_capture_pending_menu_settings()
+		return
 	_ensure_legacy_save_migration()
 	var path := get_slot_save_path(current_save_slot)
 	if FileAccess.file_exists(path) or (current_save_slot == 1 and FileAccess.file_exists("user://savegame.save")):
@@ -384,6 +430,7 @@ func save_to_player_savegame() -> void:
 				data["stage_1_title_seen"] = stage_1_title_seen
 				data["aim_assist_strength"] = aim_assist_strength
 				data["difficulty"] = difficulty
+				data["battle_mode"] = battle_mode
 				data["default_language"] = default_language
 				data["graphics_settings"] = _graphics_settings_to_dict()
 				data["save_timestamp"] = Time.get_datetime_string_from_system()
@@ -761,6 +808,8 @@ func load_progress(slot: int = -1)->void:
 			battle_mode = save_array.get("battle_mode", battle_mode_realtime)
 			difficulty = str(save_array.get("difficulty", DIFFICULTY_NORMAL))
 			realtime_hp = clampf(float(save_array.get("realtime_hp", realtime_hp_max)), 0.0, realtime_hp_max)
+			if apply_pending_menu_settings():
+				save_to_player_savegame(true)
 			if last_fase == "fase_1":
 				GameSongs.play_song(1)
 				get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_1.tscn")

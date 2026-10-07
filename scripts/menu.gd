@@ -17,6 +17,10 @@ const MAYCON_WALK_TEXTURES = [
 	preload("res://assets/images/andando_direita_6.png"),
 	preload("res://assets/images/andando_direita_7.png"),
 ]
+const LOGO_PT = preload("res://assets/imagens_publicidade/logo.png")
+const LOGO_OTHER = preload("res://assets/imagens_publicidade/logo_other.png")
+var menu_logo: TextureRect
+
 const MENU_FONT = preload("res://assets/fonts/contrast_menu.tres")
 const SKY_SHADER = preload("res://scenes/3D/menu_night_sky.gdshader")
 const WATER_SHADER = preload("res://scenes/3D/menu_ocean.gdshader")
@@ -118,6 +122,7 @@ var input_blocker: Control
 
 
 func _ready() -> void:
+	Global.begin_menu_settings()
 	Global.load_from_castle_1 = load_from_castle_1
 	Global.load_from_outside_1 = load_from_outside_1
 	if enable_debug_tab:
@@ -746,10 +751,24 @@ func _build_interface() -> void:
 	stack_main.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	stack_main.add_theme_constant_override("separation", 3)
 	menu_panel.add_child(stack_main)
-	var title := _label("GAME_TITLE", 39, Color(0.95, 0.96, 0.92), true)
-	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	stack_main.add_child(title)
-	stack_main.add_child(_label("GAME_SUBTITLE", 25, Color(0.75, 0.91, 0.92), true))
+	var logo_slot := Control.new()
+	logo_slot.name = "GameLogoSlot"
+	logo_slot.custom_minimum_size = Vector2(0, 180)
+	logo_slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stack_main.add_child(logo_slot)
+	var logo := TextureRect.new()
+	logo.name = "GameLogo"
+	menu_logo = logo
+	_update_menu_logo()
+	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	logo.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	logo_slot.add_child(logo)
+	logo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	logo.scale = Vector2(0.9, 0.9)
+	logo.resized.connect(func(): logo.pivot_offset = logo.size * 0.5)
+	logo.pivot_offset = logo.size * 0.5
 	var spacer := Control.new()
 	spacer.custom_minimum_size.y = 34
 	stack_main.add_child(spacer)
@@ -1574,6 +1593,7 @@ func _start_new_game_on_slot(slot: int) -> void:
 	menu_sounds.play_start()
 	Global.current_save_slot = slot
 	Global.reset_default_values()
+	Global.apply_pending_menu_settings()
 	Global.current_save_slot = slot
 	var transition := create_tween()
 	transition.tween_property(fade_rect, "color:a", 1.0, 1.7).set_trans(Tween.TRANS_SINE)
@@ -1611,3 +1631,13 @@ func _lock_menu_input() -> void:
 
 func _on_exit_pressed() -> void:
 	get_tree().quit()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED:
+		_update_menu_logo()
+
+
+func _update_menu_logo() -> void:
+	if is_instance_valid(menu_logo):
+		menu_logo.texture = LOGO_PT if Global.default_language == Global.language_pt_br else LOGO_OTHER

@@ -733,9 +733,11 @@ visible = false
 texture_filter = 2
 offset_left = 346.0
 offset_top = 208.0
-offset_right = 1446.0
-offset_bottom = 392.0
-scale = Vector2(0.47, 0.395)
+offset_right = 814.0
+offset_bottom = 300.0
+texture_filter = 2
+scale = Vector2(0.94, 0.79)
+theme_override_font_sizes/font_size = 64
 text = "Cidade Perdida"
 label_settings = SubResource("LabelSettings_cidade_perdida")
 

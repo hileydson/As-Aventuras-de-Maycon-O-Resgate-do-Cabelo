@@ -133,7 +133,7 @@ res://scenes/realtime_battle.tscn::a23b08f3aeed7ba460b5909f0c971d80::1790563197:
 res://assets/modelo_3d/calabouco/material_smg.tres::61aa7a0f9df2bf0fd1730302d7e53e89::1790619261::res://.godot/exported/133200997/export-b55bfac32366ce92253f0249c5bb9280-material_smg.res
 res://scenes/3D/calabouco_terror.tscn::b1892c45e222db7917e55e0aab6afc86::1791235201::res://.godot/exported/133200997/export-22a3a0e79afe18d5c5a97ee64f664b38-calabouco_terror.scn
 res://scenes/3D/dungeon_player.tscn::c3c48231d04a095acdf458b57440726e::1790563197::res://.godot/exported/133200997/export-d939520a25ad5730e521ee54ec5f36d5-dungeon_player.scn
-res://scenes/3D/maycon_platform_3d.tscn::1ab4facb9433b3fe6628ea239e1ad42d::1790883536::res://.godot/exported/133200997/export-eee68fd6a8321a2a375541008d5d206e-maycon_platform_3d.scn
+res://scenes/3D/maycon_platform_3d.tscn::32deb512db2aaf97735bfe0ca036632b::1791310767::res://.godot/exported/133200997/export-eee68fd6a8321a2a375541008d5d206e-maycon_platform_3d.scn
 res://scenes/3D/poco_infinito.tscn::eacaecae75e78d184915dec0f546c5c7::1790563197::res://.godot/exported/133200997/export-899dd0c4472cda8262b2f03d8ba409ba-poco_infinito.scn
 res://scenes/3D/seco_boss_intro.tscn::05809b672ef866d8db7cdbff5dce7ba9::1790946828::res://.godot/exported/133200997/export-eb7dd0b27f5a89c2a0d92b98b95e6d8b-seco_boss_intro.scn
 res://scenes/3D/zombie_rig_workbench.tscn::e889d6342c1e032e3d1bfad9fe7acb12::1790563197::res://.godot/exported/133200997/export-b8b04d95d341e40a169f725dbea12de3-zombie_rig_workbench.scn
