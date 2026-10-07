@@ -2,7 +2,7 @@ res://scenes/game.tscn::ccc91a2be766e2884eac3ec6d89ad96b::1790803174::res://.god
 res://scenes/intro_game.tscn::f9a135223fe7f8d58e9c22fa09069689::1767636737::res://.godot/exported/133200997/export-d812ff7a61965b00992033639963698d-intro_game.scn
 res://scenes/intro_pacoca_producoes.tscn::ef67c70e4d72e98641c8c2def64ffd57::1769794257::res://.godot/exported/133200997/export-73645334111537d72cd9a9328343782a-intro_pacoca_producoes.scn
 res://scenes/maycon.tscn::803324a1ac23cf0e9609ed2538d80e42::1769791545::res://.godot/exported/133200997/export-85185de7cb3a71cec2db2b53fc9f797e-maycon.scn
-res://scenes/menu.tscn::884e6e9cd5ac6d30f7a102a3a50ca436::1790563197::res://.godot/exported/133200997/export-1ce5c86e8ca186dcaaeaa8726f1268db-menu.scn
+res://scenes/menu.tscn::884e6e9cd5ac6d30f7a102a3a50ca436::1791402352::res://.godot/exported/133200997/export-1ce5c86e8ca186dcaaeaa8726f1268db-menu.scn
 res://assets/resources/vidro_noise.tres::f8fb095af2c8f65906d6d42917232c8b::1767636737::res://.godot/exported/133200997/export-a30762d24094eca2047354fdf5bfe9e3-vidro_noise.res
 res://scenes/inimigos/inimigo_seco.tscn::b465705f69557f3d069526602967d21d::1767636737::res://.godot/exported/133200997/export-9edf44e67ccdb115b8c25ce94c24b84c-inimigo_seco.scn
 res://scenes/batalha_2d.tscn::fd305993bc60a0869eba91de7d660d2a::1791299175::res://.godot/exported/133200997/export-dc705722b9042b873191ca1c9890a575-batalha_2d.scn
@@ -18,7 +18,7 @@ res://scenes/maycon_batalha_default.tscn::1fe51cb59ec1447b8de98c0427caa7c4::1769
 res://scenes/maycon_fase.tscn::1794f23f0d30b18c9cbfaafc33ec105f::1790563197::res://.godot/exported/133200997/export-e8f02bfddc4b5104a8b7d2d7345349cf-maycon_fase.scn
 res://scenes/pause.tscn::031b8724f42e8d1db8c84670a5fb75cb::1790563197::res://.godot/exported/133200997/export-877dd510dd31eb0f29670ab72328164d-pause.scn
 res://scenes/tunel_fogo.tscn::01c5b2c8704bcfc619a30378471bd93e::1768323970::res://.godot/exported/133200997/export-2299e257a37b4acdc27e092c3137aa50-tunel_fogo.scn
-res://scenes/demo_end.tscn::518cc5b4f5c3243e86224f90dcbcbeb1::1791223741::res://.godot/exported/133200997/export-bf1b86bf27854fb765698f6f949ebe67-demo_end.scn
+res://scenes/demo_end.tscn::4b65816ec0d01da05a47cd7e7a1d2b2f::1791399961::res://.godot/exported/133200997/export-bf1b86bf27854fb765698f6f949ebe67-demo_end.scn
 res://scenes/fase_1_before_castle_2.tscn::61c6e0ca856ae7317142c4da7408537a::1791305003::res://.godot/exported/133200997/export-a3a1507b01b834d646cdc9005ca0f44c-fase_1_before_castle_2.scn
 res://scenes/fase_1_before_castle_3.tscn::f2dd36134550fe18fbaec3a93b2f6ed6::1790619333::res://.godot/exported/133200997/export-cdcb7f626c28ab3af323a4f0e7139bc0-fase_1_before_castle_3.scn
 res://scenes/fase_1_before_castle_4.tscn::7e3d11bafa405a425229e9a47fd84a05::1791305047::res://.godot/exported/133200997/export-eb23a88fd5414768b9b44ca78af95e8c-fase_1_before_castle_4.scn
@@ -125,7 +125,7 @@ res://scenes/3D/gas.tscn::6950bdede1d1af839a4932d38ea21fd9::1770239842::res://.g
 res://scenes/3D/textura_config_barro.tres::e6bf929dc9fa5a8df8d9b9680a2ead65::1770251008::res://.godot/exported/133200997/export-6a05d6ac0f7f0eae357cddc52394e14a-textura_config_barro.res
 res://scenes/3D/cigarro_two_player.tscn::fc7ccfc04d6c1b74084d3aa1049049f7::1770925139::res://.godot/exported/133200997/export-25221cfaf56767bfacccc7dbbc6bbcc4-cigarro_two_player.scn
 res://scenes/two_layers_fps_mode.tscn::c0c475d43aba17ce43e5c6d7685bfb94::1770925139::res://.godot/exported/133200997/export-e924b5dd91ee18528bd41eb1a49982ed-two_layers_fps_mode.scn
-res://scenes/3D/last_fight_before_end.tscn::9ccb4f2ae9e0575e2b30f2295c076591::1791377630::res://.godot/exported/133200997/export-cb794d516c9838b7cc3af477b130788d-last_fight_before_end.scn
+res://scenes/3D/last_fight_before_end.tscn::00032613243220c6ae9f87aa21ff3f04::1791402802::res://.godot/exported/133200997/export-cb794d516c9838b7cc3af477b130788d-last_fight_before_end.scn
 res://scenes/3D/pause_3d_moto_cidade.tscn::1b4f4489595cababca9cad39d3538ed4::1790563197::res://.godot/exported/133200997/export-6f80c7ecac2befb8a871025b8bc3745c-pause_3d_moto_cidade.scn
 res://scenes/balao_conversa.tscn::216330b291f5f2934e17a91348f94074::1770925139::res://.godot/exported/133200997/export-547ee34ca1e5e2a6d8d63f8ab5eb2217-balao_conversa.scn
 res://scenes/battle_mode_selection.tscn::5c0957ff0ad353a6a8d71ddb3d747944::1790563197::res://.godot/exported/133200997/export-3eaab2c20bdd7fe9ea7d668a468567ef-battle_mode_selection.scn
