@@ -72,6 +72,18 @@ metadata/_tab_index = 0
 layout_mode = 2
 theme_override_constants/separation = 16
 
+[node name="LanguageSection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LanguageTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/LanguageSection"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_y8q2z")
+theme_override_font_sizes/font_size = 18
+
+[node name="LanguageOption" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/LanguageSection"]
+layout_mode = 2
+
 [node name="DifficultySection" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 6

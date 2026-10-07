@@ -23,6 +23,10 @@ const DEBUG_TRAVEL_DESTINATIONS := [
 @onready var panel: PanelContainer = $PanelContainer
 @onready var title_label: Label = $PanelContainer/MarginContainer/VBoxContainer/Header/TitleLabel
 @onready var tab_container: TabContainer = $PanelContainer/MarginContainer/VBoxContainer/TabContainer
+@onready var language_title: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/LanguageSection/LanguageTitle
+@onready var language_option: OptionButton = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/LanguageSection/LanguageOption
+const GAME_LANGUAGES = ["pt", "en", "es", "zh"]
+
 @onready var difficulty_title: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/DifficultySection/DifficultyTitle
 @onready var difficulty_option: OptionButton = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/DifficultySection/DifficultyOption
 @onready var difficulty_desc: Label = $PanelContainer/MarginContainer/VBoxContainer/TabContainer/Gameplay/VBoxContainer/DifficultySection/DifficultyDesc
@@ -82,6 +86,7 @@ func _ready() -> void:
 		debug_travel_scroll.follow_focus = true
 	if graphics3d_scroll:
 		graphics3d_scroll.follow_focus = true
+	language_option.item_selected.connect(_on_language_selected)
 	aim_slider.value_changed.connect(_on_aim_slider_value_changed)
 	difficulty_option.item_selected.connect(_on_difficulty_selected)
 	battle_mode_option.item_selected.connect(_on_battle_mode_selected)
@@ -103,6 +108,10 @@ func _on_global_debug_mode_activated() -> void:
 	_populate_debug_events()
 
 func _setup_gameplay_options() -> void:
+	language_option.clear()
+	for language_name in ["Português", "English", "Español", "中文"]:
+		language_option.add_item(language_name)
+	language_option.select(maxi(0, GAME_LANGUAGES.find(Global.default_language)))
 	difficulty_option.clear()
 	difficulty_option.add_item(tr("DIFFICULTY_NORMAL"), 0)
 	difficulty_option.add_item(tr("DIFFICULTY_EASY"), 1)
@@ -111,6 +120,10 @@ func _setup_gameplay_options() -> void:
 	battle_mode_option.add_item(tr("SETTINGS_BATTLE_MODE_REALTIME"), 0)
 	battle_mode_option.add_item(tr("SETTINGS_BATTLE_MODE_STRATEGIC"), 1)
 	battle_mode_option.select(1 if Global.battle_mode == Global.battle_mode_strategic else 0)
+
+func _on_language_selected(idx: int) -> void:
+	Global.set_game_language(GAME_LANGUAGES[idx])
+	update_language()
 
 func _on_difficulty_selected(idx: int) -> void:
 	var new_diff := Global.DIFFICULTY_EASY if idx == 1 else Global.DIFFICULTY_NORMAL
@@ -279,7 +292,9 @@ func _switch_tab(idx: int) -> void:
 
 func _on_tab_changed(tab_idx: int) -> void:
 	if tab_idx == 0:
-		difficulty_option.grab_focus()
+		language_option.grab_focus()
+		language_option.focus_neighbor_bottom = difficulty_option.get_path()
+		difficulty_option.focus_neighbor_top = language_option.get_path()
 		difficulty_option.focus_neighbor_bottom = battle_mode_option.get_path()
 		battle_mode_option.focus_neighbor_top = difficulty_option.get_path()
 		battle_mode_option.focus_neighbor_bottom = aim_slider.get_path()
@@ -318,6 +333,7 @@ func _on_tab_changed(tab_idx: int) -> void:
 				btn_close.focus_neighbor_top = last.get_path()
 
 func update_language() -> void:
+	language_title.text = tr("SETTINGS_LANGUAGE")
 	title_label.text = tr("SETTINGS_TITLE")
 	tab_container.set_tab_title(0, tr("SETTINGS_GAMEPLAY"))
 	tab_container.set_tab_title(1, tr("SETTINGS_GRAPHICS_3D"))

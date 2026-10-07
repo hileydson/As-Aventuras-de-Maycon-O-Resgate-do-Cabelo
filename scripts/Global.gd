@@ -218,10 +218,15 @@ func normalize_language(lang: String) -> String:
 	return language_pt_br
 
 func set_game_language(lang_code: String, should_save: bool = true) -> void:
+	var previous_locale := TranslationServer.get_locale()
 	default_language = normalize_language(lang_code)
 	TranslationServer.set_locale(default_language)
+	_refresh_scene_language(previous_locale)
 	if should_save:
-		save_settings()
+		if _is_main_menu():
+			_pending_menu_language = default_language
+		else:
+			save_settings()
 
 func _ready() -> void:
 	capture_graphics_defaults()
@@ -370,10 +375,11 @@ func restore_graphics_defaults_2d() -> void:
 
 var _menu_settings_baseline: Dictionary = {}
 var _pending_menu_settings: Dictionary = {}
+var _pending_menu_language: String = ""
 
 func _is_main_menu() -> bool:
 	var scene := get_tree().current_scene
-	return is_instance_valid(scene) and scene.scene_file_path == "res://scenes/menu.tscn"
+	return is_instance_valid(scene) and scene.scene_file_path in ["res://scenes/menu.tscn", "res://scenes/language.tscn"]
 
 func _menu_settings_snapshot() -> Dictionary:
 	return {
@@ -397,6 +403,9 @@ func _capture_pending_menu_settings() -> void:
 			_pending_menu_settings.erase(key)
 
 func apply_pending_menu_settings() -> bool:
+	if not _pending_menu_language.is_empty():
+		_pending_menu_settings["default_language"] = _pending_menu_language
+		_pending_menu_language = ""
 	if _pending_menu_settings.is_empty():
 		return false
 	for key in _pending_menu_settings:
@@ -411,7 +420,8 @@ func apply_pending_menu_settings() -> bool:
 
 func save_to_player_savegame(slot_chosen_from_menu: bool = false) -> void:
 	if _is_main_menu() and not slot_chosen_from_menu:
-		_capture_pending_menu_settings()
+		if get_tree().current_scene.scene_file_path == "res://scenes/menu.tscn":
+			_capture_pending_menu_settings()
 		return
 	_ensure_legacy_save_migration()
 	var path := get_slot_save_path(current_save_slot)
@@ -1018,3 +1028,31 @@ func restore_realtime_player_position() -> void:
 		realtime_restore_frames -= 1
 		if realtime_restore_frames <= 0:
 			realtime_restore_pending = false
+
+
+func _refresh_scene_language(previous_locale: String) -> void:
+	if previous_locale == TranslationServer.get_locale() or not is_instance_valid(get_tree().current_scene):
+		return
+	var previous := TranslationServer.get_translation_object(previous_locale)
+	if previous == null:
+		return
+	var replacements: Dictionary = {}
+	for key in previous.get_message_list():
+		var old_text := str(previous.get_message(key))
+		var new_text := str(TranslationServer.translate(key))
+		if not old_text.is_empty():
+			replacements[old_text] = new_text
+			replacements[old_text.to_upper()] = new_text.to_upper()
+	_refresh_node_language(get_tree().current_scene, replacements)
+
+func _refresh_node_language(node: Node, replacements: Dictionary) -> void:
+	if node is Label or node is Button or node is RichTextLabel:
+		if replacements.has(node.text):
+			node.text = replacements[node.text]
+	if node is OptionButton:
+		for index in range(node.item_count):
+			var text: String = node.get_item_text(index)
+			if replacements.has(text):
+				node.set_item_text(index, replacements[text])
+	for child in node.get_children():
+		_refresh_node_language(child, replacements)

@@ -1,8 +1,8 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1791378791
+::res://::1791379036
 AGENTS.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
-export_presets.cfg::TextFile::-1::1791378791::0::1::::<><><>0<>0<><>::
+export_presets.cfg::TextFile::-1::1791379036::0::1::::<><><>0<>0<><>::
 godot-ai-LICENSE.txt::TextFile::-1::1790563197::0::1::::<><><>0<>0<><>::
 icon.png::CompressedTexture2D::2575902027917887430::1770123705::1770123705::1::::<><><>0<>0<>dab7b3249af0a6a42bb7c259ab178f80<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.bptc.ctex<*>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.astc.ctex::
 icon.svg::CompressedTexture2D::1790880795757653::1767636737::1767636737::1::::<><><>0<>0<>1d558fff71561543e2cf7e0d300c3350<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
@@ -321,7 +321,7 @@ infected_zombie_Zombie.png::CompressedTexture2D::5969498701717469343::1790563196
 plague_hound.glb::PackedScene::2428048238826228607::1790563196::1790563196::1::::<><><>0<>0<>98f7589fd19666543340742a7f692dce<>res://.godot/imported/plague_hound.glb-369d350d920c7cc218e2f7b0cd4a1bac.scn::
 plague_hound_clean.glb::PackedScene::961960940414283699::1790563196::1790563196::1::::<><><>0<>0<>eeaeb8d516fc30e980b406208ef16c0c<>res://.godot/imported/plague_hound_clean.glb-a536e5ee5e48449c3e1024883300ed0c.scn::
 zombie_authored_animations.res::AnimationLibrary::6704073257469586578::1790563196::0::1::::<><><>0<>0<><>::
-::res://assets/imagens_publicidade/::1791378195
+::res://assets/imagens_publicidade/::1791379746
 logo.png::CompressedTexture2D::6845669483557126345::1791375842::1791375889::1::::<><><>0<>0<>a77f615abf5510b306060beb8fa6f1c3<>res://.godot/imported/logo.png-2eaf78daf0610d8ab1f2ff0c6b2290a1.ctex::
 logo_other.png::CompressedTexture2D::7542680038053110148::1791378174::1791378195::1::::<><><>0<>0<>2af4d99478e9a42001ebd5f708d6584d<>res://.godot/imported/logo_other.png-463922ea593cbb041ab67b3d992b5cb8.ctex::
 ::res://assets/images/::1767636736
@@ -4177,10 +4177,10 @@ inimigo_manga.tscn::PackedScene::7056443634180860927::1790792740::0::1::::<><><>
 inimigo_seco.tscn::PackedScene::8657484778914218226::1767636737::0::1::::<><><>0<>0<><>::uid://dtgk0ajn24u0a::::res://assets/novas_imagens/inimigos/craftpix-net-131479-free-satyr-sprite-sheet-pixel-art-pack/Satyr_3/Attack.png<>uid://olayoaq8ncqh::::res://scripts/seco.gd<>uid://ddfltmpoetq2k::::res://assets/novas_imagens/inimigos/craftpix-net-131479-free-satyr-sprite-sheet-pixel-art-pack/Satyr_3/Walk.png<>uid://bjjdu58tpmf2q::::res://assets/novas_imagens/inimigos/seco/seco_conversando-sprite_sheet.png
 inimigo_xuruzika.tscn::PackedScene::6737765857473348084::1790792740::0::1::::<><><>0<>0<><>::uid://b318wg3ert7ft::::res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_attack_1.png<>uid://cpxhy2sd1ru8b::::res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_attack_2.png<>uid://c7deic7gi33vq::::res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_idle.png<>uid://btfcmsgx47fq7::::res://scripts/inimigos/inimigo_xuruzika.gd<>uid://vf8pqgcv4yjn::::res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_boné.png<>uid://bw3esmny7cywp::::res://assets/novas_imagens/inimigos/xuruzika/inimigo_xuruzika_coxinha.png<>uid://2meppcw1h507::::res://assets/novas_imagens/menu/gui-for-cyberpunk-pixel-art/6 Buttons/1/1_09.png<>uid://dasniorc2jiw6::::res://assets/novos_audios/inimigo_1_attack_magic.mp3<>uid://4dsrxbn0hoiw::::res://assets/novos_audios/inimigo_1_voice_attack.mp3<>uid://c2uew5w81laa::::res://assets/novos_audios/doom_pain.mp3
 ::res://scenes/menus/::1790619261
-configuracoes_dialog.tscn::PackedScene::4339851293418817919::1790711239::0::1::::<><><>0<>0<><>::uid://cjpf5sqs3bkou::::res://scripts/menus/configuracoes_dialog.gd<>uid://b1o834pgp267n::::res://assets/fonts/contrast.ttf
+configuracoes_dialog.tscn::PackedScene::4339851293418817919::1791380596::0::1::::<><><>0<>0<><>::uid://cjpf5sqs3bkou::::res://scripts/menus/configuracoes_dialog.gd<>uid://b1o834pgp267n::::res://assets/fonts/contrast.ttf
 maycon_itens.tscn::PackedScene::6963755944896746500::1769775609::0::1::::<><><>0<>0<><>::uid://broav1jkk1nk1::::res://scripts/maycon_itens.gd<>uid://30tsd1l3hqfw::::res://assets/novas_imagens/objects/Items.png<>uid://b8xm3n05un7xf::::res://assets/novas_imagens/effects/Explosion/1.png<>uid://dlowt45jrflns::::res://assets/novas_imagens/effects/Explosion/3.png
 pause_backdrop.gdshader::Shader::444884068966460331::1790619261::0::1::::<><><>0<>0<><>::
-::res://scripts/::1791378898
+::res://scripts/::1791378916
 balao_conversa.gd::GDScript::6627363207731980991::1790793879::0::1::::<>CanvasLayer<><>0<>0<><>::
 batalha.gd::GDScript::7248754106168415276::1791322765::0::1::::<>AnimationPlayer<><>0<>0<><>::
 battle_3d.gd::GDScript::5694209551412885657::1767636737::0::1::::<>Camera3D<><>0<>0<><>::
@@ -4188,7 +4188,7 @@ battle_mode_selection.gd::GDScript::1174737547514756521::1791299564::0::1::::<>C
 caixa.gd::GDScript::7282922310310176152::1770228608::0::1::::<>Sprite2D<><>0<>0<><>::
 camera_batalha.gd::GDScript::9203816889009604379::1768267007::0::1::::<>Camera2D<><>0<>0<><>::
 camera_temp_scene_seco_castle.gd::GDScript::1142881256959163234::1790896655::0::1::::<>Camera2D<><>0<>0<><>::
-default_transition_autoload.gd::GDScript::1224941402831355943::1791378913::0::1::::<>Node2D<><>0<>0<><>::
+default_transition_autoload.gd::GDScript::-1::1791378913::0::1::::<>Node2D<><>0<>0<><>::
 default_transition_fade_in.gd::GDScript::2411432794830808440::1767636737::0::1::::<>Node2D<><>0<>0<><>::
 default_transition_fade_out.gd::GDScript::325153759028896861::1767636737::0::1::::<>Node2D<><>0<>0<><>::
 demo_controls.gd::GDScript::831829260655509444::1790638512::0::1::::<>Control<><>0<>0<><>::
@@ -4211,7 +4211,7 @@ fase_1_outside_castle_again_no_fire_2.gd::GDScript::6243358031740958106::1791322
 fase_1_outside_castle_again_no_fire_3.gd::GDScript::1824109410800073102::1791223741::0::1::::<>Sprite2D<><>0<>0<><>::
 game.gd::GDScript::676883979450412678::1790642661::0::1::::<>Node2D<><>0<>0<><>::
 game_songs.gd::GDScript::614287363896591786::1790563197::0::1::::<>Node2D<><>0<>0<><>::
-Global.gd::GDScript::2969336717215221737::1791377673::0::1::::<>Node<><>0<>0<><>::
+Global.gd::GDScript::2969336717215221737::1791380596::0::1::::<>Node<><>0<>0<><>::
 godot_splash.gd::GDScript::7987653038108530577::1791223741::0::1::::<>Control<><>0<>0<><>::
 hp.gd::GDScript::5708940543160946882::1790563197::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 intro_batalha_frozen_effect.gd::GDScript::6657063382709979058::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
@@ -4318,7 +4318,7 @@ inimigo_fofo.gd::GDScript::1646365888988713657::1790563197::0::1::::<>AnimatedSp
 inimigo_manga.gd::GDScript::2159721504695700621::1790563197::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 inimigo_xuruzika.gd::GDScript::3730474420872568580::1790563197::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 ::res://scripts/menus/::1791223741
-configuracoes_dialog.gd::GDScript::5435864756212849056::1791233624::0::1::::<>CanvasLayer<><>0<>0<><>::
+configuracoes_dialog.gd::GDScript::5435864756212849056::1791380596::0::1::::<>CanvasLayer<><>0<>0<><>::
 ::res://scripts/tools/::1791223741
 bake_elden_lips_animations.gd::GDScript::7620067336403114312::1791223741::0::1::::<>SceneTree<><>0<>0<><>::
 bake_platform_scene.gd::GDScript::5181919851487842878::1791310773::0::1::::<>SceneTree<><>0<>1<><>::
@@ -4353,9 +4353,9 @@ verify_rescue_landing_and_city.gd::GDScript::6400308341423337610::1791223741::0:
 verify_resgate_cabeludo.gd::GDScript::6734687796586508805::1791223741::0::1::::<>SceneTree<><>0<>0<><>::
 verify_seco_3d_victory.gd::GDScript::5198876035719671429::1791223741::0::1::::<>SceneTree<><>0<>0<><>::
 verify_stage_fixes.gd::GDScript::8768965165253107364::1791223741::0::1::::<>SceneTree<><>0<>0<><>::
-::res://translations/::1791308698
-game_text.csv::Translation::1292654866392114924::1791308267::1791308698::1::::<><><>0<>0<>406ca7db63672e95dc565661a459c51b<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
-game_text.en.translation::OptimizedTranslation::1712006235640866847::1791308698::0::1::::<><><>0<>0<><>::
-game_text.es.translation::OptimizedTranslation::9151324834628544493::1791308698::0::1::::<><><>0<>0<><>::
-game_text.pt.translation::OptimizedTranslation::8740695643655975537::1791308698::0::1::::<><><>0<>0<><>::
-game_text.zh.translation::OptimizedTranslation::3741015231047276320::1791308698::0::1::::<><><>0<>0<><>::
+::res://translations/::1791380651
+game_text.csv::Translation::1292654866392114924::1791380596::1791380821::1::::<><><>0<>0<>2b3d80747eda3d8602f690557f568f10<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
+game_text.en.translation::Translation::1712006235640866847::1791380821::0::1::::<><><>0<>0<><>::
+game_text.es.translation::Translation::9151324834628544493::1791380821::0::1::::<><><>0<>0<><>::
+game_text.pt.translation::Translation::8740695643655975537::1791380821::0::1::::<><><>0<>0<><>::
+game_text.zh.translation::Translation::3741015231047276320::1791380821::0::1::::<><><>0<>0<><>::
