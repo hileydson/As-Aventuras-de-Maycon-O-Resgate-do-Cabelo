@@ -1,8 +1,8 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1791392621
+::res://::1791392684
 AGENTS.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
-export_presets.cfg::TextFile::-1::1791392621::0::1::::<><><>0<>0<><>::
+export_presets.cfg::TextFile::-1::1791392684::0::1::::<><><>0<>0<><>::
 godot-ai-LICENSE.txt::TextFile::-1::1790563197::0::1::::<><><>0<>0<><>::
 icon.png::CompressedTexture2D::2575902027917887430::1770123705::1770123705::1::::<><><>0<>0<>dab7b3249af0a6a42bb7c259ab178f80<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.bptc.ctex<*>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.astc.ctex::
 icon.svg::CompressedTexture2D::1790880795757653::1767636737::1767636737::1::::<><><>0<>0<>1d558fff71561543e2cf7e0d300c3350<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
@@ -321,9 +321,24 @@ infected_zombie_Zombie.png::CompressedTexture2D::5969498701717469343::1790563196
 plague_hound.glb::PackedScene::2428048238826228607::1790563196::1790563196::1::::<><><>0<>0<>98f7589fd19666543340742a7f692dce<>res://.godot/imported/plague_hound.glb-369d350d920c7cc218e2f7b0cd4a1bac.scn::
 plague_hound_clean.glb::PackedScene::961960940414283699::1790563196::1790563196::1::::<><><>0<>0<>eeaeb8d516fc30e980b406208ef16c0c<>res://.godot/imported/plague_hound_clean.glb-a536e5ee5e48449c3e1024883300ed0c.scn::
 zombie_authored_animations.res::AnimationLibrary::6704073257469586578::1790563196::0::1::::<><><>0<>0<><>::
-::res://assets/imagens_publicidade/::1791379746
+::res://assets/imagens_publicidade/::1791392809
 logo.png::CompressedTexture2D::6845669483557126345::1791375842::1791375889::1::::<><><>0<>0<>a77f615abf5510b306060beb8fa6f1c3<>res://.godot/imported/logo.png-2eaf78daf0610d8ab1f2ff0c6b2290a1.ctex::
 logo_other.png::CompressedTexture2D::7542680038053110148::1791378174::1791378195::1::::<><><>0<>0<>2af4d99478e9a42001ebd5f708d6584d<>res://.godot/imported/logo_other.png-463922ea593cbb041ab67b3d992b5cb8.ctex::
+::res://assets/imagens_publicidade/arte de capa/::1791381835
+As Aventuras de Maycon - O Resgate do Cabelo - Landscape - EN.png::CompressedTexture2D::5872889034272931818::1791381349::1791392839::1::::<><><>0<>0<>02b8795adba1f15746759c9edbc128e1<>res://.godot/imported/As Aventuras de Maycon - O Resgate do Cabelo - Landscape - EN.png-0eb59d77085594461384e57905194505.ctex::
+As Aventuras de Maycon - O Resgate do Cabelo - Landscape.png::CompressedTexture2D::619570572140100771::1791379645::1791392839::1::::<><><>0<>0<>a076adb4b102a564e9a529017d333c67<>res://.godot/imported/As Aventuras de Maycon - O Resgate do Cabelo - Landscape.png-da0d8ad99a791a00378ceae879eac385.ctex::
+As Aventuras de Maycon - O Resgate do Cabelo - Portrait - EN.png::CompressedTexture2D::471127366752795774::1791381776::1791392839::1::::<><><>0<>0<>768fc293f5e471292133a0ad9f928b0c<>res://.godot/imported/As Aventuras de Maycon - O Resgate do Cabelo - Portrait - EN.png-ada53bf7589a5574bddd7775a3a24a6d.ctex::
+As Aventuras de Maycon - O Resgate do Cabelo - Portrait.png::CompressedTexture2D::1995156183360500149::1791316216::1791392839::1::::<><><>0<>0<>45851f5cb4218d4b4b83267c7585aa13<>res://.godot/imported/As Aventuras de Maycon - O Resgate do Cabelo - Portrait.png-8c28bfe05ad0b150d2d8507900b5e99f.ctex::
+::res://assets/imagens_publicidade/artes extra/::1791381846
+As Aventuras de Maycon - O Resgate do Cabelo - RETRO.jpeg::CompressedTexture2D::7457942063659289891::1791316213::1791392839::1::::<><><>0<>0<>0e9a665ce787b86a616d55c8e4d1b8a4<>res://.godot/imported/As Aventuras de Maycon - O Resgate do Cabelo - RETRO.jpeg-727cc46fe62be1911b4c2904d6fab7ef.ctex::
+::res://assets/imagens_publicidade/icone/::1791392110
+the_legend_of_maycon.ico::OtherFile::-1::1791392042::0::1::::<><><>0<>0<><>::
+::res://assets/imagens_publicidade/personagens principal/::1791381828
+cabelo.png::CompressedTexture2D::316125902363766145::1789997417::1791392839::1::::<><><>0<>0<>bf1f098979a18f8184352a1084c41938<>res://.godot/imported/cabelo.png-ee463735227beb7f607e8f25c0ad3121.ctex::
+cigarro.png::CompressedTexture2D::8667298262057444759::1770925133::1791392839::1::::<><><>0<>0<>ceaea03a46a8ccffb94a2a75c23fc423<>res://.godot/imported/cigarro.png-ec982ff2f25029e28dc658509fae2bc2.ctex::
+lips.png::CompressedTexture2D::8893870155980596852::1770925133::1791392839::1::::<><><>0<>0<>093a738f5b9cc1873821d86214f7fdd3<>res://.godot/imported/lips.png-7371d21a9cc45d5eab5f5fece70fcb70.ctex::
+maycon.png::CompressedTexture2D::1866573949578521105::1789999503::1791392838::1::::<><><>0<>0<>7bfb364b5fae7c67c4232c37c25f7c74<>res://.godot/imported/maycon.png-941b89fcb00999744e6feb1959ba0d5c.ctex::
+seco.png::CompressedTexture2D::1969926382950265083::1789997258::1791392839::1::::<><><>0<>0<>23c226b37530f7b84cf7ff1bcee9f428<>res://.godot/imported/seco.png-f762ca5ea1a208207570342d7f35ba0c.ctex::
 ::res://assets/images/::1767636736
 andando_direita_0.png::CompressedTexture2D::5636034720339164745::1767636736::1767636736::1::::<><><>0<>0<>f0bbeb16087c404db3e50ca690a8bfde<>res://.godot/imported/andando_direita_0.png-e2fdb8e41a91c38ee50e85f5b9187ad3.ctex::
 andando_direita_1.png::CompressedTexture2D::3442434133255923484::1767636736::1767636736::1::::<><><>0<>0<>665bbfb048014e6d811100bac7839655<>res://.godot/imported/andando_direita_1.png-e73716735b8ae669bb837dc62bbf61e0.ctex::
