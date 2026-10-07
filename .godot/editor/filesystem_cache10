@@ -1,8 +1,8 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1791379036
+::res://::1791391879
 AGENTS.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
-export_presets.cfg::TextFile::-1::1791379036::0::1::::<><><>0<>0<><>::
+export_presets.cfg::TextFile::-1::1791392206::0::1::::<><><>0<>0<><>::
 godot-ai-LICENSE.txt::TextFile::-1::1790563197::0::1::::<><><>0<>0<><>::
 icon.png::CompressedTexture2D::2575902027917887430::1770123705::1770123705::1::::<><><>0<>0<>dab7b3249af0a6a42bb7c259ab178f80<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.bptc.ctex<*>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.astc.ctex::
 icon.svg::CompressedTexture2D::1790880795757653::1767636737::1767636737::1::::<><><>0<>0<>1d558fff71561543e2cf7e0d300c3350<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
@@ -766,7 +766,9 @@ maycon_base_3d.obj::Mesh::6609890888767789327::1770149238::1770230688::1::::<><>
 ::res://assets/modelo_3d/objects/::1770313527
 ladder.obj::Mesh::8832730959216156851::1770313501::1770313527::1::::<><><>0<>0<>765b786ffec06bd1ca6176f53524f5b3<>res://.godot/imported/ladder.obj-74a5a325e963e7132bb58052c20c0766.mesh<*>res://.godot/imported/ladder.obj-74a5a325e963e7132bb58052c20c0766.mesh::uid://bxncgk4j2gvtr::::res://assets/modelo_3d/objects/Roof.png
 Roof.png::CompressedTexture2D::4027733717397675435::1770313501::1770313527::1::::<><><>0<>0<>f503ea6d492b467eb39b6978a582d977<>res://.godot/imported/Roof.png-3b206da8baa00a61419a6d8fb057b233.s3tc.ctex<*>res://.godot/imported/Roof.png-3b206da8baa00a61419a6d8fb057b233.etc2.ctex::
-::res://assets/novas_imagens/::1770925133
+::res://assets/novas_imagens/::1791392209
+the_legend_of_maycon.ico::OtherFile::-1::1791392042::0::1::::<><><>0<>0<><>::
+the_legend_of_maycon.png::CompressedTexture2D::3466688442024192840::1791392206::1791392209::1::::<><><>0<>0<>f2cd13ed98a89049318cc01c6af7cdd6<>res://.godot/imported/the_legend_of_maycon.png-1d93a38fba4abd81418bee8386d03f3b.ctex::
 ::res://assets/novas_imagens/3d_battle/::1770925139
 arma_3d.png::CompressedTexture2D::208041587662444155::1769824615::1769824722::1::::<><><>0<>0<>d46c136d3ab78b9f9fdf2ae4f4dcb383<>res://.godot/imported/arma_3d.png-48906d11f5ba9717c041ab214ccf0b77.s3tc.ctex<*>res://.godot/imported/arma_3d.png-48906d11f5ba9717c041ab214ccf0b77.etc2.ctex::
 bala.png::CompressedTexture2D::6512492865523401105::1769873177::1769873189::1::::<><><>0<>0<>1d9d520f398125c86896a4a04f07fee8<>res://.godot/imported/bala.png-415bf17cdc4e8a03b9ae4be217ca13d7.ctex::
@@ -4197,7 +4199,7 @@ difficulty_selection.gd::GDScript::2147860775748857937::1791299565::0::1::::<>Co
 efeito_vidro_canvas.gd::GDScript::2533287663486452858::1767636737::0::1::::<>CanvasLayer<><>0<>0<><>::
 effect_stage_show.gd::GDScript::684586504690271007::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 explosao.gd::GDScript::6255021781690688224::1767836030::0::1::::<>CPUParticles2D<><>0<>0<><>::
-fase_1_before_castle_1.gd::GDScript::6635833604853315044::1791378599::0::1::::<>Sprite2D<><>0<>0<><>::
+fase_1_before_castle_1.gd::GDScript::6635833604853315044::1791386789::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_2.gd::GDScript::3133076191879326939::1768258387::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_3.gd::GDScript::6184730094203413863::1790563197::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_4.gd::GDScript::2154952988607779227::1790563197::0::1::::<>Sprite2D<><>0<>0<><>::
@@ -4318,7 +4320,7 @@ inimigo_fofo.gd::GDScript::1646365888988713657::1790563197::0::1::::<>AnimatedSp
 inimigo_manga.gd::GDScript::2159721504695700621::1790563197::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 inimigo_xuruzika.gd::GDScript::3730474420872568580::1790563197::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 ::res://scripts/menus/::1791223741
-configuracoes_dialog.gd::GDScript::5435864756212849056::1791380596::0::1::::<>CanvasLayer<><>0<>0<><>::
+configuracoes_dialog.gd::GDScript::5435864756212849056::1791380986::0::1::::<>CanvasLayer<><>0<>0<><>::
 ::res://scripts/tools/::1791223741
 bake_elden_lips_animations.gd::GDScript::7620067336403114312::1791223741::0::1::::<>SceneTree<><>0<>0<><>::
 bake_platform_scene.gd::GDScript::5181919851487842878::1791310773::0::1::::<>SceneTree<><>0<>1<><>::
@@ -4353,7 +4355,7 @@ verify_rescue_landing_and_city.gd::GDScript::6400308341423337610::1791223741::0:
 verify_resgate_cabeludo.gd::GDScript::6734687796586508805::1791223741::0::1::::<>SceneTree<><>0<>0<><>::
 verify_seco_3d_victory.gd::GDScript::5198876035719671429::1791223741::0::1::::<>SceneTree<><>0<>0<><>::
 verify_stage_fixes.gd::GDScript::8768965165253107364::1791223741::0::1::::<>SceneTree<><>0<>0<><>::
-::res://translations/::1791380651
+::res://translations/::1791380821
 game_text.csv::Translation::1292654866392114924::1791380596::1791380821::1::::<><><>0<>0<>2b3d80747eda3d8602f690557f568f10<>res://translations/game_text.pt.translation<*>res://translations/game_text.en.translation<*>res://translations/game_text.es.translation<*>res://translations/game_text.zh.translation::
 game_text.en.translation::Translation::1712006235640866847::1791380821::0::1::::<><><>0<>0<><>::
 game_text.es.translation::Translation::9151324834628544493::1791380821::0::1::::<><><>0<>0<><>::
