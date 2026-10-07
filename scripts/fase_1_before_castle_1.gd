@@ -27,8 +27,6 @@ func _ready() -> void:
 	restore_session_boxes()
 	if Global.stage_1_title_seen:
 		disable_stage_title()
-	else:
-		Global.stage_1_title_seen = true
 	$"../tutorial_1/Hint".hide()
 	$"../tutorial_2/Hint".hide()
 	Global.game_events["before_prologo"] = false 
@@ -61,6 +59,9 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if not Global.stage_1_title_seen and $node2d_stage_1_label.visible:
+		Global.stage_1_title_seen = true
+		Global.save_progress(get_tree().current_scene.name)
 	if not tutorial_box_moved:
 		if not is_instance_valid(tutorial_box) or absf(tutorial_box.position.x - tutorial_box_initial_x) > 8.0:
 			tutorial_box_moved = true
@@ -99,7 +100,8 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 
 func _on_dead_line_body_entered(body: Node2D) -> void:
 	maycon_fase.visible = false
-	disable_stage_title()
+	if Global.stage_1_title_seen:
+		disable_stage_title()
 	animacoes.play("maycon_falling")
 	#get_tree().change_scene_to_file("res://scenes/fase_1_before_castle_1.tscn")
 
@@ -115,9 +117,10 @@ func disable_stage_title() -> void:
 				if animation.method_track_get_name(track, key) == &"unpause":
 					animation.track_set_key_time(track, key, 2.85)
 	animation.length = 3.0
-	var library := animacoes.get_animation_library("").duplicate() as AnimationLibrary
-	library.remove_animation("maycon_falling")
-	library.add_animation("maycon_falling", animation)
+	var original_library := animacoes.get_animation_library("")
+	var library := AnimationLibrary.new()
+	for animation_name in original_library.get_animation_list():
+		library.add_animation(animation_name, animation if animation_name == &"maycon_falling" else original_library.get_animation(animation_name))
 	animacoes.remove_animation_library("")
 	animacoes.add_animation_library("", library)
 	$node2d_stage_1_label.hide()
