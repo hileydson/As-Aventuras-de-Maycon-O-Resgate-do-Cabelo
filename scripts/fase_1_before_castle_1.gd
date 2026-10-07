@@ -51,7 +51,13 @@ func _ready() -> void:
 		camera.make_current()
 	elif Global.back_to_fase == true:
 		Global.back_to_fase = false
+		maycon_falling.hide()
+		maycon_fase.show()
+		maycon_fase.velocity = Vector2.ZERO
 		animacoes.play("maycon_back_to_fase")
+		animacoes.advance(0.3)
+		maycon_fase.get_node("AnimatedSprite2D").flip_h = true
+		camera.make_current()
 		await get_tree().create_timer(1.0).timeout
 	else:
 		animacoes.play("maycon_falling")
@@ -99,6 +105,8 @@ func _on_next_scene_body_entered(body: Node2D) -> void:
 
 
 func _on_dead_line_body_entered(body: Node2D) -> void:
+	if body != maycon_fase:
+		return
 	maycon_fase.visible = false
 	if Global.stage_1_title_seen:
 		disable_stage_title()
