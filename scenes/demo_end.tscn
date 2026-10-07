@@ -6,6 +6,7 @@
 [ext_resource type="AudioStream" uid="uid://c7ap4akws6abl" path="res://assets/novos_audios/the_end.mp3" id="4_hefi4"]
 [ext_resource type="PackedScene" uid="uid://eryejsrbh53q" path="res://scenes/default_transition_auto_fade_in_long.tscn" id="4_ryeef"]
 [ext_resource type="Texture2D" uid="uid://dbicvg8ismuhi" path="res://assets/novas_imagens/maycon/jamelao_float_1.png" id="5_ryeef"]
+[ext_resource type="Texture2D" uid="uid://c4sdf8yrvtk2d" path="res://assets/imagens_publicidade/logo.png" id="7_1dhky"]
 [ext_resource type="Texture2D" uid="uid://bntwoiej8ke2w" path="res://assets/novas_imagens/end/hug_1.png" id="7_hvkwn"]
 [ext_resource type="Texture2D" uid="uid://bipvqda2dqlnq" path="res://assets/novas_imagens/end/hug_2.png" id="8_8ulnn"]
 [ext_resource type="Texture2D" uid="uid://5x3arlktkuq8" path="res://assets/novas_imagens/effects/smoke_sheet.png" id="9_42jx3"]
@@ -524,25 +525,10 @@ libraries/ = SubResource("AnimationLibrary_ahm46")
 position = Vector2(8.264331, -5.258192)
 scale = Vector2(3.9585018, 1.3761984)
 
-[node name="Label" type="Label" parent="Fase1BeforeCastle" unique_id=1048643671]
-visible = false
-offset_left = 187.1061
-offset_top = 314.54517
-offset_right = 361.10608
-offset_bottom = 339.70026
-scale = Vector2(1.722152, 2.011176)
-text = "The Legend of Maycon"
-label_settings = SubResource("LabelSettings_hvkwn")
-
-[node name="end_demo_thanks" type="Label" parent="Fase1BeforeCastle" unique_id=935402569]
-visible = false
-offset_left = 189.7476
-offset_top = 339.31766
-offset_right = 443.7476
-offset_bottom = 364.69968
-scale = Vector2(1.2207694, 2.7819045)
-text = "The Cabelo's Rescue"
-label_settings = SubResource("LabelSettings_8ulnn")
+[node name="logo_end" type="Sprite2D" parent="Fase1BeforeCastle" unique_id=1239596064]
+position = Vector2(357.04245, 326.2795)
+scale = Vector2(0.4461587, 0.51339686)
+texture = ExtResource("7_1dhky")
 
 [node name="TheEnd" type="AudioStreamPlayer" parent="." unique_id=1828689277]
 stream = ExtResource("4_hefi4")
@@ -680,5 +666,4 @@ horizontal_alignment = 1
 libraries/ = SubResource("AnimationLibrary_42jx3")
 autoplay = &"the_end"
 
-[connection signal="ready" from="." to="Fase1BeforeCastle" method="_on_node_2d_ready"]
 [connection signal="animation_finished" from="end_movie" to="Fase1BeforeCastle" method="_on_end_movie_animation_finished"]

@@ -1,13 +1,27 @@
 extends Sprite2D
 
 @onready var animacoes: AnimationPlayer = $animacoes
-@onready var end_demo_thanks: Label = $end_demo_thanks
-@onready var label: Label = $Label
+const LOGO_OTHER = preload("res://assets/imagens_publicidade/logo_other.png")
+@onready var logo_end: Sprite2D = $logo_end
+var portuguese_logo: Texture2D
 
 var time_to_skip:bool = false
 func _ready() -> void:
-	await get_tree().create_timer(25.0).timeout 
-	
+	portuguese_logo = logo_end.texture
+	_update_end_logo()
+	logo_end.modulate.a = 0.0
+	var movie: AnimationPlayer = $"../end_movie"
+	var reveal_duration := minf(25.0, maxf(1.0, movie.get_animation("the_end").length - 5.0))
+	var reveal := create_tween()
+	reveal.tween_property(logo_end, "modulate:a", 1.0, reveal_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED and is_instance_valid(portuguese_logo):
+		_update_end_logo()
+
+func _update_end_logo() -> void:
+	logo_end.texture = portuguese_logo if Global.default_language == Global.language_pt_br else LOGO_OTHER
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -17,19 +31,6 @@ func _process(delta: float) -> void:
 		get_tree().change_scene_to_file("res://scenes/menu.tscn")
 	
 
-
-func _on_node_2d_ready() -> void:
-	
-	label.text = tr("GAME_TITLE")
-	end_demo_thanks.text = tr("GAME_SUBTITLE")
-	
-	#Global.reset_save_to_fase_1()
-	await get_tree().create_timer(7.0).timeout 
-	label.visible = true
-	await get_tree().create_timer(3.0).timeout 
-	end_demo_thanks.visible = true
-	
-	
 
 func _on_end_movie_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "the_end":
