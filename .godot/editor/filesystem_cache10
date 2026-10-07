@@ -1,8 +1,8 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1791391879
+::res://::1791392621
 AGENTS.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
-export_presets.cfg::TextFile::-1::1791392206::0::1::::<><><>0<>0<><>::
+export_presets.cfg::TextFile::-1::1791392621::0::1::::<><><>0<>0<><>::
 godot-ai-LICENSE.txt::TextFile::-1::1790563197::0::1::::<><><>0<>0<><>::
 icon.png::CompressedTexture2D::2575902027917887430::1770123705::1770123705::1::::<><><>0<>0<>dab7b3249af0a6a42bb7c259ab178f80<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.bptc.ctex<*>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.astc.ctex::
 icon.svg::CompressedTexture2D::1790880795757653::1767636737::1767636737::1::::<><><>0<>0<>1d558fff71561543e2cf7e0d300c3350<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
@@ -766,8 +766,8 @@ maycon_base_3d.obj::Mesh::6609890888767789327::1770149238::1770230688::1::::<><>
 ::res://assets/modelo_3d/objects/::1770313527
 ladder.obj::Mesh::8832730959216156851::1770313501::1770313527::1::::<><><>0<>0<>765b786ffec06bd1ca6176f53524f5b3<>res://.godot/imported/ladder.obj-74a5a325e963e7132bb58052c20c0766.mesh<*>res://.godot/imported/ladder.obj-74a5a325e963e7132bb58052c20c0766.mesh::uid://bxncgk4j2gvtr::::res://assets/modelo_3d/objects/Roof.png
 Roof.png::CompressedTexture2D::4027733717397675435::1770313501::1770313527::1::::<><><>0<>0<>f503ea6d492b467eb39b6978a582d977<>res://.godot/imported/Roof.png-3b206da8baa00a61419a6d8fb057b233.s3tc.ctex<*>res://.godot/imported/Roof.png-3b206da8baa00a61419a6d8fb057b233.etc2.ctex::
-::res://assets/novas_imagens/::1791392209
-the_legend_of_maycon.ico::OtherFile::-1::1791392042::0::1::::<><><>0<>0<><>::
+::res://assets/novas_imagens/::1791392606
+the_legend_of_maycon.ico::OtherFile::-1::1791392657::0::1::::<><><>0<>0<><>::
 the_legend_of_maycon.png::CompressedTexture2D::3466688442024192840::1791392206::1791392606::1::::<><><>0<>0<>f2cd13ed98a89049318cc01c6af7cdd6<>res://.godot/imported/the_legend_of_maycon.png-1d93a38fba4abd81418bee8386d03f3b.ctex::
 ::res://assets/novas_imagens/3d_battle/::1770925139
 arma_3d.png::CompressedTexture2D::208041587662444155::1769824615::1769824722::1::::<><><>0<>0<>d46c136d3ab78b9f9fdf2ae4f4dcb383<>res://.godot/imported/arma_3d.png-48906d11f5ba9717c041ab214ccf0b77.s3tc.ctex<*>res://.godot/imported/arma_3d.png-48906d11f5ba9717c041ab214ccf0b77.etc2.ctex::
