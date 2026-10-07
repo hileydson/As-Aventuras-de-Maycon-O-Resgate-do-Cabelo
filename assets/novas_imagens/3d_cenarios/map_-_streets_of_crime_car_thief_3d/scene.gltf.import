@@ -33,12 +33,15 @@ animation/fps=30
 animation/trimming=false
 animation/remove_immutable_tracks=true
 animation/import_rest_as_RESET=false
-import_script/path="uid://b0utl482yp6ho"
+import_script/path="res://scripts/3D/import_collision_gen.gd"
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
 _subresources={
 "nodes": {
+"PATH:Sketchfab_model/0d74323375424ca99d84743ec61e2d92_fbx/RootNode/city/barricades": {
+"import/skip_import": true
+},
 "PATH:Sketchfab_model/0d74323375424ca99d84743ec61e2d92_fbx/RootNode/city/crime_truck_driving_world03/shipping_container_d285_1": {
 "import/skip_import": true
 },

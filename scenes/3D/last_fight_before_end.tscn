@@ -21,9 +21,6 @@
 [ext_resource type="AudioStream" uid="uid://cgbaylimr110j" path="res://assets/novos_audios/cidade_intro_wind.mp3" id="13_ut78q"]
 [ext_resource type="Texture2D" uid="uid://b35jq8goxova5" path="res://assets/novas_imagens/npcs/tony.png" id="14_n602u"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_cidade_perdida"]
-font_size = 128
-
 [sub_resource type="Environment" id="Environment_nhhbp"]
 background_color = Color(0.61, 0.48098502, 0.4453, 1)
 background_energy_multiplier = 0.4
@@ -240,6 +237,9 @@ animations = [{
 "name": &"default",
 "speed": 5.0
 }]
+
+[sub_resource type="LabelSettings" id="LabelSettings_cidade_perdida"]
+font_size = 128
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_cdnep"]
 emission_shape = 3
@@ -735,7 +735,6 @@ offset_left = 346.0
 offset_top = 208.0
 offset_right = 814.0
 offset_bottom = 300.0
-texture_filter = 2
 scale = Vector2(0.94, 0.79)
 theme_override_font_sizes/font_size = 64
 text = "Cidade Perdida"
@@ -756,7 +755,7 @@ stream = ExtResource("13_ut78q")
 volume_db = -4.522
 
 [node name="Camera3D" type="Camera3D" parent="cutscene" unique_id=1963888353]
-transform = Transform3D(-0.05420078, 0, -0.99852914, 0, 1, 0, 0.9985292, 0, -0.054200776, 800.94366, -2.076416, 217.57733)
+transform = Transform3D(-0.054200776, 0, -0.9985291, 0, 1, 0, 0.99852914, 0, -0.054200772, 800.94366, -2.076416, 217.57733)
 
 [node name="chuva" type="GPUParticles3D" parent="cutscene/Camera3D" unique_id=130191730]
 transform = Transform3D(1.8595114, -4.656613e-10, 2.9802322e-08, 4.656613e-10, 1.0954939, -1.7331331e-08, 4.4703484e-08, 7.537892e-09, 1.8346369, 0.028381348, 6.9735413, 0.39990234)
