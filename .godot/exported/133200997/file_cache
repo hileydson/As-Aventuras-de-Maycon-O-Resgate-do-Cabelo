@@ -117,7 +117,7 @@ res://demo/data/assets.tres::0a63951ffdf7e778043d40d02208e525::1770123704::res:/
 res://demo/CodeGeneratedDemo.tscn::6bcf1e463526527fb70a87cf951072a5::1770123704::res://.godot/exported/133200997/export-083ab6464bed0869ca961a8294939e07-CodeGeneratedDemo.scn
 res://demo/Demo.tscn::4a5017de13edc1256b6616e31927f1c7::1770123704::res://.godot/exported/133200997/export-f80a9e29aeb04aea4136453e2398f126-Demo.scn
 res://demo/NavigationDemo.tscn::dc5d9873a2c50ccfd140c9fbf47391df::1770123704::res://.godot/exported/133200997/export-e93ebe3609735e810fb4ceb89ec30fe1-NavigationDemo.scn
-res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn::1b303f2bdaf7028ed01e4fcbc632d951::1791308267::res://.godot/exported/133200997/export-cb2de700edb0bf17b3e3be1c0f1ce11a-cenario_3d_after_castle_berore_seco_boss.scn
+res://scenes/3D/cenario_3d_after_castle_berore_seco_boss.tscn::183f8d4d8f534c3e54305087422189d3::1791377630::res://.godot/exported/133200997/export-cb2de700edb0bf17b3e3be1c0f1ce11a-cenario_3d_after_castle_berore_seco_boss.scn
 res://scenes/3D/cenario_3d_bofore_castle_1.tscn::a021a9d64834eb4aba0e34555a101578::1791299175::res://.godot/exported/133200997/export-482d88b557fbf67731168a9a99f56c1e-cenario_3d_bofore_castle_1.scn
 res://scenes/3D/lamp.tscn::b05374c4723d81bf4acbd967549f42f4::1770074388::res://.godot/exported/133200997/export-9efe9100d3947e6a48f6bd8fbfcfcf27-lamp.scn
 res://scenes/3D/torcha_3d.tscn::48c9058cb70e5fafc72fa2285af8e6ab::1770083291::res://.godot/exported/133200997/export-264c644993ee3ecf265d4a98579aca9a-torcha_3d.scn
@@ -125,7 +125,7 @@ res://scenes/3D/gas.tscn::6950bdede1d1af839a4932d38ea21fd9::1770239842::res://.g
 res://scenes/3D/textura_config_barro.tres::e6bf929dc9fa5a8df8d9b9680a2ead65::1770251008::res://.godot/exported/133200997/export-6a05d6ac0f7f0eae357cddc52394e14a-textura_config_barro.res
 res://scenes/3D/cigarro_two_player.tscn::fc7ccfc04d6c1b74084d3aa1049049f7::1770925139::res://.godot/exported/133200997/export-25221cfaf56767bfacccc7dbbc6bbcc4-cigarro_two_player.scn
 res://scenes/two_layers_fps_mode.tscn::c0c475d43aba17ce43e5c6d7685bfb94::1770925139::res://.godot/exported/133200997/export-e924b5dd91ee18528bd41eb1a49982ed-two_layers_fps_mode.scn
-res://scenes/3D/last_fight_before_end.tscn::4b630c7944d0f4dd70015c96f31eb7d0::1791308267::res://.godot/exported/133200997/export-cb794d516c9838b7cc3af477b130788d-last_fight_before_end.scn
+res://scenes/3D/last_fight_before_end.tscn::9ccb4f2ae9e0575e2b30f2295c076591::1791377630::res://.godot/exported/133200997/export-cb794d516c9838b7cc3af477b130788d-last_fight_before_end.scn
 res://scenes/3D/pause_3d_moto_cidade.tscn::1b4f4489595cababca9cad39d3538ed4::1790563197::res://.godot/exported/133200997/export-6f80c7ecac2befb8a871025b8bc3745c-pause_3d_moto_cidade.scn
 res://scenes/balao_conversa.tscn::216330b291f5f2934e17a91348f94074::1770925139::res://.godot/exported/133200997/export-547ee34ca1e5e2a6d8d63f8ab5eb2217-balao_conversa.scn
 res://scenes/battle_mode_selection.tscn::5c0957ff0ad353a6a8d71ddb3d747944::1790563197::res://.godot/exported/133200997/export-3eaab2c20bdd7fe9ea7d668a468567ef-battle_mode_selection.scn

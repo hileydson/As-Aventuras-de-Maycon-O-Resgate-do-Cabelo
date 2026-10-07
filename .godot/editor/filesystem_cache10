@@ -1,12 +1,12 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1791312493
+::res://::1791378791
 AGENTS.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
 CLAUDE.md::TextFile::-1::1790563196::0::1::::<><><>0<>0<><>::
-export_presets.cfg::TextFile::-1::1791312493::0::1::::<><><>0<>0<><>::
+export_presets.cfg::TextFile::-1::1791378791::0::1::::<><><>0<>0<><>::
 godot-ai-LICENSE.txt::TextFile::-1::1790563197::0::1::::<><><>0<>0<><>::
 icon.png::CompressedTexture2D::2575902027917887430::1770123705::1770123705::1::::<><><>0<>0<>dab7b3249af0a6a42bb7c259ab178f80<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.bptc.ctex<*>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.astc.ctex::
 icon.svg::CompressedTexture2D::1790880795757653::1767636737::1767636737::1::::<><><>0<>0<>1d558fff71561543e2cf7e0d300c3350<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
-README.md::TextFile::-1::1769709718::0::1::::<><><>0<>0<><>::
+README.md::TextFile::-1::1791378762::0::1::::<><><>0<>0<><>::
 ::res://addons/::1790563196
 ::res://addons/godot_ai/::1790563196
 client_configurator.gd::GDScript::1846084051969471465::1790563196::0::1::::McpClientConfigurator<>RefCounted<><>0<>1<><>::
@@ -4180,7 +4180,7 @@ inimigo_xuruzika.tscn::PackedScene::6737765857473348084::1790792740::0::1::::<><
 configuracoes_dialog.tscn::PackedScene::4339851293418817919::1790711239::0::1::::<><><>0<>0<><>::uid://cjpf5sqs3bkou::::res://scripts/menus/configuracoes_dialog.gd<>uid://b1o834pgp267n::::res://assets/fonts/contrast.ttf
 maycon_itens.tscn::PackedScene::6963755944896746500::1769775609::0::1::::<><><>0<>0<><>::uid://broav1jkk1nk1::::res://scripts/maycon_itens.gd<>uid://30tsd1l3hqfw::::res://assets/novas_imagens/objects/Items.png<>uid://b8xm3n05un7xf::::res://assets/novas_imagens/effects/Explosion/1.png<>uid://dlowt45jrflns::::res://assets/novas_imagens/effects/Explosion/3.png
 pause_backdrop.gdshader::Shader::444884068966460331::1790619261::0::1::::<><><>0<>0<><>::
-::res://scripts/::1791299568
+::res://scripts/::1791378898
 balao_conversa.gd::GDScript::6627363207731980991::1790793879::0::1::::<>CanvasLayer<><>0<>0<><>::
 batalha.gd::GDScript::7248754106168415276::1791322765::0::1::::<>AnimationPlayer<><>0<>0<><>::
 battle_3d.gd::GDScript::5694209551412885657::1767636737::0::1::::<>Camera3D<><>0<>0<><>::
@@ -4188,6 +4188,7 @@ battle_mode_selection.gd::GDScript::1174737547514756521::1791299564::0::1::::<>C
 caixa.gd::GDScript::7282922310310176152::1770228608::0::1::::<>Sprite2D<><>0<>0<><>::
 camera_batalha.gd::GDScript::9203816889009604379::1768267007::0::1::::<>Camera2D<><>0<>0<><>::
 camera_temp_scene_seco_castle.gd::GDScript::1142881256959163234::1790896655::0::1::::<>Camera2D<><>0<>0<><>::
+default_transition_autoload.gd::GDScript::1224941402831355943::1791378913::0::1::::<>Node2D<><>0<>0<><>::
 default_transition_fade_in.gd::GDScript::2411432794830808440::1767636737::0::1::::<>Node2D<><>0<>0<><>::
 default_transition_fade_out.gd::GDScript::325153759028896861::1767636737::0::1::::<>Node2D<><>0<>0<><>::
 demo_controls.gd::GDScript::831829260655509444::1790638512::0::1::::<>Control<><>0<>0<><>::
@@ -4196,7 +4197,7 @@ difficulty_selection.gd::GDScript::2147860775748857937::1791299565::0::1::::<>Co
 efeito_vidro_canvas.gd::GDScript::2533287663486452858::1767636737::0::1::::<>CanvasLayer<><>0<>0<><>::
 effect_stage_show.gd::GDScript::684586504690271007::1767636737::0::1::::<>AnimatedSprite2D<><>0<>0<><>::
 explosao.gd::GDScript::6255021781690688224::1767836030::0::1::::<>CPUParticles2D<><>0<>0<><>::
-fase_1_before_castle_1.gd::GDScript::6635833604853315044::1791297340::0::1::::<>Sprite2D<><>0<>0<><>::
+fase_1_before_castle_1.gd::GDScript::6635833604853315044::1791378599::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_2.gd::GDScript::3133076191879326939::1768258387::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_3.gd::GDScript::6184730094203413863::1790563197::0::1::::<>Sprite2D<><>0<>0<><>::
 fase_1_before_castle_4.gd::GDScript::2154952988607779227::1790563197::0::1::::<>Sprite2D<><>0<>0<><>::
@@ -4224,7 +4225,7 @@ maycon.gd::GDScript::2120782937936992069::1790874045::0::1::::<>CharacterBody2D<
 maycon_batalha.gd::GDScript::5958723479534775137::1769904053::0::1::::<>CharacterBody2D<><>0<>0<><>::
 maycon_fase.gd::GDScript::2636479185831734840::1790638943::0::1::::<>CharacterBody2D<><>0<>0<><>::
 maycon_itens.gd::GDScript::3608571195747589650::1790804357::0::1::::<>Node2D<><>0<>0<><>::
-menu.gd::GDScript::1661121416407267804::1791378212::0::1::::<>Node3D<><>0<>0<><>::
+menu.gd::GDScript::1661121416407267804::1791378243::0::1::::<>Node3D<><>0<>0<><>::
 pause.gd::GDScript::7449233017950370426::1790879329::0::1::::<>Control<><>0<>0<><>::
 prologue_portal_effect.gd::GDScript::647274216301822878::1790710798::0::1::::<>Node2D<><>0<>0<><>::
 realtime_battle.gd::GDScript::7867064034200866415::1791299566::0::1::::<>Node2D<><>0<>0<><>::
